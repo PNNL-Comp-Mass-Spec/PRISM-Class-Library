@@ -1,0 +1,435 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+PRISM
+</name>
+</assembly>
+<members>
+<member name="M:PRISM.DataBase.clsDBTools.#ctor(PRISM.Logging.ILogger,System.String)">
+	<summary>Initializes a new instance of the clsDBTools class which logs to the specified logger.</summary>
+	<param name="logger">This is the logger.</param>
+	<param name="ConnectStr">This is a connection string.</param>
+</member><member name="T:PRISM.DataBase.clsDBTools">
+	<summary>Tools to manipulates the database.</summary>
+</member><member name="P:PRISM.Files.FolderBrowser.BrowseFlags">
+	<summary>TBD</summary>
+</member><member name="P:PRISM.Files.FolderBrowser.FolderPath">
+	<summary>TBD</summary>
+</member><member name="P:PRISM.Files.FolderBrowser.Title">
+	<summary>TBD</summary>
+</member><member name="M:PRISM.Files.FolderBrowser.BrowseForFolder(System.String)">
+	<summary>TBD</summary>
+</member><member name="M:PRISM.Files.FolderBrowser.mFolderBrowserDialog_Initialized(System.Object,System.EventArgs)">
+	<summary>TBD</summary>
+</member><member name="M:PRISM.Files.FolderBrowser.#ctor">
+	<summary>TBD</summary>
+</member><member name="T:PRISM.Files.FolderBrowser">
+	<summary>TBD</summary>
+</member><member name="M:PRISM.Files.XmlSettingsFileAccessor.SectionPresent(System.String)">
+	<summary>Checks if a section is present in the settings file.</summary>
+	<param name="sectionName">The name of the section to look for.</param>
+	<return>The function returns a boolean that shows if the section is present.</return>
+</member><member name="M:PRISM.Files.XmlSettingsFileAccessor.RegisterExceptionLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the exception logger</summary>
+</member><member name="M:PRISM.Files.XmlSettingsFileAccessor.RegisterEventLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the event logger</summary>
+</member><member name="P:PRISM.Files.XmlSettingsFileAccessor.NotifyOnEvent">
+	<summary>Gets or Sets notify on event.</summary>
+</member><member name="P:PRISM.Files.XmlSettingsFileAccessor.NotifyOnException">
+	<summary>Gets or Sets notify on exception.</summary>
+</member><member name="M:PRISM.Files.ZipTools.MakeZipFile(System.String,System.String,System.String)">
+	<summary>Create a zip file.</summary>
+	<param name="CmdOptions">The zip program command line arguments.</param>
+	<param name="OutputFile">The file path of the output zip file.</param>
+	<param name="InputSpec">The files and/or directorys to archive.</param>
+</member><member name="M:PRISM.Files.ZipTools.UnzipFile(System.String,System.String,System.String)">
+	<summary>Extract files from a zip file.</summary>
+	<param name="CmdOptions">The zip program command line arguments.</param>
+	<param name="InputFile">The file path of the zip file from which to extract files.</param>
+	<param name="OutPath">The path where you want to put the extracted files.</param>
+</member><member name="P:PRISM.Files.ZipTools.CreateNoWindow">
+	<summary>Defines whether a window is displayed when calling the zipping program.</summary>
+</member><member name="P:PRISM.Files.ZipTools.WorkDir">
+	<summary>The working directory for the zipping process.</summary>
+</member><member name="P:PRISM.Files.ZipTools.ZipFilePath">
+	<summary>The path to the zipping program.</summary>
+</member><member name="M:PRISM.Files.ZipTools.#ctor(System.String,System.String)">
+	<summary>Initializes a new instance of the ZipTools class.</summary>
+	<param name="WorkDir">The working directory for the zipping process.</param>
+	<param name="ZipFilePath">The path to the zipping program.</param>
+</member><member name="M:PRISM.Files.ZipTools.VerifyParams">
+	<summary>Verifies initial parameters have been set prior to performing operation.</summary>
+</member><member name="M:PRISM.Files.ZipTools.RegisterExceptionLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the exception logger</summary>
+</member><member name="M:PRISM.Files.ZipTools.RegisterEventLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the event logger</summary>
+</member><member name="P:PRISM.Files.ZipTools.NotifyOnEvent">
+	<summary>Gets or Sets notify on event.</summary>
+</member><member name="P:PRISM.Files.ZipTools.NotifyOnException">
+	<summary>Gets or Sets notify on exception.</summary>
+</member><member name="T:PRISM.Files.ShareConnector.NETRESOURCE">
+	<summary>This structure is used to group a bunch of member variables.</summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_CONNECTED">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_GLOBALNET">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_DISK">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_PRINT">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_ANY">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_DOMAIN">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_GENERIC">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SERVER">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SHARE">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONNECTABLE">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONTAINER">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwUsage </summary>
+</member><member name="E:PRISM.Files.DirectoryScanner.FoundFile">
+	<summary>Event is raised whenever a matching file is found.</summary>
+	<remarks>This event is most useful for implementing a progress indicator.</remarks>
+	<param name="fileName">The found file's full path.</param>
+</member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.String[])">
+	<summary>Initializes a new instance of the DirectoryScanner class.</summary>
+	<param name="dirs">An array of directory paths to scan.</param>
+</member><member name="T:PRISM.Files.DirectoryScanner">
+	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
+</member><member name="E:PRISM.Files.clsFileTools.CopyingFile">
+	<summary>Event is raised before copying begins.</summary>
+	<param name="filename">The file's full path.</param>
+</member><member name="F:PRISM.Files.clsFileTools.TERMINATOR_ADD">
+	<summary>Used to add the path seperation character to the end of the directory path.</summary>
+</member><member name="F:PRISM.Files.clsFileTools.TERMINATOR_REMOVE">
+	<summary>Used to remove the path seperation character from the end of the directory path.</summary>
+</member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.Boolean,System.String)">
+	<summary>Modifies input directory path string depending on optional settings.</summary>
+	<param name="InpFolder">The input directory path.</param>
+	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
+	<param name="TermChar">The specified directory seperation character.</param>
+	<returns>The modified directory path.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.Boolean)">
+	<summary>Adds or removes the DOS path seperation character from the end of the directory path.</summary>
+	<param name="InpFolder">The input directory path.</param>
+	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
+	<returns>The modified directory path.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.String)">
+	<summary>Assures the directory path ends with the specified path seperation character.</summary>
+	<param name="InpFolder">The input directory path.</param>
+	<param name="TermChar">The specified directory seperation character.</param>
+	<returns>The modified directory path.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String)">
+	<summary>Assures the directory path ends with the DOS path seperation character.</summary>
+	<param name="InpFolder">The input directory path.</param>
+	<returns>The modified directory path.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.CheckTerminatorEX(System.String,System.Boolean,System.String)">
+	<summary>Modifies input directory path string depending on optional settings.</summary>
+	<param name="InpFolder">The input directory path.</param>
+	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
+	<param name="TermChar">The specified directory seperation character.</param>
+	<returns>The modified directory path.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.CopyFile(System.String,System.String,System.Boolean)">
+	<summary>Copies a source file to the destination file. Allows overwriting.</summary>
+	<param name="SourcePath">The source file path.</param>
+	<param name="DestPath">The destination file path.</param>
+	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Boolean)">
+	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
+	<param name="SourcePath">The source directory path.</param>
+	<param name="DestPath">The destination directory path.</param>
+	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Boolean,System.Boolean)">
+	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
+	<param name="SourcePath">The source directory path.</param>
+	<param name="DestPath">The destination directory path.</param>
+	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+	<param name="bReadOnly">The value to be assgned to the read-only attribute of the destination file.</param>
+</member><member name="M:PRISM.Files.clsFileTools.GetDirectorySize(System.String)">
+	<summary>Get the directory size.</summary>
+	<param name="DirPath">The path to the directory.</param>
+	<returns>The directory size.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.GetDirectorySize(System.String,System.Int64@,System.Int64@)">
+	<summary>Get the directory size, file count, and directory count for the entire directory tree.</summary>
+	<param name="DirPath">The path to the directory.</param>
+	<param name="FileCount">The number of files in the entire directory tree.</param>
+	<param name="SubDirCount">The number of directories in the entire directory tree.</param>
+	<returns>The directory size.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.GetDirectorySizeEX(System.String,System.Int64@,System.Int64@)">
+	<summary>Get the directory size, file count, and directory count for the entire directory tree.</summary>
+	<param name="DirPath">The path to the directory.</param>
+	<param name="FileCount">The number of files in the entire directory tree.</param>
+	<param name="SubDirCount">The number of directories in the entire directory tree.</param>
+	<returns>The directory size.</returns>
+</member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@)">
+	<summary>Initializes a new instance of the IniFileReader.</summary>
+	<param name="IniFileName">The name of the ini file.</param>
+	<param name="logger">This is the logger.</param>
+</member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,System.Boolean)">
+	<summary>Initializes a new instance of the IniFileReader.</summary>
+	<param name="IniFileName">The name of the ini file.</param>
+	<param name="IsCaseSensitive">Case sensitive as boolean.</param>
+</member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@,System.Boolean)">
+	<summary>Initializes a new instance of the IniFileReader.</summary>
+	<param name="IniFileName">The name of the ini file.</param>
+	<param name="logger">This is the logger.</param>
+	<param name="IsCaseSensitive">Case sensitive as boolean.</param>
+</member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String)">
+	<summary>Initializes a new instance of the IniFileReader.</summary>
+	<param name="IniFileName">The name of the ini file.</param>
+</member><member name="M:PRISM.Files.IniFileReader.SetIniValue(System.String,System.String,System.String)">
+	<summary>
+ The function sets a new value for the "value" attribute.
+ </summary>
+	<param name="sectionName">The name of the section.</param>
+	<param name="keyName">The name of the key.</param>
+	<param name="newValue">The new value for the "value".</param>
+	<return>The function returns a boolean that shows if the change was done.</return>
+</member><member name="M:PRISM.Files.IniFileReader.GetIniComments(System.String)">
+	<summary>
+ The function gets the comments for a section name.
+ </summary>
+	<param name="sectionName">The name of the section.</param>
+	<return>The function returns a string collection with comments</return>
+</member><member name="M:PRISM.Files.IniFileReader.AllKeysInSection(System.String)">
+	<summary>The funtions gets a collection of keys in a section.</summary>
+	<param name="sectionName">The name of the section.</param>
+	<return>The function returns a string colection of all the keys in a section.</return>
+</member><member name="M:PRISM.Files.IniFileReader.AllValuesInSection(System.String)">
+	<summary>The funtions gets a collection of values in a section.</summary>
+	<param name="sectionName">The name of the section.</param>
+	<return>The function returns a string colection of all the values in a section.</return>
+</member><member name="M:PRISM.Files.IniFileReader.AllItemsInSection(System.String)">
+	<summary>The funtions gets a collection of items in a section.</summary>
+	<param name="sectionName">The name of the section.</param>
+	<return>The function returns a string colection of all the items in a section.</return>
+</member><member name="M:PRISM.Files.IniFileReader.GetCustomIniAttribute(System.String,System.String,System.String)">
+	<summary>The funtions gets a custom attribute name.</summary>
+	<param name="sectionName">The name of the section.</param>
+	<param name="keyName">The name of the key.</param>
+	<param name="attributeName">The name of the attribute.</param>
+	<return>The function returns a string.</return>
+</member><member name="M:PRISM.Files.IniFileReader.SetCustomIniAttribute(System.String,System.String,System.String,System.String)">
+	<summary>The funtions sets a custom attribute name.</summary>
+	<param name="sectionName">The name of the section.</param>
+	<param name="keyName">The name of the key.</param>
+	<param name="attributeName">The name of the attribute.</param>
+	<param name="attributeValue">The value of the attribute.</param>
+	<return>The function returns a Boolean.</return>
+</member><member name="M:PRISM.Files.IniFileReader.CreateSection(System.String)">
+	<summary>The funtions creates a section name.</summary>
+	<param name="sectionName">The name of the section to be created.</param>
+	<return>The function returns a Boolean.</return>
+</member><member name="M:PRISM.Files.IniFileReader.CreateItem(System.String,System.String,System.String)">
+	<summary>The funtions creates a section name.</summary>
+	<param name="sectionName">The name of the section.</param>
+	<param name="keyName">The name of the key.</param>
+	<param name="newValue">The new value to be created.</param>
+	<return>The function returns a Boolean.</return>
+</member><member name="M:PRISM.Files.IniFileReader.ParseLineXml(System.String,System.Xml.XmlDocument)">
+	<summary>It parses a string and adds atribbutes to the XMLDocument.</summary>
+	<param name="s">The name of the string to be parse.</param>
+	<param name="doc">The name of the XmlDocument.</param>
+</member><member name="P:PRISM.Files.IniFileReader.OutputFilename">
+	<summary>It Sets or Gets the output file name.</summary>
+</member><member name="M:PRISM.Files.IniFileReader.Save">
+	<summary>It saves the data to the Xml output file.</summary>
+</member><member name="M:PRISM.Files.IniFileReader.AsIniFile">
+	<summary>It transforms a XML file to an INI file.</summary>
+	<return>The function returns document formatted as a string.</return>
+</member><member name="P:PRISM.Files.IniFileReader.XmlDoc">
+	<summary>It gets the XmlDocument.</summary>
+</member><member name="P:PRISM.Files.IniFileReader.XML">
+	<summary>Converts an XML document to a string.</summary>
+	<return>It returns the XML document formatted as a string.</return>
+</member><member name="M:PRISM.Files.IniFileReader.RegisterExceptionLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the exception logger</summary>
+</member><member name="M:PRISM.Files.IniFileReader.RegisterEventLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the event logger</summary>
+</member><member name="P:PRISM.Files.IniFileReader.NotifyOnEvent">
+	<summary>Gets or Sets notify on event.</summary>
+</member><member name="P:PRISM.Files.IniFileReader.NotifyOnException">
+	<summary>Gets or Sets notify on exception.</summary>
+</member><member name="T:PRISM.Files.IniFileReader">
+	<summary>Tools to manipulates INI files.</summary>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logNormal">
+	<summary>The message is informational.</summary>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logError">
+	<summary>The message represents an error.</summary>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logWarning">
+	<summary>The message represents a warning.</summary>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logDebug">
+	<summary>The message is only for debugging purposes.</summary>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logNA">
+	<summary>The mesaage does not apply (to what?).</summary>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logHealth">
+	<summary>The message is an indicator of (in)correct operation.</summary>
+</member><member name="T:PRISM.Logging.ILogger.logMsgType">
+	<summary>The type of log message.</summary>
+</member><member name="M:PRISM.Logging.ILogger.PostEntry(System.String,PRISM.Logging.ILogger.logMsgType,System.Boolean)">
+	<summary>Posts a message to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+	<param name="localOnly">Post message locally only.</param>
+</member><member name="T:PRISM.Logging.ILogger">
+	<summary>Defines the logging interface.</summary>
+</member><member name="M:PRISM.Logging.ILoggerAware.RegisterExceptionLogger(PRISM.Logging.ILogger)">
+	<summary>Register an ILogger with a class to have it log any exception that might occur.</summary>
+	<param name="logger">A logger object to be used when logging is desired.</param>
+</member><member name="M:PRISM.Logging.ILoggerAware.RegisterEventLogger(PRISM.Logging.ILogger)">
+	<summary>Register an ILogger with a class to have it log any event that might occur.</summary>
+	<param name="logger">A logger object to be used when logging is desired.</param>
+</member><member name="M:PRISM.Logging.clsFileLogger.#ctor">
+	<summary>Initializes a new instance of the clsFileLogger class.</summary>
+</member><member name="M:PRISM.Logging.clsFileLogger.#ctor(System.String)">
+	<summary>Initializes a new instance of the clsFileLogger class which logs to the specified file.</summary>
+	<param name="filePath">The name of the file to use for the log.</param>
+	<remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
+</member><member name="P:PRISM.Logging.clsFileLogger.LogExecutableName">
+	<summary> Set to true to have the executable's name entered in the log.</summary>
+</member><member name="P:PRISM.Logging.clsFileLogger.LogExecutableVersion">
+	<summary> Set to true to have the executable's version entered in the log.</summary>
+</member><member name="P:PRISM.Logging.clsFileLogger.ExecutableVersion">
+	<summary>Gets the product version associated with this application.</summary>
+</member><member name="P:PRISM.Logging.clsFileLogger.ExecutableName">
+	<summary>Gets the name of the executable file that started the application.</summary>
+</member><member name="P:PRISM.Logging.clsFileLogger.LogFilePath">
+	<summary>The name of the file being used as the log.</summary>
+	<remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
+</member><member name="M:PRISM.Logging.clsFileLogger.LogToFile(System.String,PRISM.Logging.ILogger.logMsgType)">
+	<summary>Writes a message to the log file.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+</member><member name="M:PRISM.Logging.clsFileLogger.TypeToString(PRISM.Logging.ILogger.logMsgType)">
+	<summary>Converts enumerated error type to string for logging output.</summary>
+	<param name="MyErrType">The ILogger error type.</param>
+</member><member name="M:PRISM.Logging.clsFileLogger.PostEntry(System.String,PRISM.Logging.ILogger.logMsgType,System.Boolean)">
+	<summary>Posts a message to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+	<param name="localOnly">Post message locally only.</param>
+</member><member name="M:PRISM.Logging.clsFileLogger.PostError(System.String,System.Exception,System.Boolean)">
+	<summary>Posts an error to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="ex">The exception associated with the error.</param>
+	<param name="localOnly">Post message locally only.</param>
+</member><member name="T:PRISM.Logging.clsFileLogger">
+	<summary>Provides logging to a local file.</summary>
+	<remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
+</member><member name="M:PRISM.Logging.clsDBLogger.#ctor">
+	<summary>Initializes a new instance of the clsDBLogger class.</summary>
+</member><member name="M:PRISM.Logging.clsDBLogger.#ctor(System.String)">
+	<summary>Initializes a new instance of the clsDBLogger class which logs to the specified database.</summary>
+	<param name="connectionStr">The connection string used to access the database.</param>
+</member><member name="M:PRISM.Logging.clsDBLogger.#ctor(System.String,System.String)">
+	<summary>Initializes a new instance of the clsDBLogger class which logs to the specified database and file.</summary>
+	<param name="connectionStr">The connection string used to access the database.</param>
+	<param name="filePath">The name of the file to use for the log.</param>
+</member><member name="M:PRISM.Logging.clsDBLogger.#ctor(System.String,System.String,System.String)">
+	<summary>Initializes a new instance of the clsDBLogger class which logs to the specified database and file.</summary>
+	<param name="modName">The string used to identify the posting process.</param>
+	<param name="connectionStr">The connection string used to access the database.</param>
+	<param name="filePath">The name of the file to use for the log.</param>
+	<remarks>The module name identifies the logging process, but if not specified, it is filled in as
+ ExecutableName:ExecutableVersion:MachineName:UserName.</remarks>
+</member><member name="P:PRISM.Logging.clsDBLogger.LogExecutableName">
+	<summary> Set to true to have the executable's name entered in the log.</summary>
+</member><member name="P:PRISM.Logging.clsDBLogger.LogExecutableVersion">
+	<summary> Set to true to have the executable's version entered in the log.</summary>
+</member><member name="P:PRISM.Logging.clsDBLogger.ConnectionString">
+	<summary>The connection string used to access the database.</summary>
+</member><member name="P:PRISM.Logging.clsDBLogger.MachineName">
+	<summary>The module name identifies the logging process.</summary>
+</member><member name="P:PRISM.Logging.clsDBLogger.UserName">
+	<summary>The module name identifies the logging process.</summary>
+</member><member name="M:PRISM.Logging.clsDBLogger.ConstructModuleName">
+	<summary>COnstruct the string ExecutableName:ExecutableVersion:MachineName:UserName.</summary>
+</member><member name="P:PRISM.Logging.clsDBLogger.ModuleName">
+	<summary>The module name identifies the logging process.</summary>
+	<remarks>If the module name is not specified, it is filled in as
+ ExecutableName:ExecutableVersion:MachineName:UserName.</remarks>
+</member><member name="M:PRISM.Logging.clsDBLogger.LogToDB(System.String,PRISM.Logging.ILogger.logMsgType)">
+	<summary>Writes a message to the log table.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+</member><member name="M:PRISM.Logging.clsDBLogger.PostEntry(System.String,PRISM.Logging.ILogger.logMsgType,System.Boolean)">
+	<summary>Posts a message to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+	<param name="localOnly">Post message locally only.</param>
+</member><member name="M:PRISM.Logging.clsDBLogger.OnInfoMessage(System.Object,System.Data.SqlClient.SqlInfoMessageEventArgs)">
+	<summary>Event handler for InfoMessage event.</summary>
+	<remarks>Errors and warnings sent from the SQL Server database engine are caught here.</remarks>
+</member><member name="T:PRISM.Logging.clsDBLogger">
+	<summary>Provides logging to a database and local file.</summary>
+	<remarks>The module name identifies the logging process, but if not specified, it is filled in as
+ ExecutableName:ExecutableVersion:MachineName:UserName.</remarks>
+</member><member name="T:PRISM.Logging.clsQueLogger.clsLogEntry">
+	<summary>A class to hold a log entry in the internal queue.</summary>
+	<remarks>It holds the three arguments to PostEntry.</remarks>
+</member><member name="M:PRISM.Logging.clsQueLogger.#ctor(PRISM.Logging.ILogger)">
+	<summary>Initializes a new instance of the clsQueLogger class which logs to the ILogger.</summary>
+	<param name="logger">The target logger object.</param>
+</member><member name="M:PRISM.Logging.clsQueLogger.KickTheOutputThread">
+	<summary>Start the log output thread if it isn't already running.</summary>
+</member><member name="M:PRISM.Logging.clsQueLogger.LogFromQueue">
+	<summary>Pull all entries from the queue and output them to the log streams.</summary>
+</member><member name="M:PRISM.Logging.clsQueLogger.PostEntry(System.String,PRISM.Logging.ILogger.logMsgType,System.Boolean)">
+	<summary>Writes a message to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+</member><member name="T:PRISM.Logging.clsQueLogger">
+	<summary>Wraps a queuing mechanism around any object that implements ILogger interface.</summary>
+	<remarks>The posting member functions of this class put the log entry
+ onto the end of an internal queue and return very quickly to the caller.
+ A separate thread within the class is used to perform the actual output of
+ the log entries using the logging object that is specified
+ in the constructor for this class.</remarks>
+</member><member name="P:PRISM.Logging.clsControlLogger.ExecutableVersion">
+	<summary>Gets the product version associated with this application.</summary>
+</member><member name="P:PRISM.Logging.clsControlLogger.ExecutableName">
+	<summary>Gets the name of the executable file that started the application.</summary>
+</member><member name="P:PRISM.Logging.clsControlLogger.LogListBox">
+	<summary>Gets and Sets the name of the listbox control.</summary>
+</member><member name="P:PRISM.Logging.clsControlLogger.LogListView">
+	<summary>Gets and Sets the name of the listview control.</summary>
+</member><member name="P:PRISM.Logging.clsControlLogger.LogTextBoxBase">
+	<summary>Gets and Sets the name of the TextBoxBase control.</summary>
+</member><member name="M:PRISM.Logging.clsControlLogger.LogToControl(System.String,PRISM.Logging.ILogger.logMsgType)">
+	<summary>Posts a message.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+</member><member name="M:PRISM.Logging.clsControlLogger.PostEntryTextBox(System.String)">
+	<summary>Posts a message to the textbox control.</summary>
+	<param name="message">The message to post.</param>
+</member><member name="M:PRISM.Logging.clsControlLogger.PostEntryListBox(System.String)">
+	<summary>Posts a message to the listbox control.</summary>
+	<param name="message">The message to post.</param>
+</member><member name="M:PRISM.Logging.clsControlLogger.PostEntryListview(System.String,PRISM.Logging.ILogger.logMsgType)">
+	<summary>Posts a message to the listview control.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+</member><member name="M:PRISM.Logging.clsControlLogger.TypeToString(PRISM.Logging.ILogger.logMsgType)">
+	<summary>Converts enumerated error type to string for logging output.</summary>
+	<param name="MyErrType">The ILogger error type.</param>
+</member><member name="M:PRISM.Logging.clsControlLogger.PostEntry(System.String,PRISM.Logging.ILogger.logMsgType,System.Boolean)">
+	<summary>Posts a message to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="EntryType">The ILogger error type.</param>
+	<param name="localOnly">Post message locally only.</param>
+</member><member name="M:PRISM.Logging.clsControlLogger.PostError(System.String,System.Exception,System.Boolean)">
+	<summary>Posts an error to the log.</summary>
+	<param name="message">The message to post.</param>
+	<param name="ex">The exception associated with the error.</param>
+	<param name="localOnly">Post message locally only.</param>
+</member><member name="T:PRISM.Logging.clsControlLogger">
+	<summary>Provides logging to a control.</summary>
+	<remarks>The actual log control can be a textbox, listbox and a listview.</remarks>
+</member>
+</members>
+</doc>

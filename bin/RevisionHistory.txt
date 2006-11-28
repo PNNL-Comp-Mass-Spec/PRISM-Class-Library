@@ -1,0 +1,52 @@
+Prism Class Library Log
+
+Version 1.0.2523; November 28, 2006
+	- Updated the XML Settings File Accessor to properly handle XML files with duplicate section names and/or duplicate key names within a section - 'd3l243'
+		- If duplicate sections, then only uses the first section present
+		- If multiple keys, then uses the value for the first key present
+
+Version 1.0.2020; July 13, 2005
+	 - Added WindowStyle property to the ProgRunner and ZipTools classes - 'd3l243'
+
+Version 1.0.2008; July 1, 2005
+	- Added copyright statements - 'd3l243'
+
+Version 1.0.1993; June 16, 2005
+	 - Corrected object initialization error in ZipTools - 'd3j410'
+
+Version 1.0.1917; April 1, 2005
+	 - Commenting format fixes - 'd3m306'
+
+Version 1.0.1854; January 28, 2005
+	- Implemented ILoggerAware in clsProgRunner and ZipTools - 'd3m306'
+		- Updated Prism.xml to reflect changes
+	- Added exception handling to clsProgRunner.Start() - 'd3m306'
+
+Version 1.0.1764; October 30, 2004
+	- XmlSettingsFileAccessor.vb: Updated comments, standardized variable names, and fixed one bug - 'd3l243'
+
+Version 1.0.1762; October 28, 2004
+	- Improved case-insensitive mode for the XmlSettingsFileAccessor class - 'd3l243'
+
+Version 1.0.1761; October 27, 2004
+	- Add DirectoryScanner and fix ZipTools - 'd3j409'
+
+Version 1.0.1749; October 15, 2004
+	- In FileTools, added an event for tracking the progress of a directory copy and added the ability to change the read-only attribute of the copied files
+	- Added the ZipTools class - 'd3j409'
+
+Version 1.0.1740; October 6, 2004
+ 	 - Replaced GetExecutingAssembly with GetEntryAssembly in LogClasses.vb - 'd3l243'
+
+Version 1.0.1739; October 5, 2004
+	- Added the XmlSettingsFileAccessor class - 'd3l243'
+	- Added Option Strict to each class, and made a few, minor updates to support this change - 'd3j409'
+
+Version 1.0.1732; September 28, 2004
+	- Added two classes to the solution and added comments to the classes - 'd3k901'
+
+Version 1.0.1712; September 8, 2004
+	- Added FileTools and updated other documentation - d3j409
+
+Version 1.0.1711; September 7, 2004
+	- Initial release - 'd3j409'
