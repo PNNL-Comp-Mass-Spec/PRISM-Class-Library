@@ -33,7 +33,7 @@ Namespace Files
         Public Event InformationMessage(ByVal msg As String)
 
         ''' <summary>
-        ' Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
+        ''' Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
         ''' </summary>
         ''' <return>The function returns a boolean that shows if the file was successfully loaded.</return>
         Public Function LoadSettings() As Boolean
@@ -41,7 +41,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' Loads the settings for the defined Xml Settings File.   Assumes names are not case sensitive
+        ''' Loads the settings for the defined Xml Settings File.   Assumes names are not case sensitive
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <return>The function returns a boolean that shows if the file was successfully loaded.</return>
@@ -50,7 +50,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' Loads the settings for the defined Xml Settings File
+        ''' Loads the settings for the defined Xml Settings File
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <param name="IsCaseSensitive">Case sensitive names if True. Non-case sensitive if false.</param>
@@ -76,7 +76,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
+        ''' Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <param name="logger">This is the logger.</param>
@@ -85,7 +85,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' Loads the settings for the defined Xml Settings File
+        ''' Loads the settings for the defined Xml Settings File
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <param name="logger">This is the logger.</param>
@@ -110,7 +110,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' Saves the settings for the defined Xml Settings File.  Note that you must call LoadSettings to initialize the class prior to setting any values.
+        ''' Saves the settings for the defined Xml Settings File.  Note that you must call LoadSettings to initialize the class prior to setting any values.
         ''' </summary>
         ''' <return>The function returns a boolean that shows if the file was successfully saved.</return>
         Public Function SaveSettings() As Boolean
@@ -280,7 +280,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -314,7 +314,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -340,7 +340,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -377,7 +377,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -414,7 +414,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -451,7 +451,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -488,7 +488,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute in section "sectionName".
+        ''' The function gets the name of the "value" attribute in section "sectionName".
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -525,7 +525,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets the path to the Xml Settings File.
+        ''' The function sets the path to the Xml Settings File.
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         Public Sub SetIniFilePath(ByVal XmlSettingsFilePath As String)
@@ -533,7 +533,7 @@ Namespace Files
         End Sub
 
         ''' <summary>
-        ' The function sets a new String value for the "value" attribute.
+        ''' The function sets a new String value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -563,7 +563,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new Boolean value for the "value" attribute.
+        ''' The function sets a new Boolean value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -574,7 +574,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new Short value for the "value" attribute.
+        ''' The function sets a new Short value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -585,7 +585,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new Integer value for the "value" attribute.
+        ''' The function sets a new Integer value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -596,7 +596,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new Long value for the "value" attribute.
+        ''' The function sets a new Long value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -607,7 +607,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new Single value for the "value" attribute.
+        ''' The function sets a new Single value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -618,7 +618,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new Double value for the "value" attribute.
+        ''' The function sets a new Double value for the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -629,15 +629,14 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function renames a section.
+        ''' The function renames a section.
         ''' </summary>
-        ''' <param name="oldSection">The name of the old ini section name.</param>
-        ''' <param name="newSection">The new name for the ini section.</param>
+        ''' <param name="sectionNameOld">The name of the old ini section name.</param>
+        ''' <param name="sectionNameNew">The new name for the ini section.</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
         Public Function RenameSection(ByVal sectionNameOld As String, ByVal sectionNameNew As String) As Boolean
 
             Dim strSectionName As String
-            Dim strKeyName As String
 
             If Not mCaseSensitive Then
                 strSectionName = GetCachedSectionName(sectionNameOld)

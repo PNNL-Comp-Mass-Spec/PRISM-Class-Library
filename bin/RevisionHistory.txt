@@ -1,5 +1,12 @@
 Prism Class Library Log
 
+Version 2.0.3370; March 24, 2009
+	- Expanded the Logging.ILogger interface to include three new properties:
+		- CurrentLogFilePath: returns the file path to which the most recent message was written
+        - MostRecentLogMessage: returns the most recent message that was not an error
+        - MostRecentErrorMessage: returns the most recent error message
+	- Updated to Visual Studio 2008
+
 Version 1.0.2523; November 28, 2006
 	- Updated the XML Settings File Accessor to properly handle XML files with duplicate section names and/or duplicate key names within a section - 'd3l243'
 		- If duplicate sections, then only uses the first section present

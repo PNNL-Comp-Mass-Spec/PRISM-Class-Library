@@ -75,7 +75,7 @@ Namespace Files
             InitIniFileReader(IniFilename, False)
         End Sub
         ''' <summary>
-        ' This routine is called by each of the constructors to make the actual assignments.
+        ''' This routine is called by each of the constructors to make the actual assignments.
         ''' </summary>
         Private Sub InitIniFileReader(ByVal IniFilename As String, ByVal IsCaseSensitive As Boolean)
             Dim fi As FileInfo
@@ -128,7 +128,7 @@ Namespace Files
             End Try
         End Sub
         ''' <summary>
-        ' This routine returns the name of the ini file.
+        ''' This routine returns the name of the ini file.
         ''' </summary>
         ''' <return>The function returns the name of ini file.</return>
         Public ReadOnly Property IniFilename() As String
@@ -138,7 +138,7 @@ Namespace Files
             End Get
         End Property
         ''' <summary>
-        ' This routine returns a boolean showing if the file was initialized or not.
+        ''' This routine returns a boolean showing if the file was initialized or not.
         ''' </summary>
         ''' <return>The function returns a Boolean.</return>
         Public ReadOnly Property Initialized() As Boolean
@@ -147,7 +147,7 @@ Namespace Files
             End Get
         End Property
         ''' <summary>
-        ' This routine returns a boolean showing if the name is case sensitive or not.
+        ''' This routine returns a boolean showing if the name is case sensitive or not.
         ''' </summary>
         ''' <return>The function returns a Boolean.</return>
         Public ReadOnly Property CaseSensitive() As Boolean
@@ -157,7 +157,7 @@ Namespace Files
         End Property
 
         ''' <summary>
-        ' This routine sets a name.
+        ''' This routine sets a name.
         ''' </summary>
         ''' <param name="aName">The name to be set.</param>
         ''' <return>The function returns a string.</return>
@@ -169,14 +169,14 @@ Namespace Files
             End If
         End Function
         ''' <summary>
-        ' TBD.
+        ''' TBD.
         ''' </summary>
         Private Function GetRoot() As XmlElement
             Return m_XmlDoc.DocumentElement
         End Function
 
         ''' <summary>
-        ' The function gets the last section.
+        ''' The function gets the last section.
         ''' </summary>
         ''' <return>The function returns the last section as XmlElement.</return>
         Private Function GetLastSection() As XmlElement
@@ -187,7 +187,7 @@ Namespace Files
             End If
         End Function
         ''' <summary>
-        ' The function gets a section as XmlElement.
+        ''' The function gets a section as XmlElement.
         ''' </summary>
         ''' <param name="sectionName">The name of a section.</param>
         ''' <return>The function returns a section as XmlElement.</return>
@@ -200,7 +200,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets an item.
+        ''' The function gets an item.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -218,7 +218,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets the ini section name.
+        ''' The function sets the ini section name.
         ''' </summary>
         ''' <param name="oldSection">The name of the old ini section name.</param>
         ''' <param name="newSection">The new name for the ini section.</param>
@@ -293,7 +293,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function deletes a section in the file.
+        ''' The function deletes a section in the file.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <return>The function returns a boolean that shows if the delete was completed.</return>
@@ -308,7 +308,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function deletes a item in a specific section.
+        ''' The function deletes a item in a specific section.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -323,7 +323,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a new value for the "key" attribute.
+        ''' The function sets a new value for the "key" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -340,7 +340,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function gets the name of the "value" attribute.
+        ''' The function gets the name of the "value" attribute.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
@@ -382,7 +382,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The function sets a the comments for a section name.
+        ''' The function sets a the comments for a section name.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="comments">A string collection.</param>
@@ -420,7 +420,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ' The subroutine updades the sections.
+        ''' The subroutine updades the sections.
         ''' </summary>
         Private Sub UpdateSections()
             sections = New StringCollection
@@ -430,7 +430,7 @@ Namespace Files
             Next
         End Sub
         ''' <summary>
-        ' The subroutine gets the sections.
+        ''' The subroutine gets the sections.
         ''' </summary>
         ''' <return>The subroutine returns a strin collection of sections.</return>
         Public ReadOnly Property AllSections() As StringCollection
@@ -443,7 +443,7 @@ Namespace Files
         End Property
 
         ''' <summary>
-        ' The function gets a collection of items for a section name.
+        ''' The function gets a collection of items for a section name.
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="itemType">Item type.</param>

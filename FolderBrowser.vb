@@ -126,64 +126,64 @@ Namespace Files.Forms
 
 #Region "BrowseFlags Enum"
     ''' <summary>
-    ' Flags that control display and behaviour of folder browse dialog
+    ''' Flags that control display and behaviour of folder browse dialog
     ''' </summary>
     <Flags()> _
    Public Enum BrowseFlags As Integer
         ''' <summary>
-        ' Same as BIF_RETURNONLYFSDIRS 
+        ''' Same as BIF_RETURNONLYFSDIRS 
         ''' </summary>
         ReturnOnlyFSDirs = &H1
         ''' <summary>
-        ' Same as BIF_DONTGOBELOWDOMAIN 
+        ''' Same as BIF_DONTGOBELOWDOMAIN 
         ''' </summary>
         DontGoBelowDomain = &H2
         ''' <summary>
-        ' Same as BIF_STATUSTEXT 
+        ''' Same as BIF_STATUSTEXT 
         ''' </summary>
         ShowStatusText = &H4
         ''' <summary>
-        ' Same as BIF_RETURNFSANCESTORS 
+        ''' Same as BIF_RETURNFSANCESTORS 
         ''' </summary>
         ReturnFSancestors = &H8
         ''' <summary>
-        ' Same as BIF_EDITBOX 
+        ''' Same as BIF_EDITBOX 
         ''' </summary>
         EditBox = &H10
         ''' <summary>
-        ' Same as BIF_VALIDATE 
+        ''' Same as BIF_VALIDATE 
         ''' </summary>
         Validate = &H20
         ''' <summary>
-        ' Same as BIF_NEWDIALOGSTYLE
+        ''' Same as BIF_NEWDIALOGSTYLE
         ''' </summary>
         NewDialogStyle = &H40
         ''' <summary>
-        ' Same as BIF_BROWSEINCLUDEURLS 
+        ''' Same as BIF_BROWSEINCLUDEURLS 
         ''' </summary>
         BrowseIncludeURLs = &H80
         ''' <summary>
-        ' Same as BIF_UAHINT
+        ''' Same as BIF_UAHINT
         ''' </summary>
         AddUsageHint = &H100
         ''' <summary>
-        ' Same as BIF_NONEWFOLDERBUTTON 
+        ''' Same as BIF_NONEWFOLDERBUTTON 
         ''' </summary>
         NoNewFolderButton = &H200
         ''' <summary>
-        ' Same as BIF_BROWSEFORCOMPUTER
+        ''' Same as BIF_BROWSEFORCOMPUTER
         ''' </summary>
         BrowseForComputer = &H1000
         ''' <summary>
-        ' Same as BIF_BROWSEFORPRINTER 
+        ''' Same as BIF_BROWSEFORPRINTER 
         ''' </summary>
         BrowseForPrinter = &H2000
         ''' <summary>
-        ' Same as BIF_BROWSEINCLUDEFILES 
+        ''' Same as BIF_BROWSEINCLUDEFILES 
         ''' </summary>
         IncludeFiles = &H4000
         ''' <summary>
-        ' Same as BIF_SHAREABLE 
+        ''' Same as BIF_SHAREABLE 
         ''' </summary>
         ShowShareable = &H8000
     End Enum
@@ -194,7 +194,7 @@ Namespace Files.Forms
     Public Delegate Sub ValidateFailedEventHandler(ByVal sender As Object, ByVal args As ValidateFailedEventArgs)
 
     ''' <summary>
-    ' Encapsulates the shell folder browse dialog shown by SHBrowseForFolder
+    ''' Encapsulates the shell folder browse dialog shown by SHBrowseForFolder
     ''' </summary>
     Public Class ShellFolderBrowser
         Inherits System.ComponentModel.Component
@@ -208,9 +208,9 @@ Namespace Files.Forms
         End Sub
 
         ''' <summary>
-        ' String that is displayed above the tree view control in the dialog box. 
-        ' This string can be used to specify instructions to the user. 
-        ' Can only be modified if the dalog is not currently displayed.
+        ''' String that is displayed above the tree view control in the dialog box. 
+        ''' This string can be used to specify instructions to the user. 
+        ''' Can only be modified if the dalog is not currently displayed.
         ''' </summary>
         <Description("String that is displayed above the tree view control in the dialog box. This string can be used to specify instructions to the user.")> _
         Public Property Title() As String
@@ -226,7 +226,7 @@ Namespace Files.Forms
         End Property
 
         ''' <summary>
-        ' The display name of the folder selected by the user
+        ''' The display name of the folder selected by the user
         ''' </summary>
         <Description("The display name of the folder selected by the user")> _
         Public ReadOnly Property FolderDisplayName() As String
@@ -236,7 +236,7 @@ Namespace Files.Forms
         End Property
 
         ''' <summary>
-        ' The folder path that was selected
+        ''' The folder path that was selected
         ''' </summary>
         Public ReadOnly Property FolderPath() As String
             Get
@@ -251,7 +251,7 @@ Namespace Files.Forms
         End Property
 
         ''' <summary>
-        ' Sets the flags that control the behaviour of the dialog
+        ''' Sets the flags that control the behaviour of the dialog
         ''' </summary>
         Public Property BrowseFlags() As BrowseFlags
             Get
@@ -288,7 +288,7 @@ Namespace Files.Forms
         End Function
 
         ''' <summary>
-        ' Shows the dialog
+        ''' Shows the dialog
         ''' </summary>
         ''' <param name="owner">The window to use as the owner</param>
         Public Overloads Function ShowDialog(ByVal owner As System.Windows.Forms.IWin32Window) As Boolean
@@ -304,7 +304,7 @@ Namespace Files.Forms
         End Function
 
         ''' <summary>
-        ' Shows the dialog using active window as the owner
+        ''' Shows the dialog using active window as the owner
         ''' </summary>
         Public Overloads Function ShowDialog() As Boolean
             Return ShowDialog(System.Windows.Forms.Form.ActiveForm)
@@ -315,7 +315,7 @@ Namespace Files.Forms
         Private BFFM_SETSTATUSTEXTW As Integer = WM_USER + 104
 
         ''' <summary>
-        ' Sets the text of the staus area of the folder dialog
+        ''' Sets the text of the staus area of the folder dialog
         ''' </summary>
         ''' <param name="text">Text to set</param>
         Public Sub SetStatusText(ByVal [text] As String)
@@ -338,7 +338,7 @@ Namespace Files.Forms
         Private BFFM_ENABLEOK As Integer = WM_USER + 101
 
         ''' <summary>
-        ' Enables or disables the ok button
+        ''' Enables or disables the ok button
         ''' </summary>
         ''' <param name="bEnable">true to enable false to diasble the OK button</param>
         Public Sub EnableOkButton(ByVal bEnable As Boolean)
@@ -360,7 +360,7 @@ Namespace Files.Forms
 
 
         ''' <summary>
-        ' Sets the selection the text specified
+        ''' Sets the selection the text specified
         ''' </summary>
         ''' <param name="newsel">The path of the folder which is to be selected</param>
         Public Sub SetSelection(ByVal newsel As String)
@@ -385,7 +385,7 @@ Namespace Files.Forms
         Private BFFM_SETOKTEXT As Integer = WM_USER + 105
 
         ''' <summary>
-        ' Sets the text of the OK button in the dialog
+        ''' Sets the text of the OK button in the dialog
         ''' </summary>
         ''' <param name="text">New text of the OK button</param>
         Public Sub SetOkButtonText(ByVal [text] As String)
@@ -402,7 +402,7 @@ Namespace Files.Forms
         Private BFFM_SETEXPANDED As Integer = WM_USER + 106
 
         ''' <summary>
-        ' Expand a path in the folder
+        ''' Expand a path in the folder
         ''' </summary>
         ''' <param name="path">The path to expand</param>
         Public Sub SetExpanded(ByVal path As String)
@@ -414,19 +414,19 @@ Namespace Files.Forms
         End Sub
 
         ''' <summary>
-        ' Fired when the dialog is initialized
+        ''' Fired when the dialog is initialized
         ''' </summary>
         Public Event Initialized As EventHandler
         ''' <summary>
-        ' Fired when selection changes
+        ''' Fired when selection changes
         ''' </summary>
         Public Event SelChanged As FolderSelChangedEventHandler
         ''' <summary>
-        ' Shell provides an IUnknown through this event. For details see documentation of SHBrowseForFolder
+        ''' Shell provides an IUnknown through this event. For details see documentation of SHBrowseForFolder
         ''' </summary>
         Public Event IUnknownObtained As IUnknownObtainedEventHandler
         ''' <summary>
-        ' Fired when validation of text typed by user fails
+        ''' Fired when validation of text typed by user fails
         ''' </summary>
         Public Event ValidateFailed As ValidateFailedEventHandler
 
@@ -494,7 +494,7 @@ Namespace Files.Forms
         End Sub
 
         ''' <summary>
-        ' Return ITEMIDLIST for the currently selected folder
+        ''' Return ITEMIDLIST for the currently selected folder
         ''' </summary>
         Public ReadOnly Property SelectedFolderPidl() As IntPtr
             Get
@@ -503,7 +503,7 @@ Namespace Files.Forms
         End Property
 
         ''' <summary>
-        ' Gets the path of the folder which is currently selected
+        ''' Gets the path of the folder which is currently selected
         ''' </summary>
         Public ReadOnly Property SelectedFolderPath() As String
             Get
@@ -525,7 +525,7 @@ Namespace Files.Forms
     Public Delegate Sub IUnknownObtainedEventHandler(ByVal sender As Object, ByVal args As IUnknownObtainedEventArgs)
 
     ''' <summary>
-    ' Provides data for the IUnknownObtainedEvent.
+    ''' Provides data for the IUnknownObtainedEvent.
     ''' </summary>
     Public Class IUnknownObtainedEventArgs
         Inherits EventArgs
@@ -537,7 +537,7 @@ Namespace Files.Forms
         End Sub
 
         ''' <summary>
-        ' Object that corrensponds to the IUnknown obtained
+        ''' Object that corrensponds to the IUnknown obtained
         ''' </summary>
         Public ReadOnly Property SiteUnknown() As Object
             Get
@@ -549,7 +549,7 @@ Namespace Files.Forms
 
 #Region "Class ValidateFailedEventArgs"
     ''' <summary>
-    ' Provides data for validation failed event.
+    ''' Provides data for validation failed event.
     ''' </summary>
     Public Class ValidateFailedEventArgs
         Private invalidTextValue As String
@@ -561,7 +561,7 @@ Namespace Files.Forms
         End Sub
 
         ''' <summary>
-        ' The text which called validation to fail
+        ''' The text which called validation to fail
         ''' </summary>
         Public ReadOnly Property InvalidText() As String
             Get
@@ -570,7 +570,7 @@ Namespace Files.Forms
         End Property
 
         ''' <summary>
-        ' Sets whether the dialog needs to be dismissed or not
+        ''' Sets whether the dialog needs to be dismissed or not
         ''' </summary>
         Public Property DismissDialog() As Boolean
             Get

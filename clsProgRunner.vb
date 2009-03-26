@@ -9,15 +9,15 @@ Namespace Processes
     ' This class runs a single program as an external process
     ' and monitors it with an internal thread
     '
-    ''''' <summary>
+    ''' <summary>
     ''' This class runs a single program as an external process and monitors it with an internal thread.
-    ''''' </summary>
+    ''' </summary>
     Public Class clsProgRunner
         Implements ILoggerAware
 
-        ''''' <summary>
+        ''' <summary>
         ''' clsProgRunner states
-        ''''' </summary>
+        ''' </summary>
         Public Enum States
             NotMonitoring
             Monitoring
@@ -25,69 +25,69 @@ Namespace Processes
             CleaningUp
         End Enum
 
-        ''''' <summary>
+        ''' <summary>
         ''' Interface used for logging exceptions.
-        ''''' </summary>
+        ''' </summary>
         Private m_ExceptionLogger As ILogger
 
-        ''''' <summary>
+        ''' <summary>
         ''' Interface used for logging errors and health related messages.
-        ''''' </summary>
+        ''' </summary>
         Private m_EventLogger As ILogger
 
-        ''''' <summary>
+        ''' <summary>
         ''' True for logging behavior, else false.
-        ''''' </summary>
+        ''' </summary>
         Private m_NotifyOnException As Boolean
-        ''''' <summary>
+        ''' <summary>
         ''' True for logging behavior, else false.
-        ''''' </summary>
+        ''' </summary>
         Private m_NotifyOnEvent As Boolean
 
-        ''''' <summary>
+        ''' <summary>
         ''' This event is raised whenever the state property changes.
-        ''''' </summary>
+        ''' </summary>
         Public Event ProgChanged(ByVal obj As clsProgRunner)
 
         ' overall state of this object
         Private m_state As States = States.NotMonitoring
 
-        ''''' <summary>
+        ''' <summary>
         ''' Used to start and monitor the external program.
-        ''''' </summary>
+        ''' </summary>
         Private m_Process As New Process
 
-        ''''' <summary>
+        ''' <summary>
         ''' The process id of the currently running incarnation of the external program.
-        ''''' </summary>
+        ''' </summary>
         Private m_pid As Integer
 
-        ''''' <summary>
+        ''' <summary>
         ''' The internal thread used to run the monitoring code.
-        ''''' </summary>
-        ''''' <remarks>
+        ''' </summary>
+        ''' <remarks>
         ''' That starts and monitors the external program
-        ''''' </remarks>
+        ''' </remarks>
         Private m_Thread As Thread
 
-        ''''' <summary>
+        ''' <summary>
         ''' Flag that tells internal thread to quit monitoring external program and exit.
-        ''''' </summary>
+        ''' </summary>
         Private m_doCleanup As Boolean = False
 
-        ''''' <summary>
+        ''' <summary>
         ''' The interval for monitoring thread to wake up and check m_doCleanup.
-        ''''' </summary>
+        ''' </summary>
         Private m_monitorInterval As Integer = 5000 ' (miliseconds)
 
-        ''''' <summary>
+        ''' <summary>
         ''' Exit code returned by completed process.
-        ''''' </summary>
+        ''' </summary>
         Private m_ExitCode As Integer
 
-        ''''' <summary>
+        ''' <summary>
         ''' Parameters for external program.
-        ''''' </summary>
+        ''' </summary>
         Private m_name As String
         Private m_ProgName As String
         Private m_ProgArgs As String
@@ -97,9 +97,9 @@ Namespace Processes
         Private m_CreateNoWindow As Boolean
         Private m_WindowStyle As System.Diagnostics.ProcessWindowStyle
 
-        ''''' <summary>
+        ''' <summary>
         ''' How often (milliseconds) internal monitoring thread checks status of external program
-        ''''' </summary>
+        ''' </summary>
         Public Property MonitoringInterval() As Integer
             Get
                 Return m_monitorInterval
@@ -109,9 +109,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Current state of prog runner (as descriptive name).
-        ''''' </summary>
+        ''' </summary>
         Public ReadOnly Property StateName() As String
             Get
                 Select Case m_state
@@ -129,27 +129,27 @@ Namespace Processes
             End Get
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Process id of currently running external program's process.
-        ''''' </summary>
+        ''' </summary>
         Public ReadOnly Property PID() As Integer
             Get
                 Return m_pid
             End Get
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Current state of prog runner (as number).
-        ''''' </summary>
+        ''' </summary>
         Public ReadOnly Property State() As States
             Get
                 Return m_state
             End Get
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Whether prog runner will restart external program after it exits.
-        ''''' </summary>
+        ''' </summary>
         Public Property Repeat() As Boolean
             Get
                 Return m_repeat
@@ -159,9 +159,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Time (seconds) that prog runner waits to restart external program after it exits.
-        ''''' </summary>
+        ''' </summary>
         Public Property RepeatHoldOffTime() As Double
             Get
                 Return m_holdOffTime / 1000.0
@@ -171,9 +171,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Name of this progrunner.
-        ''''' </summary>
+        ''' </summary>
         Public Property Name() As String
             Get
                 Return m_name
@@ -183,9 +183,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' External program that prog runner will run.
-        ''''' </summary>
+        ''' </summary>
         Public Property Program() As String
             Get
                 Return m_ProgName
@@ -195,9 +195,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Arguments supplied to external program when it is run.
-        ''''' </summary>
+        ''' </summary>
         Public Property Arguments() As String
             Get
                 Return m_ProgArgs
@@ -207,18 +207,18 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Exit code when process completes.
-        ''''' </summary>
+        ''' </summary>
         Public ReadOnly Property ExitCode() As Integer
             Get
                 Return m_ExitCode
             End Get
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Working directory for process execution.
-        ''''' </summary>
+        ''' </summary>
         Public Property WorkDir() As String
             Get
                 Return m_WorkDir
@@ -228,9 +228,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Determine if window should be displayed.
-        ''''' </summary>
+        ''' </summary>
         Public Property CreateNoWindow() As Boolean
             Get
                 Return m_CreateNoWindow
@@ -240,9 +240,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Window style to use when CreateNoWindow is False.
-        ''''' </summary>
+        ''' </summary>
         Public Property WindowStyle() As System.Diagnostics.ProcessWindowStyle
             Get
                 Return m_WindowStyle
@@ -252,9 +252,9 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Start program as external process and monitor its state.
-        ''''' </summary>
+        ''' </summary>
         Private Sub Start()
             ' set up parameters for external process
             '
@@ -329,7 +329,7 @@ Namespace Processes
 
                     RaiseConditionalProgChangedEvent(Me)
 
-                    m_Thread.Sleep(m_holdOffTime)
+                    System.Threading.Thread.Sleep(m_holdOffTime)
 
                     m_state = States.Monitoring
                 Else
@@ -343,9 +343,9 @@ Namespace Processes
 
         End Sub
 
-        ''''' <summary>
+        ''' <summary>
         ''' Creates a new thread and starts code that runs and monitors a program in it.
-        ''''' </summary>
+        ''' </summary>
         Public Sub StartAndMonitorProgram()
             If m_state = States.NotMonitoring Then
                 m_state = States.Monitoring
@@ -365,9 +365,9 @@ Namespace Processes
             End If
         End Sub
 
-        ''''' <summary>
+        ''' <summary>
         ''' Causes monitoring thread to exit on its next monitoring cycle.
-        ''''' </summary>
+        ''' </summary>
         Public Sub StopMonitoringProgram(Optional ByVal Kill As Boolean = False)
 
             If m_state = States.Monitoring And Kill Then  'Program is running, kill it and abort thread
@@ -378,10 +378,10 @@ Namespace Processes
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
                 Catch ex As System.ComponentModel.Win32Exception
                     ThrowConditionalException(CType(ex, Exception), "Caught Win32Exception while trying to kill thread.")
-                Catch ex As System.SystemException
-                    ThrowConditionalException(CType(ex, Exception), "Caught SystemException while trying to kill thread.")
                 Catch ex As System.InvalidOperationException
                     ThrowConditionalException(CType(ex, Exception), "Caught InvalidOperationException while trying to kill thread.")
+                Catch ex As System.SystemException
+                    ThrowConditionalException(CType(ex, Exception), "Caught SystemException while trying to kill thread.")
                 Catch ex As Exception
                     ThrowConditionalException(CType(ex, Exception), "Caught Exception while trying to kill or abort thread.")
                 End Try
@@ -419,9 +419,9 @@ Namespace Processes
             End If
         End Sub
 
-        ''''' <summary>
+        ''' <summary>
         ''' Initializes a new instance of the clsProgRunner class.
-        ''''' </summary>
+        ''' </summary>
         Public Sub New()
             m_WorkDir = ""
             m_CreateNoWindow = False
@@ -429,17 +429,17 @@ Namespace Processes
             m_NotifyOnEvent = True
             m_NotifyOnException = True
         End Sub
-        ''''' <summary>Sets the name of the exception logger</summary>
+        ''' <summary>Sets the name of the exception logger</summary>
         Public Sub RegisterExceptionLogger(ByVal logger As ILogger) Implements Logging.ILoggerAware.RegisterEventLogger
             m_ExceptionLogger = logger
         End Sub
 
-        ''''' <summary>Sets the name of the event logger</summary>
+        ''' <summary>Sets the name of the event logger</summary>
         Public Sub RegisterEventLogger(ByVal logger As ILogger) Implements Logging.ILoggerAware.RegisterExceptionLogger
             m_EventLogger = logger
         End Sub
 
-        ''''' <summary>Gets or Sets notify on event.</summary>
+        ''' <summary>Gets or Sets notify on event.</summary>
         Public Property NotifyOnEvent() As Boolean Implements Logging.ILoggerAware.NotifyOnEvent
             Get
                 Return m_NotifyOnEvent
@@ -449,7 +449,7 @@ Namespace Processes
             End Set
         End Property
 
-        ''''' <summary>Gets or Sets notify on exception.</summary>
+        ''' <summary>Gets or Sets notify on exception.</summary>
         Public Property NotifyOnException() As Boolean Implements Logging.ILoggerAware.NotifyOnException
             Get
                 Return m_NotifyOnException

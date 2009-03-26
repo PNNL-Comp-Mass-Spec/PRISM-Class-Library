@@ -30,7 +30,7 @@ Namespace DataBase
         End Sub
 
         ''' <summary>
-        ' The property sets and gets a connection string.
+        ''' The property sets and gets a connection string.
         ''' </summary>
         Public Property ConnectStr() As String
             Get
@@ -41,7 +41,7 @@ Namespace DataBase
             End Set
         End Property
         ''' <summary>
-        ' The function opens a database connection.
+        ''' The function opens a database connection.
         ''' </summary>
         ''' <return>The function returns a boolean that shows if the connection was opened.</return>
         Protected Function OpenConnection() As Boolean
@@ -66,7 +66,7 @@ Namespace DataBase
             End If
         End Function
         ''' <summary>
-        ' The subroutine closes the database connection.
+        ''' The subroutine closes the database connection.
         ''' </summary>
         Protected Sub CLoseConnection()
             If Not m_DBCn Is Nothing Then
@@ -74,7 +74,7 @@ Namespace DataBase
             End If
         End Sub
         ''' <summary>
-        ' The subroutine logs the error events.
+        ''' The subroutine logs the error events.
         ''' </summary>
         Public Sub LogErrorEvents()
             If m_error_list.Count > 0 Then
@@ -86,10 +86,10 @@ Namespace DataBase
             Next
         End Sub
         ''' <summary>
-        ' The subroutine is an event handeler for InfoMessage event.
+        ''' The subroutine is an event handeler for InfoMessage event.
         ''' </summary>
         ''' <remarks>
-        ' The errors and warnings sent from the SQL server are caught here
+        ''' The errors and warnings sent from the SQL server are caught here
         ''' </remarks>
         Private Sub OnInfoMessage(ByVal sender As Object, ByVal args As SqlInfoMessageEventArgs)
             Dim err As SqlError
@@ -108,7 +108,7 @@ Namespace DataBase
             Next
         End Sub
         ''' <summary>
-        ' The function gets a disconnected dataset as specified by the SQL statement.
+        ''' The function gets a disconnected dataset as specified by the SQL statement.
         ''' </summary>
         ''' <param name="SQL">A SQL string.</param>
         ''' <param name="DS">A dataset.</param>
@@ -140,7 +140,7 @@ Namespace DataBase
         End Function
 
         ''' <summary>
-        ' The function updates a database table as specified in the SQL statement.
+        ''' The function updates a database table as specified in the SQL statement.
         ''' </summary>
         ''' <param name="SQL">A SQL string.</param>
         ''' <param name="AffectedRows">Affected Rows to be updated.</param>

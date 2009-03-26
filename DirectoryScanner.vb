@@ -24,12 +24,11 @@ Namespace Files
 
         ''' <summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
         ''' <param name="results">An array of file paths found.</param>
-        ''' <param name="dirs">An array of regular expressions to use in the search.</param>
+        ''' <param name="searchPatterns">An array of regular expressions to use in the search.</param>
         ''' <returns>Always return true.</returns>
         Public Function PerformScan(ByRef results As ArrayList, ByVal ParamArray searchPatterns As String()) As Boolean
             Dim dir As String
             Dim pattern As String
-            Dim i As Int32
 
             If al.Count > 0 Then
                 al.Clear()

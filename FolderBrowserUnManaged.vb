@@ -43,7 +43,7 @@ Namespace Files.Forms
     End Interface
 
     ''' <summary>
-    ' A class that defines all the unmanaged methods used in the assembly
+    ''' A class that defines all the unmanaged methods used in the assembly
     ''' </summary>
     Friend Class UnManagedMethods
 

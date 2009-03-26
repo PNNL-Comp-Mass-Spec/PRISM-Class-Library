@@ -5,9 +5,9 @@ Imports System.IO
 Namespace Files
     ''' <summary>Tools to manipulate paths and directories.</summary>
     ''' <remarks>
-    ' There is a set of functions to properly terminate directory paths.
-    ' There is a set of functions to copy an entire directory tree.
-    ' There is a set of functions to get the size of an entire directory tree, including the number of files and directories.
+    ''' There is a set of functions to properly terminate directory paths.
+    ''' There is a set of functions to copy an entire directory tree.
+    ''' There is a set of functions to get the size of an entire directory tree, including the number of files and directories.
     '''</remarks>
     Public Class clsFileTools
 
@@ -110,7 +110,6 @@ Namespace Files
         ''' <summary>Copies a source file to the destination file. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source file path.</param>
         ''' <param name="DestPath">The destination file path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         Public Overloads Shared Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String)
 
             'Overload with overwrite set to default=FALSE
@@ -132,12 +131,12 @@ Namespace Files
 
         ''' <summary>Copies a source file to the destination file. Allows overwriting.</summary>
         ''' <remarks>
-        ' This function is unique in that it allows you to specify a destination path where
-        ' some of the directories do not already exist.  It will create them if they don't.
-        ' The last parameter specifies whether a file already present in the
-        ' destination directory will be overwritten
-        ' - Note: requires Imports System.IO
-        ' - Usage: CopyFile("C:\Misc\Bob.txt", "D:\MiscBackup\Bob.txt")
+        ''' This function is unique in that it allows you to specify a destination path where
+        ''' some of the directories do not already exist.  It will create them if they don't.
+        ''' The last parameter specifies whether a file already present in the
+        ''' destination directory will be overwritten
+        ''' - Note: requires Imports System.IO
+        ''' - Usage: CopyFile("C:\Misc\Bob.txt", "D:\MiscBackup\Bob.txt")
         ''' </remarks>
         ''' <param name="SourcePath">The source file path.</param>
         ''' <param name="DestPath">The destination file path.</param>
@@ -157,7 +156,6 @@ Namespace Files
         ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, ByVal DestPath As String)
 
             'Overload with overwrite set to default=FALSE
@@ -192,11 +190,11 @@ Namespace Files
 
         ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
         ''' <remarks>The last parameter specifies whether the files already present in the
-        ' destination directory will be overwritten
-        ' - Note: requires Imports System.IO
-        ' - Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
-        '
-        ' Original code obtained from vb2themax.com
+        ''' destination directory will be overwritten
+        ''' - Note: requires Imports System.IO
+        ''' - Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
+        '''
+        ''' Original code obtained from vb2themax.com
         ''' </remarks>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>

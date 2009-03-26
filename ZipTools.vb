@@ -5,7 +5,7 @@ Imports PRISM.Logging
 Namespace Files
 	''' <summary>Makes using a file archiving program easier.</summary>
 	''' <remarks>There are a routines to create an archive, extract files from an existing archive,
-	' and to verify an existing archive.
+    ''' and to verify an existing archive.
 	''' </remarks>
 	Public Class ZipTools
 		Implements ILoggerAware
@@ -159,9 +159,9 @@ Namespace Files
             End Set
         End Property
 
-        ''''' <summary>
+        ''' <summary>
         ''' Window style to use when CreateNoWindow is False.
-        ''''' </summary>
+        ''' </summary>
         Public Property WindowStyle() As System.Diagnostics.ProcessWindowStyle
             Get
                 Return m_WindowStyle
@@ -218,7 +218,7 @@ Namespace Files
         End Function
 
         ''' <summary>Verifies the integrity of a zip file.</summary>
-        ''' <param name="InputFile">The file path of the zip file to verify.</param>
+        ''' <param name="FilePath">The file path of the zip file to verify.</param>
         Public Function VerifyZippedFile(ByVal FilePath As String) As Boolean
 
             'Verifies integrity of specified zip file
