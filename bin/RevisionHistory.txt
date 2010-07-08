@@ -1,5 +1,10 @@
 Prism Class Library Log
 
+Version 2.0.3834; July 1, 2010
+	- Added option CacheStandardOutput to the ProgRunner class
+		- When True, then will raise event ConsoleOutputEvent when new text is written to the console; 
+          you can also retrieve the text using Property CachedConsoleOutput
+
 Version 2.0.3370; March 24, 2009
 	- Expanded the Logging.ILogger interface to include three new properties:
 		- CurrentLogFilePath: returns the file path to which the most recent message was written

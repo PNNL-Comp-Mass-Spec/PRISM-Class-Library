@@ -6,219 +6,7 @@ PRISM
 </name>
 </assembly>
 <members>
-<member name="T:PRISM.Processes.clsProgRunner.States">
-	<summary>
- clsProgRunner states
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_ExceptionLogger">
-	<summary>
- Interface used for logging exceptions.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_EventLogger">
-	<summary>
- Interface used for logging errors and health related messages.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnException">
-	<summary>
- True for logging behavior, else false.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnEvent">
-	<summary>
- True for logging behavior, else false.
- </summary>
-</member><member name="E:PRISM.Processes.clsProgRunner.ProgChanged">
-	<summary>
- This event is raised whenever the state property changes.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_Process">
-	<summary>
- Used to start and monitor the external program.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_pid">
-	<summary>
- The process id of the currently running incarnation of the external program.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_Thread">
-	<summary>
- The internal thread used to run the monitoring code.
- </summary>
-	<remarks>
- That starts and monitors the external program
- </remarks>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_doCleanup">
-	<summary>
- Flag that tells internal thread to quit monitoring external program and exit.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_monitorInterval">
-	<summary>
- The interval for monitoring thread to wake up and check m_doCleanup.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_ExitCode">
-	<summary>
- Exit code returned by completed process.
- </summary>
-</member><member name="F:PRISM.Processes.clsProgRunner.m_name">
-	<summary>
- Parameters for external program.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.MonitoringInterval">
-	<summary>
- How often (milliseconds) internal monitoring thread checks status of external program
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.StateName">
-	<summary>
- Current state of prog runner (as descriptive name).
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.PID">
-	<summary>
- Process id of currently running external program's process.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.State">
-	<summary>
- Current state of prog runner (as number).
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.Repeat">
-	<summary>
- Whether prog runner will restart external program after it exits.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.RepeatHoldOffTime">
-	<summary>
- Time (seconds) that prog runner waits to restart external program after it exits.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.Name">
-	<summary>
- Name of this progrunner.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.Program">
-	<summary>
- External program that prog runner will run.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.Arguments">
-	<summary>
- Arguments supplied to external program when it is run.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.ExitCode">
-	<summary>
- Exit code when process completes.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.WorkDir">
-	<summary>
- Working directory for process execution.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.CreateNoWindow">
-	<summary>
- Determine if window should be displayed.
- </summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.WindowStyle">
-	<summary>
- Window style to use when CreateNoWindow is False.
- </summary>
-</member><member name="M:PRISM.Processes.clsProgRunner.Start">
-	<summary>
- Start program as external process and monitor its state.
- </summary>
-</member><member name="M:PRISM.Processes.clsProgRunner.StartAndMonitorProgram">
-	<summary>
- Creates a new thread and starts code that runs and monitors a program in it.
- </summary>
-</member><member name="M:PRISM.Processes.clsProgRunner.StopMonitoringProgram(System.Boolean)">
-	<summary>
- Causes monitoring thread to exit on its next monitoring cycle.
- </summary>
-</member><member name="M:PRISM.Processes.clsProgRunner.#ctor">
-	<summary>
- Initializes a new instance of the clsProgRunner class.
- </summary>
-</member><member name="M:PRISM.Processes.clsProgRunner.RegisterExceptionLogger(PRISM.Logging.ILogger)">
-	<summary>Sets the name of the exception logger</summary>
-</member><member name="M:PRISM.Processes.clsProgRunner.RegisterEventLogger(PRISM.Logging.ILogger)">
-	<summary>Sets the name of the event logger</summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.NotifyOnEvent">
-	<summary>Gets or Sets notify on event.</summary>
-</member><member name="P:PRISM.Processes.clsProgRunner.NotifyOnException">
-	<summary>Gets or Sets notify on exception.</summary>
-</member><member name="T:PRISM.Processes.clsProgRunner">
-	<summary>
- This class runs a single program as an external process and monitors it with an internal thread.
- </summary>
-</member><member name="T:PRISM.Files.ShareConnector.NETRESOURCE">
-	<summary>This structure is used to group a bunch of member variables.</summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_CONNECTED">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_GLOBALNET">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_DISK">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_PRINT">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_ANY">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_DOMAIN">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_GENERIC">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SERVER">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SHARE">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONNECTABLE">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONTAINER">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwUsage </summary>
-</member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String)">
-	<summary>
- This version of the constructor requires you to specify the sharename by setting the <see cref="P:PRISM.Files.ShareConnector.Share">Share</see> property.
- </summary>
-</member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String,System.String)">
-	<summary>
- This version of the constructor allows you to specify the sharename as an  argument.
- </summary>
-</member><member name="M:PRISM.Files.ShareConnector.RealNew(System.String,System.String)">
-	<summary>
- This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
- </summary>
-</member><member name="P:PRISM.Files.ShareConnector.Share">
-	<summary>
- Sets the name of the file share to which you will connect.
- </summary>
-</member><member name="M:PRISM.Files.ShareConnector.Connect(System.String)">
-	<summary>
- Connects to specified share using account/password specified through the constructor and 
- the file share name passed as an argument.
- </summary>
-	<param name="Share">The name of the file share to which you will connect.</param>
-</member><member name="M:PRISM.Files.ShareConnector.Connect">
-	<summary>
- Connects to specified share using account/password specified through the constructor.
- Requires you to have specifyed the sharename by setting the <see cref="P:PRISM.Files.ShareConnector.Share">Share</see> property.
- </summary>
-</member><member name="M:PRISM.Files.ShareConnector.RealConnect">
-	<summary>
- Connects to specified share using account/password specified previously.
- This is the function that actually does the connection based on the setup 
- from the <see cref="M:PRISM.Files.ShareConnector.Connect(System.String)">Connect</see> functions.
- </summary>
-</member><member name="M:PRISM.Files.ShareConnector.Disconnect">
-	<summary>
- Disconnects the files share.
- </summary>
-</member><member name="P:PRISM.Files.ShareConnector.ErrorMessage">
-	<summary>
- Gets the error message returned by the <see cref="M:PRISM.Files.ShareConnector.Connect(System.String)">Connect</see> and <see cref="M:PRISM.Files.ShareConnector.Disconnect">Disconnect</see> functions.
- </summary>
-</member><member name="T:PRISM.Files.ShareConnector">
-	<summary>Connects to a file share using a password and user name.
- </summary>
-	<remarks>
- The default behaviour when connecting to SMB/CIFS file shares is for
- the system to supply the user name and password used to logon to the local machine.
- This class allows you to connect to SMB/CIFS file shares when the use of
- SSPI isn't availabe and/or when you don't wish to use the default behaviour.
- It's quite comparable to the "Connect using a different user name." option in the Map Network Drive
- utility in Windows.  Much of this code came from Microsoft Knowledge Base Article - 173011.  It was
- then modified to fit our needs.
- </remarks>
-</member><member name="F:PRISM.Logging.ILogger.logMsgType.logNormal">
+<member name="F:PRISM.Logging.ILogger.logMsgType.logNormal">
 	<summary>The message is informational.</summary>
 </member><member name="F:PRISM.Logging.ILogger.logMsgType.logError">
 	<summary>The message represents an error.</summary>
@@ -439,6 +227,277 @@ PRISM
 </member><member name="T:PRISM.Logging.clsControlLogger">
 	<summary>Provides logging to a control.</summary>
 	<remarks>The actual log control can be a textbox, listbox and a listview.</remarks>
+</member><member name="M:PRISM.DataBase.clsDBTools.#ctor(PRISM.Logging.ILogger,System.String)">
+	<summary>Initializes a new instance of the clsDBTools class which logs to the specified logger.</summary>
+	<param name="logger">This is the logger.</param>
+	<param name="ConnectStr">This is a connection string.</param>
+</member><member name="P:PRISM.DataBase.clsDBTools.ConnectStr">
+	<summary>
+ The property sets and gets a connection string.
+ </summary>
+</member><member name="M:PRISM.DataBase.clsDBTools.OpenConnection">
+	<summary>
+ The function opens a database connection.
+ </summary>
+	<return>The function returns a boolean that shows if the connection was opened.</return>
+</member><member name="M:PRISM.DataBase.clsDBTools.CLoseConnection">
+	<summary>
+ The subroutine closes the database connection.
+ </summary>
+</member><member name="M:PRISM.DataBase.clsDBTools.LogErrorEvents">
+	<summary>
+ The subroutine logs the error events.
+ </summary>
+</member><member name="M:PRISM.DataBase.clsDBTools.OnInfoMessage(System.Object,System.Data.SqlClient.SqlInfoMessageEventArgs)">
+	<summary>
+ The subroutine is an event handeler for InfoMessage event.
+ </summary>
+	<remarks>
+ The errors and warnings sent from the SQL server are caught here
+ </remarks>
+</member><member name="M:PRISM.DataBase.clsDBTools.GetDiscDataSet(System.String,System.Data.DataSet@,System.Int32@)">
+	<summary>
+ The function gets a disconnected dataset as specified by the SQL statement.
+ </summary>
+	<param name="SQL">A SQL string.</param>
+	<param name="DS">A dataset.</param>
+	<param name="RowCount">A row counter.</param>
+	<return>Returns a disconnected dataset as specified by the SQL statement.</return>
+</member><member name="M:PRISM.DataBase.clsDBTools.UpdateDatabase(System.String,System.Int32@)">
+	<summary>
+ The function updates a database table as specified in the SQL statement.
+ </summary>
+	<param name="SQL">A SQL string.</param>
+	<param name="AffectedRows">Affected Rows to be updated.</param>
+	<return>Returns Boolean shwoing if the database was updated.</return>
+</member><member name="T:PRISM.DataBase.clsDBTools">
+	<summary>Tools to manipulates the database.</summary>
+</member><member name="T:PRISM.Processes.clsProgRunner.States">
+	<summary>
+ clsProgRunner states
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_ExceptionLogger">
+	<summary>
+ Interface used for logging exceptions.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_EventLogger">
+	<summary>
+ Interface used for logging errors and health related messages.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnException">
+	<summary>
+ True for logging behavior, else false.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnEvent">
+	<summary>
+ True for logging behavior, else false.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_Process">
+	<summary>
+ Used to start and monitor the external program.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_pid">
+	<summary>
+ The process id of the currently running incarnation of the external program.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_Thread">
+	<summary>
+ The internal thread used to run the monitoring code.
+ </summary>
+	<remarks>
+ That starts and monitors the external program
+ </remarks>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_doCleanup">
+	<summary>
+ Flag that tells internal thread to quit monitoring external program and exit.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_monitorInterval">
+	<summary>
+ The interval for monitoring thread to wake up and check m_doCleanup.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_ExitCode">
+	<summary>
+ Exit code returned by completed process.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_name">
+	<summary>
+ Parameters for external program.
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_CachedConsoleOutput">
+	<summary>
+ Caches the text written to the Console by the external program
+ </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_CachedConsoleError">
+	<summary>
+ Caches the text written to the Error buffer by the external program
+ </summary>
+</member><member name="E:PRISM.Processes.clsProgRunner.ProgChanged">
+	<summary>
+ This event is raised whenever the state property changes.
+ </summary>
+</member><member name="E:PRISM.Processes.clsProgRunner.ConsoleOutputEvent">
+	<summary>
+ This event is raised when the external program writes text to the console
+ </summary>
+	<param name="NewText"></param>
+	<remarks></remarks>
+</member><member name="E:PRISM.Processes.clsProgRunner.ConsoleErrorEvent">
+	<summary>
+ This event is raised when the external program writes text to the console's error stream
+ </summary>
+	<param name="NewText"></param>
+	<remarks></remarks>
+</member><member name="P:PRISM.Processes.clsProgRunner.Arguments">
+	<summary>
+ Arguments supplied to external program when it is run.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.CachedConsoleOutput">
+	<summary>
+ Text written to the Console by the external program (including carriage returns)
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.CachedConsoleError">
+	<summary>
+ Any text written to the Error buffer by the external program
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.CacheStandardOutput">
+	<summary>
+ When true then will cache the text the external program writes to the console
+ Can retrieve using the CachedConsoleOutput readonly property
+ Will also fire event ConsoleOutputEvent as new text is written to the console
+ </summary>
+	<remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
+</member><member name="P:PRISM.Processes.clsProgRunner.ConsoleOutputFilePath">
+	<summary>
+ File path to which the console output will be written if WriteConsoleOutputToFile is true
+ If blank, then file path will be auto-defined in the WorkDir  when program execution starts
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="P:PRISM.Processes.clsProgRunner.CreateNoWindow">
+	<summary>
+ Determine if window should be displayed.
+ Will be forced to True if CacheStandardOutput = True
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.EchoOutputToConsole">
+	<summary>
+ When true, then echoes, in real time, text written to the Console by the external program 
+ Ignored if CreateNoWindow = False
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.ExitCode">
+	<summary>
+ Exit code when process completes.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.MonitoringInterval">
+	<summary>
+ How often (milliseconds) internal monitoring thread checks status of external program
+ Minimum allowed value is 50 milliseconds
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.Name">
+	<summary>
+ Name of this progrunner.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.NotifyOnEvent">
+	<summary>Gets or Sets notify on event.</summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.NotifyOnException">
+	<summary>Gets or Sets notify on exception.</summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.PID">
+	<summary>
+ Process id of currently running external program's process.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.Program">
+	<summary>
+ External program that prog runner will run.
+ This is the full path to the program file
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.Repeat">
+	<summary>
+ Whether prog runner will restart external program after it exits.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.RepeatHoldOffTime">
+	<summary>
+ Time (seconds) that prog runner waits to restart external program after it exits.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.State">
+	<summary>
+ Current state of prog runner (as number).
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.StateName">
+	<summary>
+ Current state of prog runner (as descriptive name).
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.WindowStyle">
+	<summary>
+ Window style to use when CreateNoWindow is False.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.WorkDir">
+	<summary>
+ Working directory for process execution.
+ Not necessarily the same as the directory that contains the program we're running.
+ </summary>
+</member><member name="P:PRISM.Processes.clsProgRunner.WriteConsoleOutputToFile">
+	<summary>
+ When true then will write the standard output to a file in real-time
+ Will also fire event ConsoleOutputEvent as new text is written to the console
+ Define the path to the file using property ConsoleOutputFilePath; if not defined, the file will be created in the WorkDir
+ </summary>
+	<remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.#ctor">
+	<summary>
+ Initializes a new instance of the clsProgRunner class.
+ </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedConsoleOutput">
+	<summary>
+ Clears any console output text that is currently cached
+ </summary>
+	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedConsoleError">
+	<summary>
+ Clears any console error text that is currently cached
+ </summary>
+	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.ConsoleOutputHandler(System.Object,System.Diagnostics.DataReceivedEventArgs)">
+	<summary>
+ Asynchronously handles the console output from the process running by m_Process
+ </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.HandleOutputStreams(System.IO.StreamReader@)">
+	<summary>
+ Handles any new data in the console output and console error streams
+ </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.RegisterExceptionLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the exception logger</summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.RegisterEventLogger(PRISM.Logging.ILogger)">
+	<summary>Sets the name of the event logger</summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.Start">
+	<summary>
+ Start program as external process and monitor its state.
+ </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.StartAndMonitorProgram">
+	<summary>
+ Creates a new thread and starts code that runs and monitors a program in it.
+ </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.StopMonitoringProgram(System.Boolean)">
+	<summary>
+ Causes monitoring thread to exit on its next monitoring cycle.
+ </summary>
+</member><member name="T:PRISM.Processes.clsProgRunner">
+	<summary>
+ This class runs a single program as an external process and monitors it with an internal thread.
+ </summary>
+</member><member name="E:PRISM.Files.DirectoryScanner.FoundFile">
+	<summary>Event is raised whenever a matching file is found.</summary>
+	<remarks>This event is most useful for implementing a progress indicator.</remarks>
+	<param name="fileName">The found file's full path.</param>
+</member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.String[])">
+	<summary>Initializes a new instance of the DirectoryScanner class.</summary>
+	<param name="dirs">An array of directory paths to scan.</param>
+</member><member name="M:PRISM.Files.DirectoryScanner.PerformScan(System.Collections.ArrayList@,System.String[])">
+	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
+	<param name="results">An array of file paths found.</param>
+	<param name="searchPatterns">An array of regular expressions to use in the search.</param>
+	<returns>Always return true.</returns>
+</member><member name="T:PRISM.Files.DirectoryScanner">
+	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@)">
 	<summary>Initializes a new instance of the IniFileReader.</summary>
 	<param name="IniFileName">The name of the ini file.</param>
@@ -635,51 +694,6 @@ PRISM
 	<summary>Gets or Sets notify on exception.</summary>
 </member><member name="T:PRISM.Files.IniFileReader">
 	<summary>Tools to manipulates INI files.</summary>
-</member><member name="M:PRISM.DataBase.clsDBTools.#ctor(PRISM.Logging.ILogger,System.String)">
-	<summary>Initializes a new instance of the clsDBTools class which logs to the specified logger.</summary>
-	<param name="logger">This is the logger.</param>
-	<param name="ConnectStr">This is a connection string.</param>
-</member><member name="P:PRISM.DataBase.clsDBTools.ConnectStr">
-	<summary>
- The property sets and gets a connection string.
- </summary>
-</member><member name="M:PRISM.DataBase.clsDBTools.OpenConnection">
-	<summary>
- The function opens a database connection.
- </summary>
-	<return>The function returns a boolean that shows if the connection was opened.</return>
-</member><member name="M:PRISM.DataBase.clsDBTools.CLoseConnection">
-	<summary>
- The subroutine closes the database connection.
- </summary>
-</member><member name="M:PRISM.DataBase.clsDBTools.LogErrorEvents">
-	<summary>
- The subroutine logs the error events.
- </summary>
-</member><member name="M:PRISM.DataBase.clsDBTools.OnInfoMessage(System.Object,System.Data.SqlClient.SqlInfoMessageEventArgs)">
-	<summary>
- The subroutine is an event handeler for InfoMessage event.
- </summary>
-	<remarks>
- The errors and warnings sent from the SQL server are caught here
- </remarks>
-</member><member name="M:PRISM.DataBase.clsDBTools.GetDiscDataSet(System.String,System.Data.DataSet@,System.Int32@)">
-	<summary>
- The function gets a disconnected dataset as specified by the SQL statement.
- </summary>
-	<param name="SQL">A SQL string.</param>
-	<param name="DS">A dataset.</param>
-	<param name="RowCount">A row counter.</param>
-	<return>Returns a disconnected dataset as specified by the SQL statement.</return>
-</member><member name="M:PRISM.DataBase.clsDBTools.UpdateDatabase(System.String,System.Int32@)">
-	<summary>
- The function updates a database table as specified in the SQL statement.
- </summary>
-	<param name="SQL">A SQL string.</param>
-	<param name="AffectedRows">Affected Rows to be updated.</param>
-	<return>Returns Boolean shwoing if the database was updated.</return>
-</member><member name="T:PRISM.DataBase.clsDBTools">
-	<summary>Tools to manipulates the database.</summary>
 </member><member name="P:PRISM.Files.FolderBrowser.BrowseFlags">
 	<summary>TBD</summary>
 </member><member name="P:PRISM.Files.FolderBrowser.FolderPath">
@@ -1037,20 +1051,83 @@ PRISM
 	<summary>
  A class that defines all the unmanaged methods used in the assembly
  </summary>
-</member><member name="E:PRISM.Files.DirectoryScanner.FoundFile">
-	<summary>Event is raised whenever a matching file is found.</summary>
-	<remarks>This event is most useful for implementing a progress indicator.</remarks>
-	<param name="fileName">The found file's full path.</param>
-</member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.String[])">
-	<summary>Initializes a new instance of the DirectoryScanner class.</summary>
-	<param name="dirs">An array of directory paths to scan.</param>
-</member><member name="M:PRISM.Files.DirectoryScanner.PerformScan(System.Collections.ArrayList@,System.String[])">
-	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
-	<param name="results">An array of file paths found.</param>
-	<param name="searchPatterns">An array of regular expressions to use in the search.</param>
-	<returns>Always return true.</returns>
-</member><member name="T:PRISM.Files.DirectoryScanner">
-	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
+</member><member name="T:PRISM.Files.ShareConnector.NETRESOURCE">
+	<summary>This structure is used to group a bunch of member variables.</summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_CONNECTED">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_GLOBALNET">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_DISK">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_PRINT">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_ANY">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_DOMAIN">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_GENERIC">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SERVER">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SHARE">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONNECTABLE">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+</member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONTAINER">
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwUsage </summary>
+</member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String)">
+	<summary>
+ This version of the constructor requires you to specify the sharename by setting the <see cref="P:PRISM.Files.ShareConnector.Share">Share</see> property.
+ </summary>
+</member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String,System.String)">
+	<summary>
+ This version of the constructor allows you to specify the sharename as an  argument.
+ </summary>
+</member><member name="M:PRISM.Files.ShareConnector.RealNew(System.String,System.String)">
+	<summary>
+ This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
+ </summary>
+</member><member name="P:PRISM.Files.ShareConnector.Share">
+	<summary>
+ Sets the name of the file share to which you will connect.
+ </summary>
+</member><member name="M:PRISM.Files.ShareConnector.Connect(System.String)">
+	<summary>
+ Connects to specified share using account/password specified through the constructor and 
+ the file share name passed as an argument.
+ </summary>
+	<param name="Share">The name of the file share to which you will connect.</param>
+</member><member name="M:PRISM.Files.ShareConnector.Connect">
+	<summary>
+ Connects to specified share using account/password specified through the constructor.
+ Requires you to have specifyed the sharename by setting the <see cref="P:PRISM.Files.ShareConnector.Share">Share</see> property.
+ </summary>
+</member><member name="M:PRISM.Files.ShareConnector.RealConnect">
+	<summary>
+ Connects to specified share using account/password specified previously.
+ This is the function that actually does the connection based on the setup 
+ from the <see cref="M:PRISM.Files.ShareConnector.Connect(System.String)">Connect</see> functions.
+ </summary>
+</member><member name="M:PRISM.Files.ShareConnector.Disconnect">
+	<summary>
+ Disconnects the files share.
+ </summary>
+</member><member name="P:PRISM.Files.ShareConnector.ErrorMessage">
+	<summary>
+ Gets the error message returned by the <see cref="M:PRISM.Files.ShareConnector.Connect(System.String)">Connect</see> and <see cref="M:PRISM.Files.ShareConnector.Disconnect">Disconnect</see> functions.
+ </summary>
+</member><member name="T:PRISM.Files.ShareConnector">
+	<summary>Connects to a file share using a password and user name.
+ </summary>
+	<remarks>
+ The default behaviour when connecting to SMB/CIFS file shares is for
+ the system to supply the user name and password used to logon to the local machine.
+ This class allows you to connect to SMB/CIFS file shares when the use of
+ SSPI isn't availabe and/or when you don't wish to use the default behaviour.
+ It's quite comparable to the "Connect using a different user name." option in the Map Network Drive
+ utility in Windows.  Much of this code came from Microsoft Knowledge Base Article - 173011.  It was
+ then modified to fit our needs.
+ </remarks>
 </member><member name="E:PRISM.Files.clsFileTools.CopyingFile">
 	<summary>Event is raised before copying begins.</summary>
 	<param name="filename">The file's full path.</param>
