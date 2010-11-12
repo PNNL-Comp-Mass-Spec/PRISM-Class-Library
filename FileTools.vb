@@ -1,7 +1,5 @@
 Option Strict On
 
-Imports System.IO
-
 Namespace Files
     ''' <summary>Tools to manipulate paths and directories.</summary>
     ''' <remarks>
@@ -14,7 +12,7 @@ Namespace Files
         ''' <summary>Event is raised before copying begins.</summary>
         ''' <param name="filename">The file's full path.</param>
         Public Shared Event CopyingFile(ByVal filename As String)
-  
+
 #Region "Module constants and variables"
         'Private constants
         Private Const TERM_ADD As Boolean = True
@@ -143,11 +141,11 @@ Namespace Files
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         Private Shared Sub CopyFileEx(ByVal SourcePath As String, ByVal DestPath As String, _
          ByVal Overwrite As Boolean)
-            Dim dirPath As String = Path.GetDirectoryName(DestPath)
-            If Not Directory.Exists(dirPath) Then
-                Directory.CreateDirectory(dirPath)
+            Dim dirPath As String = System.IO.Path.GetDirectoryName(DestPath)
+            If Not System.IO.Directory.Exists(dirPath) Then
+                System.IO.Directory.CreateDirectory(dirPath)
             End If
-            File.Copy(SourcePath, DestPath, Overwrite)
+            System.IO.File.Copy(SourcePath, DestPath, Overwrite)
         End Sub
 #End Region
 
@@ -156,10 +154,11 @@ Namespace Files
         ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
-        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, ByVal DestPath As String)
+        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
+                                                  ByVal DestPath As String)
 
             'Overload with overwrite set to default=FALSE
-            CopyDirectoryEx(SourcePath, DestPath, COPY_NO_OVERWRITE, False, False)
+            CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE)
 
         End Sub
 
@@ -167,11 +166,12 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, ByVal DestPath As String, _
-        ByVal OverWrite As Boolean)
+        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
+                                                  ByVal DestPath As String, _
+                                                  ByVal OverWrite As Boolean)
 
             'Overload with no defaults
-            CopyDirectoryEx(SourcePath, DestPath, OverWrite, False, False)
+            CopyDirectory(SourcePath, DestPath, OverWrite, False)
 
         End Sub
 
@@ -179,20 +179,36 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        ''' <param name="bReadOnly">The value to be assgned to the read-only attribute of the destination file.</param>
-        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, ByVal DestPath As String, _
-        ByVal OverWrite As Boolean, ByVal bReadOnly As Boolean)
+        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
+                                                  ByVal DestPath As String, _
+                                                  ByVal OverWrite As Boolean, _
+                                                  ByVal bReadOnly As Boolean)
 
             'Overload with no defaults
-            CopyDirectoryEx(SourcePath, DestPath, OverWrite, True, bReadOnly)
+            CopyDirectoryEx(SourcePath, DestPath, OverWrite, True, bReadOnly, New System.Collections.Generic.List(Of String))
 
         End Sub
 
         ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <remarks>The last parameter specifies whether the files already present in the
-        ''' destination directory will be overwritten
-        ''' - Note: requires Imports System.IO
-        ''' - Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
+        ''' <param name="SourcePath">The source directory path.</param>
+        ''' <param name="DestPath">The destination directory path.</param>
+        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories)</param>
+        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
+                                                  ByVal DestPath As String, _
+                                                  ByVal OverWrite As Boolean, _
+                                                  ByVal bReadOnly As Boolean, _
+                                                  ByVal FileNamesToSkip As System.Collections.Generic.List(Of String))
+
+            'Overload with no defaults
+            CopyDirectoryEx(SourcePath, DestPath, OverWrite, True, bReadOnly, FileNamesToSkip)
+
+        End Sub
+
+        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
+        ''' <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
         '''
         ''' Original code obtained from vb2themax.com
         ''' </remarks>
@@ -200,18 +216,24 @@ Namespace Files
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="SetAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
-        ''' <param name="bReadOnly">The value to be assgned to the read-only attribute of the destination file.</param>
-        Private Shared Sub CopyDirectoryEx(ByVal SourcePath As String, ByVal DestPath As String, _
-        ByVal Overwrite As Boolean, ByVal SetAttribute As Boolean, ByVal bReadOnly As Boolean)
+        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        Private Shared Sub CopyDirectoryEx(ByVal SourcePath As String, _
+                                           ByVal DestPath As String, _
+                                           ByVal Overwrite As Boolean, _
+                                           ByVal SetAttribute As Boolean, _
+                                           ByVal bReadOnly As Boolean, _
+                                           ByVal FileNamesToSkip As System.Collections.Generic.List(Of String))
 
-            Dim SourceDir As DirectoryInfo = New DirectoryInfo(SourcePath)
-            Dim DestDir As DirectoryInfo = New DirectoryInfo(DestPath)
+            Dim SourceDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(SourcePath)
+            Dim DestDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(DestPath)
+
+            Dim objFileNamesToSkipCaseInsensitive As System.Collections.Generic.Dictionary(Of String, String)
 
             ' the source directory must exist, otherwise throw an exception
             If SourceDir.Exists Then
                 ' if destination SubDir's parent SubDir does not exist throw an exception
                 If Not DestDir.Parent.Exists Then
-                    Throw New DirectoryNotFoundException _
+                    Throw New System.IO.DirectoryNotFoundException _
                      ("Destination directory does not exist: " + DestDir.Parent.FullName)
                 End If
 
@@ -219,43 +241,54 @@ Namespace Files
                     DestDir.Create()
                 End If
 
-                ' copy all the files of the current directory
-                Dim ChildFile As FileInfo
+                ' Populate objFileNamesToSkipCaseInsensitive
+                objFileNamesToSkipCaseInsensitive = New System.Collections.Generic.Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
+                If Not FileNamesToSkip Is Nothing Then
+                    For Each strItem As String In FileNamesToSkip
+                        objFileNamesToSkipCaseInsensitive.Add(strItem, "")
+                    Next
+                End If
+
+                ' Copy all the files of the current directory
+                Dim ChildFile As System.IO.FileInfo
                 For Each ChildFile In SourceDir.GetFiles()
-                    RaiseEvent CopyingFile(ChildFile.FullName)
-                    If Overwrite Then
-                        ChildFile.CopyTo(Path.Combine(DestDir.FullName, ChildFile.Name), True)
-                    Else
-                        ' if Overwrite = false, copy the file only if it does not exist
-                        ' this is done to avoid an IOException if a file already exists
-                        ' this way the other files can be copied anyway...
-                        If Not File.Exists(Path.Combine(DestDir.FullName, ChildFile.Name)) Then
-                            ChildFile.CopyTo(Path.Combine(DestDir.FullName, ChildFile.Name), _
-                             False)
-                        End If
-                    End If
-                    If SetAttribute Then
-                        ' Get the file attributes from the source file
-                        Dim fa As FileAttributes = ChildFile.Attributes()
-                        ' Change the read-only attribute to the desired value
-                        If bReadOnly Then
-                            fa = fa Or FileAttributes.ReadOnly
+
+                    If Not objFileNamesToSkipCaseInsensitive.ContainsKey(ChildFile.Name) Then
+
+                        RaiseEvent CopyingFile(ChildFile.FullName)
+                        If Overwrite Then
+                            ChildFile.CopyTo(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name), True)
                         Else
-                            fa = fa And Not FileAttributes.ReadOnly
+                            ' if Overwrite = false, copy the file only if it does not exist
+                            ' this is done to avoid an IOException if a file already exists
+                            ' this way the other files can be copied anyway...
+                            If Not System.IO.File.Exists(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name)) Then
+                                ChildFile.CopyTo(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name), False)
+                            End If
                         End If
-                        ' Set the attributes of the destination file
-                        File.SetAttributes(Path.Combine(DestDir.FullName, ChildFile.Name), fa)
+                        If SetAttribute Then
+                            ' Get the file attributes from the source file
+                            Dim fa As System.IO.FileAttributes = ChildFile.Attributes()
+                            ' Change the read-only attribute to the desired value
+                            If bReadOnly Then
+                                fa = fa Or System.IO.FileAttributes.ReadOnly
+                            Else
+                                fa = fa And Not System.IO.FileAttributes.ReadOnly
+                            End If
+                            ' Set the attributes of the destination file
+                            System.IO.File.SetAttributes(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name), fa)
+                        End If
                     End If
                 Next
 
                 ' copy all the sub-directories by recursively calling this same routine
-                Dim SubDir As DirectoryInfo
+                Dim SubDir As System.IO.DirectoryInfo
                 For Each SubDir In SourceDir.GetDirectories()
-                    CopyDirectory(SubDir.FullName, Path.Combine(DestDir.FullName, _
+                    CopyDirectory(SubDir.FullName, System.IO.Path.Combine(DestDir.FullName, _
                      SubDir.Name), Overwrite)
                 Next
             Else
-                Throw New DirectoryNotFoundException("Source directory does not exist: " + _
+                Throw New System.IO.DirectoryNotFoundException("Source directory does not exist: " + _
                  SourceDir.FullName)
             End If
 
@@ -302,12 +335,12 @@ Namespace Files
             '
             ' Original code obtained from vb2themax.com
             Dim DirSize As Long
-            Dim Dir As DirectoryInfo = New DirectoryInfo(DirPath)
+            Dim Dir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(DirPath)
             '		Dim InternalFileCount As Long
             '		Dim InternalDirCount As Long
 
             ' add the size of each file
-            Dim ChildFile As FileInfo
+            Dim ChildFile As System.IO.FileInfo
             For Each ChildFile In Dir.GetFiles()
                 DirSize += ChildFile.Length
                 FileCount += 1
@@ -315,7 +348,7 @@ Namespace Files
 
             ' add the size of each sub-directory, that is retrieved by recursively
             ' calling this same routine
-            Dim SubDir As DirectoryInfo
+            Dim SubDir As System.IO.DirectoryInfo
             For Each SubDir In Dir.GetDirectories()
                 DirSize += GetDirectorySizeEX(SubDir.FullName, FileCount, SubDirCount)
                 SubDirCount += 1
