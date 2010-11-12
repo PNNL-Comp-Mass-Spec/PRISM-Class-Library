@@ -162,6 +162,18 @@ Namespace Files
 
         End Sub
 
+        ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
+        ''' <param name="SourcePath">The source directory path.</param>
+        ''' <param name="DestPath">The destination directory path.</param>
+        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
+                                                  ByVal DestPath As String, _
+                                                  ByVal FileNamesToSkip As System.Collections.Generic.List(Of String))
+
+            'Overload with overwrite set to default=FALSE
+            CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, FileNamesToSkip)
+
+        End Sub
+
         ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
@@ -175,6 +187,19 @@ Namespace Files
 
         End Sub
 
+        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
+        ''' <param name="SourcePath">The source directory path.</param>
+        ''' <param name="DestPath">The destination directory path.</param>
+        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
+                                                  ByVal DestPath As String, _
+                                                  ByVal OverWrite As Boolean, _
+                                                  ByVal FileNamesToSkip As System.Collections.Generic.List(Of String))
+
+            'Overload with no defaults
+            CopyDirectory(SourcePath, DestPath, OverWrite, False, FileNamesToSkip)
+
+        End Sub
         ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>

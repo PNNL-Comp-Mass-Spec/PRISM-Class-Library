@@ -1187,7 +1187,16 @@ PRISM
 	<summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
 	<param name="DestPath">The destination directory path.</param>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Collections.Generic.List{System.String})">
+	<summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
+	<param name="SourcePath">The source directory path.</param>
+	<param name="DestPath">The destination directory path.</param>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Boolean)">
+	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
+	<param name="SourcePath">The source directory path.</param>
+	<param name="DestPath">The destination directory path.</param>
+	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Boolean,System.Collections.Generic.List{System.String})">
 	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
 	<param name="DestPath">The destination directory path.</param>
