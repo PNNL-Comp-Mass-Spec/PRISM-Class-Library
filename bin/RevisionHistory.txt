@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.0.3967; November 11, 2010
+	- Added FileNamesToSkip parameter to CopyDirectory in clsFileTools
+
 Version 2.0.3834; July 1, 2010
 	- Added option CacheStandardOutput to the ProgRunner class
 		- When True, then will raise event ConsoleOutputEvent when new text is written to the console; 
