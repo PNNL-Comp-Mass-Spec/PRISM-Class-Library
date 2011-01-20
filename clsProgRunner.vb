@@ -469,9 +469,13 @@ Namespace Processes
                     m_CachedConsoleOutput.AppendLine(outLine.Data)
                 End If
 
-                If m_WriteConsoleOutputToFile Then
+                If m_WriteConsoleOutputToFile AndAlso Not m_ConsoleOutputStreamWriter Is Nothing Then
                     ' Write the standard output to the console output file
-                    m_ConsoleOutputStreamWriter.WriteLine(outLine.Data)
+                    Try
+                        m_ConsoleOutputStreamWriter.WriteLine(outLine.Data)
+                    Catch ex As Exception
+                        ' Ignore errors here
+                    End Try
                 End If
             End If
         End Sub
@@ -637,9 +641,9 @@ Namespace Processes
 
                 m_Process.Close()
 
-                If Not m_ConsoleOutputStreamWriter Is Nothing Then
-                    m_ConsoleOutputStreamWriter.Close()
-                End If
+                ' Note: do not call m_ConsoleOutputStreamWriter.Close here, since ConsoleOutputHandler 
+                '       might still need to write to the file (from another thread)
+                ' Furthermore, since the file is set to .AutoFlush, we don't need to explicitly close it
 
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode, _
@@ -767,7 +771,6 @@ Namespace Processes
         End Sub
 
 #End Region
-
     End Class
 
 End Namespace

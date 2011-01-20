@@ -1,5 +1,9 @@
 Prism Class Library Log
 
+Version 2.0.4036; January 19, 2011
+	- clsProgRunner is no longer calling m_ConsoleOutputStreamWriter.Close() after the process ends
+		- This was leading to a "Cannot write to a closed stream" error
+
 Version 2.0.3967; November 11, 2010
 	- Added FileNamesToSkip parameter to CopyDirectory in clsFileTools
 
