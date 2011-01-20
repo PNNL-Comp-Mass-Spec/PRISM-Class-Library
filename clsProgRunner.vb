@@ -421,13 +421,6 @@ Namespace Processes
             m_ConsoleOutputFilePath = String.Empty
         End Sub
 
-        Protected Overrides Sub Finalize()
-            MyBase.Finalize()
-            If Not m_ConsoleOutputStreamWriter Is Nothing Then
-                m_ConsoleOutputStreamWriter.Close()
-            End If
-        End Sub
-
         ''' <summary>
         ''' Clears any console output text that is currently cached
         ''' </summary>
@@ -481,6 +474,7 @@ Namespace Processes
                     Try
                         m_ConsoleOutputStreamWriter.WriteLine(outLine.Data)
                     Catch ex As Exception
+                        ' Another thread is likely trying to write to a closed file
                         ' Ignore errors here
                     End Try
                 End If
@@ -648,10 +642,6 @@ Namespace Processes
 
                 m_Process.Close()
 
-                ' Note: do not call m_ConsoleOutputStreamWriter.Close here, since ConsoleOutputHandler 
-                '       might still need to write to the file (from another thread)
-                ' We'll call the .Close event when this class is finalized
-
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode, _
                     Logging.ILogger.logMsgType.logHealth, True)
@@ -660,6 +650,16 @@ Namespace Processes
                         m_EventLogger.PostEntry("Cached error text for process " & m_name & ": " & m_CachedConsoleError.ToString, _
                         Logging.ILogger.logMsgType.logError, True)
                     End If
+                End If
+
+                If Not m_ConsoleOutputStreamWriter Is Nothing Then
+                    ' Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
+                    System.Threading.Thread.Sleep(150)
+                    GC.Collect()
+                    GC.WaitForPendingFinalizers()
+                    System.Threading.Thread.Sleep(150)
+
+                    m_ConsoleOutputStreamWriter.Close()
                 End If
 
                 ' decide whether or not to repeat starting
