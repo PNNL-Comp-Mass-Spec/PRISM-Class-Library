@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.0.4037; January 20, 2011
+	- Fixed recursion bug in CopyDirectoryEx
+
 Version 2.0.4036; January 19, 2011
 	- In clsProgRunner, added code to better handle closing m_ConsoleOutputStreamWriter
 		- Previously, the file was sometimes getting closed too early, leading to a "Cannot write to a closed stream" error

@@ -247,7 +247,7 @@ Namespace Files
                                            ByVal Overwrite As Boolean, _
                                            ByVal SetAttribute As Boolean, _
                                            ByVal bReadOnly As Boolean, _
-                                           ByVal FileNamesToSkip As System.Collections.Generic.List(Of String))
+                                           ByRef FileNamesToSkip As System.Collections.Generic.List(Of String))
 
             Dim SourceDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(SourcePath)
             Dim DestDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(DestPath)
@@ -307,10 +307,9 @@ Namespace Files
                 Next
 
                 ' copy all the sub-directories by recursively calling this same routine
-                Dim SubDir As System.IO.DirectoryInfo
-                For Each SubDir In SourceDir.GetDirectories()
-                    CopyDirectory(SubDir.FullName, System.IO.Path.Combine(DestDir.FullName, _
-                     SubDir.Name), Overwrite)
+                For Each SubDir As System.IO.DirectoryInfo In SourceDir.GetDirectories()
+                    CopyDirectoryEx(SubDir.FullName, System.IO.Path.Combine(DestDir.FullName, SubDir.Name), _
+                                    Overwrite, SetAttribute, bReadOnly, FileNamesToSkip)
                 Next
             Else
                 Throw New System.IO.DirectoryNotFoundException("Source directory does not exist: " + _
