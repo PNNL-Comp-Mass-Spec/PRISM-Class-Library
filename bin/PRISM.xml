@@ -676,9 +676,6 @@ PRISM
 	<summary>It Sets or Gets the output file name.</summary>
 </member><member name="M:PRISM.Files.IniFileReader.Save">
 	<summary>It saves the data to the Xml output file.</summary>
-</member><member name="M:PRISM.Files.IniFileReader.AsIniFile">
-	<summary>It transforms a XML file to an INI file.</summary>
-	<return>The function returns document formatted as a string.</return>
 </member><member name="P:PRISM.Files.IniFileReader.XmlDoc">
 	<summary>It gets the XmlDocument.</summary>
 </member><member name="P:PRISM.Files.IniFileReader.XML">

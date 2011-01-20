@@ -421,6 +421,13 @@ Namespace Processes
             m_ConsoleOutputFilePath = String.Empty
         End Sub
 
+        Protected Overrides Sub Finalize()
+            MyBase.Finalize()
+            If Not m_ConsoleOutputStreamWriter Is Nothing Then
+                m_ConsoleOutputStreamWriter.Close()
+            End If
+        End Sub
+
         ''' <summary>
         ''' Clears any console output text that is currently cached
         ''' </summary>
@@ -643,7 +650,7 @@ Namespace Processes
 
                 ' Note: do not call m_ConsoleOutputStreamWriter.Close here, since ConsoleOutputHandler 
                 '       might still need to write to the file (from another thread)
-                ' Furthermore, since the file is set to .AutoFlush, we don't need to explicitly close it
+                ' We'll call the .Close event when this class is finalized
 
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode, _
@@ -771,6 +778,7 @@ Namespace Processes
         End Sub
 
 #End Region
+
     End Class
 
 End Namespace

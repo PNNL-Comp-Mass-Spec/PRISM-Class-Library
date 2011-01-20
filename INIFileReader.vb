@@ -707,29 +707,31 @@ Namespace Files
                 End If
             End If
         End Sub
-        ''' <summary>It transforms a XML file to an INI file.</summary>
-        ''' <return>The function returns document formatted as a string.</return>
-        Public Function AsIniFile() As String
-            If Not Initialized Then Throw New IniFileReaderNotInitializedException
-            Try
-                Dim xsl As XslTransform = New XslTransform
-                Dim resolver As XmlUrlResolver = New XmlUrlResolver
-                xsl.Load("c:\\XMLToIni.xslt")
-                Dim sb As StringBuilder = New StringBuilder
-                Dim sw As StringWriter = New StringWriter(sb)
-                xsl.Transform(m_XmlDoc, Nothing, sw, resolver)
-                sw.Close()
-                Return sb.ToString
-            Catch e As Exception
-                If Not IsNothing(m_ExceptionLogger) Then
-                    m_ExceptionLogger.PostError("Error transforming XML to INI file.", e, True)
-                End If
-                If NotifyOnException Then
-                    Throw New Exception("Error transforming XML to INI file.")
-                End If
-                Return Nothing
-            End Try
-        End Function
+
+        ' <summary>It transforms a XML file to an INI file.</summary>
+        ' <return>The function returns document formatted as a string.</return>
+        ''Public Function AsIniFile() As String
+        ''    If Not Initialized Then Throw New IniFileReaderNotInitializedException
+        ''    Try
+        ''        Dim xsl As XslTransform = New XslTransform
+        ''        Dim resolver As XmlUrlResolver = New XmlUrlResolver
+        ''        xsl.Load("c:\\XMLToIni.xslt")
+        ''        Dim sb As StringBuilder = New StringBuilder
+        ''        Dim sw As StringWriter = New StringWriter(sb)
+        ''        xsl.Transform(m_XmlDoc, Nothing, sw, resolver)
+        ''        sw.Close()
+        ''        Return sb.ToString
+        ''    Catch e As Exception
+        ''        If Not IsNothing(m_ExceptionLogger) Then
+        ''            m_ExceptionLogger.PostError("Error transforming XML to INI file.", e, True)
+        ''        End If
+        ''        If NotifyOnException Then
+        ''            Throw New Exception("Error transforming XML to INI file.")
+        ''        End If
+        ''        Return Nothing
+        ''    End Try
+        ''End Function
+
         ''' <summary>It gets the XmlDocument.</summary>
         Public ReadOnly Property XmlDoc() As XmlDocument
             Get
