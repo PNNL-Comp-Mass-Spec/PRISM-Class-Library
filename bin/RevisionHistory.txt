@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.0.4042; January 25, 2011
+	- Now allowing the FileNamesToSkip parameter for CopyDirectory to contain either file names or full file paths
+
 Version 2.0.4037; January 20, 2011
 	- Fixed recursion bug in CopyDirectoryEx
 

@@ -165,6 +165,7 @@ Namespace Files
         ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
+        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
                                                   ByVal DestPath As String, _
                                                   ByVal FileNamesToSkip As System.Collections.Generic.List(Of String))
@@ -191,6 +192,7 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
                                                   ByVal DestPath As String, _
                                                   ByVal OverWrite As Boolean, _
@@ -220,7 +222,7 @@ Namespace Files
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories)</param>
+        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         Public Overloads Shared Sub CopyDirectory(ByVal SourcePath As String, _
                                                   ByVal DestPath As String, _
                                                   ByVal OverWrite As Boolean, _
@@ -242,6 +244,7 @@ Namespace Files
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="SetAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        ''' ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         Private Shared Sub CopyDirectoryEx(ByVal SourcePath As String, _
                                            ByVal DestPath As String, _
                                            ByVal Overwrite As Boolean, _
@@ -253,6 +256,8 @@ Namespace Files
             Dim DestDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(DestPath)
 
             Dim objFileNamesToSkipCaseInsensitive As System.Collections.Generic.Dictionary(Of String, String)
+
+            Dim blnCopyFile As Boolean
 
             ' the source directory must exist, otherwise throw an exception
             If SourceDir.Exists Then
@@ -278,9 +283,20 @@ Namespace Files
                 Dim ChildFile As System.IO.FileInfo
                 For Each ChildFile In SourceDir.GetFiles()
 
-                    If Not objFileNamesToSkipCaseInsensitive.ContainsKey(ChildFile.Name) Then
+                    ' Look for both the file name and the full path in objFileNamesToSkipCaseInsensitive
+                    ' If either matches, then to not copy the file
+                    If objFileNamesToSkipCaseInsensitive.ContainsKey(ChildFile.Name) Then
+                        blnCopyFile = False
+                    ElseIf objFileNamesToSkipCaseInsensitive.ContainsKey(ChildFile.FullName) Then
+                        blnCopyFile = False
+                    Else
+                        blnCopyFile = True
+                    End If
+
+                    If blnCopyFile Then
 
                         RaiseEvent CopyingFile(ChildFile.FullName)
+
                         If Overwrite Then
                             ChildFile.CopyTo(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name), True)
                         Else
@@ -291,6 +307,7 @@ Namespace Files
                                 ChildFile.CopyTo(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name), False)
                             End If
                         End If
+
                         If SetAttribute Then
                             ' Get the file attributes from the source file
                             Dim fa As System.IO.FileAttributes = ChildFile.Attributes()
@@ -303,6 +320,7 @@ Namespace Files
                             ' Set the attributes of the destination file
                             System.IO.File.SetAttributes(System.IO.Path.Combine(DestDir.FullName, ChildFile.Name), fa)
                         End If
+
                     End If
                 Next
 

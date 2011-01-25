@@ -1188,6 +1188,7 @@ PRISM
 	<summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
 	<param name="DestPath">The destination directory path.</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Boolean)">
 	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
@@ -1198,6 +1199,7 @@ PRISM
 	<param name="SourcePath">The source directory path.</param>
 	<param name="DestPath">The destination directory path.</param>
 	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String,System.Boolean,System.Boolean)">
 	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
@@ -1210,7 +1212,7 @@ PRISM
 	<param name="DestPath">The destination directory path.</param>
 	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 	<param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories)</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryEx(System.String,System.String,System.Boolean,System.Boolean,System.Boolean,System.Collections.Generic.List{System.String}@)">
 	<summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
 	<remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
@@ -1222,6 +1224,7 @@ PRISM
 	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 	<param name="SetAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
 	<param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+ ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 </member><member name="M:PRISM.Files.clsFileTools.GetDirectorySize(System.String)">
 	<summary>Get the directory size.</summary>
 	<param name="DirPath">The path to the directory.</param>
