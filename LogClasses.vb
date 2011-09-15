@@ -792,7 +792,7 @@ Namespace Logging
         ''' <param name="EntryType">The ILogger error type.</param>
         Private Sub LogToControl(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
             Dim localMsg As String
-            localMsg = Now & ", " & ", " & ExecutableName & ", " & _
+            localMsg = System.DateTime.Now() & ", " & ", " & ExecutableName & ", " & _
                         ExecutableVersion & ", " & message & ", " & TypeToString(EntryType)
 
             If EntryType = ILogger.logMsgType.logError Then
@@ -826,7 +826,7 @@ Namespace Logging
         Private Sub PostEntryListview(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
             If IsNothing(m_loglsViewCtl) Then Exit Sub
             ' Create three items and three sets of subitems for each item.
-            Dim lvItem As New ListViewItem(Now.ToString)
+            Dim lvItem As New ListViewItem(System.DateTime.Now().ToString)
             lvItem.SubItems.Add(ExecutableName)
             lvItem.SubItems.Add(ExecutableVersion)
             lvItem.SubItems.Add(message)
