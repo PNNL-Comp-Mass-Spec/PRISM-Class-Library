@@ -1128,10 +1128,27 @@ PRISM
 </member><member name="E:PRISM.Files.clsFileTools.CopyingFile">
 	<summary>Event is raised before copying begins.</summary>
 	<param name="filename">The file's full path.</param>
+</member><member name="E:PRISM.Files.clsFileTools.ResumingFileCopy">
+	<summary>Event is raised before copying begins.</summary>
+	<param name="filename">The file's full path.</param>
+</member><member name="E:PRISM.Files.clsFileTools.FileCopyProgress">
+	<summary>Event is raised before copying begins.</summary>
+	<param name="filename">The file name (not full path)</param>
+	<param name="percentComplete">Percent complete (value between 0 and 100)</param>
 </member><member name="F:PRISM.Files.clsFileTools.TERMINATOR_ADD">
 	<summary>Used to add the path seperation character to the end of the directory path.</summary>
 </member><member name="F:PRISM.Files.clsFileTools.TERMINATOR_REMOVE">
 	<summary>Used to remove the path seperation character from the end of the directory path.</summary>
+</member><member name="F:PRISM.Files.clsFileTools.DEFAULT_CHUNK_SIZE_MB">
+	<summary>
+ Used by CopyFileWithResume and CopyDirectoryWithResume when copying a file byte-by-byte and supporting resuming the copy if interrupted
+ </summary>
+	<remarks></remarks>
+</member><member name="F:PRISM.Files.clsFileTools.DEFAULT_FLUSH_THRESHOLD_MB">
+	<summary>
+ Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
+ </summary>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.Boolean,System.String)">
 	<summary>Modifies input directory path string depending on optional settings.</summary>
 	<param name="InpFolder">The input directory path.</param>
@@ -1224,7 +1241,116 @@ PRISM
 	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 	<param name="SetAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
 	<param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
- ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+</member><member name="M:PRISM.Files.clsFileTools.UpdateReadonlyAttribute(System.IO.FileInfo,System.String,System.Boolean)">
+	<summary>
+ Copies the file attributes from a source file to a target file, explicitly updating the read-only bit based on bReadOnly
+ </summary>
+	<param name="fiSourceFile">Source FileInfo</param>
+	<param name="sTargetFilePath">Target file path</param>
+	<param name="bReadOnly">True to force the ReadOnly bit on, False to force it off</param>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryWithResume(System.String,System.String)">
+	<summary>
+ Copies a source directory to the destination directory.
+ Overwrites existing files if they differ in modification time or size.
+ Copies large files in chunks and allows resuming copying a large file if interrupted.
+ </summary>
+	<param name="SourceFolderPath">The source directory path.</param>
+	<param name="TargetFolderPath">The destination directory path.</param>
+	<returns>True if success; false if an error</returns>
+	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean)">
+	<summary>
+ Copies a source directory to the destination directory.
+ Overwrites existing files if they differ in modification time or size.
+ Copies large files in chunks and allows resuming copying a large file if interrupted.
+ </summary>
+	<param name="SourceFolderPath">The source directory path.</param>
+	<param name="TargetFolderPath">The destination directory path.</param>
+	<param name="Recurse">True to copy subdirectories</param>
+	<returns>True if success; false if an error</returns>
+	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.Files.clsFileTools.FileOverwriteMode,System.Collections.Generic.List{System.String})">
+	<summary>
+ Copies a source directory to the destination directory. 
+ Overwrite behavior is governed by eFileOverwriteMode
+ Copies large files in chunks and allows resuming copying a large file if interrupted.
+ </summary>
+	<param name="SourceFolderPath">The source directory path.</param>
+	<param name="TargetFolderPath">The destination directory path.</param>
+	<param name="Recurse">True to copy subdirectories</param>
+	<param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+	<returns>True if success; false if an error</returns>
+	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.Files.clsFileTools.FileOverwriteMode,System.Int32@,System.Int32@,System.Int32@)">
+	<summary>
+ Copies a source directory to the destination directory. 
+ Overwrite behavior is governed by eFileOverwriteMode
+ Copies large files in chunks and allows resuming copying a large file if interrupted.
+ </summary>
+	<param name="SourceFolderPath">The source directory path.</param>
+	<param name="TargetFolderPath">The destination directory path.</param>
+	<param name="Recurse">True to copy subdirectories</param>
+	<param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
+	<param name="FileCountSkipped">Number of files skipped (output)</param>
+	<param name="FileCountResumed">Number of files resumed (output)</param>
+	<param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
+	<returns>True if success; false if an error</returns>
+	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.Files.clsFileTools.FileOverwriteMode,System.Collections.Generic.List{System.String},System.Int32@,System.Int32@,System.Int32@)">
+	<summary>
+ Copies a source directory to the destination directory. 
+ Overwrite behavior is governed by eFileOverwriteMode
+ Copies large files in chunks and allows resuming copying a large file if interrupted.
+ </summary>
+	<param name="SourceFolderPath">The source directory path.</param>
+	<param name="TargetFolderPath">The destination directory path.</param>
+	<param name="Recurse">True to copy subdirectories</param>
+	<param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+	<param name="FileCountSkipped">Number of files skipped (output)</param>
+	<param name="FileCountResumed">Number of files resumed (output)</param>
+	<param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
+	<returns>True if success; false if an error</returns>
+	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.Files.clsFileTools.FileOverwriteMode,System.Boolean,System.Boolean,System.Collections.Generic.List{System.String},System.Int32@,System.Int32@,System.Int32@)">
+	<summary>
+ Copies a source directory to the destination directory. 
+ Overwrite behavior is governed by eFileOverwriteMode
+ Copies large files in chunks and allows resuming copying a large file if interrupted.
+ </summary>
+	<param name="SourceFolderPath">The source directory path.</param>
+	<param name="TargetFolderPath">The destination directory path.</param>
+	<param name="Recurse">True to copy subdirectories</param>
+	<param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
+	<param name="SetAttribute">True if the read-only attribute of the destination file is to be modified, false otherwise.</param>
+	<param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+	<param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+	<param name="FileCountSkipped">Number of files skipped (output)</param>
+	<param name="FileCountResumed">Number of files resumed (output)</param>
+	<param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
+	<returns>True if success; false if an error</returns>
+	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyFileWithResume(System.String,System.String,System.Boolean@)">
+	<summary>
+ Copy a file using 
+ </summary>
+	<param name="SourceFilePath"></param>
+	<param name="strTargetFilePath"></param>
+	<param name="blnResumed"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CopyFileWithResume(System.IO.FileInfo,System.String,System.Boolean@)">
+	<summary>
+ Copy fiSourceFile to diTargetFolder
+ </summary>
+	<param name="fiSourceFile"></param>
+	<param name="strTargetFilePath"></param>
+	<param name="blnResumed">Output parameter; true if copying was resumed</param>
+	<returns></returns>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.GetDirectorySize(System.String)">
 	<summary>Get the directory size.</summary>
 	<param name="DirPath">The path to the directory.</param>
@@ -1246,6 +1372,7 @@ PRISM
 	<remarks>
  There is a set of functions to properly terminate directory paths.
  There is a set of functions to copy an entire directory tree.
+ There is a set of functions to copy an entire directory tree and resume copying interrupted files.
  There is a set of functions to get the size of an entire directory tree, including the number of files and directories.
 </remarks>
 </member><member name="M:PRISM.Files.ZipTools.MakeZipFile(System.String,System.String,System.String)">

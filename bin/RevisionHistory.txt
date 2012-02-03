@@ -1,5 +1,12 @@
 Prism Class Library Log
 
+Version 2.0.4415; February 3, 2012
+	- Made CopyFileWithResume public
+	- Changed timestamp comparison when looking for changed files to allow for a 2 second difference
+
+Version 2.0.4414; February 2, 2012
+	- Added CopyDirectoryWithResume to the FileTools class
+
 Version 2.0.4275; September 15, 2011
 	- Updated to Visual Studio 2010
 
