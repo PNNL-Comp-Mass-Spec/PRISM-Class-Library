@@ -666,14 +666,14 @@ Namespace Files
 
 								Case FileOverwriteMode.OverwriteIfSourceNewer
 									If fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc OrElse _
-									  (fiSourceFile.LastWriteTimeUtc = fiExistingFile.LastWriteTimeUtc And fiExistingFile.Length = fiSourceFile.Length) Then
+									 (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) AndAlso fiExistingFile.Length = fiSourceFile.Length) Then
 										blnCopyFile = False
 									End If
 
 								Case FileOverwriteMode.OverWriteIfDateOrLengthDiffer
 									' File exists; if size and last modified time are the same then don't copy
 
-									If fiSourceFile.LastWriteTimeUtc = fiExistingFile.LastWriteTimeUtc AndAlso fiExistingFile.Length = fiSourceFile.Length Then
+									If NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) AndAlso fiExistingFile.Length = fiSourceFile.Length Then
 										blnCopyFile = False
 									End If
 
@@ -771,7 +771,9 @@ Namespace Files
 			Dim dtSourceFileLastWriteTimeUTC As System.DateTime
 			Dim strSourceFileLastWriteTime As String
 
-			Try			
+			Dim swFilePart As System.IO.FileStream = Nothing
+
+			Try
 				If mChunkSizeMB < 1 Then mChunkSizeMB = 1
 				intChunkSizeBytes = mChunkSizeMB * 1024 * 1024
 
@@ -783,7 +785,7 @@ Namespace Files
 				blnResumeCopy = False
 
 				If fiSourceFile.Length <= intChunkSizeBytes Then
-					' Simply copy the file					
+					' Simply copy the file
 					UpdateCurrentStatus(CopyStatus.NormalCopy, fiSourceFile.FullName)
 					fiSourceFile.CopyTo(strTargetFilePath, True)
 					UpdateCurrentStatusIdle()
@@ -835,7 +837,7 @@ Namespace Files
 
 									Dim dtCachedLastWriteTimeUTC As System.DateTime
 									If System.DateTime.TryParse(lstSourceLines(2), dtCachedLastWriteTimeUTC) Then
-										If Math.Abs(dtSourceFileLastWriteTimeUTC.Subtract(dtCachedLastWriteTimeUTC).TotalSeconds) <= 2 Then
+										If NearlyEqualFileTimes(dtSourceFileLastWriteTimeUTC, dtCachedLastWriteTimeUTC) Then
 
 											' Source file is unchanged; safe to resume
 
@@ -853,8 +855,6 @@ Namespace Files
 					End If
 
 				End If
-
-				Dim swFilePart As System.IO.FileStream
 
 				If blnResumeCopy Then
 					UpdateCurrentStatus(CopyStatus.BufferedCopyResume, fiSourceFile.FullName)
@@ -896,7 +896,7 @@ Namespace Files
 				Dim buffer() As Byte
 				Dim intBytesSinceLastFlush As Int64
 
-				Dim lngBytesWritten As Int64 = 0
+				Dim lngBytesWritten As Int64 = lngFileOffsetStart
 				Dim sngTotalBytes As Single = srSourceFile.Length
 				Dim sngProgress As Single = 0	 ' Value between 0 and 100
 
@@ -942,12 +942,34 @@ Namespace Files
 				fiFilePartInfo.Delete()
 
 			Catch ex As Exception
+				If Not swFilePart Is Nothing Then
+					swFilePart.Close()
+				End If
+				System.GC.Collect()
+				System.Threading.Thread.Sleep(100)
+
 				Throw New System.IO.IOException("Exception copying file with resume: " & ex.Message, ex)
 				Return False
 			End Try
 
 			Return True
 
+		End Function
+
+		''' <summary>
+		''' Compares two timestamps (typically the LastWriteTime for a file)
+		''' If they agree within 2 seconds, then returns True, otherwise false
+		''' </summary>
+		''' <param name="dtTime1">First file time</param>
+		''' <param name="dtTime2">Second file time</param>
+		''' <returns>True if the times agree within 2 seconds</returns>
+		''' <remarks></remarks>
+		Protected Shared Function NearlyEqualFileTimes(ByVal dtTime1 As System.DateTime, ByVal dtTime2 As System.DateTime) As Boolean
+			If Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2 Then
+				Return True
+			Else
+				Return False
+			End If
 		End Function
 
 		Protected Shared Sub UpdateCurrentStatusIdle()

@@ -1,5 +1,9 @@
 Prism Class Library Log
 
+Version 2.0.4416; February 4, 2012
+	- Added function NearlyEqualFileTimes
+	- Fixed bug related to computing % complete when resuming file copy
+
 Version 2.0.4415; February 3, 2012
 	- Made CopyFileWithResume public
 	- Changed timestamp comparison when looking for changed files to allow for a 2 second difference
