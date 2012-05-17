@@ -203,7 +203,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
         Private Sub LogToFile(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
-            Dim LogFile As StreamWriter
+			Dim LogFile As StreamWriter = Nothing
             Dim FormattedLogMessage As String
 
             ' don't log to file if no file name given
@@ -454,68 +454,64 @@ Namespace Logging
         ''' <param name="type">The ILogger error type.</param>
         ''' <param name="message">The message to post.</param>
         Private Function PostLogEntry(ByVal type As String, ByVal message As String) As Boolean
-            Dim dbCn As SqlConnection
-            Dim sc As SqlCommand
+			Dim sc As SqlCommand
             Dim Outcome As Boolean = False
 
             Try
                 m_error_list.Clear()
                 ' create the database connection
                 '
-                Dim cnStr As String = m_connection_str
-                dbCn = New SqlConnection(cnStr)
-                AddHandler dbCn.InfoMessage, New SqlInfoMessageEventHandler(AddressOf OnInfoMessage)
-                dbCn.Open()
+				Dim cnStr As String = m_connection_str
+				Using dbCn As SqlConnection = New SqlConnection(cnStr)
+					AddHandler dbCn.InfoMessage, New SqlInfoMessageEventHandler(AddressOf OnInfoMessage)
+					dbCn.Open()
 
-                ' create the command object
-                '
-                sc = New SqlCommand("PostLogEntry", dbCn)
-                sc.CommandType = CommandType.StoredProcedure
+					' create the command object
+					'
+					sc = New SqlCommand("PostLogEntry", dbCn)
+					sc.CommandType = CommandType.StoredProcedure
 
-                ' define parameters for command object
-                '
-                Dim myParm As SqlParameter
-                '
-                ' define parameter for stored procedure's return value
-                '
-                myParm = sc.Parameters.Add("@Return", SqlDbType.Int)
-                myParm.Direction = ParameterDirection.ReturnValue
-                '
-                ' define parameters for the stored procedure's arguments
-                '
-                myParm = sc.Parameters.Add("@type", SqlDbType.VarChar, 50)
-                myParm.Direction = ParameterDirection.Input
-                myParm.Value = type
+					' define parameters for command object
+					'
+					Dim myParm As SqlParameter
+					'
+					' define parameter for stored procedure's return value
+					'
+					myParm = sc.Parameters.Add("@Return", SqlDbType.Int)
+					myParm.Direction = ParameterDirection.ReturnValue
+					'
+					' define parameters for the stored procedure's arguments
+					'
+					myParm = sc.Parameters.Add("@type", SqlDbType.VarChar, 50)
+					myParm.Direction = ParameterDirection.Input
+					myParm.Value = type
 
-                myParm = sc.Parameters.Add("@message", SqlDbType.VarChar, 500)
-                myParm.Direction = ParameterDirection.Input
-                myParm.Value = message
+					myParm = sc.Parameters.Add("@message", SqlDbType.VarChar, 500)
+					myParm.Direction = ParameterDirection.Input
+					myParm.Value = message
 
-                myParm = sc.Parameters.Add("@postedBy", SqlDbType.VarChar, 50)
-                myParm.Direction = ParameterDirection.Input
-                myParm.Value = ModuleName
+					myParm = sc.Parameters.Add("@postedBy", SqlDbType.VarChar, 50)
+					myParm.Direction = ParameterDirection.Input
+					myParm.Value = ModuleName
 
-                ' execute the stored procedure
-                '
-                sc.ExecuteNonQuery()
+					' execute the stored procedure
+					'
+					sc.ExecuteNonQuery()
 
-                ' get return value
-                '
-                Dim ret As Object
-                ret = sc.Parameters("@Return").Value
+					' get return value
+					'
+					Dim ret As Object
+					ret = sc.Parameters("@Return").Value
 
-                ' if we made it this far, we succeeded
-                '
-                Outcome = True
+				End Using
 
-            Catch ex As Exception
-                PostError("Failed to post log entry in database.", ex, True)
-            Finally
-                If Not dbCn Is Nothing Then
-                    dbCn.Close()
-                    dbCn.Dispose()
-                End If
-            End Try
+				' if we made it this far, we succeeded
+				'
+				Outcome = True
+
+			Catch ex As Exception
+				PostError("Failed to post log entry in database.", ex, True)			
+			End Try
 
             Return Outcome
 

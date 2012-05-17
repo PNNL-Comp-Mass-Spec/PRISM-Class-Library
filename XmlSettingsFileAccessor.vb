@@ -288,7 +288,7 @@ Namespace Files
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a String.</return>
         Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As String, Optional ByRef valueNotPresent As Boolean = False) As String
-            Dim strResult As String
+			Dim strResult As String = Nothing
             Dim sectionNameInFile As String
             Dim keyNameInFile As String
 
@@ -304,13 +304,13 @@ Namespace Files
                 End If
             End If
 
-            If strResult Is Nothing Then
-                valueNotPresent = True
-                Return valueIfMissing
-            Else
-                valueNotPresent = False
-                Return strResult
-            End If
+			If strResult Is Nothing Then
+				valueNotPresent = True
+				Return valueIfMissing
+			Else
+				valueNotPresent = False
+				Return strResult
+			End If
         End Function
 
         ''' <summary>

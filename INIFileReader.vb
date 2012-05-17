@@ -79,8 +79,7 @@ Namespace Files
         ''' </summary>
         Private Sub InitIniFileReader(ByVal IniFilename As String, ByVal IsCaseSensitive As Boolean)
             Dim fi As FileInfo
-            Dim s As String
-            Dim tr As TextReader
+            Dim s As String            
             m_CaseSensitive = IsCaseSensitive
             m_XmlDoc = New XmlDocument
 
@@ -99,20 +98,21 @@ Namespace Files
                 m_XmlDoc.LoadXml("<?xml version=""1.0"" encoding=""UTF-8""?><sections></sections>")
                 Try
                     fi = New FileInfo(IniFilename)
-                    If (fi.Exists) Then
-                        tr = fi.OpenText
-                        s = tr.ReadLine()
-                        Do While Not s Is Nothing
-                            ParseLineXml(s, m_XmlDoc)
-                            s = tr.ReadLine()
-                        Loop
-                        m_IniFilename = IniFilename
-                        m_initialized = True
-                    Else
-                        m_XmlDoc.Save(IniFilename)
-                        m_IniFilename = IniFilename
-                        m_initialized = True
-                    End If
+					If (fi.Exists) Then
+						Using tr As TextReader = fi.OpenText
+							s = tr.ReadLine()
+							Do While Not s Is Nothing
+								ParseLineXml(s, m_XmlDoc)
+								s = tr.ReadLine()
+							Loop
+						End Using
+						m_IniFilename = IniFilename
+						m_initialized = True
+					Else
+						m_XmlDoc.Save(IniFilename)
+						m_IniFilename = IniFilename
+						m_initialized = True
+					End If
                 Catch e As Exception
                     If Not IsNothing(m_ExceptionLogger) Then
                         m_ExceptionLogger.PostError("Failed to read INI file.", e, True)
@@ -120,11 +120,7 @@ Namespace Files
                     If NotifyOnException Then
                         Throw New Exception("Failed to read INI file.")
                     End If
-                Finally
-                    If (Not tr Is Nothing) Then
-                        tr.Close()
-                    End If
-                End Try
+				End Try
             End Try
         End Sub
         ''' <summary>
