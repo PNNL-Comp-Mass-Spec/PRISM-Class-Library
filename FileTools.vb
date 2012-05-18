@@ -945,8 +945,7 @@ Namespace Files
 				If Not swFilePart Is Nothing Then
 					swFilePart.Close()
 				End If
-				System.GC.Collect()
-				System.Threading.Thread.Sleep(100)
+				Processes.clsProgRunner.GarbageCollectNow()
 
 				Throw New System.IO.IOException("Exception copying file with resume: " & ex.Message, ex)
 				Return False

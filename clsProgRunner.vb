@@ -481,6 +481,46 @@ Namespace Processes
             End If
         End Sub
 
+		Public Shared Sub GarbageCollectNow()
+			Dim intMaxWaitTimeMSec As Integer = 1000
+			GarbageCollectNow(intMaxWaitTimeMSec)
+		End Sub
+
+		Public Shared Sub GarbageCollectNow(ByVal intMaxWaitTimeMSec As Integer)
+			Const THREAD_SLEEP_TIME_MSEC As Integer = 100
+
+			Dim intTotalThreadWaitTimeMsec As Integer
+			If intMaxWaitTimeMSec < 100 Then intMaxWaitTimeMSec = 100
+			If intMaxWaitTimeMSec > 5000 Then intMaxWaitTimeMSec = 5000
+
+			System.Threading.Thread.Sleep(100)
+
+			Try
+				Dim gcThread As New Threading.Thread(AddressOf GarbageCollectWaitForGC)
+				gcThread.Start()
+
+				intTotalThreadWaitTimeMsec = 0
+				While gcThread.IsAlive AndAlso intTotalThreadWaitTimeMsec < intMaxWaitTimeMSec
+					Threading.Thread.Sleep(THREAD_SLEEP_TIME_MSEC)
+					intTotalThreadWaitTimeMsec += THREAD_SLEEP_TIME_MSEC
+				End While
+				If gcThread.IsAlive Then gcThread.Abort()
+
+			Catch ex As Exception
+				' Ignore errors here
+			End Try
+
+		End Sub
+
+		Protected Shared Sub GarbageCollectWaitForGC()
+			Try
+				GC.Collect()
+				GC.WaitForPendingFinalizers()
+			Catch
+				' Ignore errors here
+			End Try
+		End Sub
+
         ''' <summary>
         ''' Handles any new data in the console output and console error streams
         ''' </summary>
@@ -605,17 +645,28 @@ Namespace Processes
                     Exit Sub
                 End Try
 
-                m_pid = m_Process.Id
+				Try
+					m_pid = m_Process.Id
+				Catch ex As Exception
+					' Exception looking up the process ID
+					m_pid = 999999999
+				End Try
 
-                If blnStandardOutputRedirected Then
-                    m_Process.BeginOutputReadLine()
+				If blnStandardOutputRedirected Then
+					Try
+						m_Process.BeginOutputReadLine()
 
-                    ' Attach a StreamReader to m_Process.StandardError 
-                    srConsoleError = m_Process.StandardError
+						' Attach a StreamReader to m_Process.StandardError 
+						srConsoleError = m_Process.StandardError
 
-                    ' Do not attach a reader to m_Process.StandardOutput
-                    ' since we are asynchronously reading the console output
-                End If
+						' Do not attach a reader to m_Process.StandardOutput
+						' since we are asynchronously reading the console output
+
+					Catch ex As Exception
+						' Exception attaching the standard output
+						blnStandardOutputRedirected = False
+					End Try
+				End If
 
                 RaiseConditionalProgChangedEvent(Me)
 
@@ -623,67 +674,81 @@ Namespace Processes
                 ' until external process exits or class is commanded
                 ' to stop monitoring the process (m_doCleanup = true)
                 '
-                While Not (m_doCleanup Or m_Process.HasExited)
-                    m_Process.WaitForExit(m_monitorInterval)
-                End While
+				Do While Not (m_doCleanup)
 
-                ' need to free up resources used to keep
-                ' track of the external process
-                '
-                m_pid = 0
-                m_ExitCode = m_Process.ExitCode
+					Try
+						m_Process.WaitForExit(m_monitorInterval)
+						If m_Process.HasExited Then Exit Do
+					Catch ex As Exception
+						' Exception calling .WaitForExit or .HasExited; most likely the process has exited
+						Exit Do
+					End Try
 
-                If blnStandardOutputRedirected Then
-                    ' Read any console error text using srConsoleError
-                    HandleOutputStreams(srConsoleError)
+				Loop
 
-                    If Not srConsoleError Is Nothing Then srConsoleError.Close()
-                End If
+				' need to free up resources used to keep
+				' track of the external process
+				'
+				m_pid = 0
+				Try
+					m_ExitCode = m_Process.ExitCode
+				Catch ex As Exception
+					' Exception looking up ExitCode; most likely the process has exited
+					m_ExitCode = 0
+				End Try
 
-                m_Process.Close()
+				If blnStandardOutputRedirected Then
+					' Read any console error text using srConsoleError
+					HandleOutputStreams(srConsoleError)
 
-                If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode, _
-                    Logging.ILogger.logMsgType.logHealth, True)
+					If Not srConsoleError Is Nothing Then srConsoleError.Close()
+				End If
 
-                    If Not m_CachedConsoleError Is Nothing AndAlso m_CachedConsoleError.Length > 0 Then
-                        m_EventLogger.PostEntry("Cached error text for process " & m_name & ": " & m_CachedConsoleError.ToString, _
-                        Logging.ILogger.logMsgType.logError, True)
-                    End If
-                End If
+				Try
+					m_Process.Close()
+				Catch ex As Exception
+					' Exception closing the process; ignore
+				End Try
 
-                If Not m_ConsoleOutputStreamWriter Is Nothing Then
-                    ' Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
-                    System.Threading.Thread.Sleep(150)
-                    GC.Collect()
-                    GC.WaitForPendingFinalizers()
-                    System.Threading.Thread.Sleep(150)
+				If Not m_EventLogger Is Nothing Then
+					m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode, _
+					Logging.ILogger.logMsgType.logHealth, True)
 
-                    m_ConsoleOutputStreamWriter.Close()
-                End If
+					If Not m_CachedConsoleError Is Nothing AndAlso m_CachedConsoleError.Length > 0 Then
+						m_EventLogger.PostEntry("Cached error text for process " & m_name & ": " & m_CachedConsoleError.ToString, _
+						Logging.ILogger.logMsgType.logError, True)
+					End If
+				End If
 
-                ' decide whether or not to repeat starting
-                ' the external process again, or quit
-                '
-                If m_repeat And Not m_doCleanup Then
-                    ' repeat starting the process
-                    ' after waiting for minimum hold off time interval
-                    '
-                    m_state = States.Waiting
+				If Not m_ConsoleOutputStreamWriter Is Nothing Then
+					' Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
+					Dim intMaxWaitTimeMSec As Integer = 1000
+					GarbageCollectNow(intMaxWaitTimeMSec)
+					m_ConsoleOutputStreamWriter.Close()
+				End If
 
-                    RaiseConditionalProgChangedEvent(Me)
+				' decide whether or not to repeat starting
+				' the external process again, or quit
+				'
+				If m_repeat And Not m_doCleanup Then
+					' repeat starting the process
+					' after waiting for minimum hold off time interval
+					'
+					m_state = States.Waiting
 
-                    System.Threading.Thread.Sleep(m_holdOffTime)
+					RaiseConditionalProgChangedEvent(Me)
 
-                    m_state = States.Monitoring
-                Else
-                    ' don't repeat starting the process - just quit
-                    '
-                    m_state = States.NotMonitoring
-                    RaiseConditionalProgChangedEvent(Me)
-                    Exit Do
-                End If
-            Loop
+					System.Threading.Thread.Sleep(m_holdOffTime)
+
+					m_state = States.Monitoring
+				Else
+					' don't repeat starting the process - just quit
+					'
+					m_state = States.NotMonitoring
+					RaiseConditionalProgChangedEvent(Me)
+					Exit Do
+				End If
+			Loop
 
         End Sub
 
@@ -731,34 +796,29 @@ Namespace Processes
                 End Try
             End If
 
-            '********************************************************************************************************
-            '	DAC added
-            '********************************************************************************************************
             If m_state = States.Waiting And Kill Then  'Program not running, just abort thread
                 Try
-                    m_Thread.Abort()
+					m_Thread.Abort()
                 Catch ex As System.Threading.ThreadAbortException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
                 Catch ex As Exception
                     ThrowConditionalException(CType(ex, Exception), "Caught exception while trying to abort thread.")
                 End Try
             End If
-            '********************************************************************************************************
-            '	DAC addition end
-            '********************************************************************************************************
 
             If m_state = States.Monitoring Or m_state = States.Waiting Then
                 m_state = States.CleaningUp
                 m_doCleanup = True
-                Try
-                    m_Thread.Join()
-                Catch ex As System.Threading.ThreadStateException
-                    ThrowConditionalException(CType(ex, Exception), "Caught ThreadStateException while trying to join thread.")
-                Catch ex As System.Threading.ThreadInterruptedException
-                    ThrowConditionalException(CType(ex, Exception), "Caught ThreadInterruptedException while trying to join thread.")
-                Catch ex As Exception
-                    ThrowConditionalException(CType(ex, Exception), "Caught exception while trying to join thread.")
-                End Try
+				Try
+					' Attempt to re-join the thread (wait for 5 seconds, at most)
+					m_Thread.Join(5000)
+				Catch ex As System.Threading.ThreadStateException
+					ThrowConditionalException(CType(ex, Exception), "Caught ThreadStateException while trying to join thread.")
+				Catch ex As System.Threading.ThreadInterruptedException
+					ThrowConditionalException(CType(ex, Exception), "Caught ThreadInterruptedException while trying to join thread.")
+				Catch ex As Exception
+					ThrowConditionalException(CType(ex, Exception), "Caught exception while trying to join thread.")
+				End Try
                 m_state = States.NotMonitoring
             End If
         End Sub

@@ -1,5 +1,9 @@
 Prism Class Library Log
 
+Version 2.1.4520; May 17, 2012
+	- Updated to .NET 4.0
+	- Added exception handlers in clsProgRunner to handle m_Process no longer being associated with an actual process
+
 Version 2.0.4416; February 4, 2012
 	- Added function NearlyEqualFileTimes
 	- Fixed bug related to computing % complete when resuming file copy
