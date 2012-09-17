@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.1.4643; September 17, 2012
+	- Added clsExecuteDatabaseSP
+
 Version 2.1.4520; May 17, 2012
 	- Updated to .NET 4.0
 	- Added exception handlers in clsProgRunner to handle m_Process no longer being associated with an actual process
