@@ -94,7 +94,7 @@ Namespace DataBase
 		''' <param name="SpCmd">SQL command object containing stored procedure params</param>
 		''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
 		''' <remarks></remarks>
-		Public Function ExecuteSP(ByRef SpCmd As System.Data.SqlClient.SqlCommand) As Integer
+		Public Function ExecuteSP(ByVal SpCmd As System.Data.SqlClient.SqlCommand) As Integer
 
 			Return ExecuteSP(SpCmd, Nothing, DEFAULT_SP_RETRY_COUNT, DEFAULT_SP_RETRY_DELAY_SEC)
 
@@ -107,8 +107,8 @@ Namespace DataBase
 		''' <param name="MaxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
 		''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
 		''' <remarks></remarks>
-		Public Function ExecuteSP(ByRef SpCmd As System.Data.SqlClient.SqlCommand, _
-								  ByVal MaxRetryCount As Integer) As Integer
+		Public Function ExecuteSP(ByVal SpCmd As System.Data.SqlClient.SqlCommand, _
+		  ByVal MaxRetryCount As Integer) As Integer
 
 			Return ExecuteSP(SpCmd, Nothing, MaxRetryCount, DEFAULT_SP_RETRY_DELAY_SEC)
 
@@ -122,9 +122,9 @@ Namespace DataBase
 		''' <param name="RetryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
 		''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
 		''' <remarks></remarks>
-		Public Function ExecuteSP(ByRef SpCmd As System.Data.SqlClient.SqlCommand, _
-								  ByVal MaxRetryCount As Integer, _
-								  ByVal RetryDelaySeconds As Integer) As Integer
+		Public Function ExecuteSP(ByVal SpCmd As System.Data.SqlClient.SqlCommand, _
+		  ByVal MaxRetryCount As Integer, _
+		  ByVal RetryDelaySeconds As Integer) As Integer
 
 			Return ExecuteSP(SpCmd, Nothing, MaxRetryCount, RetryDelaySeconds)
 
@@ -137,8 +137,7 @@ Namespace DataBase
 		''' <param name="OutTable">NOTHING when called; if SP successful, contains data table on return</param>
 		''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
 		''' <remarks></remarks>
-		Public Function ExecuteSP(ByRef SpCmd As System.Data.SqlClient.SqlCommand, _
-		  ByRef OutTable As System.Data.DataTable) As Integer
+		Public Function ExecuteSP(ByVal SpCmd As System.Data.SqlClient.SqlCommand, ByRef OutTable As System.Data.DataTable) As Integer
 			Return ExecuteSP(SpCmd, OutTable, DEFAULT_SP_RETRY_COUNT, DEFAULT_SP_RETRY_DELAY_SEC)
 		End Function
 
@@ -151,10 +150,7 @@ Namespace DataBase
 		''' <param name="RetryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
 		''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
 		''' <remarks></remarks>
-		Public Function ExecuteSP(ByRef SpCmd As System.Data.SqlClient.SqlCommand, _
-				ByRef OutTable As System.Data.DataTable, _
-				ByVal MaxRetryCount As Integer, _
-				ByVal RetryDelaySeconds As Integer) As Integer
+		Public Function ExecuteSP(ByVal SpCmd As System.Data.SqlClient.SqlCommand, ByRef OutTable As System.Data.DataTable, ByVal MaxRetryCount As Integer, ByVal RetryDelaySeconds As Integer) As Integer
 
 			Dim ResCode As Integer = -9999	'If this value is in error msg, then exception occurred before ResCode was set
 			Dim ErrMsg As String
