@@ -1,5 +1,12 @@
 Prism Class Library Log
 
+Version 2.1.4756; January 8, 2013
+	- Added CopyFileUsingLocks
+		- Only used for files 20 MB or larger
+		- Enabled, by default, when calling CopyDirectoryEx
+		- Disable using clsFileTools.UseLockFileFolder = False
+		- Define the manager name using clsFileTools.ManagerName = "MgrName"
+
 Version 2.1.4643; September 17, 2012
 	- Added clsExecuteDatabaseSP
 

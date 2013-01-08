@@ -1239,7 +1239,7 @@ PRISM
 	<summary>Copies a source file to the destination file. Allows overwriting.</summary>
 	<param name="SourcePath">The source file path.</param>
 	<param name="DestPath">The destination file path.</param>
-	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+	<param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
 </member><member name="M:PRISM.Files.clsFileTools.CopyFileEx(System.String,System.String,System.Boolean)">
 	<summary>Copies a source file to the destination file. Allows overwriting.</summary>
 	<remarks>
@@ -1252,7 +1252,28 @@ PRISM
  </remarks>
 	<param name="SourcePath">The source file path.</param>
 	<param name="DestPath">The destination file path.</param>
-	<param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
+	<param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
+</member><member name="M:PRISM.Files.clsFileTools.CopyFileUsingLocks(System.String,System.String,System.IO.FileInfo,System.String,System.String,System.Boolean)">
+	<summary>
+	</summary>
+	<param name="strLockFolderPathSource">Path to the lock folder for the source file; can be an empty string</param>
+	<param name="strLockFolderPathTarget">Path to the lock folder for the target file; can be an empty string</param>
+	<param name="fiSource"></param>
+	<param name="strTargetFilePath"></param>
+	<param name="strManagerName"></param>
+	<param name="Overwrite"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.CreateLockFile(System.IO.DirectoryInfo,System.IO.FileInfo,System.String,System.String)">
+	<summary>
+ Create a lock file in the specified lock folder
+ </summary>
+	<param name="diLockFolder"></param>
+	<param name="fiSource"></param>
+	<param name="strTargetFilePath"></param>
+	<param name="strManagerName"></param>
+	<returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String)">
 	<summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
