@@ -12,7 +12,7 @@ Option Strict On
 ' Website: http://ncrr.pnnl.gov/ or http://www.sysbio.org/resources/staff/
 ' -------------------------------------------------------------------------------
 Module modMain
-	Public Const PROGRAM_DATE As String = "February 3, 2012"
+	Public Const PROGRAM_DATE As String = "January 9, 2013"
 
 	Private mSourceFolderPath As String = String.Empty
 	Private mTargetFolderPath As String = String.Empty
@@ -71,7 +71,7 @@ Module modMain
 				Console.WriteLine("Overwrite mode: " & mOverwriteMode.ToString())
 				Console.WriteLine()
 
-				bSuccess = PRISM.Files.clsFileTools.CopyDirectoryWithResume(mSourceFolderPath, mTargetFolderPath, mRecurse, mOverwriteMode, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
+				bSuccess = mFileTools.CopyDirectoryWithResume(mSourceFolderPath, mTargetFolderPath, mRecurse, mOverwriteMode, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
 
 				If bSuccess Then
 					Console.WriteLine()
