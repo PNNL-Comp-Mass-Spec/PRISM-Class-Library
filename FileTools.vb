@@ -314,6 +314,8 @@ Namespace Files
 					strLockFolderPathSource = IO.Path.Combine(GetServerShareBase(fiSource.Directory.Root.FullName), "DMS_LockFiles")
 					If System.IO.Directory.Exists(strLockFolderPathSource) Then
 						blnUseLockFile = True
+					Else
+						strLockFolderPathSource = String.Empty
 					End If
 				End If
 			End If
@@ -326,6 +328,8 @@ Namespace Files
 					strLockFolderPathTarget = IO.Path.Combine(GetServerShareBase(fiTarget.Directory.Root.FullName), "DMS_LockFiles")
 					If System.IO.Directory.Exists(strLockFolderPathTarget) Then
 						blnUseLockFile = True
+					Else
+						strLockFolderPathTarget = String.Empty
 					End If
 				End If
 			End If
