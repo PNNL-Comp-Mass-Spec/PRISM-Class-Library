@@ -53,7 +53,6 @@ Namespace Files
 		Private mFlushThresholdMB As Integer = DEFAULT_FLUSH_THRESHOLD_MB
 
 		Private mDebugLevel As Integer = 1
-		Private mUseLockFileFolder As Boolean = True
 		Private mManagerName As String = "Unknown-Manager"
 
 #End Region
@@ -147,14 +146,22 @@ Namespace Files
 			End Set
 		End Property
 
-		Public Property UseLockFileFolder As Boolean
-			Get
-				Return mUseLockFileFolder
-			End Get
-			Set(value As Boolean)
-				mUseLockFileFolder = value
-			End Set
-		End Property
+#End Region
+
+#Region "Constructor"
+		''' <summary>
+		''' Constructor
+		''' </summary>
+		''' <remarks></remarks>
+		Public Sub clsFileTools()
+			mManagerName = "Unknown-Manager"
+			mDebugLevel = 1
+		End Sub
+
+		Public Sub clsFileTools(strManagerName As String, intDebugLevel As Integer)
+			mManagerName = strManagerName
+			mDebugLevel = intDebugLevel
+		End Sub
 #End Region
 
 #Region "CheckTerminator function"
@@ -280,7 +287,6 @@ Namespace Files
 		End Sub
 
 #End Region
-
 
 #Region "Lock File Copying functions"
 
@@ -807,24 +813,14 @@ Namespace Files
 
 						If Overwrite Then
 							UpdateCurrentStatus(CopyStatus.NormalCopy, ChildFile.FullName)
-							If mUseLockFileFolder Then
-								CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=True)
-							Else
-								ChildFile.CopyTo(sTargetFilePath, True)
-							End If
-
+							CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=True)
 						Else
 							' If Overwrite = false, copy the file only if it does not exist
 							' this is done to avoid an IOException if a file already exists
 							' this way the other files can be copied anyway...
 							If Not System.IO.File.Exists(sTargetFilePath) Then
 								UpdateCurrentStatus(CopyStatus.NormalCopy, ChildFile.FullName)
-								If mUseLockFileFolder Then
-									CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=False)
-								Else
-									ChildFile.CopyTo(sTargetFilePath, False)
-								End If
-
+								CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=False)
 							End If
 						End If
 

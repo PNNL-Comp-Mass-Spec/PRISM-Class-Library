@@ -1205,6 +1205,11 @@ PRISM
  Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
  </summary>
 	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.clsFileTools">
+	<summary>
+ Constructor
+ </summary>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.Boolean,System.String)">
 	<summary>Modifies input directory path string depending on optional settings.</summary>
 	<param name="InpFolder">The input directory path.</param>
