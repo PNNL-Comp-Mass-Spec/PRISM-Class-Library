@@ -1,11 +1,15 @@
 Prism Class Library Log
 
-Version 2.1.4756; January 8, 2013
+Version 2.2.4756; January 8, 2013
+	- Changed most of the functions in clsFileTools to not be Shared
+		- Required to allow calling programs to utilize events raised by the class
 	- Added CopyFileUsingLocks
 		- Only used for files 20 MB or larger
 		- Enabled, by default, when calling CopyDirectoryEx
 		- Disable using clsFileTools.UseLockFileFolder = False
 		- Define the manager name using clsFileTools.ManagerName = "MgrName"
+	- Added MoveDirectory
+
 
 Version 2.1.4643; September 17, 2012
 	- Added clsExecuteDatabaseSP

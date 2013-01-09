@@ -16,6 +16,8 @@ Namespace Files
 		''' <param name="filename">The file's full path.</param>
 		Public Event CopyingFile(ByVal filename As String)
 
+		Public Event DebugEvent(ByVal CurrentTask As String, ByVal TaskDetail As String)
+
 		''' <summary>Event is raised before copying begins.</summary>
 		''' <param name="filename">The file's full path.</param>
 		Public Event ResumingFileCopy(ByVal filename As String)
@@ -50,8 +52,8 @@ Namespace Files
 		Private mChunkSizeMB As Integer = DEFAULT_CHUNK_SIZE_MB
 		Private mFlushThresholdMB As Integer = DEFAULT_FLUSH_THRESHOLD_MB
 
+		Private mDebugLevel As Integer = 1
 		Private mUseLockFileFolder As Boolean = True
-		Private mShowDebugMessages As Boolean = False
 		Private mManagerName As String = "Unknown-Manager"
 
 #End Region
@@ -127,21 +129,21 @@ Namespace Files
 			End Get
 		End Property
 
+		Public Property DebugLevel As Integer
+			Get
+				Return mDebugLevel
+			End Get
+			Set(value As Integer)
+				mDebugLevel = value
+			End Set
+		End Property
+
 		Public Property ManagerName As String
 			Get
 				Return mManagerName
 			End Get
 			Set(value As String)
 				mManagerName = value
-			End Set
-		End Property
-
-		Public Property ShowDebugMessages() As Boolean
-			Get
-				Return mShowDebugMessages
-			End Get
-			Set(value As Boolean)
-				mShowDebugMessages = value
 			End Set
 		End Property
 
@@ -268,8 +270,8 @@ Namespace Files
 				System.IO.Directory.CreateDirectory(dirPath)
 			End If
 
-			If mShowDebugMessages Then
-				Console.WriteLine("Copying file with CopyFileEx: " & SourcePath & ControlChars.NewLine & " to " & DestPath)
+			If mDebugLevel >= 3 Then
+				RaiseEvent DebugEvent("Copying file with CopyFileEx", SourcePath & " to " & DestPath)
 			End If
 
 			UpdateCurrentStatus(CopyStatus.NormalCopy, SourcePath)
@@ -350,8 +352,8 @@ Namespace Files
 			Dim intSourceFileSizeMB As Integer
 
 			If Not Overwrite AndAlso System.IO.File.Exists(strTargetFilePath) Then
-				If mShowDebugMessages Then
-					Console.WriteLine("Skipping file since target exists: " & strTargetFilePath)
+				If mDebugLevel >= 2 Then
+					RaiseEvent DebugEvent("Skipping file since target exists", strTargetFilePath)
 				End If
 				Return True
 			End If
@@ -425,10 +427,11 @@ Namespace Files
 
 					' Server resources exceed the thresholds
 					' Sleep for 1 to 30 seconds, depending on intMBBacklogSource and intMBBacklogTarget
-					' We compute intSleepTimeMsec using the assumption that data is being copied to/from the server at a rate of 100 MB/sec (a reasonable upper-bound)
+					' We compute intSleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
+					' This is faster than reality, but helps minimize waiting too long between checking
 
 					Dim dblSleepTimeSec As Double
-					dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 100.0
+					dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0
 					If dblSleepTimeSec < 1 Then dblSleepTimeSec = 1
 					If dblSleepTimeSec > 30 Then dblSleepTimeSec = 30
 
@@ -437,8 +440,8 @@ Namespace Files
 					System.Threading.Thread.Sleep(CInt(dblSleepTimeSec) * 1000)
 				Loop
 
-				If mShowDebugMessages Then
-					Console.WriteLine("Copying file using Locks: " & fiSource.FullName & ControlChars.NewLine & " to " & strTargetFilePath)
+				If mDebugLevel >= 1 Then
+					RaiseEvent DebugEvent("Copying file using Locks", fiSource.FullName & " to " & strTargetFilePath)
 				End If
 
 				' Perform the copy
