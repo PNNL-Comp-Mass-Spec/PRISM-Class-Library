@@ -291,24 +291,24 @@ Namespace Files.Forms
         ''' Shows the dialog
         ''' </summary>
         ''' <param name="owner">The window to use as the owner</param>
-        Public Overloads Function ShowDialog(ByVal owner As System.Windows.Forms.IWin32Window) As Boolean
-            If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
-                Throw New InvalidOperationException
-            End If
-            Dim bi As New BrowseInfo
+		Public Function ShowDialog(ByVal owner As System.Windows.Forms.IWin32Window) As Boolean
+			If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
+				Throw New InvalidOperationException
+			End If
+			Dim bi As New BrowseInfo
 
-            If Not (owner Is Nothing) Then
-                bi.hwndOwner = owner.Handle
-            End If
-            Return ShowDialogInternal(bi)
-        End Function
+			If Not (owner Is Nothing) Then
+				bi.hwndOwner = owner.Handle
+			End If
+			Return ShowDialogInternal(bi)
+		End Function
 
         ''' <summary>
         ''' Shows the dialog using active window as the owner
         ''' </summary>
-        Public Overloads Function ShowDialog() As Boolean
-            Return ShowDialog(System.Windows.Forms.Form.ActiveForm)
-        End Function
+		Public Function ShowDialog() As Boolean
+			Return ShowDialog(System.Windows.Forms.Form.ActiveForm)
+		End Function
 
         Private WM_USER As Integer = &H400
         Private BFFM_SETSTATUSTEXTA As Integer = WM_USER + 100
@@ -471,12 +471,12 @@ Namespace Files.Forms
             Return ret
         End Function
 
-        Protected Overloads Overrides Sub Dispose(ByVal disposing As Boolean)
-            If IntPtr.op_Inequality(pidlReturnedValue, IntPtr.Zero) Then
-                UnManagedMethods.SHMemFree(pidlReturnedValue)
-                pidlReturnedValue = IntPtr.Zero
-            End If
-        End Sub
+		Protected Overrides Sub Dispose(ByVal disposing As Boolean)
+			If IntPtr.op_Inequality(pidlReturnedValue, IntPtr.Zero) Then
+				UnManagedMethods.SHMemFree(pidlReturnedValue)
+				pidlReturnedValue = IntPtr.Zero
+			End If
+		End Sub
     End Class
 #End Region
 

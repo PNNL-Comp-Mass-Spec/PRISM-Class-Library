@@ -171,7 +171,7 @@ Namespace Files
 		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
 		''' <param name="TermChar">The specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
+		Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
 
 			'Overload for all parameters specified
 			Return CheckTerminatorEX(InpFolder, AddTerm, TermChar)
@@ -182,7 +182,7 @@ Namespace Files
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean) As String
+		Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean) As String
 
 			'Overload for using default termination character (DOS)
 			Return CheckTerminatorEX(InpFolder, AddTerm, TERMCHAR_DOS)
@@ -193,7 +193,7 @@ Namespace Files
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <param name="TermChar">The specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Function CheckTerminator(ByVal InpFolder As String, ByVal TermChar As String) As String
+		Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal TermChar As String) As String
 
 			'Overload for using "add character" as default
 			Return CheckTerminatorEX(InpFolder, TERM_ADD, TermChar)
@@ -203,7 +203,7 @@ Namespace Files
 		''' <summary>Assures the directory path ends with the DOS path seperation character.</summary>
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Function CheckTerminator(ByVal InpFolder As String) As String
+		Public Shared Function CheckTerminator(ByVal InpFolder As String) As String
 
 			'Overload for using all defaults (add DOS terminator char)
 			Return CheckTerminatorEX(InpFolder, TERM_ADD, TERMCHAR_DOS)
@@ -215,7 +215,7 @@ Namespace Files
 		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
 		''' <param name="TermChar">The specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Private Function CheckTerminatorEX(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
+		Private Shared Function CheckTerminatorEX(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
 
 			'Modifies input folder string depending on optional settings.
 			'		m_Addterm=True forces string to end with specified m_TermChar.
@@ -239,7 +239,7 @@ Namespace Files
 		''' <summary>Copies a source file to the destination file. Does not allow overwriting.</summary>
 		''' <param name="SourcePath">The source file path.</param>
 		''' <param name="DestPath">The destination file path.</param>
-		Public Overloads Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String)
+		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String)
 
 			'Overload with overwrite set to default=FALSE
 			CopyFileEx(SourcePath, DestPath, COPY_NO_OVERWRITE)
@@ -250,7 +250,7 @@ Namespace Files
 		''' <param name="SourcePath">The source file path.</param>
 		''' <param name="DestPath">The destination file path.</param>
 		''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-		Public Overloads Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean)
+		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean)
 
 			'Overload with no defaults
 			CopyFileEx(SourcePath, DestPath, OverWrite)
@@ -614,8 +614,7 @@ Namespace Files
 		''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 		''' <param name="SourcePath">The source directory path.</param>
 		''' <param name="DestPath">The destination directory path.</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String)
+		Public Sub CopyDirectory(ByVal SourcePath As String, ByVal DestPath As String)
 
 			'Overload with overwrite set to default=FALSE
 			CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE)
@@ -625,9 +624,9 @@ Namespace Files
 		''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 		''' <param name="SourcePath">The source directory path.</param>
 		''' <param name="DestPath">The destination directory path.</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal strManagerName As String)
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal strManagerName As String)
 
 			'Overload with overwrite set to default=FALSE
 			CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, strManagerName)
@@ -638,9 +637,9 @@ Namespace Files
 		''' <param name="SourcePath">The source directory path.</param>
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal FileNamesToSkip As Generic.List(Of String))
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal FileNamesToSkip As Generic.List(Of String))
 
 			'Overload with overwrite set to default=FALSE
 			CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, FileNamesToSkip)
@@ -651,9 +650,9 @@ Namespace Files
 		''' <param name="SourcePath">The source directory path.</param>
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal OverWrite As Boolean)
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal OverWrite As Boolean)
 
 			'Overload with no defaults
 			Dim bReadOnly As Boolean = False
@@ -665,10 +664,10 @@ Namespace Files
 		''' <param name="SourcePath">The source directory path.</param>
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal OverWrite As Boolean, _
-	 ByVal strManagerName As String)
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal OverWrite As Boolean, _
+  ByVal strManagerName As String)
 
 			'Overload with no defaults
 			Dim bReadOnly As Boolean = False
@@ -681,10 +680,10 @@ Namespace Files
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal OverWrite As Boolean, _
-	 ByVal FileNamesToSkip As Generic.List(Of String))
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal OverWrite As Boolean, _
+  ByVal FileNamesToSkip As Generic.List(Of String))
 
 			'Overload with no defaults
 			Dim bReadOnly As Boolean = False
@@ -697,10 +696,10 @@ Namespace Files
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal OverWrite As Boolean, _
-	 ByVal bReadOnly As Boolean)
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal OverWrite As Boolean, _
+  ByVal bReadOnly As Boolean)
 
 			'Overload with no defaults
 			Dim SetAttribute As Boolean = True
@@ -714,11 +713,11 @@ Namespace Files
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal OverWrite As Boolean, _
-	 ByVal bReadOnly As Boolean, _
-	 ByVal FileNamesToSkip As Generic.List(Of String))
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal OverWrite As Boolean, _
+  ByVal bReadOnly As Boolean, _
+  ByVal FileNamesToSkip As Generic.List(Of String))
 
 			'Overload with no defaults
 			Dim SetAttribute As Boolean = True
@@ -732,12 +731,12 @@ Namespace Files
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-		Public Overloads Sub CopyDirectory(ByVal SourcePath As String, _
-	 ByVal DestPath As String, _
-	 ByVal OverWrite As Boolean, _
-	 ByVal bReadOnly As Boolean, _
-	 ByVal FileNamesToSkip As Generic.List(Of String), _
-	 ByVal strManagerName As String)
+		Public Sub CopyDirectory(ByVal SourcePath As String, _
+  ByVal DestPath As String, _
+  ByVal OverWrite As Boolean, _
+  ByVal bReadOnly As Boolean, _
+  ByVal FileNamesToSkip As Generic.List(Of String), _
+  ByVal strManagerName As String)
 
 			'Overload with no defaults
 			Dim SetAttribute As Boolean = True
@@ -1428,7 +1427,7 @@ Namespace Files
 		''' <summary>Get the directory size.</summary>
 		''' <param name="DirPath">The path to the directory.</param>
 		''' <returns>The directory size.</returns>
-		Public Overloads Function GetDirectorySize(ByVal DirPath As String) As Long
+		Public Function GetDirectorySize(ByVal DirPath As String) As Long
 
 			' Overload for returning directory size only
 
@@ -1444,7 +1443,7 @@ Namespace Files
 		''' <param name="FileCount">The number of files in the entire directory tree.</param>
 		''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
 		''' <returns>The directory size.</returns>
-		Public Overloads Function GetDirectorySize(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
+		Public Function GetDirectorySize(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
 
 			'Overload for returning directory size, file count and directory count for entire directory tree
 			Return GetDirectorySizeEX(DirPath, FileCount, SubDirCount)

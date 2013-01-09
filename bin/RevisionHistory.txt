@@ -1,5 +1,10 @@
 Prism Class Library Log
 
+
+Version 2.2.4757; January 9, 2013
+	- Changed the CheckTerminator function back to a shared (aka static) function
+	- Removed the Overloads keyword from function signatures since not necessary
+
 Version 2.2.4756; January 8, 2013
 	- Changed most of the functions in clsFileTools to not be Shared
 		- Required to allow calling programs to utilize events raised by the class
