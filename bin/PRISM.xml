@@ -1205,7 +1205,7 @@ PRISM
  Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
  </summary>
 	<remarks></remarks>
-</member><member name="M:PRISM.Files.clsFileTools.clsFileTools">
+</member><member name="M:PRISM.Files.clsFileTools.#ctor">
 	<summary>
  Constructor
  </summary>

@@ -153,12 +153,12 @@ Namespace Files
 		''' Constructor
 		''' </summary>
 		''' <remarks></remarks>
-		Public Sub clsFileTools()
+		Public Sub New()
 			mManagerName = "Unknown-Manager"
 			mDebugLevel = 1
 		End Sub
 
-		Public Sub clsFileTools(strManagerName As String, intDebugLevel As Integer)
+		Public Sub New(strManagerName As String, intDebugLevel As Integer)
 			mManagerName = strManagerName
 			mDebugLevel = intDebugLevel
 		End Sub
