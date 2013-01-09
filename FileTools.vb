@@ -171,8 +171,7 @@ Namespace Files
 		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
 		''' <param name="TermChar">The specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean, _
-		 ByVal TermChar As String) As String
+		Public Overloads Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
 
 			'Overload for all parameters specified
 			Return CheckTerminatorEX(InpFolder, AddTerm, TermChar)
@@ -183,7 +182,7 @@ Namespace Files
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean) As String
+		Public Overloads Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean) As String
 
 			'Overload for using default termination character (DOS)
 			Return CheckTerminatorEX(InpFolder, AddTerm, TERMCHAR_DOS)
@@ -194,7 +193,7 @@ Namespace Files
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <param name="TermChar">The specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Shared Function CheckTerminator(ByVal InpFolder As String, ByVal TermChar As String) As String
+		Public Overloads Function CheckTerminator(ByVal InpFolder As String, ByVal TermChar As String) As String
 
 			'Overload for using "add character" as default
 			Return CheckTerminatorEX(InpFolder, TERM_ADD, TermChar)
@@ -204,7 +203,7 @@ Namespace Files
 		''' <summary>Assures the directory path ends with the DOS path seperation character.</summary>
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <returns>The modified directory path.</returns>
-		Public Overloads Shared Function CheckTerminator(ByVal InpFolder As String) As String
+		Public Overloads Function CheckTerminator(ByVal InpFolder As String) As String
 
 			'Overload for using all defaults (add DOS terminator char)
 			Return CheckTerminatorEX(InpFolder, TERM_ADD, TERMCHAR_DOS)
@@ -216,7 +215,7 @@ Namespace Files
 		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
 		''' <param name="TermChar">The specified directory seperation character.</param>
 		''' <returns>The modified directory path.</returns>
-		Private Shared Function CheckTerminatorEX(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
+		Private Function CheckTerminatorEX(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
 
 			'Modifies input folder string depending on optional settings.
 			'		m_Addterm=True forces string to end with specified m_TermChar.
@@ -1429,7 +1428,7 @@ Namespace Files
 		''' <summary>Get the directory size.</summary>
 		''' <param name="DirPath">The path to the directory.</param>
 		''' <returns>The directory size.</returns>
-		Public Overloads Shared Function GetDirectorySize(ByVal DirPath As String) As Long
+		Public Overloads Function GetDirectorySize(ByVal DirPath As String) As Long
 
 			' Overload for returning directory size only
 
@@ -1445,7 +1444,7 @@ Namespace Files
 		''' <param name="FileCount">The number of files in the entire directory tree.</param>
 		''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
 		''' <returns>The directory size.</returns>
-		Public Overloads Shared Function GetDirectorySize(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
+		Public Overloads Function GetDirectorySize(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
 
 			'Overload for returning directory size, file count and directory count for entire directory tree
 			Return GetDirectorySizeEX(DirPath, FileCount, SubDirCount)
@@ -1457,7 +1456,7 @@ Namespace Files
 		''' <param name="FileCount">The number of files in the entire directory tree.</param>
 		''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
 		''' <returns>The directory size.</returns>
-		Private Shared Function GetDirectorySizeEX(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
+		Private Function GetDirectorySizeEX(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
 
 			' Returns the size of the specified directory, number of files in the directory tree, and number of subdirectories
 			' - Note: requires Imports System.IO
