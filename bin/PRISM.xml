@@ -1294,6 +1294,13 @@ PRISM
 	<param name="strManagerName"></param>
 	<returns></returns>
 	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.GetServerShareBase(System.String)">
+	<summary>
+ Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
+ </summary>
+	<param name="strServerSharePath"></param>
+	<returns></returns>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String)">
 	<summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
