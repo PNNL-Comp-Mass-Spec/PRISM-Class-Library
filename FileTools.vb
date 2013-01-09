@@ -598,7 +598,13 @@ Namespace Files
 			Return CType(Math.Round(System.DateTime.UtcNow.Subtract(New DateTime(2010, 1, 1)).TotalMilliseconds, 0), Int64)
 		End Function
 
-		Private Function GetServerShareBase(ByVal strServerSharePath As String) As String
+		''' <summary>
+		''' Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
+		''' </summary>
+		''' <param name="strServerSharePath"></param>
+		''' <returns></returns>
+		''' <remarks></remarks>
+		Public Function GetServerShareBase(ByVal strServerSharePath As String) As String
 			If strServerSharePath.StartsWith("\\") Then
 				Dim intSlashIndex As Integer
 				intSlashIndex = strServerSharePath.IndexOf("\", 2)
