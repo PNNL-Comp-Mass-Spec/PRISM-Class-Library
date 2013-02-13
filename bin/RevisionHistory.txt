@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.4785; February 6, 2013
+	- Added states Initializing and Starting
+	- Added sub JoinThreadNow
 
 Version 2.2.4757; January 9, 2013
 	- Changed the CheckTerminator function back to a shared (aka static) function
