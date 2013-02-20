@@ -12,7 +12,7 @@ Option Strict On
 ' Website: http://ncrr.pnnl.gov/ or http://www.sysbio.org/resources/staff/
 ' -------------------------------------------------------------------------------
 Module modMain
-	Public Const PROGRAM_DATE As String = "January 9, 2013"
+	Public Const PROGRAM_DATE As String = "February 19, 2013"
 
 	Private mSourceFolderPath As String = String.Empty
 	Private mTargetFolderPath As String = String.Empty
@@ -86,7 +86,7 @@ Module modMain
 			End If
 
 		Catch ex As Exception
-			Console.WriteLine("Error occurred in modMain->Main: " & ControlChars.NewLine & ex.Message)
+			ShowErrorMessage("Error occurred in modMain->Main: " & System.Environment.NewLine & ex.Message)
 			intReturnCode = -1
 		End Try
 
@@ -103,12 +103,14 @@ Module modMain
 		' Returns True if no problems; otherwise, returns false
 
 		Dim strValue As String = String.Empty
-		Dim strValidParameters() As String = New String() {"S", "Overwrite"}
+		Dim lstValidParameters As Generic.List(Of String) = New Generic.List(Of String) From {"S", "Overwrite"}
 		Dim strOverwriteValue As String = String.Empty
 
 		Try
 			' Make sure no invalid parameters are present
-			If objParseCommandLine.InvalidParametersPresent(strValidParameters) Then
+			If objParseCommandLine.InvalidParametersPresent(lstValidParameters) Then
+				ShowErrorMessage("Invalid commmand line parameters",
+				  (From item In objParseCommandLine.InvalidParameters(lstValidParameters) Select "/" + item).ToList())
 				Return False
 			Else
 				With objParseCommandLine
@@ -150,7 +152,7 @@ Module modMain
 
 						Else
 							' Unknown overwrite mode
-							ShowErrorMessage("Unknown overwrite mode: " & strOverwriteValue)							
+							ShowErrorMessage("Unknown overwrite mode: " & strOverwriteValue)
 							Return False
 						End If
 
@@ -162,9 +164,10 @@ Module modMain
 			End If
 
 		Catch ex As Exception
-			Console.WriteLine("Error parsing the command line parameters: " & ControlChars.NewLine & ex.Message)
-			Return False
+			ShowErrorMessage("Error parsing the command line parameters: " & System.Environment.NewLine & ex.Message)
 		End Try
+
+		Return False
 
 	End Function
 
@@ -185,6 +188,26 @@ Module modMain
 		Console.WriteLine(strSeparator)
 		Console.WriteLine()
 
+		WriteToErrorStream(strMessage)
+	End Sub
+
+	Private Sub ShowErrorMessage(ByVal strTitle As String, ByVal items As List(Of String))
+		Dim strSeparator As String = "------------------------------------------------------------------------------"
+		Dim strMessage As String
+
+		Console.WriteLine()
+		Console.WriteLine(strSeparator)
+		Console.WriteLine(strTitle)
+		strMessage = strTitle & ":"
+
+		For Each item As String In items
+			Console.WriteLine("   " + item)
+			strMessage &= " " & item
+		Next
+		Console.WriteLine(strSeparator)
+		Console.WriteLine()
+
+		WriteToErrorStream(strMessage)
 	End Sub
 
 	Private Sub ShowProgramHelp()
@@ -220,16 +243,26 @@ Module modMain
 			Console.WriteLine("Version: " & GetAppVersion())
 			Console.WriteLine()
 			Console.WriteLine("E-mail: matthew.monroe@pnnl.gov or matt@alchemistmatt.com")
-			Console.WriteLine("Website: http://ncrr.pnnl.gov/ or http://www.sysbio.org/resources/staff/")
+			Console.WriteLine("Website: http://panomics.pnnl.gov/ or http://omics.pnl.gov")
 			Console.WriteLine()
 
 			' Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
 			System.Threading.Thread.Sleep(750)
 
 		Catch ex As Exception
-			Console.WriteLine("Error displaying the program syntax: " & ex.Message)
+			ShowErrorMessage("Error displaying the program syntax: " & ex.Message)
 		End Try
 
+	End Sub
+
+	Private Sub WriteToErrorStream(strErrorMessage As String)
+		Try
+			Using swErrorStream As System.IO.StreamWriter = New System.IO.StreamWriter(Console.OpenStandardError())
+				swErrorStream.WriteLine(strErrorMessage)
+			End Using
+		Catch ex As Exception
+			' Ignore errors here
+		End Try
 	End Sub
 
 	Private Sub mFileTools_CopyingFile(filename As String) Handles mFileTools.CopyingFile

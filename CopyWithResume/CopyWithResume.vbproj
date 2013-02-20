@@ -51,6 +51,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -60,6 +61,7 @@
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
     <Import Include="System.Diagnostics" />
+    <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="clsParseCommandLine.vb" />
