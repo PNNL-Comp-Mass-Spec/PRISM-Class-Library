@@ -1663,14 +1663,6 @@ Namespace Files
 
 		End Function
 
-		'=======================================================
-		'Service provided by Telerik (www.telerik.com)
-		'Conversion powered by NRefactory.
-		'Twitter: @telerik, @toddanglin
-		'Facebook: facebook.com/telerik
-		'=======================================================
-
-
 #End Region
 
 	End Class
