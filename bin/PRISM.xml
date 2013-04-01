@@ -1496,6 +1496,25 @@ PRISM
 	<param name="FileCount">The number of files in the entire directory tree.</param>
 	<param name="SubDirCount">The number of directories in the entire directory tree.</param>
 	<returns>The directory size.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.ValidateFreeDiskSpace(System.String,System.Double,System.String@)">
+	<summary>
+ Confirms that the drive for the target output file has a minimum amount of free disk space
+ </summary>
+	<param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
+	<param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative</param>
+	<param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
+	<returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.ValidateFreeDiskSpace(System.String,System.Double,System.Double,System.String@)">
+	<summary>
+ Confirms that the drive for the target output file has a minimum amount of free disk space
+ </summary>
+	<param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
+	<param name="outputFileExpectedSizeMB">Expected size of the output file</param>
+	<param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative.  Takes into account outputFileExpectedSizeMB</param>
+	<param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
+	<returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
+	<remarks></remarks>
 </member><member name="T:PRISM.Files.clsFileTools">
 	<summary>Tools to manipulate paths and directories.</summary>
 	<remarks>

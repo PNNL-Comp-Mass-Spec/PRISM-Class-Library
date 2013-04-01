@@ -1,5 +1,7 @@
 Option Strict On
 
+Imports System.Runtime.InteropServices			' Required for call to GetDiskFreeSpaceEx
+
 Namespace Files
 	''' <summary>Tools to manipulate paths and directories.</summary>
 	''' <remarks>
@@ -635,8 +637,8 @@ Namespace Files
 		''' <param name="SourcePath">The source directory path.</param>
 		''' <param name="DestPath">The destination directory path.</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal strManagerName As String)
+		ByVal DestPath As String, _
+		ByVal strManagerName As String)
 
 			'Overload with overwrite set to default=FALSE
 			CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, strManagerName)
@@ -648,8 +650,8 @@ Namespace Files
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal FileNamesToSkip As Generic.List(Of String))
+		ByVal DestPath As String, _
+		ByVal FileNamesToSkip As Generic.List(Of String))
 
 			'Overload with overwrite set to default=FALSE
 			CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, FileNamesToSkip)
@@ -661,8 +663,8 @@ Namespace Files
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal OverWrite As Boolean)
+		ByVal DestPath As String, _
+		ByVal OverWrite As Boolean)
 
 			'Overload with no defaults
 			Dim bReadOnly As Boolean = False
@@ -675,9 +677,9 @@ Namespace Files
 		''' <param name="DestPath">The destination directory path.</param>
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal OverWrite As Boolean, _
-  ByVal strManagerName As String)
+		ByVal DestPath As String, _
+		ByVal OverWrite As Boolean, _
+		ByVal strManagerName As String)
 
 			'Overload with no defaults
 			Dim bReadOnly As Boolean = False
@@ -691,9 +693,9 @@ Namespace Files
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal OverWrite As Boolean, _
-  ByVal FileNamesToSkip As Generic.List(Of String))
+		ByVal DestPath As String, _
+		ByVal OverWrite As Boolean, _
+		ByVal FileNamesToSkip As Generic.List(Of String))
 
 			'Overload with no defaults
 			Dim bReadOnly As Boolean = False
@@ -707,9 +709,9 @@ Namespace Files
 		''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
 		''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal OverWrite As Boolean, _
-  ByVal bReadOnly As Boolean)
+		ByVal DestPath As String, _
+		ByVal OverWrite As Boolean, _
+		ByVal bReadOnly As Boolean)
 
 			'Overload with no defaults
 			Dim SetAttribute As Boolean = True
@@ -724,10 +726,10 @@ Namespace Files
 		''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal OverWrite As Boolean, _
-  ByVal bReadOnly As Boolean, _
-  ByVal FileNamesToSkip As Generic.List(Of String))
+		ByVal DestPath As String, _
+		ByVal OverWrite As Boolean, _
+		ByVal bReadOnly As Boolean, _
+		ByVal FileNamesToSkip As Generic.List(Of String))
 
 			'Overload with no defaults
 			Dim SetAttribute As Boolean = True
@@ -742,11 +744,11 @@ Namespace Files
 		''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 		Public Sub CopyDirectory(ByVal SourcePath As String, _
-  ByVal DestPath As String, _
-  ByVal OverWrite As Boolean, _
-  ByVal bReadOnly As Boolean, _
-  ByVal FileNamesToSkip As Generic.List(Of String), _
-  ByVal strManagerName As String)
+		ByVal DestPath As String, _
+		ByVal OverWrite As Boolean, _
+		ByVal bReadOnly As Boolean, _
+		ByVal FileNamesToSkip As Generic.List(Of String), _
+		ByVal strManagerName As String)
 
 			'Overload with no defaults
 			Dim SetAttribute As Boolean = True
@@ -766,12 +768,12 @@ Namespace Files
 		''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
 		''' <param name="strManagerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
 		Private Sub CopyDirectoryEx(ByVal SourcePath As String, _
-	ByVal DestPath As String, _
-	ByVal Overwrite As Boolean, _
-	ByVal SetAttribute As Boolean, _
-	ByVal bReadOnly As Boolean, _
-	ByRef FileNamesToSkip As Generic.List(Of String), _
-	ByVal strManagerName As String)
+		  ByVal DestPath As String, _
+		  ByVal Overwrite As Boolean, _
+		  ByVal SetAttribute As Boolean, _
+		  ByVal bReadOnly As Boolean, _
+		  ByRef FileNamesToSkip As Generic.List(Of String), _
+		  ByVal strManagerName As String)
 
 			Dim SourceDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(SourcePath)
 			Dim DestDir As System.IO.DirectoryInfo = New System.IO.DirectoryInfo(DestPath)
@@ -930,10 +932,10 @@ Namespace Files
 		''' <returns>True if success; false if an error</returns>
 		''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
 		Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, _
-   ByVal TargetFolderPath As String, _
-   ByVal Recurse As Boolean, _
-   ByVal eFileOverwriteMode As FileOverwriteMode, _
-   ByVal FileNamesToSkip As Generic.List(Of String)) As Boolean
+		 ByVal TargetFolderPath As String, _
+		 ByVal Recurse As Boolean, _
+		 ByVal eFileOverwriteMode As FileOverwriteMode, _
+		 ByVal FileNamesToSkip As Generic.List(Of String)) As Boolean
 
 			Dim FileCountSkipped As Integer = 0
 			Dim FileCountResumed As Integer = 0
@@ -960,12 +962,12 @@ Namespace Files
 		''' <returns>True if success; false if an error</returns>
 		''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
 		Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, _
-   ByVal TargetFolderPath As String, _
-   ByVal Recurse As Boolean, _
-   ByVal eFileOverwriteMode As FileOverwriteMode, _
-   ByRef FileCountSkipped As Integer, _
-   ByRef FileCountResumed As Integer, _
-   ByRef FileCountNewlyCopied As Integer) As Boolean
+		 ByVal TargetFolderPath As String, _
+		 ByVal Recurse As Boolean, _
+		 ByVal eFileOverwriteMode As FileOverwriteMode, _
+		 ByRef FileCountSkipped As Integer, _
+		 ByRef FileCountResumed As Integer, _
+		 ByRef FileCountNewlyCopied As Integer) As Boolean
 
 			Dim SetAttribute As Boolean = False
 			Dim bReadOnly As Boolean = False
@@ -991,13 +993,13 @@ Namespace Files
 		''' <returns>True if success; false if an error</returns>
 		''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
 		Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, _
-   ByVal TargetFolderPath As String, _
-   ByVal Recurse As Boolean, _
-   ByVal eFileOverwriteMode As FileOverwriteMode, _
-   ByVal FileNamesToSkip As Generic.List(Of String), _
-   ByRef FileCountSkipped As Integer, _
-   ByRef FileCountResumed As Integer, _
-   ByRef FileCountNewlyCopied As Integer) As Boolean
+		 ByVal TargetFolderPath As String, _
+		 ByVal Recurse As Boolean, _
+		 ByVal eFileOverwriteMode As FileOverwriteMode, _
+		 ByVal FileNamesToSkip As Generic.List(Of String), _
+		 ByRef FileCountSkipped As Integer, _
+		 ByRef FileCountResumed As Integer, _
+		 ByRef FileCountNewlyCopied As Integer) As Boolean
 
 			Dim SetAttribute As Boolean = False
 			Dim bReadOnly As Boolean = False
@@ -1024,15 +1026,15 @@ Namespace Files
 		''' <returns>True if success; false if an error</returns>
 		''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
 		Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, _
-   ByVal TargetFolderPath As String, _
-   ByVal Recurse As Boolean, _
-   ByVal eFileOverwriteMode As FileOverwriteMode, _
-   ByVal SetAttribute As Boolean, _
-   ByVal bReadOnly As Boolean, _
-   ByVal FileNamesToSkip As Generic.List(Of String), _
-   ByRef FileCountSkipped As Integer, _
-   ByRef FileCountResumed As Integer, _
-   ByRef FileCountNewlyCopied As Integer) As Boolean
+		 ByVal TargetFolderPath As String, _
+		 ByVal Recurse As Boolean, _
+		 ByVal eFileOverwriteMode As FileOverwriteMode, _
+		 ByVal SetAttribute As Boolean, _
+		 ByVal bReadOnly As Boolean, _
+		 ByVal FileNamesToSkip As Generic.List(Of String), _
+		 ByRef FileCountSkipped As Integer, _
+		 ByRef FileCountResumed As Integer, _
+		 ByRef FileCountNewlyCopied As Integer) As Boolean
 
 			Dim diSourceFolder As System.IO.DirectoryInfo
 			Dim diTargetFolder As System.IO.DirectoryInfo
@@ -1542,6 +1544,133 @@ Namespace Files
 			Return True
 
 		End Function
+#End Region
+
+#Region "Utility Functions"
+		''' <summary>
+		''' Confirms that the drive for the target output file has a minimum amount of free disk space
+		''' </summary>
+		''' <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
+		''' <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative</param>
+		''' <param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
+		''' <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
+		''' <remarks></remarks>
+		Public Shared Function ValidateFreeDiskSpace(ByVal outputFilePath As String, ByVal minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
+			Dim outputFileExpectedSizeMB As Double = 0
+
+			Return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, errorMessage))
+		End Function
+
+		''' <summary>
+		''' Confirms that the drive for the target output file has a minimum amount of free disk space
+		''' </summary>
+		''' <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
+		''' <param name="outputFileExpectedSizeMB">Expected size of the output file</param>
+		''' <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative.  Takes into account outputFileExpectedSizeMB</param>
+		''' <param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
+		''' <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
+		''' <remarks></remarks>
+		Public Shared Function ValidateFreeDiskSpace(ByVal outputFilePath As String, ByVal outputFileExpectedSizeMB As Double, ByVal minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
+
+			Const DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB As Integer = 150
+
+			Dim diFolderInfo As System.IO.DirectoryInfo
+
+			Dim freeBytesAvailableToUser As Long
+			Dim totalDriveCapacityBytes As Long
+			Dim totalNumberOfFreeBytes As Long
+
+			errorMessage = String.Empty
+
+			Try
+				If minimumFreeSpaceMB <= 0 Then minimumFreeSpaceMB = DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB
+				If outputFileExpectedSizeMB < 0 Then outputFileExpectedSizeMB = 0
+
+				diFolderInfo = New System.IO.FileInfo(outputFilePath).Directory
+
+				Do While Not diFolderInfo.Exists AndAlso Not diFolderInfo.Parent Is Nothing
+					diFolderInfo = diFolderInfo.Parent
+				Loop
+
+				If GetDiskFreeSpace(diFolderInfo.FullName, freeBytesAvailableToUser, totalDriveCapacityBytes, totalNumberOfFreeBytes) Then
+					Dim freeSpaceMB As Double = totalNumberOfFreeBytes / 1024.0 / 1024.0
+
+					If outputFileExpectedSizeMB > 0 Then
+
+						If freeSpaceMB - outputFileExpectedSizeMB < minimumFreeSpaceMB Then
+							errorMessage = "Target drive will have less than " & minimumFreeSpaceMB.ToString("0") & " MB free after creating a " & outputFileExpectedSizeMB.ToString("0") & " MB file : " & freeSpaceMB.ToString("0.0") & " MB available prior to file creation"
+
+							Return False
+						End If
+
+					ElseIf freeSpaceMB < minimumFreeSpaceMB Then
+						errorMessage = "Target drive has less than " & minimumFreeSpaceMB.ToString("0") & " MB free: " & freeSpaceMB.ToString("0.0") & " MB available"
+
+						Return False
+
+					End If
+
+				Else
+					errorMessage = "Error validating target drive free space (GetDiskFreeSpaceEx returned false): " & diFolderInfo.FullName
+					Return False
+
+				End If
+
+
+			Catch ex As Exception
+				errorMessage = "Exception validating target drive free space for " & outputFilePath & ": " & ex.Message
+				Return False
+			End Try
+
+			Return True
+		End Function
+
+	
+		<DllImport("Kernel32.dll", EntryPoint:="GetDiskFreeSpaceEx", SetLastError:=True, CharSet:=CharSet.Auto)> _
+		Private Shared Function GetDiskFreeSpaceEx( _
+   ByVal lpDirectoryName As String, _
+   ByRef lpFreeBytesAvailable As UInt64, _
+   ByRef lpTotalNumberOfBytes As UInt64, _
+   ByRef lpTotalNumberOfFreeBytes As UInt64) As Boolean
+		End Function
+
+		Protected Shared Function GetDiskFreeSpace(ByVal directoryPath As String, ByRef freeBytesAvailableToUser As Long, ByRef totalDriveCapacityBytes As Long, ByRef totalNumberOfFreeBytes As Long) As Boolean
+
+			Dim freeAvailableUser As ULong
+			Dim totalDriveCapacity As ULong
+			Dim totalFree As ULong
+
+			Dim bResult As Boolean
+
+			' Make sure directoryPath ends in a forward slash
+			If Not directoryPath.EndsWith(IO.Path.DirectorySeparatorChar) Then directoryPath &= IO.Path.DirectorySeparatorChar
+
+			bResult = GetDiskFreeSpaceEx(directoryPath, freeAvailableUser, totalDriveCapacity, totalFree)
+
+			If Not bResult Then
+				freeBytesAvailableToUser = 0
+				totalDriveCapacityBytes = 0
+				totalNumberOfFreeBytes = 0
+
+				Return False
+			Else
+				freeBytesAvailableToUser = CLng(freeAvailableUser)
+				totalDriveCapacityBytes = CLng(totalDriveCapacity)
+				totalNumberOfFreeBytes = CLng(totalFree)
+
+				Return True
+			End If
+
+		End Function
+
+		'=======================================================
+		'Service provided by Telerik (www.telerik.com)
+		'Conversion powered by NRefactory.
+		'Twitter: @telerik, @toddanglin
+		'Facebook: facebook.com/telerik
+		'=======================================================
+
+
 #End Region
 
 	End Class
