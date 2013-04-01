@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.4839; April 1, 2013
+	- Added function ValidateFreeDiskSpace
+
 Version 2.2.4785; February 6, 2013
 	- Added states Initializing and Starting
 	- Added sub JoinThreadNow
