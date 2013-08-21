@@ -35,10 +35,16 @@ Namespace DataBase
 #End Region
 
 #Region "Properties"
-		Public ReadOnly Property DBConnectionString() As String
+		Public Property DBConnectionString() As String
 			Get
 				Return m_ConnStr
 			End Get
+			Set(value As String)
+				If String.IsNullOrWhiteSpace(value) Then
+					Throw New ArgumentNullException("Connection string cannot be empty")
+				End If
+				m_ConnStr = value
+			End Set
 		End Property
 
 		Public Property TimeoutSeconds() As Integer

@@ -61,9 +61,9 @@ Namespace Files
 
 #Region "Public constants"
 		'Constants
-		''' <summary>Used to add the path seperation character to the end of the directory path.</summary>
+		''' <summary>Used to add the path separation character to the end of the directory path.</summary>
 		Public Const TERMINATOR_ADD As Boolean = True
-		''' <summary>Used to remove the path seperation character from the end of the directory path.</summary>
+		''' <summary>Used to remove the path separation character from the end of the directory path.</summary>
 		Public Const TERMINATOR_REMOVE As Boolean = False
 
 		''' <summary>
@@ -170,8 +170,8 @@ Namespace Files
 		'Functions
 		''' <summary>Modifies input directory path string depending on optional settings.</summary>
 		''' <param name="InpFolder">The input directory path.</param>
-		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
-		''' <param name="TermChar">The specified directory seperation character.</param>
+		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
+		''' <param name="TermChar">The specified directory separation character.</param>
 		''' <returns>The modified directory path.</returns>
 		Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
 
@@ -180,9 +180,9 @@ Namespace Files
 
 		End Function
 
-		''' <summary>Adds or removes the DOS path seperation character from the end of the directory path.</summary>
+		''' <summary>Adds or removes the DOS path separation character from the end of the directory path.</summary>
 		''' <param name="InpFolder">The input directory path.</param>
-		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
+		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
 		''' <returns>The modified directory path.</returns>
 		Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean) As String
 
@@ -191,9 +191,9 @@ Namespace Files
 
 		End Function
 
-		''' <summary>Assures the directory path ends with the specified path seperation character.</summary>
+		''' <summary>Assures the directory path ends with the specified path separation character.</summary>
 		''' <param name="InpFolder">The input directory path.</param>
-		''' <param name="TermChar">The specified directory seperation character.</param>
+		''' <param name="TermChar">The specified directory separation character.</param>
 		''' <returns>The modified directory path.</returns>
 		Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal TermChar As String) As String
 
@@ -202,7 +202,7 @@ Namespace Files
 
 		End Function
 
-		''' <summary>Assures the directory path ends with the DOS path seperation character.</summary>
+		''' <summary>Assures the directory path ends with the DOS path separation character.</summary>
 		''' <param name="InpFolder">The input directory path.</param>
 		''' <returns>The modified directory path.</returns>
 		Public Shared Function CheckTerminator(ByVal InpFolder As String) As String
@@ -212,26 +212,31 @@ Namespace Files
 
 		End Function
 
-		''' <summary>Modifies input directory path string depending on optional settings.</summary>
+		''' <summary>Modifies input directory path string depending on AddTerm</summary>
 		''' <param name="InpFolder">The input directory path.</param>
-		''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
-		''' <param name="TermChar">The specified directory seperation character.</param>
+		''' <param name="AddTerm">Specifies whether the directory path should end with the specified directory separation character</param>
+		''' <param name="TermChar">The specified directory separation character.</param>
 		''' <returns>The modified directory path.</returns>
+		''' <remarks>AddTerm=True forces the path to end with specified TermChar while AddTerm=False will remove TermChar from the end if present</remarks>
 		Private Shared Function CheckTerminatorEX(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
 
-			'Modifies input folder string depending on optional settings.
-			'		m_Addterm=True forces string to end with specified m_TermChar.
-			'		m_Addterm=False removes specified m_TermChar from string if present
-
-			Dim TempStr As String
-
-			If AddTerm Then
-				TempStr = CStr(IIf(Right(InpFolder, 1) <> TermChar, InpFolder & TermChar, InpFolder))
-			Else
-				TempStr = CStr(IIf(Right(InpFolder, 1) = TermChar, Left(InpFolder, Len(InpFolder) - 1), InpFolder))
+			If String.IsNullOrWhiteSpace(InpFolder) OrElse String.IsNullOrWhiteSpace(TermChar) Then
+				Return InpFolder
 			End If
 
-			Return TempStr
+			If AddTerm Then
+				If InpFolder.EndsWith(TermChar) Then
+					Return InpFolder
+				Else
+					Return InpFolder & TermChar
+				End If
+			Else
+				If InpFolder.EndsWith(TermChar) Then
+					Return InpFolder.TrimEnd(TermChar.Chars(0))
+				Else
+					Return InpFolder
+				End If
+			End If
 
 		End Function
 #End Region
@@ -1625,7 +1630,7 @@ Namespace Files
 			Return True
 		End Function
 
-	
+
 		<DllImport("Kernel32.dll", EntryPoint:="GetDiskFreeSpaceEx", SetLastError:=True, CharSet:=CharSet.Auto)> _
 		Private Shared Function GetDiskFreeSpaceEx( _
    ByVal lpDirectoryName As String, _

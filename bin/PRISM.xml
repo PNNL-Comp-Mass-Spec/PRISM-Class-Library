@@ -491,11 +491,21 @@ PRISM
 </member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.String[])">
 	<summary>Initializes a new instance of the DirectoryScanner class.</summary>
 	<param name="dirs">An array of directory paths to scan.</param>
+</member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.Collections.Generic.List{System.String})">
+	<summary>
+ Initializes a new instance of the DirectoryScanner class.
+ </summary>
+	<param name="dirs">A list of directory paths to scan</param>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.DirectoryScanner.PerformScan(System.Collections.ArrayList@,System.String[])">
 	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
-	<param name="results">An array of file paths found.</param>
+	<param name="results">An array of file paths found; unchanged if no matches</param>
 	<param name="searchPatterns">An array of regular expressions to use in the search.</param>
-	<returns>Always return true.</returns>
+	<returns>Always returns true</returns>
+</member><member name="M:PRISM.Files.DirectoryScanner.PerformScan(System.String[])">
+	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
+	<param name="searchPatterns">An array of regular expressions to use in the search.</param>
+	<returns>A list of the file paths found; empty list if no matches</returns>
 </member><member name="T:PRISM.Files.DirectoryScanner">
 	<summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
 </member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.#ctor(System.String)">
@@ -1192,9 +1202,9 @@ PRISM
 	<param name="filename">The file name (not full path)</param>
 	<param name="percentComplete">Percent complete (value between 0 and 100)</param>
 </member><member name="F:PRISM.Files.clsFileTools.TERMINATOR_ADD">
-	<summary>Used to add the path seperation character to the end of the directory path.</summary>
+	<summary>Used to add the path separation character to the end of the directory path.</summary>
 </member><member name="F:PRISM.Files.clsFileTools.TERMINATOR_REMOVE">
-	<summary>Used to remove the path seperation character from the end of the directory path.</summary>
+	<summary>Used to remove the path separation character from the end of the directory path.</summary>
 </member><member name="F:PRISM.Files.clsFileTools.DEFAULT_CHUNK_SIZE_MB">
 	<summary>
  Used by CopyFileWithResume and CopyDirectoryWithResume when copying a file byte-by-byte and supporting resuming the copy if interrupted
@@ -1213,29 +1223,30 @@ PRISM
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.Boolean,System.String)">
 	<summary>Modifies input directory path string depending on optional settings.</summary>
 	<param name="InpFolder">The input directory path.</param>
-	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
-	<param name="TermChar">The specified directory seperation character.</param>
+	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
+	<param name="TermChar">The specified directory separation character.</param>
 	<returns>The modified directory path.</returns>
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.Boolean)">
-	<summary>Adds or removes the DOS path seperation character from the end of the directory path.</summary>
+	<summary>Adds or removes the DOS path separation character from the end of the directory path.</summary>
 	<param name="InpFolder">The input directory path.</param>
-	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
+	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
 	<returns>The modified directory path.</returns>
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String,System.String)">
-	<summary>Assures the directory path ends with the specified path seperation character.</summary>
+	<summary>Assures the directory path ends with the specified path separation character.</summary>
 	<param name="InpFolder">The input directory path.</param>
-	<param name="TermChar">The specified directory seperation character.</param>
+	<param name="TermChar">The specified directory separation character.</param>
 	<returns>The modified directory path.</returns>
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminator(System.String)">
-	<summary>Assures the directory path ends with the DOS path seperation character.</summary>
+	<summary>Assures the directory path ends with the DOS path separation character.</summary>
 	<param name="InpFolder">The input directory path.</param>
 	<returns>The modified directory path.</returns>
 </member><member name="M:PRISM.Files.clsFileTools.CheckTerminatorEX(System.String,System.Boolean,System.String)">
-	<summary>Modifies input directory path string depending on optional settings.</summary>
+	<summary>Modifies input directory path string depending on AddTerm</summary>
 	<param name="InpFolder">The input directory path.</param>
-	<param name="AddTerm">Specifies whether the directory path string ends with the specified directory seperation character.</param>
-	<param name="TermChar">The specified directory seperation character.</param>
+	<param name="AddTerm">Specifies whether the directory path should end with the specified directory separation character</param>
+	<param name="TermChar">The specified directory separation character.</param>
 	<returns>The modified directory path.</returns>
+	<remarks>AddTerm=True forces the path to end with specified TermChar while AddTerm=False will remove TermChar from the end if present</remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CopyFile(System.String,System.String)">
 	<summary>Copies a source file to the destination file. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source file path.</param>
