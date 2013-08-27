@@ -18,7 +18,7 @@ Namespace Files
 		Private m_NotifyOnException As Boolean
         Private m_NotifyOnEvent As Boolean
         Private m_CreateNoWindow As Boolean
-        Private m_WindowStyle As Boolean
+		Private m_WindowStyle As System.Diagnostics.ProcessWindowStyle
 
 		''' <summary>Create a zip file.</summary>
 		''' <param name="CmdOptions">The zip program command line arguments.</param>
