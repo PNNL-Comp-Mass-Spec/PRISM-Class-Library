@@ -48,6 +48,8 @@ Namespace Files
 		Private Const LOCKFILE_TRANSFER_THRESHOLD_MB As Integer = 1000
 		Private Const LOCKFILE_EXTENSION As String = ".lock"
 
+		Private Const DEFAULT_VERSION_COUNT_TO_KEEP As Integer = 9
+
 		Private mCopyStatus As CopyStatus = CopyStatus.Idle
 		Private mCurrentSourceFilePath As String = String.Empty
 
@@ -248,19 +250,30 @@ Namespace Files
 		''' <param name="DestPath">The destination file path.</param>
 		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String)
 
-			'Overload with overwrite set to default=FALSE
-			CopyFileEx(SourcePath, DestPath, COPY_NO_OVERWRITE)
+			'Overload with overwrite set to default (FALSE)
+			Dim BackupDestFileBeforeCopy As Boolean = False
+			CopyFileEx(SourcePath, DestPath, COPY_NO_OVERWRITE, BackupDestFileBeforeCopy)
 
+		End Sub
+
+		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean)
+			Dim BackupDestFileBeforeCopy As Boolean = False
+			CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy)
+		End Sub
+
+		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean, BackupDestFileBeforeCopy As Boolean)
+			Dim VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP
+			CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy, VersionCountToKeep)
 		End Sub
 
 		''' <summary>Copies a source file to the destination file. Allows overwriting.</summary>
 		''' <param name="SourcePath">The source file path.</param>
 		''' <param name="DestPath">The destination file path.</param>
 		''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean)
+		Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean, ByVal BackupDestFileBeforeCopy As Boolean, ByVal VersionCountToKeep As Integer)
 
 			'Overload with no defaults
-			CopyFileEx(SourcePath, DestPath, OverWrite)
+			CopyFileEx(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy, VersionCountToKeep)
 
 		End Sub
 
@@ -276,11 +289,20 @@ Namespace Files
 		''' <param name="SourcePath">The source file path.</param>
 		''' <param name="DestPath">The destination file path.</param>
 		''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-		Private Sub CopyFileEx(ByVal SourcePath As String, ByVal DestPath As String, ByVal Overwrite As Boolean)
+		Private Sub CopyFileEx(
+		  ByVal SourcePath As String,
+		  ByVal DestPath As String,
+		  ByVal Overwrite As Boolean,
+		  ByVal BackupDestFileBeforeCopy As Boolean,
+		  Optional ByVal VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP)
 
 			Dim dirPath As String = IO.Path.GetDirectoryName(DestPath)
 			If Not IO.Directory.Exists(dirPath) Then
 				IO.Directory.CreateDirectory(dirPath)
+			End If
+
+			If BackupDestFileBeforeCopy Then
+				BackupFileBeforeCopy(DestPath, VersionCountToKeep)
 			End If
 
 			If mDebugLevel >= 3 Then
@@ -344,7 +366,8 @@ Namespace Files
 			If blnUseLockFile Then
 				blnSuccess = CopyFileUsingLocks(strLockFolderPathSource, strLockFolderPathTarget, fiSource, strTargetFilePath, strManagerName, Overwrite)
 			Else
-				CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite)
+				Dim BackupDestFileBeforeCopy As Boolean = False
+				CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
 				blnSuccess = True
 			End If
 
@@ -378,8 +401,10 @@ Namespace Files
 			' If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
 			' copy the file normally
 			intSourceFileSizeMB = CInt(fiSource.Length / 1024.0 / 1024.0)
-			If intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB OrElse (String.IsNullOrWhiteSpace(strLockFolderPathSource) And String.IsNullOrWhiteSpace(strLockFolderPathTarget)) Then
-				CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite)
+			If intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB OrElse
+			   (String.IsNullOrWhiteSpace(strLockFolderPathSource) And String.IsNullOrWhiteSpace(strLockFolderPathTarget)) Then
+				Dim BackupDestFileBeforeCopy As Boolean = False
+				CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
 				Return True
 			End If
 
@@ -461,7 +486,8 @@ Namespace Files
 				End If
 
 				' Perform the copy
-				CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite)
+				Dim BackupDestFileBeforeCopy As Boolean = False
+				CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
 
 				' Delete the lock file(s)
 				DeleteFileIgnoreErrors(strLockFilePathSource)
@@ -1179,7 +1205,7 @@ Namespace Files
 		End Function
 
 		''' <summary>
-		''' Copy a file using 
+		''' Copy a file using a chunks, thus allowing for resuming
 		''' </summary>
 		''' <param name="SourceFilePath"></param>
 		''' <param name="strTargetFilePath"></param>
@@ -1196,6 +1222,7 @@ Namespace Files
 
 		''' <summary>
 		''' Copy fiSourceFile to diTargetFolder
+		''' Copies the file using a chunks, thus allowing for resuming
 		''' </summary>
 		''' <param name="fiSourceFile"></param>
 		''' <param name="strTargetFilePath"></param>
@@ -1563,7 +1590,7 @@ Namespace Files
 		''' <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
 		''' <remarks></remarks>
 		Public Shared Function BackupFileBeforeCopy(ByVal strTargetFilePath As String) As Boolean
-			Dim VersionCountToKeep As Integer = 9
+			Dim VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP
 			Return BackupFileBeforeCopy(strTargetFilePath, VersionCountToKeep)
 		End Function
 
