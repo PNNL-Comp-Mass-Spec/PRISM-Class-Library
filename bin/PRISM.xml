@@ -1114,7 +1114,7 @@ PRISM
 	<summary>
  A class that defines all the unmanaged methods used in the assembly
  </summary>
-</member><member name="T:PRISM.Files.ShareConnector.NETRESOURCE">
+</member><member name="T:PRISM.Files.ShareConnector.udtNetResource">
 	<summary>This structure is used to group a bunch of member variables.</summary>
 </member><member name="F:PRISM.Files.ShareConnector.RESOURCE_CONNECTED">
 	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
@@ -1144,7 +1144,7 @@ PRISM
  </summary>
 </member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String,System.String)">
 	<summary>
- This version of the constructor allows you to specify the sharename as an  argument.
+ This version of the constructor allows you to specify the sharename as an argument.
  </summary>
 </member><member name="M:PRISM.Files.ShareConnector.RealNew(System.String,System.String)">
 	<summary>
@@ -1165,6 +1165,12 @@ PRISM
  Connects to specified share using account/password specified through the constructor.
  Requires you to have specifyed the sharename by setting the <see cref="P:PRISM.Files.ShareConnector.Share">Share</see> property.
  </summary>
+</member><member name="M:PRISM.Files.ShareConnector.DefineShareName(System.String)">
+	<summary>
+ Updates class variable with the specified share path
+ </summary>
+	<param name="share"></param>
+	<remarks>If the path ends in a forward slash then the slash will be removed</remarks>
 </member><member name="M:PRISM.Files.ShareConnector.RealConnect">
 	<summary>
  Connects to specified share using account/password specified previously.
