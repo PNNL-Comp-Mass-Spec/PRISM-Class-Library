@@ -1257,12 +1257,12 @@ PRISM
 	<summary>Copies a source file to the destination file. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source file path.</param>
 	<param name="DestPath">The destination file path.</param>
-</member><member name="M:PRISM.Files.clsFileTools.CopyFile(System.String,System.String,System.Boolean)">
+</member><member name="M:PRISM.Files.clsFileTools.CopyFile(System.String,System.String,System.Boolean,System.Boolean,System.Int32)">
 	<summary>Copies a source file to the destination file. Allows overwriting.</summary>
 	<param name="SourcePath">The source file path.</param>
 	<param name="DestPath">The destination file path.</param>
 	<param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-</member><member name="M:PRISM.Files.clsFileTools.CopyFileEx(System.String,System.String,System.Boolean)">
+</member><member name="M:PRISM.Files.clsFileTools.CopyFileEx(System.String,System.String,System.Boolean,System.Boolean,System.Int32)">
 	<summary>Copies a source file to the destination file. Allows overwriting.</summary>
 	<remarks>
  This function is unique in that it allows you to specify a destination path where
@@ -1472,7 +1472,7 @@ PRISM
 	<remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CopyFileWithResume(System.String,System.String,System.Boolean@)">
 	<summary>
- Copy a file using 
+ Copy a file using chunks, thus allowing for resuming
  </summary>
 	<param name="SourceFilePath"></param>
 	<param name="strTargetFilePath"></param>
@@ -1482,6 +1482,7 @@ PRISM
 </member><member name="M:PRISM.Files.clsFileTools.CopyFileWithResume(System.IO.FileInfo,System.String,System.Boolean@)">
 	<summary>
  Copy fiSourceFile to diTargetFolder
+ Copies the file using chunks, thus allowing for resuming
  </summary>
 	<param name="fiSourceFile"></param>
 	<param name="strTargetFilePath"></param>
@@ -1513,6 +1514,26 @@ PRISM
 	<param name="FileCount">The number of files in the entire directory tree.</param>
 	<param name="SubDirCount">The number of directories in the entire directory tree.</param>
 	<returns>The directory size.</returns>
+</member><member name="M:PRISM.Files.clsFileTools.BackupFileBeforeCopy(System.String)">
+	<summary>
+ Renames strTargetFilePath to have _Old1 before the file extension
+ Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
+ Use this function to backup old versions of a file before copying a new version to a target folder
+ Keeps up to 9 old versions of a file
+ </summary>
+	<param name="strTargetFilePath">Full path to the file to backup</param>
+	<returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.BackupFileBeforeCopy(System.String,System.Int32)">
+	<summary>
+ Renames strTargetFilePath to have _Old1 before the file extension
+ Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
+ Use this function to backup old versions of a file before copying a new version to a target folder
+ </summary>
+	<param name="strTargetFilePath">Full path to the file to backup</param>
+	<param name="VersionCountToKeep">Maximum backup copies of the file to keep</param>
+	<returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.ValidateFreeDiskSpace(System.String,System.Double,System.String@)">
 	<summary>
  Confirms that the drive for the target output file has a minimum amount of free disk space

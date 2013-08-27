@@ -1205,7 +1205,7 @@ Namespace Files
 		End Function
 
 		''' <summary>
-		''' Copy a file using a chunks, thus allowing for resuming
+		''' Copy a file using chunks, thus allowing for resuming
 		''' </summary>
 		''' <param name="SourceFilePath"></param>
 		''' <param name="strTargetFilePath"></param>
@@ -1222,7 +1222,7 @@ Namespace Files
 
 		''' <summary>
 		''' Copy fiSourceFile to diTargetFolder
-		''' Copies the file using a chunks, thus allowing for resuming
+		''' Copies the file using chunks, thus allowing for resuming
 		''' </summary>
 		''' <param name="fiSourceFile"></param>
 		''' <param name="strTargetFilePath"></param>
