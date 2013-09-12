@@ -1651,6 +1651,208 @@ Namespace Files
 
 		End Function
 
+		Public Shared Function CompactPathString(ByVal strPathToCompact As String, Optional ByVal intMaxLength As Integer = 40) As String
+			' Recursive function to shorten strPathToCompact to a maximum length of intMaxLength
+
+			' The following is example output
+			' Note that when drive letters or subdirectories are present, the a minimum length is imposed
+			' For "C:\My Documents\Readme.txt"
+			'   Minimum string returned=  C:\M..\Rea..
+			'   Length for 20 characters= C:\My D..\Readme.txt
+			'   Length for 25 characters= C:\My Docume..\Readme.txt
+			'
+			' For "C:\My Documents\Word\Business\Finances.doc"
+			'   Minimum string returned=  C:\...\B..\Fin..
+			'   Length for 20 characters= C:\...\B..\Finance..
+			'   Length for 25 characters= C:\...\Bus..\Finances.doc
+			'   Length for 32 characters= C:\...\W..\Business\Finances.doc
+			'   Length for 40 characters= C:\My Docum..\Word\Business\Finances.doc
+
+			Dim pathSepChars(1) As Char
+			pathSepChars(0) = "\"c
+			pathSepChars(1) = "/"c
+
+			Dim pathSepCharPreferred As Char = "\"c
+
+			Dim strPath(4) As String		' 0-based array
+			Dim intPartCount As Integer
+
+			Dim strLeadingChars As String
+			Dim strShortenedPath As String
+
+			Dim intCharIndex As Integer
+			Dim intLoopCount, intFileNameIndex As Integer
+			Dim intShortLength, intOverLength As Integer
+			Dim intLeadingCharsLength As Integer
+			Dim intMultiPathCorrection As Short
+
+			If intMaxLength < 3 Then intMaxLength = 3
+
+			For intPartCount = 0 To strPath.Length - 1
+				strPath(intPartCount) = String.Empty
+			Next intPartCount
+
+			If String.IsNullOrWhiteSpace(strPathToCompact) Then
+				Return String.Empty
+			End If
+
+			Dim intFirstPathSepChar = strPathToCompact.IndexOfAny(pathSepChars)
+			If intFirstPathSepChar >= 0 Then
+				pathSepCharPreferred = strPathToCompact.Chars(intFirstPathSepChar)
+			End If
+
+			strPathToCompact = strPathToCompact.Trim()
+			If strPathToCompact.Length <= intMaxLength Then
+				Return strPathToCompact
+			End If
+
+			intPartCount = 1
+			strLeadingChars = String.Empty
+
+			If strPathToCompact.StartsWith("\\") Then
+				strLeadingChars = "\\"
+				intCharIndex = strPathToCompact.IndexOfAny(pathSepChars, 2)
+
+				If intCharIndex > 0 Then
+					strLeadingChars = "\\" & strPathToCompact.Substring(2, intCharIndex - 1)
+					strPath(0) = strPathToCompact.Substring(intCharIndex + 1)
+				Else
+					strPath(0) = strPathToCompact.Substring(2)
+				End If
+			ElseIf strPathToCompact.StartsWith("\") OrElse strPathToCompact.StartsWith("/") Then
+				strLeadingChars = strPathToCompact.Substring(0, 1)
+				strPath(0) = strPathToCompact.Substring(1)
+			ElseIf strPathToCompact.StartsWith(".\") OrElse strPathToCompact.StartsWith("./") Then
+				strLeadingChars = strPathToCompact.Substring(0, 2)
+				strPath(0) = strPathToCompact.Substring(2)
+			ElseIf strPathToCompact.StartsWith("..\") OrElse strPathToCompact.Substring(1, 2) = ":\" OrElse
+			 strPathToCompact.StartsWith("../") OrElse strPathToCompact.Substring(1, 2) = ":/" Then
+				strLeadingChars = strPathToCompact.Substring(0, 3)
+				strPath(0) = strPathToCompact.Substring(3)
+			Else
+				strPath(0) = strPathToCompact
+			End If
+
+			' Examine strPath(0) to see if there are 1, 2, or more subdirectories
+			intLoopCount = 0
+			Do
+				intCharIndex = strPath(intPartCount - 1).IndexOfAny(pathSepChars)
+				If intCharIndex >= 0 Then
+					strPath(intPartCount) = strPath(intPartCount - 1).Substring(intCharIndex + 1)
+					strPath(intPartCount - 1) = strPath(intPartCount - 1).Substring(0, intCharIndex + 1)
+					intPartCount += 1
+				Else
+					Exit Do
+				End If
+				intLoopCount += 1
+			Loop While intLoopCount < 3
+
+			If intPartCount = 1 Then
+				' No \ or / found, we're forced to shorten the filename (though if a UNC, then can shorten part of the UNC)
+
+				If strLeadingChars.StartsWith("\\") Then
+					intLeadingCharsLength = strLeadingChars.Length
+					If intLeadingCharsLength > 5 Then
+						' Can shorten the server name as needed
+						intShortLength = intMaxLength - strPath(0).Length - 3
+						If intShortLength < intLeadingCharsLength Then
+							If intShortLength < 3 Then intShortLength = 3
+							strLeadingChars = strLeadingChars.Substring(0, intShortLength) & "..\"
+						End If
+
+					End If
+				End If
+
+				intShortLength = intMaxLength - strLeadingChars.Length - 2
+				If intShortLength < 3 Then intShortLength = 3
+				If intShortLength < strPath(0).Length - 2 Then
+					If intShortLength < 4 Then
+						strShortenedPath = strLeadingChars & strPath(0).Substring(0, intShortLength) & ".."
+					Else
+						' Shorten by removing the middle portion of the filename
+						Dim leftLength = CInt(Math.Ceiling(intShortLength / 2))
+						Dim rightLength = intShortLength - leftLength
+						strShortenedPath = strLeadingChars & strPath(0).Substring(0, leftLength) & ".." & strPath(0).Substring(strPath(0).Length - rightLength)
+					End If
+				Else
+					strShortenedPath = strLeadingChars & strPath(0)
+				End If
+			Else
+				' Found one (or more) subdirectories
+
+				' First check if strPath(1) = "...\" or ".../"
+				If strPath(0) = "...\" OrElse strPath(0) = ".../" Then
+					intMultiPathCorrection = 4
+					strPath(0) = strPath(1)
+					strPath(1) = strPath(2)
+					strPath(2) = strPath(3)
+					strPath(3) = String.Empty
+					intPartCount = 3
+				Else
+					intMultiPathCorrection = 0
+				End If
+
+				' Shorten the first to as little as possible
+				' If not short enough, replace the first with ... and call this function again
+				intShortLength = intMaxLength - strLeadingChars.Length - strPath(3).Length - strPath(2).Length - strPath(1).Length - 3 - intMultiPathCorrection
+				If intShortLength < 1 And strPath(2).Length > 0 Then
+					' Not short enough, but other subdirectories are present
+					' Thus, can call this function recursively
+					strShortenedPath = strLeadingChars & "..." & pathSepCharPreferred & strPath(1) & strPath(2) & strPath(3)
+					strShortenedPath = CompactPathString(strShortenedPath, intMaxLength)
+				Else
+					If strLeadingChars.StartsWith("\\") Then
+						intLeadingCharsLength = strLeadingChars.Length
+						If intLeadingCharsLength > 5 Then
+							' Can shorten the server name as needed
+							intShortLength = intMaxLength - strPath(3).Length - strPath(2).Length - strPath(1).Length - 7 - intMultiPathCorrection
+							If intShortLength < intLeadingCharsLength - 3 Then
+								If intShortLength < 3 Then intShortLength = 3
+								strLeadingChars = strLeadingChars.Substring(0, intShortLength) & "..\"
+							End If
+
+							' Recompute intShortLength
+							intShortLength = intMaxLength - strLeadingChars.Length - strPath(3).Length - strPath(2).Length - strPath(1).Length - 3 - intMultiPathCorrection
+						End If
+					End If
+
+					If intMultiPathCorrection > 0 Then
+						strLeadingChars = strLeadingChars & "..." & pathSepCharPreferred
+					End If
+
+					If intShortLength < 1 Then intShortLength = 1
+					strPath(0) = strPath(0).Substring(0, intShortLength) & ".." & pathSepCharPreferred
+					strShortenedPath = strLeadingChars & strPath(0) & strPath(1) & strPath(2) & strPath(3)
+
+					' See if still too long
+					' If it is, then will need to shorten the filename too
+					intOverLength = strShortenedPath.Length - intMaxLength
+					If intOverLength > 0 Then
+						' Need to shorten filename too
+						' Determine which index the filename is in
+						For intFileNameIndex = intPartCount - 1 To 0 Step -1
+							If strPath(intFileNameIndex).Length > 0 Then Exit For
+						Next intFileNameIndex
+
+						intShortLength = strPath(intFileNameIndex).Length - intOverLength - 2
+						If intShortLength < 4 Then
+							strPath(intFileNameIndex) = strPath(intFileNameIndex).Substring(0, 3) & ".."
+						Else
+							' Shorten by removing the middle portion of the filename
+							Dim leftLength = CInt(Math.Ceiling(intShortLength / 2))
+							Dim rightLength = intShortLength - leftLength
+							strPath(intFileNameIndex) = strPath(intFileNameIndex).Substring(0, leftLength) & ".." & strPath(intFileNameIndex).Substring(strPath(intFileNameIndex).Length - rightLength)
+						End If
+
+						strShortenedPath = strLeadingChars & strPath(0) & strPath(1) & strPath(2) & strPath(3)
+					End If
+
+				End If
+			End If
+
+			Return strShortenedPath
+		End Function
+
 		''' <summary>
 		''' Confirms that the drive for the target output file has a minimum amount of free disk space
 		''' </summary>

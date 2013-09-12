@@ -73,6 +73,8 @@
     <NoWarn>42353,42354,42355</NoWarn>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
