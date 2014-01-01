@@ -1,6 +1,8 @@
 Option Strict On
 
-Imports System.Runtime.InteropServices			' Required for call to GetDiskFreeSpaceEx
+Imports System.IO
+Imports System.Runtime.InteropServices
+' Required for call to GetDiskFreeSpaceEx
 
 Namespace Files
 	''' <summary>Tools to manipulate paths and directories.</summary>
@@ -58,6 +60,8 @@ Namespace Files
 
 		Private mDebugLevel As Integer = 1
 		Private mManagerName As String = "Unknown-Manager"
+
+		Private mLastGC As DateTime = DateTime.UtcNow
 
 #End Region
 
@@ -296,9 +300,9 @@ Namespace Files
 		  ByVal BackupDestFileBeforeCopy As Boolean,
 		  Optional ByVal VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP)
 
-			Dim dirPath As String = IO.Path.GetDirectoryName(DestPath)
-			If Not IO.Directory.Exists(dirPath) Then
-				IO.Directory.CreateDirectory(dirPath)
+			Dim dirPath As String = Path.GetDirectoryName(DestPath)
+			If Not Directory.Exists(dirPath) Then
+				Directory.CreateDirectory(dirPath)
 			End If
 
 			If BackupDestFileBeforeCopy Then
@@ -310,7 +314,7 @@ Namespace Files
 			End If
 
 			UpdateCurrentStatus(CopyStatus.NormalCopy, SourcePath)
-			IO.File.Copy(SourcePath, DestPath, Overwrite)
+			File.Copy(SourcePath, DestPath, Overwrite)
 			UpdateCurrentStatusIdle()
 		End Sub
 
@@ -319,14 +323,14 @@ Namespace Files
 #Region "Lock File Copying functions"
 
 		Public Function CopyFileUsingLocks(ByVal strSourceFilePath As String, ByVal strTargetFilePath As String, ByVal strManagerName As String) As Boolean
-			Return CopyFileUsingLocks(New IO.FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite:=False)
+			Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite:=False)
 		End Function
 
 		Public Function CopyFileUsingLocks(ByVal strSourceFilePath As String, ByVal strTargetFilePath As String, ByVal strManagerName As String, ByVal Overwrite As Boolean) As Boolean
-			Return CopyFileUsingLocks(New IO.FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite)
+			Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite)
 		End Function
 
-		Public Function CopyFileUsingLocks(ByVal fiSource As IO.FileInfo, ByVal strTargetFilePath As String, ByVal strManagerName As String, ByVal Overwrite As Boolean) As Boolean
+		Public Function CopyFileUsingLocks(ByVal fiSource As FileInfo, ByVal strTargetFilePath As String, ByVal strManagerName As String, ByVal Overwrite As Boolean) As Boolean
 
 			Dim blnUseLockFile As Boolean = False
 			Dim blnSuccess As Boolean = False
@@ -334,14 +338,14 @@ Namespace Files
 			Dim strLockFolderPathSource As String = String.Empty
 			Dim strLockFolderPathTarget As String = String.Empty
 
-			If Not Overwrite AndAlso IO.File.Exists(strTargetFilePath) Then
+			If Not Overwrite AndAlso File.Exists(strTargetFilePath) Then
 				Return True
 			End If
 
-			If IO.Path.IsPathRooted(fiSource.FullName) Then
+			If Path.IsPathRooted(fiSource.FullName) Then
 				If fiSource.Directory.Root.FullName.StartsWith("\\") Then
-					strLockFolderPathSource = IO.Path.Combine(GetServerShareBase(fiSource.Directory.Root.FullName), "DMS_LockFiles")
-					If IO.Directory.Exists(strLockFolderPathSource) Then
+					strLockFolderPathSource = Path.Combine(GetServerShareBase(fiSource.Directory.Root.FullName), "DMS_LockFiles")
+					If Directory.Exists(strLockFolderPathSource) Then
 						blnUseLockFile = True
 					Else
 						strLockFolderPathSource = String.Empty
@@ -349,13 +353,13 @@ Namespace Files
 				End If
 			End If
 
-			Dim fiTarget As IO.FileInfo
-			fiTarget = New IO.FileInfo(strTargetFilePath)
+			Dim fiTarget As FileInfo
+			fiTarget = New FileInfo(strTargetFilePath)
 
-			If IO.Path.IsPathRooted(fiTarget.FullName) Then
+			If Path.IsPathRooted(fiTarget.FullName) Then
 				If fiTarget.Directory.Root.FullName.StartsWith("\\") Then
-					strLockFolderPathTarget = IO.Path.Combine(GetServerShareBase(fiTarget.Directory.Root.FullName), "DMS_LockFiles")
-					If IO.Directory.Exists(strLockFolderPathTarget) Then
+					strLockFolderPathTarget = Path.Combine(GetServerShareBase(fiTarget.Directory.Root.FullName), "DMS_LockFiles")
+					If Directory.Exists(strLockFolderPathTarget) Then
 						blnUseLockFile = True
 					Else
 						strLockFolderPathTarget = String.Empty
@@ -386,11 +390,11 @@ Namespace Files
 		''' <param name="Overwrite"></param>
 		''' <returns></returns>
 		''' <remarks></remarks>
-		Public Function CopyFileUsingLocks(ByVal strLockFolderPathSource As String, ByVal strLockFolderPathTarget As String, ByVal fiSource As IO.FileInfo, ByVal strTargetFilePath As String, ByVal strManagerName As String, ByVal Overwrite As Boolean) As Boolean
+		Public Function CopyFileUsingLocks(ByVal strLockFolderPathSource As String, ByVal strLockFolderPathTarget As String, ByVal fiSource As FileInfo, ByVal strTargetFilePath As String, ByVal strManagerName As String, ByVal Overwrite As Boolean) As Boolean
 
 			Dim intSourceFileSizeMB As Integer
 
-			If Not Overwrite AndAlso IO.File.Exists(strTargetFilePath) Then
+			If Not Overwrite AndAlso File.Exists(strTargetFilePath) Then
 				If mDebugLevel >= 2 Then
 					RaiseEvent DebugEvent("Skipping file since target exists", strTargetFilePath)
 				End If
@@ -416,17 +420,17 @@ Namespace Files
 				' Create a new lock file on the source and/or target server
 				' This file indicates an intent to copy a file
 
-				Dim diLockFolderSource As IO.DirectoryInfo = Nothing
-				Dim diLockFolderTarget As IO.DirectoryInfo = Nothing
+				Dim diLockFolderSource As DirectoryInfo = Nothing
+				Dim diLockFolderTarget As DirectoryInfo = Nothing
 				Dim intLockFileTimestamp As Int64 = GetLockFileTimeStamp()
 
 				If Not String.IsNullOrWhiteSpace(strLockFolderPathSource) Then
-					diLockFolderSource = New IO.DirectoryInfo(strLockFolderPathSource)
+					diLockFolderSource = New DirectoryInfo(strLockFolderPathSource)
 					strLockFilePathSource = CreateLockFile(diLockFolderSource, intLockFileTimestamp, fiSource, strTargetFilePath, strManagerName)
 				End If
 
 				If Not String.IsNullOrWhiteSpace(strLockFolderPathTarget) Then
-					diLockFolderTarget = New IO.DirectoryInfo(strLockFolderPathTarget)
+					diLockFolderTarget = New DirectoryInfo(strLockFolderPathTarget)
 					strLockFilePathTarget = CreateLockFile(diLockFolderTarget, intLockFileTimestamp, fiSource, strTargetFilePath, strManagerName)
 				End If
 
@@ -441,10 +445,10 @@ Namespace Files
 
 				Dim dtWaitTimeStart As System.DateTime
 
-				dtWaitTimeStart = System.DateTime.UtcNow
+				dtWaitTimeStart = DateTime.UtcNow
 
 				' Wait for up to 60 minutes for the server resources to free up
-				Do While System.DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < MAX_LOCKFILE_WAIT_TIME_MINUTES
+				Do While DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < MAX_LOCKFILE_WAIT_TIME_MINUTES
 
 					' Refresh the lock files list by finding recent lock files with a timestamp less than intLockFileTimestamp
 					lstLockFileMBSource = FindLockFiles(diLockFolderSource, intLockFileTimestamp)
@@ -499,8 +503,7 @@ Namespace Files
 				DeleteFileIgnoreErrors(strLockFilePathSource)
 				DeleteFileIgnoreErrors(strLockFilePathTarget)
 
-				Throw ex
-				Return False
+				Throw
 			End Try
 
 			Return True
@@ -516,7 +519,7 @@ Namespace Files
 		''' <param name="strManagerName"></param>
 		''' <returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
 		''' <remarks></remarks>
-		Protected Function CreateLockFile(ByVal diLockFolder As IO.DirectoryInfo, ByVal intLockFileTimestamp As Int64, ByVal fiSource As IO.FileInfo, ByVal strTargetFilePath As String, ByVal strManagerName As String) As String
+		Protected Function CreateLockFile(ByVal diLockFolder As DirectoryInfo, ByVal intLockFileTimestamp As Int64, ByVal fiSource As FileInfo, ByVal strTargetFilePath As String, ByVal strManagerName As String) As String
 
 			Dim strLockFilePath As String = String.Empty
 			Dim strLockFileName As String
@@ -527,16 +530,16 @@ Namespace Files
 
 			' Define the lock file name
 			strLockFileName = GenerateLockFileName(intLockFileTimestamp, fiSource, strManagerName)
-			strLockFilePath = IO.Path.Combine(diLockFolder.FullName, strLockFileName)
-			Do While IO.File.Exists(strLockFilePath)
+			strLockFilePath = Path.Combine(diLockFolder.FullName, strLockFileName)
+			Do While File.Exists(strLockFilePath)
 				' File already exists for this manager; append a dash to the path
-				strLockFileName = IO.Path.GetFileNameWithoutExtension(strLockFileName) & "-" & IO.Path.GetExtension(strLockFileName)
-				strLockFilePath = IO.Path.Combine(diLockFolder.FullName, strLockFileName)
+				strLockFileName = Path.GetFileNameWithoutExtension(strLockFileName) & "-" & Path.GetExtension(strLockFileName)
+				strLockFilePath = Path.Combine(diLockFolder.FullName, strLockFileName)
 			Loop
 
 			Try
 				' Create the lock file
-				Using swLockFile As IO.StreamWriter = New IO.StreamWriter(New IO.FileStream(strLockFilePath, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read))
+				Using swLockFile As StreamWriter = New StreamWriter(New FileStream(strLockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
 					swLockFile.WriteLine("Date: " & System.DateTime.Now.ToString())
 					swLockFile.WriteLine("Source: " & fiSource.FullName)
 					swLockFile.WriteLine("Target: " & strTargetFilePath)
@@ -552,15 +555,119 @@ Namespace Files
 
 		End Function
 
-		Private Sub DeleteFileIgnoreErrors(ByVal strFilePath As String)
+		''' <summary>
+		'''  Deletes the specified directory and all subdirectories
+		''' </summary>
+		''' <param name="strDirectoryPath"></param>
+		''' <returns>True if success, false if an error</returns>
+		''' <remarks></remarks>
+		Public Function DeleteDirectory(ByVal strDirectoryPath As String) As Boolean
+			Return DeleteDirectory(strDirectoryPath, ignoreErrors:=False)
+		End Function
+
+		''' <summary>
+		'''  Deletes the specified directory and all subdirectories
+		''' </summary>
+		''' <param name="strDirectoryPath"></param>
+		''' <returns>True if success, false if an error</returns>
+		''' <remarks></remarks>
+		Public Function DeleteDirectory(ByVal strDirectoryPath As String, ByVal ignoreErrors As Boolean) As Boolean
+
+			Dim diLocalDotDFolder = New DirectoryInfo(strDirectoryPath)
+
 			Try
-				If Not String.IsNullOrWhiteSpace(strFilePath) Then
-					IO.File.Delete(strFilePath)
+				diLocalDotDFolder.Delete(True)
+			Catch ex As Exception
+				' Problems deleting one or more of the files
+				If Not ignoreErrors Then Throw
+
+				' Collect garbage, then delete the files one-by-one
+				Processes.clsProgRunner.GarbageCollectNow()
+				Return DeleteDirectoryFiles(strDirectoryPath)
+			End Try
+
+			Return True
+
+		End Function
+
+		''' <summary>
+		''' Deletes the specified directory and all subdirectories
+		''' </summary>
+		''' <param name="strDirectoryPath"></param>
+		''' <returns>True if success, false if an error</returns>
+		''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+		Public Function DeleteDirectoryFiles(ByVal strDirectoryPath As String) As Boolean
+
+			Dim diFolderToDelete = New DirectoryInfo(strDirectoryPath)
+			Dim errorCount As Integer = 0
+
+			For Each fiFile In diFolderToDelete.GetFiles("*", SearchOption.AllDirectories)
+				If Not DeleteFileIgnoreErrors(fiFile.FullName) Then
+					errorCount += 1
 				End If
+			Next
+
+			If errorCount = 0 Then
+				Try
+					diFolderToDelete.Delete(True)
+				Catch ex As Exception
+					RaiseEvent DebugEvent("Error removing empty directory", "Unable to delete directory " & diFolderToDelete.FullName & ": " & ex.Message)
+					errorCount += 1
+				End Try
+			End If
+
+			If errorCount = 0 Then
+				Return True
+			Else
+				Return False
+			End If
+
+		End Function
+
+		''' <summary>
+		''' Delete the specified file
+		''' </summary>
+		''' <param name="strFilePath"></param>
+		''' <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
+		''' <remarks>If the initial attempt fails, then checks the readonly bit and tries again.  If not readonly, then performs a garbage collection (every 500 msec)</remarks>
+		Private Function DeleteFileIgnoreErrors(ByVal strFilePath As String) As Boolean
+
+			If String.IsNullOrWhiteSpace(strFilePath) Then Return True
+
+			Dim fiFile = New FileInfo(strFilePath)
+
+			Try
+				If (fiFile.Exists) Then
+					fiFile.Delete()
+				End If
+				Return True
 			Catch ex As Exception
 				' Ignore errors here
 			End Try
-		End Sub
+
+			Try
+				' The file might be readonly; check for this then re-try the delete
+				If fiFile.IsReadOnly Then
+					fiFile.IsReadOnly = False
+				Else
+					If DateTime.UtcNow.Subtract(mLastGC).TotalMilliseconds >= 500 Then
+						mLastGC = DateTime.UtcNow
+						Processes.clsProgRunner.GarbageCollectNow()
+					End If
+				End If
+
+				fiFile.Delete()
+
+			Catch ex As Exception
+				' Ignore errors here
+				RaiseEvent DebugEvent("Error deleting file", "Unable to delete file " & fiFile.FullName & ": " & ex.Message)
+
+				Return False
+			End Try
+
+			Return True
+
+		End Function
 
 		''' <summary>
 		''' Finds lock files with a timestamp less than
@@ -568,7 +675,7 @@ Namespace Files
 		''' <param name="diLockFolder"></param>
 		''' <returns></returns>
 		''' <remarks></remarks>
-		Private Function FindLockFiles(ByVal diLockFolder As IO.DirectoryInfo, intLockFileTimestamp As Int64) As Generic.List(Of Integer)
+		Private Function FindLockFiles(ByVal diLockFolder As DirectoryInfo, intLockFileTimestamp As Int64) As Generic.List(Of Integer)
 			Static reParseLockFileName As System.Text.RegularExpressions.Regex = New System.Text.RegularExpressions.Regex("^(\d+)_(\d+)_", Text.RegularExpressions.RegexOptions.Compiled)
 
 			Dim reMatch As System.Text.RegularExpressions.Match
@@ -581,7 +688,7 @@ Namespace Files
 			If Not diLockFolder Is Nothing Then
 				diLockFolder.Refresh()
 
-				For Each fiLockFile As IO.FileInfo In diLockFolder.GetFiles("*" & LOCKFILE_EXTENSION)
+				For Each fiLockFile As FileInfo In diLockFolder.GetFiles("*" & LOCKFILE_EXTENSION)
 					reMatch = reParseLockFileName.Match(fiLockFile.Name)
 
 					If reMatch.Success Then
@@ -613,7 +720,7 @@ Namespace Files
 		''' <param name="strManagerName"></param>
 		''' <returns></returns>
 		''' <remarks></remarks>
-		Private Function GenerateLockFileName(ByVal intLockFileTimestamp As Int64, ByVal fiSource As IO.FileInfo, ByVal strManagerName As String) As String
+		Private Function GenerateLockFileName(ByVal intLockFileTimestamp As Int64, ByVal fiSource As FileInfo, ByVal strManagerName As String) As String
 			Static reInvalidDosChars As System.Text.RegularExpressions.Regex = New System.Text.RegularExpressions.Regex("[\\/:*?""<>| ]", Text.RegularExpressions.RegexOptions.Compiled)
 
 			Dim strLockFileName As String
@@ -628,7 +735,7 @@ Namespace Files
 		End Function
 
 		Private Function GetLockFileTimeStamp() As Int64
-			Return CType(Math.Round(System.DateTime.UtcNow.Subtract(New DateTime(2010, 1, 1)).TotalMilliseconds, 0), Int64)
+			Return CType(Math.Round(DateTime.UtcNow.Subtract(New DateTime(2010, 1, 1)).TotalMilliseconds, 0), Int64)
 		End Function
 
 		''' <summary>
@@ -806,8 +913,8 @@ Namespace Files
 		  ByRef FileNamesToSkip As Generic.List(Of String), _
 		  ByVal strManagerName As String)
 
-			Dim SourceDir As IO.DirectoryInfo = New IO.DirectoryInfo(SourcePath)
-			Dim DestDir As IO.DirectoryInfo = New IO.DirectoryInfo(DestPath)
+			Dim SourceDir As DirectoryInfo = New DirectoryInfo(SourcePath)
+			Dim DestDir As DirectoryInfo = New DirectoryInfo(DestPath)
 
 			Dim dctFileNamesToSkip As Generic.Dictionary(Of String, String)
 
@@ -817,7 +924,7 @@ Namespace Files
 			If SourceDir.Exists Then
 				' if destination SubDir's parent SubDir does not exist throw an exception
 				If Not DestDir.Parent.Exists Then
-					Throw New IO.DirectoryNotFoundException("Destination directory does not exist: " + DestDir.Parent.FullName)
+					Throw New DirectoryNotFoundException("Destination directory does not exist: " + DestDir.Parent.FullName)
 				End If
 
 				If Not DestDir.Exists Then
@@ -833,7 +940,7 @@ Namespace Files
 				End If
 
 				' Copy all the files of the current directory
-				Dim ChildFile As IO.FileInfo
+				Dim ChildFile As FileInfo
 				Dim sTargetFilePath As String
 
 				For Each ChildFile In SourceDir.GetFiles()
@@ -850,7 +957,7 @@ Namespace Files
 
 					If blnCopyFile Then
 
-						sTargetFilePath = IO.Path.Combine(DestDir.FullName, ChildFile.Name)
+						sTargetFilePath = Path.Combine(DestDir.FullName, ChildFile.Name)
 
 						If Overwrite Then
 							UpdateCurrentStatus(CopyStatus.NormalCopy, ChildFile.FullName)
@@ -859,7 +966,7 @@ Namespace Files
 							' If Overwrite = false, copy the file only if it does not exist
 							' this is done to avoid an IOException if a file already exists
 							' this way the other files can be copied anyway...
-							If Not IO.File.Exists(sTargetFilePath) Then
+							If Not File.Exists(sTargetFilePath) Then
 								UpdateCurrentStatus(CopyStatus.NormalCopy, ChildFile.FullName)
 								CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=False)
 							End If
@@ -874,12 +981,12 @@ Namespace Files
 				Next
 
 				' copy all the sub-directories by recursively calling this same routine
-				For Each SubDir As IO.DirectoryInfo In SourceDir.GetDirectories()
-					CopyDirectoryEx(SubDir.FullName, IO.Path.Combine(DestDir.FullName, SubDir.Name), _
+				For Each SubDir As DirectoryInfo In SourceDir.GetDirectories()
+					CopyDirectoryEx(SubDir.FullName, Path.Combine(DestDir.FullName, SubDir.Name), _
 					 Overwrite, SetAttribute, bReadOnly, FileNamesToSkip, strManagerName)
 				Next
 			Else
-				Throw New IO.DirectoryNotFoundException("Source directory does not exist: " + SourceDir.FullName)
+				Throw New DirectoryNotFoundException("Source directory does not exist: " + SourceDir.FullName)
 			End If
 
 		End Sub
@@ -891,22 +998,22 @@ Namespace Files
 		''' <param name="sTargetFilePath">Target file path</param>
 		''' <param name="bReadOnly">True to force the ReadOnly bit on, False to force it off</param>
 		''' <remarks></remarks>
-		Protected Sub UpdateReadonlyAttribute(ByVal fiSourceFile As IO.FileInfo, ByVal sTargetFilePath As String, ByVal bReadOnly As Boolean)
+		Protected Sub UpdateReadonlyAttribute(ByVal fiSourceFile As FileInfo, ByVal sTargetFilePath As String, ByVal bReadOnly As Boolean)
 
 			' Get the file attributes from the source file
-			Dim fa As IO.FileAttributes = fiSourceFile.Attributes()
-			Dim faNew As IO.FileAttributes
+			Dim fa As FileAttributes = fiSourceFile.Attributes()
+			Dim faNew As FileAttributes
 
 			' Change the read-only attribute to the desired value
 			If bReadOnly Then
-				faNew = fa Or IO.FileAttributes.ReadOnly
+				faNew = fa Or FileAttributes.ReadOnly
 			Else
-				faNew = fa And Not IO.FileAttributes.ReadOnly
+				faNew = fa And Not FileAttributes.ReadOnly
 			End If
 
 			If fa <> faNew Then
 				' Set the attributes of the destination file
-				IO.File.SetAttributes(sTargetFilePath, fa)
+				File.SetAttributes(sTargetFilePath, fa)
 			End If
 
 		End Sub
@@ -1067,29 +1174,29 @@ Namespace Files
 		 ByRef FileCountResumed As Integer, _
 		 ByRef FileCountNewlyCopied As Integer) As Boolean
 
-			Dim diSourceFolder As IO.DirectoryInfo
-			Dim diTargetFolder As IO.DirectoryInfo
+			Dim diSourceFolder As DirectoryInfo
+			Dim diTargetFolder As DirectoryInfo
 			Dim dctFileNamesToSkip As Generic.Dictionary(Of String, String)
 
 			Dim blnCopyFile As Boolean
 			Dim bSuccess As Boolean = True
 
 
-			diSourceFolder = New IO.DirectoryInfo(SourceFolderPath)
-			diTargetFolder = New IO.DirectoryInfo(TargetFolderPath)
+			diSourceFolder = New DirectoryInfo(SourceFolderPath)
+			diTargetFolder = New DirectoryInfo(TargetFolderPath)
 
 			' The source directory must exist, otherwise throw an exception
 			If Not diSourceFolder.Exists Then
-				Throw New IO.DirectoryNotFoundException("Source directory does not exist: " + diSourceFolder.FullName)
+				Throw New DirectoryNotFoundException("Source directory does not exist: " + diSourceFolder.FullName)
 			End If
 
 			' If destination SubDir's parent SubDir does not exist throw an exception
 			If Not diTargetFolder.Parent.Exists Then
-				Throw New IO.DirectoryNotFoundException("Destination directory does not exist: " + diTargetFolder.Parent.FullName)
+				Throw New DirectoryNotFoundException("Destination directory does not exist: " + diTargetFolder.Parent.FullName)
 			End If
 
 			If diSourceFolder.FullName = diTargetFolder.FullName Then
-				Throw New IO.IOException("Source and target directories cannot be the same: " + diTargetFolder.FullName)
+				Throw New IOException("Source and target directories cannot be the same: " + diTargetFolder.FullName)
 			End If
 
 
@@ -1109,7 +1216,7 @@ Namespace Files
 				End If
 
 				' Copy all the files of the current directory
-				For Each fiSourceFile As IO.FileInfo In diSourceFolder.GetFiles()
+				For Each fiSourceFile As FileInfo In diSourceFolder.GetFiles()
 
 					' Look for both the file name and the full path in dctFileNamesToSkip
 					' If either matches, then do not copy the file
@@ -1123,8 +1230,8 @@ Namespace Files
 
 					If blnCopyFile Then
 						' Does file already exist?
-						Dim fiExistingFile As IO.FileInfo
-						fiExistingFile = New IO.FileInfo(IO.Path.Combine(diTargetFolder.FullName, fiSourceFile.Name))
+						Dim fiExistingFile As FileInfo
+						fiExistingFile = New FileInfo(Path.Combine(diTargetFolder.FullName, fiSourceFile.Name))
 
 						If fiExistingFile.Exists Then
 							Select Case eFileOverwriteMode
@@ -1161,10 +1268,10 @@ Namespace Files
 
 						Dim blnResumed As Boolean = False
 						Try
-							Dim strTargetFilePath As String = IO.Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
+							Dim strTargetFilePath As String = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
 							bSuccess = CopyFileWithResume(fiSourceFile, strTargetFilePath, blnResumed)
 						Catch ex As Exception
-							Throw ex
+							Throw
 						End Try
 
 						If Not bSuccess Then Exit For
@@ -1176,7 +1283,7 @@ Namespace Files
 						End If
 
 						If SetAttribute Then
-							Dim sTargetFilePath As String = IO.Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
+							Dim sTargetFilePath As String = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
 							UpdateReadonlyAttribute(fiSourceFile, sTargetFilePath, bReadOnly)
 						End If
 
@@ -1186,9 +1293,9 @@ Namespace Files
 
 				If bSuccess AndAlso Recurse Then
 					' Process each subdirectory
-					For Each fiSourceFolder As IO.DirectoryInfo In diSourceFolder.GetDirectories()
+					For Each fiSourceFolder As DirectoryInfo In diSourceFolder.GetDirectories()
 						Dim strSubDirTargetFolderPath As String
-						strSubDirTargetFolderPath = IO.Path.Combine(TargetFolderPath, fiSourceFolder.Name)
+						strSubDirTargetFolderPath = Path.Combine(TargetFolderPath, fiSourceFolder.Name)
 						bSuccess = CopyDirectoryWithResume(fiSourceFolder.FullName, strSubDirTargetFolderPath, _
 						  Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, _
 						  FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
@@ -1196,8 +1303,7 @@ Namespace Files
 				End If
 
 			Catch ex As Exception
-				Throw New IO.IOException("Exception copying directory with resume: " + ex.Message, ex)
-				bSuccess = False
+				Throw New IOException("Exception copying directory with resume: " + ex.Message, ex)			
 			End Try
 
 			Return bSuccess
@@ -1213,9 +1319,9 @@ Namespace Files
 		''' <returns></returns>
 		''' <remarks></remarks>
 		Public Function CopyFileWithResume(ByVal SourceFilePath As String, ByVal strTargetFilePath As String, ByRef blnResumed As Boolean) As Boolean
-			Dim fiSourceFile As IO.FileInfo
+			Dim fiSourceFile As FileInfo
 
-			fiSourceFile = New IO.FileInfo(SourceFilePath)
+			fiSourceFile = New FileInfo(SourceFilePath)
 			Return CopyFileWithResume(fiSourceFile, strTargetFilePath, blnResumed)
 
 		End Function
@@ -1229,7 +1335,7 @@ Namespace Files
 		''' <param name="blnResumed">Output parameter; true if copying was resumed</param>
 		''' <returns></returns>
 		''' <remarks></remarks>
-		Public Function CopyFileWithResume(ByVal fiSourceFile As IO.FileInfo, ByVal strTargetFilePath As String, ByRef blnResumed As Boolean) As Boolean
+		Public Function CopyFileWithResume(ByVal fiSourceFile As FileInfo, ByVal strTargetFilePath As String, ByRef blnResumed As Boolean) As Boolean
 
 			Const FILE_PART_TAG As String = ".#FilePart#"
 			Const FILE_PART_INFO_TAG As String = ".#FilePartInfo#"
@@ -1242,7 +1348,7 @@ Namespace Files
 			Dim dtSourceFileLastWriteTimeUTC As System.DateTime
 			Dim strSourceFileLastWriteTime As String
 
-			Dim swFilePart As IO.FileStream = Nothing
+			Dim swFilePart As FileStream = Nothing
 
 			Try
 				If mChunkSizeMB < 1 Then mChunkSizeMB = 1
@@ -1264,17 +1370,17 @@ Namespace Files
 				End If
 
 				' Delete the target file if it already exists
-				If IO.File.Exists(strTargetFilePath) Then
-					IO.File.Delete(strTargetFilePath)
+				If File.Exists(strTargetFilePath) Then
+					File.Delete(strTargetFilePath)
 					System.Threading.Thread.Sleep(25)
 				End If
 
 				' Check for a #FilePart# file
-				Dim fiFilePart As IO.FileInfo
-				fiFilePart = New IO.FileInfo(strTargetFilePath & FILE_PART_TAG)
+				Dim fiFilePart As FileInfo
+				fiFilePart = New FileInfo(strTargetFilePath & FILE_PART_TAG)
 
-				Dim fiFilePartInfo As IO.FileInfo
-				fiFilePartInfo = New IO.FileInfo(strTargetFilePath & FILE_PART_INFO_TAG)
+				Dim fiFilePartInfo As FileInfo
+				fiFilePartInfo = New FileInfo(strTargetFilePath & FILE_PART_INFO_TAG)
 
 				dtSourceFileLastWriteTimeUTC = fiSourceFile.LastWriteTimeUtc
 				strSourceFileLastWriteTime = dtSourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt")
@@ -1287,7 +1393,7 @@ Namespace Files
 						' Open the file and read the file length and file modification time
 						' If they match fiSourceFile then set blnResumeCopy to true and update lngFileOffsetStart
 
-						Using srFilePartInfo As IO.StreamReader = New IO.StreamReader(New IO.FileStream(fiFilePartInfo.FullName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.ReadWrite))
+						Using srFilePartInfo As StreamReader = New StreamReader(New FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 
 							Dim lstSourceLines As Generic.List(Of String) = New Generic.List(Of String)
 
@@ -1329,7 +1435,7 @@ Namespace Files
 
 				If blnResumeCopy Then
 					UpdateCurrentStatus(CopyStatus.BufferedCopyResume, fiSourceFile.FullName)
-					swFilePart = New IO.FileStream(fiFilePart.FullName, IO.FileMode.Append, IO.FileAccess.Write, IO.FileShare.Read)
+					swFilePart = New FileStream(fiFilePart.FullName, FileMode.Append, FileAccess.Write, FileShare.Read)
 				Else
 					UpdateCurrentStatus(CopyStatus.BufferedCopy, fiSourceFile.FullName)
 
@@ -1340,7 +1446,7 @@ Namespace Files
 					End If
 
 					' Create the FILE_PART_INFO_TAG file
-					Using swFilePartInfo As IO.StreamWriter = New IO.StreamWriter(New IO.FileStream(fiFilePartInfo.FullName, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read))
+					Using swFilePartInfo As StreamWriter = New StreamWriter(New FileStream(fiFilePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read))
 
 						' The first line contains the source file path
 						' The second contains the file length, in bytes
@@ -1351,16 +1457,16 @@ Namespace Files
 					End Using
 
 					' Open the FilePart file
-					swFilePart = New IO.FileStream(fiFilePart.FullName, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read)
+					swFilePart = New FileStream(fiFilePart.FullName, FileMode.Create, FileAccess.Write, FileShare.Read)
 				End If
 
 				' Now copy the file, appending data to swFilePart
 
 				' Open the source and seek to lngFileOffsetStart if > 0
-				Dim srSourceFile As IO.FileStream
-				srSourceFile = New IO.FileStream(fiSourceFile.FullName, IO.FileMode.Open, IO.FileAccess.Read, IO.FileShare.Read)
+				Dim srSourceFile As FileStream
+				srSourceFile = New FileStream(fiSourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read)
 				If lngFileOffsetStart > 0 Then
-					srSourceFile.Seek(lngFileOffsetStart, IO.SeekOrigin.Begin)
+					srSourceFile.Seek(lngFileOffsetStart, SeekOrigin.Begin)
 				End If
 
 				Dim intBytesRead As Integer
@@ -1418,8 +1524,7 @@ Namespace Files
 				End If
 				Processes.clsProgRunner.GarbageCollectNow()
 
-				Throw New IO.IOException("Exception copying file with resume: " & ex.Message, ex)
-				Return False
+				Throw New IOException("Exception copying file with resume: " & ex.Message, ex)				
 			End Try
 
 			Return True
@@ -1507,12 +1612,12 @@ Namespace Files
 			'
 			' Original code obtained from vb2themax.com
 			Dim DirSize As Long
-			Dim Dir As IO.DirectoryInfo = New IO.DirectoryInfo(DirPath)
+			Dim Dir As DirectoryInfo = New DirectoryInfo(DirPath)
 			'		Dim InternalFileCount As Long
 			'		Dim InternalDirCount As Long
 
 			' add the size of each file
-			Dim ChildFile As IO.FileInfo
+			Dim ChildFile As FileInfo
 			For Each ChildFile In Dir.GetFiles()
 				DirSize += ChildFile.Length
 				FileCount += 1
@@ -1520,7 +1625,7 @@ Namespace Files
 
 			' add the size of each sub-directory, that is retrieved by recursively
 			' calling this same routine
-			Dim SubDir As IO.DirectoryInfo
+			Dim SubDir As DirectoryInfo
 			For Each SubDir In Dir.GetDirectories()
 				DirSize += GetDirectorySizeEX(SubDir.FullName, FileCount, SubDirCount)
 				SubDirCount += 1
@@ -1540,21 +1645,21 @@ Namespace Files
 		End Function
 
 		Public Function MoveDirectory(ByVal SourceFolderPath As String, ByVal TargetFolderPath As String, ByVal OverwriteFiles As Boolean, ByVal strManagerName As String) As Boolean
-			Dim diSourceFolder As IO.DirectoryInfo
+			Dim diSourceFolder As DirectoryInfo
 			Dim blnSuccess As Boolean
 
-			diSourceFolder = New IO.DirectoryInfo(SourceFolderPath)
+			diSourceFolder = New DirectoryInfo(SourceFolderPath)
 
 			' Recursively call this function for each subdirectory
-			For Each fiFolder As IO.DirectoryInfo In diSourceFolder.GetDirectories()
-				blnSuccess = MoveDirectory(fiFolder.FullName, IO.Path.Combine(TargetFolderPath, fiFolder.Name), OverwriteFiles, strManagerName)
+			For Each fiFolder As DirectoryInfo In diSourceFolder.GetDirectories()
+				blnSuccess = MoveDirectory(fiFolder.FullName, Path.Combine(TargetFolderPath, fiFolder.Name), OverwriteFiles, strManagerName)
 				If Not blnSuccess Then
 					Throw New Exception("Error moving directory " & fiFolder.FullName & " to " & TargetFolderPath & "; MoveDirectory returned False")
 				End If
 			Next
 
-			For Each fiFile As IO.FileInfo In diSourceFolder.GetFiles()
-				blnSuccess = CopyFileUsingLocks(fiFile.FullName, IO.Path.Combine(TargetFolderPath, fiFile.Name), strManagerName, OverwriteFiles)
+			For Each fiFile As FileInfo In diSourceFolder.GetFiles()
+				blnSuccess = CopyFileUsingLocks(fiFile.FullName, Path.Combine(TargetFolderPath, fiFile.Name), strManagerName, OverwriteFiles)
 				If Not blnSuccess Then
 					Throw New Exception("Error copying file " & fiFile.FullName & " to " & TargetFolderPath & "; CopyFileUsingLocks returned False")
 				Else
@@ -1564,7 +1669,7 @@ Namespace Files
 			Next
 
 			diSourceFolder.Refresh()
-			If diSourceFolder.GetFileSystemInfos("*", IO.SearchOption.AllDirectories).Count = 0 Then
+			If diSourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Count = 0 Then
 				' This folder is now empty; delete it
 				Try
 					diSourceFolder.Delete(True)
@@ -1605,7 +1710,7 @@ Namespace Files
 		''' <remarks></remarks>
 		Public Shared Function BackupFileBeforeCopy(ByVal strTargetFilePath As String, ByVal VersionCountToKeep As Integer) As Boolean
 
-			Dim fiTargetFile = New IO.FileInfo(strTargetFilePath)
+			Dim fiTargetFile = New FileInfo(strTargetFilePath)
 
 			If Not fiTargetFile.Exists Then
 				' Target file does not exist; nothing to backup
@@ -1615,8 +1720,8 @@ Namespace Files
 			If VersionCountToKeep = 0 Then VersionCountToKeep = 2
 			If VersionCountToKeep < 1 Then VersionCountToKeep = 1
 
-			Dim strBaseName = IO.Path.GetFileNameWithoutExtension(fiTargetFile.Name)
-			Dim strExtension = IO.Path.GetExtension(fiTargetFile.Name)
+			Dim strBaseName = Path.GetFileNameWithoutExtension(fiTargetFile.Name)
+			Dim strExtension = Path.GetExtension(fiTargetFile.Name)
 			If String.IsNullOrEmpty(strExtension) Then
 				strExtension = ".bak"
 			End If
@@ -1632,12 +1737,12 @@ Namespace Files
 				End If
 				strBaseNameCurrent &= strExtension
 
-				Dim ioFileToRename = New IO.FileInfo(IO.Path.Combine(strTargetFolderPath, strBaseNameCurrent))
-				Dim strNewFilePath = IO.Path.Combine(strTargetFolderPath, strBaseName & "_Old" & (intRevision + 1).ToString() & strExtension)
+				Dim ioFileToRename = New FileInfo(Path.Combine(strTargetFolderPath, strBaseNameCurrent))
+				Dim strNewFilePath = Path.Combine(strTargetFolderPath, strBaseName & "_Old" & (intRevision + 1).ToString() & strExtension)
 
 				' Confirm that strNewFilePath doesn't exist; delete it if it does
-				If IO.File.Exists(strNewFilePath) Then
-					IO.File.Delete(strNewFilePath)
+				If File.Exists(strNewFilePath) Then
+					File.Delete(strNewFilePath)
 				End If
 
 				' Rename the current file to strNewFilePath
@@ -1880,7 +1985,7 @@ Namespace Files
 
 			Const DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB As Integer = 150
 
-			Dim diFolderInfo As IO.DirectoryInfo
+			Dim diFolderInfo As DirectoryInfo
 
 			Dim freeBytesAvailableToUser As Long
 			Dim totalDriveCapacityBytes As Long
@@ -1892,7 +1997,7 @@ Namespace Files
 				If minimumFreeSpaceMB <= 0 Then minimumFreeSpaceMB = DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB
 				If outputFileExpectedSizeMB < 0 Then outputFileExpectedSizeMB = 0
 
-				diFolderInfo = New IO.FileInfo(outputFilePath).Directory
+				diFolderInfo = New FileInfo(outputFilePath).Directory
 
 				Do While Not diFolderInfo.Exists AndAlso Not diFolderInfo.Parent Is Nothing
 					diFolderInfo = diFolderInfo.Parent
@@ -1949,7 +2054,7 @@ Namespace Files
 			Dim bResult As Boolean
 
 			' Make sure directoryPath ends in a forward slash
-			If Not directoryPath.EndsWith(IO.Path.DirectorySeparatorChar) Then directoryPath &= IO.Path.DirectorySeparatorChar
+			If Not directoryPath.EndsWith(Path.DirectorySeparatorChar) Then directoryPath &= Path.DirectorySeparatorChar
 
 			bResult = GetDiskFreeSpaceEx(directoryPath, freeAvailableUser, totalDriveCapacity, totalFree)
 

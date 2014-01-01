@@ -1296,6 +1296,34 @@ PRISM
 	<param name="strManagerName"></param>
 	<returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
 	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteDirectory(System.String)">
+	<summary>
+  Deletes the specified directory and all subdirectories
+ </summary>
+	<param name="strDirectoryPath"></param>
+	<returns>True if success, false if an error</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteDirectory(System.String,System.Boolean)">
+	<summary>
+  Deletes the specified directory and all subdirectories
+ </summary>
+	<param name="strDirectoryPath"></param>
+	<returns>True if success, false if an error</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteDirectoryFiles(System.String)">
+	<summary>
+ Deletes the specified directory and all subdirectories
+ </summary>
+	<param name="strDirectoryPath"></param>
+	<returns>True if success, false if an error</returns>
+	<remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteFileIgnoreErrors(System.String)">
+	<summary>
+ Delete the specified file
+ </summary>
+	<param name="strFilePath"></param>
+	<returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
+	<remarks>If the initial attempt fails, then checks the readonly bit and tries again.  If not readonly, then performs a garbage collection (every 500 msec)</remarks>
 </member><member name="M:PRISM.Files.clsFileTools.FindLockFiles(System.IO.DirectoryInfo,System.Int64)">
 	<summary>
  Finds lock files with a timestamp less than
