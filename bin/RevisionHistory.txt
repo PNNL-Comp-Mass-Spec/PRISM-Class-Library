@@ -1,5 +1,12 @@
 Prism Class Library Log
 
+Version 2.2.5142; January 30, 2014
+	- Switched from arrays and ArrayLists to Generic Lists
+	- Added function BackupFileBeforeCopy
+	- Added function CompactPathString
+	- Added function DeleteDirectory 
+	- Overloaded DeleteDirectoryFiles to allow the folder contents to be deleted, but not the folder itself
+
 Version 2.2.4839; April 1, 2013
 	- Added function ValidateFreeDiskSpace
 

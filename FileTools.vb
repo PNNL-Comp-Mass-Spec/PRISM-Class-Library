@@ -623,7 +623,7 @@ Namespace Files
 				End If
 			Next
 
-			If errorCount = 0 Then
+			If errorCount = 0 AndAlso blnDeleteFolderIfEmpty Then
 				Try
 					diFolderToDelete.Delete(True)
 				Catch ex As Exception
