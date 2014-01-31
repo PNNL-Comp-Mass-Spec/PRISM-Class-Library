@@ -583,20 +583,36 @@ Namespace Files
 
 				' Collect garbage, then delete the files one-by-one
 				Processes.clsProgRunner.GarbageCollectNow()
-				Return DeleteDirectoryFiles(strDirectoryPath)
+
+				Const blnDeleteFolderIfEmpty = True
+				Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
 			End Try
 
 			Return True
 
 		End Function
 
+
 		''' <summary>
-		''' Deletes the specified directory and all subdirectories
+		''' Deletes the specified directory and all subdirectories; does not delete the target folder
 		''' </summary>
 		''' <param name="strDirectoryPath"></param>
 		''' <returns>True if success, false if an error</returns>
 		''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
 		Public Function DeleteDirectoryFiles(ByVal strDirectoryPath As String) As Boolean
+			Const blnDeleteFolderIfEmpty = False
+			Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
+		End Function
+
+
+		''' <summary>
+		''' Deletes the specified directory and all subdirectories
+		''' </summary>
+		''' <param name="strDirectoryPath"></param>
+		''' <param name="blnDeleteFolderIfEmpty">Set to True to delete the folder, if it is empty</param>
+		''' <returns>True if success, false if an error</returns>
+		''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+		Public Function DeleteDirectoryFiles(ByVal strDirectoryPath As String, ByVal blnDeleteFolderIfEmpty As Boolean) As Boolean
 
 			Dim diFolderToDelete = New DirectoryInfo(strDirectoryPath)
 			Dim errorCount As Integer = 0
@@ -743,13 +759,17 @@ Namespace Files
 		''' </summary>
 		''' <param name="strServerSharePath"></param>
 		''' <returns></returns>
-		''' <remarks></remarks>
+		''' <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
 		Public Function GetServerShareBase(ByVal strServerSharePath As String) As String
 			If strServerSharePath.StartsWith("\\") Then
 				Dim intSlashIndex As Integer
-				intSlashIndex = strServerSharePath.IndexOf("\", 2)
+				intSlashIndex = strServerSharePath.IndexOf("\"c, 2)
 				If intSlashIndex > 0 Then
-					Return strServerSharePath.Substring(0, intSlashIndex)
+					Dim strServerShareBase = strServerSharePath.Substring(0, intSlashIndex)
+					If strServerShareBase.ToLower() = "\\picfs" Then
+						strServerShareBase = "\\picfs\projects\DMS"
+					End If
+					Return strServerShareBase
 				Else
 					Return strServerSharePath
 				End If
@@ -1303,7 +1323,7 @@ Namespace Files
 				End If
 
 			Catch ex As Exception
-				Throw New IOException("Exception copying directory with resume: " + ex.Message, ex)			
+				Throw New IOException("Exception copying directory with resume: " + ex.Message, ex)
 			End Try
 
 			Return bSuccess
@@ -1524,7 +1544,7 @@ Namespace Files
 				End If
 				Processes.clsProgRunner.GarbageCollectNow()
 
-				Throw New IOException("Exception copying file with resume: " & ex.Message, ex)				
+				Throw New IOException("Exception copying file with resume: " & ex.Message, ex)
 			End Try
 
 			Return True

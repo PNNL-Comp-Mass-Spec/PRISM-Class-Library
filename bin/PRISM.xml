@@ -1312,9 +1312,17 @@ PRISM
 	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.DeleteDirectoryFiles(System.String)">
 	<summary>
+ Deletes the specified directory and all subdirectories; does not delete the target folder
+ </summary>
+	<param name="strDirectoryPath"></param>
+	<returns>True if success, false if an error</returns>
+	<remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteDirectoryFiles(System.String,System.Boolean)">
+	<summary>
  Deletes the specified directory and all subdirectories
  </summary>
 	<param name="strDirectoryPath"></param>
+	<param name="blnDeleteFolderIfEmpty">Set to True to delete the folder, if it is empty</param>
 	<returns>True if success, false if an error</returns>
 	<remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
 </member><member name="M:PRISM.Files.clsFileTools.DeleteFileIgnoreErrors(System.String)">
@@ -1345,7 +1353,7 @@ PRISM
  </summary>
 	<param name="strServerSharePath"></param>
 	<returns></returns>
-	<remarks></remarks>
+	<remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
 </member><member name="M:PRISM.Files.clsFileTools.CopyDirectory(System.String,System.String)">
 	<summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
 	<param name="SourcePath">The source directory path.</param>
