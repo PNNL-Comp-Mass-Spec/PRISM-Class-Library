@@ -12,7 +12,7 @@ Option Strict On
 ' Website: http://ncrr.pnnl.gov/ or http://www.sysbio.org/resources/staff/
 ' -------------------------------------------------------------------------------
 Module modMain
-	Public Const PROGRAM_DATE As String = "February 19, 2013"
+	Public Const PROGRAM_DATE As String = "July 10, 2014"
 
 	Private mSourceFolderPath As String = String.Empty
 	Private mTargetFolderPath As String = String.Empty
