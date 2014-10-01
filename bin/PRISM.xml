@@ -488,7 +488,7 @@ PRISM
 	<summary>Event is raised whenever a matching file is found.</summary>
 	<remarks>This event is most useful for implementing a progress indicator.</remarks>
 	<param name="fileName">The found file's full path.</param>
-</member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.String[])">
+</member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.Collections.Generic.IEnumerable{System.String})">
 	<summary>Initializes a new instance of the DirectoryScanner class.</summary>
 	<param name="dirs">An array of directory paths to scan.</param>
 </member><member name="M:PRISM.Files.DirectoryScanner.#ctor(System.Collections.Generic.List{System.String})">
@@ -1116,40 +1116,32 @@ PRISM
  </summary>
 </member><member name="T:PRISM.Files.ShareConnector.udtNetResource">
 	<summary>This structure is used to group a bunch of member variables.</summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_CONNECTED">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCE_GLOBALNET">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwScope </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_DISK">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_PRINT">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCETYPE_ANY">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_DOMAIN">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_GENERIC">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SERVER">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
-</member><member name="F:PRISM.Files.ShareConnector.RESOURCEDISPLAYTYPE_SHARE">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
 </member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONNECTABLE">
-	<summary> Constant that may be used by NETRESOURCE-&gt;dwDisplayType </summary>
+	<summary> Constant that may be used by NETRESOURCE-&gt;dwUsage </summary>
 </member><member name="F:PRISM.Files.ShareConnector.RESOURCEUSAGE_CONTAINER">
 	<summary> Constant that may be used by NETRESOURCE-&gt;dwUsage </summary>
 </member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String)">
 	<summary>
  This version of the constructor requires you to specify the sharename by setting the <see cref="P:PRISM.Files.ShareConnector.Share">Share</see> property.
  </summary>
+	<param name="userName">Username</param>
+	<param name="userPwd">Password</param>
+	<remarks>For local user accounts, it is safest to use HostName\username</remarks>
 </member><member name="M:PRISM.Files.ShareConnector.#ctor(System.String,System.String,System.String)">
 	<summary>
  This version of the constructor allows you to specify the sharename as an argument.
  </summary>
+	<param name="shareName">The name of the file share to which you will connect.</param>
+	<param name="userName">Username</param>
+	<param name="userPwd">Password</param>
+	<remarks>For local user accounts, it is safest to use HostName\username</remarks>  ''' 
+
 </member><member name="M:PRISM.Files.ShareConnector.RealNew(System.String,System.String)">
 	<summary>
  This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
  </summary>
+	<param name="userName">Username</param>
+	<param name="userPwd">Password</param>
 </member><member name="P:PRISM.Files.ShareConnector.Share">
 	<summary>
  Sets the name of the file share to which you will connect.
@@ -1159,7 +1151,7 @@ PRISM
  Connects to specified share using account/password specified through the constructor and 
  the file share name passed as an argument.
  </summary>
-	<param name="Share">The name of the file share to which you will connect.</param>
+	<param name="shareName">The name of the file share to which you will connect.</param>
 </member><member name="M:PRISM.Files.ShareConnector.Connect">
 	<summary>
  Connects to specified share using account/password specified through the constructor.
@@ -1169,7 +1161,7 @@ PRISM
 	<summary>
  Updates class variable with the specified share path
  </summary>
-	<param name="share"></param>
+	<param name="shareName"></param>
 	<remarks>If the path ends in a forward slash then the slash will be removed</remarks>
 </member><member name="M:PRISM.Files.ShareConnector.RealConnect">
 	<summary>

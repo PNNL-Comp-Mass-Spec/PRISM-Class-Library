@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.5387; January 30, 2014
+	- Update ShareConnector to use enums
+
 Version 2.2.5142; January 30, 2014
 	- Switched from arrays and ArrayLists to Generic Lists
 	- Added function BackupFileBeforeCopy

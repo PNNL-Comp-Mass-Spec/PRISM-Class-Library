@@ -1,11 +1,9 @@
 Option Explicit On 
 Option Strict On
 
-Imports System
 Imports System.IO
 Imports System.Collections
 Imports System.Collections.Generic
-Imports System.Diagnostics
 
 Namespace Files
     ''' <summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
@@ -14,14 +12,14 @@ Namespace Files
         ''' <remarks>This event is most useful for implementing a progress indicator.</remarks>
         ''' <param name="fileName">The found file's full path.</param>
         Public Event FoundFile(ByVal fileName As String)
-		Private mSearchDirs As List(Of String)
-		Private mFileList As List(Of String)
+        Private ReadOnly mSearchDirs As List(Of String)
+        Private ReadOnly mFileList As List(Of String)
 
 		''' <summary>Initializes a new instance of the DirectoryScanner class.</summary>
 		''' <param name="dirs">An array of directory paths to scan.</param>
-		Public Sub New(ByVal dirs As String())
-			Me.New(dirs.ToList())
-		End Sub
+        Public Sub New(ByVal dirs As IEnumerable(Of String))
+            Me.New(dirs.ToList())
+        End Sub
 
 		''' <summary>
 		''' Initializes a new instance of the DirectoryScanner class.
@@ -38,7 +36,7 @@ Namespace Files
 		''' <param name="searchPatterns">An array of regular expressions to use in the search.</param>
 		''' <returns>Always returns true</returns>
 		Public Function PerformScan(ByRef results As ArrayList, ByVal ParamArray searchPatterns As String()) As Boolean
-			Dim files As Generic.List(Of String)
+            Dim files As List(Of String)
 			files = PerformScan(searchPatterns)
 
 			If files.Count > 0 Then
@@ -60,18 +58,18 @@ Namespace Files
 		''' <summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
 		''' <param name="searchPatterns">An array of regular expressions to use in the search.</param>
 		''' <returns>A list of the file paths found; empty list if no matches</returns>
-		Public Function PerformScan(ByVal ParamArray searchPatterns As String()) As Generic.List(Of String)
-			mFileList.Clear()
+        Public Function PerformScan(ByVal ParamArray searchPatterns As String()) As List(Of String)
+            mFileList.Clear()
 
-			For Each dir As String In mSearchDirs
-				For Each pattern As String In searchPatterns
-					RecursiveFileSearch(dir, pattern)
-				Next pattern
-			Next dir
+            For Each dir As String In mSearchDirs
+                For Each pattern As String In searchPatterns
+                    RecursiveFileSearch(dir, pattern)
+                Next pattern
+            Next dir
 
-			Return mFileList
+            Return mFileList
 
-		End Function
+        End Function
 
 		Private Sub RecursiveFileSearch(ByVal searchDir As String, ByVal filePattern As String)
 			For Each f As String In Directory.GetFiles(searchDir, filePattern)

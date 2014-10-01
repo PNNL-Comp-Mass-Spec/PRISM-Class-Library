@@ -7,7 +7,6 @@ Option Strict On
 '
 'Modifed: DAC (7/2/2004) -- Provided overloading for constructor, added property for share name
 
-
 Namespace Files
     ''' <summary>Connects to a file share using a password and user name.
     ''' </summary>
@@ -24,11 +23,41 @@ Namespace Files
 
 		Private mErrorMessage As String = ""
 
+        Public Enum ResourceScope As Integer
+            Connected = 1
+            GlobalNetwork
+            Remembered
+            Recent
+            Context
+        End Enum
+
+        Public Enum ResourceType As Integer
+            Any = 0
+            Disk = 1
+            Print = 2
+            Reserved = 8
+        End Enum
+
+        Public Enum ResourceDisplaytype As Integer
+            Generic = &H0
+            Domain = &H1
+            Server = &H2
+            Share = &H3
+            File = &H4
+            Group = &H5
+            Network = &H6
+            Root = &H7
+            Shareadmin = &H8
+            Directory = &H9
+            Tree = &HA
+            Ndscontainer = &HB
+        End Enum
+
 		''' <summary>This structure is used to group a bunch of member variables.</summary>
 		Private Structure udtNetResource
-			Dim dwScope As Integer
-			Dim dwType As Integer
-			Dim dwDisplayType As Integer
+            Dim dwScope As ResourceScope
+            Dim dwType As ResourceType
+            Dim dwDisplayType As ResourceDisplaytype
 			Dim dwUsage As Integer
 			Dim lpLocalName As String
 			Dim lpRemoteName As String
@@ -39,29 +68,30 @@ Namespace Files
 		Private Const NO_ERROR As Short = 0
 		Private Const CONNECT_UPDATE_PROFILE As Short = &H1S
 
-		''' <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
-		Private Const RESOURCE_CONNECTED As Short = &H1S
-		''' <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
-		Private Const RESOURCE_GLOBALNET As Short = &H2S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
+        ''Private Const RESOURCE_CONNECTED As Short = &H1S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
+        ''Private Const RESOURCE_GLOBALNET As Short = &H2S
 
-		''' <summary> Constant that may be used by NETRESOURCE->dwType </summary>
-		Private Const RESOURCETYPE_DISK As Short = &H1S
-		''' <summary> Constant that may be used by NETRESOURCE->dwType </summary>
-		Private Const RESOURCETYPE_PRINT As Short = &H2S
-		''' <summary> Constant that may be used by NETRESOURCE->dwType </summary>
-		Private Const RESOURCETYPE_ANY As Short = &H0S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwType </summary>
+        ''Private Const RESOURCETYPE_DISK As Short = &H1S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwType </summary>
+        ''Private Const RESOURCETYPE_PRINT As Short = &H2S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwType </summary>
+        ''Private Const RESOURCETYPE_ANY As Short = &H0S
 
-		''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-		Private Const RESOURCEDISPLAYTYPE_DOMAIN As Short = &H1S
-		''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-		Private Const RESOURCEDISPLAYTYPE_GENERIC As Short = &H0S
-		''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-		Private Const RESOURCEDISPLAYTYPE_SERVER As Short = &H2S
-		''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-		Private Const RESOURCEDISPLAYTYPE_SHARE As Short = &H3S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
+        ''Private Const RESOURCEDISPLAYTYPE_DOMAIN As Short = &H1S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
+        ''Private Const RESOURCEDISPLAYTYPE_GENERIC As Short = &H0S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
+        ''Private Const RESOURCEDISPLAYTYPE_SERVER As Short = &H2S
+        '' ''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
+        ''Private Const RESOURCEDISPLAYTYPE_SHARE As Short = &H3S
 
-		''' <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-		Private Const RESOURCEUSAGE_CONNECTABLE As Short = &H1S
+        ''' <summary> Constant that may be used by NETRESOURCE->dwUsage </summary>
+        Private Const RESOURCEUSAGE_CONNECTABLE As Short = &H1S
+
 		''' <summary> Constant that may be used by NETRESOURCE->dwUsage </summary>
 		Private Const RESOURCEUSAGE_CONTAINER As Short = &H2S
 
@@ -75,31 +105,40 @@ Namespace Files
 
 		''' <summary>
 		''' This version of the constructor requires you to specify the sharename by setting the <see cref="Share">Share</see> property.
-		''' </summary>
+        ''' </summary>
+        ''' <param name="userName">Username</param>
+        ''' <param name="userPwd">Password</param>
+        ''' <remarks>For local user accounts, it is safest to use HostName\username</remarks>
 		Public Sub New(ByVal userName As String, ByVal userPwd As String)
 			RealNew(userName, userPwd)
 		End Sub
 
 		''' <summary>
 		''' This version of the constructor allows you to specify the sharename as an argument.
-		''' </summary>
-		Public Sub New(ByVal share As String, ByVal userName As String, ByVal userPwd As String)
-			DefineShareName(share)
-			RealNew(userName, userPwd)
-		End Sub
+        ''' </summary>
+        ''' <param name="shareName">The name of the file share to which you will connect.</param>
+        ''' <param name="userName">Username</param>
+        ''' <param name="userPwd">Password</param>
+        ''' <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ''' 
+        Public Sub New(ByVal shareName As String, ByVal userName As String, ByVal userPwd As String)
+            DefineShareName(shareName)
+            RealNew(userName, userPwd)
+        End Sub
 
 		''' <summary>
 		''' This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
 		''' </summary>
-		Private Sub RealNew(ByVal userName As String, ByVal userPwd As String)
-			mUsername = userName
-			mPassword = userPwd
-			mNetResource.lpRemoteName = mShareName
-			mNetResource.dwType = RESOURCETYPE_DISK
-			mNetResource.dwScope = RESOURCE_GLOBALNET
-			mNetResource.dwDisplayType = RESOURCEDISPLAYTYPE_SHARE
-			mNetResource.dwUsage = RESOURCEUSAGE_CONNECTABLE
-		End Sub
+        ''' <param name="userName">Username</param>
+        ''' <param name="userPwd">Password</param>
+        Private Sub RealNew(ByVal userName As String, ByVal userPwd As String)
+            mUsername = userName
+            mPassword = userPwd
+            mNetResource.lpRemoteName = mShareName
+            mNetResource.dwType = ResourceType.Disk
+            mNetResource.dwScope = ResourceScope.GlobalNetwork
+            mNetResource.dwDisplayType = ResourceDisplaytype.Share
+            mNetResource.dwUsage = RESOURCEUSAGE_CONNECTABLE
+        End Sub
 
 		''' <summary>
 		''' Sets the name of the file share to which you will connect.
@@ -118,14 +157,14 @@ Namespace Files
 		''' Connects to specified share using account/password specified through the constructor and 
 		''' the file share name passed as an argument.
 		''' </summary>
-		''' <param name="Share">The name of the file share to which you will connect.</param>
-		Public Function Connect(ByVal Share As String) As Boolean
+        ''' <param name="shareName">The name of the file share to which you will connect.</param>
+        Public Function Connect(ByVal shareName As String) As Boolean
 
-			DefineShareName(Share)
-			mNetResource.lpRemoteName = mShareName
-			Return RealConnect()
+            DefineShareName(shareName)
+            mNetResource.lpRemoteName = mShareName
+            Return RealConnect()
 
-		End Function
+        End Function
 
 		''' <summary>
 		''' Connects to specified share using account/password specified through the constructor.
@@ -144,15 +183,15 @@ Namespace Files
 		''' <summary>
 		''' Updates class variable with the specified share path
 		''' </summary>
-		''' <param name="share"></param>
+        ''' <param name="shareName"></param>
 		''' <remarks>If the path ends in a forward slash then the slash will be removed</remarks>
-		Private Sub DefineShareName(ByVal share As String)
-			If share.EndsWith("\") Then
-				mShareName = share.TrimEnd("\"c)
-			Else
-				mShareName = share
-			End If
-		End Sub
+        Private Sub DefineShareName(ByVal shareName As String)
+            If shareName.EndsWith("\") Then
+                mShareName = shareName.TrimEnd("\"c)
+            Else
+                mShareName = shareName
+            End If
+        End Sub
 
 		''' <summary>
 		''' Connects to specified share using account/password specified previously.
