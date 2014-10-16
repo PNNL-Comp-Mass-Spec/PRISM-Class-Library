@@ -12,7 +12,7 @@ Option Strict On
 ' Website: http://ncrr.pnnl.gov/ or http://www.sysbio.org/resources/staff/
 ' -------------------------------------------------------------------------------
 Module modMain
-	Public Const PROGRAM_DATE As String = "July 10, 2014"
+    Public Const PROGRAM_DATE As String = "October 16, 2014"
 
 	Private mSourceFolderPath As String = String.Empty
 	Private mTargetFolderPath As String = String.Empty
@@ -42,48 +42,48 @@ Module modMain
 				If SetOptionsUsingCommandLineParameters(objParseCommandLine) Then blnProceed = True
 			End If
 
-			If Not blnProceed OrElse _
-			   objParseCommandLine.NeedToShowHelp Then
-				ShowProgramHelp()
-				intReturnCode = -1
-			Else
+            If Not blnProceed OrElse
+               objParseCommandLine.NeedToShowHelp Then
+                ShowProgramHelp()
+                intReturnCode = -1
+            Else
 
-				If String.IsNullOrEmpty(mSourceFolderPath) Then
-					ShowErrorMessage("Source folder not defined")
-					ShowProgramHelp(False)
-					Return -1
-				End If
+                If String.IsNullOrEmpty(mSourceFolderPath) Then
+                    ShowErrorMessage("Source folder not defined")
+                    ShowProgramHelp(False)
+                    Return -1
+                End If
 
-				If String.IsNullOrEmpty(mTargetFolderPath) Then
-					ShowErrorMessage("Target folder not defined")
-					ShowProgramHelp(False)
-					Return -1
-				End If
+                If String.IsNullOrEmpty(mTargetFolderPath) Then
+                    ShowErrorMessage("Target folder not defined")
+                    ShowProgramHelp(False)
+                    Return -1
+                End If
 
 
-				Dim FileCountSkipped As Integer = 0
-				Dim FileCountResumed As Integer = 0
-				Dim FileCountNewlyCopied As Integer = 0
+                Dim FileCountSkipped As Integer = 0
+                Dim FileCountResumed As Integer = 0
+                Dim FileCountNewlyCopied As Integer = 0
 
-				mFileTools = New PRISM.Files.clsFileTools()
+                mFileTools = New PRISM.Files.clsFileTools()
 
-				Console.WriteLine("Copying " & mSourceFolderPath & " to " & mTargetFolderPath)
-				Console.WriteLine("Overwrite mode: " & mOverwriteMode.ToString())
-				Console.WriteLine()
+                Console.WriteLine("Copying " & mSourceFolderPath & " to " & mTargetFolderPath)
+                Console.WriteLine("Overwrite mode: " & mOverwriteMode.ToString())
+                Console.WriteLine()
 
-				bSuccess = mFileTools.CopyDirectoryWithResume(mSourceFolderPath, mTargetFolderPath, mRecurse, mOverwriteMode, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
+                bSuccess = mFileTools.CopyDirectoryWithResume(mSourceFolderPath, mTargetFolderPath, mRecurse, mOverwriteMode, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
 
-				If bSuccess Then
-					Console.WriteLine()
-					Console.WriteLine("Files newly copied: ".PadRight(22) & FileCountNewlyCopied)
-					Console.WriteLine("Files resumed: ".PadRight(22) & FileCountResumed)
-					Console.WriteLine("Files skipped: ".PadRight(22) & FileCountSkipped)
-				Else
-					Console.WriteLine("Copied failed for " & mSourceFolderPath & " copying to " & mTargetFolderPath)
-				End If
+                If bSuccess Then
+                    Console.WriteLine()
+                    Console.WriteLine("Files newly copied: ".PadRight(22) & FileCountNewlyCopied)
+                    Console.WriteLine("Files resumed: ".PadRight(22) & FileCountResumed)
+                    Console.WriteLine("Files skipped: ".PadRight(22) & FileCountSkipped)
+                Else
+                    Console.WriteLine("Copied failed for " & mSourceFolderPath & " copying to " & mTargetFolderPath)
+                End If
 
-				Console.WriteLine()
-			End If
+                Console.WriteLine()
+            End If
 
 		Catch ex As Exception
 			ShowErrorMessage("Error occurred in modMain->Main: " & System.Environment.NewLine & ex.Message)
@@ -218,9 +218,9 @@ Module modMain
 
 		Try
 			If blnShowProgramDescription Then
-				Console.WriteLine("This program copies a folder from a one location to another. " & _
-				"By default, existing files are overwritten only if they differ in size or modification time. " & _
-				"Copies large files in chunks such that copying can be resumed if a network error occurs.")
+                Console.WriteLine("This program copies a folder from a one location to another. " &
+                  "By default, existing files are overwritten only if they differ in size or modification time. " &
+                  "Copies large files in chunks such that copying can be resumed if a network error occurs.")
 			End If
 
 			Console.WriteLine()

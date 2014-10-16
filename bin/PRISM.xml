@@ -1515,7 +1515,7 @@ PRISM
 	<param name="fiSourceFile"></param>
 	<param name="strTargetFilePath"></param>
 	<param name="blnResumed">Output parameter; true if copying was resumed</param>
-	<returns></returns>
+	<returns>True if success; false if an error</returns>
 	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.NearlyEqualFileTimes(System.DateTime,System.DateTime)">
 	<summary>

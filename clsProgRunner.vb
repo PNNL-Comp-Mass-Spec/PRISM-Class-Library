@@ -488,7 +488,7 @@ Namespace Processes
 		End Sub
 
 		Public Shared Sub GarbageCollectNow()
-			Dim intMaxWaitTimeMSec As Integer = 1000
+            Const intMaxWaitTimeMSec As Integer = 1000
 			GarbageCollectNow(intMaxWaitTimeMSec)
 		End Sub
 
