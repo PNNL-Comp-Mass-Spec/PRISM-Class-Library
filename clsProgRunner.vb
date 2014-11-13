@@ -534,15 +534,15 @@ Namespace Processes
 
 			Dim strNewText As String
 
-			If Not srConsoleError Is Nothing AndAlso srConsoleError.Peek >= 0 Then
-				strNewText = srConsoleError.ReadToEnd
+            If Not srConsoleError Is Nothing AndAlso Not srConsoleError.EndOfStream Then
+                strNewText = srConsoleError.ReadToEnd
 
-				RaiseEvent ConsoleErrorEvent(strNewText)
+                RaiseEvent ConsoleErrorEvent(strNewText)
 
-				If Not m_CachedConsoleError Is Nothing Then
-					m_CachedConsoleError.Append(strNewText)
-				End If
-			End If
+                If Not m_CachedConsoleError Is Nothing Then
+                    m_CachedConsoleError.Append(strNewText)
+                End If
+            End If
 
 		End Sub
 
