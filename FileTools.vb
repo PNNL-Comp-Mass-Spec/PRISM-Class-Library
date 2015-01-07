@@ -1401,7 +1401,7 @@ Namespace Files
 
                             Dim lstSourceLines As Generic.List(Of String) = New Generic.List(Of String)
 
-                            Do While srFilePartInfo.Peek > -1
+                            Do While Not srFilePartInfo.EndofStream
                                 lstSourceLines.Add(srFilePartInfo.ReadLine())
                             Loop
 
