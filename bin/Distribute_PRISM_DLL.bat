@@ -136,6 +136,7 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\
 
 copy PRISM.dll "F:\My Documents\Projects\DataMining\QRollupExport\bin" /y
 
+copy PRISM.dll "F:\My Documents\Projects\GordonSlysz\DeconTools_IQ\Library" /y
 
 copy PRISM.dll "F:\My Documents\Projects\KenAuberry\Organism_Database_Handler\Shared Libraries" /y
 

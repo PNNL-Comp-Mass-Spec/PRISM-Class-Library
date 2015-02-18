@@ -58,6 +58,13 @@ PRISM
  way.  If an ILogger is specified, the user has the option of just logging,
  or logging and throwing/raising Exceptions/Events in the usual way as well.
  </remarks>
+</member><member name="M:PRISM.Logging.Utilities.GetExceptionStackTrace(System.Exception)">
+	<summary>
+ Parses the .StackTrace text of the given expression to return a compact description of the current stack
+ </summary>
+	<param name="objException"></param>
+	<returns>String similar to "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"</returns>
+	<remarks></remarks>
 </member><member name="M:PRISM.Logging.clsFileLogger.#ctor">
 	<summary>Initializes a new instance of the clsFileLogger class.</summary>
 </member><member name="M:PRISM.Logging.clsFileLogger.#ctor(System.String)">
@@ -513,6 +520,11 @@ PRISM
  Constructor
  </summary>
 	<remarks></remarks>
+</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.#ctor(System.String,System.Int32)">
+	<summary>
+ Constructor
+ </summary>
+	<remarks></remarks>
 </member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.OnInfoMessage(System.Object,System.Data.SqlClient.SqlInfoMessageEventArgs)">
 	<summary>
  Event handler for InfoMessage event
@@ -520,48 +532,67 @@ PRISM
 	<param name="sender"></param>
 	<param name="args"></param>
 	<remarks>Errors and warnings from SQL Server are caught here</remarks>
-</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand)">
-	<summary>
- Method for executing a db stored procedure, assuming no data table is returned; will retry the call to the procedure up to DEFAULT_SP_RETRY_COUNT=3 times
- </summary>
-	<param name="SpCmd">SQL command object containing stored procedure params</param>
-	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
-	<remarks></remarks>
-</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Int32)">
-	<summary>
- Method for executing a db stored procedure, assuming no data table is returned
- </summary>
-	<param name="SpCmd">SQL command object containing stored procedure params</param>
-	<param name="MaxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
-	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
-	<remarks></remarks>
-</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Int32,System.Int32)">
-	<summary>
- Method for executing a db stored procedure, assuming no data table is returned
- </summary>
-	<param name="SpCmd">SQL command object containing stored procedure params</param>
-	<param name="MaxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
-	<param name="RetryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
-	<remarks></remarks>
 </member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Data.DataTable@)">
 	<summary>
  Method for executing a db stored procedure if a data table is to be returned; will retry the call to the procedure up to DEFAULT_SP_RETRY_COUNT=3 times
  </summary>
-	<param name="SpCmd">SQL command object containing stored procedure params</param>
-	<param name="OutTable">NOTHING when called; if SP successful, contains data table on return</param>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<param name="outTable">If SP successful, contains data table on return</param>
 	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
 	<remarks></remarks>
 </member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Data.DataTable@,System.Int32,System.Int32)">
 	<summary>
  Method for executing a db stored procedure if a data table is to be returned
  </summary>
-	<param name="SpCmd">SQL command object containing stored procedure params</param>
-	<param name="OutTable">NOTHING when called; if SP successful, contains data table on return</param>
-	<param name="MaxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
-	<param name="RetryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<param name="outTable">If SP successful, contains data table on return</param>
+	<param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+	<param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
 	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
 	<remarks></remarks>
+</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand)">
+	<summary>
+ Method for executing a db stored procedure, assuming no data table is returned; will retry the call to the procedure up to DEFAULT_SP_RETRY_COUNT=3 times
+ </summary>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Int32)">
+	<summary>
+ Method for executing a db stored procedure, assuming no data table is returned
+ </summary>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Int32,System.Int32)">
+	<summary>
+ Method for executing a db stored procedure, assuming no data table is returned
+ </summary>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+	<param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Int32,System.String@)">
+	<summary>
+ Method for executing a db stored procedure when a data table is not returned
+ </summary>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+	<param name="errorMessage">Error message (output)</param>
+	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
+	<remarks>No logging is performed by this procedure</remarks>
+</member><member name="M:PRISM.DataBase.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Int32,System.String@,System.Int32)">
+	<summary>
+ Method for executing a db stored procedure when a data table is not returned
+ </summary>
+	<param name="spCmd">SQL command object containing stored procedure params</param>
+	<param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+	<param name="errorMessage">Error message (output)</param>
+	<param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+	<returns>Result code returned by SP; -1 if unable to execute SP</returns>
+	<remarks>No logging is performed by this procedure</remarks>
 </member><member name="T:PRISM.DataBase.clsExecuteDatabaseSP">
 	<summary>Tools to execute a stored procedure</summary>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@)">

@@ -1,6 +1,9 @@
 Prism Class Library Log
 
-Version 2.2.5387; January 30, 2014
+Version 2.2.5527; February 18, 2015
+	- 
+
+Version 2.2.5387; October 1, 2014
 	- Update ShareConnector to use enums
 
 Version 2.2.5142; January 30, 2014
