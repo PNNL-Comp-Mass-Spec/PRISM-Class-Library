@@ -467,7 +467,6 @@ Namespace Logging
         Public ReadOnly Property MachineName() As String
             Get
                 Dim host As String = System.Net.Dns.GetHostName
-                host = System.Net.Dns.GetHostEntry("localhost").HostName
 
                 If host.Contains(".") Then
                     host = host.Substring(0, host.IndexOf("."c))
