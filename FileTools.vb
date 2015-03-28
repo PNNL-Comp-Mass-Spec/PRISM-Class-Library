@@ -2075,7 +2075,22 @@ Namespace Files
             Dim intSourceFileSizeMB = CInt(fiSourceFile.Length / 1024.0 / 1024.0)
 
             ' Wait for up to 60 minutes for the server resources to free up
-            Do While DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < MAX_LOCKFILE_WAIT_TIME_MINUTES
+
+            ' However, if retrieving files from a2.emsl.pnl.gov only wait for a maximum of 5 minutes
+            ' because sometimes that folder's permissions get messed up and we can create files there, but cannot delete them
+
+            Dim maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES
+            Dim maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES
+
+            If diLockFolderSource.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
+                maxWaitTimeSource = 5
+            End If
+
+            If diLockFolderTarget.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
+                maxWaitTimeTarget = 5
+            End If
+
+            Do While Not WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES)
 
                 ' Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
                 lstLockFileMBSource = FindLockFiles(diLockFolderSource, lockFileTimestamp)
@@ -2088,9 +2103,9 @@ Namespace Files
                 intMBBacklogSource = lstLockFileMBSource.Sum()
                 intMBBacklogTarget = lstLockFileMBTarget.Sum()
 
-                If intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB Then
+                If intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeSource) Then
                     ' The source server has enough resources available to allow the copy
-                    If intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB Then
+                    If intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeTarget) Then
                         ' The target server has enough resources available to allow the copy
                         ' Copy the file
                         Exit Do
@@ -2113,6 +2128,14 @@ Namespace Files
             Loop
 
         End Sub
+
+        Private Function WaitedTooLong(ByVal dtWaitTimeStart As Date, ByVal maxLockfileWaitTimeMinutes As Integer) As Boolean
+            If DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes Then
+                Return False
+            Else
+                Return True
+            End If
+        End Function
 
 #End Region
 

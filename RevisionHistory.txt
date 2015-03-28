@@ -1,7 +1,13 @@
 Prism Class Library Log
 
+Version 2.2.5565; March 28, 2015
+	- Adjusted max wait time for lock files from a2.emsl.pnl.gov to be 5 minutes instead of 60 minutes
+
 Version 2.2.5527; February 18, 2015
-	- 
+	- Added ExecuteSP overloads that do not return a data table
+	- Add Logging.Utilities.GetExceptionStackTrace
+	- Replace Dns.GetHostEntry with Dns.GetHostName
+	- Resharper code cleanup
 
 Version 2.2.5387; October 1, 2014
 	- Update ShareConnector to use enums
