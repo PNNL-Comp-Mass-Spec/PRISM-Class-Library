@@ -1701,8 +1701,7 @@ Namespace Files
         ''' <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
         ''' <remarks></remarks>
         Public Shared Function BackupFileBeforeCopy(ByVal strTargetFilePath As String) As Boolean
-            Dim VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP
-            Return BackupFileBeforeCopy(strTargetFilePath, VersionCountToKeep)
+            Return BackupFileBeforeCopy(strTargetFilePath, DEFAULT_VERSION_COUNT_TO_KEEP)
         End Function
 
         ''' <summary>
@@ -2082,11 +2081,11 @@ Namespace Files
             Dim maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES
             Dim maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES
 
-            If diLockFolderSource.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
+            If Not diLockFolderSource Is Nothing AndAlso diLockFolderSource.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
                 maxWaitTimeSource = 5
             End If
 
-            If diLockFolderTarget.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
+            If Not diLockFolderTarget Is Nothing AndAlso diLockFolderTarget.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
                 maxWaitTimeTarget = 5
             End If
 
