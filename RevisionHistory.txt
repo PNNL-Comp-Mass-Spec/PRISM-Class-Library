@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.5602; May 4, 2015
+	- Adjusted default max wait time for lock files to be 3 hours instead of 60 minutes
+
 Version 2.2.5565; March 28, 2015
 	- Adjusted max wait time for lock files from a2.emsl.pnl.gov to be 5 minutes instead of 60 minutes
 

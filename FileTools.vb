@@ -44,7 +44,7 @@ Namespace Files
         Private Const COPY_OVERWRITE As Boolean = True
         Private Const COPY_NO_OVERWRITE As Boolean = False
 
-        Private Const MAX_LOCKFILE_WAIT_TIME_MINUTES As Integer = 60
+        Private Const MAX_LOCKFILE_WAIT_TIME_MINUTES As Integer = 180
 
         Public Const LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB As Integer = 20
         Private Const LOCKFILE_TRANSFER_THRESHOLD_MB As Integer = 1000
@@ -2073,20 +2073,20 @@ Namespace Files
 
             Dim intSourceFileSizeMB = CInt(fiSourceFile.Length / 1024.0 / 1024.0)
 
-            ' Wait for up to 60 minutes for the server resources to free up
+            ' Wait for up to 180 minutes (3 hours) for the server resources to free up
 
-            ' However, if retrieving files from a2.emsl.pnl.gov only wait for a maximum of 5 minutes
+            ' However, if retrieving files from a2.emsl.pnl.gov only wait for a maximum of 30 minutes
             ' because sometimes that folder's permissions get messed up and we can create files there, but cannot delete them
 
             Dim maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES
             Dim maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES
 
             If Not diLockFolderSource Is Nothing AndAlso diLockFolderSource.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
-                maxWaitTimeSource = 5
+                maxWaitTimeSource = 30
             End If
 
             If Not diLockFolderTarget Is Nothing AndAlso diLockFolderTarget.FullName.ToLower().StartsWith("\\a2.emsl.pnl.gov\") Then
-                maxWaitTimeTarget = 5
+                maxWaitTimeTarget = 30
             End If
 
             Do While Not WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES)
