@@ -1,8 +1,9 @@
 Option Strict On
 
 Imports System.IO
-Imports System.Runtime.InteropServices
-' Required for call to GetDiskFreeSpaceEx
+Imports System.Runtime.InteropServices    ' Required for call to GetDiskFreeSpaceEx
+Imports System.Text.RegularExpressions
+
 
 Namespace Files
     ''' <summary>Tools to manipulate paths and directories.</summary>
@@ -32,6 +33,10 @@ Namespace Files
         Public Event FileCopyProgress(ByVal filename As String, ByVal percentComplete As Single)
 
         Public Event WaitingForLockQueue(ByVal SourceFilePath As String, ByVal TargetFilePath As String, ByVal MBBacklogSource As Integer, ByVal MBBacklogTarget As Integer)
+
+        Public Event LockQueueTimedOut(ByVal sourceFilePath As String, ByVal targetFilePath As String, ByVal waitTimeMinutes As Double)
+
+        Public Event LockQueueWaitComplete(ByVal sourceFilePath As String, ByVal targetFilePath As String, ByVal waitTimeMinutes As Double)
 
 #End Region
 
@@ -335,15 +340,14 @@ Namespace Files
           ByVal strManagerName As String,
           ByVal Overwrite As Boolean) As Boolean
 
-            Dim blnUseLockFile As Boolean = False
-            Dim blnSuccess As Boolean = False
+            Dim blnUseLockFile = False
+            Dim blnSuccess As Boolean
 
             If Not Overwrite AndAlso File.Exists(strTargetFilePath) Then
                 Return True
             End If
 
-            Dim fiTarget As FileInfo
-            fiTarget = New FileInfo(strTargetFilePath)
+            Dim fiTarget = New FileInfo(strTargetFilePath)
 
             Dim strLockFolderPathSource As String = GetLockFolder(fiSource)
             Dim strLockFolderPathTarget As String = GetLockFolder(fiTarget)
@@ -355,7 +359,7 @@ Namespace Files
             If blnUseLockFile Then
                 blnSuccess = CopyFileUsingLocks(strLockFolderPathSource, strLockFolderPathTarget, fiSource, strTargetFilePath, strManagerName, Overwrite)
             Else
-                Const BackupDestFileBeforeCopy As Boolean = False
+                Const BackupDestFileBeforeCopy = False
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
                 blnSuccess = True
             End If
@@ -489,16 +493,17 @@ Namespace Files
           ByVal strTargetFilePath As String,
           ByVal strManagerName As String) As String
 
-            Dim strLockFilePath As String = String.Empty
-            Dim strLockFileName As String
-
             If diLockFolder Is Nothing Then
                 Return String.Empty
             End If
 
+            If String.IsNullOrWhiteSpace(strManagerName) Then
+                strManagerName = "UnknownManager"
+            End If
+
             ' Define the lock file name
-            strLockFileName = GenerateLockFileName(lockFileTimestamp, fiSource, strManagerName)
-            strLockFilePath = Path.Combine(diLockFolder.FullName, strLockFileName)
+            Dim strLockFileName = GenerateLockFileName(lockFileTimestamp, fiSource, strManagerName)
+            Dim strLockFilePath = Path.Combine(diLockFolder.FullName, strLockFileName)
             Do While File.Exists(strLockFilePath)
                 ' File already exists for this manager; append a dash to the path
                 strLockFileName = Path.GetFileNameWithoutExtension(strLockFileName) & "-" & Path.GetExtension(strLockFileName)
@@ -507,11 +512,12 @@ Namespace Files
 
             Try
                 ' Create the lock file
-                Using swLockFile As StreamWriter = New StreamWriter(New FileStream(strLockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
-                    swLockFile.WriteLine("Date: " & System.DateTime.Now.ToString())
+                Using swLockFile = New StreamWriter(New FileStream(strLockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                    swLockFile.WriteLine("Date: " & DateTime.Now.ToString())
                     swLockFile.WriteLine("Source: " & fiSource.FullName)
                     swLockFile.WriteLine("Target: " & strTargetFilePath)
                     swLockFile.WriteLine("Size_Bytes: " & fiSource.Length)
+                    swLockFile.WriteLine("Manager: " & strManagerName)
                 End Using
             Catch ex As Exception
                 ' Error creating the lock file
@@ -660,9 +666,9 @@ Namespace Files
         ''' <returns></returns>
         ''' <remarks></remarks>
         Private Function FindLockFiles(ByVal diLockFolder As DirectoryInfo, lockFileTimestamp As Int64) As Generic.List(Of Integer)
-            Static reParseLockFileName As System.Text.RegularExpressions.Regex = New System.Text.RegularExpressions.Regex("^(\d+)_(\d+)_", Text.RegularExpressions.RegexOptions.Compiled)
+            Static reParseLockFileName As Regex = New Regex("^(\d+)_(\d+)_", RegexOptions.Compiled)
 
-            Dim reMatch As System.Text.RegularExpressions.Match
+            Dim reMatch As Match
             Dim intQueueTimeMSec As Int64
             Dim intFileSizeMB As Int32
 
@@ -707,7 +713,7 @@ Namespace Files
         ''' <returns></returns>
         ''' <remarks></remarks>
         Private Function GenerateLockFileName(ByVal lockFileTimestamp As Int64, ByVal fiSource As FileInfo, ByVal strManagerName As String) As String
-            Static reInvalidDosChars As System.Text.RegularExpressions.Regex = New System.Text.RegularExpressions.Regex("[\\/:*?""<>| ]", Text.RegularExpressions.RegexOptions.Compiled)
+            Static reInvalidDosChars As Regex = New Regex("[\\/:*?""<>| ]", RegexOptions.Compiled)
 
             If String.IsNullOrWhiteSpace(strManagerName) Then
                 strManagerName = "UnknownManager"
@@ -715,8 +721,7 @@ Namespace Files
 
             Dim strLockFileName As String
             strLockFileName = lockFileTimestamp.ToString() & "_" &
-              (fiSource.Length / 1024.0 / 1024.0).ToString("0000") & "_" &
-              System.Environment.MachineName & "_" &
+              (fiSource.Length / 1024.0 / 1024.0).ToString("0000") & "_" & Environment.MachineName & "_" &
               strManagerName & LOCKFILE_EXTENSION
 
             ' Replace any invalid characters (including spaces) with an underscore
@@ -1345,7 +1350,6 @@ Namespace Files
 
             Dim lngFileOffsetStart As Int64 = 0
             Dim blnResumeCopy As Boolean
-            Dim dtSourceFileLastWriteTimeUTC As System.DateTime
             Dim strSourceFileLastWriteTime As String
 
             Dim swFilePart As FileStream = Nothing
@@ -1376,7 +1380,7 @@ Namespace Files
                 ' Delete the target file if it already exists
                 If File.Exists(strTargetFilePath) Then
                     File.Delete(strTargetFilePath)
-                    System.Threading.Thread.Sleep(25)
+                    Threading.Thread.Sleep(25)
                 End If
 
                 ' Check for a #FilePart# file
@@ -1386,7 +1390,7 @@ Namespace Files
                 Dim fiFilePartInfo As FileInfo
                 fiFilePartInfo = New FileInfo(strTargetFilePath & FILE_PART_INFO_TAG)
 
-                dtSourceFileLastWriteTimeUTC = fiSourceFile.LastWriteTimeUtc
+                Dim dtSourceFileLastWriteTimeUTC = fiSourceFile.LastWriteTimeUtc
                 strSourceFileLastWriteTime = dtSourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt")
 
                 If fiFilePart.Exists Then
@@ -1416,8 +1420,8 @@ Namespace Files
                                     ' Name and size are the same
                                     ' See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
 
-                                    Dim dtCachedLastWriteTimeUTC As System.DateTime
-                                    If System.DateTime.TryParse(lstSourceLines(2), dtCachedLastWriteTimeUTC) Then
+                                    Dim dtCachedLastWriteTimeUTC As DateTime
+                                    If DateTime.TryParse(lstSourceLines(2), dtCachedLastWriteTimeUTC) Then
                                         If NearlyEqualFileTimes(dtSourceFileLastWriteTimeUTC, dtCachedLastWriteTimeUTC) Then
 
                                             ' Source file is unchanged; safe to resume
@@ -1447,7 +1451,7 @@ Namespace Files
                     ' Delete FilePart file in the target folder if it already exists
                     If fiFilePart.Exists Then
                         fiFilePart.Delete()
-                        System.Threading.Thread.Sleep(25)
+                        Threading.Thread.Sleep(25)
                     End If
 
                     ' Create the FILE_PART_INFO_TAG file
@@ -1480,7 +1484,6 @@ Namespace Files
 
                     Dim lngBytesWritten As Int64 = lngFileOffsetStart
                     Dim sngTotalBytes As Single = srSourceFile.Length
-                    Dim sngProgress As Single = 0    ' Value between 0 and 100
 
                     ReDim buffer(intChunkSizeBytes)
                     intBytesSinceLastFlush = 0
@@ -1496,7 +1499,9 @@ Namespace Files
                         If intBytesSinceLastFlush >= intFlushThresholdBytes Then
                             swFilePart.Flush()
                             intBytesSinceLastFlush = 0
-                            sngProgress = lngBytesWritten / sngTotalBytes * 100
+
+                            ' Value between 0 and 100
+                            Dim sngProgress = lngBytesWritten / sngTotalBytes * 100
                             RaiseEvent FileCopyProgress(fiSourceFile.Name, sngProgress)
                         End If
 
@@ -1545,8 +1550,8 @@ Namespace Files
         ''' <param name="dtTime2">Second file time</param>
         ''' <returns>True if the times agree within 2 seconds</returns>
         ''' <remarks></remarks>
-        Protected Function NearlyEqualFileTimes(ByVal dtTime1 As System.DateTime, ByVal dtTime2 As System.DateTime) As Boolean
-            If Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2 Then
+        Protected Function NearlyEqualFileTimes(ByVal dtTime1 As DateTime, ByVal dtTime2 As DateTime) As Boolean
+            If Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2.05 Then
                 Return True
             Else
                 Return False
@@ -2067,9 +2072,7 @@ Namespace Files
             Dim intMBBacklogSource As Integer
             Dim intMBBacklogTarget As Integer
 
-            Dim dtWaitTimeStart As System.DateTime
-
-            dtWaitTimeStart = DateTime.UtcNow
+            Dim dtWaitTimeStart = DateTime.UtcNow
 
             Dim intSourceFileSizeMB = CInt(fiSourceFile.Length / 1024.0 / 1024.0)
 
@@ -2089,26 +2092,34 @@ Namespace Files
                 maxWaitTimeTarget = 30
             End If
 
-            Do While Not WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES)
+            Do While True
 
                 ' Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
                 lstLockFileMBSource = FindLockFiles(diLockFolderSource, lockFileTimestamp)
                 lstLockFileMBTarget = FindLockFiles(diLockFolderTarget, lockFileTimestamp)
 
+                Dim stopWaiting = False
+
                 If lstLockFileMBSource.Count <= 1 AndAlso lstLockFileMBTarget.Count <= 1 Then
-                    Exit Do
+                    stopWaiting = True
+                Else
+
+                    intMBBacklogSource = lstLockFileMBSource.Sum()
+                    intMBBacklogTarget = lstLockFileMBTarget.Sum()
+
+                    If intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeSource) Then
+                        ' The source server has enough resources available to allow the copy
+                        If intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeTarget) Then
+                            ' The target server has enough resources available to allow the copy
+                            ' Copy the file
+                            stopWaiting = True
+                        End If
+                    End If
                 End If
 
-                intMBBacklogSource = lstLockFileMBSource.Sum()
-                intMBBacklogTarget = lstLockFileMBTarget.Sum()
-
-                If intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeSource) Then
-                    ' The source server has enough resources available to allow the copy
-                    If intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeTarget) Then
-                        ' The target server has enough resources available to allow the copy
-                        ' Copy the file
-                        Exit Do
-                    End If
+                If stopWaiting Then
+                    RaiseEvent LockQueueWaitComplete(fiSourceFile.FullName, strTargetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes)
+                    Exit Do
                 End If
 
                 ' Server resources exceed the thresholds
@@ -2118,12 +2129,18 @@ Namespace Files
 
                 Dim dblSleepTimeSec As Double
                 dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0
+
                 If dblSleepTimeSec < 1 Then dblSleepTimeSec = 1
                 If dblSleepTimeSec > 30 Then dblSleepTimeSec = 30
 
                 RaiseEvent WaitingForLockQueue(fiSourceFile.FullName, strTargetFilePath, intMBBacklogSource, intMBBacklogTarget)
 
-                System.Threading.Thread.Sleep(CInt(dblSleepTimeSec) * 1000)
+                Threading.Thread.Sleep(CInt(dblSleepTimeSec) * 1000)
+
+                If WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES) Then
+                    RaiseEvent LockQueueTimedOut(fiSourceFile.FullName, strTargetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes)
+                    Exit Do
+                End If
             Loop
 
         End Sub
