@@ -9,7 +9,6 @@ Imports System.Threading
 Imports System.Windows.Forms
 Imports System.Collections.Generic
 Imports System.Text.RegularExpressions
-Imports System.Net
 
 Namespace Logging
 
@@ -114,12 +113,12 @@ Namespace Logging
         ''' <returns>String similar to "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"</returns>
         ''' <remarks></remarks>
         Public Shared Function GetExceptionStackTrace(ByVal objException As Exception) As String
-            Const REGEX_FUNCTION_NAME As String = "at ([^(]+)\("
-            Const REGEX_FILE_NAME As String = "in .+\\(.+)"
+            Const REGEX_FUNCTION_NAME = "at ([^(]+)\("
+            Const REGEX_FILE_NAME = "in .+\\(.+)"
 
             Dim intIndex As Integer
 
-            Dim lstFunctions As List(Of String) = New List(Of String)
+            Dim lstFunctions = New List(Of String)
 
             Dim strCurrentFunction As String
             Dim strFinalFile As String = String.Empty
@@ -133,7 +132,7 @@ Namespace Logging
 
             ' Process each line in objException.StackTrace
             ' Populate strFunctions() with the function name of each line
-            Using trTextReader As StringReader = New StringReader(objException.StackTrace)
+            Using trTextReader = New StringReader(objException.StackTrace)
 
                 Do While trTextReader.Peek > -1
                     strLine = trTextReader.ReadLine()
@@ -297,7 +296,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
         Private Sub LogToFile(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
-			Dim LogFile As StreamWriter = Nothing
+            Dim LogFile As StreamWriter = Nothing
             Dim FormattedLogMessage As String
 
             ' don't log to file if no file name given
@@ -466,7 +465,7 @@ Namespace Logging
         ''' <summary>The module name identifies the logging process.</summary>
         Public ReadOnly Property MachineName() As String
             Get
-                Dim host As String = System.Net.Dns.GetHostName
+                Dim host As String = Net.Dns.GetHostName
 
                 If host.Contains(".") Then
                     host = host.Substring(0, host.IndexOf("."c))
@@ -558,7 +557,7 @@ Namespace Logging
                 ' create the database connection
                 '
                 Dim cnStr As String = m_connection_str
-                Using dbCn As SqlConnection = New SqlConnection(cnStr)
+                Using dbCn = New SqlConnection(cnStr)
                     AddHandler dbCn.InfoMessage, New SqlInfoMessageEventHandler(AddressOf OnInfoMessage)
                     dbCn.Open()
 

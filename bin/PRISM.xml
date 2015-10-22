@@ -6,7 +6,28 @@ PRISM
 </name>
 </assembly>
 <members>
-<member name="F:PRISM.Logging.ILogger.logMsgType.logNormal">
+<member name="M:PRISM.clsWindowsUpdateStatus.UpdatesArePending">
+	<summary>
+ Checks whether Windows Updates are expected to occur close to the current time of day
+ </summary>
+	<returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.clsWindowsUpdateStatus.UpdatesArePending(System.String@)">
+	<summary>
+ Checks whether Windows Updates are expected to occur close to the current time of day
+ </summary>
+	<param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
+	<returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.clsWindowsUpdateStatus.UpdatesArePending(System.DateTime,System.String@)">
+	<summary>
+ Checks whether Windows Updates are expected to occur close to the current time of day
+ </summary>
+	<param name="currentTime">Current time of day</param>
+	<param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
+	<returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
+	<remarks></remarks>
+</member><member name="F:PRISM.Logging.ILogger.logMsgType.logNormal">
 	<summary>The message is informational.</summary>
 </member><member name="F:PRISM.Logging.ILogger.logMsgType.logError">
 	<summary>The message represents an error.</summary>
@@ -597,20 +618,20 @@ PRISM
 	<summary>Tools to execute a stored procedure</summary>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@)">
 	<summary>Initializes a new instance of the IniFileReader.</summary>
-	<param name="IniFileName">The name of the ini file.</param>
+	<param name="filename">The name of the ini file.</param>
 	<param name="logger">This is the logger.</param>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,System.Boolean)">
 	<summary>Initializes a new instance of the IniFileReader.</summary>
-	<param name="IniFileName">The name of the ini file.</param>
+	<param name="filename">The name of the ini file.</param>
 	<param name="IsCaseSensitive">Case sensitive as boolean.</param>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@,System.Boolean)">
 	<summary>Initializes a new instance of the IniFileReader.</summary>
-	<param name="IniFileName">The name of the ini file.</param>
+	<param name="filename">The name of the ini file.</param>
 	<param name="logger">This is the logger.</param>
 	<param name="IsCaseSensitive">Case sensitive as boolean.</param>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String)">
 	<summary>Initializes a new instance of the IniFileReader.</summary>
-	<param name="IniFileName">The name of the ini file.</param>
+	<param name="filename">The name of the ini file.</param>
 </member><member name="M:PRISM.Files.IniFileReader.InitIniFileReader(System.String,System.Boolean)">
 	<summary>
  This routine is called by each of the constructors to make the actual assignments.

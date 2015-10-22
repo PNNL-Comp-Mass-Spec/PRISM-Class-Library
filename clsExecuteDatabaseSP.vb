@@ -155,9 +155,9 @@ Namespace DataBase
             While retryCount > 0    'Multiple retry loop for handling SP execution failures
                 blnDeadlockOccurred = False
                 Try
-                    Using Cn As SqlConnection = New SqlConnection(m_ConnStr)
+                    Using Cn = New SqlConnection(m_ConnStr)
                         AddHandler Cn.InfoMessage, New SqlInfoMessageEventHandler(AddressOf OnInfoMessage)
-                        Using Da As SqlDataAdapter = New SqlDataAdapter(), Ds As DataSet = New DataSet
+                        Using Da = New SqlDataAdapter(), Ds = New DataSet
                             'NOTE: The connection has to be added here because it didn't exist at the time the command object was created
                             spCmd.Connection = Cn
 
@@ -183,7 +183,7 @@ Namespace DataBase
                     retryCount -= 1
                     errorMessage = "Exception filling data adapter for " & spCmd.CommandText & ": " & ex.Message
                     errorMessage &= "; resultCode = " & resultCode.ToString & "; Retry count = " & retryCount.ToString
-                    errorMessage &= "; " & PRISM.Logging.Utilities.GetExceptionStackTrace(ex)
+                    errorMessage &= "; " & Logging.Utilities.GetExceptionStackTrace(ex)
 
                     RaiseEvent DBErrorEvent(errorMessage)
                     Console.WriteLine(errorMessage)
@@ -321,7 +321,7 @@ Namespace DataBase
             While retryCount > 0    'Multiple retry loop for handling SP execution failures
                 blnDeadlockOccurred = False
                 Try
-                    Using Cn As SqlConnection = New SqlConnection(m_ConnStr)
+                    Using Cn = New SqlConnection(m_ConnStr)
 
                         Cn.Open()
 
@@ -342,7 +342,7 @@ Namespace DataBase
                     retryCount -= 1
                     errorMessage = "Exception calling stored procedure " & spCmd.CommandText & ": " & ex.Message
                     errorMessage &= "; resultCode = " & resultCode.ToString & "; Retry count = " & retryCount.ToString
-                    errorMessage &= "; " & PRISM.Logging.Utilities.GetExceptionStackTrace(ex)
+                    errorMessage &= "; " & Logging.Utilities.GetExceptionStackTrace(ex)
 
                     RaiseEvent DBErrorEvent(errorMessage)
                     Console.WriteLine(errorMessage)

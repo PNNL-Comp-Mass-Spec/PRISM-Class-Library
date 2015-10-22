@@ -8,6 +8,7 @@ Option Strict On
 ' Updated in October 2004 to truly be case-insensitive if IsCaseSensitive = False when calling LoadSettings()
 
 Imports PRISM.Logging
+
 Namespace Files
     Public Class XmlSettingsFileAccessor
         Implements ILoggerAware
@@ -27,7 +28,7 @@ Namespace Files
         ' When mCaseSensitive = False, then htSectionNames stores mapping between lowercase section name and actual section name stored in file
         '   If section is present more than once in file, then only grabs the last occurence of the section
         ' When mCaseSensitive = True, then the mappings in htSectionNames are effectively not used
-        Private htSectionNames As Hashtable
+        Private ReadOnly htSectionNames As Hashtable
         Private mCachedSection As udtRecentSectionType
 
         Public Event InformationMessage(ByVal msg As String)
@@ -131,7 +132,7 @@ Namespace Files
         ''' <param name="sectionName">The name of the section to look for.</param>
         ''' <return>The function returns a boolean that shows if the section is present.</return>
         Public Function SectionPresent(ByVal sectionName As String) As Boolean
-            Dim strSections As System.Collections.Specialized.StringCollection
+            Dim strSections As Specialized.StringCollection
             Dim intIndex As Integer
 
             strSections = m_iniFileAccessor.AllSections
@@ -148,7 +149,7 @@ Namespace Files
             ' Looks up the Key Names for the given section, storing them in mCachedSection
             ' This is done so that this class will know the correct capitalization for the key names
 
-            Dim strKeys As System.Collections.Specialized.StringCollection
+            Dim strKeys As Specialized.StringCollection
             Dim intIndex As Integer
 
             Dim sectionNameInFile As String
@@ -197,7 +198,7 @@ Namespace Files
             ' Looks up the Section Names in the XML file
             ' This is done so that this class will know the correct capitalization for the section names
 
-            Dim strSections As System.Collections.Specialized.StringCollection
+            Dim strSections As Specialized.StringCollection
             Dim strSectionNameToStore As String
 
             Dim intIndex As Integer
@@ -288,7 +289,7 @@ Namespace Files
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a String.</return>
         Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As String, Optional ByRef valueNotPresent As Boolean = False) As String
-			Dim strResult As String = Nothing
+            Dim strResult As String = Nothing
             Dim sectionNameInFile As String
             Dim keyNameInFile As String
 
@@ -304,13 +305,13 @@ Namespace Files
                 End If
             End If
 
-			If strResult Is Nothing Then
-				valueNotPresent = True
-				Return valueIfMissing
-			Else
-				valueNotPresent = False
-				Return strResult
-			End If
+            If strResult Is Nothing Then
+                valueNotPresent = True
+                Return valueIfMissing
+            Else
+                valueNotPresent = False
+                Return strResult
+            End If
         End Function
 
         ''' <summary>
@@ -655,21 +656,21 @@ Namespace Files
         End Sub
 
         ''' <summary>Sets the name of the exception logger</summary>
-        Public Sub RegisterExceptionLogger(ByVal logger As ILogger) Implements Logging.ILoggerAware.RegisterEventLogger
+        Public Sub RegisterExceptionLogger(ByVal logger As ILogger) Implements ILoggerAware.RegisterEventLogger
             If Not m_iniFileAccessor Is Nothing Then
                 m_iniFileAccessor.RegisterExceptionLogger(logger)
             End If
         End Sub
 
         ''' <summary>Sets the name of the event logger</summary>
-        Public Sub RegisterEventLogger(ByVal logger As ILogger) Implements Logging.ILoggerAware.RegisterExceptionLogger
+        Public Sub RegisterEventLogger(ByVal logger As ILogger) Implements ILoggerAware.RegisterExceptionLogger
             If Not m_iniFileAccessor Is Nothing Then
                 m_iniFileAccessor.RegisterEventLogger(logger)
             End If
         End Sub
 
         ''' <summary>Gets or Sets notify on event.</summary>
-        Public Property NotifyOnEvent() As Boolean Implements Logging.ILoggerAware.NotifyOnEvent
+        Public Property NotifyOnEvent() As Boolean Implements ILoggerAware.NotifyOnEvent
             Get
                 If Not m_iniFileAccessor Is Nothing Then
                     Return m_iniFileAccessor.NotifyOnEvent
@@ -685,7 +686,7 @@ Namespace Files
         End Property
 
         ''' <summary>Gets or Sets notify on exception.</summary>
-        Public Property NotifyOnException() As Boolean Implements Logging.ILoggerAware.NotifyOnException
+        Public Property NotifyOnException() As Boolean Implements ILoggerAware.NotifyOnException
             Get
                 If Not m_iniFileAccessor Is Nothing Then
                     Return m_iniFileAccessor.NotifyOnException
@@ -704,10 +705,11 @@ Namespace Files
             mCaseSensitive = False
             htSectionNames = New Hashtable
 
-            With mCachedSection
-                .SectionName = String.Empty
-                .htKeys = New Hashtable
-            End With
+            mCachedSection = New udtRecentSectionType
+
+            mCachedSection.SectionName = String.Empty
+            mCachedSection.htKeys = New Hashtable
+
         End Sub
     End Class
 End Namespace

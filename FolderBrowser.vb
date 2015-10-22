@@ -16,21 +16,21 @@ Namespace Files
 
 #Region "Classwide Variables"
 
-        Private WithEvents mFolderBrowserDialog As Files.Forms.ShellFolderBrowser
+        Private WithEvents mFolderBrowserDialog As Forms.ShellFolderBrowser
 
         Private mCurrentFolderPath As String
-        Private mBrowseFlags As Files.Forms.BrowseFlags
+        Private mBrowseFlags As Forms.BrowseFlags
         Private mTitle As String
 
 #End Region
 
 #Region "Interface Functions"
         ''' <summary>TBD</summary>
-        Public Property BrowseFlags() As Files.Forms.BrowseFlags
+        Public Property BrowseFlags() As Forms.BrowseFlags
             Get
                 Return mBrowseFlags
             End Get
-            Set(ByVal Value As Files.Forms.BrowseFlags)
+            Set(ByVal Value As Forms.BrowseFlags)
                 mBrowseFlags = Value
             End Set
         End Property
@@ -63,7 +63,7 @@ Namespace Files
 
             Dim blnSuccess As Boolean
 
-            mFolderBrowserDialog = New Files.Forms.ShellFolderBrowser
+            mFolderBrowserDialog = New Forms.ShellFolderBrowser
 
             Try
                 blnSuccess = False
@@ -96,7 +96,7 @@ Namespace Files
 
 
         ''' <summary>TBD</summary>
-        Private Sub mFolderBrowserDialog_Initialized(ByVal sender As Object, ByVal e As System.EventArgs) Handles mFolderBrowserDialog.Initialized
+        Private Sub mFolderBrowserDialog_Initialized(ByVal sender As Object, ByVal e As EventArgs) Handles mFolderBrowserDialog.Initialized
             If Not mCurrentFolderPath Is Nothing AndAlso mCurrentFolderPath.Length > 0 Then
                 Try
                     mFolderBrowserDialog.SetExpanded(mCurrentFolderPath)
@@ -112,9 +112,12 @@ Namespace Files
             mTitle = "Select Folder"
 
             ' Define the default Browse Flags
-            mBrowseFlags = Files.Forms.BrowseFlags.ReturnOnlyFSDirs Or Files.Forms.BrowseFlags.DontGoBelowDomain Or _
-                           Files.Forms.BrowseFlags.ShowStatusText Or Files.Forms.BrowseFlags.EditBox Or _
-                           Files.Forms.BrowseFlags.Validate Or Files.Forms.BrowseFlags.NewDialogStyle
+            mBrowseFlags = Forms.BrowseFlags.ReturnOnlyFSDirs Or
+                           Forms.BrowseFlags.DontGoBelowDomain Or
+                           Forms.BrowseFlags.ShowStatusText Or
+                           Forms.BrowseFlags.EditBox Or
+                           Forms.BrowseFlags.Validate Or
+                           Forms.BrowseFlags.NewDialogStyle
         End Sub
 
     End Class
@@ -197,7 +200,7 @@ Namespace Files.Forms
     ''' Encapsulates the shell folder browse dialog shown by SHBrowseForFolder
     ''' </summary>
     Public Class ShellFolderBrowser
-        Inherits System.ComponentModel.Component
+        Inherits Component
         Private titleValue As String
         Private pidlReturnedValue As IntPtr = IntPtr.Zero
         Private handleValue As IntPtr
@@ -243,7 +246,7 @@ Namespace Files.Forms
                 If IntPtr.op_Equality(pidlReturnedValue, IntPtr.Zero) Then
                     Return String.Empty
                 End If
-                Dim pathReturned As New System.Text.StringBuilder(260)
+                Dim pathReturned As New Text.StringBuilder(260)
 
                 UnManagedMethods.SHGetPathFromIDList(pidlReturnedValue, pathReturned)
                 Return pathReturned.ToString()
@@ -291,28 +294,28 @@ Namespace Files.Forms
         ''' Shows the dialog
         ''' </summary>
         ''' <param name="owner">The window to use as the owner</param>
-		Public Function ShowDialog(ByVal owner As System.Windows.Forms.IWin32Window) As Boolean
-			If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
-				Throw New InvalidOperationException
-			End If
-			Dim bi As New BrowseInfo
+        Public Function ShowDialog(ByVal owner As Windows.Forms.IWin32Window) As Boolean
+            If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
+                Throw New InvalidOperationException
+            End If
+            Dim bi As New BrowseInfo
 
-			If Not (owner Is Nothing) Then
-				bi.hwndOwner = owner.Handle
-			End If
-			Return ShowDialogInternal(bi)
-		End Function
+            If Not (owner Is Nothing) Then
+                bi.hwndOwner = owner.Handle
+            End If
+            Return ShowDialogInternal(bi)
+        End Function
 
         ''' <summary>
         ''' Shows the dialog using active window as the owner
         ''' </summary>
 		Public Function ShowDialog() As Boolean
-			Return ShowDialog(System.Windows.Forms.Form.ActiveForm)
+            Return ShowDialog(Windows.Forms.Form.ActiveForm)
 		End Function
 
-        Private WM_USER As Integer = &H400
-        Private BFFM_SETSTATUSTEXTA As Integer = WM_USER + 100
-        Private BFFM_SETSTATUSTEXTW As Integer = WM_USER + 104
+        Const WM_USER As Integer = &H400
+        Const BFFM_SETSTATUSTEXTA As Integer = WM_USER + 100
+        Const BFFM_SETSTATUSTEXTW As Integer = WM_USER + 104
 
         ''' <summary>
         ''' Sets the text of the staus area of the folder dialog
@@ -328,14 +331,14 @@ Namespace Files.Forms
             Else
                 msg = BFFM_SETSTATUSTEXTA
             End If
-            Dim strptr As IntPtr = System.Runtime.InteropServices.Marshal.StringToHGlobalAuto([text])
+            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalAuto([text])
 
             UnManagedMethods.SendMessage(handleValue, msg, IntPtr.Zero, strptr)
 
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
         End Sub
 
-        Private BFFM_ENABLEOK As Integer = WM_USER + 101
+        Const BFFM_ENABLEOK As Integer = WM_USER + 101
 
         ''' <summary>
         ''' Enables or disables the ok button
@@ -355,8 +358,8 @@ Namespace Files.Forms
             UnManagedMethods.SendMessage(handleValue, BFFM_ENABLEOK, IntPtr.Zero, lp)
         End Sub
 
-        Private BFFM_SETSELECTIONA As Integer = WM_USER + 102
-        Private BFFM_SETSELECTIONW As Integer = WM_USER + 103
+        Const BFFM_SETSELECTIONA As Integer = WM_USER + 102
+        Const BFFM_SETSELECTIONW As Integer = WM_USER + 103
 
 
         ''' <summary>
@@ -375,14 +378,14 @@ Namespace Files.Forms
                 msg = BFFM_SETSELECTIONW
             End If
 
-            Dim strptr As IntPtr = System.Runtime.InteropServices.Marshal.StringToHGlobalAuto(newsel)
+            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalAuto(newsel)
 
             UnManagedMethods.SendMessage(handleValue, msg, New IntPtr(1), strptr)
 
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
         End Sub
 
-        Private BFFM_SETOKTEXT As Integer = WM_USER + 105
+        Const BFFM_SETOKTEXT As Integer = WM_USER + 105
 
         ''' <summary>
         ''' Sets the text of the OK button in the dialog
@@ -392,25 +395,25 @@ Namespace Files.Forms
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
-            Dim strptr As IntPtr = System.Runtime.InteropServices.Marshal.StringToHGlobalUni([text])
+            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni([text])
 
             UnManagedMethods.SendMessage(handleValue, BFFM_SETOKTEXT, New IntPtr(1), strptr)
 
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
         End Sub
 
-        Private BFFM_SETEXPANDED As Integer = WM_USER + 106
+        Const BFFM_SETEXPANDED As Integer = WM_USER + 106
 
         ''' <summary>
         ''' Expand a path in the folder
         ''' </summary>
         ''' <param name="path">The path to expand</param>
         Public Sub SetExpanded(ByVal path As String)
-            Dim strptr As IntPtr = System.Runtime.InteropServices.Marshal.StringToHGlobalUni(path)
+            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni(path)
 
             UnManagedMethods.SendMessage(handleValue, BFFM_SETEXPANDED, New IntPtr(1), strptr)
 
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
         End Sub
 
         ''' <summary>
@@ -430,11 +433,11 @@ Namespace Files.Forms
         ''' </summary>
         Public Event ValidateFailed As ValidateFailedEventHandler
 
-        Private BFFM_INITIALIZED As Integer = 1
-        Private BFFM_SELCHANGED As Integer = 2
-        Private BFFM_VALIDATEFAILEDA As Integer = 3
-        Private BFFM_VALIDATEFAILEDW As Integer = 4
-        Private BFFM_IUNKNOWN As Integer = 5
+        Const BFFM_INITIALIZED As Integer = 1
+        Const BFFM_SELCHANGED As Integer = 2
+        Const BFFM_VALIDATEFAILEDA As Integer = 3
+        Const BFFM_VALIDATEFAILEDW As Integer = 4
+        Const BFFM_IUNKNOWN As Integer = 5
 
         Private Function CallBack(ByVal hwnd As IntPtr, ByVal msg As Integer, ByVal lp As IntPtr, ByVal lpData As IntPtr) As Integer
             Dim ret As Integer = 0

@@ -502,7 +502,7 @@ Namespace Processes
             If intMaxWaitTimeMSec < 100 Then intMaxWaitTimeMSec = 100
             If intMaxWaitTimeMSec > 5000 Then intMaxWaitTimeMSec = 5000
 
-            System.Threading.Thread.Sleep(100)
+            Threading.Thread.Sleep(100)
 
             Try
                 Dim gcThread As New Threading.Thread(AddressOf GarbageCollectWaitForGC)
@@ -556,12 +556,12 @@ Namespace Processes
             Try
                 ' Attempt to re-join the thread (wait for 5 seconds, at most)
                 m_Thread.Join(5000)
-            Catch ex As System.Threading.ThreadStateException
+            Catch ex As Threading.ThreadStateException
                 ThrowConditionalException(CType(ex, Exception), "Caught ThreadStateException while trying to join thread.")
-            Catch ex As System.Threading.ThreadInterruptedException
+            Catch ex As Threading.ThreadInterruptedException
                 ThrowConditionalException(CType(ex, Exception), "Caught ThreadInterruptedException while trying to join thread.")
             Catch ex As Exception
-                ThrowConditionalException(CType(ex, Exception), "Caught exception while trying to join thread.")
+                ThrowConditionalException(ex, "Caught exception while trying to join thread.")
             End Try
 
         End Sub
@@ -647,7 +647,7 @@ Namespace Processes
 
                         End If
 
-                        m_ConsoleOutputStreamWriter = New StreamWriter(New FileStream(m_ConsoleOutputFilePath, IO.FileMode.Create, IO.FileAccess.Write, IO.FileShare.Read))
+                        m_ConsoleOutputStreamWriter = New StreamWriter(New FileStream(m_ConsoleOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
                         m_ConsoleOutputStreamWriter.AutoFlush = True
 
                     Catch ex As Exception
@@ -770,7 +770,7 @@ Namespace Processes
 
                     RaiseConditionalProgChangedEvent(Me)
 
-                    System.Threading.Thread.Sleep(m_holdOffTime)
+                    Threading.Thread.Sleep(m_holdOffTime)
 
                     m_state = States.Monitoring
                 Else
@@ -796,8 +796,8 @@ Namespace Processes
                 ' and monitor it in a separate internal thread
                 '
                 Try
-                    Dim m_ThreadStart As New System.Threading.ThreadStart(AddressOf Me.Start)
-                    m_Thread = New System.Threading.Thread(m_ThreadStart)
+                    Dim m_ThreadStart As New Threading.ThreadStart(AddressOf Me.Start)
+                    m_Thread = New Threading.Thread(m_ThreadStart)
                     m_Thread.Start()
                 Catch ex As Exception
                     ThrowConditionalException(ex, "Caught exception while trying to start thread.")
@@ -823,26 +823,26 @@ Namespace Processes
                 Try
                     m_Process.Kill()
                     m_Thread.Abort()  'DAC added
-                Catch ex As System.Threading.ThreadAbortException
+                Catch ex As Threading.ThreadAbortException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
-                Catch ex As System.ComponentModel.Win32Exception
+                Catch ex As ComponentModel.Win32Exception
                     ThrowConditionalException(CType(ex, Exception), "Caught Win32Exception while trying to kill thread.")
-                Catch ex As System.InvalidOperationException
+                Catch ex As InvalidOperationException
                     ThrowConditionalException(CType(ex, Exception), "Caught InvalidOperationException while trying to kill thread.")
-                Catch ex As System.SystemException
+                Catch ex As SystemException
                     ThrowConditionalException(CType(ex, Exception), "Caught SystemException while trying to kill thread.")
                 Catch ex As Exception
-                    ThrowConditionalException(CType(ex, Exception), "Caught Exception while trying to kill or abort thread.")
+                    ThrowConditionalException(ex, "Caught Exception while trying to kill or abort thread.")
                 End Try
             End If
 
             If m_state = States.Waiting And Kill Then  'Program not running, just abort thread
                 Try
                     m_Thread.Abort()
-                Catch ex As System.Threading.ThreadAbortException
+                Catch ex As Threading.ThreadAbortException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
                 Catch ex As Exception
-                    ThrowConditionalException(CType(ex, Exception), "Caught exception while trying to abort thread.")
+                    ThrowConditionalException(ex, "Caught exception while trying to abort thread.")
                 End Try
             End If
 
@@ -852,12 +852,12 @@ Namespace Processes
                 Try
                     ' Attempt to re-join the thread (wait for 5 seconds, at most)
                     m_Thread.Join(5000)
-                Catch ex As System.Threading.ThreadStateException
+                Catch ex As Threading.ThreadStateException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadStateException while trying to join thread.")
-                Catch ex As System.Threading.ThreadInterruptedException
+                Catch ex As Threading.ThreadInterruptedException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadInterruptedException while trying to join thread.")
                 Catch ex As Exception
-                    ThrowConditionalException(CType(ex, Exception), "Caught exception while trying to join thread.")
+                    ThrowConditionalException(ex, "Caught exception while trying to join thread.")
                 End Try
                 m_state = States.NotMonitoring
             End If

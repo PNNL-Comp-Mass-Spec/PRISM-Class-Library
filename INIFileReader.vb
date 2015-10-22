@@ -1,12 +1,9 @@
 Option Strict On
 
 Imports System
-Imports System.Collections
 Imports System.Collections.Specialized
 Imports System.IO
 Imports System.Xml
-Imports System.Xml.Xsl
-Imports System.Xml.XPath
 Imports System.Text
 Imports PRISM.Logging
 
@@ -19,20 +16,20 @@ Namespace Files
     End Enum
 
     Public Class IniFileReaderNotInitializedException
-        Inherits System.ApplicationException
+        Inherits ApplicationException
         Public Overrides ReadOnly Property Message() As String
             Get
                 Return "The IniFileReader instance has not been properly initialized."
             End Get
         End Property
     End Class
+
     ''' <summary>Tools to manipulates INI files.</summary>
     Public Class IniFileReader
         Implements ILoggerAware
 
         Private m_IniFilename As String
         Private m_XmlDoc As XmlDocument
-        Private unattachedComments As ArrayList = New ArrayList
         Private sections As StringCollection = New StringCollection
         Private m_CaseSensitive As Boolean = False
         Private m_SaveFilename As String
@@ -45,74 +42,79 @@ Namespace Files
         Public Event InformationMessage(ByVal msg As String)
 
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
-        ''' <param name="IniFileName">The name of the ini file.</param>
+        ''' <param name="filename">The name of the ini file.</param>
         ''' <param name="logger">This is the logger.</param>
-        Public Sub New(ByVal IniFilename As String, ByRef logger As ILogger)
+        Public Sub New(ByVal filename As String, ByRef logger As ILogger)
             RegisterExceptionLogger(logger)
             NotifyOnException = False
-            InitIniFileReader(IniFilename, False)
+            InitIniFileReader(filename, False)
         End Sub
+
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
-        ''' <param name="IniFileName">The name of the ini file.</param>
+        ''' <param name="filename">The name of the ini file.</param>
         ''' <param name="IsCaseSensitive">Case sensitive as boolean.</param>
-        Public Sub New(ByVal IniFilename As String, ByVal IsCaseSensitive As Boolean)
+        Public Sub New(ByVal filename As String, ByVal IsCaseSensitive As Boolean)
             NotifyOnException = True
-            InitIniFileReader(IniFilename, IsCaseSensitive)
+            InitIniFileReader(filename, IsCaseSensitive)
         End Sub
+
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
-        ''' <param name="IniFileName">The name of the ini file.</param>
+        ''' <param name="filename">The name of the ini file.</param>
         ''' <param name="logger">This is the logger.</param>
         ''' <param name="IsCaseSensitive">Case sensitive as boolean.</param>
-        Public Sub New(ByVal IniFilename As String, ByRef logger As ILogger, ByVal IsCaseSensitive As Boolean)
+        Public Sub New(ByVal filename As String, ByRef logger As ILogger, ByVal IsCaseSensitive As Boolean)
             RegisterExceptionLogger(logger)
             NotifyOnException = False
-            InitIniFileReader(IniFilename, IsCaseSensitive)
+            InitIniFileReader(filename, IsCaseSensitive)
         End Sub
+
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
-        ''' <param name="IniFileName">The name of the ini file.</param>
-        Public Sub New(ByVal IniFilename As String)
+        ''' <param name="filename">The name of the ini file.</param>
+        Public Sub New(ByVal filename As String)
             NotifyOnException = True
-            InitIniFileReader(IniFilename, False)
+            InitIniFileReader(filename, False)
         End Sub
+
         ''' <summary>
         ''' This routine is called by each of the constructors to make the actual assignments.
         ''' </summary>
-        Private Sub InitIniFileReader(ByVal IniFilename As String, ByVal IsCaseSensitive As Boolean)
+        Private Sub InitIniFileReader(ByVal filename As String, ByVal IsCaseSensitive As Boolean)
             Dim fi As FileInfo
-            Dim s As String            
+            Dim s As String
             m_CaseSensitive = IsCaseSensitive
             m_XmlDoc = New XmlDocument
 
-            If ((IniFilename Is Nothing) OrElse (IniFilename.Trim() = "")) Then
+            If String.IsNullOrWhiteSpace(filename) Then
                 Return
             End If
+
             ' try to load the file as an XML file
             Try
-                m_XmlDoc.Load(IniFilename)
+                m_XmlDoc.Load(filename)
                 UpdateSections()
-                m_IniFilename = IniFilename
+                m_IniFilename = filename
                 m_initialized = True
 
             Catch
                 ' load the default XML
                 m_XmlDoc.LoadXml("<?xml version=""1.0"" encoding=""UTF-8""?><sections></sections>")
                 Try
-                    fi = New FileInfo(IniFilename)
-					If (fi.Exists) Then
-						Using tr As TextReader = fi.OpenText
-							s = tr.ReadLine()
-							Do While Not s Is Nothing
-								ParseLineXml(s, m_XmlDoc)
-								s = tr.ReadLine()
-							Loop
-						End Using
-						m_IniFilename = IniFilename
-						m_initialized = True
-					Else
-						m_XmlDoc.Save(IniFilename)
-						m_IniFilename = IniFilename
-						m_initialized = True
-					End If
+                    fi = New FileInfo(filename)
+                    If (fi.Exists) Then
+                        Using tr As TextReader = fi.OpenText
+                            s = tr.ReadLine()
+                            Do While Not s Is Nothing
+                                ParseLineXml(s, m_XmlDoc)
+                                s = tr.ReadLine()
+                            Loop
+                        End Using
+                        m_IniFilename = filename
+                        m_initialized = True
+                    Else
+                        m_XmlDoc.Save(filename)
+                        m_IniFilename = filename
+                        m_initialized = True
+                    End If
                 Catch e As Exception
                     If Not IsNothing(m_ExceptionLogger) Then
                         m_ExceptionLogger.PostError("Failed to read INI file.", e, True)
@@ -120,9 +122,10 @@ Namespace Files
                     If NotifyOnException Then
                         Throw New Exception("Failed to read INI file.")
                     End If
-				End Try
+                End Try
             End Try
         End Sub
+
         ''' <summary>
         ''' This routine returns the name of the ini file.
         ''' </summary>
@@ -133,6 +136,7 @@ Namespace Files
                 Return (m_IniFilename)
             End Get
         End Property
+
         ''' <summary>
         ''' This routine returns a boolean showing if the file was initialized or not.
         ''' </summary>
@@ -142,6 +146,7 @@ Namespace Files
                 Return m_initialized
             End Get
         End Property
+
         ''' <summary>
         ''' This routine returns a boolean showing if the name is case sensitive or not.
         ''' </summary>
@@ -164,6 +169,7 @@ Namespace Files
                 Return aName.ToLower()
             End If
         End Function
+
         ''' <summary>
         ''' TBD.
         ''' </summary>
@@ -182,6 +188,7 @@ Namespace Files
                 Return GetSection(sections(sections.Count - 1))
             End If
         End Function
+
         ''' <summary>
         ''' The function gets a section as XmlElement.
         ''' </summary>
@@ -425,6 +432,7 @@ Namespace Files
                 sections.Add(N.GetAttribute("name"))
             Next
         End Sub
+
         ''' <summary>
         ''' The subroutine gets the sections.
         ''' </summary>
@@ -646,6 +654,7 @@ Namespace Files
             End Select
 
         End Sub
+
         ''' <summary>It Sets or Gets the output file name.</summary>
         Public Property OutputFilename() As String
             Get

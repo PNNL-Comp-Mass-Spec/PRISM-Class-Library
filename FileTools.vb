@@ -260,13 +260,13 @@ Namespace Files
         Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String)
 
             'Overload with overwrite set to default (FALSE)
-            Const BackupDestFileBeforeCopy As Boolean = False
+            Const BackupDestFileBeforeCopy = False
             CopyFileEx(SourcePath, DestPath, COPY_NO_OVERWRITE, BackupDestFileBeforeCopy)
 
         End Sub
 
         Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean)
-            Const BackupDestFileBeforeCopy As Boolean = False
+            Const BackupDestFileBeforeCopy = False
             CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy)
         End Sub
 
@@ -417,7 +417,7 @@ Namespace Files
             intSourceFileSizeMB = CInt(fiSource.Length / 1024.0 / 1024.0)
             If intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB OrElse
                (String.IsNullOrWhiteSpace(strLockFolderPathSource) AndAlso String.IsNullOrWhiteSpace(strLockFolderPathTarget)) Then
-                Const BackupDestFileBeforeCopy As Boolean = False
+                Const BackupDestFileBeforeCopy = False
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
                 Return True
             End If
@@ -457,7 +457,7 @@ Namespace Files
                 End If
 
                 ' Perform the copy
-                Const BackupDestFileBeforeCopy As Boolean = False
+                Const BackupDestFileBeforeCopy = False
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
 
                 ' Delete the lock file(s)
@@ -589,7 +589,7 @@ Namespace Files
         Public Function DeleteDirectoryFiles(ByVal strDirectoryPath As String, ByVal blnDeleteFolderIfEmpty As Boolean) As Boolean
 
             Dim diFolderToDelete = New DirectoryInfo(strDirectoryPath)
-            Dim errorCount As Integer = 0
+            Dim errorCount = 0
 
             For Each fiFile In diFolderToDelete.GetFiles("*", SearchOption.AllDirectories)
                 If Not DeleteFileIgnoreErrors(fiFile.FullName) Then
@@ -804,7 +804,7 @@ Namespace Files
           ByVal OverWrite As Boolean)
 
             'Overload with no defaults
-            Const bReadOnly As Boolean = False
+            Const bReadOnly = False
             CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly)
 
         End Sub
@@ -819,7 +819,7 @@ Namespace Files
           ByVal strManagerName As String)
 
             'Overload with no defaults
-            Const bReadOnly As Boolean = False
+            Const bReadOnly = False
             CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly, New Generic.List(Of String), strManagerName)
 
         End Sub
@@ -835,7 +835,7 @@ Namespace Files
           ByVal FileNamesToSkip As Generic.List(Of String))
 
             'Overload with no defaults
-            Dim bReadOnly As Boolean = False
+            Dim bReadOnly = False
             CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly, FileNamesToSkip)
 
         End Sub
@@ -851,7 +851,7 @@ Namespace Files
           ByVal bReadOnly As Boolean)
 
             'Overload with no defaults
-            Const SetAttribute As Boolean = True
+            Const SetAttribute = True
             CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, New Generic.List(Of String), mManagerName)
 
         End Sub
@@ -869,7 +869,7 @@ Namespace Files
           ByVal FileNamesToSkip As Generic.List(Of String))
 
             'Overload with no defaults
-            Const SetAttribute As Boolean = True
+            Const SetAttribute = True
             CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, FileNamesToSkip, mManagerName)
 
         End Sub
@@ -888,7 +888,7 @@ Namespace Files
           ByVal strManagerName As String)
 
             'Overload with no defaults
-            Const SetAttribute As Boolean = True
+            Const SetAttribute = True
             CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, FileNamesToSkip, strManagerName)
 
         End Sub
@@ -912,8 +912,8 @@ Namespace Files
             ByRef FileNamesToSkip As Generic.List(Of String),
             ByVal strManagerName As String)
 
-            Dim SourceDir As DirectoryInfo = New DirectoryInfo(SourcePath)
-            Dim DestDir As DirectoryInfo = New DirectoryInfo(DestPath)
+            Dim SourceDir = New DirectoryInfo(SourcePath)
+            Dim DestDir = New DirectoryInfo(DestPath)
 
             Dim dctFileNamesToSkip As Generic.Dictionary(Of String, String)
 
@@ -1031,7 +1031,7 @@ Namespace Files
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, ByVal TargetFolderPath As String) As Boolean
 
-            Const Recurse As Boolean = False
+            Const Recurse = False
             Const eFileOverwriteMode As FileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
             Dim FileNamesToSkip As New Generic.List(Of String)
 
@@ -1074,11 +1074,11 @@ Namespace Files
           ByVal eFileOverwriteMode As FileOverwriteMode,
           ByVal FileNamesToSkip As Generic.List(Of String)) As Boolean
 
-            Dim FileCountSkipped As Integer = 0
-            Dim FileCountResumed As Integer = 0
-            Dim FileCountNewlyCopied As Integer = 0
-            Const SetAttribute As Boolean = False
-            Const bReadOnly As Boolean = False
+            Dim FileCountSkipped = 0
+            Dim FileCountResumed = 0
+            Dim FileCountNewlyCopied = 0
+            Const SetAttribute = False
+            Const bReadOnly = False
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
 
@@ -1106,8 +1106,8 @@ Namespace Files
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
 
-            Const SetAttribute As Boolean = False
-            Const bReadOnly As Boolean = False
+            Const SetAttribute = False
+            Const bReadOnly = False
             Dim FileNamesToSkip As New Generic.List(Of String)
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
@@ -1138,8 +1138,8 @@ Namespace Files
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
 
-            Const SetAttribute As Boolean = False
-            Const bReadOnly As Boolean = False
+            Const SetAttribute = False
+            Const bReadOnly = False
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
 
@@ -1178,7 +1178,7 @@ Namespace Files
             Dim dctFileNamesToSkip As Generic.Dictionary(Of String, String)
 
             Dim blnCopyFile As Boolean
-            Dim bSuccess As Boolean = True
+            Dim bSuccess = True
 
             FileCountSkipped = 0
             FileCountResumed = 0
@@ -1268,7 +1268,7 @@ Namespace Files
                         FileCountSkipped += 1
                     Else
 
-                        Dim blnResumed As Boolean = False
+                        Dim blnResumed = False
                         Try
                             Dim strTargetFilePath As String = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
                             bSuccess = CopyFileWithResume(fiSourceFile, strTargetFilePath, blnResumed)
@@ -1342,8 +1342,8 @@ Namespace Files
           ByVal strTargetFilePath As String,
           <Out> ByRef blnResumed As Boolean) As Boolean
 
-            Const FILE_PART_TAG As String = ".#FilePart#"
-            Const FILE_PART_INFO_TAG As String = ".#FilePartInfo#"
+            Const FILE_PART_TAG = ".#FilePart#"
+            Const FILE_PART_INFO_TAG = ".#FilePartInfo#"
 
             Dim intChunkSizeBytes As Integer
             Dim intFlushThresholdBytes As Integer
@@ -1401,11 +1401,11 @@ Namespace Files
                         ' Open the file and read the file length and file modification time
                         ' If they match fiSourceFile then set blnResumeCopy to true and update lngFileOffsetStart
 
-                        Using srFilePartInfo As StreamReader = New StreamReader(New FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        Using srFilePartInfo = New StreamReader(New FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 
-                            Dim lstSourceLines As Generic.List(Of String) = New Generic.List(Of String)
+                            Dim lstSourceLines = New Generic.List(Of String)
 
-                            Do While Not srFilePartInfo.EndofStream
+                            Do While Not srFilePartInfo.EndOfStream
                                 lstSourceLines.Add(srFilePartInfo.ReadLine())
                             Loop
 
@@ -1455,7 +1455,7 @@ Namespace Files
                     End If
 
                     ' Create the FILE_PART_INFO_TAG file
-                    Using swFilePartInfo As StreamWriter = New StreamWriter(New FileStream(fiFilePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read))
+                    Using swFilePartInfo = New StreamWriter(New FileStream(fiFilePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read))
 
                         ' The first line contains the source file path
                         ' The second contains the file length, in bytes
@@ -1623,7 +1623,7 @@ Namespace Files
             '
             ' Original code obtained from vb2themax.com
             Dim DirSize As Long
-            Dim Dir As DirectoryInfo = New DirectoryInfo(DirPath)
+            Dim Dir = New DirectoryInfo(DirPath)
             '		Dim InternalFileCount As Long
             '		Dim InternalDirCount As Long
 
@@ -1787,7 +1787,7 @@ Namespace Files
             pathSepChars(0) = "\"c
             pathSepChars(1) = "/"c
 
-            Dim pathSepCharPreferred As Char = "\"c
+            Dim pathSepCharPreferred = "\"c
 
             Dim strPath(4) As String        ' 0-based array
             Dim intPartCount As Integer
@@ -1993,7 +1993,7 @@ Namespace Files
         ''' <remarks></remarks>
         Public Shared Function ValidateFreeDiskSpace(ByVal outputFilePath As String, ByVal outputFileExpectedSizeMB As Double, ByVal minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
 
-            Const DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB As Integer = 150
+            Const DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150
 
             Dim diFolderInfo As DirectoryInfo
 
