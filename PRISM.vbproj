@@ -112,6 +112,7 @@
     <Compile Include="clsProgRunner.vb">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="clsWindowsUpdateStatus.vb" />
     <Compile Include="DirectoryScanner.vb">
       <SubType>Code</SubType>
     </Compile>
