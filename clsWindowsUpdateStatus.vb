@@ -23,7 +23,7 @@ Public Class clsWindowsUpdateStatus
 	End Function
 
 	''' <summary>
-	''' Checks whether Windows Updates are expected to occur close to the current time of day
+    ''' Checks whether Windows Updates are expected to occur close to currentTime
 	''' </summary>
 	''' <param name="currentTime">Current time of day</param>
 	''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
@@ -33,38 +33,63 @@ Public Class clsWindowsUpdateStatus
 
 		pendingWindowsUpdateMessage = "No pending update"
 
-		' Determine the second Tuesday in the current month
-		Dim firstTuesdayInMonth = New DateTime(currentTime.Year, currentTime.Month, 1)
-		While firstTuesdayInMonth.DayOfWeek <> DayOfWeek.Tuesday
-			firstTuesdayInMonth = firstTuesdayInMonth.AddDays(1)
-		End While
+        ' Determine the second Tuesday in the current month
+        Dim secondTuesdayInMonth = GetSecondTuesdayInMonth(currentTime)
 
-		Dim secondTuesdayInMonth = firstTuesdayInMonth.AddDays(7)
+        ' Windows 7 / Windows 8 Pubs install updates around 3 am on the Thursday after the second Tuesday of the month
+        ' Return true between 12 am and 6 am on Thursday in the week with the second Tuesday of the month
+        Dim dtExclusionStart = secondTuesdayInMonth.AddDays(2)
+        Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(2).AddHours(6)
 
-		' Windows 7 / Windows 8 Pubs install updates around 3 am on the Thursday after the second Tuesday of the month
-		' Do not request a job between 12 am and 6 am on Thursday in the week with the second Tuesday of the month
-		Dim dtExclusionStart = secondTuesdayInMonth.AddDays(2)
-		Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(2).AddHours(6)
+        If currentTime >= dtExclusionStart AndAlso currentTime < dtExclusionEnd Then
+            Dim dtPendingUpdateTime = secondTuesdayInMonth.AddDays(2).AddHours(3)
 
-		If currentTime >= dtExclusionStart AndAlso currentTime < dtExclusionEnd Then
-			Dim dtPendingUpdateTime = secondTuesdayInMonth.AddDays(2).AddHours(3)
+            If currentTime < dtPendingUpdateTime Then
+                pendingWindowsUpdateMessage = "Processing boxes are expected to install Windows updates around " & dtPendingUpdateTime.ToString("hh:mm:ss tt")
+            Else
+                pendingWindowsUpdateMessage = "Processing boxes should have installed Windows updates at " & dtPendingUpdateTime.ToString("hh:mm:ss tt")
+            End If
 
-			If currentTime < dtPendingUpdateTime Then
-				pendingWindowsUpdateMessage = "Processing boxes are expected to install Windows updates around " & dtPendingUpdateTime.ToString("hh:mm:ss tt")
-			Else
-				pendingWindowsUpdateMessage = "Processing boxes should have installed Windows updates at " & dtPendingUpdateTime.ToString("hh:mm:ss tt")
-			End If
+            Return True
+        End If
 
-			Return True
-		End If
+        Dim pendingUpdates = ServerUpdatesArePending(currentTime, pendingWindowsUpdateMessage)
 
-		' Windows servers install updates around either 3 am or 10 am on the Sunday after the second Tuesday of the month
-		' Do not request a job between 2 am and 4 am or between 9 am and 11 am on Sunday in the week with the second Tuesday of the month
-		dtExclusionStart = secondTuesdayInMonth.AddDays(5).AddHours(2)
-		dtExclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(4)
+        Return pendingUpdates
 
-		Dim dtExclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9)
-		Dim dtExclusionEnd2 = secondTuesdayInMonth.AddDays(5).AddHours(11)
+    End Function
+
+    ''' <summary>
+    ''' Checks whether Windows Updates are expected to occur on Windows Server machines close to the current time of day
+    ''' </summary>
+    ''' <returns>True if Windows updates are likely pending on the Windows servers</returns>
+    ''' <remarks></remarks>
+    Public Shared Function ServerUpdatesArePending() As Boolean
+        Dim pendingWindowsUpdateMessage As String = Nothing
+        Return ServerUpdatesArePending(DateTime.Now, pendingWindowsUpdateMessage)
+    End Function
+
+    ''' <summary>
+    ''' Checks whether Windows Updates are expected to occur on Windows Server machines close currentTime
+    ''' </summary>
+    ''' <param name="currentTime">Current time of day</param>
+    ''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
+    ''' <returns>True if Windows updates are likely pending on the Windows servers</returns>
+    ''' <remarks></remarks>
+    Public Shared Function ServerUpdatesArePending(ByVal currentTime As DateTime, <Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
+
+        pendingWindowsUpdateMessage = "No pending update"
+
+        ' Determine the second Tuesday in the current month
+        Dim secondTuesdayInMonth = GetSecondTuesdayInMonth(currentTime)
+
+        ' Windows servers install updates around either 3 am or 10 am on the first Sunday after the second Tuesday of the month
+        ' Return true between 2 am and 4 am or between 9 am and 11 am on the first Sunday after the second Tuesday of the month
+        Dim dtExclusionStart = secondTuesdayInMonth.AddDays(5).AddHours(2)
+        Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(4)
+
+        Dim dtExclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9)
+        Dim dtExclusionEnd2 = secondTuesdayInMonth.AddDays(5).AddHours(11)
 
         If (currentTime >= dtExclusionStart AndAlso currentTime < dtExclusionEnd) OrElse
            (currentTime >= dtExclusionStart2 AndAlso currentTime < dtExclusionEnd2) Then
@@ -83,7 +108,20 @@ Public Class clsWindowsUpdateStatus
             Return True
         End If
 
-		Return False
+        Return False
 
-	End Function
+    End Function
+
+    Private Shared Function GetSecondTuesdayInMonth(currentTime As Date) As Date
+        Dim secondTuesdayInMonth As Date
+
+        Dim firstTuesdayInMonth = New DateTime(currentTime.Year, currentTime.Month, 1)
+        While firstTuesdayInMonth.DayOfWeek <> DayOfWeek.Tuesday
+            firstTuesdayInMonth = firstTuesdayInMonth.AddDays(1)
+        End While
+
+        secondTuesdayInMonth = firstTuesdayInMonth.AddDays(7)
+        Return secondTuesdayInMonth
+    End Function
+
 End Class
