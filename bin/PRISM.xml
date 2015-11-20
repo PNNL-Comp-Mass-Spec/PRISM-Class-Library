@@ -285,50 +285,52 @@ PRISM
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_ExceptionLogger">
 	<summary>
- Interface used for logging exceptions.
+ Interface used for logging exceptions
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_EventLogger">
 	<summary>
- Interface used for logging errors and health related messages.
+ Interface used for logging errors and health related messages
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnException">
 	<summary>
- True for logging behavior, else false.
+ True for logging behavior, else false
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnEvent">
 	<summary>
- True for logging behavior, else false.
+ True for logging behavior, else false
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_Process">
 	<summary>
- Used to start and monitor the external program.
+ Used to start and monitor the external program
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_pid">
 	<summary>
- The process id of the currently running incarnation of the external program.
+ The process id of the currently running incarnation of the external program
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_Thread">
 	<summary>
- The internal thread used to run the monitoring code.
+ The internal thread used to run the monitoring code
  </summary>
 	<remarks>
  That starts and monitors the external program
  </remarks>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_doCleanup">
 	<summary>
- Flag that tells internal thread to quit monitoring external program and exit.
+ Flag that tells internal thread to quit monitoring external program and exit
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_monitorInterval">
 	<summary>
- The interval for monitoring thread to wake up and check m_doCleanup.
+ The interval, in milliseconds, for monitoring the thread to wake up and check m_doCleanup
  </summary>
+	<remarks>Default is 5000 msec</remarks>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_ExitCode">
 	<summary>
- Exit code returned by completed process.
+ Exit code returned by completed process
  </summary>
+	<remarks>Initially set to -123454321</remarks>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_name">
 	<summary>
- Parameters for external program.
+ Parameters for external program
  </summary>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_CachedConsoleOutput">
 	<summary>
@@ -340,8 +342,9 @@ PRISM
  </summary>
 </member><member name="E:PRISM.Processes.clsProgRunner.ProgChanged">
 	<summary>
- This event is raised whenever the state property changes.
+ This event is raised at regular intervals while monitoring the program
  </summary>
+	<remarks>Raised every m_monitorInterval milliseconds</remarks>
 </member><member name="E:PRISM.Processes.clsProgRunner.ConsoleOutputEvent">
 	<summary>
  This event is raised when the external program writes text to the console
@@ -356,7 +359,7 @@ PRISM
 	<remarks></remarks>
 </member><member name="P:PRISM.Processes.clsProgRunner.Arguments">
 	<summary>
- Arguments supplied to external program when it is run.
+ Arguments supplied to external program when it is run
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.CachedConsoleOutput">
 	<summary>
@@ -383,7 +386,7 @@ PRISM
 	<remarks></remarks>
 </member><member name="P:PRISM.Processes.clsProgRunner.CreateNoWindow">
 	<summary>
- Determine if window should be displayed.
+ Determine if window should be displayed
  Will be forced to True if CacheStandardOutput = True
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.EchoOutputToConsole">
@@ -393,54 +396,54 @@ PRISM
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.ExitCode">
 	<summary>
- Exit code when process completes.
+ Exit code when process completes
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.MonitoringInterval">
 	<summary>
  How often (milliseconds) internal monitoring thread checks status of external program
- Minimum allowed value is 50 milliseconds
  </summary>
+	<remarks>Minimum allowed value is 100 milliseconds</remarks>
 </member><member name="P:PRISM.Processes.clsProgRunner.Name">
 	<summary>
- Name of this progrunner.
+ Name of this progrunner
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.NotifyOnEvent">
-	<summary>Gets or Sets notify on event.</summary>
+	<summary>Gets or Sets notify on event</summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.NotifyOnException">
-	<summary>Gets or Sets notify on exception.</summary>
+	<summary>Gets or Sets notify on exception</summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.PID">
 	<summary>
- Process id of currently running external program's process.
+ Process id of currently running external program's process
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.Program">
 	<summary>
- External program that prog runner will run.
+ External program that prog runner will run
  This is the full path to the program file
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.Repeat">
 	<summary>
- Whether prog runner will restart external program after it exits.
+ Whether prog runner will restart external program after it exits
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.RepeatHoldOffTime">
 	<summary>
- Time (seconds) that prog runner waits to restart external program after it exits.
+ Time (seconds) that prog runner waits to restart external program after it exits
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.State">
 	<summary>
- Current state of prog runner (as number).
+ Current state of prog runner (as number)
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.StateName">
 	<summary>
- Current state of prog runner (as descriptive name).
+ Current state of prog runner (as descriptive name)
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.WindowStyle">
 	<summary>
- Window style to use when CreateNoWindow is False.
+ Window style to use when CreateNoWindow is False
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.WorkDir">
 	<summary>
- Working directory for process execution.
- Not necessarily the same as the directory that contains the program we're running.
+ Working directory for process execution
+ Not necessarily the same as the directory that contains the program we're running
  </summary>
 </member><member name="P:PRISM.Processes.clsProgRunner.WriteConsoleOutputToFile">
 	<summary>
@@ -451,11 +454,16 @@ PRISM
 	<remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.#ctor">
 	<summary>
- Initializes a new instance of the clsProgRunner class.
+ Constructor
  </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedConsoleOutput">
 	<summary>
  Clears any console output text that is currently cached
+ </summary>
+	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedPerformanceCounters">
+	<summary>
+ Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
  </summary>
 	<remarks></remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedConsoleError">
@@ -467,6 +475,40 @@ PRISM
 	<summary>
  Asynchronously handles the console output from the process running by m_Process
  </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreCount">
+	<summary>
+ Returns the number of cores
+ </summary>
+	<returns>The number of cores on this computer</returns>
+	<remarks>Should not affected by hyperthreading, so a computer with two 4-core chips will report 8 cores</remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsage">
+	<summary>
+ Reports the number of cores in use by the program started with StartAndMonitorProgram
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageByProcessID(System.Int32)">
+	<summary>
+ Reports the number of cores in use by the program started with StartAndMonitorProgram
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetPerfCounterForProcessID(System.Int32,System.String@,System.String)">
+	<summary>
+ Obtain the performance counter for the given process
+ </summary>
+	<param name="processId">Process ID</param>
+	<param name="instanceName">Output: instance name corresponding to processId</param>
+	<param name="processCounterName">Performance counter to return</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetInstanceNameForProcessId(System.Int32)">
+	<summary>
+ Get the specific Windows instance name for a program
+ </summary>
+	<param name="processId">Process ID</param>
+	<returns>Instance name if found, otherwise an empty string</returns>
+	<remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.HandleOutputStreams(System.IO.StreamReader@)">
 	<summary>
  Handles any new data in the console output and console error streams
@@ -477,19 +519,19 @@ PRISM
 	<summary>Sets the name of the event logger</summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.Start">
 	<summary>
- Start program as external process and monitor its state.
+ Start program as external process and monitor its state
  </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.StartAndMonitorProgram">
 	<summary>
- Creates a new thread and starts code that runs and monitors a program in it.
+ Creates a new thread and starts code that runs and monitors a program in it
  </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.StopMonitoringProgram(System.Boolean)">
 	<summary>
- Causes monitoring thread to exit on its next monitoring cycle.
+ Causes monitoring thread to exit on its next monitoring cycle
  </summary>
 </member><member name="T:PRISM.Processes.clsProgRunner">
 	<summary>
- This class runs a single program as an external process and monitors it with an internal thread.
+ This class runs a single program as an external process and monitors it with an internal thread
  </summary>
 </member><member name="E:PRISM.Files.DirectoryScanner.FoundFile">
 	<summary>Event is raised whenever a matching file is found.</summary>

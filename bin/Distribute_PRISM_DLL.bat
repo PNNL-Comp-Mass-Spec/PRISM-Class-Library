@@ -15,7 +15,6 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manage
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_AScore_PlugIn\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Cyclops_PlugIn\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DataImport_Plugin\bin" /y
-copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Decon2ls_PlugIn\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Decon2ls_PlugIn_Decon2LSV2\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DTA_Import_PlugIn\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DTA_Split_PlugIn\bin" /y
@@ -33,7 +32,6 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manage
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Masic_Plugin\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSAlign_Plugin\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSAlign_Quant_Plugin\bin" /y
-copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSClusterDTAtoDAT_PlugIn\bin" /y
 
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSDeconv_Plugin\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGF_PlugIn\Bin" /y
@@ -54,7 +52,6 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manage
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Sequest_PlugIn\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_SMAQC_PlugIn\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_XTandem_PlugIn\bin" /y
-copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_XTandemHPC_PlugIn\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Test_Plugins\TestApePlugIn\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Test_Plugins\TestAScorePlugIn\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Test_Plugins\TestMagePlugIn\bin\Debug" /y
@@ -62,6 +59,7 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manage
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Capture_Task_Manager\CaptureTaskManager\CaptureTaskManager\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Capture_Task_Manager\CaptureTaskManager\CaptureTaskManager\bin\Debug_NoDartFTP" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Capture_Task_Manager\CaptureTaskManager\CTM_Shared\bin\Debug" /y
+
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Capture_Task_Manager\DatasetArchivePlugin\pacifica\Pacifica.DMS_Metadata\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\projects\dataMining\DMS_Managers\Capture_Task_Manager\DatasetArchivePlugin\pacifica\Pacifica.Core\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\projects\dataMining\DMS_Managers\Capture_Task_Manager\DatasetArchivePlugin\pacifica\Debug\bin\x64" /y
@@ -96,8 +94,6 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DataImportManag
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DMS_Update_Manager\bin\DMS_Programs\AnalysisToolManager1" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Index_Creator\Imports" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Index_Creator\IndexRunner\bin" /y
-copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\IMFAutoProcessor\lib" /y
-copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\IMFAutoProcessor\bin" /y
 
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DMS_Update_Manager\MASIC" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\GANET_Manager\bin" /y
@@ -129,10 +125,13 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\MSAlignResultsMerger\bin" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\MSAlignResultsMerger\Lib" /y
 
 copy PRISM.dll "F:\My Documents\Projects\DataMining\MS_File_Info_Scanner\bin" /y
+copy PRISM.dll "F:\My Documents\Projects\DataMining\MS_File_Info_Scanner\bin\Dll" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\MS_File_Info_Scanner\Lib" /y
 
 copy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\Lib" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\bin" /y
+copy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\bin\x86" /y
+copy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\bin\x64" /y
 
 copy PRISM.dll "F:\My Documents\Projects\DataMining\QRollupExport\bin" /y
 

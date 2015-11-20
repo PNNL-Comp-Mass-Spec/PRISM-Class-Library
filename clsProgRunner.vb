@@ -1,19 +1,25 @@
 Option Strict On
 
+Imports System.Collections.Generic
 Imports System.IO
+Imports System.Runtime.InteropServices
 Imports System.Text
+Imports System.Threading
 
 Namespace Processes
     ' This class runs a single program as an external process
     ' and monitors it with an internal thread
     '
     ''' <summary>
-    ''' This class runs a single program as an external process and monitors it with an internal thread.
+    ''' This class runs a single program as an external process and monitors it with an internal thread
     ''' </summary>
     Public Class clsProgRunner
         Implements Logging.ILoggerAware
 
 #Region "Constants and Enums"
+
+        Public Const DEFAULT_MONITOR_INTERVAL_MSEC As Integer = 5000
+        Public Const MINIMUM_MONITOR_INTERVAL_MSEC As Integer = 250
 
         ''' <summary>
         ''' clsProgRunner states
@@ -22,91 +28,94 @@ Namespace Processes
             NotMonitoring
             Monitoring
             Waiting
-			CleaningUp
-			Initializing
-			StartingProcess
-		End Enum
+            CleaningUp
+            Initializing
+            StartingProcess
+        End Enum
 #End Region
 
 #Region "Classwide Variables"
 
-		''' <summary>
-		''' Interface used for logging exceptions.
-		''' </summary>
-		Private m_ExceptionLogger As Logging.ILogger
+        ''' <summary>
+        ''' Interface used for logging exceptions
+        ''' </summary>
+        Private m_ExceptionLogger As Logging.ILogger
 
-		''' <summary>
-		''' Interface used for logging errors and health related messages.
-		''' </summary>
-		Private m_EventLogger As Logging.ILogger
+        ''' <summary>
+        ''' Interface used for logging errors and health related messages
+        ''' </summary>
+        Private m_EventLogger As Logging.ILogger
 
-		''' <summary>
-		''' True for logging behavior, else false.
-		''' </summary>
-		Private m_NotifyOnException As Boolean
-		''' <summary>
-		''' True for logging behavior, else false.
-		''' </summary>
-		Private m_NotifyOnEvent As Boolean
+        ''' <summary>
+        ''' True for logging behavior, else false
+        ''' </summary>
+        Private m_NotifyOnException As Boolean
 
-		' overall state of this object
-		Private m_state As States = States.NotMonitoring
+        ''' <summary>
+        ''' True for logging behavior, else false
+        ''' </summary>
+        Private m_NotifyOnEvent As Boolean
 
-		''' <summary>
-		''' Used to start and monitor the external program.
-		''' </summary>
+        ' overall state of this object
+        Private m_state As States = States.NotMonitoring
+
+        ''' <summary>
+        ''' Used to start and monitor the external program
+        ''' </summary>
         Private ReadOnly m_Process As New Process
 
-		''' <summary>
-		''' The process id of the currently running incarnation of the external program.
-		''' </summary>
-		Private m_pid As Integer
+        ''' <summary>
+        ''' The process id of the currently running incarnation of the external program
+        ''' </summary>
+        Private m_pid As Integer
 
-		''' <summary>
-		''' The internal thread used to run the monitoring code.
-		''' </summary>
-		''' <remarks>
-		''' That starts and monitors the external program
-		''' </remarks>
+        ''' <summary>
+        ''' The internal thread used to run the monitoring code
+        ''' </summary>
+        ''' <remarks>
+        ''' That starts and monitors the external program
+        ''' </remarks>
         Private m_Thread As Threading.Thread
 
-		''' <summary>
-		''' Flag that tells internal thread to quit monitoring external program and exit.
-		''' </summary>
-		Private m_doCleanup As Boolean = False
+        ''' <summary>
+        ''' Flag that tells internal thread to quit monitoring external program and exit
+        ''' </summary>
+        Private m_doCleanup As Boolean = False
 
-		''' <summary>
-		''' The interval for monitoring thread to wake up and check m_doCleanup.
-		''' </summary>
-		Private m_monitorInterval As Integer = 5000	' (milliseconds)
+        ''' <summary>
+        ''' The interval, in milliseconds, for monitoring the thread to wake up and check m_doCleanup
+        ''' </summary>
+        ''' <remarks>Default is 5000 msec</remarks>
+        Private m_monitorInterval As Integer
 
-		''' <summary>
-		''' Exit code returned by completed process.
-		''' </summary>
-		Private m_ExitCode As Integer
+        ''' <summary>
+        ''' Exit code returned by completed process
+        ''' </summary>
+        ''' <remarks>Initially set to -123454321</remarks>
+        Private m_ExitCode As Integer
 
-		''' <summary>
-		''' Parameters for external program.
-		''' </summary>
-		Private m_name As String
-		Private m_ProgName As String
-		Private m_ProgArgs As String
-		Private m_repeat As Boolean = False
-		Private m_holdOffTime As Integer = 3000
-		Private m_WorkDir As String
-		Private m_CreateNoWindow As Boolean
+        ''' <summary>
+        ''' Parameters for external program
+        ''' </summary>
+        Private m_name As String
+        Private m_ProgName As String
+        Private m_ProgArgs As String
+        Private m_repeat As Boolean = False
+        Private m_holdOffTime As Integer = 3000
+        Private m_WorkDir As String
+        Private m_CreateNoWindow As Boolean
         Private m_WindowStyle As ProcessWindowStyle
 
-		Private m_CacheStandardOutput As Boolean
-		Private m_EchoOutputToConsole As Boolean
+        Private m_CacheStandardOutput As Boolean
+        Private m_EchoOutputToConsole As Boolean
 
-		Private m_WriteConsoleOutputToFile As Boolean
-		Private m_ConsoleOutputFilePath As String = String.Empty
+        Private m_WriteConsoleOutputToFile As Boolean
+        Private m_ConsoleOutputFilePath As String = String.Empty
         Private m_ConsoleOutputStreamWriter As StreamWriter
 
-		''' <summary>
-		''' Caches the text written to the Console by the external program
-		''' </summary>
+        ''' <summary>
+        ''' Caches the text written to the Console by the external program
+        ''' </summary>
         Private m_CachedConsoleOutput As StringBuilder
 
         ''' <summary>
@@ -114,13 +123,18 @@ Namespace Processes
         ''' </summary>
         Private m_CachedConsoleError As StringBuilder
 
+        Private Shared mCachedCoreCount As Integer = 0
+
+        Private Shared ReadOnly mCachedPerfCounters As Dictionary(Of Integer, PerformanceCounter) = New Dictionary(Of Integer, PerformanceCounter)        
+
 #End Region
 
 #Region "Events"
 
         ''' <summary>
-        ''' This event is raised whenever the state property changes.
+        ''' This event is raised at regular intervals while monitoring the program
         ''' </summary>
+        ''' <remarks>Raised every m_monitorInterval milliseconds</remarks>
         Public Event ProgChanged(ByVal obj As clsProgRunner)
 
         ''' <summary>
@@ -142,7 +156,7 @@ Namespace Processes
 #Region "Properties"
 
         ''' <summary>
-        ''' Arguments supplied to external program when it is run.
+        ''' Arguments supplied to external program when it is run
         ''' </summary>
         Public Property Arguments() As String
             Get
@@ -212,7 +226,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Determine if window should be displayed.
+        ''' Determine if window should be displayed
         ''' Will be forced to True if CacheStandardOutput = True
         ''' </summary>
         Public Property CreateNoWindow() As Boolean
@@ -238,7 +252,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Exit code when process completes.
+        ''' Exit code when process completes
         ''' </summary>
         Public ReadOnly Property ExitCode() As Integer
             Get
@@ -248,20 +262,20 @@ Namespace Processes
 
         ''' <summary>
         ''' How often (milliseconds) internal monitoring thread checks status of external program
-        ''' Minimum allowed value is 50 milliseconds
         ''' </summary>
+        ''' <remarks>Minimum allowed value is 100 milliseconds</remarks>
         Public Property MonitoringInterval() As Integer
             Get
                 Return m_monitorInterval
             End Get
             Set(ByVal Value As Integer)
-                If Value < 50 Then Value = 50
+                If Value < MINIMUM_MONITOR_INTERVAL_MSEC Then Value = MINIMUM_MONITOR_INTERVAL_MSEC
                 m_monitorInterval = Value
             End Set
         End Property
 
         ''' <summary>
-        ''' Name of this progrunner.
+        ''' Name of this progrunner
         ''' </summary>
         Public Property Name() As String
             Get
@@ -272,7 +286,7 @@ Namespace Processes
             End Set
         End Property
 
-        ''' <summary>Gets or Sets notify on event.</summary>
+        ''' <summary>Gets or Sets notify on event</summary>
         Public Property NotifyOnEvent() As Boolean Implements Logging.ILoggerAware.NotifyOnEvent
             Get
                 Return m_NotifyOnEvent
@@ -282,7 +296,7 @@ Namespace Processes
             End Set
         End Property
 
-        ''' <summary>Gets or Sets notify on exception.</summary>
+        ''' <summary>Gets or Sets notify on exception</summary>
         Public Property NotifyOnException() As Boolean Implements Logging.ILoggerAware.NotifyOnException
             Get
                 Return m_NotifyOnException
@@ -293,7 +307,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Process id of currently running external program's process.
+        ''' Process id of currently running external program's process
         ''' </summary>
         Public ReadOnly Property PID() As Integer
             Get
@@ -302,7 +316,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' External program that prog runner will run.
+        ''' External program that prog runner will run
         ''' This is the full path to the program file
         ''' </summary>
         Public Property Program() As String
@@ -315,7 +329,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Whether prog runner will restart external program after it exits.
+        ''' Whether prog runner will restart external program after it exits
         ''' </summary>
         Public Property Repeat() As Boolean
             Get
@@ -327,7 +341,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Time (seconds) that prog runner waits to restart external program after it exits.
+        ''' Time (seconds) that prog runner waits to restart external program after it exits
         ''' </summary>
         Public Property RepeatHoldOffTime() As Double
             Get
@@ -339,7 +353,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Current state of prog runner (as number).
+        ''' Current state of prog runner (as number)
         ''' </summary>
         Public ReadOnly Property State() As States
             Get
@@ -348,7 +362,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Current state of prog runner (as descriptive name).
+        ''' Current state of prog runner (as descriptive name)
         ''' </summary>
         Public ReadOnly Property StateName() As String
             Get
@@ -372,7 +386,7 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Window style to use when CreateNoWindow is False.
+        ''' Window style to use when CreateNoWindow is False
         ''' </summary>
         Public Property WindowStyle() As System.Diagnostics.ProcessWindowStyle
             Get
@@ -384,8 +398,8 @@ Namespace Processes
         End Property
 
         ''' <summary>
-        ''' Working directory for process execution.
-        ''' Not necessarily the same as the directory that contains the program we're running.
+        ''' Working directory for process execution
+        ''' Not necessarily the same as the directory that contains the program we're running
         ''' </summary>
         Public Property WorkDir() As String
             Get
@@ -416,18 +430,20 @@ Namespace Processes
 #Region "Methods"
 
         ''' <summary>
-        ''' Initializes a new instance of the clsProgRunner class.
+        ''' Constructor
         ''' </summary>
         Public Sub New()
             m_WorkDir = ""
             m_CreateNoWindow = False
-            m_ExitCode = -123454321  'Unreasonable value in case I missed setting it somewhere
+            m_ExitCode = -123454321  ' Unreasonable value
+            m_monitorInterval = DEFAULT_MONITOR_INTERVAL_MSEC
             m_NotifyOnEvent = True
             m_NotifyOnException = True
             m_CacheStandardOutput = False
             m_EchoOutputToConsole = True
             m_WriteConsoleOutputToFile = False
             m_ConsoleOutputFilePath = String.Empty
+
         End Sub
 
         ''' <summary>
@@ -442,6 +458,14 @@ Namespace Processes
                 m_CachedConsoleOutput.Length = 0
             End If
 
+        End Sub
+
+        ''' <summary>
+        ''' Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
+        ''' </summary>
+        ''' <remarks></remarks>
+        Public Shared Sub ClearCachedPerformanceCounters()
+            mCachedPerfCounters.Clear()
         End Sub
 
         ''' <summary>
@@ -464,7 +488,7 @@ Namespace Processes
         Private Sub ConsoleOutputHandler(ByVal sendingProcess As Object, _
                                          ByVal outLine As DataReceivedEventArgs)
 
-            ' Collect the console output.
+            ' Collect the console output
             If Not String.IsNullOrEmpty(outLine.Data) Then
 
                 RaiseEvent ConsoleOutputEvent(outLine.Data)
@@ -474,7 +498,7 @@ Namespace Processes
                 End If
 
                 If m_CacheStandardOutput Then
-                    ' Add the text to the collected output.
+                    ' Add the text to the collected output
                     m_CachedConsoleOutput.AppendLine(outLine.Data)
                 End If
 
@@ -529,6 +553,161 @@ Namespace Processes
                 ' Ignore errors here
             End Try
         End Sub
+
+        ''' <summary>
+        ''' Returns the number of cores
+        ''' </summary>
+        ''' <returns>The number of cores on this computer</returns>
+        ''' <remarks>Should not affected by hyperthreading, so a computer with two 4-core chips will report 8 cores</remarks>
+        Public Shared Function GetCoreCount() As Integer
+
+            Try
+
+                If mCachedCoreCount > 0 Then
+                    Return mCachedCoreCount
+                End If
+
+                Dim result = New System.Management.ManagementObjectSearcher("Select NumberOfCores from Win32_Processor")
+                mCachedCoreCount = 0
+
+                For Each item In result.Get()
+                    mCachedCoreCount += Integer.Parse(item("NumberOfCores").ToString())
+                Next
+
+                Return mCachedCoreCount
+
+            Catch ex As Exception
+                ' This value will be affected by hyperthreading
+                Return Environment.ProcessorCount
+            End Try
+
+        End Function
+
+        ''' <summary>
+        ''' Reports the number of cores in use by the program started with StartAndMonitorProgram
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Function GetCoreUsage() As Single
+
+            If m_pid = 0 Then
+                Return 0
+            End If
+
+            Try
+                Return GetCoreUsageByProcessID(m_pid)
+            Catch ex As Exception
+                ThrowConditionalException(ex, "ProcessID not recognized or permissions error")
+                Return 0
+            End Try
+
+        End Function
+
+        ''' <summary>
+        ''' Reports the number of cores in use by the program started with StartAndMonitorProgram
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Shared Function GetCoreUsageByProcessID(processID As Integer) As Single
+
+            Try
+
+                If mCachedCoreCount = 0 Then
+                    mCachedCoreCount = GetCoreCount()
+                End If
+
+                Dim perfCounter As PerformanceCounter = Nothing
+
+                If Not mCachedPerfCounters.TryGetValue(processID, perfCounter) Then
+                    Dim instanceName As String = String.Empty
+                    perfCounter = GetPerfCounterForProcessID(processID, instanceName)
+
+                    If perfCounter Is Nothing Then
+                        Throw New Exception("GetCoreUsageByProcessID: Performance counter not found for ProcessID " & processID)
+                    End If
+
+                    ' Cache this performance counter so that it is quickly available on the next call to this method
+                    mCachedPerfCounters.Add(processID, perfCounter)
+                End If
+
+                ' Take a sample, wait 1 second, then sample again
+                Dim sample1 = perfCounter.NextSample()
+                Thread.Sleep(1000)
+                Dim sample2 = perfCounter.NextSample()
+
+                ' Each core contributes "100" to the overall cpuUsage
+                Dim cpuUsage = CounterSample.Calculate(sample1, sample2)
+
+                Dim coresInUse = cpuUsage / 100.0
+
+                Return CSng(coresInUse)
+
+            Catch ex As InvalidOperationException
+                ' The process is likely terminated
+                Return 0
+            Catch ex As Exception
+                Throw New Exception("Exception in GetCoreUsageByProcessID for ProcessID " & processID, ex)
+            End Try
+
+        End Function
+
+        ''' <summary>
+        ''' Obtain the performance counter for the given process
+        ''' </summary>
+        ''' <param name="processId">Process ID</param>
+        ''' <param name="instanceName">Output: instance name corresponding to processId</param>
+        ''' <param name="processCounterName">Performance counter to return</param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Shared Function GetPerfCounterForProcessID(
+           processId As Integer,
+           <Out()> ByRef instanceName As String,
+           Optional processCounterName As String = "% Processor Time") As PerformanceCounter
+
+            instanceName = GetInstanceNameForProcessId(processId)
+            If String.IsNullOrEmpty(instanceName) Then
+                Return Nothing
+            End If
+
+            Return New PerformanceCounter("Process", processCounterName, instanceName)
+
+        End Function
+
+        ''' <summary>
+        ''' Get the specific Windows instance name for a program
+        ''' </summary>
+        ''' <param name="processId">Process ID</param>
+        ''' <returns>Instance name if found, otherwise an empty string</returns>
+        ''' <remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
+        Public Shared Function GetInstanceNameForProcessId(processId As Integer) As String
+
+            Try
+                Dim runningProcess = Process.GetProcessById(processId)
+
+                Dim processName = Path.GetFileNameWithoutExtension(runningProcess.ProcessName)
+
+                Dim processCategory = New PerformanceCounterCategory("Process")
+
+                Dim perfCounterInstances = (From item In processCategory.GetInstanceNames() Where item.StartsWith(processName)).ToList()
+
+                For Each instanceName In perfCounterInstances
+
+                    Using counterInstance = New PerformanceCounter("Process", "ID Process", instanceName, True)
+                        Dim instanceProcessID = CInt(counterInstance.RawValue)
+                        If instanceProcessID = processId Then
+                            Return instanceName
+                        End If
+                    End Using
+
+                Next
+
+            Catch ex As Exception
+                Return String.Empty
+            End Try
+
+            Return String.Empty
+
+        End Function
 
         ''' <summary>
         ''' Handles any new data in the console output and console error streams
@@ -586,7 +765,7 @@ Namespace Processes
         End Sub
 
         ''' <summary>
-        ''' Start program as external process and monitor its state.
+        ''' Start program as external process and monitor its state
         ''' </summary>
         Private Sub Start()
 
@@ -708,6 +887,8 @@ Namespace Processes
                 '
                 Do While Not (m_doCleanup)
 
+                    If m_monitorInterval < MINIMUM_MONITOR_INTERVAL_MSEC Then m_monitorInterval = MINIMUM_MONITOR_INTERVAL_MSEC
+
                     Try
                         m_Process.WaitForExit(m_monitorInterval)
                         If m_Process.HasExited Then Exit Do
@@ -785,7 +966,7 @@ Namespace Processes
         End Sub
 
         ''' <summary>
-        ''' Creates a new thread and starts code that runs and monitors a program in it.
+        ''' Creates a new thread and starts code that runs and monitors a program in it
         ''' </summary>
         Public Sub StartAndMonitorProgram()
             If m_state = States.NotMonitoring Then
@@ -815,7 +996,7 @@ Namespace Processes
         End Function
 
         ''' <summary>
-        ''' Causes monitoring thread to exit on its next monitoring cycle.
+        ''' Causes monitoring thread to exit on its next monitoring cycle
         ''' </summary>
         Public Sub StopMonitoringProgram(Optional ByVal Kill As Boolean = False)
 

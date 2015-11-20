@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.5801; November 19, 2015
+	- Added GetCoreUsageForRunningProgram() and GetCoreCount() to clsProgRunner
+
 Version 2.2.5602; May 4, 2015
 	- Adjusted default max wait time for lock files to be 3 hours instead of 60 minutes
 
