@@ -22,8 +22,10 @@ Namespace Files
         ''' <param name="CmdOptions">The zip program command line arguments.</param>
         ''' <param name="OutputFile">The file path of the output zip file.</param>
         ''' <param name="InputSpec">The files and/or directorys to archive.</param>
-        Public Function MakeZipFile(ByVal CmdOptions As String, ByVal OutputFile As String, _
-                ByVal InputSpec As String) As Boolean
+        Public Function MakeZipFile(
+          ByVal CmdOptions As String,
+          ByVal OutputFile As String,
+          ByVal InputSpec As String) As Boolean
 
             'Makes specified zip file
             Dim RunZipper As New clsProgRunner
@@ -54,8 +56,8 @@ Namespace Files
             'Wait for zipper program to complete
             While (RunZipper.State <> clsProgRunner.States.NotMonitoring)
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.", _
-                     ILogger.logMsgType.logHealth, True)
+                    m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.",
+                      ILogger.logMsgType.logHealth, True)
                 End If
                 Threading.Thread.Sleep(m_WaitInterval)
             End While
@@ -78,8 +80,7 @@ Namespace Files
         ''' <param name="CmdOptions">The zip program command line arguments.</param>
         ''' <param name="InputFile">The file path of the zip file from which to extract files.</param>
         ''' <param name="OutPath">The path where you want to put the extracted files.</param>
-        Public Function UnzipFile(ByVal CmdOptions As String, ByVal InputFile As String, _
-            ByVal OutPath As String) As Boolean
+        Public Function UnzipFile(ByVal CmdOptions As String, ByVal InputFile As String, ByVal OutPath As String) As Boolean
 
             'Unzips specified zip file
             Dim RunZipper As New clsProgRunner
@@ -127,8 +128,8 @@ Namespace Files
             'Wait for zipper program to complete
             While (RunZipper.State <> clsProgRunner.States.NotMonitoring)
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.", _
-                            ILogger.logMsgType.logHealth, True)
+                    m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.",
+                       ILogger.logMsgType.logHealth, True)
                 End If
                 Threading.Thread.Sleep(m_WaitInterval)
             End While
@@ -257,8 +258,8 @@ Namespace Files
             'Wait for zipper program to complete
             While (RunZipper.State <> clsProgRunner.States.NotMonitoring)
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.", _
-                      ILogger.logMsgType.logHealth, True)
+                    m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.",
+                       ILogger.logMsgType.logHealth, True)
                 End If
                 Threading.Thread.Sleep(m_WaitInterval)
             End While

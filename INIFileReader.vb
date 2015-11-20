@@ -469,7 +469,7 @@ Namespace Files
                             Case IniItemTypeEnum.GetValues
                                 items.Add(N.Attributes.GetNamedItem("value").Value)
                             Case IniItemTypeEnum.GetKeysAndValues
-                                items.Add(N.Attributes.GetNamedItem("key").Value & "=" & _
+                                items.Add(N.Attributes.GetNamedItem("key").Value & "=" &
                                 N.Attributes.GetNamedItem("value").Value)
                         End Select
                     Next

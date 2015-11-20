@@ -71,6 +71,12 @@ Namespace Processes
         Private m_pid As Integer
 
         ''' <summary>
+        ''' The instance name of the most recent performance counter used by GetCoreUsageByProcessID
+        ''' </summary>
+        ''' <remarks></remarks>
+        Private m_processIdInstanceName As String
+
+        ''' <summary>
         ''' The internal thread used to run the monitoring code
         ''' </summary>
         ''' <remarks>
@@ -124,9 +130,18 @@ Namespace Processes
         ''' </summary>
         Private m_CachedConsoleError As StringBuilder
 
+        ''' <summary>
+        ''' Number of cores on this computer
+        ''' </summary>
+        ''' <remarks></remarks>
         Private Shared mCachedCoreCount As Integer = 0
 
-        Private Shared ReadOnly mCachedPerfCounters As ConcurrentDictionary(Of Integer, PerformanceCounter) = New ConcurrentDictionary(Of Integer, PerformanceCounter)
+        ''' <summary>
+        ''' Maps processId to a PerformanceCounter instance
+        ''' </summary>
+        ''' <remarks>The KeyValuePair tracks the performance counter instance name (could be empty string) and the PerformanceCounter instance</remarks>
+        Private Shared ReadOnly mCachedPerfCounters As ConcurrentDictionary(Of Integer, KeyValuePair(Of String, PerformanceCounter)) =
+            New ConcurrentDictionary(Of Integer, KeyValuePair(Of String, PerformanceCounter))
 
 #End Region
 
@@ -470,14 +485,18 @@ Namespace Processes
         End Sub
 
         ''' <summary>
-        ''' Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
+        ''' Clear the performance counter cached for the given Process ID
         ''' </summary>
         ''' <remarks></remarks>
-        Public Shared Sub ClearCachedPerformanceCounterForProcessID(processID As Integer)
+        Public Shared Sub ClearCachedPerformanceCounterForProcessID(processId As Integer)
 
             Try
-                Dim removedCounter As PerformanceCounter = Nothing
-                mCachedPerfCounters.TryRemove(processID, removedCounter)
+                If Not mCachedPerfCounters.ContainsKey(processId) Then
+                    Return
+                End If
+
+                Dim removedCounter As KeyValuePair(Of String, PerformanceCounter) = Nothing
+                mCachedPerfCounters.TryRemove(processId, removedCounter)
             Catch ex As Exception
                 ' Ignore errors
             End Try
@@ -501,7 +520,7 @@ Namespace Processes
         ''' <summary>
         ''' Asynchronously handles the console output from the process running by m_Process
         ''' </summary>
-        Private Sub ConsoleOutputHandler(ByVal sendingProcess As Object, _
+        Private Sub ConsoleOutputHandler(ByVal sendingProcess As Object,
                                          ByVal outLine As DataReceivedEventArgs)
 
             ' Collect the console output
@@ -530,11 +549,19 @@ Namespace Processes
             End If
         End Sub
 
+        ''' <summary>
+        ''' Force garbage collection
+        ''' </summary>
+        ''' <remarks>Waits up to 1 second for the collection to finish</remarks>
         Public Shared Sub GarbageCollectNow()
             Const intMaxWaitTimeMSec As Integer = 1000
             GarbageCollectNow(intMaxWaitTimeMSec)
         End Sub
 
+        ''' <summary>
+        ''' Force garbage collection
+        ''' </summary>
+        ''' <remarks></remarks>
         Public Shared Sub GarbageCollectNow(ByVal intMaxWaitTimeMSec As Integer)
             Const THREAD_SLEEP_TIME_MSEC As Integer = 100
 
@@ -601,9 +628,10 @@ Namespace Processes
 
         ''' <summary>
         ''' Reports the number of cores in use by the program started with StartAndMonitorProgram
+        ''' This process takes 1000 msec     
         ''' </summary>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <returns>Number of cores in use</returns>
+        ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         Public Function GetCoreUsage() As Single
 
             If m_pid = 0 Then
@@ -611,20 +639,34 @@ Namespace Processes
             End If
 
             Try
-                Return GetCoreUsageByProcessID(m_pid)
+                Return GetCoreUsageByProcessID(m_pid, m_processIdInstanceName)
             Catch ex As Exception
-                ThrowConditionalException(ex, "ProcessID not recognized or permissions error")
+                ThrowConditionalException(ex, "processId not recognized or permissions error")
                 Return 0
             End Try
 
         End Function
 
         ''' <summary>
-        ''' Reports the number of cores in use by the program started with StartAndMonitorProgram
+        ''' Reports the number of cores in use by the given process
+        ''' This process takes 1000 msec
         ''' </summary>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Shared Function GetCoreUsageByProcessID(processID As Integer) As Single
+        ''' <param name="processId">Process ID for the program</param>
+        ''' <returns>Number of cores in use</returns>
+        ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
+        Public Shared Function GetCoreUsageByProcessID(processId As Integer) As Single
+            GetCoreUsageByProcessID(processId, String.Empty)
+        End Function
+
+        ''' <summary>
+        ''' Reports the number of cores in use by the given process
+        ''' This process takes 1000 msec
+        ''' </summary>
+        ''' <param name="processId">Process ID for the program</param>
+        ''' <param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
+        ''' <returns>Number of cores in use</returns>
+        ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
+        Public Shared Function GetCoreUsageByProcessID(processId As Integer, ByRef processIdInstanceName As String) As Single
 
             Try
 
@@ -632,24 +674,49 @@ Namespace Processes
                     mCachedCoreCount = GetCoreCount()
                 End If
 
-                Dim perfCounter As PerformanceCounter = Nothing
+                Dim perfCounterContainer As KeyValuePair(Of String, PerformanceCounter) = Nothing
+                Dim getNewPerfCounter = True
 
-                If Not mCachedPerfCounters.TryGetValue(processID, perfCounter) Then
-                    Dim instanceName As String = String.Empty
-                    perfCounter = GetPerfCounterForProcessID(processID, instanceName)
+                ' Look for a cached performance counter instance
+                If mCachedPerfCounters.TryGetValue(processId, perfCounterContainer) Then
 
-                    If perfCounter Is Nothing Then
-                        Throw New Exception("GetCoreUsageByProcessID: Performance counter not found for ProcessID " & processID)
+                    Dim cachedProcessIdInstanceName = perfCounterContainer.Key
+
+                    If String.IsNullOrEmpty(processIdInstanceName) OrElse String.IsNullOrEmpty(cachedProcessIdInstanceName) Then
+                        ' Use the existing performance counter
+                        getNewPerfCounter = False
+                    Else
+                        ' Confirm that the existing performance counter matches the expected instance name                        
+                        If cachedProcessIdInstanceName.Equals(processIdInstanceName, StringComparison.InvariantCultureIgnoreCase) Then
+                            getNewPerfCounter = False
+                        End If
                     End If
 
+                    If perfCounterContainer.Value Is Nothing Then
+                        getNewPerfCounter = True
+                    End If
+                End If
+
+                If getNewPerfCounter Then
+                    Dim newProcessIdInstanceName As String = String.Empty
+                    Dim perfCounter = GetPerfCounterForProcessID(processId, newProcessIdInstanceName)
+
+                    If perfCounter Is Nothing Then
+                        Throw New Exception("GetCoreUsageByProcessID: Performance counter not found for processId " & processId)
+                    End If
+
+                    processIdInstanceName = newProcessIdInstanceName
+
+                    ClearCachedPerformanceCounterForProcessID(processId)
+
                     ' Cache this performance counter so that it is quickly available on the next call to this method
-                    mCachedPerfCounters.TryAdd(processID, perfCounter)
+                    mCachedPerfCounters.TryAdd(processId, New KeyValuePair(Of String, PerformanceCounter)(newProcessIdInstanceName, perfCounter))
                 End If
 
                 ' Take a sample, wait 1 second, then sample again
-                Dim sample1 = perfCounter.NextSample()
+                Dim sample1 = perfCounterContainer.Value.NextSample()
                 Thread.Sleep(1000)
-                Dim sample2 = perfCounter.NextSample()
+                Dim sample2 = perfCounterContainer.Value.NextSample()
 
                 ' Each core contributes "100" to the overall cpuUsage
                 Dim cpuUsage = CounterSample.Calculate(sample1, sample2)
@@ -662,7 +729,7 @@ Namespace Processes
                 ' The process is likely terminated
                 Return 0
             Catch ex As Exception
-                Throw New Exception("Exception in GetCoreUsageByProcessID for ProcessID " & processID, ex)
+                Throw New Exception("Exception in GetCoreUsageByProcessID for processId " & processId, ex)
             End Try
 
         End Function
@@ -815,15 +882,15 @@ Namespace Processes
             End With
 
             If Not File.Exists(m_Process.StartInfo.FileName) Then
-                ThrowConditionalException(New Exception("Process filename " & m_Process.StartInfo.FileName & " not found."), _
-                "clsProgRunner m_ProgName was not set correctly.")
+                ThrowConditionalException(New Exception("Process filename " & m_Process.StartInfo.FileName & " not found."),
+                  "clsProgRunner m_ProgName was not set correctly.")
                 m_state = States.NotMonitoring
                 Exit Sub
             End If
 
             If Not Directory.Exists(m_Process.StartInfo.WorkingDirectory) Then
-                ThrowConditionalException(New Exception("Process working directory " & m_Process.StartInfo.WorkingDirectory & " not found."), _
-                "clsProgRunner m_WorkDir was not set correctly.")
+                ThrowConditionalException(New Exception("Process working directory " & m_Process.StartInfo.WorkingDirectory & " not found."),
+                  "clsProgRunner m_WorkDir was not set correctly.")
                 m_state = States.NotMonitoring
                 Exit Sub
             End If
@@ -837,7 +904,7 @@ Namespace Processes
                         If String.IsNullOrEmpty(m_ConsoleOutputFilePath) Then
                             ' Need to auto-define m_ConsoleOutputFilePath
 
-                            m_ConsoleOutputFilePath = Path.Combine(m_Process.StartInfo.WorkingDirectory, _
+                            m_ConsoleOutputFilePath = Path.Combine(m_Process.StartInfo.WorkingDirectory,
                                                       Path.GetFileNameWithoutExtension(m_Process.StartInfo.FileName) & "_ConsoleOutput.txt")
 
                         End If
@@ -863,9 +930,9 @@ Namespace Processes
                     m_state = States.StartingProcess
                     m_Process.Start()
                 Catch ex As Exception
-                    ThrowConditionalException(ex, "Problem starting process. Parameters: " & _
-                     m_Process.StartInfo.WorkingDirectory & m_Process.StartInfo.FileName & " " & _
-                     m_Process.StartInfo.Arguments & ".")
+                    ThrowConditionalException(ex, "Problem starting process. Parameters: " &
+                      m_Process.StartInfo.WorkingDirectory & m_Process.StartInfo.FileName & " " &
+                      m_Process.StartInfo.Arguments & ".")
                     m_ExitCode = -1234567
                     m_state = States.NotMonitoring
                     Exit Sub
@@ -878,6 +945,8 @@ Namespace Processes
                     ' Exception looking up the process ID
                     m_pid = 999999999
                 End Try
+
+                m_processIdInstanceName = String.Empty
 
                 If blnStandardOutputRedirected Then
                     Try
@@ -915,10 +984,12 @@ Namespace Processes
 
                 Loop
 
-                ' need to free up resources used to keep
+                ' Need to free up resources used to keep
                 ' track of the external process
                 '
                 m_pid = 0
+                m_processIdInstanceName = String.Empty
+
                 Try
                     m_ExitCode = m_Process.ExitCode
                 Catch ex As Exception
@@ -940,12 +1011,12 @@ Namespace Processes
                 End Try
 
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode, _
-                    Logging.ILogger.logMsgType.logHealth, True)
+                    m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode,
+                      Logging.ILogger.logMsgType.logHealth, True)
 
                     If Not m_CachedConsoleError Is Nothing AndAlso m_CachedConsoleError.Length > 0 Then
-                        m_EventLogger.PostEntry("Cached error text for process " & m_name & ": " & m_CachedConsoleError.ToString, _
-                        Logging.ILogger.logMsgType.logError, True)
+                        m_EventLogger.PostEntry("Cached error text for process " & m_name & ": " & m_CachedConsoleError.ToString,
+                          Logging.ILogger.logMsgType.logError, True)
                     End If
                 End If
 
@@ -956,11 +1027,11 @@ Namespace Processes
                     m_ConsoleOutputStreamWriter.Close()
                 End If
 
-                ' decide whether or not to repeat starting
+                ' Decide whether or not to repeat starting
                 ' the external process again, or quit
                 '
                 If m_repeat And Not m_doCleanup Then
-                    ' repeat starting the process
+                    ' Repeat starting the process
                     ' after waiting for minimum hold off time interval
                     '
                     m_state = States.Waiting
@@ -971,7 +1042,7 @@ Namespace Processes
 
                     m_state = States.Monitoring
                 Else
-                    ' don't repeat starting the process - just quit
+                    ' Don't repeat starting the process - just quit
                     '
                     m_state = States.NotMonitoring
                     RaiseConditionalProgChangedEvent(Me)

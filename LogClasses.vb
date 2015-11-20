@@ -876,8 +876,8 @@ Namespace Logging
         ''' <param name="EntryType">The ILogger error type.</param>
         Private Sub LogToControl(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
             Dim localMsg As String
-            localMsg = DateTime.Now() & ", " & ", " & ExecutableName & ", " & _
-                        ExecutableVersion & ", " & message & ", " & TypeToString(EntryType)
+            localMsg = DateTime.Now() & ", " & ", " & ExecutableName & ", " &
+                       ExecutableVersion & ", " & message & ", " & TypeToString(EntryType)
 
             If EntryType = ILogger.logMsgType.logError Then
                 m_MostRecentErrorMessage = localMsg
