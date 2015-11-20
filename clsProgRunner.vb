@@ -1,5 +1,6 @@
 Option Strict On
 
+Imports System.Collections.Concurrent
 Imports System.Collections.Generic
 Imports System.IO
 Imports System.Runtime.InteropServices
@@ -125,7 +126,7 @@ Namespace Processes
 
         Private Shared mCachedCoreCount As Integer = 0
 
-        Private Shared ReadOnly mCachedPerfCounters As Dictionary(Of Integer, PerformanceCounter) = New Dictionary(Of Integer, PerformanceCounter)        
+        Private Shared ReadOnly mCachedPerfCounters As ConcurrentDictionary(Of Integer, PerformanceCounter) = New ConcurrentDictionary(Of Integer, PerformanceCounter)
 
 #End Region
 
@@ -469,6 +470,21 @@ Namespace Processes
         End Sub
 
         ''' <summary>
+        ''' Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
+        ''' </summary>
+        ''' <remarks></remarks>
+        Public Shared Sub ClearCachedPerformanceCounterForProcessID(processID As Integer)
+
+            Try
+                Dim removedCounter As PerformanceCounter = Nothing
+                mCachedPerfCounters.TryRemove(processID, removedCounter)
+            Catch ex As Exception
+                ' Ignore errors
+            End Try
+
+        End Sub
+
+        ''' <summary>
         ''' Clears any console error text that is currently cached
         ''' </summary>
         ''' <remarks></remarks>
@@ -568,13 +584,13 @@ Namespace Processes
                 End If
 
                 Dim result = New System.Management.ManagementObjectSearcher("Select NumberOfCores from Win32_Processor")
-                mCachedCoreCount = 0
+                Dim coreCount = 0
 
                 For Each item In result.Get()
-                    mCachedCoreCount += Integer.Parse(item("NumberOfCores").ToString())
+                    coreCount += Integer.Parse(item("NumberOfCores").ToString())
                 Next
 
-                Return mCachedCoreCount
+                Interlocked.Exchange(mCachedCoreCount, coreCount)
 
             Catch ex As Exception
                 ' This value will be affected by hyperthreading
@@ -627,7 +643,7 @@ Namespace Processes
                     End If
 
                     ' Cache this performance counter so that it is quickly available on the next call to this method
-                    mCachedPerfCounters.Add(processID, perfCounter)
+                    mCachedPerfCounters.TryAdd(processID, perfCounter)
                 End If
 
                 ' Take a sample, wait 1 second, then sample again

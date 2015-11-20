@@ -466,6 +466,11 @@ PRISM
  Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
  </summary>
 	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedPerformanceCounterForProcessID(System.Int32)">
+	<summary>
+ Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
+ </summary>
+	<remarks></remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedConsoleError">
 	<summary>
  Clears any console error text that is currently cached
