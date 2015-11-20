@@ -307,6 +307,11 @@ PRISM
 	<summary>
  The process id of the currently running incarnation of the external program
  </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.m_processIdInstanceName">
+	<summary>
+ The instance name of the most recent performance counter used by GetCoreUsageByProcessID
+ </summary>
+	<remarks></remarks>
 </member><member name="F:PRISM.Processes.clsProgRunner.m_Thread">
 	<summary>
  The internal thread used to run the monitoring code
@@ -340,6 +345,16 @@ PRISM
 	<summary>
  Caches the text written to the Error buffer by the external program
  </summary>
+</member><member name="F:PRISM.Processes.clsProgRunner.mCachedCoreCount">
+	<summary>
+ Number of cores on this computer
+ </summary>
+	<remarks></remarks>
+</member><member name="F:PRISM.Processes.clsProgRunner.mCachedPerfCounters">
+	<summary>
+ Maps processId to a PerformanceCounter instance
+ </summary>
+	<remarks>The KeyValuePair tracks the performance counter instance name (could be empty string) and the PerformanceCounter instance</remarks>
 </member><member name="E:PRISM.Processes.clsProgRunner.ProgChanged">
 	<summary>
  This event is raised at regular intervals while monitoring the program
@@ -468,7 +483,7 @@ PRISM
 	<remarks></remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedPerformanceCounterForProcessID(System.Int32)">
 	<summary>
- Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
+ Clear the performance counter cached for the given Process ID
  </summary>
 	<remarks></remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.ClearCachedConsoleError">
@@ -480,6 +495,16 @@ PRISM
 	<summary>
  Asynchronously handles the console output from the process running by m_Process
  </summary>
+</member><member name="M:PRISM.Processes.clsProgRunner.GarbageCollectNow">
+	<summary>
+ Force garbage collection
+ </summary>
+	<remarks>Waits up to 1 second for the collection to finish</remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GarbageCollectNow(System.Int32)">
+	<summary>
+ Force garbage collection
+ </summary>
+	<remarks></remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.GetCoreCount">
 	<summary>
  Returns the number of cores
@@ -489,15 +514,27 @@ PRISM
 </member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsage">
 	<summary>
  Reports the number of cores in use by the program started with StartAndMonitorProgram
+ This process takes 1000 msec     
  </summary>
-	<returns></returns>
-	<remarks></remarks>
+	<returns>Number of cores in use</returns>
+	<remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageByProcessID(System.Int32)">
 	<summary>
- Reports the number of cores in use by the program started with StartAndMonitorProgram
+ Reports the number of cores in use by the given process
+ This process takes 1000 msec
  </summary>
-	<returns></returns>
-	<remarks></remarks>
+	<param name="processId">Process ID for the program</param>
+	<returns>Number of cores in use</returns>
+	<remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageByProcessID(System.Int32,System.String@)">
+	<summary>
+ Reports the number of cores in use by the given process
+ This process takes 1000 msec
+ </summary>
+	<param name="processId">Process ID for the program</param>
+	<param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
+	<returns>Number of cores in use</returns>
+	<remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.GetPerfCounterForProcessID(System.Int32,System.String@,System.String)">
 	<summary>
  Obtain the performance counter for the given process

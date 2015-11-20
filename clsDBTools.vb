@@ -40,6 +40,7 @@ Namespace DataBase
                 m_connection_str = Value
             End Set
         End Property
+
         ''' <summary>
         ''' The function opens a database connection.
         ''' </summary>
@@ -57,14 +58,14 @@ Namespace DataBase
                     retryCount -= 1
                     m_DBCn.Close()
                     m_logger.PostError("Connection problem: ", e, True)
-                    System.Threading.Thread.Sleep(300)
+                    System.Threading.Thread.Sleep(300)                   
                 End Try
             End While
-            If retryCount < 1 Then
-                m_logger.PostEntry("Unable to open connection after multiple tries", ILogger.logMsgType.logError, True)
-                Return False
-            End If
+
+            m_logger.PostEntry("Unable to open connection after multiple tries", ILogger.logMsgType.logError, True)
+            Return False
         End Function
+
         ''' <summary>
         ''' The subroutine closes the database connection.
         ''' </summary>

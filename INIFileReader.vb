@@ -547,8 +547,8 @@ Namespace Files
                         End If
                     End Try
                 End If
-                Return False
             End If
+            Return False
         End Function
         ''' <summary>The funtions creates a section name.</summary>
         ''' <param name="sectionName">The name of the section to be created.</param>

@@ -82,7 +82,7 @@ Namespace Processes
         ''' <remarks>
         ''' That starts and monitors the external program
         ''' </remarks>
-        Private m_Thread As Threading.Thread
+        Private m_Thread As Thread
 
         ''' <summary>
         ''' Flag that tells internal thread to quit monitoring external program and exit
@@ -404,11 +404,11 @@ Namespace Processes
         ''' <summary>
         ''' Window style to use when CreateNoWindow is False
         ''' </summary>
-        Public Property WindowStyle() As System.Diagnostics.ProcessWindowStyle
+        Public Property WindowStyle() As ProcessWindowStyle
             Get
                 Return m_WindowStyle
             End Get
-            Set(ByVal Value As System.Diagnostics.ProcessWindowStyle)
+            Set(ByVal Value As ProcessWindowStyle)
                 m_WindowStyle = Value
             End Set
         End Property
@@ -569,15 +569,15 @@ Namespace Processes
             If intMaxWaitTimeMSec < 100 Then intMaxWaitTimeMSec = 100
             If intMaxWaitTimeMSec > 5000 Then intMaxWaitTimeMSec = 5000
 
-            Threading.Thread.Sleep(100)
+            Thread.Sleep(100)
 
             Try
-                Dim gcThread As New Threading.Thread(AddressOf GarbageCollectWaitForGC)
+                Dim gcThread As New Thread(AddressOf GarbageCollectWaitForGC)
                 gcThread.Start()
 
                 intTotalThreadWaitTimeMsec = 0
                 While gcThread.IsAlive AndAlso intTotalThreadWaitTimeMsec < intMaxWaitTimeMSec
-                    Threading.Thread.Sleep(THREAD_SLEEP_TIME_MSEC)
+                    Thread.Sleep(THREAD_SLEEP_TIME_MSEC)
                     intTotalThreadWaitTimeMsec += THREAD_SLEEP_TIME_MSEC
                 End While
                 If gcThread.IsAlive Then gcThread.Abort()
@@ -610,7 +610,7 @@ Namespace Processes
                     Return mCachedCoreCount
                 End If
 
-                Dim result = New System.Management.ManagementObjectSearcher("Select NumberOfCores from Win32_Processor")
+                Dim result = New Management.ManagementObjectSearcher("Select NumberOfCores from Win32_Processor")
                 Dim coreCount = 0
 
                 For Each item In result.Get()
@@ -618,6 +618,8 @@ Namespace Processes
                 Next
 
                 Interlocked.Exchange(mCachedCoreCount, coreCount)
+
+                Return mCachedCoreCount
 
             Catch ex As Exception
                 ' This value will be affected by hyperthreading
@@ -655,7 +657,7 @@ Namespace Processes
         ''' <returns>Number of cores in use</returns>
         ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         Public Shared Function GetCoreUsageByProcessID(processId As Integer) As Single
-            GetCoreUsageByProcessID(processId, String.Empty)
+            Return GetCoreUsageByProcessID(processId, String.Empty)
         End Function
 
         ''' <summary>
@@ -818,9 +820,9 @@ Namespace Processes
             Try
                 ' Attempt to re-join the thread (wait for 5 seconds, at most)
                 m_Thread.Join(5000)
-            Catch ex As Threading.ThreadStateException
+            Catch ex As ThreadStateException
                 ThrowConditionalException(CType(ex, Exception), "Caught ThreadStateException while trying to join thread.")
-            Catch ex As Threading.ThreadInterruptedException
+            Catch ex As ThreadInterruptedException
                 ThrowConditionalException(CType(ex, Exception), "Caught ThreadInterruptedException while trying to join thread.")
             Catch ex As Exception
                 ThrowConditionalException(ex, "Caught exception while trying to join thread.")
@@ -1038,7 +1040,7 @@ Namespace Processes
 
                     RaiseConditionalProgChangedEvent(Me)
 
-                    Threading.Thread.Sleep(m_holdOffTime)
+                    Thread.Sleep(m_holdOffTime)
 
                     m_state = States.Monitoring
                 Else
@@ -1064,8 +1066,8 @@ Namespace Processes
                 ' and monitor it in a separate internal thread
                 '
                 Try
-                    Dim m_ThreadStart As New Threading.ThreadStart(AddressOf Me.Start)
-                    m_Thread = New Threading.Thread(m_ThreadStart)
+                    Dim m_ThreadStart As New ThreadStart(AddressOf Me.Start)
+                    m_Thread = New Thread(m_ThreadStart)
                     m_Thread.Start()
                 Catch ex As Exception
                     ThrowConditionalException(ex, "Caught exception while trying to start thread.")
@@ -1091,7 +1093,7 @@ Namespace Processes
                 Try
                     m_Process.Kill()
                     m_Thread.Abort()  'DAC added
-                Catch ex As Threading.ThreadAbortException
+                Catch ex As ThreadAbortException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
                 Catch ex As ComponentModel.Win32Exception
                     ThrowConditionalException(CType(ex, Exception), "Caught Win32Exception while trying to kill thread.")
@@ -1107,7 +1109,7 @@ Namespace Processes
             If m_state = States.Waiting And Kill Then  'Program not running, just abort thread
                 Try
                     m_Thread.Abort()
-                Catch ex As Threading.ThreadAbortException
+                Catch ex As ThreadAbortException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
                 Catch ex As Exception
                     ThrowConditionalException(ex, "Caught exception while trying to abort thread.")
@@ -1120,9 +1122,9 @@ Namespace Processes
                 Try
                     ' Attempt to re-join the thread (wait for 5 seconds, at most)
                     m_Thread.Join(5000)
-                Catch ex As Threading.ThreadStateException
+                Catch ex As ThreadStateException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadStateException while trying to join thread.")
-                Catch ex As Threading.ThreadInterruptedException
+                Catch ex As ThreadInterruptedException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadInterruptedException while trying to join thread.")
                 Catch ex As Exception
                     ThrowConditionalException(ex, "Caught exception while trying to join thread.")
