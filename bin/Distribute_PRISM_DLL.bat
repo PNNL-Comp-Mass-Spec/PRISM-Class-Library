@@ -87,6 +87,9 @@ copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\LLRCRunner\LLRC
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_UserUpdate\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_UserUpdate\Lib" /y
 
+copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Status_Message_DB_Updater\StatusMessageDBUpdater\lib" /y
+copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Status_Message_DB_Updater\StatusMessageDBUpdater\bin\Debug" /y
+
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DataImportManager\DataImportManager\Lib" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DataImportManager\DataImportManager\bin\Debug" /y
 copy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DataImportManager\DataImportManager\bin\Release" /y

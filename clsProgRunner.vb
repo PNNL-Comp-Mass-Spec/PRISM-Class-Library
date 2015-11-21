@@ -630,9 +630,9 @@ Namespace Processes
 
         ''' <summary>
         ''' Reports the number of cores in use by the program started with StartAndMonitorProgram
-        ''' This process takes 1000 msec     
+        ''' This method takes at least 1000 msec to execute
         ''' </summary>
-        ''' <returns>Number of cores in use</returns>
+        ''' <returns>Number of cores in use; -1 if an error</returns>
         ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         Public Function GetCoreUsage() As Single
 
@@ -644,14 +644,14 @@ Namespace Processes
                 Return GetCoreUsageByProcessID(m_pid, m_processIdInstanceName)
             Catch ex As Exception
                 ThrowConditionalException(ex, "processId not recognized or permissions error")
-                Return 0
+                Return -1
             End Try
 
         End Function
 
         ''' <summary>
         ''' Reports the number of cores in use by the given process
-        ''' This process takes 1000 msec
+        ''' This method takes at least 1000 msec to execute
         ''' </summary>
         ''' <param name="processId">Process ID for the program</param>
         ''' <returns>Number of cores in use</returns>
@@ -662,7 +662,7 @@ Namespace Processes
 
         ''' <summary>
         ''' Reports the number of cores in use by the given process
-        ''' This process takes 1000 msec
+        ''' This method takes at least 1000 msec to execute
         ''' </summary>
         ''' <param name="processId">Process ID for the program</param>
         ''' <param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
@@ -713,6 +713,7 @@ Namespace Processes
 
                     ' Cache this performance counter so that it is quickly available on the next call to this method
                     mCachedPerfCounters.TryAdd(processId, New KeyValuePair(Of String, PerformanceCounter)(newProcessIdInstanceName, perfCounter))
+
                 End If
 
                 ' Take a sample, wait 1 second, then sample again
@@ -722,7 +723,6 @@ Namespace Processes
 
                 ' Each core contributes "100" to the overall cpuUsage
                 Dim cpuUsage = CounterSample.Calculate(sample1, sample2)
-
                 Dim coresInUse = cpuUsage / 100.0
 
                 Return CSng(coresInUse)
