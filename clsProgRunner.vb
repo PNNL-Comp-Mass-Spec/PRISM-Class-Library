@@ -8,9 +8,7 @@ Imports System.Text
 Imports System.Threading
 
 Namespace Processes
-    ' This class runs a single program as an external process
-    ' and monitors it with an internal thread
-    '
+
     ''' <summary>
     ''' This class runs a single program as an external process and monitors it with an internal thread
     ''' </summary>
@@ -151,21 +149,21 @@ Namespace Processes
         ''' This event is raised at regular intervals while monitoring the program
         ''' </summary>
         ''' <remarks>Raised every m_monitorInterval milliseconds</remarks>
-        Public Event ProgChanged(ByVal obj As clsProgRunner)
+        Public Event ProgChanged(obj As clsProgRunner)
 
         ''' <summary>
         ''' This event is raised when the external program writes text to the console
         ''' </summary>
         ''' <param name="NewText"></param>
         ''' <remarks></remarks>
-        Public Event ConsoleOutputEvent(ByVal NewText As String)
+        Public Event ConsoleOutputEvent(NewText As String)
 
         ''' <summary>
         ''' This event is raised when the external program writes text to the console's error stream
         ''' </summary>
         ''' <param name="NewText"></param>
         ''' <remarks></remarks>
-        Public Event ConsoleErrorEvent(ByVal NewText As String)
+        Public Event ConsoleErrorEvent(NewText As String)
 
 #End Region
 
@@ -178,7 +176,7 @@ Namespace Processes
             Get
                 Return m_ProgArgs
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_ProgArgs = Value
             End Set
         End Property
@@ -219,7 +217,7 @@ Namespace Processes
             Get
                 Return m_CacheStandardOutput
             End Get
-            Set(ByVal value As Boolean)
+            Set(value As Boolean)
                 m_CacheStandardOutput = value
             End Set
         End Property
@@ -235,7 +233,7 @@ Namespace Processes
             Get
                 Return m_ConsoleOutputFilePath
             End Get
-            Set(ByVal value As String)
+            Set(value As String)
                 If value Is Nothing Then value = String.Empty
                 m_ConsoleOutputFilePath = value
             End Set
@@ -249,7 +247,7 @@ Namespace Processes
             Get
                 Return m_CreateNoWindow
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 m_CreateNoWindow = Value
             End Set
         End Property
@@ -262,7 +260,7 @@ Namespace Processes
             Get
                 Return m_EchoOutputToConsole
             End Get
-            Set(ByVal value As Boolean)
+            Set(value As Boolean)
                 m_EchoOutputToConsole = value
             End Set
         End Property
@@ -284,7 +282,7 @@ Namespace Processes
             Get
                 Return m_monitorInterval
             End Get
-            Set(ByVal Value As Integer)
+            Set(Value As Integer)
                 If Value < MINIMUM_MONITOR_INTERVAL_MSEC Then Value = MINIMUM_MONITOR_INTERVAL_MSEC
                 m_monitorInterval = Value
             End Set
@@ -297,7 +295,7 @@ Namespace Processes
             Get
                 Return m_name
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_name = Value
             End Set
         End Property
@@ -307,7 +305,7 @@ Namespace Processes
             Get
                 Return m_NotifyOnEvent
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 m_NotifyOnEvent = Value
             End Set
         End Property
@@ -317,7 +315,7 @@ Namespace Processes
             Get
                 Return m_NotifyOnException
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 m_NotifyOnException = Value
             End Set
         End Property
@@ -339,7 +337,7 @@ Namespace Processes
             Get
                 Return m_ProgName
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_ProgName = Value
             End Set
         End Property
@@ -351,7 +349,7 @@ Namespace Processes
             Get
                 Return m_repeat
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 m_repeat = Value
             End Set
         End Property
@@ -363,7 +361,7 @@ Namespace Processes
             Get
                 Return m_holdOffTime / 1000.0
             End Get
-            Set(ByVal Value As Double)
+            Set(Value As Double)
                 m_holdOffTime = CType(Value * 1000, Integer)
             End Set
         End Property
@@ -408,7 +406,7 @@ Namespace Processes
             Get
                 Return m_WindowStyle
             End Get
-            Set(ByVal Value As ProcessWindowStyle)
+            Set(Value As ProcessWindowStyle)
                 m_WindowStyle = Value
             End Set
         End Property
@@ -421,7 +419,7 @@ Namespace Processes
             Get
                 Return m_WorkDir
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_WorkDir = Value
             End Set
         End Property
@@ -436,7 +434,7 @@ Namespace Processes
             Get
                 Return m_WriteConsoleOutputToFile
             End Get
-            Set(ByVal value As Boolean)
+            Set(value As Boolean)
                 m_WriteConsoleOutputToFile = value
             End Set
         End Property
@@ -520,8 +518,8 @@ Namespace Processes
         ''' <summary>
         ''' Asynchronously handles the console output from the process running by m_Process
         ''' </summary>
-        Private Sub ConsoleOutputHandler(ByVal sendingProcess As Object,
-                                         ByVal outLine As DataReceivedEventArgs)
+        Private Sub ConsoleOutputHandler(sendingProcess As Object,
+                                         outLine As DataReceivedEventArgs)
 
             ' Collect the console output
             If Not String.IsNullOrEmpty(outLine.Data) Then
@@ -562,7 +560,7 @@ Namespace Processes
         ''' Force garbage collection
         ''' </summary>
         ''' <remarks></remarks>
-        Public Shared Sub GarbageCollectNow(ByVal intMaxWaitTimeMSec As Integer)
+        Public Shared Sub GarbageCollectNow(intMaxWaitTimeMSec As Integer)
             Const THREAD_SLEEP_TIME_MSEC As Integer = 100
 
             Dim intTotalThreadWaitTimeMsec As Integer
@@ -654,7 +652,7 @@ Namespace Processes
         ''' This method takes at least 1000 msec to execute
         ''' </summary>
         ''' <param name="processId">Process ID for the program</param>
-        ''' <returns>Number of cores in use</returns>
+        ''' <returns>Number of cores in use; 0 if the process is terminated.  Exception is thrown if a problem</returns>
         ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         Public Shared Function GetCoreUsageByProcessID(processId As Integer) As Single
             Return GetCoreUsageByProcessID(processId, String.Empty)
@@ -666,7 +664,7 @@ Namespace Processes
         ''' </summary>
         ''' <param name="processId">Process ID for the program</param>
         ''' <param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
-        ''' <returns>Number of cores in use</returns>
+        ''' <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
         ''' <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         Public Shared Function GetCoreUsageByProcessID(processId As Integer, ByRef processIdInstanceName As String) As Single
 
@@ -678,6 +676,7 @@ Namespace Processes
 
                 Dim perfCounterContainer As KeyValuePair(Of String, PerformanceCounter) = Nothing
                 Dim getNewPerfCounter = True
+                Dim maxAttempts = 2
 
                 ' Look for a cached performance counter instance
                 If mCachedPerfCounters.TryGetValue(processId, perfCounterContainer) Then
@@ -696,6 +695,9 @@ Namespace Processes
 
                     If perfCounterContainer.Value Is Nothing Then
                         getNewPerfCounter = True
+                    Else
+                        ' Existing performance counter found
+                        maxAttempts = 1
                     End If
                 End If
 
@@ -714,15 +716,11 @@ Namespace Processes
                     ' Cache this performance counter so that it is quickly available on the next call to this method
                     mCachedPerfCounters.TryAdd(processId, New KeyValuePair(Of String, PerformanceCounter)(newProcessIdInstanceName, perfCounter))
 
+                    mCachedPerfCounters.TryGetValue(processId, perfCounterContainer)
                 End If
 
-                ' Take a sample, wait 1 second, then sample again
-                Dim sample1 = perfCounterContainer.Value.NextSample()
-                Thread.Sleep(1000)
-                Dim sample2 = perfCounterContainer.Value.NextSample()
+                Dim cpuUsage = GetCoreUsageForPerfCounter(perfCounterContainer.Value, maxAttempts)
 
-                ' Each core contributes "100" to the overall cpuUsage
-                Dim cpuUsage = CounterSample.Calculate(sample1, sample2)
                 Dim coresInUse = cpuUsage / 100.0
 
                 Return CSng(coresInUse)
@@ -731,8 +729,99 @@ Namespace Processes
                 ' The process is likely terminated
                 Return 0
             Catch ex As Exception
-                Throw New Exception("Exception in GetCoreUsageByProcessID for processId " & processId, ex)
+                Throw New Exception("Exception in GetCoreUsageByProcessID for processId " & processId & ": " & ex.Message, ex)
             End Try
+
+        End Function
+
+        ''' <summary>
+        ''' Sample the given performance counter to determine the CPU usage
+        ''' </summary>
+        ''' <param name="perfCounter">Performance counter instance</param>
+        ''' <param name="maxAttempts">Number of attempts</param>
+        ''' <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
+        ''' <remarks>
+        ''' The first time perfCounter.NextSample() is called a Permissions exception is sometimes thrown
+        ''' Set maxAttempts to 2 or higher to gracefully handle this
+        ''' </remarks>
+        Private Shared Function GetCoreUsageForPerfCounter(perfCounter As PerformanceCounter, maxAttempts As Integer) As Single
+
+            If maxAttempts < 1 Then maxAttempts = 1
+            For iteration = 1 To maxAttempts
+
+                Try
+
+                    ' Take a sample, wait 1 second, then sample again
+                    Dim sample1 = perfCounter.NextSample()
+                    Thread.Sleep(1000)
+                    Dim sample2 = perfCounter.NextSample()
+
+                    ' Each core contributes "100" to the overall cpuUsage
+                    Dim cpuUsage = CounterSample.Calculate(sample1, sample2)
+                    Return cpuUsage
+
+                Catch ex As InvalidOperationException
+                    ' The process is likely terminated
+                    Return 0
+                Catch ex As Exception
+                    If iteration = maxAttempts Then
+                        Throw
+                    Else
+                        ' Wait 500 milliseconds then try again
+                        Thread.Sleep(500)
+                    End If
+                End Try
+
+            Next
+
+            Return 0
+
+        End Function
+
+        ''' <summary>
+        ''' Reports the number of cores in use by the given process
+        ''' This method takes at least 1000 msec to execute
+        ''' </summary>
+        ''' <param name="processName">Process name, for example chrome (do not include .exe)</param>
+        ''' <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
+        ''' <remarks>
+        ''' Core count is typically an integer, but can be a fractional number if not using a core 100%
+        ''' If multiple processes are running with the given name then returns the total core usage for all of them
+        ''' </remarks>
+        Public Shared Function GetCoreUsageByProcessName(processName As String) As Single
+            Dim processIDs As List(Of Integer) = Nothing
+            Return GetCoreUsageByProcessName(processName, processIDs)
+        End Function
+
+        ''' <summary>
+        ''' Reports the number of cores in use by the given process
+        ''' This method takes at least 1000 msec to execute
+        ''' </summary>
+        ''' <param name="processName">Process name, for example chrome (do not include .exe)</param>
+        ''' <param name="processIDs">List of ProcessIDs matching the given process name</param>
+        ''' <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
+        ''' <remarks>
+        ''' Core count is typically an integer, but can be a fractional number if not using a core 100%
+        ''' If multiple processes are running with the given name then returns the total core usage for all of them
+        ''' </remarks>
+        Public Shared Function GetCoreUsageByProcessName(processName As String, <Out()> ByRef processIDs As List(Of Integer)) As Single
+
+            processIDs = New List(Of Integer)
+            Dim processInstances = Process.GetProcessesByName(processName)
+            If processInstances.Count = 0 Then Return -1
+
+            Dim coreUsageOverall As Single = 0
+            For Each runningProcess In processInstances
+                Dim processID = runningProcess.Id
+                processIDs.Add(processID)
+
+                Dim coreUsage = GetCoreUsageByProcessID(processID, String.Empty)
+                If coreUsage > 0 Then
+                    coreUsageOverall += coreUsage
+                End If
+            Next
+
+            Return coreUsageOverall
 
         End Function
 
@@ -831,16 +920,16 @@ Namespace Processes
         End Sub
 
         ''' <summary>Sets the name of the exception logger</summary>
-        Public Sub RegisterExceptionLogger(ByVal logger As Logging.ILogger) Implements Logging.ILoggerAware.RegisterEventLogger
+        Public Sub RegisterExceptionLogger(logger As Logging.ILogger) Implements Logging.ILoggerAware.RegisterEventLogger
             m_ExceptionLogger = logger
         End Sub
 
         ''' <summary>Sets the name of the event logger</summary>
-        Public Sub RegisterEventLogger(ByVal logger As Logging.ILogger) Implements Logging.ILoggerAware.RegisterExceptionLogger
+        Public Sub RegisterEventLogger(logger As Logging.ILogger) Implements Logging.ILoggerAware.RegisterExceptionLogger
             m_EventLogger = logger
         End Sub
 
-        Private Sub RaiseConditionalProgChangedEvent(ByVal obj As clsProgRunner)
+        Private Sub RaiseConditionalProgChangedEvent(obj As clsProgRunner)
             If m_NotifyOnEvent Then
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Raising ProgChanged event for " & obj.m_name & ".", Logging.ILogger.logMsgType.logHealth, True)
@@ -1087,7 +1176,7 @@ Namespace Processes
         ''' <summary>
         ''' Causes monitoring thread to exit on its next monitoring cycle
         ''' </summary>
-        Public Sub StopMonitoringProgram(Optional ByVal Kill As Boolean = False)
+        Public Sub StopMonitoringProgram(Optional Kill As Boolean = False)
 
             If Me.StartingOrMonitoring() AndAlso Kill Then   'Program is running, kill it and abort thread
                 Try
@@ -1133,7 +1222,7 @@ Namespace Processes
             End If
         End Sub
 
-        Private Sub ThrowConditionalException(ByRef ex As Exception, ByVal loggerMessage As String)
+        Private Sub ThrowConditionalException(ByRef ex As Exception, loggerMessage As String)
             If Not m_ExceptionLogger Is Nothing Then
                 m_ExceptionLogger.PostError(loggerMessage, ex, True)
             End If
