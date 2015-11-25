@@ -4,8 +4,8 @@ Imports System.IO
 Imports System.Runtime.InteropServices    ' Required for call to GetDiskFreeSpaceEx
 Imports System.Text.RegularExpressions
 
-
 Namespace Files
+
     ''' <summary>Tools to manipulate paths and directories.</summary>
     ''' <remarks>
     ''' There is a set of functions to properly terminate directory paths.
@@ -19,24 +19,24 @@ Namespace Files
 
         ''' <summary>Event is raised before copying begins.</summary>
         ''' <param name="filename">The file's full path.</param>
-        Public Event CopyingFile(ByVal filename As String)
+        Public Event CopyingFile(filename As String)
 
-        Public Event DebugEvent(ByVal CurrentTask As String, ByVal TaskDetail As String)
+        Public Event DebugEvent(CurrentTask As String, TaskDetail As String)
 
         ''' <summary>Event is raised before copying begins.</summary>
         ''' <param name="filename">The file's full path.</param>
-        Public Event ResumingFileCopy(ByVal filename As String)
+        Public Event ResumingFileCopy(filename As String)
 
         ''' <summary>Event is raised before copying begins.</summary>
         ''' <param name="filename">The file name (not full path)</param>
         ''' <param name="percentComplete">Percent complete (value between 0 and 100)</param>
-        Public Event FileCopyProgress(ByVal filename As String, ByVal percentComplete As Single)
+        Public Event FileCopyProgress(filename As String, percentComplete As Single)
 
-        Public Event WaitingForLockQueue(ByVal SourceFilePath As String, ByVal TargetFilePath As String, ByVal MBBacklogSource As Integer, ByVal MBBacklogTarget As Integer)
+        Public Event WaitingForLockQueue(SourceFilePath As String, TargetFilePath As String, MBBacklogSource As Integer, MBBacklogTarget As Integer)
 
-        Public Event LockQueueTimedOut(ByVal sourceFilePath As String, ByVal targetFilePath As String, ByVal waitTimeMinutes As Double)
+        Public Event LockQueueTimedOut(sourceFilePath As String, targetFilePath As String, waitTimeMinutes As Double)
 
-        Public Event LockQueueWaitComplete(ByVal sourceFilePath As String, ByVal targetFilePath As String, ByVal waitTimeMinutes As Double)
+        Public Event LockQueueWaitComplete(sourceFilePath As String, targetFilePath As String, waitTimeMinutes As Double)
 
 #End Region
 
@@ -184,7 +184,7 @@ Namespace Files
         ''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
         ''' <param name="TermChar">The specified directory separation character.</param>
         ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
+        Public Shared Function CheckTerminator(InpFolder As String, AddTerm As Boolean, TermChar As String) As String
 
             'Overload for all parameters specified
             Return CheckTerminatorEX(InpFolder, AddTerm, TermChar)
@@ -195,7 +195,7 @@ Namespace Files
         ''' <param name="InpFolder">The input directory path.</param>
         ''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
         ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal AddTerm As Boolean) As String
+        Public Shared Function CheckTerminator(InpFolder As String, AddTerm As Boolean) As String
 
             'Overload for using default termination character (DOS)
             Return CheckTerminatorEX(InpFolder, AddTerm, TERMCHAR_DOS)
@@ -206,7 +206,7 @@ Namespace Files
         ''' <param name="InpFolder">The input directory path.</param>
         ''' <param name="TermChar">The specified directory separation character.</param>
         ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(ByVal InpFolder As String, ByVal TermChar As String) As String
+        Public Shared Function CheckTerminator(InpFolder As String, TermChar As String) As String
 
             'Overload for using "add character" as default
             Return CheckTerminatorEX(InpFolder, TERM_ADD, TermChar)
@@ -216,7 +216,7 @@ Namespace Files
         ''' <summary>Assures the directory path ends with the DOS path separation character.</summary>
         ''' <param name="InpFolder">The input directory path.</param>
         ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(ByVal InpFolder As String) As String
+        Public Shared Function CheckTerminator(InpFolder As String) As String
 
             'Overload for using all defaults (add DOS terminator char)
             Return CheckTerminatorEX(InpFolder, TERM_ADD, TERMCHAR_DOS)
@@ -229,7 +229,7 @@ Namespace Files
         ''' <param name="TermChar">The specified directory separation character.</param>
         ''' <returns>The modified directory path.</returns>
         ''' <remarks>AddTerm=True forces the path to end with specified TermChar while AddTerm=False will remove TermChar from the end if present</remarks>
-        Private Shared Function CheckTerminatorEX(ByVal InpFolder As String, ByVal AddTerm As Boolean, ByVal TermChar As String) As String
+        Private Shared Function CheckTerminatorEX(InpFolder As String, AddTerm As Boolean, TermChar As String) As String
 
             If String.IsNullOrWhiteSpace(InpFolder) OrElse String.IsNullOrWhiteSpace(TermChar) Then
                 Return InpFolder
@@ -257,7 +257,7 @@ Namespace Files
         ''' <summary>Copies a source file to the destination file. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source file path.</param>
         ''' <param name="DestPath">The destination file path.</param>
-        Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String)
+        Public Sub CopyFile(SourcePath As String, DestPath As String)
 
             'Overload with overwrite set to default (FALSE)
             Const BackupDestFileBeforeCopy = False
@@ -265,12 +265,12 @@ Namespace Files
 
         End Sub
 
-        Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean)
+        Public Sub CopyFile(SourcePath As String, DestPath As String, OverWrite As Boolean)
             Const BackupDestFileBeforeCopy = False
             CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy)
         End Sub
 
-        Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean, BackupDestFileBeforeCopy As Boolean)
+        Public Sub CopyFile(SourcePath As String, DestPath As String, OverWrite As Boolean, BackupDestFileBeforeCopy As Boolean)
             CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy, DEFAULT_VERSION_COUNT_TO_KEEP)
         End Sub
 
@@ -278,7 +278,7 @@ Namespace Files
         ''' <param name="SourcePath">The source file path.</param>
         ''' <param name="DestPath">The destination file path.</param>
         ''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-        Public Sub CopyFile(ByVal SourcePath As String, ByVal DestPath As String, ByVal OverWrite As Boolean, ByVal BackupDestFileBeforeCopy As Boolean, ByVal VersionCountToKeep As Integer)
+        Public Sub CopyFile(SourcePath As String, DestPath As String, OverWrite As Boolean, BackupDestFileBeforeCopy As Boolean, VersionCountToKeep As Integer)
 
             'Overload with no defaults
             CopyFileEx(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy, VersionCountToKeep)
@@ -298,11 +298,11 @@ Namespace Files
         ''' <param name="DestPath">The destination file path.</param>
         ''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
         Private Sub CopyFileEx(
-          ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal Overwrite As Boolean,
-          ByVal BackupDestFileBeforeCopy As Boolean,
-          Optional ByVal VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP)
+          SourcePath As String,
+          DestPath As String,
+          Overwrite As Boolean,
+          BackupDestFileBeforeCopy As Boolean,
+          Optional VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP)
 
             Dim dirPath As String = Path.GetDirectoryName(DestPath)
             If Not Directory.Exists(dirPath) Then
@@ -326,19 +326,19 @@ Namespace Files
 
 #Region "Lock File Copying functions"
 
-        Public Function CopyFileUsingLocks(ByVal strSourceFilePath As String, ByVal strTargetFilePath As String, ByVal strManagerName As String) As Boolean
+        Public Function CopyFileUsingLocks(strSourceFilePath As String, strTargetFilePath As String, strManagerName As String) As Boolean
             Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite:=False)
         End Function
 
-        Public Function CopyFileUsingLocks(ByVal strSourceFilePath As String, ByVal strTargetFilePath As String, ByVal strManagerName As String, ByVal Overwrite As Boolean) As Boolean
+        Public Function CopyFileUsingLocks(strSourceFilePath As String, strTargetFilePath As String, strManagerName As String, Overwrite As Boolean) As Boolean
             Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite)
         End Function
 
         Public Function CopyFileUsingLocks(
-          ByVal fiSource As FileInfo,
-          ByVal strTargetFilePath As String,
-          ByVal strManagerName As String,
-          ByVal Overwrite As Boolean) As Boolean
+          fiSource As FileInfo,
+          strTargetFilePath As String,
+          strManagerName As String,
+          Overwrite As Boolean) As Boolean
 
             Dim blnUseLockFile = False
             Dim blnSuccess As Boolean
@@ -368,7 +368,7 @@ Namespace Files
 
         End Function
 
-        Public Function GetLockFolder(ByVal fiFile As FileInfo) As String
+        Public Function GetLockFolder(fiFile As FileInfo) As String
 
             If Path.IsPathRooted(fiFile.FullName) Then
                 If fiFile.Directory.Root.FullName.StartsWith("\\") Then
@@ -395,12 +395,12 @@ Namespace Files
         ''' <returns></returns>
         ''' <remarks></remarks>
         Public Function CopyFileUsingLocks(
-          ByVal strLockFolderPathSource As String,
-          ByVal strLockFolderPathTarget As String,
-          ByVal fiSource As FileInfo,
-          ByVal strTargetFilePath As String,
-          ByVal strManagerName As String,
-          ByVal Overwrite As Boolean) As Boolean
+          strLockFolderPathSource As String,
+          strLockFolderPathTarget As String,
+          fiSource As FileInfo,
+          strTargetFilePath As String,
+          strManagerName As String,
+          Overwrite As Boolean) As Boolean
 
             Dim intSourceFileSizeMB As Integer
 
@@ -487,11 +487,11 @@ Namespace Files
         ''' <returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
         ''' <remarks></remarks>
         Public Function CreateLockFile(
-          ByVal diLockFolder As DirectoryInfo,
-          ByVal lockFileTimestamp As Int64,
-          ByVal fiSource As FileInfo,
-          ByVal strTargetFilePath As String,
-          ByVal strManagerName As String) As String
+          diLockFolder As DirectoryInfo,
+          lockFileTimestamp As Int64,
+          fiSource As FileInfo,
+          strTargetFilePath As String,
+          strManagerName As String) As String
 
             If diLockFolder Is Nothing Then
                 Return String.Empty
@@ -535,7 +535,7 @@ Namespace Files
         ''' <param name="strDirectoryPath"></param>
         ''' <returns>True if success, false if an error</returns>
         ''' <remarks></remarks>
-        Public Function DeleteDirectory(ByVal strDirectoryPath As String) As Boolean
+        Public Function DeleteDirectory(strDirectoryPath As String) As Boolean
             Return DeleteDirectory(strDirectoryPath, ignoreErrors:=False)
         End Function
 
@@ -545,7 +545,7 @@ Namespace Files
         ''' <param name="strDirectoryPath"></param>
         ''' <returns>True if success, false if an error</returns>
         ''' <remarks></remarks>
-        Public Function DeleteDirectory(ByVal strDirectoryPath As String, ByVal ignoreErrors As Boolean) As Boolean
+        Public Function DeleteDirectory(strDirectoryPath As String, ignoreErrors As Boolean) As Boolean
 
             Dim diLocalDotDFolder = New DirectoryInfo(strDirectoryPath)
 
@@ -573,7 +573,7 @@ Namespace Files
         ''' <param name="strDirectoryPath"></param>
         ''' <returns>True if success, false if an error</returns>
         ''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        Public Function DeleteDirectoryFiles(ByVal strDirectoryPath As String) As Boolean
+        Public Function DeleteDirectoryFiles(strDirectoryPath As String) As Boolean
             Const blnDeleteFolderIfEmpty = False
             Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
         End Function
@@ -586,7 +586,7 @@ Namespace Files
         ''' <param name="blnDeleteFolderIfEmpty">Set to True to delete the folder, if it is empty</param>
         ''' <returns>True if success, false if an error</returns>
         ''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        Public Function DeleteDirectoryFiles(ByVal strDirectoryPath As String, ByVal blnDeleteFolderIfEmpty As Boolean) As Boolean
+        Public Function DeleteDirectoryFiles(strDirectoryPath As String, blnDeleteFolderIfEmpty As Boolean) As Boolean
 
             Dim diFolderToDelete = New DirectoryInfo(strDirectoryPath)
             Dim errorCount = 0
@@ -620,7 +620,7 @@ Namespace Files
         ''' <param name="strFilePath"></param>
         ''' <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
         ''' <remarks>If the initial attempt fails, then checks the readonly bit and tries again.  If not readonly, then performs a garbage collection (every 500 msec)</remarks>
-        Private Function DeleteFileIgnoreErrors(ByVal strFilePath As String) As Boolean
+        Private Function DeleteFileIgnoreErrors(strFilePath As String) As Boolean
 
             If String.IsNullOrWhiteSpace(strFilePath) Then Return True
 
@@ -665,7 +665,7 @@ Namespace Files
         ''' <param name="diLockFolder"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Private Function FindLockFiles(ByVal diLockFolder As DirectoryInfo, lockFileTimestamp As Int64) As Generic.List(Of Integer)
+        Private Function FindLockFiles(diLockFolder As DirectoryInfo, lockFileTimestamp As Int64) As Generic.List(Of Integer)
             Static reParseLockFileName As Regex = New Regex("^(\d+)_(\d+)_", RegexOptions.Compiled)
 
             Dim reMatch As Match
@@ -712,7 +712,7 @@ Namespace Files
         ''' <param name="strManagerName"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Private Function GenerateLockFileName(ByVal lockFileTimestamp As Int64, ByVal fiSource As FileInfo, ByVal strManagerName As String) As String
+        Private Function GenerateLockFileName(lockFileTimestamp As Int64, fiSource As FileInfo, strManagerName As String) As String
             Static reInvalidDosChars As Regex = New Regex("[\\/:*?""<>| ]", RegexOptions.Compiled)
 
             If String.IsNullOrWhiteSpace(strManagerName) Then
@@ -739,7 +739,7 @@ Namespace Files
         ''' <param name="strServerSharePath"></param>
         ''' <returns></returns>
         ''' <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
-        Public Function GetServerShareBase(ByVal strServerSharePath As String) As String
+        Public Function GetServerShareBase(strServerSharePath As String) As String
             If strServerSharePath.StartsWith("\\") Then
                 Dim intSlashIndex As Integer
                 intSlashIndex = strServerSharePath.IndexOf("\"c, 2)
@@ -763,7 +763,7 @@ Namespace Files
         ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String, ByVal DestPath As String)
+        Public Sub CopyDirectory(SourcePath As String, DestPath As String)
 
             'Overload with overwrite set to default=FALSE
             CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE)
@@ -773,9 +773,9 @@ Namespace Files
         ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal strManagerName As String)
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          strManagerName As String)
 
             'Overload with overwrite set to default=FALSE
             CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, strManagerName)
@@ -786,9 +786,9 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal FileNamesToSkip As Generic.List(Of String))
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          FileNamesToSkip As Generic.List(Of String))
 
             'Overload with overwrite set to default=FALSE
             CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, FileNamesToSkip)
@@ -799,9 +799,9 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal OverWrite As Boolean)
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          OverWrite As Boolean)
 
             'Overload with no defaults
             Const bReadOnly = False
@@ -813,10 +813,10 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal OverWrite As Boolean,
-          ByVal strManagerName As String)
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          OverWrite As Boolean,
+          strManagerName As String)
 
             'Overload with no defaults
             Const bReadOnly = False
@@ -829,10 +829,10 @@ Namespace Files
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal OverWrite As Boolean,
-          ByVal FileNamesToSkip As Generic.List(Of String))
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          OverWrite As Boolean,
+          FileNamesToSkip As Generic.List(Of String))
 
             'Overload with no defaults
             Dim bReadOnly = False
@@ -845,10 +845,10 @@ Namespace Files
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal OverWrite As Boolean,
-          ByVal bReadOnly As Boolean)
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          OverWrite As Boolean,
+          bReadOnly As Boolean)
 
             'Overload with no defaults
             Const SetAttribute = True
@@ -862,11 +862,11 @@ Namespace Files
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal OverWrite As Boolean,
-          ByVal bReadOnly As Boolean,
-          ByVal FileNamesToSkip As Generic.List(Of String))
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          OverWrite As Boolean,
+          bReadOnly As Boolean,
+          FileNamesToSkip As Generic.List(Of String))
 
             'Overload with no defaults
             Const SetAttribute = True
@@ -880,12 +880,12 @@ Namespace Files
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(ByVal SourcePath As String,
-          ByVal DestPath As String,
-          ByVal OverWrite As Boolean,
-          ByVal bReadOnly As Boolean,
-          ByVal FileNamesToSkip As Generic.List(Of String),
-          ByVal strManagerName As String)
+        Public Sub CopyDirectory(SourcePath As String,
+          DestPath As String,
+          OverWrite As Boolean,
+          bReadOnly As Boolean,
+          FileNamesToSkip As Generic.List(Of String),
+          strManagerName As String)
 
             'Overload with no defaults
             Const SetAttribute = True
@@ -904,13 +904,13 @@ Namespace Files
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         ''' <param name="strManagerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
-        Private Sub CopyDirectoryEx(ByVal SourcePath As String,
-            ByVal DestPath As String,
-            ByVal Overwrite As Boolean,
-            ByVal SetAttribute As Boolean,
-            ByVal bReadOnly As Boolean,
+        Private Sub CopyDirectoryEx(SourcePath As String,
+            DestPath As String,
+            Overwrite As Boolean,
+            SetAttribute As Boolean,
+            bReadOnly As Boolean,
             ByRef FileNamesToSkip As Generic.List(Of String),
-            ByVal strManagerName As String)
+            strManagerName As String)
 
             Dim SourceDir = New DirectoryInfo(SourcePath)
             Dim DestDir = New DirectoryInfo(DestPath)
@@ -997,7 +997,7 @@ Namespace Files
         ''' <param name="sTargetFilePath">Target file path</param>
         ''' <param name="bReadOnly">True to force the ReadOnly bit on, False to force it off</param>
         ''' <remarks></remarks>
-        Protected Sub UpdateReadonlyAttribute(ByVal fiSourceFile As FileInfo, ByVal sTargetFilePath As String, ByVal bReadOnly As Boolean)
+        Protected Sub UpdateReadonlyAttribute(fiSourceFile As FileInfo, sTargetFilePath As String, bReadOnly As Boolean)
 
             ' Get the file attributes from the source file
             Dim fa As FileAttributes = fiSourceFile.Attributes()
@@ -1029,7 +1029,7 @@ Namespace Files
         ''' <param name="TargetFolderPath">The destination directory path.</param>
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, ByVal TargetFolderPath As String) As Boolean
+        Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String) As Boolean
 
             Const Recurse = False
             Const eFileOverwriteMode As FileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
@@ -1048,7 +1048,7 @@ Namespace Files
         ''' <param name="Recurse">True to copy subdirectories</param>
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String, ByVal TargetFolderPath As String, ByVal Recurse As Boolean) As Boolean
+        Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String, Recurse As Boolean) As Boolean
 
             Const eFileOverwriteMode As FileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
             Dim FileNamesToSkip As New Generic.List(Of String)
@@ -1068,11 +1068,11 @@ Namespace Files
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String,
-          ByVal TargetFolderPath As String,
-          ByVal Recurse As Boolean,
-          ByVal eFileOverwriteMode As FileOverwriteMode,
-          ByVal FileNamesToSkip As Generic.List(Of String)) As Boolean
+        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
+          TargetFolderPath As String,
+          Recurse As Boolean,
+          eFileOverwriteMode As FileOverwriteMode,
+          FileNamesToSkip As Generic.List(Of String)) As Boolean
 
             Dim FileCountSkipped = 0
             Dim FileCountResumed = 0
@@ -1098,10 +1098,10 @@ Namespace Files
         ''' <param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String,
-          ByVal TargetFolderPath As String,
-          ByVal Recurse As Boolean,
-          ByVal eFileOverwriteMode As FileOverwriteMode,
+        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
+          TargetFolderPath As String,
+          Recurse As Boolean,
+          eFileOverwriteMode As FileOverwriteMode,
           <Out> ByRef FileCountSkipped As Integer,
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
@@ -1129,11 +1129,11 @@ Namespace Files
         ''' <param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String,
-          ByVal TargetFolderPath As String,
-          ByVal Recurse As Boolean,
-          ByVal eFileOverwriteMode As FileOverwriteMode,
-          ByVal FileNamesToSkip As Generic.List(Of String),
+        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
+          TargetFolderPath As String,
+          Recurse As Boolean,
+          eFileOverwriteMode As FileOverwriteMode,
+          FileNamesToSkip As Generic.List(Of String),
           <Out> ByRef FileCountSkipped As Integer,
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
@@ -1162,13 +1162,13 @@ Namespace Files
         ''' <param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(ByVal SourceFolderPath As String,
-          ByVal TargetFolderPath As String,
-          ByVal Recurse As Boolean,
-          ByVal eFileOverwriteMode As FileOverwriteMode,
-          ByVal SetAttribute As Boolean,
-          ByVal bReadOnly As Boolean,
-          ByVal FileNamesToSkip As Generic.List(Of String),
+        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
+          TargetFolderPath As String,
+          Recurse As Boolean,
+          eFileOverwriteMode As FileOverwriteMode,
+          SetAttribute As Boolean,
+          bReadOnly As Boolean,
+          FileNamesToSkip As Generic.List(Of String),
           <Out> ByRef FileCountSkipped As Integer,
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
@@ -1320,7 +1320,7 @@ Namespace Files
         ''' <param name="blnResumed"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Public Function CopyFileWithResume(ByVal SourceFilePath As String, ByVal strTargetFilePath As String, <Out> ByRef blnResumed As Boolean) As Boolean
+        Public Function CopyFileWithResume(SourceFilePath As String, strTargetFilePath As String, <Out> ByRef blnResumed As Boolean) As Boolean
             Dim fiSourceFile As FileInfo
 
             fiSourceFile = New FileInfo(SourceFilePath)
@@ -1338,8 +1338,8 @@ Namespace Files
         ''' <returns>True if success; false if an error</returns>
         ''' <remarks></remarks>
         Public Function CopyFileWithResume(
-          ByVal fiSourceFile As FileInfo,
-          ByVal strTargetFilePath As String,
+          fiSourceFile As FileInfo,
+          strTargetFilePath As String,
           <Out> ByRef blnResumed As Boolean) As Boolean
 
             Const FILE_PART_TAG = ".#FilePart#"
@@ -1550,7 +1550,7 @@ Namespace Files
         ''' <param name="dtTime2">Second file time</param>
         ''' <returns>True if the times agree within 2 seconds</returns>
         ''' <remarks></remarks>
-        Protected Function NearlyEqualFileTimes(ByVal dtTime1 As DateTime, ByVal dtTime2 As DateTime) As Boolean
+        Protected Function NearlyEqualFileTimes(dtTime1 As DateTime, dtTime2 As DateTime) As Boolean
             If Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2.05 Then
                 Return True
             Else
@@ -1562,7 +1562,7 @@ Namespace Files
             UpdateCurrentStatus(CopyStatus.Idle, String.Empty)
         End Sub
 
-        Protected Sub UpdateCurrentStatus(ByVal eStatus As CopyStatus, ByVal sSourceFilePath As String)
+        Protected Sub UpdateCurrentStatus(eStatus As CopyStatus, sSourceFilePath As String)
             mCopyStatus = eStatus
 
             If eStatus = CopyStatus.Idle Then
@@ -1587,7 +1587,7 @@ Namespace Files
         ''' <summary>Get the directory size.</summary>
         ''' <param name="DirPath">The path to the directory.</param>
         ''' <returns>The directory size.</returns>
-        Public Function GetDirectorySize(ByVal DirPath As String) As Long
+        Public Function GetDirectorySize(DirPath As String) As Long
 
             ' Overload for returning directory size only
 
@@ -1603,7 +1603,7 @@ Namespace Files
         ''' <param name="FileCount">The number of files in the entire directory tree.</param>
         ''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
         ''' <returns>The directory size.</returns>
-        Public Function GetDirectorySize(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
+        Public Function GetDirectorySize(DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
 
             'Overload for returning directory size, file count and directory count for entire directory tree
             Return GetDirectorySizeEX(DirPath, FileCount, SubDirCount)
@@ -1615,7 +1615,7 @@ Namespace Files
         ''' <param name="FileCount">The number of files in the entire directory tree.</param>
         ''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
         ''' <returns>The directory size.</returns>
-        Private Function GetDirectorySizeEX(ByVal DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
+        Private Function GetDirectorySizeEX(DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
 
             ' Returns the size of the specified directory, number of files in the directory tree, and number of subdirectories
             ' - Note: requires Imports System.IO
@@ -1651,11 +1651,11 @@ Namespace Files
 
 #Region "MoveDirectory Function"
 
-        Public Function MoveDirectory(ByVal SourceFolderPath As String, ByVal TargetFolderPath As String, ByVal OverwriteFiles As Boolean) As Boolean
+        Public Function MoveDirectory(SourceFolderPath As String, TargetFolderPath As String, OverwriteFiles As Boolean) As Boolean
             Return MoveDirectory(SourceFolderPath, TargetFolderPath, OverwriteFiles, mManagerName)
         End Function
 
-        Public Function MoveDirectory(ByVal SourceFolderPath As String, ByVal TargetFolderPath As String, ByVal OverwriteFiles As Boolean, ByVal strManagerName As String) As Boolean
+        Public Function MoveDirectory(SourceFolderPath As String, TargetFolderPath As String, OverwriteFiles As Boolean, strManagerName As String) As Boolean
             Dim diSourceFolder As DirectoryInfo
             Dim blnSuccess As Boolean
 
@@ -1705,7 +1705,7 @@ Namespace Files
         ''' <param name="strTargetFilePath">Full path to the file to backup</param>
         ''' <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
         ''' <remarks></remarks>
-        Public Shared Function BackupFileBeforeCopy(ByVal strTargetFilePath As String) As Boolean
+        Public Shared Function BackupFileBeforeCopy(strTargetFilePath As String) As Boolean
             Return BackupFileBeforeCopy(strTargetFilePath, DEFAULT_VERSION_COUNT_TO_KEEP)
         End Function
 
@@ -1718,7 +1718,7 @@ Namespace Files
         ''' <param name="VersionCountToKeep">Maximum backup copies of the file to keep</param>
         ''' <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
         ''' <remarks></remarks>
-        Public Shared Function BackupFileBeforeCopy(ByVal strTargetFilePath As String, ByVal VersionCountToKeep As Integer) As Boolean
+        Public Shared Function BackupFileBeforeCopy(strTargetFilePath As String, VersionCountToKeep As Integer) As Boolean
 
             Dim fiTargetFile = New FileInfo(strTargetFilePath)
 
@@ -1766,7 +1766,7 @@ Namespace Files
 
         End Function
 
-        Public Shared Function CompactPathString(ByVal strPathToCompact As String, Optional ByVal intMaxLength As Integer = 40) As String
+        Public Shared Function CompactPathString(strPathToCompact As String, Optional intMaxLength As Integer = 40) As String
             ' Recursive function to shorten strPathToCompact to a maximum length of intMaxLength
 
             ' The following is example output
@@ -1976,7 +1976,7 @@ Namespace Files
         ''' <param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         ''' <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
         ''' <remarks></remarks>
-        Public Shared Function ValidateFreeDiskSpace(ByVal outputFilePath As String, ByVal minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
+        Public Shared Function ValidateFreeDiskSpace(outputFilePath As String, minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
             Dim outputFileExpectedSizeMB As Double = 0
 
             Return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, errorMessage))
@@ -1991,7 +1991,7 @@ Namespace Files
         ''' <param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         ''' <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
         ''' <remarks></remarks>
-        Public Shared Function ValidateFreeDiskSpace(ByVal outputFilePath As String, ByVal outputFileExpectedSizeMB As Double, ByVal minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
+        Public Shared Function ValidateFreeDiskSpace(outputFilePath As String, outputFileExpectedSizeMB As Double, minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
 
             Const DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150
 
@@ -2047,22 +2047,22 @@ Namespace Files
         End Function
 
         Public Sub WaitForLockFileQueue(
-          ByVal lockFileTimestamp As Int64,
-          ByVal diLockFolderSource As DirectoryInfo,
-          ByVal fiSourceFile As FileInfo,
-          ByVal maxWaitTimeMinutes As Integer)
+          lockFileTimestamp As Int64,
+          diLockFolderSource As DirectoryInfo,
+          fiSourceFile As FileInfo,
+          maxWaitTimeMinutes As Integer)
 
             WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, Nothing, fiSourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes)
 
         End Sub
 
         Public Sub WaitForLockFileQueue(
-          ByVal lockFileTimestamp As Int64,
-          ByVal diLockFolderSource As DirectoryInfo,
-          ByVal diLockFolderTarget As DirectoryInfo,
-          ByVal fiSourceFile As FileInfo,
-          ByVal strTargetFilePath As String,
-          ByVal maxWaitTimeMinutes As Integer)
+          lockFileTimestamp As Int64,
+          diLockFolderSource As DirectoryInfo,
+          diLockFolderTarget As DirectoryInfo,
+          fiSourceFile As FileInfo,
+          strTargetFilePath As String,
+          maxWaitTimeMinutes As Integer)
 
             ' Find the recent LockFiles present in the source and/or target lock folders
             ' These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
@@ -2127,8 +2127,7 @@ Namespace Files
                 ' We compute intSleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
                 ' This is faster than reality, but helps minimize waiting too long between checking
 
-                Dim dblSleepTimeSec As Double
-                dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0
+                Dim dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0
 
                 If dblSleepTimeSec < 1 Then dblSleepTimeSec = 1
                 If dblSleepTimeSec > 30 Then dblSleepTimeSec = 30
@@ -2145,7 +2144,7 @@ Namespace Files
 
         End Sub
 
-        Private Function WaitedTooLong(ByVal dtWaitTimeStart As Date, ByVal maxLockfileWaitTimeMinutes As Integer) As Boolean
+        Private Function WaitedTooLong(dtWaitTimeStart As Date, maxLockfileWaitTimeMinutes As Integer) As Boolean
             If DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes Then
                 Return False
             Else
@@ -2159,13 +2158,13 @@ Namespace Files
 
         <DllImport("Kernel32.dll", EntryPoint:="GetDiskFreeSpaceEx", SetLastError:=True, CharSet:=CharSet.Auto)>
         Private Shared Function GetDiskFreeSpaceEx(
-          ByVal lpDirectoryName As String,
+          lpDirectoryName As String,
           ByRef lpFreeBytesAvailable As UInt64,
           ByRef lpTotalNumberOfBytes As UInt64,
           ByRef lpTotalNumberOfFreeBytes As UInt64) As Boolean
         End Function
 
-        Protected Shared Function GetDiskFreeSpace(ByVal directoryPath As String, ByRef freeBytesAvailableToUser As Long, ByRef totalDriveCapacityBytes As Long, ByRef totalNumberOfFreeBytes As Long) As Boolean
+        Protected Shared Function GetDiskFreeSpace(directoryPath As String, ByRef freeBytesAvailableToUser As Long, ByRef totalDriveCapacityBytes As Long, ByRef totalNumberOfFreeBytes As Long) As Boolean
 
             Dim freeAvailableUser As ULong
             Dim totalDriveCapacity As ULong
@@ -2196,5 +2195,5 @@ Namespace Files
 
 #End Region
 
-	End Class
+    End Class
 End Namespace

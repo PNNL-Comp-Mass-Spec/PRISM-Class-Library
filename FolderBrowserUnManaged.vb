@@ -4,7 +4,7 @@ Imports System.Runtime.InteropServices
 
 Namespace Files.Forms
 
-    Delegate Function BrowseCallBackProc(ByVal hwnd As IntPtr, ByVal msg As Integer, ByVal lp As IntPtr, ByVal wp As IntPtr) As Integer
+    Delegate Function BrowseCallBackProc(hwnd As IntPtr, msg As Integer, lp As IntPtr, wp As IntPtr) As Integer
 
     <StructLayout(LayoutKind.Sequential)>
     Friend Structure BrowseInfo
@@ -23,19 +23,19 @@ Namespace Files.Forms
     <ComImport(), Guid("00000002-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)>
     Friend Interface IMalloc
         <PreserveSig()>
-        Function Alloc(ByVal cb As IntPtr) As IntPtr
+        Function Alloc(cb As IntPtr) As IntPtr
 
         <PreserveSig()>
-        Function Realloc(ByVal pv As IntPtr, ByVal cb As IntPtr) As IntPtr
+        Function Realloc(pv As IntPtr, cb As IntPtr) As IntPtr
 
         <PreserveSig()>
-        Sub Free(ByVal pv As IntPtr)
+        Sub Free(pv As IntPtr)
 
         <PreserveSig()>
-        Function GetSize(ByVal pv As IntPtr) As IntPtr
+        Function GetSize(pv As IntPtr) As IntPtr
 
         <PreserveSig()>
-        Function DidAlloc(ByVal pv As IntPtr) As Integer
+        Function DidAlloc(pv As IntPtr) As Integer
 
         <PreserveSig()>
         Sub HeapMinimize()
@@ -49,19 +49,19 @@ Namespace Files.Forms
         Friend Declare Auto Function SHBrowseForFolder Lib "Shell32.dll" (ByRef bi As BrowseInfo) As IntPtr
 
 
-        Friend Declare Auto Function SHGetPathFromIDList Lib "Shell32.dll" (ByVal pidl As IntPtr,
-            <MarshalAs(UnmanagedType.LPTStr)> ByVal pszPath As Text.StringBuilder) As <MarshalAs(UnmanagedType.Bool)> Boolean
+        Friend Declare Auto Function SHGetPathFromIDList Lib "Shell32.dll" (pidl As IntPtr,
+            <MarshalAs(UnmanagedType.LPTStr)> pszPath As Text.StringBuilder) As <MarshalAs(UnmanagedType.Bool)> Boolean
 
 
-        Friend Declare Auto Function SendMessage Lib "User32.Dll" (ByVal hwnd As IntPtr, ByVal msg As Integer,
-            ByVal wp As IntPtr, ByVal lp As IntPtr) As <MarshalAs(UnmanagedType.Bool)> Boolean
+        Friend Declare Auto Function SendMessage Lib "User32.Dll" (hwnd As IntPtr, msg As Integer,
+            wp As IntPtr, lp As IntPtr) As <MarshalAs(UnmanagedType.Bool)> Boolean
 
 
         Friend Declare Auto Function SHGetMalloc Lib "Shell32.dll" (<MarshalAs(UnmanagedType.IUnknown)> ByRef shmalloc As Object) As Integer
 
 
         ' Helper routine to free memory allocated using shells malloc object
-        Friend Shared Sub SHMemFree(ByVal ptr As IntPtr)
+        Friend Shared Sub SHMemFree(ptr As IntPtr)
             Dim shmalloc As Object = Nothing
 
             If SHGetMalloc(shmalloc) = 0 Then

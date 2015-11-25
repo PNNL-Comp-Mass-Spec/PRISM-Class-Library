@@ -6,8 +6,8 @@ Imports System.Data.SqlClient
 Imports System.Runtime.InteropServices
 
 Namespace DataBase
-    ''' <summary>Tools to execute a stored procedure</summary>
 
+    ''' <summary>Tools to execute a stored procedure</summary>
     Public Class clsExecuteDatabaseSP
 
 #Region "Constants"
@@ -27,8 +27,8 @@ Namespace DataBase
         Protected m_ConnStr As String
         Protected mTimeoutSeconds As Integer = DEFAULT_SP_TIMEOUT_SEC
 
-        Public Event DebugEvent(ByVal Message As String)
-        Public Event DBErrorEvent(ByVal Message As String)
+        Public Event DebugEvent(Message As String)
+        Public Event DBErrorEvent(Message As String)
 
 #End Region
 
@@ -51,7 +51,7 @@ Namespace DataBase
             Get
                 Return mTimeoutSeconds
             End Get
-            Set(ByVal value As Integer)
+            Set(value As Integer)
                 If value = 0 Then value = DEFAULT_SP_TIMEOUT_SEC
                 If value < 10 Then value = 10
 
@@ -65,7 +65,7 @@ Namespace DataBase
         ''' Constructor
         ''' </summary>
         ''' <remarks></remarks>
-        Public Sub New(ByVal ConnectionString As String)
+        Public Sub New(ConnectionString As String)
 
             m_ConnStr = String.Copy(ConnectionString)
 
@@ -75,9 +75,9 @@ Namespace DataBase
         ''' Constructor
         ''' </summary>
         ''' <remarks></remarks>
-        Public Sub New(ByVal connectionString As String, ByVal timoutSeconds As Integer)
+        Public Sub New(connectionString As String, timoutSeconds As Integer)
 
-            m_ConnStr = String.Copy(ConnectionString)
+            m_ConnStr = String.Copy(connectionString)
             mTimeoutSeconds = timoutSeconds
 
         End Sub
@@ -88,7 +88,7 @@ Namespace DataBase
         ''' <param name="sender"></param>
         ''' <param name="args"></param>
         ''' <remarks>Errors and warnings from SQL Server are caught here</remarks>
-        Private Sub OnInfoMessage(ByVal sender As Object, ByVal args As SqlInfoMessageEventArgs)
+        Private Sub OnInfoMessage(sender As Object, args As SqlInfoMessageEventArgs)
 
             Dim err As SqlError
             Dim s As String
@@ -116,7 +116,7 @@ Namespace DataBase
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks></remarks>
         Public Function ExecuteSP(
-          ByVal spCmd As SqlCommand,
+          spCmd As SqlCommand,
           <Out> ByRef outTable As DataTable) As Integer
             Return ExecuteSP(spCmd, outTable, DEFAULT_SP_RETRY_COUNT, DEFAULT_SP_RETRY_DELAY_SEC)
         End Function
@@ -131,10 +131,10 @@ Namespace DataBase
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks></remarks>
         Public Function ExecuteSP(
-          ByVal spCmd As SqlCommand,
+          spCmd As SqlCommand,
           <Out> ByRef outTable As DataTable,
-          ByVal maxRetryCount As Integer,
-          ByVal retryDelaySeconds As Integer) As Integer
+          maxRetryCount As Integer,
+          retryDelaySeconds As Integer) As Integer
 
             Dim resultCode As Integer = -9999  'If this value is in error msg, then exception occurred before resultCode was set
             Dim errorMessage As String
@@ -234,7 +234,7 @@ Namespace DataBase
         ''' <param name="spCmd">SQL command object containing stored procedure params</param>
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks></remarks>
-        Public Function ExecuteSP(ByVal spCmd As SqlCommand) As Integer
+        Public Function ExecuteSP(spCmd As SqlCommand) As Integer
 
             Return ExecuteSP(spCmd, DEFAULT_SP_RETRY_COUNT)
 
@@ -248,8 +248,8 @@ Namespace DataBase
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks></remarks>
         Public Function ExecuteSP(
-          ByVal spCmd As SqlCommand,
-          ByVal maxRetryCount As Integer) As Integer
+          spCmd As SqlCommand,
+          maxRetryCount As Integer) As Integer
 
             Return ExecuteSP(spCmd, maxRetryCount, DEFAULT_SP_RETRY_DELAY_SEC)
 
@@ -264,9 +264,9 @@ Namespace DataBase
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks></remarks>
         Public Function ExecuteSP(
-          ByVal spCmd As SqlCommand,
-          ByVal maxRetryCount As Integer,
-          ByVal retryDelaySeconds As Integer) As Integer
+          spCmd As SqlCommand,
+          maxRetryCount As Integer,
+          retryDelaySeconds As Integer) As Integer
 
             Dim errorMessage As String = String.Empty
             Return ExecuteSP(spCmd, maxRetryCount, errorMessage, retryDelaySeconds)
@@ -282,8 +282,8 @@ Namespace DataBase
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks>No logging is performed by this procedure</remarks>
         Public Function ExecuteSP(
-          ByVal spCmd As SqlCommand,
-          ByVal maxRetryCount As Integer,
+          spCmd As SqlCommand,
+          maxRetryCount As Integer,
           <Out> ByRef errorMessage As String) As Integer
             Return ExecuteSP(spCmd, maxRetryCount, errorMessage, DEFAULT_SP_RETRY_DELAY_SEC)
         End Function
@@ -298,10 +298,10 @@ Namespace DataBase
         ''' <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         ''' <remarks>No logging is performed by this procedure</remarks>
         Public Function ExecuteSP(
-          ByVal spCmd As SqlCommand,
-          ByVal maxRetryCount As Integer,
+          spCmd As SqlCommand,
+          maxRetryCount As Integer,
           <Out> ByRef errorMessage As String,
-          ByVal retryDelaySeconds As Integer) As Integer
+          retryDelaySeconds As Integer) As Integer
 
             Dim resultCode As Integer = -9999  'If this value is in error msg, then exception occurred before resultCode was set			
             Dim dtStartTime = DateTime.UtcNow

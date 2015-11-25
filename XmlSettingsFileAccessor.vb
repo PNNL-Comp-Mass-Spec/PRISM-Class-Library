@@ -31,7 +31,7 @@ Namespace Files
         Private ReadOnly htSectionNames As Hashtable
         Private mCachedSection As udtRecentSectionType
 
-        Public Event InformationMessage(ByVal msg As String)
+        Public Event InformationMessage(msg As String)
 
         ''' <summary>
         ''' Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
@@ -46,7 +46,7 @@ Namespace Files
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <return>The function returns a boolean that shows if the file was successfully loaded.</return>
-        Public Function LoadSettings(ByVal XmlSettingsFilePath As String) As Boolean
+        Public Function LoadSettings(XmlSettingsFilePath As String) As Boolean
             Return LoadSettings(XmlSettingsFilePath, False)
         End Function
 
@@ -56,7 +56,7 @@ Namespace Files
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <param name="IsCaseSensitive">Case sensitive names if True. Non-case sensitive if false.</param>
         ''' <return>The function returns a boolean that shows if the file was successfully loaded.</return>
-        Public Function LoadSettings(ByVal XmlSettingsFilePath As String, ByVal IsCaseSensitive As Boolean) As Boolean
+        Public Function LoadSettings(XmlSettingsFilePath As String, IsCaseSensitive As Boolean) As Boolean
 
             mCaseSensitive = IsCaseSensitive
 
@@ -81,7 +81,7 @@ Namespace Files
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <param name="logger">This is the logger.</param>
-        Public Function LoadSettings(ByVal XmlSettingsFilePath As String, ByRef logger As ILogger) As Boolean
+        Public Function LoadSettings(XmlSettingsFilePath As String, ByRef logger As ILogger) As Boolean
             Return LoadSettings(XmlSettingsFilePath, logger, False)
         End Function
 
@@ -91,7 +91,7 @@ Namespace Files
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         ''' <param name="logger">This is the logger.</param>
         ''' <param name="IsCaseSensitive">Case sensitive names if True.  Non-case sensitive if false.</param>
-        Public Function LoadSettings(ByVal XmlSettingsFilePath As String, ByRef logger As ILogger, ByVal IsCaseSensitive As Boolean) As Boolean
+        Public Function LoadSettings(XmlSettingsFilePath As String, ByRef logger As ILogger, IsCaseSensitive As Boolean) As Boolean
             mCaseSensitive = IsCaseSensitive
 
             m_IniFilePath = XmlSettingsFilePath
@@ -131,7 +131,7 @@ Namespace Files
         ''' <summary>Checks if a section is present in the settings file.</summary>
         ''' <param name="sectionName">The name of the section to look for.</param>
         ''' <return>The function returns a boolean that shows if the section is present.</return>
-        Public Function SectionPresent(ByVal sectionName As String) As Boolean
+        Public Function SectionPresent(sectionName As String) As Boolean
             Dim strSections As Specialized.StringCollection
             Dim intIndex As Integer
 
@@ -145,7 +145,7 @@ Namespace Files
 
         End Function
 
-        Private Function CacheKeyNames(ByVal sectionName As String) As Boolean
+        Private Function CacheKeyNames(sectionName As String) As Boolean
             ' Looks up the Key Names for the given section, storing them in mCachedSection
             ' This is done so that this class will know the correct capitalization for the key names
 
@@ -222,7 +222,7 @@ Namespace Files
 
         End Sub
 
-        Private Function GetCachedKeyName(ByVal sectionName As String, ByVal keyName As String) As String
+        Private Function GetCachedKeyName(sectionName As String, keyName As String) As String
             ' Looks up the correct capitalization for key keyName in section sectionName
             ' Returns String.Empty if not found
 
@@ -255,7 +255,7 @@ Namespace Files
             End If
         End Function
 
-        Private Function GetCachedSectionName(ByVal sectionName As String) As String
+        Private Function GetCachedSectionName(sectionName As String) As String
             ' Looks up the correct capitalization for sectionName
             ' Returns String.Empty if not found
 
@@ -270,7 +270,7 @@ Namespace Files
 
         End Function
 
-        Private Function SetNameCase(ByVal aName As String) As String
+        Private Function SetNameCase(aName As String) As String
             ' Changes aName to lowercase if mCaseSensitive = False
 
             If mCaseSensitive Then
@@ -288,7 +288,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a String.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As String, Optional ByRef valueNotPresent As Boolean = False) As String
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As String, Optional ByRef valueNotPresent As Boolean = False) As String
             Dim strResult As String = Nothing
             Dim sectionNameInFile As String
             Dim keyNameInFile As String
@@ -322,7 +322,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns boolean True if the "value" attribute is "true".  Otherwise, returns boolean False.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As Boolean, Optional ByRef valueNotPresent As Boolean = False) As Boolean
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As Boolean, Optional ByRef valueNotPresent As Boolean = False) As Boolean
             Dim strResult As String
             Dim blnNotFound As Boolean = False
 
@@ -348,7 +348,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a Short.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As Short, Optional ByRef valueNotPresent As Boolean = False) As Short
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As Short, Optional ByRef valueNotPresent As Boolean = False) As Short
             Dim strResult As String
             Dim blnNotFound As Boolean = False
 
@@ -385,7 +385,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as an Integer.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As Integer, Optional ByRef valueNotPresent As Boolean = False) As Integer
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As Integer, Optional ByRef valueNotPresent As Boolean = False) As Integer
             Dim strResult As String
             Dim blnNotFound As Boolean = False
 
@@ -422,7 +422,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a Long.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As Long, Optional ByRef valueNotPresent As Boolean = False) As Long
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As Long, Optional ByRef valueNotPresent As Boolean = False) As Long
             Dim strResult As String
             Dim blnNotFound As Boolean = False
 
@@ -459,7 +459,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a Single.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As Single, Optional ByRef valueNotPresent As Boolean = False) As Single
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As Single, Optional ByRef valueNotPresent As Boolean = False) As Single
             Dim strResult As String
             Dim blnNotFound As Boolean = False
 
@@ -496,7 +496,7 @@ Namespace Files
         ''' <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         ''' <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
         ''' <return>The function returns the name of the "value" attribute as a Double.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
-        Public Function GetParam(ByVal sectionName As String, ByVal keyName As String, ByVal valueIfMissing As Double, Optional ByRef valueNotPresent As Boolean = False) As Double
+        Public Function GetParam(sectionName As String, keyName As String, valueIfMissing As Double, Optional ByRef valueNotPresent As Boolean = False) As Double
             Dim strResult As String
             Dim blnNotFound As Boolean = False
 
@@ -529,7 +529,7 @@ Namespace Files
         ''' The function sets the path to the Xml Settings File.
         ''' </summary>
         ''' <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
-        Public Sub SetIniFilePath(ByVal XmlSettingsFilePath As String)
+        Public Sub SetIniFilePath(XmlSettingsFilePath As String)
             m_IniFilePath = XmlSettingsFilePath
         End Sub
 
@@ -540,7 +540,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As String) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As String) As Boolean
             Dim sectionNameInFile As String
             Dim keyNameInFile As String
 
@@ -570,7 +570,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As Boolean) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As Boolean) As Boolean
             Return Me.SetParam(sectionName, keyName, CStr(newValue))
         End Function
 
@@ -581,7 +581,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As Short) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As Short) As Boolean
             Return Me.SetParam(sectionName, keyName, CStr(newValue))
         End Function
 
@@ -592,7 +592,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As Integer) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As Integer) As Boolean
             Return Me.SetParam(sectionName, keyName, CStr(newValue))
         End Function
 
@@ -603,7 +603,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As Long) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As Long) As Boolean
             Return Me.SetParam(sectionName, keyName, CStr(newValue))
         End Function
 
@@ -614,7 +614,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As Single) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As Single) As Boolean
             Return Me.SetParam(sectionName, keyName, CStr(newValue))
         End Function
 
@@ -625,7 +625,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetParam(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As Double) As Boolean
+        Public Function SetParam(sectionName As String, keyName As String, newValue As Double) As Boolean
             Return Me.SetParam(sectionName, keyName, CStr(newValue))
         End Function
 
@@ -635,7 +635,7 @@ Namespace Files
         ''' <param name="sectionNameOld">The name of the old ini section name.</param>
         ''' <param name="sectionNameNew">The new name for the ini section.</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function RenameSection(ByVal sectionNameOld As String, ByVal sectionNameNew As String) As Boolean
+        Public Function RenameSection(sectionNameOld As String, sectionNameNew As String) As Boolean
 
             Dim strSectionName As String
 
@@ -651,19 +651,19 @@ Namespace Files
 
         End Function
 
-        Private Sub FileAccessorInfoMessageEvent(ByVal msg As String) Handles m_iniFileAccessor.InformationMessage
+        Private Sub FileAccessorInfoMessageEvent(msg As String) Handles m_iniFileAccessor.InformationMessage
             RaiseEvent InformationMessage(msg)
         End Sub
 
         ''' <summary>Sets the name of the exception logger</summary>
-        Public Sub RegisterExceptionLogger(ByVal logger As ILogger) Implements ILoggerAware.RegisterEventLogger
+        Public Sub RegisterExceptionLogger(logger As ILogger) Implements ILoggerAware.RegisterEventLogger
             If Not m_iniFileAccessor Is Nothing Then
                 m_iniFileAccessor.RegisterExceptionLogger(logger)
             End If
         End Sub
 
         ''' <summary>Sets the name of the event logger</summary>
-        Public Sub RegisterEventLogger(ByVal logger As ILogger) Implements ILoggerAware.RegisterExceptionLogger
+        Public Sub RegisterEventLogger(logger As ILogger) Implements ILoggerAware.RegisterExceptionLogger
             If Not m_iniFileAccessor Is Nothing Then
                 m_iniFileAccessor.RegisterEventLogger(logger)
             End If
@@ -678,7 +678,7 @@ Namespace Files
                     Return False
                 End If
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 If Not m_iniFileAccessor Is Nothing Then
                     m_iniFileAccessor.NotifyOnEvent = Value
                 End If
@@ -694,7 +694,7 @@ Namespace Files
                     Return False
                 End If
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 If Not m_iniFileAccessor Is Nothing Then
                     m_iniFileAccessor.NotifyOnException = Value
                 End If

@@ -4,7 +4,9 @@ Imports System.Collections.Specialized
 Imports System.Data
 Imports System.Data.SqlClient
 Imports PRISM.Logging
+
 Namespace DataBase
+
     ''' <summary>Tools to manipulates the database.</summary>
     Public Class clsDBTools
 
@@ -24,7 +26,7 @@ Namespace DataBase
         ''' <summary>Initializes a new instance of the clsDBTools class which logs to the specified logger.</summary>
         ''' <param name="logger">This is the logger.</param>
         ''' <param name="ConnectStr">This is a connection string.</param>
-        Public Sub New(ByVal logger As ILogger, ByVal ConnectStr As String)
+        Public Sub New(logger As ILogger, ConnectStr As String)
             m_logger = logger
             m_connection_str = ConnectStr
         End Sub
@@ -36,7 +38,7 @@ Namespace DataBase
             Get
                 Return m_connection_str
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_connection_str = Value
             End Set
         End Property
@@ -58,7 +60,7 @@ Namespace DataBase
                     retryCount -= 1
                     m_DBCn.Close()
                     m_logger.PostError("Connection problem: ", e, True)
-                    System.Threading.Thread.Sleep(300)                   
+                    Threading.Thread.Sleep(300)
                 End Try
             End While
 
@@ -79,11 +81,11 @@ Namespace DataBase
         ''' </summary>
         Public Sub LogErrorEvents()
             If m_error_list.Count > 0 Then
-                m_logger.PostEntry("Warning messages were posted to local log", Logging.ILogger.logMsgType.logWarning, True)
+                m_logger.PostEntry("Warning messages were posted to local log", ILogger.logMsgType.logWarning, True)
             End If
             Dim s As String
             For Each s In m_error_list
-                m_logger.PostEntry(s, Logging.ILogger.logMsgType.logWarning, True)
+                m_logger.PostEntry(s, ILogger.logMsgType.logWarning, True)
             Next
         End Sub
         ''' <summary>
@@ -92,7 +94,7 @@ Namespace DataBase
         ''' <remarks>
         ''' The errors and warnings sent from the SQL server are caught here
         ''' </remarks>
-        Private Sub OnInfoMessage(ByVal sender As Object, ByVal args As SqlInfoMessageEventArgs)
+        Private Sub OnInfoMessage(sender As Object, args As SqlInfoMessageEventArgs)
             Dim err As SqlError
             Dim s As String
             For Each err In args.Errors
@@ -115,7 +117,7 @@ Namespace DataBase
         ''' <param name="DS">A dataset.</param>
         ''' <param name="RowCount">A row counter.</param>
         ''' <return>Returns a disconnected dataset as specified by the SQL statement.</return>
-        Public Function GetDiscDataSet(ByVal SQL As String, ByRef DS As DataSet, ByRef RowCount As Integer) As Boolean
+        Public Function GetDiscDataSet(SQL As String, ByRef DS As DataSet, ByRef RowCount As Integer) As Boolean
 
             'Returns a disconnected dataset as specified by the SQL statement
             Dim Adapter As SqlDataAdapter
@@ -146,7 +148,7 @@ Namespace DataBase
         ''' <param name="SQL">A SQL string.</param>
         ''' <param name="AffectedRows">Affected Rows to be updated.</param>
         ''' <return>Returns Boolean shwoing if the database was updated.</return>
-        Public Function UpdateDatabase(ByVal SQL As String, ByRef AffectedRows As Integer) As Boolean
+        Public Function UpdateDatabase(SQL As String, ByRef AffectedRows As Integer) As Boolean
 
             'Updates a database table as specified in the SQL statement
             Dim Cmd As SqlCommand

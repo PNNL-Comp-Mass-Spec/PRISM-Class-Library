@@ -95,42 +95,42 @@ Namespace Files
 		''' <summary> Constant that may be used by NETRESOURCE->dwUsage </summary>
 		Private Const RESOURCEUSAGE_CONTAINER As Short = &H2S
 
-		Private Declare Function WNetAddConnection2 Lib "mpr.dll" Alias "WNetAddConnection2A" (ByRef lpNetResource As udtNetResource, ByVal lpPassword As String, ByVal lpUserName As String, ByVal dwFlags As Integer) As Integer
-		Private Declare Function WNetCancelConnection2 Lib "mpr.dll" Alias "WNetCancelConnection2A" (ByVal lpName As String, ByVal dwFlags As Integer, ByVal fForce As Integer) As Integer
+        Private Declare Function WNetAddConnection2 Lib "mpr.dll" Alias "WNetAddConnection2A" (ByRef lpNetResource As udtNetResource, lpPassword As String, lpUserName As String, dwFlags As Integer) As Integer
+        Private Declare Function WNetCancelConnection2 Lib "mpr.dll" Alias "WNetCancelConnection2A" (lpName As String, dwFlags As Integer, fForce As Integer) As Integer
 
-		Private mNetResource As udtNetResource
-		Private mUsername As String
-		Private mPassword As String
-		Private mShareName As String = String.Empty
+        Private mNetResource As udtNetResource
+        Private mUsername As String
+        Private mPassword As String
+        Private mShareName As String = String.Empty
 
-		''' <summary>
-		''' This version of the constructor requires you to specify the sharename by setting the <see cref="Share">Share</see> property.
+        ''' <summary>
+        ''' This version of the constructor requires you to specify the sharename by setting the <see cref="Share">Share</see> property.
         ''' </summary>
         ''' <param name="userName">Username</param>
         ''' <param name="userPwd">Password</param>
         ''' <remarks>For local user accounts, it is safest to use HostName\username</remarks>
-		Public Sub New(ByVal userName As String, ByVal userPwd As String)
-			RealNew(userName, userPwd)
-		End Sub
+        Public Sub New(userName As String, userPwd As String)
+            RealNew(userName, userPwd)
+        End Sub
 
-		''' <summary>
-		''' This version of the constructor allows you to specify the sharename as an argument.
+        ''' <summary>
+        ''' This version of the constructor allows you to specify the sharename as an argument.
         ''' </summary>
         ''' <param name="shareName">The name of the file share to which you will connect.</param>
         ''' <param name="userName">Username</param>
         ''' <param name="userPwd">Password</param>
         ''' <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ''' 
-        Public Sub New(ByVal shareName As String, ByVal userName As String, ByVal userPwd As String)
+        Public Sub New(shareName As String, userName As String, userPwd As String)
             DefineShareName(shareName)
             RealNew(userName, userPwd)
         End Sub
 
-		''' <summary>
-		''' This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
-		''' </summary>
+        ''' <summary>
+        ''' This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
+        ''' </summary>
         ''' <param name="userName">Username</param>
         ''' <param name="userPwd">Password</param>
-        Private Sub RealNew(ByVal userName As String, ByVal userPwd As String)
+        Private Sub RealNew(userName As String, userPwd As String)
             mUsername = userName
             mPassword = userPwd
             mNetResource.lpRemoteName = mShareName
@@ -140,25 +140,25 @@ Namespace Files
             mNetResource.dwUsage = RESOURCEUSAGE_CONNECTABLE
         End Sub
 
-		''' <summary>
-		''' Sets the name of the file share to which you will connect.
-		''' </summary>
-		Public Property Share() As String
-			Get
-				Return mShareName
-			End Get
-			Set(ByVal Value As String)
-				DefineShareName(Value)
-				mNetResource.lpRemoteName = mShareName
-			End Set
-		End Property
+        ''' <summary>
+        ''' Sets the name of the file share to which you will connect.
+        ''' </summary>
+        Public Property Share() As String
+            Get
+                Return mShareName
+            End Get
+            Set(Value As String)
+                DefineShareName(Value)
+                mNetResource.lpRemoteName = mShareName
+            End Set
+        End Property
 
-		''' <summary>
-		''' Connects to specified share using account/password specified through the constructor and 
-		''' the file share name passed as an argument.
-		''' </summary>
+        ''' <summary>
+        ''' Connects to specified share using account/password specified through the constructor and 
+        ''' the file share name passed as an argument.
+        ''' </summary>
         ''' <param name="shareName">The name of the file share to which you will connect.</param>
-        Public Function Connect(ByVal shareName As String) As Boolean
+        Public Function Connect(shareName As String) As Boolean
 
             DefineShareName(shareName)
             mNetResource.lpRemoteName = mShareName
@@ -166,26 +166,26 @@ Namespace Files
 
         End Function
 
-		''' <summary>
-		''' Connects to specified share using account/password specified through the constructor.
-		''' Requires you to have specifyed the sharename by setting the <see cref="Share">Share</see> property.
-		''' </summary>
-		Public Function Connect() As Boolean
+        ''' <summary>
+        ''' Connects to specified share using account/password specified through the constructor.
+        ''' Requires you to have specifyed the sharename by setting the <see cref="Share">Share</see> property.
+        ''' </summary>
+        Public Function Connect() As Boolean
 
-			If mNetResource.lpRemoteName = "" Then
-				mErrorMessage = "Share name not specified"
-				Return False
-			End If
-			Return RealConnect()
+            If mNetResource.lpRemoteName = "" Then
+                mErrorMessage = "Share name not specified"
+                Return False
+            End If
+            Return RealConnect()
 
-		End Function
+        End Function
 
-		''' <summary>
-		''' Updates class variable with the specified share path
-		''' </summary>
+        ''' <summary>
+        ''' Updates class variable with the specified share path
+        ''' </summary>
         ''' <param name="shareName"></param>
-		''' <remarks>If the path ends in a forward slash then the slash will be removed</remarks>
-        Private Sub DefineShareName(ByVal shareName As String)
+        ''' <remarks>If the path ends in a forward slash then the slash will be removed</remarks>
+        Private Sub DefineShareName(shareName As String)
             If shareName.EndsWith("\") Then
                 mShareName = shareName.TrimEnd("\"c)
             Else

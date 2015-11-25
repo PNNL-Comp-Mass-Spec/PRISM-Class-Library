@@ -1,5 +1,11 @@
 ﻿Imports System.Runtime.InteropServices
 
+''' <summary>
+''' Utility functions for checking whether Windows updates are likely to be applied close to the current time
+''' Windows desktop computers have Windows updates applied around 3 am on the first Thursday after the second Tuesday of the month
+''' Windows servers have Windows updates applied around 3 am or 10 am on the first Sunday after the second Tuesday of the month
+''' </summary>
+''' <remarks></remarks>
 Public Class clsWindowsUpdateStatus
 
     ''' <summary>
@@ -29,9 +35,9 @@ Public Class clsWindowsUpdateStatus
 	''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
     ''' <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
     ''' <remarks></remarks>
-	Public Shared Function UpdatesArePending(ByVal currentTime As DateTime, <Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
+    Public Shared Function UpdatesArePending(currentTime As DateTime, <Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
 
-		pendingWindowsUpdateMessage = "No pending update"
+        pendingWindowsUpdateMessage = "No pending update"
 
         ' Determine the second Tuesday in the current month
         Dim secondTuesdayInMonth = GetSecondTuesdayInMonth(currentTime)
@@ -76,7 +82,7 @@ Public Class clsWindowsUpdateStatus
     ''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
     ''' <returns>True if Windows updates are likely pending on the Windows servers</returns>
     ''' <remarks></remarks>
-    Public Shared Function ServerUpdatesArePending(ByVal currentTime As DateTime, <Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
+    Public Shared Function ServerUpdatesArePending(currentTime As DateTime, <Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
 
         pendingWindowsUpdateMessage = "No pending update"
 

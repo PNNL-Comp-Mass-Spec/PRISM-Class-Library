@@ -1,17 +1,14 @@
 Option Strict On
 
 Imports System.ComponentModel
+Imports System.Text
 
 Namespace Files
 
-    ' Wrapper class to call Files.Forms.ShellFolderBrowser and highlight an initial folder
-    ' Also defines numerous default BrowseFlags
-    '
-    ' Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) (ShellFolderBrowser class provided by Gary Kiebel)
-    ' Copyright 2005, Battelle Memorial Institute
-    ' Started October 23, 2004
-    ' Last modified October 30, 2004
-    ''' <summary>TBD</summary>
+    ''' <summary>
+    ''' Wrapper class to call Files.Forms.ShellFolderBrowser and highlight an initial folder
+    ''' Also defines numerous default BrowseFlags
+    ''' </summary>
     Public Class FolderBrowser
 
 #Region "Classwide Variables"
@@ -25,41 +22,43 @@ Namespace Files
 #End Region
 
 #Region "Interface Functions"
-        ''' <summary>TBD</summary>
+        ''' <summary>Browsing flags</summary>
         Public Property BrowseFlags() As Forms.BrowseFlags
             Get
                 Return mBrowseFlags
             End Get
-            Set(ByVal Value As Forms.BrowseFlags)
+            Set(Value As Forms.BrowseFlags)
                 mBrowseFlags = Value
             End Set
         End Property
 
-        ''' <summary>TBD</summary>
+        ''' <summary>Folder selected by the user</summary>
         Public Property FolderPath() As String
             Get
                 Return mCurrentFolderPath
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 mCurrentFolderPath = Value
             End Set
         End Property
 
-        ''' <summary>TBD</summary>
+        ''' <summary>Window caption</summary>
         Public Property Title() As String
             Get
                 Return mTitle
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 mTitle = Value
             End Set
         End Property
 #End Region
 
-        ''' <summary>TBD</summary>
-        Public Function BrowseForFolder(Optional ByVal strFolderStartPath As String = "") As Boolean
-            ' Returns True if user selects a folder
-            ' Retrieve the folder chosen using FolderPath
+        ''' <summary>
+        ''' Show a window to allow the user to choose a folder
+        ''' </summary>
+        ''' <returns>True if user selects a folder, otherwise false</returns>
+        ''' <remarks>Retrieve the selected folder using property FolderPath</remarks>
+        Public Function BrowseForFolder(Optional strFolderStartPath As String = "") As Boolean
 
             Dim blnSuccess As Boolean
 
@@ -93,10 +92,9 @@ Namespace Files
             Return blnSuccess
 
         End Function
-
-
-        ''' <summary>TBD</summary>
-        Private Sub mFolderBrowserDialog_Initialized(ByVal sender As Object, ByVal e As EventArgs) Handles mFolderBrowserDialog.Initialized
+        
+        ''' <summary>Handles the folder browser initialization event</summary>
+        Private Sub mFolderBrowserDialog_Initialized(sender As Object, e As EventArgs) Handles mFolderBrowserDialog.Initialized
             If Not mCurrentFolderPath Is Nothing AndAlso mCurrentFolderPath.Length > 0 Then
                 Try
                     mFolderBrowserDialog.SetExpanded(mCurrentFolderPath)
@@ -106,7 +104,7 @@ Namespace Files
             End If
         End Sub
 
-        ''' <summary>TBD</summary>
+        ''' <summary>Constructor</summary>
         Public Sub New()
             mCurrentFolderPath = String.Empty
             mTitle = "Select Folder"
@@ -132,7 +130,7 @@ Namespace Files.Forms
     ''' Flags that control display and behaviour of folder browse dialog
     ''' </summary>
     <Flags()> _
-   Public Enum BrowseFlags As Integer
+    Public Enum BrowseFlags As Integer
         ''' <summary>
         ''' Same as BIF_RETURNONLYFSDIRS 
         ''' </summary>
@@ -194,12 +192,12 @@ Namespace Files.Forms
 
 #Region "Class ShellFolderBrowser"
 
-    Public Delegate Sub ValidateFailedEventHandler(ByVal sender As Object, ByVal args As ValidateFailedEventArgs)
+    Friend Delegate Sub ValidateFailedEventHandler(sender As Object, args As ValidateFailedEventArgs)
 
     ''' <summary>
     ''' Encapsulates the shell folder browse dialog shown by SHBrowseForFolder
     ''' </summary>
-    Public Class ShellFolderBrowser
+    Friend Class ShellFolderBrowser
         Inherits Component
         Private titleValue As String
         Private pidlReturnedValue As IntPtr = IntPtr.Zero
@@ -220,7 +218,7 @@ Namespace Files.Forms
             Get
                 Return titleValue
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
                     Throw New InvalidOperationException
                 End If
@@ -246,7 +244,7 @@ Namespace Files.Forms
                 If IntPtr.op_Equality(pidlReturnedValue, IntPtr.Zero) Then
                     Return String.Empty
                 End If
-                Dim pathReturned As New Text.StringBuilder(260)
+                Dim pathReturned As New StringBuilder(260)
 
                 UnManagedMethods.SHGetPathFromIDList(pidlReturnedValue, pathReturned)
                 Return pathReturned.ToString()
@@ -260,7 +258,7 @@ Namespace Files.Forms
             Get
                 Return flagsValue
             End Get
-            Set(ByVal Value As BrowseFlags)
+            Set(Value As BrowseFlags)
                 flagsValue = Value
             End Set
         End Property
@@ -294,7 +292,7 @@ Namespace Files.Forms
         ''' Shows the dialog
         ''' </summary>
         ''' <param name="owner">The window to use as the owner</param>
-        Public Function ShowDialog(ByVal owner As Windows.Forms.IWin32Window) As Boolean
+        Public Function ShowDialog(owner As Windows.Forms.IWin32Window) As Boolean
             If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -309,9 +307,9 @@ Namespace Files.Forms
         ''' <summary>
         ''' Shows the dialog using active window as the owner
         ''' </summary>
-		Public Function ShowDialog() As Boolean
+        Public Function ShowDialog() As Boolean
             Return ShowDialog(Windows.Forms.Form.ActiveForm)
-		End Function
+        End Function
 
         Const WM_USER As Integer = &H400
         Const BFFM_SETSTATUSTEXTA As Integer = WM_USER + 100
@@ -321,7 +319,7 @@ Namespace Files.Forms
         ''' Sets the text of the staus area of the folder dialog
         ''' </summary>
         ''' <param name="text">Text to set</param>
-        Public Sub SetStatusText(ByVal [text] As String)
+        Public Sub SetStatusText([text] As String)
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -344,7 +342,7 @@ Namespace Files.Forms
         ''' Enables or disables the ok button
         ''' </summary>
         ''' <param name="bEnable">true to enable false to diasble the OK button</param>
-        Public Sub EnableOkButton(ByVal bEnable As Boolean)
+        Public Sub EnableOkButton(bEnable As Boolean)
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -366,7 +364,7 @@ Namespace Files.Forms
         ''' Sets the selection the text specified
         ''' </summary>
         ''' <param name="newsel">The path of the folder which is to be selected</param>
-        Public Sub SetSelection(ByVal newsel As String)
+        Public Sub SetSelection(newsel As String)
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -391,7 +389,7 @@ Namespace Files.Forms
         ''' Sets the text of the OK button in the dialog
         ''' </summary>
         ''' <param name="text">New text of the OK button</param>
-        Public Sub SetOkButtonText(ByVal [text] As String)
+        Public Sub SetOkButtonText([text] As String)
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -408,7 +406,7 @@ Namespace Files.Forms
         ''' Expand a path in the folder
         ''' </summary>
         ''' <param name="path">The path to expand</param>
-        Public Sub SetExpanded(ByVal path As String)
+        Public Sub SetExpanded(path As String)
             Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni(path)
 
             UnManagedMethods.SendMessage(handleValue, BFFM_SETEXPANDED, New IntPtr(1), strptr)
@@ -439,20 +437,20 @@ Namespace Files.Forms
         Const BFFM_VALIDATEFAILEDW As Integer = 4
         Const BFFM_IUNKNOWN As Integer = 5
 
-        Private Function CallBack(ByVal hwnd As IntPtr, ByVal msg As Integer, ByVal lp As IntPtr, ByVal lpData As IntPtr) As Integer
-            Dim ret As Integer = 0
+        Private Function CallBack(hwnd As IntPtr, msg As Integer, lp As IntPtr, lpData As IntPtr) As Integer
+            Dim ret = 0
 
             Select Case msg
                 Case BFFM_INITIALIZED
                     handleValue = hwnd
                     RaiseEvent Initialized(Me, Nothing)
                 Case BFFM_IUNKNOWN
-                    RaiseEvent IUnknownObtained(Me, New IUnknownObtainedEventArgs(System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(lp)))
+                    RaiseEvent IUnknownObtained(Me, New IUnknownObtainedEventArgs(Runtime.InteropServices.Marshal.GetObjectForIUnknown(lp)))
                 Case BFFM_SELCHANGED
                     Dim e As New FolderSelChangedEventArgs(lp)
                     RaiseEvent SelChanged(Me, e)
                 Case BFFM_VALIDATEFAILEDA
-                    Dim e As New ValidateFailedEventArgs(System.Runtime.InteropServices.Marshal.PtrToStringAnsi(lpData))
+                    Dim e As New ValidateFailedEventArgs(Runtime.InteropServices.Marshal.PtrToStringAnsi(lpData))
                     RaiseEvent ValidateFailed(Me, e)
 
                     If e.DismissDialog Then
@@ -461,38 +459,35 @@ Namespace Files.Forms
                         ret = 1
                     End If
                 Case BFFM_VALIDATEFAILEDW
-                    Dim e As New ValidateFailedEventArgs(System.Runtime.InteropServices.Marshal.PtrToStringUni(lpData))
+                    Dim e As New ValidateFailedEventArgs(Runtime.InteropServices.Marshal.PtrToStringUni(lpData))
                     RaiseEvent ValidateFailed(Me, e)
 
                     If e.DismissDialog Then
                         ret = 0
-                    Else
-                        msg = 1
                     End If
             End Select
 
             Return ret
         End Function
 
-		Protected Overrides Sub Dispose(ByVal disposing As Boolean)
-			If IntPtr.op_Inequality(pidlReturnedValue, IntPtr.Zero) Then
-				UnManagedMethods.SHMemFree(pidlReturnedValue)
-				pidlReturnedValue = IntPtr.Zero
-			End If
-		End Sub
+        Protected Overrides Sub Dispose(disposing As Boolean)
+            If IntPtr.op_Inequality(pidlReturnedValue, IntPtr.Zero) Then
+                UnManagedMethods.SHMemFree(pidlReturnedValue)
+                pidlReturnedValue = IntPtr.Zero
+            End If
+        End Sub
     End Class
 #End Region
 
 #Region "Class FolderSelChangedEventArgs"
-    Public Delegate Sub FolderSelChangedEventHandler(ByVal sender As Object, ByVal e As FolderSelChangedEventArgs)
+    Friend Delegate Sub FolderSelChangedEventHandler(sender As Object, e As FolderSelChangedEventArgs)
 
-    Public Class FolderSelChangedEventArgs
+    Friend Class FolderSelChangedEventArgs
         Inherits EventArgs
         Implements IDisposable
-        Private pidlNewSelectValue As IntPtr
+        Private ReadOnly pidlNewSelectValue As IntPtr
 
-
-        Friend Sub New(ByVal pidlNewSelect As IntPtr)
+        Friend Sub New(pidlNewSelect As IntPtr)
             pidlNewSelectValue = pidlNewSelect
         End Sub
 
@@ -510,7 +505,7 @@ Namespace Files.Forms
         ''' </summary>
         Public ReadOnly Property SelectedFolderPath() As String
             Get
-                Dim path As New System.Text.StringBuilder(260)
+                Dim path As New StringBuilder(260)
                 UnManagedMethods.SHGetPathFromIDList(pidlNewSelectValue, path)
 
                 Return path.ToString()
@@ -525,17 +520,16 @@ Namespace Files.Forms
 #End Region
 
 #Region "Class IUnknownObtainedEventArgs"
-    Public Delegate Sub IUnknownObtainedEventHandler(ByVal sender As Object, ByVal args As IUnknownObtainedEventArgs)
+    Friend Delegate Sub IUnknownObtainedEventHandler(sender As Object, args As IUnknownObtainedEventArgs)
 
     ''' <summary>
     ''' Provides data for the IUnknownObtainedEvent.
     ''' </summary>
-    Public Class IUnknownObtainedEventArgs
+    Friend Class IUnknownObtainedEventArgs
         Inherits EventArgs
-        Private siteUnknownValue As Object
+        Private ReadOnly siteUnknownValue As Object
 
-
-        Friend Sub New(ByVal siteUnknown As Object)
+        Friend Sub New(siteUnknown As Object)
             Me.siteUnknownValue = siteUnknown
         End Sub
 
@@ -551,15 +545,16 @@ Namespace Files.Forms
 #End Region
 
 #Region "Class ValidateFailedEventArgs"
+
     ''' <summary>
     ''' Provides data for validation failed event.
     ''' </summary>
-    Public Class ValidateFailedEventArgs
-        Private invalidTextValue As String
+    Friend Class ValidateFailedEventArgs
+        Private ReadOnly invalidTextValue As String
         Private dismissDialogValue As Boolean = False
 
 
-        Friend Sub New(ByVal invalidText As String)
+        Friend Sub New(invalidText As String)
             Me.invalidTextValue = invalidText
         End Sub
 
@@ -579,7 +574,7 @@ Namespace Files.Forms
             Get
                 Return dismissDialogValue
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 dismissDialogValue = Value
             End Set
         End Property

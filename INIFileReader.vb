@@ -9,12 +9,10 @@ Imports PRISM.Logging
 
 Namespace Files
 
-    Enum IniItemTypeEnum
-        GetKeys = 0
-        GetValues = 1
-        GetKeysAndValues = 2
-    End Enum
-
+    ''' <summary>
+    ''' Exception thrown if a call is made to a method prior to initializing IniFileReader
+    ''' </summary>
+    ''' <remarks></remarks>
     Public Class IniFileReaderNotInitializedException
         Inherits ApplicationException
         Public Overrides ReadOnly Property Message() As String
@@ -28,6 +26,12 @@ Namespace Files
     Public Class IniFileReader
         Implements ILoggerAware
 
+        Private Enum IniItemTypeEnum
+            GetKeys = 0
+            GetValues = 1
+            GetKeysAndValues = 2
+        End Enum
+
         Private m_IniFilename As String
         Private m_XmlDoc As XmlDocument
         Private sections As StringCollection = New StringCollection
@@ -37,14 +41,12 @@ Namespace Files
 
         Private m_ExceptionLogger As ILogger
         Private m_EventLogger As ILogger
-        Private m_NotifyOnEvent As Boolean
-        Private m_NotifyOnException As Boolean
-        Public Event InformationMessage(ByVal msg As String)
+        Public Event InformationMessage(msg As String)
 
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
         ''' <param name="filename">The name of the ini file.</param>
         ''' <param name="logger">This is the logger.</param>
-        Public Sub New(ByVal filename As String, ByRef logger As ILogger)
+        Public Sub New(filename As String, ByRef logger As ILogger)
             RegisterExceptionLogger(logger)
             NotifyOnException = False
             InitIniFileReader(filename, False)
@@ -53,7 +55,7 @@ Namespace Files
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
         ''' <param name="filename">The name of the ini file.</param>
         ''' <param name="IsCaseSensitive">Case sensitive as boolean.</param>
-        Public Sub New(ByVal filename As String, ByVal IsCaseSensitive As Boolean)
+        Public Sub New(filename As String, IsCaseSensitive As Boolean)
             NotifyOnException = True
             InitIniFileReader(filename, IsCaseSensitive)
         End Sub
@@ -62,7 +64,7 @@ Namespace Files
         ''' <param name="filename">The name of the ini file.</param>
         ''' <param name="logger">This is the logger.</param>
         ''' <param name="IsCaseSensitive">Case sensitive as boolean.</param>
-        Public Sub New(ByVal filename As String, ByRef logger As ILogger, ByVal IsCaseSensitive As Boolean)
+        Public Sub New(filename As String, ByRef logger As ILogger, IsCaseSensitive As Boolean)
             RegisterExceptionLogger(logger)
             NotifyOnException = False
             InitIniFileReader(filename, IsCaseSensitive)
@@ -70,7 +72,7 @@ Namespace Files
 
         ''' <summary>Initializes a new instance of the IniFileReader.</summary>
         ''' <param name="filename">The name of the ini file.</param>
-        Public Sub New(ByVal filename As String)
+        Public Sub New(filename As String)
             NotifyOnException = True
             InitIniFileReader(filename, False)
         End Sub
@@ -78,7 +80,7 @@ Namespace Files
         ''' <summary>
         ''' This routine is called by each of the constructors to make the actual assignments.
         ''' </summary>
-        Private Sub InitIniFileReader(ByVal filename As String, ByVal IsCaseSensitive As Boolean)
+        Private Sub InitIniFileReader(filename As String, IsCaseSensitive As Boolean)
             Dim fi As FileInfo
             Dim s As String
             m_CaseSensitive = IsCaseSensitive
@@ -162,7 +164,7 @@ Namespace Files
         ''' </summary>
         ''' <param name="aName">The name to be set.</param>
         ''' <return>The function returns a string.</return>
-        Private Function SetNameCase(ByVal aName As String) As String
+        Private Function SetNameCase(aName As String) As String
             If (CaseSensitive) Then
                 Return aName
             Else
@@ -171,7 +173,7 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ''' TBD.
+        ''' Returns the root element
         ''' </summary>
         Private Function GetRoot() As XmlElement
             Return m_XmlDoc.DocumentElement
@@ -194,7 +196,7 @@ Namespace Files
         ''' </summary>
         ''' <param name="sectionName">The name of a section.</param>
         ''' <return>The function returns a section as XmlElement.</return>
-        Private Function GetSection(ByVal sectionName As String) As XmlElement
+        Private Function GetSection(sectionName As String) As XmlElement
             If (Not (sectionName = Nothing)) AndAlso (sectionName <> "") Then
                 sectionName = SetNameCase(sectionName)
                 Return CType(m_XmlDoc.SelectSingleNode("//section[@name='" & sectionName & "']"), XmlElement)
@@ -208,7 +210,7 @@ Namespace Files
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
         ''' <return>The function returns a XML element.</return>
-        Private Function GetItem(ByVal sectionName As String, ByVal keyName As String) As XmlElement
+        Private Function GetItem(sectionName As String, keyName As String) As XmlElement
             Dim section As XmlElement
             If (Not keyName Is Nothing) AndAlso (keyName <> "") Then
                 keyName = SetNameCase(keyName)
@@ -226,7 +228,7 @@ Namespace Files
         ''' <param name="oldSection">The name of the old ini section name.</param>
         ''' <param name="newSection">The new name for the ini section.</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetIniSection(ByVal oldSection As String, ByVal newSection As String) As Boolean
+        Public Function SetIniSection(oldSection As String, newSection As String) As Boolean
             Dim section As XmlElement
             If Not Initialized Then
                 Throw New IniFileReaderNotInitializedException
@@ -249,7 +251,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "value".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetIniValue(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As String) As Boolean
+        Public Function SetIniValue(sectionName As String, keyName As String, newValue As String) As Boolean
             Dim item As XmlElement
             Dim section As XmlElement
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
@@ -300,7 +302,7 @@ Namespace Files
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <return>The function returns a boolean that shows if the delete was completed.</return>
-        Private Function DeleteSection(ByVal sectionName As String) As Boolean
+        Private Function DeleteSection(sectionName As String) As Boolean
             Dim section As XmlElement = GetSection(sectionName)
             If Not section Is Nothing Then
                 section.ParentNode.RemoveChild(section)
@@ -316,7 +318,7 @@ Namespace Files
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
         ''' <return>The function returns a boolean that shows if the delete was completed.</return>
-        Private Function DeleteItem(ByVal sectionName As String, ByVal keyName As String) As Boolean
+        Private Function DeleteItem(sectionName As String, keyName As String) As Boolean
             Dim item As XmlElement = GetItem(sectionName, keyName)
             If Not item Is Nothing Then
                 item.ParentNode.RemoveChild(item)
@@ -332,7 +334,7 @@ Namespace Files
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value for the "key".</param>
         ''' <return>The function returns a boolean that shows if the change was done.</return>
-        Public Function SetIniKey(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As String) As Boolean
+        Public Function SetIniKey(sectionName As String, keyName As String, newValue As String) As Boolean
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Dim item As XmlElement = GetItem(sectionName, keyName)
             If Not item Is Nothing Then
@@ -348,7 +350,7 @@ Namespace Files
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
         '''<return>The function returns the name of the "value" attribute.</return>
-        Public Function GetIniValue(ByVal sectionName As String, ByVal keyName As String) As String
+        Public Function GetIniValue(sectionName As String, keyName As String) As String
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Dim N As XmlNode = GetItem(sectionName, keyName)
             If Not N Is Nothing Then
@@ -362,7 +364,7 @@ Namespace Files
         ''' </summary>
         ''' <param name="sectionName">The name of the section.</param>
         '''<return>The function returns a string collection with comments</return>
-        Public Function GetIniComments(ByVal sectionName As String) As StringCollection
+        Public Function GetIniComments(sectionName As String) As StringCollection
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Dim sc As StringCollection = New StringCollection
             Dim target As XmlNode
@@ -390,7 +392,7 @@ Namespace Files
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="comments">A string collection.</param>
         '''<return>The function returns a Boolean that shows if the change was done.</return>
-        Public Function SetIniComments(ByVal sectionName As String, ByVal comments As StringCollection) As Boolean
+        Public Function SetIniComments(sectionName As String, comments As StringCollection) As Boolean
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Dim target As XmlNode
             Dim nodes As XmlNodeList
@@ -452,7 +454,7 @@ Namespace Files
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="itemType">Item type.</param>
         ''' <return>The function returns a string colection of items in a section.</return>
-        Private Function GetItemsInSection(ByVal sectionName As String, ByVal itemType As IniItemTypeEnum) As StringCollection
+        Private Function GetItemsInSection(sectionName As String, itemType As IniItemTypeEnum) As StringCollection
             Dim nodes As XmlNodeList
             Dim items As StringCollection = New StringCollection
             Dim section As XmlNode = GetSection(sectionName)
@@ -477,33 +479,37 @@ Namespace Files
                 Return items
             End If
         End Function
+
         ''' <summary>The funtions gets a collection of keys in a section.</summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <return>The function returns a string colection of all the keys in a section.</return>
-        Public Function AllKeysInSection(ByVal sectionName As String) As StringCollection
+        Public Function AllKeysInSection(sectionName As String) As StringCollection
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Return GetItemsInSection(sectionName, IniItemTypeEnum.GetKeys)
         End Function
+
         ''' <summary>The funtions gets a collection of values in a section.</summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <return>The function returns a string colection of all the values in a section.</return>
-        Public Function AllValuesInSection(ByVal sectionName As String) As StringCollection
+        Public Function AllValuesInSection(sectionName As String) As StringCollection
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Return GetItemsInSection(sectionName, IniItemTypeEnum.GetValues)
         End Function
+
         ''' <summary>The funtions gets a collection of items in a section.</summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <return>The function returns a string colection of all the items in a section.</return>
-        Public Function AllItemsInSection(ByVal sectionName As String) As StringCollection
+        Public Function AllItemsInSection(sectionName As String) As StringCollection
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             Return (GetItemsInSection(sectionName, IniItemTypeEnum.GetKeysAndValues))
         End Function
+
         ''' <summary>The funtions gets a custom attribute name.</summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="attributeName">The name of the attribute.</param>
         ''' <return>The function returns a string.</return>
-        Public Function GetCustomIniAttribute(ByVal sectionName As String, ByVal keyName As String, ByVal attributeName As String) As String
+        Public Function GetCustomIniAttribute(sectionName As String, keyName As String, attributeName As String) As String
             Dim N As XmlElement
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             If (Not attributeName Is Nothing) AndAlso (attributeName <> "") Then
@@ -515,13 +521,14 @@ Namespace Files
             End If
             Return Nothing
         End Function
+
         ''' <summary>The funtions sets a custom attribute name.</summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="attributeName">The name of the attribute.</param>
         ''' <param name="attributeValue">The value of the attribute.</param>
         ''' <return>The function returns a Boolean.</return>
-        Public Function SetCustomIniAttribute(ByVal sectionName As String, ByVal keyName As String, ByVal attributeName As String, ByVal attributeValue As String) As Boolean
+        Public Function SetCustomIniAttribute(sectionName As String, keyName As String, attributeName As String, attributeValue As String) As Boolean
             Dim N As XmlElement
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             If attributeName <> "" Then
@@ -550,10 +557,11 @@ Namespace Files
             End If
             Return False
         End Function
+
         ''' <summary>The funtions creates a section name.</summary>
         ''' <param name="sectionName">The name of the section to be created.</param>
         ''' <return>The function returns a Boolean.</return>
-        Private Function CreateSection(ByVal sectionName As String) As Boolean
+        Private Function CreateSection(sectionName As String) As Boolean
             Dim N As XmlElement
             Dim Natt As XmlAttribute
             If (Not sectionName Is Nothing) AndAlso (sectionName <> "") Then
@@ -578,12 +586,13 @@ Namespace Files
             End If
             Return False
         End Function
+
         ''' <summary>The funtions creates a section name.</summary>
         ''' <param name="sectionName">The name of the section.</param>
         ''' <param name="keyName">The name of the key.</param>
         ''' <param name="newValue">The new value to be created.</param>
         ''' <return>The function returns a Boolean.</return>
-        Private Function CreateItem(ByVal sectionName As String, ByVal keyName As String, ByVal newValue As String) As Boolean
+        Private Function CreateItem(sectionName As String, keyName As String, newValue As String) As Boolean
             Dim item As XmlElement
             Dim section As XmlElement
             Try
@@ -606,20 +615,23 @@ Namespace Files
                 Return False
             End Try
         End Function
+
         ''' <summary>It parses a string and adds atribbutes to the XMLDocument.</summary>
         ''' <param name="s">The name of the string to be parse.</param>
         ''' <param name="doc">The name of the XmlDocument.</param>
-        Private Sub ParseLineXml(ByVal s As String, ByVal doc As XmlDocument)
+        Private Sub ParseLineXml(s As String, doc As XmlDocument)
             Dim key As String
             Dim value As String
             Dim N As XmlElement
             Dim Natt As XmlAttribute
             Dim parts() As String
-            s.TrimStart()
+
+            s = s.TrimStart()
 
             If s.Length = 0 Then
                 Return
             End If
+
             Select Case (s.Substring(0, 1))
                 Case "["
                     ' this is a section
@@ -635,7 +647,7 @@ Namespace Files
                     GetLastSection().AppendChild(N)
                 Case Else
                     ' split the string on the "=" sign, if present
-                    If (s.IndexOf("=") > 0) Then
+                    If (s.IndexOf("="c) > 0) Then
                         parts = s.Split("="c)
                         key = parts(0).Trim()
                         value = parts(1).Trim()
@@ -661,7 +673,7 @@ Namespace Files
                 If Not Initialized Then Throw New IniFileReaderNotInitializedException
                 Return m_SaveFilename
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 Dim fi As FileInfo
                 If Not Initialized Then Throw New IniFileReaderNotInitializedException
                 fi = New FileInfo(Value)
@@ -677,7 +689,8 @@ Namespace Files
                 End If
             End Set
         End Property
-        ''' <summary>It saves the data to the Xml output file.</summary>
+
+        ''' <summary>Saves the data to the Xml output file</summary>
         Public Sub Save()
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             If Not OutputFilename Is Nothing AndAlso Not m_XmlDoc Is Nothing Then
@@ -763,33 +776,21 @@ Namespace Files
         End Property
 
         ''' <summary>Sets the name of the exception logger</summary>
-        Public Sub RegisterExceptionLogger(ByVal logger As ILogger) Implements Logging.ILoggerAware.RegisterEventLogger
+        Public Sub RegisterExceptionLogger(logger As ILogger) Implements ILoggerAware.RegisterEventLogger
             m_ExceptionLogger = logger
         End Sub
 
         ''' <summary>Sets the name of the event logger</summary>
-        Public Sub RegisterEventLogger(ByVal logger As ILogger) Implements Logging.ILoggerAware.RegisterExceptionLogger
+        Public Sub RegisterEventLogger(logger As ILogger) Implements ILoggerAware.RegisterExceptionLogger
             m_EventLogger = logger
         End Sub
 
         ''' <summary>Gets or Sets notify on event.</summary>
-        Public Property NotifyOnEvent() As Boolean Implements Logging.ILoggerAware.NotifyOnEvent
-            Get
-                Return m_NotifyOnEvent
-            End Get
-            Set(ByVal Value As Boolean)
-                m_NotifyOnEvent = Value
-            End Set
-        End Property
+        Public Property NotifyOnEvent As Boolean Implements ILoggerAware.NotifyOnEvent
+
 
         ''' <summary>Gets or Sets notify on exception.</summary>
-        Public Property NotifyOnException() As Boolean Implements Logging.ILoggerAware.NotifyOnException
-            Get
-                Return m_NotifyOnException
-            End Get
-            Set(ByVal Value As Boolean)
-                m_NotifyOnException = Value
-            End Set
-        End Property
+        Public Property NotifyOnException As Boolean Implements ILoggerAware.NotifyOnException
+
     End Class
 End Namespace

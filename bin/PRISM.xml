@@ -524,7 +524,7 @@ PRISM
  This method takes at least 1000 msec to execute
  </summary>
 	<param name="processId">Process ID for the program</param>
-	<returns>Number of cores in use</returns>
+	<returns>Number of cores in use; 0 if the process is terminated.  Exception is thrown if a problem</returns>
 	<remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageByProcessID(System.Int32,System.String@)">
 	<summary>
@@ -533,8 +533,42 @@ PRISM
  </summary>
 	<param name="processId">Process ID for the program</param>
 	<param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
-	<returns>Number of cores in use</returns>
+	<returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
 	<remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageForPerfCounter(System.Diagnostics.PerformanceCounter,System.Int32)">
+	<summary>
+ Sample the given performance counter to determine the CPU usage
+ </summary>
+	<param name="perfCounter">Performance counter instance</param>
+	<param name="maxAttempts">Number of attempts</param>
+	<returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
+	<remarks>
+ The first time perfCounter.NextSample() is called a Permissions exception is sometimes thrown
+ Set maxAttempts to 2 or higher to gracefully handle this
+ </remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageByProcessName(System.String)">
+	<summary>
+ Reports the number of cores in use by the given process
+ This method takes at least 1000 msec to execute
+ </summary>
+	<param name="processName">Process name, for example chrome (do not include .exe)</param>
+	<returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
+	<remarks>
+ Core count is typically an integer, but can be a fractional number if not using a core 100%
+ If multiple processes are running with the given name then returns the total core usage for all of them
+ </remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.GetCoreUsageByProcessName(System.String,System.Collections.Generic.List{System.Int32}@)">
+	<summary>
+ Reports the number of cores in use by the given process
+ This method takes at least 1000 msec to execute
+ </summary>
+	<param name="processName">Process name, for example chrome (do not include .exe)</param>
+	<param name="processIDs">List of ProcessIDs matching the given process name</param>
+	<returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
+	<remarks>
+ Core count is typically an integer, but can be a fractional number if not using a core 100%
+ If multiple processes are running with the given name then returns the total core usage for all of them
+ </remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.GetPerfCounterForProcessID(System.Int32,System.String@,System.String)">
 	<summary>
  Obtain the performance counter for the given process
@@ -679,6 +713,11 @@ PRISM
 	<remarks>No logging is performed by this procedure</remarks>
 </member><member name="T:PRISM.DataBase.clsExecuteDatabaseSP">
 	<summary>Tools to execute a stored procedure</summary>
+</member><member name="T:PRISM.Files.IniFileReaderNotInitializedException">
+	<summary>
+ Exception thrown if a call is made to a method prior to initializing IniFileReader
+ </summary>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.IniFileReader.#ctor(System.String,PRISM.Logging.ILogger@)">
 	<summary>Initializes a new instance of the IniFileReader.</summary>
 	<param name="filename">The name of the ini file.</param>
@@ -722,7 +761,7 @@ PRISM
 	<return>The function returns a string.</return>
 </member><member name="M:PRISM.Files.IniFileReader.GetRoot">
 	<summary>
- TBD.
+ Returns the root element
  </summary>
 </member><member name="M:PRISM.Files.IniFileReader.GetLastSection">
 	<summary>
@@ -807,7 +846,7 @@ PRISM
  The subroutine gets the sections.
  </summary>
 	<return>The subroutine returns a strin collection of sections.</return>
-</member><member name="M:PRISM.Files.IniFileReader.GetItemsInSection(System.String,PRISM.Files.IniItemTypeEnum)">
+</member><member name="M:PRISM.Files.IniFileReader.GetItemsInSection(System.String,PRISM.Files.IniFileReader.IniItemTypeEnum)">
 	<summary>
  The function gets a collection of items for a section name.
  </summary>
@@ -856,7 +895,7 @@ PRISM
 </member><member name="P:PRISM.Files.IniFileReader.OutputFilename">
 	<summary>It Sets or Gets the output file name.</summary>
 </member><member name="M:PRISM.Files.IniFileReader.Save">
-	<summary>It saves the data to the Xml output file.</summary>
+	<summary>Saves the data to the Xml output file</summary>
 </member><member name="P:PRISM.Files.IniFileReader.XmlDoc">
 	<summary>It gets the XmlDocument.</summary>
 </member><member name="P:PRISM.Files.IniFileReader.XML">
@@ -873,19 +912,26 @@ PRISM
 </member><member name="T:PRISM.Files.IniFileReader">
 	<summary>Tools to manipulates INI files.</summary>
 </member><member name="P:PRISM.Files.FolderBrowser.BrowseFlags">
-	<summary>TBD</summary>
+	<summary>Browsing flags</summary>
 </member><member name="P:PRISM.Files.FolderBrowser.FolderPath">
-	<summary>TBD</summary>
+	<summary>Folder selected by the user</summary>
 </member><member name="P:PRISM.Files.FolderBrowser.Title">
-	<summary>TBD</summary>
+	<summary>Window caption</summary>
 </member><member name="M:PRISM.Files.FolderBrowser.BrowseForFolder(System.String)">
-	<summary>TBD</summary>
+	<summary>
+ Show a window to allow the user to choose a folder
+ </summary>
+	<returns>True if user selects a folder, otherwise false</returns>
+	<remarks>Retrieve the selected folder using property FolderPath</remarks>
 </member><member name="M:PRISM.Files.FolderBrowser.mFolderBrowserDialog_Initialized(System.Object,System.EventArgs)">
-	<summary>TBD</summary>
+	<summary>Handles the folder browser initialization event</summary>
 </member><member name="M:PRISM.Files.FolderBrowser.#ctor">
-	<summary>TBD</summary>
+	<summary>Constructor</summary>
 </member><member name="T:PRISM.Files.FolderBrowser">
-	<summary>TBD</summary>
+	<summary>
+ Wrapper class to call Files.Forms.ShellFolderBrowser and highlight an initial folder
+ Also defines numerous default BrowseFlags
+ </summary>
 </member><member name="F:PRISM.Files.Forms.BrowseFlags.ReturnOnlyFSDirs">
 	<summary>
  Same as BIF_RETURNONLYFSDIRS 
@@ -1338,6 +1384,13 @@ PRISM
 	<param name="currentTime">Current time of day</param>
 	<param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
 	<returns>True if Windows updates are likely pending on the Windows servers</returns>
+	<remarks></remarks>
+</member><member name="T:PRISM.clsWindowsUpdateStatus">
+	<summary>
+ Utility functions for checking whether Windows updates are likely to be applied close to the current time
+ Windows desktop computers have Windows updates applied around 3 am on the first Thursday after the second Tuesday of the month
+ Windows servers have Windows updates applied around 3 am or 10 am on the first Sunday after the second Tuesday of the month
+ </summary>
 	<remarks></remarks>
 </member><member name="E:PRISM.Files.clsFileTools.CopyingFile">
 	<summary>Event is raised before copying begins.</summary>

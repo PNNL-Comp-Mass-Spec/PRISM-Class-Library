@@ -39,13 +39,13 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Sub PostEntry(ByVal message As String, ByVal EntryType As logMsgType, ByVal localOnly As Boolean)
+        Sub PostEntry(message As String, EntryType As logMsgType, localOnly As Boolean)
 
         ''' <summary>Posts an error to the log.</summary>
         ''' <param name="message">The message to post.</param>
         ''' <param name="e">The exception associated with the error.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Sub PostError(ByVal message As String, ByVal e As Exception, ByVal localOnly As Boolean)
+        Sub PostError(message As String, e As Exception, localOnly As Boolean)
     End Interface
 #End Region
 
@@ -62,17 +62,17 @@ Namespace Logging
     Public Interface ILoggerAware
         ''' <summary>Register an ILogger with a class to have it log any exception that might occur.</summary>
         ''' <param name="logger">A logger object to be used when logging is desired.</param>
-        Sub RegisterExceptionLogger(ByVal logger As ILogger)
+        Sub RegisterExceptionLogger(logger As ILogger)
 
         ''' <summary>Register an ILogger with a class to have it log any event that might occur.</summary>
         ''' <param name="logger">A logger object to be used when logging is desired.</param>
-        Sub RegisterEventLogger(ByVal logger As ILogger)
+        Sub RegisterEventLogger(logger As ILogger)
         ''' <summary>Set true and the class will raise events.  Set false and it will not.</summary>
         ''' <remarks>A function like the one shown below can be placed in ILoggerAware class that will only raise the event in the
         ''' event of one needing to be raised.
         ''' </remarks>
         Property NotifyOnEvent() As Boolean
-        ' Private Sub RaiseConditionalProgChangedEvent(ByVal obj As clsProgRunner)
+        ' Private Sub RaiseConditionalProgChangedEvent(obj As clsProgRunner)
         '     If m_NotifyOnEvent Then
         '         If Not m_EventLogger Is Nothing Then
         '             m_EventLogger.PostEntry("Raising ProgChanged event for " & obj.m_name & ".", ILogger.logMsgType.logHealth, True)
@@ -88,7 +88,7 @@ Namespace Logging
         ''' event of one needing to be thrown.
         ''' </remarks>
         Property NotifyOnException() As Boolean
-        ' Private Sub ThrowConditionalException(ByRef ex As Exception, ByVal loggerMessage As String)
+        ' Private Sub ThrowConditionalException(ByRef ex As Exception, loggerMessage As String)
         '     If Not m_ExceptionLogger Is Nothing Then
         '         m_ExceptionLogger.PostError(loggerMessage, ex, True)
         '     End If
@@ -112,7 +112,7 @@ Namespace Logging
         ''' <param name="objException"></param>
         ''' <returns>String similar to "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"</returns>
         ''' <remarks></remarks>
-        Public Shared Function GetExceptionStackTrace(ByVal objException As Exception) As String
+        Public Shared Function GetExceptionStackTrace(objException As Exception) As String
             Const REGEX_FUNCTION_NAME = "at ([^(]+)\("
             Const REGEX_FILE_NAME = "in .+\\(.+)"
 
@@ -219,7 +219,7 @@ Namespace Logging
         ''' <summary>Initializes a new instance of the clsFileLogger class which logs to the specified file.</summary>
         ''' <param name="filePath">The name of the file to use for the log.</param>
         ''' <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
-        Public Sub New(ByVal filePath As String)
+        Public Sub New(filePath As String)
             m_logFileName = filePath
         End Sub
 
@@ -234,7 +234,7 @@ Namespace Logging
             Get
                 Return logExecName
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 logExecName = Value
             End Set
         End Property
@@ -244,7 +244,7 @@ Namespace Logging
             Get
                 Return logExecVersion
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 logExecVersion = Value
             End Set
         End Property
@@ -275,7 +275,7 @@ Namespace Logging
             Get
                 Return m_logFileName
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_logFileName = Value
             End Set
         End Property
@@ -295,7 +295,7 @@ Namespace Logging
         ''' <summary>Writes a message to the log file.</summary>
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
-        Private Sub LogToFile(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
+        Private Sub LogToFile(message As String, EntryType As ILogger.logMsgType)
             Dim LogFile As StreamWriter = Nothing
             Dim FormattedLogMessage As String
 
@@ -346,7 +346,7 @@ Namespace Logging
 
         ''' <summary>Converts enumerated error type to string for logging output.</summary>
         ''' <param name="MyErrType">The ILogger error type.</param>
-        Protected Function TypeToString(ByVal MyErrType As ILogger.logMsgType) As String
+        Protected Function TypeToString(MyErrType As ILogger.logMsgType) As String
             Select Case MyErrType
                 Case ILogger.logMsgType.logNormal
                     TypeToString = "Normal"
@@ -369,7 +369,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Overridable Sub PostEntry(ByVal message As String, ByVal EntryType As ILogger.logMsgType, ByVal localOnly As Boolean) Implements ILogger.PostEntry
+        Public Overridable Sub PostEntry(message As String, EntryType As ILogger.logMsgType, localOnly As Boolean) Implements ILogger.PostEntry
             LogToFile(message, EntryType)
         End Sub
 
@@ -377,7 +377,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="ex">The exception associated with the error.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Overridable Sub PostError(ByVal message As String, ByVal ex As Exception, ByVal localOnly As Boolean) Implements ILogger.PostError
+        Public Overridable Sub PostError(message As String, ex As Exception, localOnly As Boolean) Implements ILogger.PostError
             LogToFile(message & ": " & ex.Message, ILogger.logMsgType.logError)
         End Sub
 
@@ -402,14 +402,14 @@ Namespace Logging
         End Sub
         ''' <summary>Initializes a new instance of the clsDBLogger class which logs to the specified database.</summary>
         ''' <param name="connectionStr">The connection string used to access the database.</param>
-        Public Sub New(ByVal connectionStr As String)
+        Public Sub New(connectionStr As String)
             m_connection_str = connectionStr
         End Sub
 
         ''' <summary>Initializes a new instance of the clsDBLogger class which logs to the specified database and file.</summary>
         ''' <param name="connectionStr">The connection string used to access the database.</param>
         ''' <param name="filePath">The name of the file to use for the log.</param>
-        Public Sub New(ByVal connectionStr As String, ByVal filePath As String)
+        Public Sub New(connectionStr As String, filePath As String)
             MyBase.New(filePath)
             m_connection_str = connectionStr
         End Sub
@@ -420,7 +420,7 @@ Namespace Logging
         ''' <param name="filePath">The name of the file to use for the log.</param>
         ''' <remarks>The module name identifies the logging process, but if not specified, it is filled in as
         ''' ExecutableName:ExecutableVersion:MachineName:UserName.</remarks>
-        Public Sub New(ByVal modName As String, ByVal connectionStr As String, ByVal filePath As String)
+        Public Sub New(modName As String, connectionStr As String, filePath As String)
             MyBase.New(filePath)
             m_connection_str = connectionStr
             m_moduleName = modName
@@ -431,7 +431,7 @@ Namespace Logging
             Get
                 Return logExecName
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 logExecName = Value
                 If moduleNameConstructed Then
                     m_moduleName = Nothing 'This will cause m_moduleName to be reconstructed.
@@ -444,7 +444,7 @@ Namespace Logging
             Get
                 Return logExecVersion
             End Get
-            Set(ByVal Value As Boolean)
+            Set(Value As Boolean)
                 logExecVersion = Value
                 If moduleNameConstructed Then
                     m_moduleName = Nothing 'This will cause m_moduleName to be reconstructed.
@@ -457,7 +457,7 @@ Namespace Logging
             Get
                 Return m_connection_str
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_connection_str = Value
             End Set
         End Property
@@ -508,7 +508,7 @@ Namespace Logging
                 End If
                 Return m_moduleName
             End Get
-            Set(ByVal Value As String)
+            Set(Value As String)
                 m_moduleName = Value
             End Set
         End Property
@@ -516,7 +516,7 @@ Namespace Logging
         ''' <summary>Writes a message to the log table.</summary>
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
-        Protected Overridable Sub LogToDB(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
+        Protected Overridable Sub LogToDB(message As String, EntryType As ILogger.logMsgType)
             PostLogEntry(TypeToString(EntryType), message)
         End Sub
 
@@ -524,7 +524,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Overrides Sub PostEntry(ByVal message As String, ByVal EntryType As ILogger.logMsgType, ByVal localOnly As Boolean)
+        Public Overrides Sub PostEntry(message As String, EntryType As ILogger.logMsgType, localOnly As Boolean)
             If Not IsNothing(MyBase.LogFilePath) Then
                 MyBase.PostEntry(message, EntryType, localOnly)
             End If
@@ -537,7 +537,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="e">The exception associated with the error.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Overrides Sub PostError(ByVal message As String, ByVal e As Exception, ByVal localOnly As Boolean)
+        Public Overrides Sub PostError(message As String, e As Exception, localOnly As Boolean)
             If Not IsNothing(MyBase.LogFilePath) Then
                 MyBase.PostError(message, e, localOnly)
             End If
@@ -549,7 +549,7 @@ Namespace Logging
         ''' <summary>Writes a message to the log table via the stored procedure.</summary>
         ''' <param name="type">The ILogger error type.</param>
         ''' <param name="message">The message to post.</param>
-        Private Sub PostLogEntry(ByVal type As String, ByVal message As String)
+        Private Sub PostLogEntry(type As String, message As String)
             Dim sc As SqlCommand
 
             Try
@@ -607,7 +607,7 @@ Namespace Logging
 
         ''' <summary>Event handler for InfoMessage event.</summary>
         ''' <remarks>Errors and warnings sent from the SQL Server database engine are caught here.</remarks>
-        Private Sub OnInfoMessage(ByVal sender As Object, ByVal args As SqlInfoMessageEventArgs)
+        Private Sub OnInfoMessage(sender As Object, args As SqlInfoMessageEventArgs)
             Dim err As SqlError
             Dim s As String
             For Each err In args.Errors
@@ -688,7 +688,7 @@ Namespace Logging
 
         ''' <summary>Initializes a new instance of the clsQueLogger class which logs to the ILogger.</summary>
         ''' <param name="logger">The target logger object.</param>
-        Public Sub New(ByVal logger As ILogger)
+        Public Sub New(logger As ILogger)
             ' remember my logging object
             m_logger = logger
 
@@ -721,7 +721,7 @@ Namespace Logging
         ''' <summary>Writes a message to the log.</summary>
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
-        Public Sub PostEntry(ByVal message As String, ByVal EntryType As ILogger.logMsgType, ByVal localOnly As Boolean) Implements ILogger.PostEntry
+        Public Sub PostEntry(message As String, EntryType As ILogger.logMsgType, localOnly As Boolean) Implements ILogger.PostEntry
             Dim le As New clsLogEntry
             le.message = message
             le.entryType = EntryType
@@ -734,7 +734,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="e">The exception associated with the error.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Sub PostError(ByVal message As String, ByVal e As Exception, ByVal localOnly As Boolean) Implements ILogger.PostError
+        Public Sub PostError(message As String, e As Exception, localOnly As Boolean) Implements ILogger.PostError
             Dim le As New clsLogEntry
             le.message = message & ": " & e.Message
             le.entryType = ILogger.logMsgType.logError
@@ -762,13 +762,13 @@ Namespace Logging
 
         ''' <summary>Initializes a new instance of the clsFileLogger class which logs to a listbox.</summary>
         ''' <param name="lsBox">The name of the listbox used to log message.</param>
-        Public Sub New(ByVal lsBox As ListBox)
+        Public Sub New(lsBox As ListBox)
             m_loglsBoxCtl = lsBox
         End Sub
 
         ''' <summary>Initializes a new instance of the clsFileLogger class which logs to a listview.</summary>
         ''' <param name="lsView">The name of the listview used to log message.</param>
-        Public Sub New(ByVal lsView As ListView)
+        Public Sub New(lsView As ListView)
             m_loglsViewCtl = lsView
             ' Set the view to show details.
             m_loglsViewCtl.View = View.Details
@@ -796,7 +796,7 @@ Namespace Logging
 
         ''' <summary>Initializes a new instance of the clsFileLogger class which logs to a textbox.</summary>
         ''' <param name="txtBox">The name of the textbox used to log message.</param>
-        Public Sub New(ByVal txtBox As TextBoxBase)
+        Public Sub New(txtBox As TextBoxBase)
             If txtBox.Multiline = False Then
                 Throw New Exception("The textBox is not multiline!")
             End If
@@ -834,7 +834,7 @@ Namespace Logging
             Get
                 Return m_loglsBoxCtl
             End Get
-            Set(ByVal Value As ListBox)
+            Set(Value As ListBox)
                 m_loglsBoxCtl = Value
             End Set
         End Property
@@ -844,7 +844,7 @@ Namespace Logging
             Get
                 Return m_loglsViewCtl
             End Get
-            Set(ByVal Value As ListView)
+            Set(Value As ListView)
                 m_loglsViewCtl = Value
             End Set
         End Property
@@ -854,7 +854,7 @@ Namespace Logging
             Get
                 Return m_logtxtBoxCtl
             End Get
-            Set(ByVal Value As TextBoxBase)
+            Set(Value As TextBoxBase)
                 m_logtxtBoxCtl = Value
             End Set
         End Property
@@ -874,7 +874,7 @@ Namespace Logging
         ''' <summary>Posts a message.</summary>
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
-        Private Sub LogToControl(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
+        Private Sub LogToControl(message As String, EntryType As ILogger.logMsgType)
             Dim localMsg As String
             localMsg = DateTime.Now() & ", " & ", " & ExecutableName & ", " &
                        ExecutableVersion & ", " & message & ", " & TypeToString(EntryType)
@@ -892,14 +892,14 @@ Namespace Logging
 
         ''' <summary>Posts a message to the textbox control.</summary>
         ''' <param name="message">The message to post.</param>
-        Private Sub PostEntryTextBox(ByVal message As String)
+        Private Sub PostEntryTextBox(message As String)
             If IsNothing(m_logtxtBoxCtl) Then Exit Sub
             m_logtxtBoxCtl.Text = message
         End Sub
 
         ''' <summary>Posts a message to the listbox control.</summary>
         ''' <param name="message">The message to post.</param>
-        Private Sub PostEntryListBox(ByVal message As String)
+        Private Sub PostEntryListBox(message As String)
             If IsNothing(m_loglsBoxCtl) Then Exit Sub
             m_loglsBoxCtl.Items.Add(message)
         End Sub
@@ -907,7 +907,7 @@ Namespace Logging
         ''' <summary>Posts a message to the listview control.</summary>
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
-        Private Sub PostEntryListview(ByVal message As String, ByVal EntryType As ILogger.logMsgType)
+        Private Sub PostEntryListview(message As String, EntryType As ILogger.logMsgType)
             If IsNothing(m_loglsViewCtl) Then Exit Sub
             ' Create three items and three sets of subitems for each item.
             Dim lvItem As New ListViewItem(DateTime.Now().ToString)
@@ -922,7 +922,7 @@ Namespace Logging
 
         ''' <summary>Converts enumerated error type to string for logging output.</summary>
         ''' <param name="MyErrType">The ILogger error type.</param>
-        Protected Function TypeToString(ByVal MyErrType As ILogger.logMsgType) As String
+        Protected Function TypeToString(MyErrType As ILogger.logMsgType) As String
             Select Case MyErrType
                 Case ILogger.logMsgType.logNormal
                     TypeToString = "Normal"
@@ -945,7 +945,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="EntryType">The ILogger error type.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Overridable Sub PostEntry(ByVal message As String, ByVal EntryType As ILogger.logMsgType, ByVal localOnly As Boolean) Implements ILogger.PostEntry
+        Public Overridable Sub PostEntry(message As String, EntryType As ILogger.logMsgType, localOnly As Boolean) Implements ILogger.PostEntry
             LogToControl(message, EntryType)
         End Sub
 
@@ -953,7 +953,7 @@ Namespace Logging
         ''' <param name="message">The message to post.</param>
         ''' <param name="ex">The exception associated with the error.</param>
         ''' <param name="localOnly">Post message locally only.</param>
-        Public Overridable Sub PostError(ByVal message As String, ByVal ex As Exception, ByVal localOnly As Boolean) Implements ILogger.PostError
+        Public Overridable Sub PostError(message As String, ex As Exception, localOnly As Boolean) Implements ILogger.PostError
             LogToControl(message & ": " & ex.Message, ILogger.logMsgType.logError)
         End Sub
 
