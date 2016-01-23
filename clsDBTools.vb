@@ -48,7 +48,7 @@ Namespace DataBase
         ''' </summary>
         ''' <return>The function returns a boolean that shows if the connection was opened.</return>
         Protected Function OpenConnection() As Boolean
-            Dim retryCount As Integer = 3
+            Dim retryCount = 3
             While retryCount > 0
                 Try
                     m_DBCn = New SqlConnection(m_connection_str)

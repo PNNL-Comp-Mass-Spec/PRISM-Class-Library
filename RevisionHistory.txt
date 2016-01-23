@@ -1,5 +1,11 @@
 Prism Class Library Log
 
+Version 2.2.5865; January 22, 2016
+	- Text written to the error stream is now appended to the standard output
+	  - It is still cached in CachedConsoleError and event ConsoleErrorEvent is still raised
+	- Now asynchronously handling the console error stream from m_Process
+	  - No longer reading Process.StandardError with a StreamReader
+
 Version 2.2.5801; November 19, 2015
 	- Added GetCoreUsageForRunningProgram() and GetCoreCount() to clsProgRunner
 

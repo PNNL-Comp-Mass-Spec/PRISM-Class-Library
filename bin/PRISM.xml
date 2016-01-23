@@ -491,9 +491,13 @@ PRISM
  Clears any console error text that is currently cached
  </summary>
 	<remarks></remarks>
+</member><member name="M:PRISM.Processes.clsProgRunner.ConsoleErrorHandler(System.Object,System.Diagnostics.DataReceivedEventArgs)">
+	<summary>
+ Asynchronously handles the console error stream from m_Process
+ </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.ConsoleOutputHandler(System.Object,System.Diagnostics.DataReceivedEventArgs)">
 	<summary>
- Asynchronously handles the console output from the process running by m_Process
+ Asynchronously handles the console output from m_Process
  </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.GarbageCollectNow">
 	<summary>
@@ -585,10 +589,6 @@ PRISM
 	<param name="processId">Process ID</param>
 	<returns>Instance name if found, otherwise an empty string</returns>
 	<remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
-</member><member name="M:PRISM.Processes.clsProgRunner.HandleOutputStreams(System.IO.StreamReader@)">
-	<summary>
- Handles any new data in the console output and console error streams
- </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.RegisterExceptionLogger(PRISM.Logging.ILogger)">
 	<summary>Sets the name of the exception logger</summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.RegisterEventLogger(PRISM.Logging.ILogger)">

@@ -469,7 +469,7 @@ Namespace Processes
             If m_CachedConsoleOutput Is Nothing Then
                 m_CachedConsoleOutput = New StringBuilder
             Else
-                m_CachedConsoleOutput.Length = 0
+                m_CachedConsoleOutput.Clear()
             End If
 
         End Sub
@@ -510,13 +510,35 @@ Namespace Processes
             If m_CachedConsoleError Is Nothing Then
                 m_CachedConsoleError = New StringBuilder
             Else
-                m_CachedConsoleError.Length = 0
+                m_CachedConsoleError.Clear()
             End If
 
         End Sub
 
         ''' <summary>
-        ''' Asynchronously handles the console output from the process running by m_Process
+        ''' Asynchronously handles the console error stream from m_Process
+        ''' </summary>
+        Private Sub ConsoleErrorHandler(sendingProcess As Object,
+                                         outLine As DataReceivedEventArgs)
+
+            ' Handle the error data
+            If Not String.IsNullOrEmpty(outLine.Data) Then
+
+                ' Send to the console output stream to maximize the chance of somebody noticing this error
+                ConsoleOutputHandler(sendingProcess, outLine)
+
+                RaiseEvent ConsoleErrorEvent(outLine.Data)
+
+                If Not m_CachedConsoleError Is Nothing Then
+                    m_CachedConsoleError.Append(outLine.Data)
+                End If
+
+            End If
+
+        End Sub
+
+        ''' <summary>
+        ''' Asynchronously handles the console output from m_Process
         ''' </summary>
         Private Sub ConsoleOutputHandler(sendingProcess As Object,
                                          outLine As DataReceivedEventArgs)
@@ -545,6 +567,7 @@ Namespace Processes
                     End Try
                 End If
             End If
+
         End Sub
 
         ''' <summary>
@@ -552,7 +575,7 @@ Namespace Processes
         ''' </summary>
         ''' <remarks>Waits up to 1 second for the collection to finish</remarks>
         Public Shared Sub GarbageCollectNow()
-            Const intMaxWaitTimeMSec As Integer = 1000
+            Const intMaxWaitTimeMSec = 1000
             GarbageCollectNow(intMaxWaitTimeMSec)
         End Sub
 
@@ -561,7 +584,7 @@ Namespace Processes
         ''' </summary>
         ''' <remarks></remarks>
         Public Shared Sub GarbageCollectNow(intMaxWaitTimeMSec As Integer)
-            Const THREAD_SLEEP_TIME_MSEC As Integer = 100
+            Const THREAD_SLEEP_TIME_MSEC = 100
 
             Dim intTotalThreadWaitTimeMsec As Integer
             If intMaxWaitTimeMSec < 100 Then intMaxWaitTimeMSec = 100
@@ -883,25 +906,6 @@ Namespace Processes
 
         End Function
 
-        ''' <summary>
-        ''' Handles any new data in the console output and console error streams
-        ''' </summary>
-        Private Sub HandleOutputStreams(ByRef srConsoleError As StreamReader)
-
-            Dim strNewText As String
-
-            If Not srConsoleError Is Nothing AndAlso Not srConsoleError.EndOfStream Then
-                strNewText = srConsoleError.ReadToEnd
-
-                RaiseEvent ConsoleErrorEvent(strNewText)
-
-                If Not m_CachedConsoleError Is Nothing Then
-                    m_CachedConsoleError.Append(strNewText)
-                End If
-            End If
-
-        End Sub
-
         Public Sub JoinThreadNow()
 
             If m_Thread Is Nothing Then Exit Sub
@@ -943,7 +947,6 @@ Namespace Processes
         ''' </summary>
         Private Sub Start()
 
-            Dim srConsoleError As StreamReader = Nothing
             Dim blnStandardOutputRedirected As Boolean
 
             ' set up parameters for external process
@@ -989,6 +992,7 @@ Namespace Processes
             If blnStandardOutputRedirected Then
                 ' Add an event handler to asynchronously read the console output
                 AddHandler m_Process.OutputDataReceived, AddressOf ConsoleOutputHandler
+                AddHandler m_Process.ErrorDataReceived, AddressOf ConsoleErrorHandler
 
                 If m_WriteConsoleOutputToFile Then
                     Try
@@ -1015,7 +1019,7 @@ Namespace Processes
             ClearCachedConsoleError()
 
             Do
-                ' start the program as an external process
+                ' Start the program as an external process
                 '
                 Try
                     m_state = States.StartingProcess
@@ -1039,27 +1043,12 @@ Namespace Processes
 
                 m_processIdInstanceName = String.Empty
 
-                If blnStandardOutputRedirected Then
-                    Try
-                        m_Process.BeginOutputReadLine()
-
-                        ' Attach a StreamReader to m_Process.StandardError 
-                        srConsoleError = m_Process.StandardError
-
-                        ' Do not attach a reader to m_Process.StandardOutput
-                        ' since we are asynchronously reading the console output
-
-                    Catch ex As Exception
-                        ' Exception attaching the standard output
-                        blnStandardOutputRedirected = False
-                    End Try
-                End If
-
                 RaiseConditionalProgChangedEvent(Me)
 
-                ' wait for program to exit (loop on interval)
-                ' until external process exits or class is commanded
-                ' to stop monitoring the process (m_doCleanup = true)
+                ' Wait for program to exit (loop on interval)
+                '
+                ' We wait until the external process exits or 
+                ' the class is instructed to stop monitoring the process (m_doCleanup = true)
                 '
                 Do While Not (m_doCleanup)
 
@@ -1088,13 +1077,6 @@ Namespace Processes
                     m_ExitCode = 0
                 End Try
 
-                If blnStandardOutputRedirected Then
-                    ' Read any console error text using srConsoleError
-                    HandleOutputStreams(srConsoleError)
-
-                    If Not srConsoleError Is Nothing Then srConsoleError.Close()
-                End If
-
                 Try
                     m_Process.Close()
                 Catch ex As Exception
@@ -1113,7 +1095,7 @@ Namespace Processes
 
                 If Not m_ConsoleOutputStreamWriter Is Nothing Then
                     ' Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
-                    Dim intMaxWaitTimeMSec As Integer = 1000
+                    Dim intMaxWaitTimeMSec = 1000
                     GarbageCollectNow(intMaxWaitTimeMSec)
                     m_ConsoleOutputStreamWriter.Close()
                 End If
@@ -1181,7 +1163,7 @@ Namespace Processes
             If Me.StartingOrMonitoring() AndAlso Kill Then   'Program is running, kill it and abort thread
                 Try
                     m_Process.Kill()
-                    m_Thread.Abort()  'DAC added
+                    m_Thread.Abort()
                 Catch ex As ThreadAbortException
                     ThrowConditionalException(CType(ex, Exception), "Caught ThreadAbortException while trying to abort thread.")
                 Catch ex As ComponentModel.Win32Exception
@@ -1226,6 +1208,7 @@ Namespace Processes
             If Not m_ExceptionLogger Is Nothing Then
                 m_ExceptionLogger.PostError(loggerMessage, ex, True)
             End If
+
             If m_NotifyOnException Then
                 If m_ExceptionLogger Is Nothing Then
                     Console.WriteLine("Exception caught (but ignored): " & loggerMessage & "; " & ex.Message)
