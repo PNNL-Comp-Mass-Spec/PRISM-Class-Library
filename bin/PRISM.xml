@@ -493,7 +493,7 @@ PRISM
 	<remarks></remarks>
 </member><member name="M:PRISM.Processes.clsProgRunner.ConsoleErrorHandler(System.Object,System.Diagnostics.DataReceivedEventArgs)">
 	<summary>
- Asynchronously handles the console error stream from m_Process
+ Asynchronously handles the error stream from m_Process
  </summary>
 </member><member name="M:PRISM.Processes.clsProgRunner.ConsoleOutputHandler(System.Object,System.Diagnostics.DataReceivedEventArgs)">
 	<summary>

@@ -516,7 +516,7 @@ Namespace Processes
         End Sub
 
         ''' <summary>
-        ''' Asynchronously handles the console error stream from m_Process
+        ''' Asynchronously handles the error stream from m_Process
         ''' </summary>
         Private Sub ConsoleErrorHandler(sendingProcess As Object,
                                          outLine As DataReceivedEventArgs)
@@ -544,7 +544,7 @@ Namespace Processes
                                          outLine As DataReceivedEventArgs)
 
             ' Collect the console output
-            If Not String.IsNullOrEmpty(outLine.Data) Then
+            If Not outLine.Data Is Nothing Then
 
                 RaiseEvent ConsoleOutputEvent(outLine.Data)
 
@@ -990,7 +990,7 @@ Namespace Processes
             End If
 
             If blnStandardOutputRedirected Then
-                ' Add an event handler to asynchronously read the console output
+                ' Add event handlers to asynchronously read the console output and error stream
                 AddHandler m_Process.OutputDataReceived, AddressOf ConsoleOutputHandler
                 AddHandler m_Process.ErrorDataReceived, AddressOf ConsoleErrorHandler
 
@@ -1042,6 +1042,19 @@ Namespace Processes
                 End Try
 
                 m_processIdInstanceName = String.Empty
+
+                If blnStandardOutputRedirected Then
+                    Try
+                        ' Initiate asynchronously reading the console output and error streams
+
+                        m_Process.BeginOutputReadLine()
+                        m_Process.BeginErrorReadLine()
+
+                    Catch ex As Exception
+                        ' Exception attaching the standard output
+                        blnStandardOutputRedirected = False
+                    End Try
+                End If
 
                 RaiseConditionalProgChangedEvent(Me)
 
