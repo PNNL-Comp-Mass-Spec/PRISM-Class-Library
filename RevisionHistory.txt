@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.5876; February 2, 2016
+	- Move GetExceptionStackTrace into clsStackTraceFormatter.vb
+
 Version 2.2.5866; January 23, 2016
 	- Fix bug capturing the console output and error stream data
 	- Retain blank lines when monitoring the console output

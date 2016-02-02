@@ -7,8 +7,6 @@ Imports System.Data
 Imports System.Data.SqlClient
 Imports System.Threading
 Imports System.Windows.Forms
-Imports System.Collections.Generic
-Imports System.Text.RegularExpressions
 
 Namespace Logging
 
@@ -107,92 +105,33 @@ Namespace Logging
     Public Class Utilities
 
         ''' <summary>
-        ''' Parses the .StackTrace text of the given expression to return a compact description of the current stack
+        ''' Parses the StackTrace text of the given exception to return a compact description of the current stack
         ''' </summary>
         ''' <param name="objException"></param>
-        ''' <returns>String similar to "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"</returns>
-        ''' <remarks></remarks>
+        ''' <returns>
+        ''' String of the form:
+        ''' "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+        ''' </returns>
+        ''' <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         Public Shared Function GetExceptionStackTrace(objException As Exception) As String
-            Const REGEX_FUNCTION_NAME = "at ([^(]+)\("
-            Const REGEX_FILE_NAME = "in .+\\(.+)"
+            Return clsStackTraceFormatter.GetExceptionStackTrace(objException)
+        End Function
 
-            Dim intIndex As Integer
-
-            Dim lstFunctions = New List(Of String)
-
-            Dim strCurrentFunction As String
-            Dim strFinalFile As String = String.Empty
-
-            Dim strLine As String
-            Dim strStackTrace As String
-
-            Dim reFunctionName As New Regex(REGEX_FUNCTION_NAME, RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-            Dim reFileName As New Regex(REGEX_FILE_NAME, RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-            Dim objMatch As Match
-
-            ' Process each line in objException.StackTrace
-            ' Populate strFunctions() with the function name of each line
-            Using trTextReader = New StringReader(objException.StackTrace)
-
-                Do While trTextReader.Peek > -1
-                    strLine = trTextReader.ReadLine()
-
-                    If Not String.IsNullOrEmpty(strLine) Then
-                        strCurrentFunction = String.Empty
-
-                        objMatch = reFunctionName.Match(strLine)
-                        If objMatch.Success AndAlso objMatch.Groups.Count > 1 Then
-                            strCurrentFunction = objMatch.Groups(1).Value
-                        Else
-                            ' Look for the word " in "
-                            intIndex = strLine.ToLower().IndexOf(" in ", StringComparison.Ordinal)
-                            If intIndex = 0 Then
-                                ' " in" not found; look for the first space after startIndex 4
-                                intIndex = strLine.IndexOf(" ", 4, StringComparison.Ordinal)
-                            End If
-                            If intIndex = 0 Then
-                                ' Space not found; use the entire string
-                                intIndex = strLine.Length - 1
-                            End If
-
-                            If intIndex > 0 Then
-                                strCurrentFunction = strLine.Substring(0, intIndex)
-                            End If
-
-                        End If
-
-                        If Not String.IsNullOrEmpty(strCurrentFunction) Then
-                            lstFunctions.Add(strCurrentFunction)
-                        End If
-
-                        If strFinalFile.Length = 0 Then
-                            ' Also extract the file name where the Exception occurred
-                            objMatch = reFileName.Match(strLine)
-                            If objMatch.Success AndAlso objMatch.Groups.Count > 1 Then
-                                strFinalFile = objMatch.Groups(1).Value
-                            End If
-                        End If
-
-                    End If
-                Loop
-
-            End Using
-
-            strStackTrace = String.Empty
-            For intIndex = lstFunctions.Count - 1 To 0 Step -1
-                If strStackTrace.Length = 0 Then
-                    strStackTrace = "Stack trace: " & lstFunctions(intIndex)
-                Else
-                    strStackTrace &= "-:-" & lstFunctions(intIndex)
-                End If
-            Next intIndex
-
-            If Not String.IsNullOrEmpty(strStackTrace) AndAlso Not String.IsNullOrWhiteSpace(strFinalFile) Then
-                strStackTrace &= " in " & strFinalFile
-            End If
-
-            Return strStackTrace
-
+        ''' <summary>
+        ''' Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
+        ''' with one line for each function in the call tree
+        ''' </summary>
+        ''' <param name="ex">Exception</param>
+        ''' <returns>
+        ''' Stack trace: 
+        '''   clsCodeTest.Test
+        '''   clsCodeTest.TestException
+        '''   clsCodeTest.InnerTestException 
+        '''    in clsCodeTest.vb:line 86
+        ''' </returns>
+        ''' <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
+        Public Shared Function GetExceptionStackTraceMultiLine(ex As Exception) As String
+            Return clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex)
         End Function
     End Class
 

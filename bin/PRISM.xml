@@ -60,11 +60,28 @@ PRISM
  </remarks>
 </member><member name="M:PRISM.Logging.Utilities.GetExceptionStackTrace(System.Exception)">
 	<summary>
- Parses the .StackTrace text of the given expression to return a compact description of the current stack
+ Parses the StackTrace text of the given exception to return a compact description of the current stack
  </summary>
 	<param name="objException"></param>
-	<returns>String similar to "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"</returns>
-	<remarks></remarks>
+	<returns>
+ String of the form:
+ "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+ </returns>
+	<remarks>Useful for removing the full file paths included in the default stack trace</remarks>
+</member><member name="M:PRISM.Logging.Utilities.GetExceptionStackTraceMultiLine(System.Exception)">
+	<summary>
+ Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
+ with one line for each function in the call tree
+ </summary>
+	<param name="ex">Exception</param>
+	<returns>
+ Stack trace: 
+   clsCodeTest.Test
+   clsCodeTest.TestException
+   clsCodeTest.InnerTestException 
+    in clsCodeTest.vb:line 86
+ </returns>
+	<remarks>Useful for removing the full file paths included in the default stack trace</remarks>
 </member><member name="M:PRISM.Logging.clsFileLogger.#ctor">
 	<summary>Initializes a new instance of the clsFileLogger class.</summary>
 </member><member name="M:PRISM.Logging.clsFileLogger.#ctor(System.String)">
@@ -1092,6 +1109,30 @@ PRISM
 	<summary>
  Provides data for validation failed event.
  </summary>
+</member><member name="M:PRISM.clsStackTraceFormatter.GetExceptionStackTrace(System.Exception)">
+	<summary>
+ Parses the StackTrace text of the given exception to return a compact description of the current stack
+ </summary>
+	<param name="objException"></param>
+	<returns>
+ String of the form:
+ "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+ </returns>
+	<remarks>Useful for removing the full file paths included in the default stack trace</remarks>
+</member><member name="M:PRISM.clsStackTraceFormatter.GetExceptionStackTraceMultiLine(System.Exception)">
+	<summary>
+ Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
+ with one line for each function in the call tree
+ </summary>
+	<param name="ex">Exception</param>
+	<returns>
+ Stack trace: 
+   clsCodeTest.Test
+   clsCodeTest.TestException
+   clsCodeTest.InnerTestException 
+    in clsCodeTest.vb:line 86
+ </returns>
+	<remarks>Useful for removing the full file paths included in the default stack trace</remarks>
 </member><member name="M:PRISM.Files.XmlSettingsFileAccessor.LoadSettings">
 	<summary>
  Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
