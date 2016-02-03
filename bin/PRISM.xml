@@ -1133,6 +1133,39 @@ PRISM
     in clsCodeTest.vb:line 86
  </returns>
 	<remarks>Useful for removing the full file paths included in the default stack trace</remarks>
+</member><member name="M:PRISM.clsStackTraceFormatter.GetExceptionStackTraceData(System.Exception)">
+	<summary>
+ Parses the StackTrace text of the given exception to return a cleaned up description of the current stack
+ </summary>
+	<param name="ex">Exception</param>
+	<returns>
+ List of function names; for example:
+   clsCodeTest.Test
+   clsCodeTest.TestException
+   clsCodeTest.InnerTestException 
+    in clsCodeTest.vb:line 86
+ </returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.clsStackTraceFormatter.GetExceptionStackTraceData(System.String)">
+	<summary>
+ Parses the given StackTrace text to return a cleaned up description of the current stack
+ </summary>
+	<param name="stackTraceText">Exception.StackTrace data</param>
+	<returns>
+ List of function names; for example:
+   clsCodeTest.Test
+   clsCodeTest.TestException
+   clsCodeTest.InnerTestException 
+    in clsCodeTest.vb:line 86
+ </returns>
+	<remarks></remarks>
+</member><member name="T:PRISM.clsStackTraceFormatter">
+	<summary>
+ This class produces an easier-to read stack trace for an exception
+ See the descriptions for functions GetExceptionStackTrace and 
+ GetExceptionStackTraceMultiLine for example text
+ </summary>
+	<remarks>To see accurate source code line numbers you may need to compile with option "Enable Optimizations" disabled</remarks>
 </member><member name="M:PRISM.Files.XmlSettingsFileAccessor.LoadSettings">
 	<summary>
  Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive

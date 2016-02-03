@@ -1,5 +1,9 @@
 Prism Class Library Log
 
+Version 2.2.5877; February 3, 2016
+	- Include the line number for every function in the stack trace
+	- Add function GetExceptionStackTraceData to clsStackTraceFormatter
+
 Version 2.2.5876; February 2, 2016
 	- Move GetExceptionStackTrace into clsStackTraceFormatter.vb
 
