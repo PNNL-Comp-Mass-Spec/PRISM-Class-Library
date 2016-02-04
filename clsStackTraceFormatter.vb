@@ -10,7 +10,7 @@ Imports System.Text.RegularExpressions
 ''' See the descriptions for functions GetExceptionStackTrace and 
 ''' GetExceptionStackTraceMultiLine for example text
 ''' </summary>
-''' <remarks>To see accurate source code line numbers you may need to compile with option "Enable Optimizations" disabled</remarks>
+''' <remarks></remarks>
 Public Class clsStackTraceFormatter
 
     Public Const STACK_TRACE_TITLE As String = "Stack trace: "
@@ -143,7 +143,12 @@ Public Class clsStackTraceFormatter
                     If fileMatch.Success Then
                         currentFunctionFile = fileMatch.Groups(1).Value
                         If strFinalFile.Length = 0 Then
-                            strFinalFile = String.Copy(currentFunctionFile)
+                            Dim lineMatchFinalFile = reLineInCode.Match(currentFunctionFile)
+                            If lineMatchFinalFile.Success Then
+                                strFinalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index)
+                            Else
+                                strFinalFile = String.Copy(currentFunctionFile)
+                            End If
                         End If
                     Else
                         currentFunctionFile = String.Empty

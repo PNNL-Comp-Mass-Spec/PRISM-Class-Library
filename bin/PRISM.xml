@@ -1165,7 +1165,7 @@ PRISM
  See the descriptions for functions GetExceptionStackTrace and 
  GetExceptionStackTraceMultiLine for example text
  </summary>
-	<remarks>To see accurate source code line numbers you may need to compile with option "Enable Optimizations" disabled</remarks>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.XmlSettingsFileAccessor.LoadSettings">
 	<summary>
  Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
