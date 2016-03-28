@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.5931; March 28, 2016
+	- Add DeleteFileWithRetry and IsVimSwapFile to clsFileTools
+
 Version 2.2.5877; February 3, 2016
 	- Include the line number for every function in the stack trace
 	- Add function GetExceptionStackTraceData to clsStackTraceFormatter

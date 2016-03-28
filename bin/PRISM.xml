@@ -1839,6 +1839,30 @@ PRISM
 	<param name="VersionCountToKeep">Maximum backup copies of the file to keep</param>
 	<returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
 	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteFileWithRetry(System.IO.FileInfo,System.String@)">
+	<summary>
+ Delete the file, retrying up to 3 times
+ </summary>
+	<param name="fiFile">File to delete</param>
+	<param name="errorMessage">Output message: error message if unable to delete the file</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.DeleteFileWithRetry(System.IO.FileInfo,System.Int32,System.String@)">
+	<summary>
+ Delete the file, retrying up to retryCount times
+ </summary>
+	<param name="fiFile">File to delete</param>
+	<param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
+	<param name="errorMessage">Output message: error message if unable to delete the file</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:PRISM.Files.clsFileTools.IsVimSwapFile(System.String)">
+	<summary>
+ Returns true if the file is _.swp or starts with a . and ends with .swp
+ </summary>
+	<param name="filePath"></param>
+	<returns></returns>
+	<remarks></remarks>
 </member><member name="M:PRISM.Files.clsFileTools.ValidateFreeDiskSpace(System.String,System.Double,System.String@)">
 	<summary>
  Confirms that the drive for the target output file has a minimum amount of free disk space

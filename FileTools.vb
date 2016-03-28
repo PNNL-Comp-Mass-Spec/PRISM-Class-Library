@@ -1969,6 +1969,103 @@ Namespace Files
         End Function
 
         ''' <summary>
+        ''' Delete the file, retrying up to 3 times
+        ''' </summary>
+        ''' <param name="fiFile">File to delete</param>
+        ''' <param name="errorMessage">Output message: error message if unable to delete the file</param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Function DeleteFileWithRetry(fiFile As FileInfo, <Out> ByRef errorMessage As String) As Boolean
+            Return DeleteFileWithRetry(fiFile, 3, errorMessage)
+        End Function
+
+        ''' <summary>
+        ''' Delete the file, retrying up to retryCount times
+        ''' </summary>
+        ''' <param name="fiFile">File to delete</param>
+        ''' <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
+        ''' <param name="errorMessage">Output message: error message if unable to delete the file</param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Function DeleteFileWithRetry(fiFile As FileInfo, retryCount As Integer, <Out> ByRef errorMessage As String) As Boolean
+
+            Dim fileDeleted = False
+            Dim sleepTimeMsec = 500
+
+            Dim retriesRemaining = retryCount - 1
+            If retriesRemaining < 0 Then retriesRemaining = 0
+
+            While Not fileDeleted AndAlso retriesRemaining >= 0
+                retriesRemaining -= 1
+
+                Try
+                    fiFile.Delete()
+                    fileDeleted = True
+                Catch ex As Exception
+                    If IsVimSwapFile(fiFile.Name) Then
+                        ' Ignore this error
+                        errorMessage = String.Empty
+                        Return True
+                    End If
+
+                    ' Make sure the readonly bit is not set
+                    If (fiFile.IsReadOnly) Then
+                        Dim attributes = fiFile.Attributes
+                        fiFile.Attributes = attributes And (Not FileAttributes.ReadOnly)
+
+                        Try
+                            ' Retry the delete
+                            fiFile.Delete()
+                            fileDeleted = True
+                        Catch ex2 As Exception
+                            errorMessage = "Error deleting file " & fiFile.FullName & ": " & ex2.Message
+                        End Try
+                    Else
+                        errorMessage = "Error deleting file " & fiFile.FullName & ": " & ex.Message
+                    End If
+                End Try
+
+                If Not fileDeleted Then
+                    ' Sleep for 0.5 second (or longer) then try again
+                    Threading.Thread.Sleep(sleepTimeMsec)
+
+                    ' Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
+                    If sleepTimeMsec < 5 Then
+                        sleepTimeMsec = CInt(Math.Round(sleepTimeMsec * 1.5, 0))
+                    End If
+                End If
+
+            End While
+
+            If fileDeleted Then
+                errorMessage = String.Empty
+            ElseIf String.IsNullOrWhiteSpace(errorMessage) Then
+                errorMessage = "Unknown error deleting file " & fiFile.FullName
+            End If
+
+            ' ReSharper disable once NotAssignedOutParameter
+            Return True
+
+        End Function
+
+        ''' <summary>
+        ''' Returns true if the file is _.swp or starts with a . and ends with .swp
+        ''' </summary>
+        ''' <param name="filePath"></param>
+        ''' <returns></returns>
+        ''' <remarks></remarks>
+        Public Shared Function IsVimSwapFile(filePath As String) As Boolean
+
+            Dim fileName = Path.GetFileName(filePath)
+
+            If fileName.ToLower() = "_.swp" OrElse fileName.StartsWith(".") AndAlso fileName.ToLower().EndsWith(".swp") Then
+                Return True
+            Else
+                Return False
+            End If
+        End Function
+
+        ''' <summary>
         ''' Confirms that the drive for the target output file has a minimum amount of free disk space
         ''' </summary>
         ''' <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
