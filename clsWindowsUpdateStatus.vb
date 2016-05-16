@@ -43,9 +43,9 @@ Public Class clsWindowsUpdateStatus
         Dim secondTuesdayInMonth = GetSecondTuesdayInMonth(currentTime)
 
         ' Windows 7 / Windows 8 Pubs install updates around 3 am on the Thursday after the second Tuesday of the month
-        ' Return true between 12 am and 6 am on Thursday in the week with the second Tuesday of the month
+        ' Return true between 12 am and 6:30 am on Thursday in the week with the second Tuesday of the month
         Dim dtExclusionStart = secondTuesdayInMonth.AddDays(2)
-        Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(2).AddHours(6)
+        Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(2).AddHours(6).AddMinutes(30)
 
         If currentTime >= dtExclusionStart AndAlso currentTime < dtExclusionEnd Then
             Dim dtPendingUpdateTime = secondTuesdayInMonth.AddDays(2).AddHours(3)
@@ -90,11 +90,11 @@ Public Class clsWindowsUpdateStatus
         Dim secondTuesdayInMonth = GetSecondTuesdayInMonth(currentTime)
 
         ' Windows servers install updates around either 3 am or 10 am on the first Sunday after the second Tuesday of the month
-        ' Return true between 2 am and 4 am or between 9 am and 11 am on the first Sunday after the second Tuesday of the month
+        ' Return true between 2 am and 6:30 am or between 9:30 am and 11 am on the first Sunday after the second Tuesday of the month
         Dim dtExclusionStart = secondTuesdayInMonth.AddDays(5).AddHours(2)
-        Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(4)
+        Dim dtExclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(6).AddMinutes(30)
 
-        Dim dtExclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9)
+        Dim dtExclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9).AddMinutes(30)
         Dim dtExclusionEnd2 = secondTuesdayInMonth.AddDays(5).AddHours(11)
 
         If (currentTime >= dtExclusionStart AndAlso currentTime < dtExclusionEnd) OrElse

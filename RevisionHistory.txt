@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.5980; May 16, 2016
+	- Expanded the time range during which Windows Updates are expected to affect server availability
+
 Version 2.2.5931; March 28, 2016
 	- Add DeleteFileWithRetry and IsVimSwapFile to clsFileTools
 
