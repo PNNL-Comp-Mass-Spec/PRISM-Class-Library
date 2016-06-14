@@ -15,7 +15,7 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manag
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_AScore_PlugIn\bin\Debug" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Cyclops_PlugIn\bin\Debug" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DataImport_Plugin\bin" /Y /D
-xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Decon2ls_PlugIn_Decon2LSV2\bin" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Decon2ls_PlugIn_Decon2LSV2\bin\Debug" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DTA_Import_PlugIn\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DTA_Split_PlugIn\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_DtaRefinery_PlugIn\bin" /Y /D
@@ -140,7 +140,7 @@ xcopy PRISM.dll "F:\My Documents\Projects\GordonSlysz\DeconTools_IQ\Library" /Y 
 xcopy PRISM.dll "F:\My Documents\Projects\KenAuberry\Organism_Database_Handler\Shared Libraries" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\JoshAldrich\InterferenceDetection\InterDetect\DLLLibrary" /Y /D
-xcopy PRISM.dll "F:\My Documents\Projects\JohnSandoval\ApeVbNet\Lib" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\JohnSandoval\APE_DLL\Lib" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\SharedVBNetRoutines" /Y /D
 
