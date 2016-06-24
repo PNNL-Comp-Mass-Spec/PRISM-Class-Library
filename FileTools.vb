@@ -1192,7 +1192,7 @@ Namespace Files
                 Throw New DirectoryNotFoundException("Source directory does not exist: " + diSourceFolder.FullName)
             End If
 
-            ' If destination SubDir's parent SubDir does not exist throw an exception
+            ' If destination SubDir's parent directory does not exist throw an exception
             If Not diTargetFolder.Parent.Exists Then
                 Throw New DirectoryNotFoundException("Destination directory does not exist: " + diTargetFolder.Parent.FullName)
             End If
@@ -1624,8 +1624,6 @@ Namespace Files
             ' Original code obtained from vb2themax.com
             Dim DirSize As Long
             Dim Dir = New DirectoryInfo(DirPath)
-            '		Dim InternalFileCount As Long
-            '		Dim InternalDirCount As Long
 
             ' add the size of each file
             Dim ChildFile As FileInfo
@@ -1642,8 +1640,6 @@ Namespace Files
                 SubDirCount += 1
             Next
 
-            '		FileCount = InternalFileCount
-            '		SubDirCount = InternalDirCount
             Return DirSize
 
         End Function
