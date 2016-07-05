@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.2.6030; July 5, 2016
+	- Switched from \\a2.emsl.pnl.gov to \\aurora.emsl.pnl.gov
+
 Version 2.2.5980; May 16, 2016
 	- Expanded the time range during which Windows Updates are expected to affect server availability
 
