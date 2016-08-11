@@ -95,7 +95,7 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DMS_Update_Man
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Index_Creator\Imports" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Index_Creator\IndexRunner\bin" /Y /D
 
-xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DMS_Update_Manager\MASIC" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\DMS_Update_Manager\bin\AnalysisToolManagerDistribution\MASIC" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\GANET_Manager\bin" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide_File_Extractor\Debug\Executable" /Y /D

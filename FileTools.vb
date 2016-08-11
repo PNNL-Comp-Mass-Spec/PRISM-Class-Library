@@ -21,7 +21,9 @@ Namespace Files
         ''' <param name="filename">The file's full path.</param>
         Public Event CopyingFile(filename As String)
 
-        Public Event DebugEvent(CurrentTask As String, TaskDetail As String)
+        Public Event DebugEvent(currentTask As String, taskDetail As String)
+
+        Public Event WarningEvent(warningMessage As String, warningDetail As String)
 
         ''' <summary>Event is raised before copying begins.</summary>
         ''' <param name="filename">The file's full path.</param>
@@ -32,7 +34,7 @@ Namespace Files
         ''' <param name="percentComplete">Percent complete (value between 0 and 100)</param>
         Public Event FileCopyProgress(filename As String, percentComplete As Single)
 
-        Public Event WaitingForLockQueue(SourceFilePath As String, TargetFilePath As String, MBBacklogSource As Integer, MBBacklogTarget As Integer)
+        Public Event WaitingForLockQueue(sourceFilePath As String, targetFilePath As String, backlogSourceMB As Integer, backlogTargetMB As Integer)
 
         Public Event LockQueueTimedOut(sourceFilePath As String, targetFilePath As String, waitTimeMinutes As Double)
 
@@ -326,14 +328,40 @@ Namespace Files
 
 #Region "Lock File Copying functions"
 
+        ''' <summary>
+        ''' Copy the source file to the target path; do not overwrite existing files
+        ''' </summary>
+        ''' <param name="strSourceFilePath">Source file path</param>
+        ''' <param name="strTargetFilePath">Target file path</param>
+        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
+        ''' <returns>True if success, false if an error</returns>
+        ''' <remarks>If the file exists, will not copy the file but will still return true</remarks>
         Public Function CopyFileUsingLocks(strSourceFilePath As String, strTargetFilePath As String, strManagerName As String) As Boolean
             Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite:=False)
         End Function
 
+        ''' <summary>
+        ''' Copy the source file to the target path
+        ''' </summary>
+        ''' <param name="strSourceFilePath">Source file path</param>
+        ''' <param name="strTargetFilePath">Target file path</param>
+        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
+        ''' <param name="Overwrite">True to overwrite existing files</param>
+        ''' <returns>True if success, false if an error</returns>
+        ''' <remarks>If the file exists yet Overwrite is false, will not copy the file but will still return true</remarks>
         Public Function CopyFileUsingLocks(strSourceFilePath As String, strTargetFilePath As String, strManagerName As String, Overwrite As Boolean) As Boolean
             Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite)
         End Function
 
+        ''' <summary>
+        ''' Copy the source file to the target path
+        ''' </summary>
+        ''' <param name="fiSource">Source file object</param>
+        ''' <param name="strTargetFilePath">Target file path</param>
+        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
+        ''' <param name="Overwrite">True to overwrite existing files</param>
+        ''' <returns>True if success, false if an error</returns>
+        ''' <remarks>If the file exists yet Overwrite is false, will not copy the file but will still return true</remarks>
         Public Function CopyFileUsingLocks(
           fiSource As FileInfo,
           strTargetFilePath As String,
@@ -359,6 +387,7 @@ Namespace Files
             If blnUseLockFile Then
                 blnSuccess = CopyFileUsingLocks(strLockFolderPathSource, strLockFolderPathTarget, fiSource, strTargetFilePath, strManagerName, Overwrite)
             Else
+                RaiseEvent WarningEvent("Lock file folder not found on the source or target", strLockFolderPathSource & " and " & strLockFolderPathTarget)
                 Const BackupDestFileBeforeCopy = False
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
                 blnSuccess = True
@@ -368,6 +397,11 @@ Namespace Files
 
         End Function
 
+        ''' <summary>
+        ''' Given a file path, return the lock file folder if it exsists
+        ''' </summary>
+        ''' <param name="fiFile"></param>
+        ''' <returns></returns>
         Public Function GetLockFolder(fiFile As FileInfo) As String
 
             If Path.IsPathRooted(fiFile.FullName) Then
@@ -384,16 +418,16 @@ Namespace Files
         End Function
 
         ''' <summary>
-        ''' 
+        ''' Copy the source file to the target path
         ''' </summary>
         ''' <param name="strLockFolderPathSource">Path to the lock folder for the source file; can be an empty string</param>
         ''' <param name="strLockFolderPathTarget">Path to the lock folder for the target file; can be an empty string</param>
-        ''' <param name="fiSource"></param>
-        ''' <param name="strTargetFilePath"></param>
-        ''' <param name="strManagerName"></param>
-        ''' <param name="Overwrite"></param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
+        ''' <param name="fiSource">Source file object</param>
+        ''' <param name="strTargetFilePath">Target file path</param>
+        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
+        ''' <param name="Overwrite">True to overwrite existing files</param>
+        ''' <returns>True if success, false if an error</returns>
+        ''' <remarks>If the file exists yet Overwrite is false, will not copy the file but will still return true</remarks>
         Public Function CopyFileUsingLocks(
           strLockFolderPathSource As String,
           strLockFolderPathTarget As String,
@@ -519,9 +553,13 @@ Namespace Files
                     swLockFile.WriteLine("Size_Bytes: " & fiSource.Length)
                     swLockFile.WriteLine("Manager: " & strManagerName)
                 End Using
+
+                RaiseEvent DebugEvent("Created lock file in " + diLockFolder.FullName, strLockFilePath)
+
             Catch ex As Exception
                 ' Error creating the lock file
                 ' Return an empty string
+                RaiseEvent WarningEvent("Error creating lock file in " + diLockFolder.FullName, ex.Message)
                 Return String.Empty
             End Try
 
@@ -566,7 +604,6 @@ Namespace Files
 
         End Function
 
-
         ''' <summary>
         ''' Deletes the specified directory and all subdirectories; does not delete the target folder
         ''' </summary>
@@ -577,7 +614,6 @@ Namespace Files
             Const blnDeleteFolderIfEmpty = False
             Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
         End Function
-
 
         ''' <summary>
         ''' Deletes the specified directory and all subdirectories
@@ -601,7 +637,7 @@ Namespace Files
                 Try
                     diFolderToDelete.Delete(True)
                 Catch ex As Exception
-                    RaiseEvent DebugEvent("Error removing empty directory", "Unable to delete directory " & diFolderToDelete.FullName & ": " & ex.Message)
+                    RaiseEvent WarningEvent("Error removing empty directory", "Unable to delete directory " & diFolderToDelete.FullName & ": " & ex.Message)
                     errorCount += 1
                 End Try
             End If
@@ -650,7 +686,7 @@ Namespace Files
 
             Catch ex As Exception
                 ' Ignore errors here
-                RaiseEvent DebugEvent("Error deleting file", "Unable to delete file " & fiFile.FullName & ": " & ex.Message)
+                RaiseEvent WarningEvent("Error deleting file", "Unable to delete file " & fiFile.FullName & ": " & ex.Message)
 
                 Return False
             End Try
@@ -1032,7 +1068,7 @@ Namespace Files
         Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String) As Boolean
 
             Const Recurse = False
-            Const eFileOverwriteMode As FileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
+            Const eFileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
             Dim FileNamesToSkip As New Generic.List(Of String)
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, FileNamesToSkip)
@@ -1050,7 +1086,7 @@ Namespace Files
         ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String, Recurse As Boolean) As Boolean
 
-            Const eFileOverwriteMode As FileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
+            Const eFileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
             Dim FileNamesToSkip As New Generic.List(Of String)
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, FileNamesToSkip)
