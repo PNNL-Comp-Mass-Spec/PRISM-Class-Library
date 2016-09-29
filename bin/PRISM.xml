@@ -7,10 +7,20 @@ PRISM
 </assembly>
 <members>
 <member name="T:PRISM.DataBase.clsDBTools">
- <summary>Tools to manipulates the database.</summary>
+ <summary>
+ Tools to manipulates the database.
+ </summary>
+</member>
+<member name="M:PRISM.DataBase.clsDBTools.#ctor(System.String)">
+ <summary>
+ Constructor
+ </summary>
+ <param name="connectionString">Database connection string</param>
 </member>
 <member name="M:PRISM.DataBase.clsDBTools.#ctor(PRISM.Logging.ILogger,System.String)">
- <summary>Initializes a new instance of the clsDBTools class which logs to the specified logger.</summary>
+ <summary>
+ Deprecated Constructor
+ </summary>
  <param name="logger">This is the logger.</param>
  <param name="ConnectStr">This is a connection string.</param>
 </member>
@@ -23,21 +33,17 @@ PRISM
  <summary>
  The function opens a database connection.
  </summary>
- <return>The function returns a boolean that shows if the connection was opened.</return>
+ <return>True if the connection was successfully opened</return>
+ <remarks>Retries the connection up to 3 times</remarks>
 </member>
-<member name="M:PRISM.DataBase.clsDBTools.CLoseConnection">
+<member name="M:PRISM.DataBase.clsDBTools.CloseConnection">
  <summary>
  The subroutine closes the database connection.
  </summary>
 </member>
-<member name="M:PRISM.DataBase.clsDBTools.LogErrorEvents">
- <summary>
- The subroutine logs the error events.
- </summary>
-</member>
 <member name="M:PRISM.DataBase.clsDBTools.OnInfoMessage(System.Object,System.Data.SqlClient.SqlInfoMessageEventArgs)">
  <summary>
- The subroutine is an event handeler for InfoMessage event.
+ The subroutine is an event handler for InfoMessage event.
  </summary>
  <remarks>
  The errors and warnings sent from the SQL server are caught here
@@ -51,6 +57,23 @@ PRISM
  <param name="DS">A dataset.</param>
  <param name="RowCount">A row counter.</param>
  <return>Returns a disconnected dataset as specified by the SQL statement.</return>
+</member>
+<member name="M:PRISM.DataBase.clsDBTools.GetQueryResults(System.String,System.String,System.Collections.Generic.List{System.Collections.Generic.List{System.String}}@,System.String,System.Int16,System.Int32,System.Int32)">
+ <summary>
+ Run a query against a SQL Server database, return the results as a list of strings
+ </summary>
+ <param name="sqlQuery">Query to run</param>
+ <param name="connectionString">Connection string</param>
+ <param name="lstResults">Results (list of list of strings)</param>
+ <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+ <param name="retryCount">Number of times to retry (in case of a problem)</param>
+ <param name="timeoutSeconds">Query timeout (in seconds); minimum is 5 seconds; suggested value is 30 seconds</param>
+ <returns>True if success, false if an error</returns>
+ <remarks>
+ Null values are converted to empty strings
+ Numbers are converted to their string equivalent
+ By default, retries the query up to 3 times
+ </remarks>
 </member>
 <member name="M:PRISM.DataBase.clsDBTools.UpdateDatabase(System.String,System.Int32@)">
  <summary>
