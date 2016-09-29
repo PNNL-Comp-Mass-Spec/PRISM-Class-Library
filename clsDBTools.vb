@@ -146,6 +146,101 @@ Namespace DataBase
         End Function
 
         ''' <summary>
+        ''' Run a query against a SQL Server database, return the results as a list of strings
+        ''' </summary>
+        ''' <param name="sqlQuery">Query to run</param>
+        ''' <param name="connectionString">Connection string</param>
+        ''' <param name="lstResults">Results (list of list of strings)</param>
+        ''' <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        ''' <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        ''' <param name="timeoutSeconds">Query timeout (in seconds); minimum is 5 seconds; suggested value is 30 seconds</param>
+        ''' <returns>True if success, false if an error</returns>
+        ''' <remarks>
+        ''' Null values are converted to empty strings
+        ''' Numbers are converted to their string equivalent
+        ''' By default, retries the query up to 3 times
+        ''' </remarks>
+        Public Function GetQueryResults(
+          sqlQuery As String,
+          connectionString As String,
+          <Out()> ByRef lstResults As List(Of List(Of String)),
+          callingFunction As String,
+          Optional retryCount As Short = 3,
+          Optional timeoutSeconds As Integer = 5,
+          Optional maxRowsToReturn As Integer = 0) As Boolean
+
+            If retryCount < 1 Then retryCount = 1
+            If timeoutSeconds < 5 Then timeoutSeconds = 5
+
+            lstResults = New List(Of List(Of String))
+
+            While retryCount > 0
+                Try
+                    Using dbConnection = New SqlConnection(connectionString)
+                        Using cmd = New SqlCommand(sqlQuery, dbConnection)
+
+                            cmd.CommandTimeout = timeoutSeconds
+
+                            dbConnection.Open()
+
+                            Dim reader = cmd.ExecuteReader()
+
+                            While reader.Read()
+                                Dim lstCurrentRow = New List(Of String)
+
+                                For columnIndex = 0 To reader.FieldCount - 1
+                                    Dim value = reader.GetValue(columnIndex)
+
+                                    If DBNull.Value.Equals(value) Then
+                                        lstCurrentRow.Add(String.Empty)
+                                    Else
+                                        lstCurrentRow.Add(value.ToString())
+                                    End If
+
+                                Next
+
+                                lstResults.Add(lstCurrentRow)
+
+                                If maxRowsToReturn > 0 AndAlso lstResults.Count >= maxRowsToReturn Then
+                                    Exit While
+                                End If
+                            End While
+
+                        End Using
+                    End Using
+
+                    Return True
+
+                Catch ex As Exception
+                    retryCount -= 1S
+                    If String.IsNullOrWhiteSpace(callingFunction) Then
+                        callingFunction = "Unknown"
+                    End If
+                    Dim errorMessage = String.Format("Exception querying database (called from {0}): {1}; " +
+                                                     "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                                                     callingFunction, ex.Message, connectionString, retryCount, sqlQuery)
+
+                    OnError(errorMessage)
+                    Thread.Sleep(5000)              'Delay for 5 seconds before trying again
+                End Try
+            End While
+
+            Return False
+
+        End Function
+
+        Private Sub OnError(errorMessage As String)
+            If Not String.IsNullOrWhiteSpace(errorMessage) Then
+                RaiseEvent ErrorEvent(errorMessage)
+            End If
+        End Sub
+
+        Private Sub OnError(errorMessage As String, ex As Exception)
+            If Not String.IsNullOrWhiteSpace(errorMessage) Then
+                RaiseEvent ErrorEvent(errorMessage & ": " & ex.Message)
+            End If
+        End Sub
+
         ''' The function updates a database table as specified in the SQL statement.
         ''' </summary>
         ''' <param name="SQL">A SQL string.</param>
