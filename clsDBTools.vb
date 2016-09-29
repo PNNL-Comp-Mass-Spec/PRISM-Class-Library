@@ -149,24 +149,24 @@ Namespace DataBase
         ''' Run a query against a SQL Server database, return the results as a list of strings
         ''' </summary>
         ''' <param name="sqlQuery">Query to run</param>
-        ''' <param name="connectionString">Connection string</param>
         ''' <param name="lstResults">Results (list of list of strings)</param>
         ''' <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         ''' <param name="retryCount">Number of times to retry (in case of a problem)</param>
         ''' <param name="timeoutSeconds">Query timeout (in seconds); minimum is 5 seconds; suggested value is 30 seconds</param>
+        ''' <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         ''' <returns>True if success, false if an error</returns>
         ''' <remarks>
+        ''' Uses the connection string passed to the constructor of this class
         ''' Null values are converted to empty strings
         ''' Numbers are converted to their string equivalent
         ''' By default, retries the query up to 3 times
         ''' </remarks>
         Public Function GetQueryResults(
           sqlQuery As String,
-          connectionString As String,
           <Out()> ByRef lstResults As List(Of List(Of String)),
           callingFunction As String,
           Optional retryCount As Short = 3,
-          Optional timeoutSeconds As Integer = 5,
+          Optional timeoutSeconds As Integer = 30,
           Optional maxRowsToReturn As Integer = 0) As Boolean
 
             If retryCount < 1 Then retryCount = 1
@@ -176,7 +176,7 @@ Namespace DataBase
 
             While retryCount > 0
                 Try
-                    Using dbConnection = New SqlConnection(connectionString)
+                    Using dbConnection = New SqlConnection(m_connection_str)
                         Using cmd = New SqlCommand(sqlQuery, dbConnection)
 
                             cmd.CommandTimeout = timeoutSeconds
@@ -218,7 +218,7 @@ Namespace DataBase
                     End If
                     Dim errorMessage = String.Format("Exception querying database (called from {0}): {1}; " +
                                                      "ConnectionString: {2}, RetryCount = {3}, Query {4}",
-                                                     callingFunction, ex.Message, connectionString, retryCount, sqlQuery)
+                                                     callingFunction, ex.Message, m_connection_str, retryCount, sqlQuery)
 
                     OnError(errorMessage)
                     Thread.Sleep(5000)              'Delay for 5 seconds before trying again

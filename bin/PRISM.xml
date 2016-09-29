@@ -58,18 +58,19 @@ PRISM
  <param name="RowCount">A row counter.</param>
  <return>Returns a disconnected dataset as specified by the SQL statement.</return>
 </member>
-<member name="M:PRISM.DataBase.clsDBTools.GetQueryResults(System.String,System.String,System.Collections.Generic.List{System.Collections.Generic.List{System.String}}@,System.String,System.Int16,System.Int32,System.Int32)">
+<member name="M:PRISM.DataBase.clsDBTools.GetQueryResults(System.String,System.Collections.Generic.List{System.Collections.Generic.List{System.String}}@,System.String,System.Int16,System.Int32,System.Int32)">
  <summary>
  Run a query against a SQL Server database, return the results as a list of strings
  </summary>
  <param name="sqlQuery">Query to run</param>
- <param name="connectionString">Connection string</param>
  <param name="lstResults">Results (list of list of strings)</param>
  <param name="callingFunction">Name of the calling function (for logging purposes)</param>
  <param name="retryCount">Number of times to retry (in case of a problem)</param>
  <param name="timeoutSeconds">Query timeout (in seconds); minimum is 5 seconds; suggested value is 30 seconds</param>
+ <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
  <returns>True if success, false if an error</returns>
  <remarks>
+ Uses the connection string passed to the constructor of this class
  Null values are converted to empty strings
  Numbers are converted to their string equivalent
  By default, retries the query up to 3 times
