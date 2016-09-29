@@ -82,6 +82,12 @@ Namespace DataBase
 
         End Sub
 
+        Private Sub OnError(errorMessage As String)
+            If Not String.IsNullOrWhiteSpace(errorMessage) Then
+                RaiseEvent DBErrorEvent(errorMessage)
+            End If
+        End Sub
+
         ''' <summary>
         ''' Event handler for InfoMessage event
         ''' </summary>
@@ -103,7 +109,7 @@ Namespace DataBase
                     ", Procedure:" & err.Procedure &
                     ", Server: " & err.Server
 
-                RaiseEvent DBErrorEvent(s)
+                OnError(s)
             Next
 
         End Sub
@@ -185,7 +191,7 @@ Namespace DataBase
                     errorMessage &= "; resultCode = " & resultCode.ToString & "; Retry count = " & retryCount.ToString
                     errorMessage &= "; " & Logging.Utilities.GetExceptionStackTrace(ex)
 
-                    RaiseEvent DBErrorEvent(errorMessage)
+                    OnError(errorMessage)
                     Console.WriteLine(errorMessage)
 
                     If ex.Message.StartsWith("Could not find stored procedure " & spCmd.CommandText) Then
@@ -214,7 +220,7 @@ Namespace DataBase
                 End If
                 errorMessage &= " executing SP " & spCmd.CommandText
 
-                RaiseEvent DBErrorEvent(errorMessage)
+                OnError(errorMessage)
                 Console.WriteLine(errorMessage)
 
                 If blnDeadlockOccurred Then
@@ -344,7 +350,7 @@ Namespace DataBase
                     errorMessage &= "; resultCode = " & resultCode.ToString & "; Retry count = " & retryCount.ToString
                     errorMessage &= "; " & Logging.Utilities.GetExceptionStackTrace(ex)
 
-                    RaiseEvent DBErrorEvent(errorMessage)
+                    OnError(errorMessage)
                     Console.WriteLine(errorMessage)
 
                     If ex.Message.StartsWith("Could not find stored procedure " & spCmd.CommandText) Then
@@ -372,7 +378,7 @@ Namespace DataBase
                 End If
                 errorMessage &= " executing SP " & spCmd.CommandText
 
-                RaiseEvent DBErrorEvent(errorMessage)
+                OnError(errorMessage)
                 Console.WriteLine(errorMessage)
 
                 If blnDeadlockOccurred Then
