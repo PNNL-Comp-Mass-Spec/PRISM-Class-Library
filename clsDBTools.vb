@@ -241,12 +241,16 @@ Namespace DataBase
             End If
         End Sub
 
+        ''' <summary>
         ''' The function updates a database table as specified in the SQL statement.
         ''' </summary>
         ''' <param name="SQL">A SQL string.</param>
         ''' <param name="AffectedRows">Affected Rows to be updated.</param>
         ''' <return>Returns Boolean shwoing if the database was updated.</return>
+        <Obsolete("Functionality of this method has been disabled for safety; an exception will be raised if it is called")>
         Public Function UpdateDatabase(SQL As String, ByRef AffectedRows As Integer) As Boolean
+
+            Throw New Exception("This method is obsolete (because it blindly executes the SQL); do not use")
 
             'Updates a database table as specified in the SQL statement
             Dim Cmd As SqlCommand
@@ -262,7 +266,7 @@ Namespace DataBase
                 Return True
             Catch ex As Exception
                 'If error happened, log it
-                m_logger.PostError("Error updating database", ex, True)
+                OnError("Error updating database", ex)
                 Return False
             Finally
                 m_DBCn.Close()
