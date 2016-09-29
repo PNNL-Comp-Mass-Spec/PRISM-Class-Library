@@ -1,33 +1,43 @@
 Option Strict On
 
-Imports System.Collections.Specialized
-Imports System.Data
+Imports System.Collections.Generic
 Imports System.Data.SqlClient
+Imports System.Runtime.InteropServices
+Imports System.Threading
 Imports PRISM.Logging
 
 Namespace DataBase
 
-    ''' <summary>Tools to manipulates the database.</summary>
+    ''' <summary>
+    ''' Tools to manipulates the database.
+    ''' </summary>
     Public Class clsDBTools
 
 #Region "Member Variables"
 
-        ' access to the logger
-        Protected m_logger As ILogger
-
         ' DB access
-        Protected m_connection_str As String
-        Protected m_DBCn As SqlConnection
-        Protected m_error_list As New StringCollection
+        Private m_connection_str As String
+        Private m_DBCn As SqlConnection
+
+        Public Event ErrorEvent(errorMessage As String)
 
 #End Region
 
-        ' constructor
-        ''' <summary>Initializes a new instance of the clsDBTools class which logs to the specified logger.</summary>
+        ''' <summary>
+        ''' Constructor
+        ''' </summary>
+        ''' <param name="connectionString">Database connection string</param>
+        Public Sub New(connectionString As String)
+            m_connection_str = connectionString
+        End Sub
+
+        ''' <summary>
+        ''' Deprecated Constructor
+        ''' </summary>
         ''' <param name="logger">This is the logger.</param>
         ''' <param name="ConnectStr">This is a connection string.</param>
+        <Obsolete("Use the constructor that does not take a logger")>
         Public Sub New(logger As ILogger, ConnectStr As String)
-            m_logger = logger
             m_connection_str = ConnectStr
         End Sub
 
@@ -46,9 +56,11 @@ Namespace DataBase
         ''' <summary>
         ''' The function opens a database connection.
         ''' </summary>
-        ''' <return>The function returns a boolean that shows if the connection was opened.</return>
-        Protected Function OpenConnection() As Boolean
+        ''' <return>True if the connection was successfully opened</return>
+        ''' <remarks>Retries the connection up to 3 times</remarks>
+        Private Function OpenConnection() As Boolean
             Dim retryCount = 3
+            Dim sleepTimeMsec = 300
             While retryCount > 0
                 Try
                     m_DBCn = New SqlConnection(m_connection_str)
@@ -59,37 +71,27 @@ Namespace DataBase
                 Catch e As SqlException
                     retryCount -= 1
                     m_DBCn.Close()
-                    m_logger.PostError("Connection problem: ", e, True)
-                    Threading.Thread.Sleep(300)
+                    OnError("Connection problem", e)
+                    Thread.Sleep(sleepTimeMsec)
+                    sleepTimeMsec *= 2
                 End Try
             End While
 
-            m_logger.PostEntry("Unable to open connection after multiple tries", ILogger.logMsgType.logError, True)
+            OnError("Unable to open connection after multiple tries")
             Return False
         End Function
 
         ''' <summary>
         ''' The subroutine closes the database connection.
         ''' </summary>
-        Protected Sub CLoseConnection()
+        Private Sub CloseConnection()
             If Not m_DBCn Is Nothing Then
                 m_DBCn.Close()
             End If
         End Sub
+
         ''' <summary>
-        ''' The subroutine logs the error events.
-        ''' </summary>
-        Public Sub LogErrorEvents()
-            If m_error_list.Count > 0 Then
-                m_logger.PostEntry("Warning messages were posted to local log", ILogger.logMsgType.logWarning, True)
-            End If
-            Dim s As String
-            For Each s In m_error_list
-                m_logger.PostEntry(s, ILogger.logMsgType.logWarning, True)
-            Next
-        End Sub
-        ''' <summary>
-        ''' The subroutine is an event handeler for InfoMessage event.
+        ''' The subroutine is an event handler for InfoMessage event.
         ''' </summary>
         ''' <remarks>
         ''' The errors and warnings sent from the SQL server are caught here
@@ -107,9 +109,10 @@ Namespace DataBase
                 s &= ", LineNumber: " & err.LineNumber
                 s &= ", Procedure:" & err.Procedure
                 s &= ", Server: " & err.Server
-                m_error_list.Add(s)
+                OnError(s)
             Next
         End Sub
+
         ''' <summary>
         ''' The function gets a disconnected dataset as specified by the SQL statement.
         ''' </summary>
@@ -133,7 +136,7 @@ Namespace DataBase
                 Return True
             Catch ex As Exception
                 'If error happened, log it
-                m_logger.PostError("Error reading database", ex, True)
+                OnError("Error reading database", ex)
                 Return False
             Finally
                 'Be sure connection is closed
