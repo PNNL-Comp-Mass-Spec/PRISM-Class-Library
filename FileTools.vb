@@ -2207,18 +2207,19 @@ Namespace Files
 
             ' Wait for up to 180 minutes (3 hours) for the server resources to free up
 
-            ' However, if retrieving files from aurora.emsl.pnl.gov only wait for a maximum of 30 minutes
+            ' However, if retrieving files from adms.emsl.pnl.gov only wait for a maximum of 30 minutes
             ' because sometimes that folder's permissions get messed up and we can create files there, but cannot delete them
 
             Dim maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES
             Dim maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES
 
 			' Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
-            If Not diLockFolderSource Is Nothing AndAlso diLockFolderSource.FullName.ToLower().StartsWith("\\aurora.emsl.pnl.gov\") Then
+			' Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
+            If Not diLockFolderSource Is Nothing AndAlso diLockFolderSource.FullName.ToLower().StartsWith("\\adms.emsl.pnl.gov\") Then
                 maxWaitTimeSource = 30
             End If
 
-            If Not diLockFolderTarget Is Nothing AndAlso diLockFolderTarget.FullName.ToLower().StartsWith("\\aurora.emsl.pnl.gov\") Then
+            If Not diLockFolderTarget Is Nothing AndAlso diLockFolderTarget.FullName.ToLower().StartsWith("\\adms.emsl.pnl.gov\") Then
                 maxWaitTimeTarget = 30
             End If
 
