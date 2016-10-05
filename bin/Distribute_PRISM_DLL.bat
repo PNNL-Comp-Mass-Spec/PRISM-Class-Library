@@ -133,6 +133,10 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\bin\x86" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\Protein_Coverage_Summarizer\bin\x64" /Y /D
 
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\Lib" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\bin" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\bin\Release" /Y /D
+
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\QRollupExport\bin" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\GordonSlysz\DeconTools_IQ\Library" /Y /D
