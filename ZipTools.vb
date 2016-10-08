@@ -27,8 +27,6 @@ Namespace Files
           OutputFile As String,
           InputSpec As String) As Boolean
 
-            'Makes specified zip file
-            Dim RunZipper As New clsProgRunner
 
             'Verify input file and output path have been specified
             If (m_ZipFilePath = "") Or (m_WorkDir = "") Then
@@ -39,22 +37,22 @@ Namespace Files
             End If
 
             'Setup the zip program
-            With RunZipper
-                .Arguments = "-Add " & CmdOptions & " """ & OutputFile & """ """ & InputSpec & """"
-                .Program = m_ZipFilePath
-                .WorkDir = m_WorkDir
-                .MonitoringInterval = m_WaitInterval
-                .Name = "Zipper"
-                .Repeat = False
-                .RepeatHoldOffTime = 0
+            Dim zipper = New clsProgRunner() With {
+                .Arguments = "-Add " & CmdOptions & " """ & OutputFile & """ """ & InputSpec & """",
+                .Program = m_ZipFilePath,
+                .WorkDir = m_WorkDir,
+                .MonitoringInterval = m_WaitInterval,
+                .Name = "Zipper",
+                .Repeat = False,
+                .RepeatHoldOffTime = 0,
                 .CreateNoWindow = m_CreateNoWindow
-            End With
+            }
 
             'Start the zip program
-            RunZipper.StartAndMonitorProgram()
+            zipper.StartAndMonitorProgram()
 
             'Wait for zipper program to complete
-            While (RunZipper.State <> clsProgRunner.States.NotMonitoring)
+            While (zipper.State <> clsProgRunner.States.NotMonitoring)
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.",
                       ILogger.logMsgType.logHealth, True)
@@ -63,10 +61,9 @@ Namespace Files
             End While
 
             'Check for valid return value after completion
-            If RunZipper.ExitCode <> 0 Then
+            If zipper.ExitCode <> 0 Then
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Zipper program exited with code: " & RunZipper.ExitCode, ILogger.logMsgType.logError, True)
-                    RunZipper = Nothing
+                    m_EventLogger.PostEntry("Zipper program exited with code: " & zipper.ExitCode, ILogger.logMsgType.logError, True)
                 End If
                 Return False
             Else
@@ -81,8 +78,6 @@ Namespace Files
         ''' <param name="OutPath">The path where you want to put the extracted files.</param>
         Public Function UnzipFile(CmdOptions As String, InputFile As String, OutPath As String) As Boolean
 
-            'Unzips specified zip file
-            Dim RunZipper As New clsProgRunner
 
             'Verify input file and output path have been specified
             If (m_ZipFilePath = "") Or (m_WorkDir = "") Then
@@ -109,23 +104,23 @@ Namespace Files
             End If
 
             'Setup the unzip program
-            With RunZipper
-                .Arguments = "-Extract " & CmdOptions & " """ & InputFile & """ """ & OutPath & """"
-                .MonitoringInterval = m_WaitInterval
-                .Name = "Zipper"
-                .Program = m_ZipFilePath
-                .WorkDir = m_WorkDir
-                .Repeat = False
-                .RepeatHoldOffTime = 0
-                .CreateNoWindow = m_CreateNoWindow
+            Dim zipper = New clsProgRunner() With {
+                .Arguments = "-Extract " & CmdOptions & " """ & InputFile & """ """ & OutPath & """",
+                .MonitoringInterval = m_WaitInterval,
+                .Name = "Zipper",
+                .Program = m_ZipFilePath,
+                .WorkDir = m_WorkDir,
+                .Repeat = False,
+                .RepeatHoldOffTime = 0,
+                .CreateNoWindow = m_CreateNoWindow,
                 .WindowStyle = m_WindowStyle
-            End With
+            }
 
             'Start the unzip program
-            RunZipper.StartAndMonitorProgram()
+            zipper.StartAndMonitorProgram()
 
             'Wait for zipper program to complete
-            While (RunZipper.State <> clsProgRunner.States.NotMonitoring)
+            While (zipper.State <> clsProgRunner.States.NotMonitoring)
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.",
                        ILogger.logMsgType.logHealth, True)
@@ -134,9 +129,9 @@ Namespace Files
             End While
 
             'Check for valid return value after completion
-            If RunZipper.ExitCode <> 0 Then
+            If zipper.ExitCode <> 0 Then
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Zipper program exited with code: " & RunZipper.ExitCode, ILogger.logMsgType.logError, True)
+                    m_EventLogger.PostEntry("Zipper program exited with code: " & zipper.ExitCode, ILogger.logMsgType.logError, True)
                 End If
                 Return False
             Else
@@ -217,8 +212,6 @@ Namespace Files
         ''' <param name="FilePath">The file path of the zip file to verify.</param>
         Public Function VerifyZippedFile(FilePath As String) As Boolean
 
-            'Verifies integrity of specified zip file
-            Dim RunZipper As New clsProgRunner
 
             'Verify test file exists
             If Not File.Exists(FilePath) Then
@@ -237,23 +230,23 @@ Namespace Files
             End If
 
             'Setup the zip program
-            With RunZipper
-                .Arguments = "-test -nofix" & " " & FilePath
-                .Program = m_ZipFilePath
-                .WorkDir = m_WorkDir
-                .MonitoringInterval = m_WaitInterval
-                .Name = "Zipper"
-                .Repeat = False
-                .RepeatHoldOffTime = 0
-                .CreateNoWindow = m_CreateNoWindow
+            Dim zipper = New clsProgRunner() With {
+                .Arguments = "-test -nofix" & " " & FilePath,
+                .Program = m_ZipFilePath,
+                .WorkDir = m_WorkDir,
+                .MonitoringInterval = m_WaitInterval,
+                .Name = "Zipper",
+                .Repeat = False,
+                .RepeatHoldOffTime = 0,
+                .CreateNoWindow = m_CreateNoWindow,
                 .WindowStyle = m_WindowStyle
-            End With
+            }
 
             'Start the zip program
-            RunZipper.StartAndMonitorProgram()
+            zipper.StartAndMonitorProgram()
 
             'Wait for zipper program to complete
-            While (RunZipper.State <> clsProgRunner.States.NotMonitoring)
+            While (zipper.State <> clsProgRunner.States.NotMonitoring)
                 If Not m_EventLogger Is Nothing Then
                     m_EventLogger.PostEntry("Waiting for zipper program.  Going to sleep for " & m_WaitInterval & " milliseconds.",
                        ILogger.logMsgType.logHealth, True)
@@ -262,9 +255,9 @@ Namespace Files
             End While
 
             'Check for valid return value after completion
-            If RunZipper.ExitCode <> 0 Then
+            If zipper.ExitCode <> 0 Then
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Zipper program exited with code: " & RunZipper.ExitCode, ILogger.logMsgType.logError, True)
+                    m_EventLogger.PostEntry("Zipper program exited with code: " & zipper.ExitCode, ILogger.logMsgType.logError, True)
                 End If
                 Return False
             Else

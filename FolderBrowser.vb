@@ -62,7 +62,6 @@ Namespace Files
 
             Dim blnSuccess As Boolean
 
-            mFolderBrowserDialog = New Forms.ShellFolderBrowser
 
             Try
                 blnSuccess = False
@@ -71,17 +70,17 @@ Namespace Files
                     mCurrentFolderPath = strFolderStartPath
                 End If
 
-                With mFolderBrowserDialog
-                    .Title = mTitle
+                mFolderBrowserDialog = New Forms.ShellFolderBrowser() With {
+                    .Title = mTitle,
                     .BrowseFlags = mBrowseFlags
+                }
 
-                    If .ShowDialog() Then
-                        mCurrentFolderPath = .FolderPath
-                        blnSuccess = True
-                    Else
-                        ' Do not update mCurrentFolderPath
-                    End If
-                End With
+                If mFolderBrowserDialog.ShowDialog() Then
+                    mCurrentFolderPath = mFolderBrowserDialog.FolderPath
+                    blnSuccess = True
+                Else
+                    ' Do not update mCurrentFolderPath
+                End If
 
             Catch ex As Exception
                 ' Do not update mCurrentFolderPath

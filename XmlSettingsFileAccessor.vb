@@ -705,10 +705,10 @@ Namespace Files
             mCaseSensitive = False
             htSectionNames = New Hashtable
 
-            mCachedSection = New udtRecentSectionType
-
-            mCachedSection.SectionName = String.Empty
-            mCachedSection.htKeys = New Hashtable
+            mCachedSection = New udtRecentSectionType() With {
+                .SectionName = String.Empty,
+                .htKeys = New Hashtable
+            }
 
         End Sub
     End Class
