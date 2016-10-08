@@ -366,7 +366,7 @@ Namespace Files
         '''<return>The function returns a string collection with comments</return>
         Public Function GetIniComments(sectionName As String) As StringCollection
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
-            Dim sc As StringCollection = New StringCollection
+            Dim sc = New StringCollection
             Dim target As XmlNode
             Dim nodes As XmlNodeList
             Dim N As XmlNode
@@ -456,7 +456,7 @@ Namespace Files
         ''' <return>The function returns a string colection of items in a section.</return>
         Private Function GetItemsInSection(sectionName As String, itemType As IniItemTypeEnum) As StringCollection
             Dim nodes As XmlNodeList
-            Dim items As StringCollection = New StringCollection
+            Dim items = New StringCollection
             Dim section As XmlNode = GetSection(sectionName)
             Dim N As XmlNode
             If section Is Nothing Then
@@ -694,7 +694,7 @@ Namespace Files
         Public Sub Save()
             If Not Initialized Then Throw New IniFileReaderNotInitializedException
             If Not OutputFilename Is Nothing AndAlso Not m_XmlDoc Is Nothing Then
-                Dim fi As FileInfo = New FileInfo(OutputFilename)
+                Dim fi = New FileInfo(OutputFilename)
                 If Not fi.Directory.Exists Then
                     If Not IsNothing(m_ExceptionLogger) Then
                         m_ExceptionLogger.PostEntry("Invalid path.", ILogger.logMsgType.logError, True)
@@ -734,7 +734,7 @@ Namespace Files
         ''        Dim xsl As XslTransform = New XslTransform
         ''        Dim resolver As XmlUrlResolver = New XmlUrlResolver
         ''        xsl.Load("c:\\XMLToIni.xslt")
-        ''        Dim sb As StringBuilder = New StringBuilder
+        ''        Dim sb As StringBuilder = New StringBuilder()
         ''        Dim sw As StringWriter = New StringWriter(sb)
         ''        xsl.Transform(m_XmlDoc, Nothing, sw, resolver)
         ''        sw.Close()
@@ -763,9 +763,9 @@ Namespace Files
         Public ReadOnly Property XML() As String
             Get
                 If Not Initialized Then Throw New IniFileReaderNotInitializedException
-                Dim sb As StringBuilder = New StringBuilder
-                Dim sw As StringWriter = New StringWriter(sb)
-                Dim xw As XmlTextWriter = New XmlTextWriter(sw)
+                Dim sb = New StringBuilder()
+                Dim sw = New StringWriter(sb)
+                Dim xw = New XmlTextWriter(sw)
                 xw.Indentation = 3
                 xw.Formatting = Formatting.Indented
                 m_XmlDoc.WriteContentTo(xw)

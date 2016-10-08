@@ -1,5 +1,6 @@
 Option Strict On
 
+Imports System.Collections.Generic
 Imports System.IO
 Imports System.Runtime.InteropServices    ' Required for call to GetDiskFreeSpaceEx
 Imports System.Text.RegularExpressions
@@ -708,8 +709,8 @@ Namespace Files
             Dim intQueueTimeMSec As Int64
             Dim intFileSizeMB As Int32
 
-            Dim lstLockFiles As Generic.List(Of Integer)
-            lstLockFiles = New Generic.List(Of Integer)
+            Dim lstLockFiles As List(Of Integer)
+            lstLockFiles = New List(Of Integer)
 
             If diLockFolder Is Nothing Then
                 Return lstLockFiles
@@ -967,7 +968,7 @@ Namespace Files
                 End If
 
                 ' Populate dctFileNamesToSkip
-                dctFileNamesToSkip = New Generic.Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
+                dctFileNamesToSkip = New Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
                 If Not FileNamesToSkip Is Nothing Then
                     For Each strItem As String In FileNamesToSkip
                         dctFileNamesToSkip.Add(strItem, "")
@@ -1245,7 +1246,7 @@ Namespace Files
                 End If
 
                 ' Populate objFileNamesToSkipCaseInsensitive
-                dctFileNamesToSkip = New Generic.Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
+                dctFileNamesToSkip = New Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
                 If Not FileNamesToSkip Is Nothing Then
                     ' Copy the values from FileNamesToSkip to dctFileNamesToSkip so that we can perform case-insensitive searching
                     For Each strItem As String In FileNamesToSkip
@@ -1439,7 +1440,7 @@ Namespace Files
 
                         Using srFilePartInfo = New StreamReader(New FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 
-                            Dim lstSourceLines = New Generic.List(Of String)
+                            Dim lstSourceLines = New List(Of String)
 
                             Do While Not srFilePartInfo.EndOfStream
                                 lstSourceLines.Add(srFilePartInfo.ReadLine())
@@ -1658,25 +1659,25 @@ Namespace Files
             ' - Usage: Dim DirSize As Long = GetDirectorySize("D:\Projects")
             '
             ' Original code obtained from vb2themax.com
-            Dim DirSize As Long
-            Dim Dir = New DirectoryInfo(DirPath)
+            Dim folderSize As Long
+            Dim diFolder = New DirectoryInfo(DirPath)
 
             ' add the size of each file
             Dim ChildFile As FileInfo
-            For Each ChildFile In Dir.GetFiles()
-                DirSize += ChildFile.Length
+            For Each ChildFile In diFolder.GetFiles()
+                folderSize += ChildFile.Length
                 FileCount += 1
             Next
 
             ' add the size of each sub-directory, that is retrieved by recursively
             ' calling this same routine
             Dim SubDir As DirectoryInfo
-            For Each SubDir In Dir.GetDirectories()
-                DirSize += GetDirectorySizeEX(SubDir.FullName, FileCount, SubDirCount)
+            For Each SubDir In diFolder.GetDirectories()
+                folderSize += GetDirectorySizeEX(SubDir.FullName, FileCount, SubDirCount)
                 SubDirCount += 1
             Next
 
-            Return DirSize
+            Return folderSize
 
         End Function
 #End Region
@@ -2213,8 +2214,8 @@ Namespace Files
             Dim maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES
             Dim maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES
 
-			' Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
-			' Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
+            ' Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
+            ' Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
             If Not diLockFolderSource Is Nothing AndAlso diLockFolderSource.FullName.ToLower().StartsWith("\\adms.emsl.pnl.gov\") Then
                 maxWaitTimeSource = 30
             End If

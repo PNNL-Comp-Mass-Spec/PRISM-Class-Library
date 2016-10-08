@@ -467,7 +467,7 @@ Namespace Processes
         Public Sub ClearCachedConsoleOutput()
 
             If m_CachedConsoleOutput Is Nothing Then
-                m_CachedConsoleOutput = New StringBuilder
+                m_CachedConsoleOutput = New StringBuilder()
             Else
                 m_CachedConsoleOutput.Clear()
             End If
@@ -508,7 +508,7 @@ Namespace Processes
         Public Sub ClearCachedConsoleError()
 
             If m_CachedConsoleError Is Nothing Then
-                m_CachedConsoleError = New StringBuilder
+                m_CachedConsoleError = New StringBuilder()
             Else
                 m_CachedConsoleError.Clear()
             End If

@@ -3,17 +3,17 @@ Imports PRISM.Processes
 Imports PRISM.Logging
 
 Namespace Files
-	''' <summary>Makes using a file archiving program easier.</summary>
-	''' <remarks>There are a routines to create an archive, extract files from an existing archive,
+    ''' <summary>Makes using a file archiving program easier.</summary>
+    ''' <remarks>There are a routines to create an archive, extract files from an existing archive,
     ''' and to verify an existing archive.
-	''' </remarks>
-	Public Class ZipTools
-		Implements ILoggerAware
+    ''' </remarks>
+    Public Class ZipTools
+        Implements ILoggerAware
 
-		Private m_WorkDir As String
-		Private m_ZipFilePath As String
+        Private m_WorkDir As String
+        Private m_ZipFilePath As String
         Private ReadOnly m_WaitInterval As Integer
-		Private m_ExceptionLogger As ILogger
+        Private m_ExceptionLogger As ILogger
         Private m_EventLogger As ILogger
         Private m_CreateNoWindow As Boolean
         Private m_WindowStyle As ProcessWindowStyle
