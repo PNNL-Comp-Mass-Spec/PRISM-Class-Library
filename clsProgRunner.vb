@@ -61,7 +61,7 @@ Namespace Processes
         ''' <summary>
         ''' Used to start and monitor the external program
         ''' </summary>
-        Private ReadOnly m_Process As New Process
+        Private ReadOnly m_Process As New Process()
 
         ''' <summary>
         ''' The process id of the currently running incarnation of the external program
