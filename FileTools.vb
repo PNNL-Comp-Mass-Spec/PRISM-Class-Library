@@ -453,6 +453,12 @@ Namespace Files
             If intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB OrElse
                (String.IsNullOrWhiteSpace(strLockFolderPathSource) AndAlso String.IsNullOrWhiteSpace(strLockFolderPathTarget)) Then
                 Const BackupDestFileBeforeCopy = False
+                If mDebugLevel > 1 Then
+                    Dim debugMsg = String.Format("File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}",
+                                                    fiSource.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, fiSource.Name)
+                    RaiseEvent DebugEvent(debugMsg, fiSource.FullName)
+                End If
+
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
                 Return True
             End If

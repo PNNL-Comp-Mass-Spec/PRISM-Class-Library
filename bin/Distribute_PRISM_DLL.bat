@@ -9,8 +9,12 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_EMail_Mana
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_EMail_Manager\Bin" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Common" /Y /D
+xcopy PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Common" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\AM_Shared\bin\Debug" /Y /D
+xcopy PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\AM_Shared\bin\Debug" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\bin" /Y /D
+xcopy PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\bin" /Y /D
+
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Ape_PlugIn\bin\Debug" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_AScore_PlugIn\bin\Debug" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_Cyclops_PlugIn\bin\Debug" /Y /D
@@ -35,7 +39,8 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manag
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSDeconv_Plugin\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGF_PlugIn\Bin" /Y /D
-xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGF_PlugIn\MSGF_Results_Summarizer\bin" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGF_PlugIn\MSGFResultsSummarizerDLL\bin\Debug" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGF_PlugIn\MSGFResultsSummarizerExe\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGFDB_IMS_Plugin\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSGFDB_PlugIn\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\Plugins\AM_MSMSSpectrumFilter_PlugIn\bin" /Y /D
