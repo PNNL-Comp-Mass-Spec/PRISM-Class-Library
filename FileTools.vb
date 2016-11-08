@@ -389,16 +389,27 @@ Namespace Files
                 blnSuccess = CopyFileUsingLocks(strLockFolderPathSource, strLockFolderPathTarget, fiSource, strTargetFilePath, strManagerName, Overwrite)
             Else
                 Dim expectedSourceLockFolder = GetLockFolderPath(fiSource)
-                If String.IsNullOrEmpty(expectedSourceLockFolder) Then
-                    expectedSourceLockFolder = "Source file is local; lock folder would not be used"
-                End If
-
                 Dim expectedTargetLockFolder = GetLockFolderPath(fiTarget)
-                If String.IsNullOrEmpty(expectedTargetLockFolder) Then
-                    expectedTargetLockFolder = "Target file is local; lock folder would not be used"
+
+                If String.IsNullOrEmpty(expectedSourceLockFolder) AndAlso String.IsNullOrEmpty(expectedTargetLockFolder) Then
+                    ' File is being copied locally; we don't use lock folders
+                    ' Do not raise this as a DebugEvent
+                Else
+                    If String.IsNullOrEmpty(expectedSourceLockFolder) Then
+                        ' Source file is local; lock folder would not be used
+                        expectedSourceLockFolder = "Source file is local"
+                    End If
+
+                    If String.IsNullOrEmpty(expectedTargetLockFolder) Then
+                        ' Target file is local; lock folder would not be used
+                        expectedTargetLockFolder = "Target file is local"
+                    End If
+
+                    If mDebugLevel >= 1 Then
+                        RaiseEvent DebugEvent("Lock file folder not found on the source or target", expectedSourceLockFolder & " and " & expectedTargetLockFolder)
+                    End If
                 End If
 
-                RaiseEvent DebugEvent("Lock file folder not found on the source or target", expectedSourceLockFolder & " and " & expectedTargetLockFolder)
                 Const BackupDestFileBeforeCopy = False
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
                 blnSuccess = True
@@ -479,7 +490,7 @@ Namespace Files
             If intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB OrElse
                (String.IsNullOrWhiteSpace(strLockFolderPathSource) AndAlso String.IsNullOrWhiteSpace(strLockFolderPathTarget)) Then
                 Const BackupDestFileBeforeCopy = False
-                If mDebugLevel > 1 Then
+                If mDebugLevel >= 2 Then
                     Dim debugMsg = String.Format("File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}",
                                                     fiSource.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, fiSource.Name)
                     RaiseEvent DebugEvent(debugMsg, fiSource.FullName)
