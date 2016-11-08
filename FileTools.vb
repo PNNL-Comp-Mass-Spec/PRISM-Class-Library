@@ -388,7 +388,17 @@ Namespace Files
             If blnUseLockFile Then
                 blnSuccess = CopyFileUsingLocks(strLockFolderPathSource, strLockFolderPathTarget, fiSource, strTargetFilePath, strManagerName, Overwrite)
             Else
-                RaiseEvent WarningEvent("Lock file folder not found on the source or target", strLockFolderPathSource & " and " & strLockFolderPathTarget)
+                Dim expectedSourceLockFolder = GetLockFolderPath(fiSource)
+                If String.IsNullOrEmpty(expectedSourceLockFolder) Then
+                    expectedSourceLockFolder = "Source file is local; lock folder would not be used"
+                End If
+
+                Dim expectedTargetLockFolder = GetLockFolderPath(fiTarget)
+                If String.IsNullOrEmpty(expectedTargetLockFolder) Then
+                    expectedTargetLockFolder = "Target file is local; lock folder would not be used"
+                End If
+
+                RaiseEvent DebugEvent("Lock file folder not found on the source or target", expectedSourceLockFolder & " and " & expectedTargetLockFolder)
                 Const BackupDestFileBeforeCopy = False
                 CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
                 blnSuccess = True
@@ -402,15 +412,31 @@ Namespace Files
         ''' Given a file path, return the lock file folder if it exsists
         ''' </summary>
         ''' <param name="fiFile"></param>
-        ''' <returns></returns>
+        ''' <returns>Lock folder path if it exists</returns>
+        ''' <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
         Public Function GetLockFolder(fiFile As FileInfo) As String
+
+            Dim lockFolderPath = GetLockFolderPath(fiFile)
+
+            If Not String.IsNullOrEmpty(lockFolderPath) AndAlso Directory.Exists(lockFolderPath) Then
+                Return lockFolderPath
+            End If
+
+            Return String.Empty
+
+        End Function
+
+        ''' <summary>
+        ''' Given a file path, return the lock file folder path (does not verify that it exists)
+        ''' </summary>
+        ''' <param name="fiFile"></param>
+        ''' <returns>Lock folder path</returns>
+        ''' <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
+        Private Function GetLockFolderPath(fiFile As FileInfo) As String
 
             If Path.IsPathRooted(fiFile.FullName) Then
                 If fiFile.Directory.Root.FullName.StartsWith("\\") Then
-                    Dim strLockFolderPath = Path.Combine(GetServerShareBase(fiFile.Directory.Root.FullName), "DMS_LockFiles")
-                    If Directory.Exists(strLockFolderPath) Then
-                        Return strLockFolderPath
-                    End If
+                    Return Path.Combine(GetServerShareBase(fiFile.Directory.Root.FullName), "DMS_LockFiles")
                 End If
             End If
 

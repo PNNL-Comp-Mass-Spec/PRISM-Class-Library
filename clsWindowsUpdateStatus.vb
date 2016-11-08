@@ -18,21 +18,21 @@ Public Class clsWindowsUpdateStatus
         Return UpdatesArePending(DateTime.Now, pendingWindowsUpdateMessage)
     End Function
 
-	''' <summary>
-	''' Checks whether Windows Updates are expected to occur close to the current time of day
-	''' </summary>
-	''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
+    ''' <summary>
+    ''' Checks whether Windows Updates are expected to occur close to the current time of day
+    ''' </summary>
+    ''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
     ''' <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
     ''' <remarks></remarks>
-	Public Shared Function UpdatesArePending(<Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
-		Return UpdatesArePending(DateTime.Now, pendingWindowsUpdateMessage)
-	End Function
+    Public Shared Function UpdatesArePending(<Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
+        Return UpdatesArePending(DateTime.Now, pendingWindowsUpdateMessage)
+    End Function
 
-	''' <summary>
+    ''' <summary>
     ''' Checks whether Windows Updates are expected to occur close to currentTime
-	''' </summary>
-	''' <param name="currentTime">Current time of day</param>
-	''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
+    ''' </summary>
+    ''' <param name="currentTime">Current time of day</param>
+    ''' <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
     ''' <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
     ''' <remarks></remarks>
     Public Shared Function UpdatesArePending(currentTime As DateTime, <Out()> ByRef pendingWindowsUpdateMessage As String) As Boolean
