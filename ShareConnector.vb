@@ -5,7 +5,6 @@ Option Strict On
 '                using a password and user name.
 'Author(s):  Nathan Trimble
 '
-'Modifed: DAC (7/2/2004) -- Provided overloading for constructor, added property for share name
 
 Namespace Files
     ''' <summary>Connects to a file share using a password and user name.
@@ -21,7 +20,7 @@ Namespace Files
     ''' </remarks>
     Public Class ShareConnector
 
-		Private mErrorMessage As String = ""
+        Private mErrorMessage As String = ""
 
         Public Enum ResourceScope As Integer
             Connected = 1
@@ -53,20 +52,20 @@ Namespace Files
             Ndscontainer = &HB
         End Enum
 
-		''' <summary>This structure is used to group a bunch of member variables.</summary>
-		Private Structure udtNetResource
+        ''' <summary>This structure is used to group a bunch of member variables.</summary>
+        Private Structure udtNetResource
             Dim dwScope As ResourceScope
             Dim dwType As ResourceType
             Dim dwDisplayType As ResourceDisplaytype
-			Dim dwUsage As Integer
-			Dim lpLocalName As String
-			Dim lpRemoteName As String
-			Dim lpComment As String
-			Dim lpProvider As String
-		End Structure
+            Dim dwUsage As Integer
+            Dim lpLocalName As String
+            Dim lpRemoteName As String
+            Dim lpComment As String
+            Dim lpProvider As String
+        End Structure
 
-		Private Const NO_ERROR As Short = 0
-		Private Const CONNECT_UPDATE_PROFILE As Short = &H1S
+        Private Const NO_ERROR As Short = 0
+        Private Const CONNECT_UPDATE_PROFILE As Short = &H1S
 
         '' ''' <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
         ''Private Const RESOURCE_CONNECTED As Short = &H1S
@@ -92,8 +91,8 @@ Namespace Files
         ''' <summary> Constant that may be used by NETRESOURCE->dwUsage </summary>
         Private Const RESOURCEUSAGE_CONNECTABLE As Short = &H1S
 
-		''' <summary> Constant that may be used by NETRESOURCE->dwUsage </summary>
-		Private Const RESOURCEUSAGE_CONTAINER As Short = &H2S
+        ''' <summary> Constant that may be used by NETRESOURCE->dwUsage </summary>
+        Private Const RESOURCEUSAGE_CONTAINER As Short = &H2S
 
         Private Declare Function WNetAddConnection2 Lib "mpr.dll" Alias "WNetAddConnection2A" (ByRef lpNetResource As udtNetResource, lpPassword As String, lpUserName As String, dwFlags As Integer) As Integer
         Private Declare Function WNetCancelConnection2 Lib "mpr.dll" Alias "WNetCancelConnection2A" (lpName As String, dwFlags As Integer, fForce As Integer) As Integer
@@ -193,49 +192,49 @@ Namespace Files
             End If
         End Sub
 
-		''' <summary>
-		''' Connects to specified share using account/password specified previously.
-		''' This is the function that actually does the connection based on the setup 
-		''' from the <see cref="Connect">Connect</see> functions.
-		''' </summary>
-		Private Function RealConnect() As Boolean
+        ''' <summary>
+        ''' Connects to specified share using account/password specified previously.
+        ''' This is the function that actually does the connection based on the setup 
+        ''' from the <see cref="Connect">Connect</see> functions.
+        ''' </summary>
+        Private Function RealConnect() As Boolean
 
-			Dim errorNum As Integer
+            Dim errorNum As Integer
 
-			errorNum = WNetAddConnection2(mNetResource, mPassword, mUsername, 0)
-			If errorNum = NO_ERROR Then
-				Debug.WriteLine("Connected.")
-				Return True
-			Else
-				mErrorMessage = errorNum.ToString()
-				Debug.WriteLine("Got error: " & errorNum)
-				Return False
-			End If
+            errorNum = WNetAddConnection2(mNetResource, mPassword, mUsername, 0)
+            If errorNum = NO_ERROR Then
+                Debug.WriteLine("Connected.")
+                Return True
+            Else
+                mErrorMessage = errorNum.ToString()
+                Debug.WriteLine("Got error: " & errorNum)
+                Return False
+            End If
 
-		End Function
+        End Function
 
-		''' <summary>
-		''' Disconnects the files share.
-		''' </summary>
-		Public Function Disconnect() As Boolean
-			Dim errorNum As Integer = WNetCancelConnection2(Me.mNetResource.lpRemoteName, 0, CInt(True))
-			If errorNum = NO_ERROR Then
-				Debug.WriteLine("Disconnected.")
-				Return True
-			Else
-				mErrorMessage = errorNum.ToString()
-				Debug.WriteLine("Got error: " & errorNum)
-				Return False
-			End If
-		End Function
+        ''' <summary>
+        ''' Disconnects the files share.
+        ''' </summary>
+        Public Function Disconnect() As Boolean
+            Dim errorNum As Integer = WNetCancelConnection2(Me.mNetResource.lpRemoteName, 0, CInt(True))
+            If errorNum = NO_ERROR Then
+                Debug.WriteLine("Disconnected.")
+                Return True
+            Else
+                mErrorMessage = errorNum.ToString()
+                Debug.WriteLine("Got error: " & errorNum)
+                Return False
+            End If
+        End Function
 
-		''' <summary>
-		''' Gets the error message returned by the <see cref="Connect">Connect</see> and <see cref="Disconnect">Disconnect</see> functions.
-		''' </summary>
-		Public ReadOnly Property ErrorMessage() As String
-			Get
-				Return mErrorMessage
-			End Get
-		End Property
+        ''' <summary>
+        ''' Gets the error message returned by the <see cref="Connect">Connect</see> and <see cref="Disconnect">Disconnect</see> functions.
+        ''' </summary>
+        Public ReadOnly Property ErrorMessage() As String
+            Get
+                Return mErrorMessage
+            End Get
+        End Property
     End Class
 End Namespace
