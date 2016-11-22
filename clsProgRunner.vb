@@ -181,6 +181,10 @@ Namespace Processes
         ''' <remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
         Public Property CacheStandardOutput As Boolean
 
+        ''' <summary>
+        ''' When true, the program name and command line arguments will be added to the top of the console output file
+        ''' </summary>
+        Public Property ConsoleOutputFileIncludesCommandLine As Boolean
 
         ''' <summary>
         ''' File path to which the console output will be written if WriteConsoleOutputToFile is true
@@ -333,6 +337,7 @@ Namespace Processes
             CacheStandardOutput = False
             EchoOutputToConsole = True
             WriteConsoleOutputToFile = False
+            ConsoleOutputFileIncludesCommandLine = True
             ConsoleOutputFilePath = String.Empty
         End Sub
 
@@ -493,6 +498,27 @@ Namespace Processes
                 ' Ignore errors here
             End Try
         End Sub
+
+        ''' <summary>
+        ''' Returns the full path to the console output file that will be created if WriteConsoleOutputToFile is true
+        ''' </summary>
+        ''' <returns></returns>
+        ''' <remarks>Before calling this function, define WorkDir (working directory folder) and Program (full path to the .exe to run)</remarks>
+        Public Function GetConsoleOutputFilePath() As String
+
+            Dim consoleOutputFileName As String
+            If String.IsNullOrEmpty(Program) Then
+                consoleOutputFileName = "ProgRunner_ConsoleOutput.txt"
+            Else
+                consoleOutputFileName = Path.GetFileNameWithoutExtension(Program) & "_ConsoleOutput.txt"
+            End If
+
+            If String.IsNullOrEmpty(WorkDir) Then
+                Return consoleOutputFileName
+            End If
+
+            Return Path.Combine(WorkDir, consoleOutputFileName)
+        End Function
 
         ''' <summary>
         ''' Returns the number of cores
@@ -872,17 +898,18 @@ Namespace Processes
 
                 If WriteConsoleOutputToFile Then
                     Try
-                        If String.IsNullOrEmpty(m_ConsoleOutputFilePath) Then
+                        If String.IsNullOrEmpty(ConsoleOutputFilePath) Then
                             ' Need to auto-define m_ConsoleOutputFilePath
-
-                            m_ConsoleOutputFilePath = Path.Combine(m_Process.StartInfo.WorkingDirectory,
-                                                      Path.GetFileNameWithoutExtension(m_Process.StartInfo.FileName) & "_ConsoleOutput.txt")
-
+                            ConsoleOutputFilePath = GetConsoleOutputFilePath()
                         End If
 
                         m_ConsoleOutputStreamWriter = New StreamWriter(New FileStream(ConsoleOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
                         m_ConsoleOutputStreamWriter.AutoFlush = True
 
+                        If ConsoleOutputFileIncludesCommandLine Then
+                            m_ConsoleOutputStreamWriter.WriteLine(Path.GetFileName(Program) & " " & Trim(Arguments))
+                            m_ConsoleOutputStreamWriter.WriteLine(New String("-"c, 80))
+                        End If
                     Catch ex As Exception
                         ' Report the error, but continue processing
                         ThrowConditionalException(ex, "Caught exception while trying to create the console output file, " & ConsoleOutputFilePath)

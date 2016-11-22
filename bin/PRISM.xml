@@ -195,16 +195,6 @@ PRISM
  Interface used for logging errors and health related messages
  </summary>
 </member>
-<member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnException">
- <summary>
- True for logging behavior, else false
- </summary>
-</member>
-<member name="F:PRISM.Processes.clsProgRunner.m_NotifyOnEvent">
- <summary>
- True for logging behavior, else false
- </summary>
-</member>
 <member name="F:PRISM.Processes.clsProgRunner.m_Process">
  <summary>
  Used to start and monitor the external program
@@ -245,11 +235,6 @@ PRISM
  Exit code returned by completed process
  </summary>
  <remarks>Initially set to -123454321</remarks>
-</member>
-<member name="F:PRISM.Processes.clsProgRunner.m_name">
- <summary>
- Parameters for external program
- </summary>
 </member>
 <member name="F:PRISM.Processes.clsProgRunner.m_CachedConsoleOutput">
  <summary>
@@ -316,14 +301,16 @@ PRISM
  </summary>
  <remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
 </member>
+<member name="P:PRISM.Processes.clsProgRunner.ConsoleOutputFileIncludesCommandLine">
+ <summary>
+ When true, the program name and command line arguments will be added to the top of the console output file
+ </summary>
+</member>
 <member name="P:PRISM.Processes.clsProgRunner.ConsoleOutputFilePath">
  <summary>
  File path to which the console output will be written if WriteConsoleOutputToFile is true
  If blank, then file path will be auto-defined in the WorkDir  when program execution starts
  </summary>
- <value></value>
- <returns></returns>
- <remarks></remarks>
 </member>
 <member name="P:PRISM.Processes.clsProgRunner.CreateNoWindow">
  <summary>
@@ -354,10 +341,14 @@ PRISM
  </summary>
 </member>
 <member name="P:PRISM.Processes.clsProgRunner.NotifyOnEvent">
- <summary>Gets or Sets notify on event</summary>
+ <summary>
+ When true, raises event ProgChanged
+ </summary>
 </member>
 <member name="P:PRISM.Processes.clsProgRunner.NotifyOnException">
- <summary>Gets or Sets notify on exception</summary>
+ <summary>
+ When true, and if m_ExceptionLogger is defined, re-throws the exception
+ </summary>
 </member>
 <member name="P:PRISM.Processes.clsProgRunner.PID">
  <summary>
@@ -377,7 +368,7 @@ PRISM
 </member>
 <member name="P:PRISM.Processes.clsProgRunner.RepeatHoldOffTime">
  <summary>
- Time (seconds) that prog runner waits to restart external program after it exits
+ Time (in seconds) that prog runner waits to restart the external program after it exits
  </summary>
 </member>
 <member name="P:PRISM.Processes.clsProgRunner.State">
@@ -459,6 +450,13 @@ PRISM
  Force garbage collection
  </summary>
  <remarks></remarks>
+</member>
+<member name="M:PRISM.Processes.clsProgRunner.GetConsoleOutputFilePath">
+ <summary>
+ Returns the full path to the console output file that will be created if WriteConsoleOutputToFile is true
+ </summary>
+ <returns></returns>
+ <remarks>Before calling this function, define WorkDir (working directory folder) and Program (full path to the .exe to run)</remarks>
 </member>
 <member name="M:PRISM.Processes.clsProgRunner.GetCoreCount">
  <summary>
