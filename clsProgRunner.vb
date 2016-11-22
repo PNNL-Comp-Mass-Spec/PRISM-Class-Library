@@ -45,16 +45,6 @@ Namespace Processes
         ''' </summary>
         Private m_EventLogger As Logging.ILogger
 
-        ''' <summary>
-        ''' True for logging behavior, else false
-        ''' </summary>
-        Private m_NotifyOnException As Boolean
-
-        ''' <summary>
-        ''' True for logging behavior, else false
-        ''' </summary>
-        Private m_NotifyOnEvent As Boolean
-
         ' overall state of this object
         Private m_state As States = States.NotMonitoring
 
@@ -99,23 +89,6 @@ Namespace Processes
         ''' <remarks>Initially set to -123454321</remarks>
         Private m_ExitCode As Integer
 
-        ''' <summary>
-        ''' Parameters for external program
-        ''' </summary>
-        Private m_name As String
-        Private m_ProgName As String
-        Private m_ProgArgs As String
-        Private m_repeat As Boolean = False
-        Private m_holdOffTime As Integer = 3000
-        Private m_WorkDir As String
-        Private m_CreateNoWindow As Boolean
-        Private m_WindowStyle As ProcessWindowStyle
-
-        Private m_CacheStandardOutput As Boolean
-        Private m_EchoOutputToConsole As Boolean
-
-        Private m_WriteConsoleOutputToFile As Boolean
-        Private m_ConsoleOutputFilePath As String = String.Empty
         Private m_ConsoleOutputStreamWriter As StreamWriter
 
         ''' <summary>
@@ -172,14 +145,7 @@ Namespace Processes
         ''' <summary>
         ''' Arguments supplied to external program when it is run
         ''' </summary>
-        Public Property Arguments() As String
-            Get
-                Return m_ProgArgs
-            End Get
-            Set(Value As String)
-                m_ProgArgs = Value
-            End Set
-        End Property
+        Public Property Arguments As String
 
         ''' <summary>
         ''' Text written to the Console by the external program (including carriage returns)
@@ -213,57 +179,26 @@ Namespace Processes
         ''' Will also fire event ConsoleOutputEvent as new text is written to the console
         ''' </summary>
         ''' <remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
-        Public Property CacheStandardOutput() As Boolean
-            Get
-                Return m_CacheStandardOutput
-            End Get
-            Set(value As Boolean)
-                m_CacheStandardOutput = value
-            End Set
-        End Property
+        Public Property CacheStandardOutput As Boolean
+
 
         ''' <summary>
         ''' File path to which the console output will be written if WriteConsoleOutputToFile is true
         ''' If blank, then file path will be auto-defined in the WorkDir  when program execution starts
         ''' </summary>
-        ''' <value></value>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Property ConsoleOutputFilePath() As String
-            Get
-                Return m_ConsoleOutputFilePath
-            End Get
-            Set(value As String)
-                If value Is Nothing Then value = String.Empty
-                m_ConsoleOutputFilePath = value
-            End Set
-        End Property
+        Public Property ConsoleOutputFilePath As String = String.Empty
 
         ''' <summary>
         ''' Determine if window should be displayed
         ''' Will be forced to True if CacheStandardOutput = True
         ''' </summary>
-        Public Property CreateNoWindow() As Boolean
-            Get
-                Return m_CreateNoWindow
-            End Get
-            Set(Value As Boolean)
-                m_CreateNoWindow = Value
-            End Set
-        End Property
+        Public Property CreateNoWindow As Boolean
 
         ''' <summary>
         ''' When true, then echoes, in real time, text written to the Console by the external program 
         ''' Ignored if CreateNoWindow = False
         ''' </summary>
-        Public Property EchoOutputToConsole() As Boolean
-            Get
-                Return m_EchoOutputToConsole
-            End Get
-            Set(value As Boolean)
-                m_EchoOutputToConsole = value
-            End Set
-        End Property
+        Public Property EchoOutputToConsole As Boolean
 
         ''' <summary>
         ''' Exit code when process completes
@@ -291,34 +226,18 @@ Namespace Processes
         ''' <summary>
         ''' Name of this progrunner
         ''' </summary>
-        Public Property Name() As String
-            Get
-                Return m_name
-            End Get
-            Set(Value As String)
-                m_name = Value
-            End Set
-        End Property
+        Public Property Name As String
 
-        ''' <summary>Gets or Sets notify on event</summary>
-        Public Property NotifyOnEvent() As Boolean Implements Logging.ILoggerAware.NotifyOnEvent
-            Get
-                Return m_NotifyOnEvent
-            End Get
-            Set(Value As Boolean)
-                m_NotifyOnEvent = Value
-            End Set
-        End Property
+        ''' <summary>
+        ''' When true, raises event ProgChanged
+        ''' </summary>
+        Public Property NotifyOnEvent As Boolean Implements Logging.ILoggerAware.NotifyOnEvent
 
-        ''' <summary>Gets or Sets notify on exception</summary>
-        Public Property NotifyOnException() As Boolean Implements Logging.ILoggerAware.NotifyOnException
-            Get
-                Return m_NotifyOnException
-            End Get
-            Set(Value As Boolean)
-                m_NotifyOnException = Value
-            End Set
-        End Property
+        ''' <summary>
+        ''' When true, and if m_ExceptionLogger is defined, re-throws the exception
+        ''' </summary>
+        Public Property NotifyOnException As Boolean Implements Logging.ILoggerAware.NotifyOnException
+
 
         ''' <summary>
         ''' Process id of currently running external program's process
@@ -333,38 +252,17 @@ Namespace Processes
         ''' External program that prog runner will run
         ''' This is the full path to the program file
         ''' </summary>
-        Public Property Program() As String
-            Get
-                Return m_ProgName
-            End Get
-            Set(Value As String)
-                m_ProgName = Value
-            End Set
-        End Property
+        Public Property Program As String
 
         ''' <summary>
         ''' Whether prog runner will restart external program after it exits
         ''' </summary>
-        Public Property Repeat() As Boolean
-            Get
-                Return m_repeat
-            End Get
-            Set(Value As Boolean)
-                m_repeat = Value
-            End Set
-        End Property
+        Public Property Repeat As Boolean = False
 
         ''' <summary>
-        ''' Time (seconds) that prog runner waits to restart external program after it exits
+        ''' Time (in seconds) that prog runner waits to restart the external program after it exits
         ''' </summary>
         Public Property RepeatHoldOffTime() As Double
-            Get
-                Return m_holdOffTime / 1000.0
-            End Get
-            Set(Value As Double)
-                m_holdOffTime = CType(Value * 1000, Integer)
-            End Set
-        End Property
 
         ''' <summary>
         ''' Current state of prog runner (as number)
@@ -402,27 +300,13 @@ Namespace Processes
         ''' <summary>
         ''' Window style to use when CreateNoWindow is False
         ''' </summary>
-        Public Property WindowStyle() As ProcessWindowStyle
-            Get
-                Return m_WindowStyle
-            End Get
-            Set(Value As ProcessWindowStyle)
-                m_WindowStyle = Value
-            End Set
-        End Property
+        Public Property WindowStyle As ProcessWindowStyle
 
         ''' <summary>
         ''' Working directory for process execution
         ''' Not necessarily the same as the directory that contains the program we're running
         ''' </summary>
-        Public Property WorkDir() As String
-            Get
-                Return m_WorkDir
-            End Get
-            Set(Value As String)
-                m_WorkDir = Value
-            End Set
-        End Property
+        Public Property WorkDir As String
 
         ''' <summary>
         ''' When true then will write the standard output to a file in real-time
@@ -430,14 +314,7 @@ Namespace Processes
         ''' Define the path to the file using property ConsoleOutputFilePath; if not defined, the file will be created in the WorkDir
         ''' </summary>
         ''' <remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
-        Public Property WriteConsoleOutputToFile() As Boolean
-            Get
-                Return m_WriteConsoleOutputToFile
-            End Get
-            Set(value As Boolean)
-                m_WriteConsoleOutputToFile = value
-            End Set
-        End Property
+        Public Property WriteConsoleOutputToFile As Boolean
 
 #End Region
 
@@ -447,17 +324,16 @@ Namespace Processes
         ''' Constructor
         ''' </summary>
         Public Sub New()
-            m_WorkDir = ""
-            m_CreateNoWindow = False
+            WorkDir = String.Empty
+            CreateNoWindow = False
             m_ExitCode = -123454321  ' Unreasonable value
             m_monitorInterval = DEFAULT_MONITOR_INTERVAL_MSEC
-            m_NotifyOnEvent = True
-            m_NotifyOnException = True
-            m_CacheStandardOutput = False
-            m_EchoOutputToConsole = True
-            m_WriteConsoleOutputToFile = False
-            m_ConsoleOutputFilePath = String.Empty
-
+            NotifyOnEvent = True
+            NotifyOnException = True
+            CacheStandardOutput = False
+            EchoOutputToConsole = True
+            WriteConsoleOutputToFile = False
+            ConsoleOutputFilePath = String.Empty
         End Sub
 
         ''' <summary>
@@ -548,16 +424,16 @@ Namespace Processes
 
                 RaiseEvent ConsoleOutputEvent(outLine.Data)
 
-                If m_EchoOutputToConsole Then
+                If EchoOutputToConsole Then
                     Console.WriteLine(outLine.Data)
                 End If
 
-                If m_CacheStandardOutput Then
+                If CacheStandardOutput Then
                     ' Add the text to the collected output
                     m_CachedConsoleOutput.AppendLine(outLine.Data)
                 End If
 
-                If m_WriteConsoleOutputToFile AndAlso Not m_ConsoleOutputStreamWriter Is Nothing Then
+                If WriteConsoleOutputToFile AndAlso Not m_ConsoleOutputStreamWriter Is Nothing Then
                     ' Write the standard output to the console output file
                     Try
                         m_ConsoleOutputStreamWriter.WriteLine(outLine.Data)
@@ -934,9 +810,9 @@ Namespace Processes
         End Sub
 
         Private Sub RaiseConditionalProgChangedEvent(obj As clsProgRunner)
-            If m_NotifyOnEvent Then
+            If NotifyOnEvent Then
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Raising ProgChanged event for " & obj.m_name & ".", Logging.ILogger.logMsgType.logHealth, True)
+                    m_EventLogger.PostEntry("Raising ProgChanged event for " & obj.Name & ".", Logging.ILogger.logMsgType.logHealth, True)
                 End If
                 RaiseEvent ProgChanged(obj)
             End If
@@ -952,17 +828,17 @@ Namespace Processes
             ' set up parameters for external process
             '
             With m_Process.StartInfo
-                .FileName = m_ProgName
-                .WorkingDirectory = m_WorkDir
-                .Arguments = m_ProgArgs
-                .CreateNoWindow = m_CreateNoWindow
+                .FileName = Program
+                .WorkingDirectory = WorkDir
+                .Arguments = Arguments
+                .CreateNoWindow = CreateNoWindow
                 If .CreateNoWindow Then
                     .WindowStyle = ProcessWindowStyle.Hidden
                 Else
-                    .WindowStyle = m_WindowStyle
+                    .WindowStyle = WindowStyle
                 End If
 
-                If .CreateNoWindow OrElse m_CacheStandardOutput OrElse m_WriteConsoleOutputToFile Then
+                If .CreateNoWindow OrElse CacheStandardOutput OrElse WriteConsoleOutputToFile Then
                     .UseShellExecute = False
                     .RedirectStandardOutput = True
                     .RedirectStandardError = True
@@ -994,7 +870,7 @@ Namespace Processes
                 AddHandler m_Process.OutputDataReceived, AddressOf ConsoleOutputHandler
                 AddHandler m_Process.ErrorDataReceived, AddressOf ConsoleErrorHandler
 
-                If m_WriteConsoleOutputToFile Then
+                If WriteConsoleOutputToFile Then
                     Try
                         If String.IsNullOrEmpty(m_ConsoleOutputFilePath) Then
                             ' Need to auto-define m_ConsoleOutputFilePath
@@ -1004,12 +880,12 @@ Namespace Processes
 
                         End If
 
-                        m_ConsoleOutputStreamWriter = New StreamWriter(New FileStream(m_ConsoleOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                        m_ConsoleOutputStreamWriter = New StreamWriter(New FileStream(ConsoleOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
                         m_ConsoleOutputStreamWriter.AutoFlush = True
 
                     Catch ex As Exception
                         ' Report the error, but continue processing
-                        ThrowConditionalException(ex, "Caught exception while trying to create the console output file, " & m_ConsoleOutputFilePath)
+                        ThrowConditionalException(ex, "Caught exception while trying to create the console output file, " & ConsoleOutputFilePath)
                     End Try
                 End If
             End If
@@ -1097,26 +973,26 @@ Namespace Processes
                 End Try
 
                 If Not m_EventLogger Is Nothing Then
-                    m_EventLogger.PostEntry("Process " & m_name & " terminated with exit code " & m_ExitCode,
+                    m_EventLogger.PostEntry("Process " & Name & " terminated with exit code " & m_ExitCode,
                       Logging.ILogger.logMsgType.logHealth, True)
 
                     If Not m_CachedConsoleError Is Nothing AndAlso m_CachedConsoleError.Length > 0 Then
-                        m_EventLogger.PostEntry("Cached error text for process " & m_name & ": " & m_CachedConsoleError.ToString,
+                        m_EventLogger.PostEntry("Cached error text for process " & Name & ": " & m_CachedConsoleError.ToString,
                           Logging.ILogger.logMsgType.logError, True)
                     End If
                 End If
 
                 If Not m_ConsoleOutputStreamWriter Is Nothing Then
                     ' Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
-                    Dim intMaxWaitTimeMSec = 1000
-                    GarbageCollectNow(intMaxWaitTimeMSec)
+                    Dim maxWaitTimeMSec = 1000
+                    GarbageCollectNow(maxWaitTimeMSec)
                     m_ConsoleOutputStreamWriter.Close()
                 End If
 
                 ' Decide whether or not to repeat starting
                 ' the external process again, or quit
                 '
-                If m_repeat And Not m_doCleanup Then
+                If Repeat And Not m_doCleanup Then
                     ' Repeat starting the process
                     ' after waiting for minimum hold off time interval
                     '
@@ -1124,7 +1000,8 @@ Namespace Processes
 
                     RaiseConditionalProgChangedEvent(Me)
 
-                    Thread.Sleep(m_holdOffTime)
+                    Dim holdoffMilliseconds = CInt(RepeatHoldOffTime * 1000)
+                    Thread.Sleep(holdoffMilliseconds)
 
                     m_state = States.Monitoring
                 Else
@@ -1217,12 +1094,12 @@ Namespace Processes
             End If
         End Sub
 
-        Private Sub ThrowConditionalException(ByRef ex As Exception, loggerMessage As String)
+        Private Sub ThrowConditionalException(ex As Exception, loggerMessage As String)
             If Not m_ExceptionLogger Is Nothing Then
                 m_ExceptionLogger.PostError(loggerMessage, ex, True)
             End If
 
-            If m_NotifyOnException Then
+            If NotifyOnException Then
                 If m_ExceptionLogger Is Nothing Then
                     Console.WriteLine("Exception caught (but ignored): " & loggerMessage & "; " & ex.Message)
                 Else
