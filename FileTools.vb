@@ -531,7 +531,7 @@ Namespace Files
                   MAX_LOCKFILE_WAIT_TIME_MINUTES)
 
                 If mDebugLevel >= 1 Then
-                    RaiseEvent DebugEvent("Copying file using Locks", fiSource.FullName & " to " & strTargetFilePath)
+                    RaiseEvent DebugEvent("Copying " & fiSource.Name & " using Locks", fiSource.FullName & " to " & strTargetFilePath)
                 End If
 
                 ' Perform the copy
