@@ -4,6 +4,8 @@ Imports System.Collections.Generic
 Imports System.IO
 Imports System.Runtime.InteropServices    ' Required for call to GetDiskFreeSpaceEx
 Imports System.Text.RegularExpressions
+Imports System.Threading
+Imports PRISM.Processes
 
 Namespace Files
 
@@ -638,7 +640,7 @@ Namespace Files
                 If Not ignoreErrors Then Throw
 
                 ' Collect garbage, then delete the files one-by-one
-                Processes.clsProgRunner.GarbageCollectNow()
+                clsProgRunner.GarbageCollectNow()
 
                 Const blnDeleteFolderIfEmpty = True
                 Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
@@ -722,7 +724,7 @@ Namespace Files
                 Else
                     If DateTime.UtcNow.Subtract(mLastGC).TotalMilliseconds >= 500 Then
                         mLastGC = DateTime.UtcNow
-                        Processes.clsProgRunner.GarbageCollectNow()
+                        clsProgRunner.GarbageCollectNow()
                     End If
                 End If
 
@@ -745,7 +747,7 @@ Namespace Files
         ''' <param name="diLockFolder"></param>
         ''' <returns></returns>
         ''' <remarks></remarks>
-        Private Function FindLockFiles(diLockFolder As DirectoryInfo, lockFileTimestamp As Int64) As Generic.List(Of Integer)
+        Private Function FindLockFiles(diLockFolder As DirectoryInfo, lockFileTimestamp As Int64) As List(Of Integer)
             Static reParseLockFileName As Regex = New Regex("^(\d+)_(\d+)_", RegexOptions.Compiled)
 
             Dim reMatch As Match
@@ -866,9 +868,10 @@ Namespace Files
         ''' <param name="SourcePath">The source directory path.</param>
         ''' <param name="DestPath">The destination directory path.</param>
         ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(SourcePath As String,
+        Public Sub CopyDirectory(
+          SourcePath As String,
           DestPath As String,
-          FileNamesToSkip As Generic.List(Of String))
+          FileNamesToSkip As List(Of String))
 
             'Overload with overwrite set to default=FALSE
             CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, FileNamesToSkip)
@@ -900,7 +903,7 @@ Namespace Files
 
             'Overload with no defaults
             Const bReadOnly = False
-            CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly, New Generic.List(Of String), strManagerName)
+            CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly, New List(Of String), strManagerName)
 
         End Sub
 
@@ -912,7 +915,7 @@ Namespace Files
         Public Sub CopyDirectory(SourcePath As String,
           DestPath As String,
           OverWrite As Boolean,
-          FileNamesToSkip As Generic.List(Of String))
+          FileNamesToSkip As List(Of String))
 
             'Overload with no defaults
             Dim bReadOnly = False
@@ -932,7 +935,7 @@ Namespace Files
 
             'Overload with no defaults
             Const SetAttribute = True
-            CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, New Generic.List(Of String), mManagerName)
+            CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, New List(Of String), mManagerName)
 
         End Sub
 
@@ -946,7 +949,7 @@ Namespace Files
           DestPath As String,
           OverWrite As Boolean,
           bReadOnly As Boolean,
-          FileNamesToSkip As Generic.List(Of String))
+          FileNamesToSkip As List(Of String))
 
             'Overload with no defaults
             Const SetAttribute = True
@@ -964,7 +967,7 @@ Namespace Files
           DestPath As String,
           OverWrite As Boolean,
           bReadOnly As Boolean,
-          FileNamesToSkip As Generic.List(Of String),
+          FileNamesToSkip As List(Of String),
           strManagerName As String)
 
             'Overload with no defaults
@@ -982,20 +985,22 @@ Namespace Files
         ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
         ''' <param name="SetAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
         ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        ''' <param name="FileNamesToSkip">
+        ''' List of file names to skip when copying the directory (and subdirectories); 
+        ''' can optionally contain full path names to skip</param>
         ''' <param name="strManagerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
         Private Sub CopyDirectoryEx(SourcePath As String,
             DestPath As String,
             Overwrite As Boolean,
             SetAttribute As Boolean,
             bReadOnly As Boolean,
-            ByRef FileNamesToSkip As Generic.List(Of String),
+            FileNamesToSkip As List(Of String),
             strManagerName As String)
 
             Dim SourceDir = New DirectoryInfo(SourcePath)
             Dim DestDir = New DirectoryInfo(DestPath)
 
-            Dim dctFileNamesToSkip As Generic.Dictionary(Of String, String)
+            Dim dctFileNamesToSkip As Dictionary(Of String, String)
 
             Dim blnCopyFile As Boolean
 
@@ -1113,7 +1118,7 @@ Namespace Files
 
             Const Recurse = False
             Const eFileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
-            Dim FileNamesToSkip As New Generic.List(Of String)
+            Dim FileNamesToSkip As New List(Of String)
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, FileNamesToSkip)
         End Function
@@ -1131,7 +1136,7 @@ Namespace Files
         Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String, Recurse As Boolean) As Boolean
 
             Const eFileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
-            Dim FileNamesToSkip As New Generic.List(Of String)
+            Dim FileNamesToSkip As New List(Of String)
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, FileNamesToSkip)
         End Function
@@ -1152,7 +1157,7 @@ Namespace Files
           TargetFolderPath As String,
           Recurse As Boolean,
           eFileOverwriteMode As FileOverwriteMode,
-          FileNamesToSkip As Generic.List(Of String)) As Boolean
+          FileNamesToSkip As List(Of String)) As Boolean
 
             Dim FileCountSkipped = 0
             Dim FileCountResumed = 0
@@ -1188,7 +1193,7 @@ Namespace Files
 
             Const SetAttribute = False
             Const bReadOnly = False
-            Dim FileNamesToSkip As New Generic.List(Of String)
+            Dim FileNamesToSkip As New List(Of String)
 
             Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
 
@@ -1213,7 +1218,7 @@ Namespace Files
           TargetFolderPath As String,
           Recurse As Boolean,
           eFileOverwriteMode As FileOverwriteMode,
-          FileNamesToSkip As Generic.List(Of String),
+          FileNamesToSkip As List(Of String),
           <Out> ByRef FileCountSkipped As Integer,
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
@@ -1248,14 +1253,14 @@ Namespace Files
           eFileOverwriteMode As FileOverwriteMode,
           SetAttribute As Boolean,
           bReadOnly As Boolean,
-          FileNamesToSkip As Generic.List(Of String),
+          FileNamesToSkip As List(Of String),
           <Out> ByRef FileCountSkipped As Integer,
           <Out> ByRef FileCountResumed As Integer,
           <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
 
             Dim diSourceFolder As DirectoryInfo
             Dim diTargetFolder As DirectoryInfo
-            Dim dctFileNamesToSkip As Generic.Dictionary(Of String, String)
+            Dim dctFileNamesToSkip As Dictionary(Of String, String)
 
             Dim blnCopyFile As Boolean
             Dim bSuccess = True
@@ -1460,7 +1465,7 @@ Namespace Files
                 ' Delete the target file if it already exists
                 If File.Exists(strTargetFilePath) Then
                     File.Delete(strTargetFilePath)
-                    Threading.Thread.Sleep(25)
+                    Thread.Sleep(25)
                 End If
 
                 ' Check for a #FilePart# file
@@ -1531,7 +1536,7 @@ Namespace Files
                     ' Delete FilePart file in the target folder if it already exists
                     If fiFilePart.Exists Then
                         fiFilePart.Delete()
-                        Threading.Thread.Sleep(25)
+                        Thread.Sleep(25)
                     End If
 
                     ' Create the FILE_PART_INFO_TAG file
@@ -1613,7 +1618,7 @@ Namespace Files
                 If Not swFilePart Is Nothing Then
                     swFilePart.Close()
                 End If
-                Processes.clsProgRunner.GarbageCollectNow()
+                clsProgRunner.GarbageCollectNow()
 
                 Throw New IOException("Exception copying file with resume: " & ex.Message, ex)
             End Try
@@ -2103,7 +2108,7 @@ Namespace Files
 
                 If Not fileDeleted Then
                     ' Sleep for 0.5 second (or longer) then try again
-                    Threading.Thread.Sleep(sleepTimeMsec)
+                    Thread.Sleep(sleepTimeMsec)
 
                     ' Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
                     If sleepTimeMsec < 5 Then
@@ -2239,8 +2244,8 @@ Namespace Files
 
             ' Find the recent LockFiles present in the source and/or target lock folders
             ' These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
-            Dim lstLockFileMBSource As Generic.List(Of Integer)
-            Dim lstLockFileMBTarget As Generic.List(Of Integer)
+            Dim lstLockFileMBSource As List(Of Integer)
+            Dim lstLockFileMBTarget As List(Of Integer)
 
             Dim intMBBacklogSource As Integer
             Dim intMBBacklogTarget As Integer
@@ -2309,7 +2314,7 @@ Namespace Files
 
                 RaiseEvent WaitingForLockQueue(fiSourceFile.FullName, strTargetFilePath, intMBBacklogSource, intMBBacklogTarget)
 
-                Threading.Thread.Sleep(CInt(dblSleepTimeSec) * 1000)
+                Thread.Sleep(CInt(dblSleepTimeSec) * 1000)
 
                 If WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES) Then
                     RaiseEvent LockQueueTimedOut(fiSourceFile.FullName, strTargetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes)
