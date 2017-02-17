@@ -52,6 +52,7 @@
     <Compile Include="LogClasses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShareConnector.cs" />
+    <Compile Include="XMLFileReader.cs" />
     <Compile Include="XmlSettingsFileAccessor.cs" />
     <Compile Include="ZipTools.cs" />
   </ItemGroup>
