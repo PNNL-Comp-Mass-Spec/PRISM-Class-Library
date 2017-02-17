@@ -70,7 +70,7 @@ namespace PRISM
 
         private const int DEFAULT_VERSION_COUNT_TO_KEEP = 9;
 
-        const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
+        public const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
 
         private int mChunkSizeMB = DEFAULT_CHUNK_SIZE_MB;
 
