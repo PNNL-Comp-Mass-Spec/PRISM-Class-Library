@@ -24,7 +24,6 @@ namespace PRISM
         private readonly XmlDocument m_XmlDoc;
 
         private List<string> m_SectionNames = new List<string>();
-        private readonly bool m_CaseSensitive;
         private string m_SaveFilename;
 
         private bool m_initialized;
@@ -45,7 +44,7 @@ namespace PRISM
             NotifyOnEvent = notifyOnEvent;
             NotifyOnException = notifyOnException;
       
-            m_CaseSensitive = isCaseSensitive;
+            CaseSensitive = isCaseSensitive;
             m_XmlDoc = new XmlDocument();
 
             if (string.IsNullOrEmpty(xmlFilename))
@@ -101,7 +100,7 @@ namespace PRISM
         /// This routine returns a boolean showing if the name is case sensitive or not.
         /// </summary>
         /// <return>The function returns a Boolean.</return>
-        private bool CaseSensitive => m_CaseSensitive;
+        private bool CaseSensitive { get; }
 
         /// <summary>
         /// This routine sets a name.
