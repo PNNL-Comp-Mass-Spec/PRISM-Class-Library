@@ -53,6 +53,7 @@
     <Compile Include="FileCopyTests.cs" />
     <Compile Include="PathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestDBTools.cs" />
     <Compile Include="XMLSettingsFileTests.cs" />
   </ItemGroup>
   <ItemGroup>
