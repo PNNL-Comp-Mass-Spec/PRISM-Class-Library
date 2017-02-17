@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISM", "PRISM.csproj", "{D4A09264-4F87-44CA-9510-EB435B25E53F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISMTest", "UnitTests\PRISMTest.csproj", "{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D4A09264-4F87-44CA-9510-EB435B25E53F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4A09264-4F87-44CA-9510-EB435B25E53F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4A09264-4F87-44CA-9510-EB435B25E53F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

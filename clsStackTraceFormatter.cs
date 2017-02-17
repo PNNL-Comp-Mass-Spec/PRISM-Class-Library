@@ -1,222 +1,230 @@
-Option Strict On
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
-Imports System.IO
-Imports System.Collections.Generic
-Imports System.Text
-Imports System.Text.RegularExpressions
+namespace PRISM
+{
+    /// <summary>
+    /// This class produces an easier-to read stack trace for an exception
+    /// See the descriptions for functions GetExceptionStackTrace and 
+    /// GetExceptionStackTraceMultiLine for example text
+    /// </summary>
+    /// <remarks></remarks>
+    public class clsStackTraceFormatter
+    {
 
-''' <summary>
-''' This class produces an easier-to read stack trace for an exception
-''' See the descriptions for functions GetExceptionStackTrace and 
-''' GetExceptionStackTraceMultiLine for example text
-''' </summary>
-''' <remarks></remarks>
-Public Class clsStackTraceFormatter
+        public const string STACK_TRACE_TITLE = "Stack trace: ";
+        public const string STACK_CHAIN_SEPARATOR = "-:-";
 
-    Public Const STACK_TRACE_TITLE As String = "Stack trace: "
-    Public Const STACK_CHAIN_SEPARATOR As String = "-:-"
-    Public Const FINAL_FILE_PREFIX As String = " in "
+        public const string FINAL_FILE_PREFIX = " in ";
+    
+        /// <summary>
+        /// Parses the StackTrace text of the given exception to return a compact description of the current stack
+        /// </summary>
+        /// <param name="objException"></param>
+        /// <returns>
+        /// String of the form:
+        /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+        /// </returns>
+        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
+        public static string GetExceptionStackTrace(Exception objException)
+        {
 
-    ''' <summary>
-    ''' Parses the StackTrace text of the given exception to return a compact description of the current stack
-    ''' </summary>
-    ''' <param name="objException"></param>
-    ''' <returns>
-    ''' String of the form:
-    ''' "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
-    ''' </returns>
-    ''' <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-    Public Shared Function GetExceptionStackTrace(objException As Exception) As String
+            var stackTraceData = GetExceptionStackTraceData(objException).ToList();
 
-        Dim stackTraceData As IEnumerable(Of String) = GetExceptionStackTraceData(objException)
+            var sbStackTrace = new StringBuilder();
+            for (var index = 0; index <= stackTraceData.Count - 1; index++) {
+                if (index == stackTraceData.Count - 1 && stackTraceData[index].StartsWith(FINAL_FILE_PREFIX)) {
+                    sbStackTrace.Append(stackTraceData[index]);
+                    break;
+                }
 
-        Dim sbStackTrace = New StringBuilder()
-        For index = 0 To stackTraceData.Count - 1
-            If index = stackTraceData.Count - 1 AndAlso stackTraceData(index).StartsWith(FINAL_FILE_PREFIX) Then
-                sbStackTrace.Append(stackTraceData(index))
-                Exit For
-            End If
+                if (index == 0) {
+                    sbStackTrace.Append(STACK_TRACE_TITLE + stackTraceData[index]);
+                } else {
+                    sbStackTrace.Append(STACK_CHAIN_SEPARATOR + stackTraceData[index]);
+                }
+            }
 
-            If index = 0 Then
-                sbStackTrace.Append(STACK_TRACE_TITLE & stackTraceData(index))
-            Else
-                sbStackTrace.Append(STACK_CHAIN_SEPARATOR & stackTraceData(index))
-            End If
-        Next
+            return sbStackTrace.ToString();
+        }
 
-        Return sbStackTrace.ToString()
-    End Function
+        /// <summary>
+        /// Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
+        /// with one line for each function in the call tree
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <returns>
+        /// Stack trace: 
+        ///   clsCodeTest.Test
+        ///   clsCodeTest.TestException
+        ///   clsCodeTest.InnerTestException 
+        ///    in clsCodeTest.vb:line 86
+        /// </returns>
+        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
+        public static string GetExceptionStackTraceMultiLine(Exception ex)
+        {
 
-    ''' <summary>
-    ''' Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
-    ''' with one line for each function in the call tree
-    ''' </summary>
-    ''' <param name="ex">Exception</param>
-    ''' <returns>
-    ''' Stack trace: 
-    '''   clsCodeTest.Test
-    '''   clsCodeTest.TestException
-    '''   clsCodeTest.InnerTestException 
-    '''    in clsCodeTest.vb:line 86
-    ''' </returns>
-    ''' <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-    Public Shared Function GetExceptionStackTraceMultiLine(ex As Exception) As String
+            var stackTraceData = GetExceptionStackTraceData(ex);
 
-        Dim stackTraceData As IEnumerable(Of String) = GetExceptionStackTraceData(ex)
+            var sbStackTrace = new StringBuilder();
+            sbStackTrace.AppendLine(STACK_TRACE_TITLE);
 
-        Dim sbStackTrace = New StringBuilder()
-        sbStackTrace.AppendLine(STACK_TRACE_TITLE)
+            foreach (var traceItem in stackTraceData)
+            {
+                sbStackTrace.AppendLine("  " + traceItem);
+            }
+       
+            return sbStackTrace.ToString();
 
-        For index = 0 To stackTraceData.Count - 1
-            sbStackTrace.AppendLine("  " & stackTraceData(index))
-        Next
+        }
 
-        Return sbStackTrace.ToString()
+        /// <summary>
+        /// Parses the StackTrace text of the given exception to return a cleaned up description of the current stack
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <returns>
+        /// List of function names; for example:
+        ///   clsCodeTest.Test
+        ///   clsCodeTest.TestException
+        ///   clsCodeTest.InnerTestException 
+        ///    in clsCodeTest.vb:line 86
+        /// </returns>
+        /// <remarks></remarks>
+        public static IEnumerable<string> GetExceptionStackTraceData(Exception ex)
+        {
+            return GetExceptionStackTraceData(ex.StackTrace);
+        }
 
-    End Function
+        /// <summary>
+        /// Parses the given StackTrace text to return a cleaned up description of the current stack
+        /// </summary>
+        /// <param name="stackTraceText">Exception.StackTrace data</param>
+        /// <returns>
+        /// List of function names; for example:
+        ///   clsCodeTest.Test
+        ///   clsCodeTest.TestException
+        ///   clsCodeTest.InnerTestException 
+        ///    in clsCodeTest.vb:line 86
+        /// </returns>
+        /// <remarks></remarks>
+        public static IEnumerable<string> GetExceptionStackTraceData(string stackTraceText)
+        {
+            const string REGEX_FUNCTION_NAME = @"at ([^(]+)\(";
+            const string REGEX_FILE_NAME = @"in .+\\(.+)";
 
-    ''' <summary>
-    ''' Parses the StackTrace text of the given exception to return a cleaned up description of the current stack
-    ''' </summary>
-    ''' <param name="ex">Exception</param>
-    ''' <returns>
-    ''' List of function names; for example:
-    '''   clsCodeTest.Test
-    '''   clsCodeTest.TestException
-    '''   clsCodeTest.InnerTestException 
-    '''    in clsCodeTest.vb:line 86
-    ''' </returns>
-    ''' <remarks></remarks>
-    Public Shared Function GetExceptionStackTraceData(ex As Exception) As IEnumerable(Of String)
-        Return GetExceptionStackTraceData(ex.StackTrace)
-    End Function
+            const string CODE_LINE_PREFIX = ":line ";
+            const string REGEX_LINE_IN_CODE = CODE_LINE_PREFIX + "\\d+";
 
-    ''' <summary>
-    ''' Parses the given StackTrace text to return a cleaned up description of the current stack
-    ''' </summary>
-    ''' <param name="stackTraceText">Exception.StackTrace data</param>
-    ''' <returns>
-    ''' List of function names; for example:
-    '''   clsCodeTest.Test
-    '''   clsCodeTest.TestException
-    '''   clsCodeTest.InnerTestException 
-    '''    in clsCodeTest.vb:line 86
-    ''' </returns>
-    ''' <remarks></remarks>
-    Public Shared Function GetExceptionStackTraceData(stackTraceText As String) As IEnumerable(Of String)
-        Const REGEX_FUNCTION_NAME = "at ([^(]+)\("
-        Const REGEX_FILE_NAME = "in .+\\(.+)"
+            var lstFunctions = new List<string>();
+            var strFinalFile = string.Empty;
 
-        Const CODE_LINE_PREFIX = ":line "
-        Const REGEX_LINE_IN_CODE = CODE_LINE_PREFIX & "\d+"
+            var reFunctionName = new Regex(REGEX_FUNCTION_NAME, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var reFileName = new Regex(REGEX_FILE_NAME, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var reLineInCode = new Regex(REGEX_LINE_IN_CODE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        Dim lstFunctions = New List(Of String)
-        Dim strFinalFile As String = String.Empty
+            if (string.IsNullOrWhiteSpace(stackTraceText)) {
+                var emptyStackTrace = new List<string> {
+                    "Empty stack trace"
+                };
+                return emptyStackTrace;
+            }
 
-        Dim reFunctionName As New Regex(REGEX_FUNCTION_NAME, RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        Dim reFileName As New Regex(REGEX_FILE_NAME, RegexOptions.Compiled Or RegexOptions.IgnoreCase)
-        Dim reLineInCode As New Regex(REGEX_LINE_IN_CODE, RegexOptions.Compiled Or RegexOptions.IgnoreCase)
+            // Process each line in objException.StackTrace
+            // Populate strFunctions() with the function name of each line
+            using (var trTextReader = new StringReader(stackTraceText)) {
 
-        If String.IsNullOrWhiteSpace(stackTraceText) Then
-            Dim emptyStackTrace = New List(Of String)
-            emptyStackTrace.Add("Empty stack trace")
-            Return emptyStackTrace
-        End If
+                while (trTextReader.Peek() > -1) {
+                    var strLine = trTextReader.ReadLine();
 
-        ' Process each line in objException.StackTrace
-        ' Populate strFunctions() with the function name of each line
-        Using trTextReader = New StringReader(stackTraceText)
+                    if (string.IsNullOrEmpty(strLine)) continue;
 
-            Do While trTextReader.Peek > -1
-                Dim strLine = trTextReader.ReadLine()
+                    var strCurrentFunction = string.Empty;
 
-                If Not String.IsNullOrEmpty(strLine) Then
-                    Dim strCurrentFunction = String.Empty
+                    var functionMatch = reFunctionName.Match(strLine);
+                    var lineMatch = reLineInCode.Match(strLine);
 
-                    Dim functionMatch = reFunctionName.Match(strLine)
-                    Dim lineMatch = reLineInCode.Match(strLine)
+                    // Also extract the file name where the Exception occurred
+                    var fileMatch = reFileName.Match(strLine);
+                    string currentFunctionFile;
 
-                    ' Also extract the file name where the Exception occurred
-                    Dim fileMatch = reFileName.Match(strLine)
-                    Dim currentFunctionFile As String
+                    if (fileMatch.Success) {
+                        currentFunctionFile = fileMatch.Groups[1].Value;
+                        if (strFinalFile.Length == 0) {
+                            var lineMatchFinalFile = reLineInCode.Match(currentFunctionFile);
+                            if (lineMatchFinalFile.Success) {
+                                strFinalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index);
+                            } else {
+                                strFinalFile = string.Copy(currentFunctionFile);
+                            }
+                        }
+                    } else {
+                        currentFunctionFile = string.Empty;
+                    }
 
-                    If fileMatch.Success Then
-                        currentFunctionFile = fileMatch.Groups(1).Value
-                        If strFinalFile.Length = 0 Then
-                            Dim lineMatchFinalFile = reLineInCode.Match(currentFunctionFile)
-                            If lineMatchFinalFile.Success Then
-                                strFinalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index)
-                            Else
-                                strFinalFile = String.Copy(currentFunctionFile)
-                            End If
-                        End If
-                    Else
-                        currentFunctionFile = String.Empty
-                    End If
+                    if (functionMatch.Success) {
+                        strCurrentFunction = functionMatch.Groups[1].Value;
+                    } else {
+                        // Look for the word " in "
+                        var intIndex = strLine.ToLower().IndexOf(" in ", StringComparison.Ordinal);
+                        if (intIndex == 0) {
+                            // " in" not found; look for the first space after startIndex 4
+                            intIndex = strLine.IndexOf(" ", 4, StringComparison.Ordinal);
+                        }
 
-                    If functionMatch.Success Then
-                        strCurrentFunction = functionMatch.Groups(1).Value
-                    Else
-                        ' Look for the word " in "
-                        Dim intIndex = strLine.ToLower().IndexOf(" in ", StringComparison.Ordinal)
-                        If intIndex = 0 Then
-                            ' " in" not found; look for the first space after startIndex 4
-                            intIndex = strLine.IndexOf(" ", 4, StringComparison.Ordinal)
-                        End If
+                        if (intIndex == 0) {
+                            // Space not found; use the entire string
+                            intIndex = strLine.Length - 1;
+                        }
 
-                        If intIndex = 0 Then
-                            ' Space not found; use the entire string
-                            intIndex = strLine.Length - 1
-                        End If
+                        if (intIndex > 0) {
+                            strCurrentFunction = strLine.Substring(0, intIndex);
+                        }
 
-                        If intIndex > 0 Then
-                            strCurrentFunction = strLine.Substring(0, intIndex)
-                        End If
+                    }
 
-                    End If
+                    var functionDescription = string.Copy(strCurrentFunction);
 
-                    Dim functionDescription As String = String.Copy(strCurrentFunction)
+                    if (!string.IsNullOrEmpty(currentFunctionFile)) {
+                        if (string.IsNullOrEmpty(strFinalFile) || !TrimLinePrefix(strFinalFile, CODE_LINE_PREFIX).Equals(TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.InvariantCulture)) {
+                            functionDescription += FINAL_FILE_PREFIX + currentFunctionFile;
+                        }
+                    }
 
-                    If Not String.IsNullOrEmpty(currentFunctionFile) Then
-                        If String.IsNullOrEmpty(strFinalFile) OrElse
-                           Not TrimLinePrefix(strFinalFile, CODE_LINE_PREFIX).Equals(
-                               TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX),
-                               StringComparison.InvariantCulture) Then
-                            functionDescription &= FINAL_FILE_PREFIX & currentFunctionFile
-                        End If
-                    End If
+                    if (lineMatch.Success && !functionDescription.Contains(CODE_LINE_PREFIX)) {
+                        functionDescription += lineMatch.Value;
+                    }
 
-                    If lineMatch.Success AndAlso Not functionDescription.Contains(CODE_LINE_PREFIX) Then
-                        functionDescription &= lineMatch.Value
-                    End If
+                    lstFunctions.Add(functionDescription);
+                }
 
-                    lstFunctions.Add(functionDescription)
+            }
 
-                End If
-            Loop
+            var stackTraceData = new List<string>();
+            stackTraceData.AddRange(lstFunctions);
+            stackTraceData.Reverse();
 
-        End Using
+            if (!string.IsNullOrWhiteSpace(strFinalFile)) {
+                stackTraceData.Add(FINAL_FILE_PREFIX + strFinalFile);
+            }
 
-        Dim stackTraceData = New List(Of String)
-        stackTraceData.AddRange(lstFunctions)
-        stackTraceData.Reverse()
+            return stackTraceData;
 
-        If Not String.IsNullOrWhiteSpace(strFinalFile) Then
-            stackTraceData.Add(FINAL_FILE_PREFIX & strFinalFile)
-        End If
+        }
 
-        Return stackTraceData
+        private static string TrimLinePrefix(string strFileDescription, string codeLinePrefix)
+        {
 
-    End Function
+            var matchIndex = strFileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal);
+            if (matchIndex > 0) {
+                return strFileDescription.Substring(0, matchIndex);
+            }
 
-    Private Shared Function TrimLinePrefix(strFileDescription As String, codeLinePrefix As String) As String
+            return strFileDescription;
+        }
 
-        Dim matchIndex = strFileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal)
-        If matchIndex > 0 Then
-            Return strFileDescription.Substring(0, matchIndex)
-        End If
-
-        Return strFileDescription
-    End Function
-
-End Class
+    }
+}

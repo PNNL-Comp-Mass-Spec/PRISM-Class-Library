@@ -1,86 +1,111 @@
-Option Explicit On 
-Option Strict On
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-Imports System.IO
-Imports System.Collections
-Imports System.Collections.Generic
+namespace PRISM
+{
 
-Namespace Files
+    /// <summary>
+    /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
+    /// </summary>
+    public class DirectoryScanner
+    {
+        public event FoundFileEventHandler FoundFile;
 
-    ''' <summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
-    Public Class DirectoryScanner
-        ''' <summary>Event is raised whenever a matching file is found.</summary>
-        ''' <remarks>This event is most useful for implementing a progress indicator.</remarks>
-        ''' <param name="fileName">The found file's full path.</param>
-        Public Event FoundFile(fileName As String)
-        Private ReadOnly mSearchDirs As List(Of String)
-        Private ReadOnly mFileList As List(Of String)
+        /// <summary>
+        /// Event is raised whenever a matching file is found.
+        /// </summary>
+        /// <remarks>This event is most useful for implementing a progress indicator.</remarks>
+        /// <param name="fileName">The found file's full path.</param>
+        public delegate void FoundFileEventHandler(string fileName);
+        private readonly List<string> mSearchDirs;
 
-        ''' <summary>Initializes a new instance of the DirectoryScanner class.</summary>
-        ''' <param name="dirs">An array of directory paths to scan.</param>
-        Public Sub New(dirs As IEnumerable(Of String))
-            Me.New(dirs.ToList())
-        End Sub
+        private readonly List<string> mFileList;
 
-        ''' <summary>
-        ''' Initializes a new instance of the DirectoryScanner class.
-        ''' </summary>
-        ''' <param name="dirs">A list of directory paths to scan</param>
-        ''' <remarks></remarks>
-        Public Sub New(dirs As List(Of String))
-            mSearchDirs = dirs
-            mFileList = New List(Of String)
-        End Sub
+        /// <summary>
+        /// Constructor: Initializes a new instance of the DirectoryScanner class.
+        /// </summary>
+        /// <param name="dirs">An array of directory paths to scan.</param>
+        public DirectoryScanner(IEnumerable<string> dirs) : this(dirs.ToList())
+        {
+        }
 
-        ''' <summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
-        ''' <param name="results">An array of file paths found; unchanged if no matches</param>
-        ''' <param name="searchPatterns">An array of regular expressions to use in the search.</param>
-        ''' <returns>Always returns true</returns>
-        Public Function PerformScan(ByRef results As ArrayList, ParamArray searchPatterns As String()) As Boolean
-            Dim files As List(Of String)
-            files = PerformScan(searchPatterns)
+        /// <summary>
+        /// Constructor: Initializes a new instance of the DirectoryScanner class.
+        /// </summary>
+        /// <param name="dirs">A list of directory paths to scan</param>
+        /// <remarks></remarks>
+        public DirectoryScanner(List<string> dirs)
+        {
+            mSearchDirs = dirs;
+            mFileList = new List<string>();
+        }
 
-            If files.Count > 0 Then
-                If results Is Nothing Then
-                    results = New ArrayList()
-                Else
-                    results.Clear()
-                End If
+        /// <summary>
+        /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
+        /// </summary>
+        /// <param name="results">An array of file paths found; unchanged if no matches</param>
+        /// <param name="searchPatterns">An array of regular expressions to use in the search.</param>
+        /// <returns>Always returns true</returns>
+        public bool PerformScan(ref ArrayList results, params string[] searchPatterns)
+        {
+            var files = PerformScan(searchPatterns);
 
-                For Each item As String In files
-                    results.Add(item)
-                Next
-            End If
+            if (files.Count > 0)
+            {
+                if (results == null)
+                {
+                    results = new ArrayList();
+                }
+                else
+                {
+                    results.Clear();
+                }
 
-            Return True
+                foreach (var item in files)
+                {
+                    results.Add(item);
+                }
+            }
 
-        End Function
+            return true;
 
-        ''' <summary>Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.</summary>
-        ''' <param name="searchPatterns">An array of regular expressions to use in the search.</param>
-        ''' <returns>A list of the file paths found; empty list if no matches</returns>
-        Public Function PerformScan(ParamArray searchPatterns As String()) As List(Of String)
-            mFileList.Clear()
+        }
 
-            For Each dir As String In mSearchDirs
-                For Each pattern As String In searchPatterns
-                    RecursiveFileSearch(dir, pattern)
-                Next pattern
-            Next dir
+        /// <summary>
+        /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
+        /// </summary>
+        /// <param name="searchPatterns">An array of regular expressions to use in the search.</param>
+        /// <returns>A list of the file paths found; empty list if no matches</returns>
+        public List<string> PerformScan(params string[] searchPatterns)
+        {
+            mFileList.Clear();
 
-            Return mFileList
+            foreach (var dir in mSearchDirs)
+            {
+                foreach (var pattern in searchPatterns)
+                {
+                    RecursiveFileSearch(dir, pattern);
+                }
+            }
 
-        End Function
+            return mFileList;
 
-        Private Sub RecursiveFileSearch(searchDir As String, filePattern As String)
-            For Each f As String In Directory.GetFiles(searchDir, filePattern)
-                mFileList.Add(f)
-                RaiseEvent FoundFile(f)
-            Next f
-            For Each d As String In Directory.GetDirectories(searchDir)
-                RecursiveFileSearch(d, filePattern)
-            Next d
-        End Sub
+        }
 
-    End Class
-End Namespace
+        private void RecursiveFileSearch(string searchDir, string filePattern)
+        {
+            foreach (var f in Directory.GetFiles(searchDir, filePattern))
+            {
+                mFileList.Add(f);
+                FoundFile?.Invoke(f);
+            }
+            foreach (var d in Directory.GetDirectories(searchDir))
+            {
+                RecursiveFileSearch(d, filePattern);
+            }
+        }
+
+    }
+}

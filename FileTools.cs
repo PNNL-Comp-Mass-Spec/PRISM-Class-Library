@@ -1,2379 +1,2659 @@
-Option Strict On
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+// Required for call to GetDiskFreeSpaceEx
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Threading;
 
-Imports System.Collections.Generic
-Imports System.IO
-Imports System.Runtime.InteropServices    ' Required for call to GetDiskFreeSpaceEx
-Imports System.Text.RegularExpressions
-Imports System.Threading
-Imports PRISM.Processes
+namespace PRISM
+{
 
-Namespace Files
-
-    ''' <summary>Tools to manipulate paths and directories.</summary>
-    ''' <remarks>
-    ''' There is a set of functions to properly terminate directory paths.
-    ''' There is a set of functions to copy an entire directory tree.
-    ''' There is a set of functions to copy an entire directory tree and resume copying interrupted files.
-    ''' There is a set of functions to get the size of an entire directory tree, including the number of files and directories.
-    '''</remarks>
-    Public Class clsFileTools
-
-#Region "Events"
-
-        ''' <summary>Event is raised before copying begins.</summary>
-        ''' <param name="filename">The file's full path.</param>
-        Public Event CopyingFile(filename As String)
-
-        Public Event DebugEvent(currentTask As String, taskDetail As String)
-
-        Public Event WarningEvent(warningMessage As String, warningDetail As String)
-
-        ''' <summary>Event is raised before copying begins.</summary>
-        ''' <param name="filename">The file's full path.</param>
-        Public Event ResumingFileCopy(filename As String)
-
-        ''' <summary>Event is raised before copying begins.</summary>
-        ''' <param name="filename">The file name (not full path)</param>
-        ''' <param name="percentComplete">Percent complete (value between 0 and 100)</param>
-        Public Event FileCopyProgress(filename As String, percentComplete As Single)
-
-        Public Event WaitingForLockQueue(sourceFilePath As String, targetFilePath As String, backlogSourceMB As Integer, backlogTargetMB As Integer)
-
-        Public Event LockQueueTimedOut(sourceFilePath As String, targetFilePath As String, waitTimeMinutes As Double)
-
-        Public Event LockQueueWaitComplete(sourceFilePath As String, targetFilePath As String, waitTimeMinutes As Double)
-
-#End Region
-
-#Region "Module constants and variables"
-        'Private constants
-        Private Const TERM_ADD As Boolean = True
-        Private Const TERM_REMOVE As Boolean = False
-        Private Const TERMCHAR_DOS As String = "\"
-        Private Const TERMCHAR_UNIX As String = "/"
-        Private Const COPY_OVERWRITE As Boolean = True
-        Private Const COPY_NO_OVERWRITE As Boolean = False
-
-        Private Const MAX_LOCKFILE_WAIT_TIME_MINUTES As Integer = 180
-
-        Public Const LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB As Integer = 20
-        Private Const LOCKFILE_TRANSFER_THRESHOLD_MB As Integer = 1000
-        Private Const LOCKFILE_EXTENSION As String = ".lock"
-
-        Private Const DEFAULT_VERSION_COUNT_TO_KEEP As Integer = 9
-
-        Private mCopyStatus As CopyStatus = CopyStatus.Idle
-        Private mCurrentSourceFilePath As String = String.Empty
-
-        Private mChunkSizeMB As Integer = DEFAULT_CHUNK_SIZE_MB
-        Private mFlushThresholdMB As Integer = DEFAULT_FLUSH_THRESHOLD_MB
-
-        Private mDebugLevel As Integer = 1
-        Private mManagerName As String = "Unknown-Manager"
-
-        Private mLastGC As DateTime = DateTime.UtcNow
-
-#End Region
-
-#Region "Public constants"
-        'Constants
-        ''' <summary>Used to add the path separation character to the end of the directory path.</summary>
-        Public Const TERMINATOR_ADD As Boolean = True
-        ''' <summary>Used to remove the path separation character from the end of the directory path.</summary>
-        Public Const TERMINATOR_REMOVE As Boolean = False
-
-        ''' <summary>
-        ''' Used by CopyFileWithResume and CopyDirectoryWithResume when copying a file byte-by-byte and supporting resuming the copy if interrupted
-        ''' </summary>
-        ''' <remarks></remarks>
-        Public Const DEFAULT_CHUNK_SIZE_MB As Integer = 1
-
-        ''' <summary>
-        ''' Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
-        ''' </summary>
-        ''' <remarks></remarks>
-        Public Const DEFAULT_FLUSH_THRESHOLD_MB As Integer = 25
-
-#End Region
-
-#Region "Enums"
-        Public Enum FileOverwriteMode
-            DoNotOverwrite = 0
-            AlwaysOverwrite = 1
-            OverwriteIfSourceNewer = 2                  ' Overwrite if source date newer (or if same date but length differs)
-            OverWriteIfDateOrLengthDiffer = 3           ' Overwrite if any difference in size or date; note that newer files in target folder will get overwritten since their date doesn't match
-        End Enum
-
-        Public Enum CopyStatus
-            Idle = 0                    ' Not copying a file
-            NormalCopy = 1              ' File is geing copied via .NET and cannot be resumed
-            BufferedCopy = 2            ' File is being copied in chunks and can be resumed
-            BufferedCopyResume = 3      ' Resuming copying a file in chunks
-        End Enum
-#End Region
-
-#Region "Properties"
-
-        Public Property CopyChunkSizeMB As Integer
-            Get
-                Return mChunkSizeMB
-            End Get
-            Set(value As Integer)
-                If value < 1 Then value = 1
-                mChunkSizeMB = value
-            End Set
-        End Property
-
-        Public Property CopyFlushThresholdMB As Integer
-            Get
-                Return mFlushThresholdMB
-            End Get
-            Set(value As Integer)
-                If value < 1 Then value = 1
-                mFlushThresholdMB = value
-            End Set
-        End Property
-
-        Public ReadOnly Property CurrentCopyStatus As CopyStatus
-            Get
-                Return mCopyStatus
-            End Get
-        End Property
-
-        Public ReadOnly Property CurrentSourceFile As String
-            Get
-                Return mCurrentSourceFilePath
-            End Get
-        End Property
-
-        Public Property DebugLevel As Integer
-            Get
-                Return mDebugLevel
-            End Get
-            Set(value As Integer)
-                mDebugLevel = value
-            End Set
-        End Property
-
-        Public Property ManagerName As String
-            Get
-                Return mManagerName
-            End Get
-            Set(value As String)
-                mManagerName = value
-            End Set
-        End Property
-
-#End Region
-
-#Region "Constructor"
-        ''' <summary>
-        ''' Constructor
-        ''' </summary>
-        ''' <remarks></remarks>
-        Public Sub New()
-            mManagerName = "Unknown-Manager"
-            mDebugLevel = 1
-        End Sub
-
-        Public Sub New(strManagerName As String, intDebugLevel As Integer)
-            mManagerName = strManagerName
-            mDebugLevel = intDebugLevel
-        End Sub
-#End Region
-
-#Region "CheckTerminator function"
-        'Functions
-        ''' <summary>Modifies input directory path string depending on optional settings.</summary>
-        ''' <param name="InpFolder">The input directory path.</param>
-        ''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
-        ''' <param name="TermChar">The specified directory separation character.</param>
-        ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(InpFolder As String, AddTerm As Boolean, TermChar As String) As String
-
-            'Overload for all parameters specified
-            Return CheckTerminatorEX(InpFolder, AddTerm, TermChar)
-
-        End Function
-
-        ''' <summary>Adds or removes the DOS path separation character from the end of the directory path.</summary>
-        ''' <param name="InpFolder">The input directory path.</param>
-        ''' <param name="AddTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
-        ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(InpFolder As String, AddTerm As Boolean) As String
-
-            'Overload for using default termination character (DOS)
-            Return CheckTerminatorEX(InpFolder, AddTerm, TERMCHAR_DOS)
-
-        End Function
-
-        ''' <summary>Assures the directory path ends with the specified path separation character.</summary>
-        ''' <param name="InpFolder">The input directory path.</param>
-        ''' <param name="TermChar">The specified directory separation character.</param>
-        ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(InpFolder As String, TermChar As String) As String
-
-            'Overload for using "add character" as default
-            Return CheckTerminatorEX(InpFolder, TERM_ADD, TermChar)
-
-        End Function
-
-        ''' <summary>Assures the directory path ends with the DOS path separation character.</summary>
-        ''' <param name="InpFolder">The input directory path.</param>
-        ''' <returns>The modified directory path.</returns>
-        Public Shared Function CheckTerminator(InpFolder As String) As String
-
-            'Overload for using all defaults (add DOS terminator char)
-            Return CheckTerminatorEX(InpFolder, TERM_ADD, TERMCHAR_DOS)
-
-        End Function
-
-        ''' <summary>Modifies input directory path string depending on AddTerm</summary>
-        ''' <param name="InpFolder">The input directory path.</param>
-        ''' <param name="AddTerm">Specifies whether the directory path should end with the specified directory separation character</param>
-        ''' <param name="TermChar">The specified directory separation character.</param>
-        ''' <returns>The modified directory path.</returns>
-        ''' <remarks>AddTerm=True forces the path to end with specified TermChar while AddTerm=False will remove TermChar from the end if present</remarks>
-        Private Shared Function CheckTerminatorEX(InpFolder As String, AddTerm As Boolean, TermChar As String) As String
-
-            If String.IsNullOrWhiteSpace(InpFolder) OrElse String.IsNullOrWhiteSpace(TermChar) Then
-                Return InpFolder
-            End If
-
-            If AddTerm Then
-                If InpFolder.EndsWith(TermChar) Then
-                    Return InpFolder
-                Else
-                    Return InpFolder & TermChar
-                End If
-            Else
-                If InpFolder.EndsWith(TermChar) Then
-                    Return InpFolder.TrimEnd(TermChar.Chars(0))
-                Else
-                    Return InpFolder
-                End If
-            End If
-
-        End Function
-#End Region
-
-#Region "CopyFile function"
-
-        ''' <summary>Copies a source file to the destination file. Does not allow overwriting.</summary>
-        ''' <param name="SourcePath">The source file path.</param>
-        ''' <param name="DestPath">The destination file path.</param>
-        Public Sub CopyFile(SourcePath As String, DestPath As String)
-
-            'Overload with overwrite set to default (FALSE)
-            Const BackupDestFileBeforeCopy = False
-            CopyFileEx(SourcePath, DestPath, COPY_NO_OVERWRITE, BackupDestFileBeforeCopy)
-
-        End Sub
-
-        Public Sub CopyFile(SourcePath As String, DestPath As String, OverWrite As Boolean)
-            Const BackupDestFileBeforeCopy = False
-            CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy)
-        End Sub
-
-        Public Sub CopyFile(SourcePath As String, DestPath As String, OverWrite As Boolean, BackupDestFileBeforeCopy As Boolean)
-            CopyFile(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy, DEFAULT_VERSION_COUNT_TO_KEEP)
-        End Sub
-
-        ''' <summary>Copies a source file to the destination file. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source file path.</param>
-        ''' <param name="DestPath">The destination file path.</param>
-        ''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-        Public Sub CopyFile(SourcePath As String, DestPath As String, OverWrite As Boolean, BackupDestFileBeforeCopy As Boolean, VersionCountToKeep As Integer)
-
-            'Overload with no defaults
-            CopyFileEx(SourcePath, DestPath, OverWrite, BackupDestFileBeforeCopy, VersionCountToKeep)
-
-        End Sub
-
-        ''' <summary>Copies a source file to the destination file. Allows overwriting.</summary>
-        ''' <remarks>
-        ''' This function is unique in that it allows you to specify a destination path where
-        ''' some of the directories do not already exist.  It will create them if they don't.
-        ''' The last parameter specifies whether a file already present in the
-        ''' destination directory will be overwritten
-        ''' - Note: requires Imports System.IO
-        ''' - Usage: CopyFile("C:\Misc\Bob.txt", "D:\MiscBackup\Bob.txt")
-        ''' </remarks>
-        ''' <param name="SourcePath">The source file path.</param>
-        ''' <param name="DestPath">The destination file path.</param>
-        ''' <param name="Overwrite">True if the destination file can be overwritten; otherwise, false.</param>
-        Private Sub CopyFileEx(
-          SourcePath As String,
-          DestPath As String,
-          Overwrite As Boolean,
-          BackupDestFileBeforeCopy As Boolean,
-          Optional VersionCountToKeep As Integer = DEFAULT_VERSION_COUNT_TO_KEEP)
-
-            Dim dirPath As String = Path.GetDirectoryName(DestPath)
-            If Not Directory.Exists(dirPath) Then
-                Directory.CreateDirectory(dirPath)
-            End If
-
-            If BackupDestFileBeforeCopy Then
-                BackupFileBeforeCopy(DestPath, VersionCountToKeep)
-            End If
-
-            If mDebugLevel >= 3 Then
-                RaiseEvent DebugEvent("Copying file with CopyFileEx", SourcePath & " to " & DestPath)
-            End If
-
-            UpdateCurrentStatus(CopyStatus.NormalCopy, SourcePath)
-            File.Copy(SourcePath, DestPath, Overwrite)
-            UpdateCurrentStatusIdle()
-        End Sub
-
-#End Region
-
-#Region "Lock File Copying functions"
-
-        ''' <summary>
-        ''' Copy the source file to the target path; do not overwrite existing files
-        ''' </summary>
-        ''' <param name="strSourceFilePath">Source file path</param>
-        ''' <param name="strTargetFilePath">Target file path</param>
-        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks>If the file exists, will not copy the file but will still return true</remarks>
-        Public Function CopyFileUsingLocks(strSourceFilePath As String, strTargetFilePath As String, strManagerName As String) As Boolean
-            Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite:=False)
-        End Function
-
-        ''' <summary>
-        ''' Copy the source file to the target path
-        ''' </summary>
-        ''' <param name="strSourceFilePath">Source file path</param>
-        ''' <param name="strTargetFilePath">Target file path</param>
-        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
-        ''' <param name="Overwrite">True to overwrite existing files</param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks>If the file exists yet Overwrite is false, will not copy the file but will still return true</remarks>
-        Public Function CopyFileUsingLocks(strSourceFilePath As String, strTargetFilePath As String, strManagerName As String, Overwrite As Boolean) As Boolean
-            Return CopyFileUsingLocks(New FileInfo(strSourceFilePath), strTargetFilePath, strManagerName, Overwrite)
-        End Function
-
-        ''' <summary>
-        ''' Copy the source file to the target path
-        ''' </summary>
-        ''' <param name="fiSource">Source file object</param>
-        ''' <param name="strTargetFilePath">Target file path</param>
-        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
-        ''' <param name="Overwrite">True to overwrite existing files</param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks>If the file exists yet Overwrite is false, will not copy the file but will still return true</remarks>
-        Public Function CopyFileUsingLocks(
-          fiSource As FileInfo,
-          strTargetFilePath As String,
-          strManagerName As String,
-          Overwrite As Boolean) As Boolean
-
-            Dim blnUseLockFile = False
-            Dim blnSuccess As Boolean
-
-            If Not Overwrite AndAlso File.Exists(strTargetFilePath) Then
-                Return True
-            End If
-
-            Dim fiTarget = New FileInfo(strTargetFilePath)
-
-            Dim strLockFolderPathSource As String = GetLockFolder(fiSource)
-            Dim strLockFolderPathTarget As String = GetLockFolder(fiTarget)
-
-            If Not String.IsNullOrEmpty(strLockFolderPathSource) OrElse Not String.IsNullOrEmpty(strLockFolderPathTarget) Then
-                blnUseLockFile = True
-            End If
-
-            If blnUseLockFile Then
-                blnSuccess = CopyFileUsingLocks(strLockFolderPathSource, strLockFolderPathTarget, fiSource, strTargetFilePath, strManagerName, Overwrite)
-            Else
-                Dim expectedSourceLockFolder = GetLockFolderPath(fiSource)
-                Dim expectedTargetLockFolder = GetLockFolderPath(fiTarget)
-
-                If String.IsNullOrEmpty(expectedSourceLockFolder) AndAlso String.IsNullOrEmpty(expectedTargetLockFolder) Then
-                    ' File is being copied locally; we don't use lock folders
-                    ' Do not raise this as a DebugEvent
-                Else
-                    If String.IsNullOrEmpty(expectedSourceLockFolder) Then
-                        ' Source file is local; lock folder would not be used
-                        expectedSourceLockFolder = "Source file is local"
-                    End If
-
-                    If String.IsNullOrEmpty(expectedTargetLockFolder) Then
-                        ' Target file is local; lock folder would not be used
-                        expectedTargetLockFolder = "Target file is local"
-                    End If
-
-                    If mDebugLevel >= 1 Then
-                        RaiseEvent DebugEvent("Lock file folder not found on the source or target", expectedSourceLockFolder & " and " & expectedTargetLockFolder)
-                    End If
-                End If
-
-                Const BackupDestFileBeforeCopy = False
-                CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
-                blnSuccess = True
-            End If
-
-            Return blnSuccess
-
-        End Function
-
-        ''' <summary>
-        ''' Given a file path, return the lock file folder if it exsists
-        ''' </summary>
-        ''' <param name="fiFile"></param>
-        ''' <returns>Lock folder path if it exists</returns>
-        ''' <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
-        Public Function GetLockFolder(fiFile As FileInfo) As String
-
-            Dim lockFolderPath = GetLockFolderPath(fiFile)
-
-            If Not String.IsNullOrEmpty(lockFolderPath) AndAlso Directory.Exists(lockFolderPath) Then
-                Return lockFolderPath
-            End If
-
-            Return String.Empty
-
-        End Function
-
-        ''' <summary>
-        ''' Given a file path, return the lock file folder path (does not verify that it exists)
-        ''' </summary>
-        ''' <param name="fiFile"></param>
-        ''' <returns>Lock folder path</returns>
-        ''' <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
-        Private Function GetLockFolderPath(fiFile As FileInfo) As String
-
-            If Path.IsPathRooted(fiFile.FullName) Then
-                If fiFile.Directory.Root.FullName.StartsWith("\\") Then
-                    Return Path.Combine(GetServerShareBase(fiFile.Directory.Root.FullName), "DMS_LockFiles")
-                End If
-            End If
-
-            Return String.Empty
-
-        End Function
-
-        ''' <summary>
-        ''' Copy the source file to the target path
-        ''' </summary>
-        ''' <param name="strLockFolderPathSource">Path to the lock folder for the source file; can be an empty string</param>
-        ''' <param name="strLockFolderPathTarget">Path to the lock folder for the target file; can be an empty string</param>
-        ''' <param name="fiSource">Source file object</param>
-        ''' <param name="strTargetFilePath">Target file path</param>
-        ''' <param name="strManagerName">Manager name (included in the lock file name)</param>
-        ''' <param name="Overwrite">True to overwrite existing files</param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks>If the file exists yet Overwrite is false, will not copy the file but will still return true</remarks>
-        Public Function CopyFileUsingLocks(
-          strLockFolderPathSource As String,
-          strLockFolderPathTarget As String,
-          fiSource As FileInfo,
-          strTargetFilePath As String,
-          strManagerName As String,
-          Overwrite As Boolean) As Boolean
-
-            Dim intSourceFileSizeMB As Integer
-
-            If Not Overwrite AndAlso File.Exists(strTargetFilePath) Then
-                If mDebugLevel >= 2 Then
-                    RaiseEvent DebugEvent("Skipping file since target exists", strTargetFilePath)
-                End If
-                Return True
-            End If
-
-            ' Examine the size of the source file
-            ' If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
-            ' copy the file normally
-            intSourceFileSizeMB = CInt(fiSource.Length / 1024.0 / 1024.0)
-            If intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB OrElse
-               (String.IsNullOrWhiteSpace(strLockFolderPathSource) AndAlso String.IsNullOrWhiteSpace(strLockFolderPathTarget)) Then
-                Const BackupDestFileBeforeCopy = False
-                If mDebugLevel >= 2 Then
-                    Dim debugMsg = String.Format("File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}",
-                                                    fiSource.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, fiSource.Name)
-                    RaiseEvent DebugEvent(debugMsg, fiSource.FullName)
-                End If
-
-                CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
-                Return True
-            End If
-
-
-            Dim strLockFilePathSource As String = String.Empty
-            Dim strLockFilePathTarget As String = String.Empty
-
-            Try
-                ' Create a new lock file on the source and/or target server
-                ' This file indicates an intent to copy a file
-
-                Dim diLockFolderSource As DirectoryInfo = Nothing
-                Dim diLockFolderTarget As DirectoryInfo = Nothing
-                Dim lockFileTimestamp As Int64 = GetLockFileTimeStamp()
-
-                If Not String.IsNullOrWhiteSpace(strLockFolderPathSource) Then
-                    diLockFolderSource = New DirectoryInfo(strLockFolderPathSource)
-                    strLockFilePathSource = CreateLockFile(diLockFolderSource, lockFileTimestamp, fiSource, strTargetFilePath, strManagerName)
-                End If
-
-                If Not String.IsNullOrWhiteSpace(strLockFolderPathTarget) Then
-                    diLockFolderTarget = New DirectoryInfo(strLockFolderPathTarget)
-                    strLockFilePathTarget = CreateLockFile(diLockFolderTarget, lockFileTimestamp, fiSource, strTargetFilePath, strManagerName)
-                End If
-
-                WaitForLockFileQueue(
-                  lockFileTimestamp,
-                  diLockFolderSource,
-                  diLockFolderTarget,
-                  fiSource,
-                  strTargetFilePath,
-                  MAX_LOCKFILE_WAIT_TIME_MINUTES)
-
-                If mDebugLevel >= 1 Then
-                    RaiseEvent DebugEvent("Copying " & fiSource.Name & " using Locks", fiSource.FullName & " to " & strTargetFilePath)
-                End If
-
-                ' Perform the copy
-                Const BackupDestFileBeforeCopy = False
-                CopyFileEx(fiSource.FullName, strTargetFilePath, Overwrite, BackupDestFileBeforeCopy)
-
-                ' Delete the lock file(s)
-                DeleteFileIgnoreErrors(strLockFilePathSource)
-                DeleteFileIgnoreErrors(strLockFilePathTarget)
-
-            Catch ex As Exception
-                ' Error occurred
-                ' Delete the lock file then throw the exception
-                DeleteFileIgnoreErrors(strLockFilePathSource)
-                DeleteFileIgnoreErrors(strLockFilePathTarget)
-
-                Throw
-            End Try
-
-            Return True
-
-        End Function
-
-        ''' <summary>
-        ''' Create a lock file in the specified lock folder
-        ''' </summary>
-        ''' <param name="diLockFolder"></param>
-        ''' <param name="fiSource"></param>
-        ''' <param name="strTargetFilePath"></param>
-        ''' <param name="strManagerName"></param>
-        ''' <returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
-        ''' <remarks></remarks>
-        Public Function CreateLockFile(
-          diLockFolder As DirectoryInfo,
-          lockFileTimestamp As Int64,
-          fiSource As FileInfo,
-          strTargetFilePath As String,
-          strManagerName As String) As String
-
-            If diLockFolder Is Nothing Then
-                Return String.Empty
-            End If
-
-            If String.IsNullOrWhiteSpace(strManagerName) Then
-                strManagerName = "UnknownManager"
-            End If
-
-            ' Define the lock file name
-            Dim strLockFileName = GenerateLockFileName(lockFileTimestamp, fiSource, strManagerName)
-            Dim strLockFilePath = Path.Combine(diLockFolder.FullName, strLockFileName)
-            Do While File.Exists(strLockFilePath)
-                ' File already exists for this manager; append a dash to the path
-                strLockFileName = Path.GetFileNameWithoutExtension(strLockFileName) & "-" & Path.GetExtension(strLockFileName)
-                strLockFilePath = Path.Combine(diLockFolder.FullName, strLockFileName)
-            Loop
-
-            Try
-                ' Create the lock file
-                Using swLockFile = New StreamWriter(New FileStream(strLockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read))
-                    swLockFile.WriteLine("Date: " & DateTime.Now.ToString())
-                    swLockFile.WriteLine("Source: " & fiSource.FullName)
-                    swLockFile.WriteLine("Target: " & strTargetFilePath)
-                    swLockFile.WriteLine("Size_Bytes: " & fiSource.Length)
-                    swLockFile.WriteLine("Manager: " & strManagerName)
-                End Using
-
-                RaiseEvent DebugEvent("Created lock file in " + diLockFolder.FullName, strLockFilePath)
-
-            Catch ex As Exception
-                ' Error creating the lock file
-                ' Return an empty string
-                RaiseEvent WarningEvent("Error creating lock file in " + diLockFolder.FullName, ex.Message)
-                Return String.Empty
-            End Try
-
-            Return strLockFilePath
-
-        End Function
-
-        ''' <summary>
-        '''  Deletes the specified directory and all subdirectories
-        ''' </summary>
-        ''' <param name="strDirectoryPath"></param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks></remarks>
-        Public Function DeleteDirectory(strDirectoryPath As String) As Boolean
-            Return DeleteDirectory(strDirectoryPath, ignoreErrors:=False)
-        End Function
-
-        ''' <summary>
-        '''  Deletes the specified directory and all subdirectories
-        ''' </summary>
-        ''' <param name="strDirectoryPath"></param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks></remarks>
-        Public Function DeleteDirectory(strDirectoryPath As String, ignoreErrors As Boolean) As Boolean
-
-            Dim diLocalDotDFolder = New DirectoryInfo(strDirectoryPath)
-
-            Try
-                diLocalDotDFolder.Delete(True)
-            Catch ex As Exception
-                ' Problems deleting one or more of the files
-                If Not ignoreErrors Then Throw
-
-                ' Collect garbage, then delete the files one-by-one
-                clsProgRunner.GarbageCollectNow()
-
-                Const blnDeleteFolderIfEmpty = True
-                Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
-            End Try
-
-            Return True
-
-        End Function
-
-        ''' <summary>
-        ''' Deletes the specified directory and all subdirectories; does not delete the target folder
-        ''' </summary>
-        ''' <param name="strDirectoryPath"></param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        Public Function DeleteDirectoryFiles(strDirectoryPath As String) As Boolean
-            Const blnDeleteFolderIfEmpty = False
-            Return DeleteDirectoryFiles(strDirectoryPath, blnDeleteFolderIfEmpty)
-        End Function
-
-        ''' <summary>
-        ''' Deletes the specified directory and all subdirectories
-        ''' </summary>
-        ''' <param name="strDirectoryPath"></param>
-        ''' <param name="blnDeleteFolderIfEmpty">Set to True to delete the folder, if it is empty</param>
-        ''' <returns>True if success, false if an error</returns>
-        ''' <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        Public Function DeleteDirectoryFiles(strDirectoryPath As String, blnDeleteFolderIfEmpty As Boolean) As Boolean
-
-            Dim diFolderToDelete = New DirectoryInfo(strDirectoryPath)
-            Dim errorCount = 0
-
-            For Each fiFile In diFolderToDelete.GetFiles("*", SearchOption.AllDirectories)
-                If Not DeleteFileIgnoreErrors(fiFile.FullName) Then
-                    errorCount += 1
-                End If
-            Next
-
-            If errorCount = 0 AndAlso blnDeleteFolderIfEmpty Then
-                Try
-                    diFolderToDelete.Delete(True)
-                Catch ex As Exception
-                    RaiseEvent WarningEvent("Error removing empty directory", "Unable to delete directory " & diFolderToDelete.FullName & ": " & ex.Message)
-                    errorCount += 1
-                End Try
-            End If
-
-            If errorCount = 0 Then
-                Return True
-            Else
-                Return False
-            End If
-
-        End Function
-
-        ''' <summary>
-        ''' Delete the specified file
-        ''' </summary>
-        ''' <param name="strFilePath"></param>
-        ''' <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
-        ''' <remarks>If the initial attempt fails, then checks the readonly bit and tries again.  If not readonly, then performs a garbage collection (every 500 msec)</remarks>
-        Private Function DeleteFileIgnoreErrors(strFilePath As String) As Boolean
-
-            If String.IsNullOrWhiteSpace(strFilePath) Then Return True
-
-            Dim fiFile = New FileInfo(strFilePath)
-
-            Try
-                If (fiFile.Exists) Then
-                    fiFile.Delete()
-                End If
-                Return True
-            Catch ex As Exception
-                ' Ignore errors here
-            End Try
-
-            Try
-                ' The file might be readonly; check for this then re-try the delete
-                If fiFile.IsReadOnly Then
-                    fiFile.IsReadOnly = False
-                Else
-                    If DateTime.UtcNow.Subtract(mLastGC).TotalMilliseconds >= 500 Then
-                        mLastGC = DateTime.UtcNow
-                        clsProgRunner.GarbageCollectNow()
-                    End If
-                End If
-
-                fiFile.Delete()
-
-            Catch ex As Exception
-                ' Ignore errors here
-                RaiseEvent WarningEvent("Error deleting file", "Unable to delete file " & fiFile.FullName & ": " & ex.Message)
-
-                Return False
-            End Try
-
-            Return True
-
-        End Function
-
-        ''' <summary>
-        ''' Finds lock files with a timestamp less than
-        ''' </summary>
-        ''' <param name="diLockFolder"></param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Private Function FindLockFiles(diLockFolder As DirectoryInfo, lockFileTimestamp As Int64) As List(Of Integer)
-            Static reParseLockFileName As Regex = New Regex("^(\d+)_(\d+)_", RegexOptions.Compiled)
-
-            Dim reMatch As Match
-            Dim intQueueTimeMSec As Int64
-            Dim intFileSizeMB As Int32
-
-            Dim lstLockFiles As List(Of Integer)
-            lstLockFiles = New List(Of Integer)
-
-            If diLockFolder Is Nothing Then
-                Return lstLockFiles
-            End If
-
-            diLockFolder.Refresh()
-
-            For Each fiLockFile As FileInfo In diLockFolder.GetFiles("*" & LOCKFILE_EXTENSION)
-                reMatch = reParseLockFileName.Match(fiLockFile.Name)
-
-                If reMatch.Success Then
-                    If Int64.TryParse(reMatch.Groups(1).Value, intQueueTimeMSec) Then
-                        If Int32.TryParse(reMatch.Groups(2).Value, intFileSizeMB) Then
-
-                            If intQueueTimeMSec < lockFileTimestamp Then
-                                ' Lock file fiLockFile was created prior to the current one
-                                ' Make sure it's less than 1 hour old
-                                If Math.Abs((lockFileTimestamp - intQueueTimeMSec) / 1000.0 / 60.0) < MAX_LOCKFILE_WAIT_TIME_MINUTES Then
-                                    lstLockFiles.Add(intFileSizeMB)
-                                End If
-                            End If
-                        End If
-                    End If
-
-                End If
-            Next
-
-            Return lstLockFiles
-
-        End Function
-
-        ''' <summary>
-        ''' Generate the lock file name, which starts with a msec-based timestamp, then has the source file size (in MB), then has information on the machine creating the file
-        ''' </summary>
-        ''' <param name="fiSource"></param>
-        ''' <param name="strManagerName"></param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Private Function GenerateLockFileName(lockFileTimestamp As Int64, fiSource As FileInfo, strManagerName As String) As String
-            Static reInvalidDosChars As Regex = New Regex("[\\/:*?""<>| ]", RegexOptions.Compiled)
-
-            If String.IsNullOrWhiteSpace(strManagerName) Then
-                strManagerName = "UnknownManager"
-            End If
-
-            Dim strLockFileName As String
-            strLockFileName = lockFileTimestamp.ToString() & "_" &
-              (fiSource.Length / 1024.0 / 1024.0).ToString("0000") & "_" & Environment.MachineName & "_" &
-              strManagerName & LOCKFILE_EXTENSION
-
-            ' Replace any invalid characters (including spaces) with an underscore
-            Return reInvalidDosChars.Replace(strLockFileName, "_")
-
-        End Function
-
-        Public Function GetLockFileTimeStamp() As Int64
-            Return CType(Math.Round(DateTime.UtcNow.Subtract(New DateTime(2010, 1, 1)).TotalMilliseconds, 0), Int64)
-        End Function
-
-        ''' <summary>
-        ''' Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
-        ''' </summary>
-        ''' <param name="strServerSharePath"></param>
-        ''' <returns></returns>
-        ''' <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
-        Public Function GetServerShareBase(strServerSharePath As String) As String
-            If strServerSharePath.StartsWith("\\") Then
-                Dim intSlashIndex As Integer
-                intSlashIndex = strServerSharePath.IndexOf("\"c, 2)
-                If intSlashIndex > 0 Then
-                    Dim strServerShareBase = strServerSharePath.Substring(0, intSlashIndex)
-                    If strServerShareBase.ToLower() = "\\picfs" Then
-                        strServerShareBase = "\\picfs\projects\DMS"
-                    End If
-                    Return strServerShareBase
-                Else
-                    Return strServerSharePath
-                End If
-            Else
-                Return String.Empty
-            End If
-        End Function
-#End Region
-
-#Region "CopyDirectory function"
-
-        ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        Public Sub CopyDirectory(SourcePath As String, DestPath As String)
-
-            'Overload with overwrite set to default=FALSE
-            CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          strManagerName As String)
-
-            'Overload with overwrite set to default=FALSE
-            CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, strManagerName)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Does not allow overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(
-          SourcePath As String,
-          DestPath As String,
-          FileNamesToSkip As List(Of String))
-
-            'Overload with overwrite set to default=FALSE
-            CopyDirectory(SourcePath, DestPath, COPY_NO_OVERWRITE, FileNamesToSkip)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          OverWrite As Boolean)
-
-            'Overload with no defaults
-            Const bReadOnly = False
-            CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          OverWrite As Boolean,
-          strManagerName As String)
-
-            'Overload with no defaults
-            Const bReadOnly = False
-            CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly, New List(Of String), strManagerName)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          OverWrite As Boolean,
-          FileNamesToSkip As List(Of String))
-
-            'Overload with no defaults
-            Dim bReadOnly = False
-            CopyDirectory(SourcePath, DestPath, OverWrite, bReadOnly, FileNamesToSkip)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          OverWrite As Boolean,
-          bReadOnly As Boolean)
-
-            'Overload with no defaults
-            Const SetAttribute = True
-            CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, New List(Of String), mManagerName)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          OverWrite As Boolean,
-          bReadOnly As Boolean,
-          FileNamesToSkip As List(Of String))
-
-            'Overload with no defaults
-            Const SetAttribute = True
-            CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, FileNamesToSkip, mManagerName)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        Public Sub CopyDirectory(SourcePath As String,
-          DestPath As String,
-          OverWrite As Boolean,
-          bReadOnly As Boolean,
-          FileNamesToSkip As List(Of String),
-          strManagerName As String)
-
-            'Overload with no defaults
-            Const SetAttribute = True
-            CopyDirectoryEx(SourcePath, DestPath, OverWrite, SetAttribute, bReadOnly, FileNamesToSkip, strManagerName)
-
-        End Sub
-
-        ''' <summary>Copies a source directory to the destination directory. Allows overwriting.</summary>
-        ''' <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
-        ''' Original code obtained from vb2themax.com
-        ''' </remarks>
-        ''' <param name="SourcePath">The source directory path.</param>
-        ''' <param name="DestPath">The destination directory path.</param>
-        ''' <param name="Overwrite">true if the destination file can be overwritten; otherwise, false.</param>
-        ''' <param name="SetAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
-        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        ''' <param name="FileNamesToSkip">
-        ''' List of file names to skip when copying the directory (and subdirectories); 
-        ''' can optionally contain full path names to skip</param>
-        ''' <param name="strManagerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
-        Private Sub CopyDirectoryEx(SourcePath As String,
-            DestPath As String,
-            Overwrite As Boolean,
-            SetAttribute As Boolean,
-            bReadOnly As Boolean,
-            FileNamesToSkip As List(Of String),
-            strManagerName As String)
-
-            Dim SourceDir = New DirectoryInfo(SourcePath)
-            Dim DestDir = New DirectoryInfo(DestPath)
-
-            Dim dctFileNamesToSkip As Dictionary(Of String, String)
-
-            Dim blnCopyFile As Boolean
-
-            ' the source directory must exist, otherwise throw an exception
-            If SourceDir.Exists Then
-                ' if destination SubDir's parent SubDir does not exist throw an exception
-                If Not DestDir.Parent.Exists Then
-                    Throw New DirectoryNotFoundException("Destination directory does not exist: " + DestDir.Parent.FullName)
-                End If
-
-                If Not DestDir.Exists Then
-                    DestDir.Create()
-                End If
-
-                ' Populate dctFileNamesToSkip
-                dctFileNamesToSkip = New Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
-                If Not FileNamesToSkip Is Nothing Then
-                    For Each strItem As String In FileNamesToSkip
-                        dctFileNamesToSkip.Add(strItem, "")
-                    Next
-                End If
-
-                ' Copy all the files of the current directory
-                Dim ChildFile As FileInfo
-                Dim sTargetFilePath As String
-
-                For Each ChildFile In SourceDir.GetFiles()
-
-                    ' Look for both the file name and the full path in dctFileNamesToSkip
-                    ' If either matches, then to not copy the file
-                    If dctFileNamesToSkip.ContainsKey(ChildFile.Name) Then
-                        blnCopyFile = False
-                    ElseIf dctFileNamesToSkip.ContainsKey(ChildFile.FullName) Then
-                        blnCopyFile = False
-                    Else
-                        blnCopyFile = True
-                    End If
-
-                    If blnCopyFile Then
-
-                        sTargetFilePath = Path.Combine(DestDir.FullName, ChildFile.Name)
-
-                        If Overwrite Then
-                            UpdateCurrentStatus(CopyStatus.NormalCopy, ChildFile.FullName)
-                            CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=True)
-                        Else
-                            ' If Overwrite = false, copy the file only if it does not exist
-                            ' this is done to avoid an IOException if a file already exists
-                            ' this way the other files can be copied anyway...
-                            If Not File.Exists(sTargetFilePath) Then
-                                UpdateCurrentStatus(CopyStatus.NormalCopy, ChildFile.FullName)
-                                CopyFileUsingLocks(ChildFile, sTargetFilePath, strManagerName, Overwrite:=False)
-                            End If
-                        End If
-
-                        If SetAttribute Then
-                            UpdateReadonlyAttribute(ChildFile, sTargetFilePath, bReadOnly)
-                        End If
-
-                        UpdateCurrentStatusIdle()
-                    End If
-                Next
-
-                ' copy all the sub-directories by recursively calling this same routine
-                For Each SubDir As DirectoryInfo In SourceDir.GetDirectories()
-                    CopyDirectoryEx(SubDir.FullName, Path.Combine(DestDir.FullName, SubDir.Name),
-                       Overwrite, SetAttribute, bReadOnly, FileNamesToSkip, strManagerName)
-                Next
-            Else
-                Throw New DirectoryNotFoundException("Source directory does not exist: " + SourceDir.FullName)
-            End If
-
-        End Sub
-
-        ''' <summary>
-        ''' Copies the file attributes from a source file to a target file, explicitly updating the read-only bit based on bReadOnly
-        ''' </summary>
-        ''' <param name="fiSourceFile">Source FileInfo</param>
-        ''' <param name="sTargetFilePath">Target file path</param>
-        ''' <param name="bReadOnly">True to force the ReadOnly bit on, False to force it off</param>
-        ''' <remarks></remarks>
-        Protected Sub UpdateReadonlyAttribute(fiSourceFile As FileInfo, sTargetFilePath As String, bReadOnly As Boolean)
-
-            ' Get the file attributes from the source file
-            Dim fa As FileAttributes = fiSourceFile.Attributes()
-            Dim faNew As FileAttributes
-
-            ' Change the read-only attribute to the desired value
-            If bReadOnly Then
-                faNew = fa Or FileAttributes.ReadOnly
-            Else
-                faNew = fa And Not FileAttributes.ReadOnly
-            End If
-
-            If fa <> faNew Then
-                ' Set the attributes of the destination file
-                File.SetAttributes(sTargetFilePath, fa)
-            End If
-
-        End Sub
-#End Region
-
-#Region "CopyDirectoryWithResume function"
-
-        ''' <summary>
-        ''' Copies a source directory to the destination directory.
-        ''' Overwrites existing files if they differ in modification time or size.
-        ''' Copies large files in chunks and allows resuming copying a large file if interrupted.
-        ''' </summary>
-        ''' <param name="SourceFolderPath">The source directory path.</param>
-        ''' <param name="TargetFolderPath">The destination directory path.</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String) As Boolean
-
-            Const Recurse = False
-            Const eFileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
-            Dim FileNamesToSkip As New List(Of String)
-
-            Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, FileNamesToSkip)
-        End Function
-
-        ''' <summary>
-        ''' Copies a source directory to the destination directory.
-        ''' Overwrites existing files if they differ in modification time or size.
-        ''' Copies large files in chunks and allows resuming copying a large file if interrupted.
-        ''' </summary>
-        ''' <param name="SourceFolderPath">The source directory path.</param>
-        ''' <param name="TargetFolderPath">The destination directory path.</param>
-        ''' <param name="Recurse">True to copy subdirectories</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(SourceFolderPath As String, TargetFolderPath As String, Recurse As Boolean) As Boolean
-
-            Const eFileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer
-            Dim FileNamesToSkip As New List(Of String)
-
-            Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, FileNamesToSkip)
-        End Function
-
-        ''' <summary>
-        ''' Copies a source directory to the destination directory. 
-        ''' Overwrite behavior is governed by eFileOverwriteMode
-        ''' Copies large files in chunks and allows resuming copying a large file if interrupted.
-        ''' </summary>
-        ''' <param name="SourceFolderPath">The source directory path.</param>
-        ''' <param name="TargetFolderPath">The destination directory path.</param>
-        ''' <param name="Recurse">True to copy subdirectories</param>
-        ''' <param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
-          TargetFolderPath As String,
-          Recurse As Boolean,
-          eFileOverwriteMode As FileOverwriteMode,
-          FileNamesToSkip As List(Of String)) As Boolean
-
-            Dim FileCountSkipped = 0
-            Dim FileCountResumed = 0
-            Dim FileCountNewlyCopied = 0
-            Const SetAttribute = False
-            Const bReadOnly = False
-
-            Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
-
-        End Function
-
-        ''' <summary>
-        ''' Copies a source directory to the destination directory. 
-        ''' Overwrite behavior is governed by eFileOverwriteMode
-        ''' Copies large files in chunks and allows resuming copying a large file if interrupted.
-        ''' </summary>
-        ''' <param name="SourceFolderPath">The source directory path.</param>
-        ''' <param name="TargetFolderPath">The destination directory path.</param>
-        ''' <param name="Recurse">True to copy subdirectories</param>
-        ''' <param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
-        ''' <param name="FileCountSkipped">Number of files skipped (output)</param>
-        ''' <param name="FileCountResumed">Number of files resumed (output)</param>
-        ''' <param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
-          TargetFolderPath As String,
-          Recurse As Boolean,
-          eFileOverwriteMode As FileOverwriteMode,
-          <Out> ByRef FileCountSkipped As Integer,
-          <Out> ByRef FileCountResumed As Integer,
-          <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
-
-            Const SetAttribute = False
-            Const bReadOnly = False
-            Dim FileNamesToSkip As New List(Of String)
-
-            Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
-
-        End Function
-
-        ''' <summary>
-        ''' Copies a source directory to the destination directory. 
-        ''' Overwrite behavior is governed by eFileOverwriteMode
-        ''' Copies large files in chunks and allows resuming copying a large file if interrupted.
-        ''' </summary>
-        ''' <param name="SourceFolderPath">The source directory path.</param>
-        ''' <param name="TargetFolderPath">The destination directory path.</param>
-        ''' <param name="Recurse">True to copy subdirectories</param>
-        ''' <param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        ''' <param name="FileCountSkipped">Number of files skipped (output)</param>
-        ''' <param name="FileCountResumed">Number of files resumed (output)</param>
-        ''' <param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
-          TargetFolderPath As String,
-          Recurse As Boolean,
-          eFileOverwriteMode As FileOverwriteMode,
-          FileNamesToSkip As List(Of String),
-          <Out> ByRef FileCountSkipped As Integer,
-          <Out> ByRef FileCountResumed As Integer,
-          <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
-
-            Const SetAttribute = False
-            Const bReadOnly = False
-
-            Return CopyDirectoryWithResume(SourceFolderPath, TargetFolderPath, Recurse, eFileOverwriteMode, SetAttribute, bReadOnly, FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
-
-        End Function
-
-        ''' <summary>
-        ''' Copies a source directory to the destination directory. 
-        ''' Overwrite behavior is governed by eFileOverwriteMode
-        ''' Copies large files in chunks and allows resuming copying a large file if interrupted.
-        ''' </summary>
-        ''' <param name="SourceFolderPath">The source directory path.</param>
-        ''' <param name="TargetFolderPath">The destination directory path.</param>
-        ''' <param name="Recurse">True to copy subdirectories</param>
-        ''' <param name="eFileOverwriteMode">Behavior when a file already exists at the destination</param>
-        ''' <param name="SetAttribute">True if the read-only attribute of the destination file is to be modified, false otherwise.</param>
-        ''' <param name="bReadOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        ''' <param name="FileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        ''' <param name="FileCountSkipped">Number of files skipped (output)</param>
-        ''' <param name="FileCountResumed">Number of files resumed (output)</param>
-        ''' <param name="FileCountNewlyCopied">Number of files newly copied (output)</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        Public Function CopyDirectoryWithResume(SourceFolderPath As String,
-          TargetFolderPath As String,
-          Recurse As Boolean,
-          eFileOverwriteMode As FileOverwriteMode,
-          SetAttribute As Boolean,
-          bReadOnly As Boolean,
-          FileNamesToSkip As List(Of String),
-          <Out> ByRef FileCountSkipped As Integer,
-          <Out> ByRef FileCountResumed As Integer,
-          <Out> ByRef FileCountNewlyCopied As Integer) As Boolean
-
-            Dim diSourceFolder As DirectoryInfo
-            Dim diTargetFolder As DirectoryInfo
-            Dim dctFileNamesToSkip As Dictionary(Of String, String)
-
-            Dim blnCopyFile As Boolean
-            Dim bSuccess = True
-
-            FileCountSkipped = 0
-            FileCountResumed = 0
-            FileCountNewlyCopied = 0
-
-            diSourceFolder = New DirectoryInfo(SourceFolderPath)
-            diTargetFolder = New DirectoryInfo(TargetFolderPath)
-
-            ' The source directory must exist, otherwise throw an exception
-            If Not diSourceFolder.Exists Then
-                Throw New DirectoryNotFoundException("Source directory does not exist: " + diSourceFolder.FullName)
-            End If
-
-            ' If destination SubDir's parent directory does not exist throw an exception
-            If Not diTargetFolder.Parent.Exists Then
-                Throw New DirectoryNotFoundException("Destination directory does not exist: " + diTargetFolder.Parent.FullName)
-            End If
-
-            If diSourceFolder.FullName = diTargetFolder.FullName Then
-                Throw New IOException("Source and target directories cannot be the same: " + diTargetFolder.FullName)
-            End If
-
-
-            Try
-                ' Create the target folder if necessary
-                If Not diTargetFolder.Exists Then
-                    diTargetFolder.Create()
-                End If
-
-                ' Populate objFileNamesToSkipCaseInsensitive
-                dctFileNamesToSkip = New Dictionary(Of String, String)(StringComparer.CurrentCultureIgnoreCase)
-                If Not FileNamesToSkip Is Nothing Then
-                    ' Copy the values from FileNamesToSkip to dctFileNamesToSkip so that we can perform case-insensitive searching
-                    For Each strItem As String In FileNamesToSkip
-                        dctFileNamesToSkip.Add(strItem, String.Empty)
-                    Next
-                End If
-
-                ' Copy all the files of the current directory
-                For Each fiSourceFile As FileInfo In diSourceFolder.GetFiles()
-
-                    ' Look for both the file name and the full path in dctFileNamesToSkip
-                    ' If either matches, then do not copy the file
-                    If dctFileNamesToSkip.ContainsKey(fiSourceFile.Name) Then
-                        blnCopyFile = False
-                    ElseIf dctFileNamesToSkip.ContainsKey(fiSourceFile.FullName) Then
-                        blnCopyFile = False
-                    Else
-                        blnCopyFile = True
-                    End If
-
-                    If blnCopyFile Then
-                        ' Does file already exist?
-                        Dim fiExistingFile As FileInfo
-                        fiExistingFile = New FileInfo(Path.Combine(diTargetFolder.FullName, fiSourceFile.Name))
-
-                        If fiExistingFile.Exists Then
-                            Select Case eFileOverwriteMode
-                                Case FileOverwriteMode.AlwaysOverwrite
-                                    blnCopyFile = True
-
-                                Case FileOverwriteMode.DoNotOverwrite
-                                    blnCopyFile = False
-
-                                Case FileOverwriteMode.OverwriteIfSourceNewer
-                                    If fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc OrElse
-                                      (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) AndAlso fiExistingFile.Length = fiSourceFile.Length) Then
-                                        blnCopyFile = False
-                                    End If
-
-                                Case FileOverwriteMode.OverWriteIfDateOrLengthDiffer
-                                    ' File exists; if size and last modified time are the same then don't copy
-
-                                    If NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) AndAlso fiExistingFile.Length = fiSourceFile.Length Then
-                                        blnCopyFile = False
-                                    End If
-
-                                Case Else
-                                    ' Unknown mode; assume DoNotOverwrite
-                                    blnCopyFile = False
-                            End Select
-
-                        End If
-                    End If
-
-                    If Not blnCopyFile Then
-                        FileCountSkipped += 1
-                    Else
-
-                        Dim blnResumed = False
-                        Try
-                            Dim strTargetFilePath As String = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
-                            bSuccess = CopyFileWithResume(fiSourceFile, strTargetFilePath, blnResumed)
-                        Catch ex As Exception
-                            Throw
-                        End Try
-
-                        If Not bSuccess Then Exit For
-
-                        If blnResumed Then
-                            FileCountResumed += 1
-                        Else
-                            FileCountNewlyCopied += 1
-                        End If
-
-                        If SetAttribute Then
-                            Dim sTargetFilePath As String = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name)
-                            UpdateReadonlyAttribute(fiSourceFile, sTargetFilePath, bReadOnly)
-                        End If
-
-                    End If
-
-                Next
-
-                If bSuccess AndAlso Recurse Then
-                    ' Process each subdirectory
-                    For Each fiSourceFolder As DirectoryInfo In diSourceFolder.GetDirectories()
-                        Dim strSubDirTargetFolderPath As String
-                        strSubDirTargetFolderPath = Path.Combine(TargetFolderPath, fiSourceFolder.Name)
-                        bSuccess = CopyDirectoryWithResume(fiSourceFolder.FullName, strSubDirTargetFolderPath,
-                          Recurse, eFileOverwriteMode, SetAttribute, bReadOnly,
-                          FileNamesToSkip, FileCountSkipped, FileCountResumed, FileCountNewlyCopied)
-                    Next
-                End If
-
-            Catch ex As Exception
-                Throw New IOException("Exception copying directory with resume: " + ex.Message, ex)
-            End Try
-
-            Return bSuccess
-
-        End Function
-
-        ''' <summary>
-        ''' Copy a file using chunks, thus allowing for resuming
-        ''' </summary>
-        ''' <param name="SourceFilePath"></param>
-        ''' <param name="strTargetFilePath"></param>
-        ''' <param name="blnResumed"></param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Function CopyFileWithResume(SourceFilePath As String, strTargetFilePath As String, <Out> ByRef blnResumed As Boolean) As Boolean
-            Dim fiSourceFile As FileInfo
-
-            fiSourceFile = New FileInfo(SourceFilePath)
-            Return CopyFileWithResume(fiSourceFile, strTargetFilePath, blnResumed)
-
-        End Function
-
-        ''' <summary>
-        ''' Copy fiSourceFile to diTargetFolder
-        ''' Copies the file using chunks, thus allowing for resuming
-        ''' </summary>
-        ''' <param name="fiSourceFile"></param>
-        ''' <param name="strTargetFilePath"></param>
-        ''' <param name="blnResumed">Output parameter; true if copying was resumed</param>
-        ''' <returns>True if success; false if an error</returns>
-        ''' <remarks></remarks>
-        Public Function CopyFileWithResume(
-          fiSourceFile As FileInfo,
-          strTargetFilePath As String,
-          <Out> ByRef blnResumed As Boolean) As Boolean
-
-            Const FILE_PART_TAG = ".#FilePart#"
-            Const FILE_PART_INFO_TAG = ".#FilePartInfo#"
-
-            Dim intChunkSizeBytes As Integer
-            Dim intFlushThresholdBytes As Integer
-
-            Dim lngFileOffsetStart As Int64 = 0
-            Dim blnResumeCopy As Boolean
-            Dim strSourceFileLastWriteTime As String
-
-            Dim swFilePart As FileStream = Nothing
-
-            Try
-                If mChunkSizeMB < 1 Then mChunkSizeMB = 1
-                intChunkSizeBytes = mChunkSizeMB * 1024 * 1024
-
-                If mFlushThresholdMB < mChunkSizeMB Then
-                    mFlushThresholdMB = mChunkSizeMB
-                End If
-                intFlushThresholdBytes = mFlushThresholdMB * 1024 * 1024
-
-                blnResumeCopy = False
-
-                If fiSourceFile.Length <= intChunkSizeBytes Then
-                    ' Simply copy the file
-
-                    UpdateCurrentStatus(CopyStatus.NormalCopy, fiSourceFile.FullName)
-                    fiSourceFile.CopyTo(strTargetFilePath, True)
-
-                    UpdateCurrentStatusIdle()
-                    blnResumed = False
-                    Return True
-
-                End If
-
-                ' Delete the target file if it already exists
-                If File.Exists(strTargetFilePath) Then
-                    File.Delete(strTargetFilePath)
-                    Thread.Sleep(25)
-                End If
-
-                ' Check for a #FilePart# file
-                Dim fiFilePart As FileInfo
-                fiFilePart = New FileInfo(strTargetFilePath & FILE_PART_TAG)
-
-                Dim fiFilePartInfo As FileInfo
-                fiFilePartInfo = New FileInfo(strTargetFilePath & FILE_PART_INFO_TAG)
-
-                Dim dtSourceFileLastWriteTimeUTC = fiSourceFile.LastWriteTimeUtc
-                strSourceFileLastWriteTime = dtSourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt")
-
-                If fiFilePart.Exists Then
-                    ' Possibly resume copying
-                    ' First inspect the FilePartInfo file
-
-                    If fiFilePartInfo.Exists Then
-                        ' Open the file and read the file length and file modification time
-                        ' If they match fiSourceFile then set blnResumeCopy to true and update lngFileOffsetStart
-
-                        Using srFilePartInfo = New StreamReader(New FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-
-                            Dim lstSourceLines = New List(Of String)
-
-                            Do While Not srFilePartInfo.EndOfStream
-                                lstSourceLines.Add(srFilePartInfo.ReadLine())
-                            Loop
-
-                            If lstSourceLines.Count >= 3 Then
-                                ' The first line contains the source file path
-                                ' The second contains the file length, in bytes
-                                ' The third contains the file modification time (UTC)
-
-                                If lstSourceLines(0) = fiSourceFile.FullName AndAlso
-                                   lstSourceLines(1) = fiSourceFile.Length.ToString Then
-
-                                    ' Name and size are the same
-                                    ' See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
-
-                                    Dim dtCachedLastWriteTimeUTC As DateTime
-                                    If DateTime.TryParse(lstSourceLines(2), dtCachedLastWriteTimeUTC) Then
-                                        If NearlyEqualFileTimes(dtSourceFileLastWriteTimeUTC, dtCachedLastWriteTimeUTC) Then
-
-                                            ' Source file is unchanged; safe to resume
-
-                                            lngFileOffsetStart = fiFilePart.Length
-                                            blnResumeCopy = True
-
-                                        End If
-                                    End If
-
-                                End If
-
-                            End If
-                        End Using
-
-                    End If
-
-                End If
-
-                If blnResumeCopy Then
-                    UpdateCurrentStatus(CopyStatus.BufferedCopyResume, fiSourceFile.FullName)
-                    swFilePart = New FileStream(fiFilePart.FullName, FileMode.Append, FileAccess.Write, FileShare.Read)
-                    blnResumed = True
-                Else
-                    UpdateCurrentStatus(CopyStatus.BufferedCopy, fiSourceFile.FullName)
-
-                    ' Delete FilePart file in the target folder if it already exists
-                    If fiFilePart.Exists Then
-                        fiFilePart.Delete()
-                        Thread.Sleep(25)
-                    End If
-
-                    ' Create the FILE_PART_INFO_TAG file
-                    Using swFilePartInfo = New StreamWriter(New FileStream(fiFilePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read))
-
-                        ' The first line contains the source file path
-                        ' The second contains the file length, in bytes
-                        ' The third contains the file modification time (UTC)
-                        swFilePartInfo.WriteLine(fiSourceFile.FullName)
-                        swFilePartInfo.WriteLine(fiSourceFile.Length)
-                        swFilePartInfo.WriteLine(strSourceFileLastWriteTime)
-                    End Using
-
-                    ' Open the FilePart file
-                    swFilePart = New FileStream(fiFilePart.FullName, FileMode.Create, FileAccess.Write, FileShare.Read)
-                    blnResumed = False
-                End If
-
-                ' Now copy the file, appending data to swFilePart
-                ' Open the source and seek to lngFileOffsetStart if > 0
-                Using srSourceFile = New FileStream(fiSourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read)
-
-                    If lngFileOffsetStart > 0 Then
-                        srSourceFile.Seek(lngFileOffsetStart, SeekOrigin.Begin)
-                    End If
-
-                    Dim intBytesRead As Integer
-                    Dim buffer() As Byte
-                    Dim intBytesSinceLastFlush As Int64
-
-                    Dim lngBytesWritten As Int64 = lngFileOffsetStart
-                    Dim sngTotalBytes As Single = srSourceFile.Length
-
-                    ReDim buffer(intChunkSizeBytes)
-                    intBytesSinceLastFlush = 0
-
-                    Do
-                        ' Read data in 1MB chunks and append to swFilePart
-                        intBytesRead = srSourceFile.Read(buffer, 0, intChunkSizeBytes)
-                        swFilePart.Write(buffer, 0, intBytesRead)
-                        lngBytesWritten += intBytesRead
-
-                        ' Flush out the data periodically 
-                        intBytesSinceLastFlush += intBytesRead
-                        If intBytesSinceLastFlush >= intFlushThresholdBytes Then
-                            swFilePart.Flush()
-                            intBytesSinceLastFlush = 0
-
-                            ' Value between 0 and 100
-                            Dim sngProgress = lngBytesWritten / sngTotalBytes * 100
-                            RaiseEvent FileCopyProgress(fiSourceFile.Name, sngProgress)
-                        End If
-
-                        If intBytesRead < intChunkSizeBytes Then
-                            Exit Do
-                        End If
-                    Loop While intBytesRead > 0
-
-                    RaiseEvent FileCopyProgress(fiSourceFile.Name, 100)
-
-                End Using
-
-                swFilePart.Close()
-
-                UpdateCurrentStatusIdle()
-
-                ' Copy is complete
-                ' Update last write time UTC to match source UTC
-                fiFilePart.Refresh()
-                fiFilePart.LastWriteTimeUtc = dtSourceFileLastWriteTimeUTC
-
-                ' Rename fiFilePart to strTargetFilePath
-                fiFilePart.MoveTo(strTargetFilePath)
-
-                ' Delete fiFilePartInfo
-                fiFilePartInfo.Delete()
-
-            Catch ex As Exception
-                If Not swFilePart Is Nothing Then
-                    swFilePart.Close()
-                End If
-                clsProgRunner.GarbageCollectNow()
-
-                Throw New IOException("Exception copying file with resume: " & ex.Message, ex)
-            End Try
-
-            Return True
-
-        End Function
-
-        ''' <summary>
-        ''' Compares two timestamps (typically the LastWriteTime for a file)
-        ''' If they agree within 2 seconds, then returns True, otherwise false
-        ''' </summary>
-        ''' <param name="dtTime1">First file time</param>
-        ''' <param name="dtTime2">Second file time</param>
-        ''' <returns>True if the times agree within 2 seconds</returns>
-        ''' <remarks></remarks>
-        Protected Function NearlyEqualFileTimes(dtTime1 As DateTime, dtTime2 As DateTime) As Boolean
-            If Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2.05 Then
-                Return True
-            Else
-                Return False
-            End If
-        End Function
-
-        Protected Sub UpdateCurrentStatusIdle()
-            UpdateCurrentStatus(CopyStatus.Idle, String.Empty)
-        End Sub
-
-        Protected Sub UpdateCurrentStatus(eStatus As CopyStatus, sSourceFilePath As String)
-            mCopyStatus = eStatus
-
-            If eStatus = CopyStatus.Idle Then
-                mCurrentSourceFilePath = String.Empty
-            Else
-                mCurrentSourceFilePath = String.Copy(sSourceFilePath)
-
-                If eStatus = CopyStatus.BufferedCopyResume Then
-                    RaiseEvent ResumingFileCopy(sSourceFilePath)
-                ElseIf eStatus = CopyStatus.NormalCopy Then
-                    RaiseEvent CopyingFile(sSourceFilePath)
-                Else
-                    ' Unknown status; do not raise an event
-                End If
-
-            End If
-        End Sub
-
-#End Region
-
-#Region "GetDirectorySize function"
-        ''' <summary>Get the directory size.</summary>
-        ''' <param name="DirPath">The path to the directory.</param>
-        ''' <returns>The directory size.</returns>
-        Public Function GetDirectorySize(DirPath As String) As Long
-
-            ' Overload for returning directory size only
-
-            Dim DumFileCount As Long
-            Dim DumDirCount As Long
-
-            Return GetDirectorySizeEX(DirPath, DumFileCount, DumDirCount)
-
-        End Function
-
-        ''' <summary>Get the directory size, file count, and directory count for the entire directory tree.</summary>
-        ''' <param name="DirPath">The path to the directory.</param>
-        ''' <param name="FileCount">The number of files in the entire directory tree.</param>
-        ''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
-        ''' <returns>The directory size.</returns>
-        Public Function GetDirectorySize(DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
-
-            'Overload for returning directory size, file count and directory count for entire directory tree
-            Return GetDirectorySizeEX(DirPath, FileCount, SubDirCount)
-
-        End Function
-
-        ''' <summary>Get the directory size, file count, and directory count for the entire directory tree.</summary>
-        ''' <param name="DirPath">The path to the directory.</param>
-        ''' <param name="FileCount">The number of files in the entire directory tree.</param>
-        ''' <param name="SubDirCount">The number of directories in the entire directory tree.</param>
-        ''' <returns>The directory size.</returns>
-        Private Function GetDirectorySizeEX(DirPath As String, ByRef FileCount As Long, ByRef SubDirCount As Long) As Long
-
-            ' Returns the size of the specified directory, number of files in the directory tree, and number of subdirectories
-            ' - Note: requires Imports System.IO
-            ' - Usage: Dim DirSize As Long = GetDirectorySize("D:\Projects")
-            '
-            ' Original code obtained from vb2themax.com
-            Dim folderSize As Long
-            Dim diFolder = New DirectoryInfo(DirPath)
-
-            ' add the size of each file
-            Dim ChildFile As FileInfo
-            For Each ChildFile In diFolder.GetFiles()
-                folderSize += ChildFile.Length
-                FileCount += 1
-            Next
-
-            ' add the size of each sub-directory, that is retrieved by recursively
-            ' calling this same routine
-            Dim SubDir As DirectoryInfo
-            For Each SubDir In diFolder.GetDirectories()
-                folderSize += GetDirectorySizeEX(SubDir.FullName, FileCount, SubDirCount)
-                SubDirCount += 1
-            Next
-
-            Return folderSize
-
-        End Function
-#End Region
-
-#Region "MoveDirectory Function"
-
-        Public Function MoveDirectory(SourceFolderPath As String, TargetFolderPath As String, OverwriteFiles As Boolean) As Boolean
-            Return MoveDirectory(SourceFolderPath, TargetFolderPath, OverwriteFiles, mManagerName)
-        End Function
-
-        Public Function MoveDirectory(SourceFolderPath As String, TargetFolderPath As String, OverwriteFiles As Boolean, strManagerName As String) As Boolean
-            Dim diSourceFolder As DirectoryInfo
-            Dim blnSuccess As Boolean
-
-            diSourceFolder = New DirectoryInfo(SourceFolderPath)
-
-            ' Recursively call this function for each subdirectory
-            For Each fiFolder As DirectoryInfo In diSourceFolder.GetDirectories()
-                blnSuccess = MoveDirectory(fiFolder.FullName, Path.Combine(TargetFolderPath, fiFolder.Name), OverwriteFiles, strManagerName)
-                If Not blnSuccess Then
-                    Throw New Exception("Error moving directory " & fiFolder.FullName & " to " & TargetFolderPath & "; MoveDirectory returned False")
-                End If
-            Next
-
-            For Each fiFile As FileInfo In diSourceFolder.GetFiles()
-                blnSuccess = CopyFileUsingLocks(fiFile.FullName, Path.Combine(TargetFolderPath, fiFile.Name), strManagerName, OverwriteFiles)
-                If Not blnSuccess Then
-                    Throw New Exception("Error copying file " & fiFile.FullName & " to " & TargetFolderPath & "; CopyFileUsingLocks returned False")
-                Else
-                    ' Delete the source file
-                    DeleteFileIgnoreErrors(fiFile.FullName)
-                End If
-            Next
-
-            diSourceFolder.Refresh()
-            If diSourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Count = 0 Then
-                ' This folder is now empty; delete it
-                Try
-                    diSourceFolder.Delete(True)
-                Catch ex As Exception
-                    ' Ignore errors here
-                End Try
-            End If
-
-            Return True
-
-        End Function
-#End Region
-
-#Region "Utility Functions"
-
-        ''' <summary>
-        ''' Renames strTargetFilePath to have _Old1 before the file extension
-        ''' Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        ''' Use this function to backup old versions of a file before copying a new version to a target folder
-        ''' Keeps up to 9 old versions of a file
-        ''' </summary>
-        ''' <param name="strTargetFilePath">Full path to the file to backup</param>
-        ''' <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
-        ''' <remarks></remarks>
-        Public Shared Function BackupFileBeforeCopy(strTargetFilePath As String) As Boolean
-            Return BackupFileBeforeCopy(strTargetFilePath, DEFAULT_VERSION_COUNT_TO_KEEP)
-        End Function
-
-        ''' <summary>
-        ''' Renames strTargetFilePath to have _Old1 before the file extension
-        ''' Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        ''' Use this function to backup old versions of a file before copying a new version to a target folder
-        ''' </summary>
-        ''' <param name="strTargetFilePath">Full path to the file to backup</param>
-        ''' <param name="VersionCountToKeep">Maximum backup copies of the file to keep</param>
-        ''' <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
-        ''' <remarks></remarks>
-        Public Shared Function BackupFileBeforeCopy(strTargetFilePath As String, VersionCountToKeep As Integer) As Boolean
-
-            Dim fiTargetFile = New FileInfo(strTargetFilePath)
-
-            If Not fiTargetFile.Exists Then
-                ' Target file does not exist; nothing to backup
-                Return True
-            End If
-
-            If VersionCountToKeep = 0 Then VersionCountToKeep = 2
-            If VersionCountToKeep < 1 Then VersionCountToKeep = 1
-
-            Dim strBaseName = Path.GetFileNameWithoutExtension(fiTargetFile.Name)
-            Dim strExtension = Path.GetExtension(fiTargetFile.Name)
-            If String.IsNullOrEmpty(strExtension) Then
-                strExtension = ".bak"
-            End If
-
-            Dim strTargetFolderPath = fiTargetFile.Directory.FullName
-
-            ' Backup any existing copies of strTargetFilePath
-            For intRevision = VersionCountToKeep - 1 To 0 Step -1
-
-                Dim strBaseNameCurrent = String.Copy(strBaseName)
-                If intRevision > 0 Then
-                    strBaseNameCurrent &= "_Old" & intRevision.ToString()
-                End If
-                strBaseNameCurrent &= strExtension
-
-                Dim ioFileToRename = New FileInfo(Path.Combine(strTargetFolderPath, strBaseNameCurrent))
-                Dim strNewFilePath = Path.Combine(strTargetFolderPath, strBaseName & "_Old" & (intRevision + 1).ToString() & strExtension)
-
-                ' Confirm that strNewFilePath doesn't exist; delete it if it does
-                If File.Exists(strNewFilePath) Then
-                    File.Delete(strNewFilePath)
-                End If
-
-                ' Rename the current file to strNewFilePath
-                If ioFileToRename.Exists Then
-                    ioFileToRename.MoveTo(strNewFilePath)
-                End If
-
-            Next intRevision
-
-            Return True
-
-        End Function
-
-        Public Shared Function CompactPathString(strPathToCompact As String, Optional intMaxLength As Integer = 40) As String
-            ' Recursive function to shorten strPathToCompact to a maximum length of intMaxLength
-
-            ' The following is example output
-            ' Note that when drive letters or subdirectories are present, the a minimum length is imposed
-            ' For "C:\My Documents\Readme.txt"
-            '   Minimum string returned=  C:\M..\Rea..
-            '   Length for 20 characters= C:\My D..\Readme.txt
-            '   Length for 25 characters= C:\My Docume..\Readme.txt
-            '
-            ' For "C:\My Documents\Word\Business\Finances.doc"
-            '   Minimum string returned=  C:\...\B..\Fin..
-            '   Length for 20 characters= C:\...\B..\Finance..
-            '   Length for 25 characters= C:\...\Bus..\Finances.doc
-            '   Length for 32 characters= C:\...\W..\Business\Finances.doc
-            '   Length for 40 characters= C:\My Docum..\Word\Business\Finances.doc
-
-            Dim pathSepChars(1) As Char
-            pathSepChars(0) = "\"c
-            pathSepChars(1) = "/"c
-
-            Dim pathSepCharPreferred = "\"c
-
-            Dim strPath(4) As String        ' 0-based array
-            Dim intPartCount As Integer
-
-            Dim strLeadingChars As String
-            Dim strShortenedPath As String
-
-            Dim intCharIndex As Integer
-            Dim intLoopCount, intFileNameIndex As Integer
-            Dim intShortLength, intOverLength As Integer
-            Dim intLeadingCharsLength As Integer
-            Dim intMultiPathCorrection As Short
-
-            If intMaxLength < 3 Then intMaxLength = 3
-
-            For intPartCount = 0 To strPath.Length - 1
-                strPath(intPartCount) = String.Empty
-            Next intPartCount
-
-            If String.IsNullOrWhiteSpace(strPathToCompact) Then
-                Return String.Empty
-            End If
-
-            Dim intFirstPathSepChar = strPathToCompact.IndexOfAny(pathSepChars)
-            If intFirstPathSepChar >= 0 Then
-                pathSepCharPreferred = strPathToCompact.Chars(intFirstPathSepChar)
-            End If
-
-            strPathToCompact = strPathToCompact.Trim()
-            If strPathToCompact.Length <= intMaxLength Then
-                Return strPathToCompact
-            End If
-
-            intPartCount = 1
-            strLeadingChars = String.Empty
-
-            If strPathToCompact.StartsWith("\\") Then
-                strLeadingChars = "\\"
-                intCharIndex = strPathToCompact.IndexOfAny(pathSepChars, 2)
-
-                If intCharIndex > 0 Then
-                    strLeadingChars = "\\" & strPathToCompact.Substring(2, intCharIndex - 1)
-                    strPath(0) = strPathToCompact.Substring(intCharIndex + 1)
-                Else
-                    strPath(0) = strPathToCompact.Substring(2)
-                End If
-            ElseIf strPathToCompact.StartsWith("\") OrElse strPathToCompact.StartsWith("/") Then
-                strLeadingChars = strPathToCompact.Substring(0, 1)
-                strPath(0) = strPathToCompact.Substring(1)
-            ElseIf strPathToCompact.StartsWith(".\") OrElse strPathToCompact.StartsWith("./") Then
-                strLeadingChars = strPathToCompact.Substring(0, 2)
-                strPath(0) = strPathToCompact.Substring(2)
-            ElseIf strPathToCompact.StartsWith("..\") OrElse strPathToCompact.Substring(1, 2) = ":\" OrElse
-             strPathToCompact.StartsWith("../") OrElse strPathToCompact.Substring(1, 2) = ":/" Then
-                strLeadingChars = strPathToCompact.Substring(0, 3)
-                strPath(0) = strPathToCompact.Substring(3)
-            Else
-                strPath(0) = strPathToCompact
-            End If
-
-            ' Examine strPath(0) to see if there are 1, 2, or more subdirectories
-            intLoopCount = 0
-            Do
-                intCharIndex = strPath(intPartCount - 1).IndexOfAny(pathSepChars)
-                If intCharIndex >= 0 Then
-                    strPath(intPartCount) = strPath(intPartCount - 1).Substring(intCharIndex + 1)
-                    strPath(intPartCount - 1) = strPath(intPartCount - 1).Substring(0, intCharIndex + 1)
-                    intPartCount += 1
-                Else
-                    Exit Do
-                End If
-                intLoopCount += 1
-            Loop While intLoopCount < 3
-
-            If intPartCount = 1 Then
-                ' No \ or / found, we're forced to shorten the filename (though if a UNC, then can shorten part of the UNC)
-
-                If strLeadingChars.StartsWith("\\") Then
-                    intLeadingCharsLength = strLeadingChars.Length
-                    If intLeadingCharsLength > 5 Then
-                        ' Can shorten the server name as needed
-                        intShortLength = intMaxLength - strPath(0).Length - 3
-                        If intShortLength < intLeadingCharsLength Then
-                            If intShortLength < 3 Then intShortLength = 3
-                            strLeadingChars = strLeadingChars.Substring(0, intShortLength) & "..\"
-                        End If
-
-                    End If
-                End If
-
-                intShortLength = intMaxLength - strLeadingChars.Length - 2
-                If intShortLength < 3 Then intShortLength = 3
-                If intShortLength < strPath(0).Length - 2 Then
-                    If intShortLength < 4 Then
-                        strShortenedPath = strLeadingChars & strPath(0).Substring(0, intShortLength) & ".."
-                    Else
-                        ' Shorten by removing the middle portion of the filename
-                        Dim leftLength = CInt(Math.Ceiling(intShortLength / 2))
-                        Dim rightLength = intShortLength - leftLength
-                        strShortenedPath = strLeadingChars & strPath(0).Substring(0, leftLength) & ".." & strPath(0).Substring(strPath(0).Length - rightLength)
-                    End If
-                Else
-                    strShortenedPath = strLeadingChars & strPath(0)
-                End If
-            Else
-                ' Found one (or more) subdirectories
-
-                ' First check if strPath(1) = "...\" or ".../"
-                If strPath(0) = "...\" OrElse strPath(0) = ".../" Then
-                    intMultiPathCorrection = 4
-                    strPath(0) = strPath(1)
-                    strPath(1) = strPath(2)
-                    strPath(2) = strPath(3)
-                    strPath(3) = String.Empty
-                    intPartCount = 3
-                Else
-                    intMultiPathCorrection = 0
-                End If
-
-                ' Shorten the first to as little as possible
-                ' If not short enough, replace the first with ... and call this function again
-                intShortLength = intMaxLength - strLeadingChars.Length - strPath(3).Length - strPath(2).Length - strPath(1).Length - 3 - intMultiPathCorrection
-                If intShortLength < 1 And strPath(2).Length > 0 Then
-                    ' Not short enough, but other subdirectories are present
-                    ' Thus, can call this function recursively
-                    strShortenedPath = strLeadingChars & "..." & pathSepCharPreferred & strPath(1) & strPath(2) & strPath(3)
-                    strShortenedPath = CompactPathString(strShortenedPath, intMaxLength)
-                Else
-                    If strLeadingChars.StartsWith("\\") Then
-                        intLeadingCharsLength = strLeadingChars.Length
-                        If intLeadingCharsLength > 5 Then
-                            ' Can shorten the server name as needed
-                            intShortLength = intMaxLength - strPath(3).Length - strPath(2).Length - strPath(1).Length - 7 - intMultiPathCorrection
-                            If intShortLength < intLeadingCharsLength - 3 Then
-                                If intShortLength < 3 Then intShortLength = 3
-                                strLeadingChars = strLeadingChars.Substring(0, intShortLength) & "..\"
-                            End If
-
-                            ' Recompute intShortLength
-                            intShortLength = intMaxLength - strLeadingChars.Length - strPath(3).Length - strPath(2).Length - strPath(1).Length - 3 - intMultiPathCorrection
-                        End If
-                    End If
-
-                    If intMultiPathCorrection > 0 Then
-                        strLeadingChars = strLeadingChars & "..." & pathSepCharPreferred
-                    End If
-
-                    If intShortLength < 1 Then intShortLength = 1
-                    strPath(0) = strPath(0).Substring(0, intShortLength) & ".." & pathSepCharPreferred
-                    strShortenedPath = strLeadingChars & strPath(0) & strPath(1) & strPath(2) & strPath(3)
-
-                    ' See if still too long
-                    ' If it is, then will need to shorten the filename too
-                    intOverLength = strShortenedPath.Length - intMaxLength
-                    If intOverLength > 0 Then
-                        ' Need to shorten filename too
-                        ' Determine which index the filename is in
-                        For intFileNameIndex = intPartCount - 1 To 0 Step -1
-                            If strPath(intFileNameIndex).Length > 0 Then Exit For
-                        Next intFileNameIndex
-
-                        intShortLength = strPath(intFileNameIndex).Length - intOverLength - 2
-                        If intShortLength < 4 Then
-                            strPath(intFileNameIndex) = strPath(intFileNameIndex).Substring(0, 3) & ".."
-                        Else
-                            ' Shorten by removing the middle portion of the filename
-                            Dim leftLength = CInt(Math.Ceiling(intShortLength / 2))
-                            Dim rightLength = intShortLength - leftLength
-                            strPath(intFileNameIndex) = strPath(intFileNameIndex).Substring(0, leftLength) & ".." & strPath(intFileNameIndex).Substring(strPath(intFileNameIndex).Length - rightLength)
-                        End If
-
-                        strShortenedPath = strLeadingChars & strPath(0) & strPath(1) & strPath(2) & strPath(3)
-                    End If
-
-                End If
-            End If
-
-            Return strShortenedPath
-        End Function
-
-        ''' <summary>
-        ''' Delete the file, retrying up to 3 times
-        ''' </summary>
-        ''' <param name="fiFile">File to delete</param>
-        ''' <param name="errorMessage">Output message: error message if unable to delete the file</param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Function DeleteFileWithRetry(fiFile As FileInfo, <Out> ByRef errorMessage As String) As Boolean
-            Return DeleteFileWithRetry(fiFile, 3, errorMessage)
-        End Function
-
-        ''' <summary>
-        ''' Delete the file, retrying up to retryCount times
-        ''' </summary>
-        ''' <param name="fiFile">File to delete</param>
-        ''' <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
-        ''' <param name="errorMessage">Output message: error message if unable to delete the file</param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Function DeleteFileWithRetry(fiFile As FileInfo, retryCount As Integer, <Out> ByRef errorMessage As String) As Boolean
-
-            Dim fileDeleted = False
-            Dim sleepTimeMsec = 500
-
-            Dim retriesRemaining = retryCount - 1
-            If retriesRemaining < 0 Then retriesRemaining = 0
-
-            While Not fileDeleted AndAlso retriesRemaining >= 0
-                retriesRemaining -= 1
-
-                Try
-                    fiFile.Delete()
-                    fileDeleted = True
-                Catch ex As Exception
-                    If IsVimSwapFile(fiFile.Name) Then
-                        ' Ignore this error
-                        errorMessage = String.Empty
-                        Return True
-                    End If
-
-                    ' Make sure the readonly bit is not set
-                    If (fiFile.IsReadOnly) Then
-                        Dim attributes = fiFile.Attributes
-                        fiFile.Attributes = attributes And (Not FileAttributes.ReadOnly)
-
-                        Try
-                            ' Retry the delete
-                            fiFile.Delete()
-                            fileDeleted = True
-                        Catch ex2 As Exception
-                            errorMessage = "Error deleting file " & fiFile.FullName & ": " & ex2.Message
-                        End Try
-                    Else
-                        errorMessage = "Error deleting file " & fiFile.FullName & ": " & ex.Message
-                    End If
-                End Try
-
-                If Not fileDeleted Then
-                    ' Sleep for 0.5 second (or longer) then try again
-                    Thread.Sleep(sleepTimeMsec)
-
-                    ' Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
-                    If sleepTimeMsec < 5 Then
-                        sleepTimeMsec = CInt(Math.Round(sleepTimeMsec * 1.5, 0))
-                    End If
-                End If
-
-            End While
-
-            If fileDeleted Then
-                errorMessage = String.Empty
-            ElseIf String.IsNullOrWhiteSpace(errorMessage) Then
-                errorMessage = "Unknown error deleting file " & fiFile.FullName
-            End If
-
-            ' ReSharper disable once NotAssignedOutParameter
-            Return True
-
-        End Function
-
-        ''' <summary>
-        ''' Returns true if the file is _.swp or starts with a . and ends with .swp
-        ''' </summary>
-        ''' <param name="filePath"></param>
-        ''' <returns></returns>
-        ''' <remarks></remarks>
-        Public Shared Function IsVimSwapFile(filePath As String) As Boolean
-
-            Dim fileName = Path.GetFileName(filePath)
-
-            If fileName.ToLower() = "_.swp" OrElse fileName.StartsWith(".") AndAlso fileName.ToLower().EndsWith(".swp") Then
-                Return True
-            Else
-                Return False
-            End If
-        End Function
-
-        ''' <summary>
-        ''' Confirms that the drive for the target output file has a minimum amount of free disk space
-        ''' </summary>
-        ''' <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
-        ''' <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative</param>
-        ''' <param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
-        ''' <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
-        ''' <remarks></remarks>
-        Public Shared Function ValidateFreeDiskSpace(outputFilePath As String, minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
-            Dim outputFileExpectedSizeMB As Double = 0
-
-            Return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, errorMessage))
-        End Function
-
-        ''' <summary>
-        ''' Confirms that the drive for the target output file has a minimum amount of free disk space
-        ''' </summary>
-        ''' <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
-        ''' <param name="outputFileExpectedSizeMB">Expected size of the output file</param>
-        ''' <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative.  Takes into account outputFileExpectedSizeMB</param>
-        ''' <param name="ErrorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
-        ''' <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
-        ''' <remarks></remarks>
-        Public Shared Function ValidateFreeDiskSpace(outputFilePath As String, outputFileExpectedSizeMB As Double, minimumFreeSpaceMB As Double, ByRef errorMessage As String) As Boolean
-
-            Const DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150
-
-            Dim diFolderInfo As DirectoryInfo
-
-            Dim freeBytesAvailableToUser As Long
-            Dim totalDriveCapacityBytes As Long
-            Dim totalNumberOfFreeBytes As Long
-
-            errorMessage = String.Empty
-
-            Try
-                If minimumFreeSpaceMB <= 0 Then minimumFreeSpaceMB = DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB
-                If outputFileExpectedSizeMB < 0 Then outputFileExpectedSizeMB = 0
-
-                diFolderInfo = New FileInfo(outputFilePath).Directory
-
-                Do While Not diFolderInfo.Exists AndAlso Not diFolderInfo.Parent Is Nothing
-                    diFolderInfo = diFolderInfo.Parent
-                Loop
-
-                If GetDiskFreeSpace(diFolderInfo.FullName, freeBytesAvailableToUser, totalDriveCapacityBytes, totalNumberOfFreeBytes) Then
-                    Dim freeSpaceMB As Double = totalNumberOfFreeBytes / 1024.0 / 1024.0
-
-                    If outputFileExpectedSizeMB > 0 Then
-
-                        If freeSpaceMB - outputFileExpectedSizeMB < minimumFreeSpaceMB Then
-                            errorMessage = "Target drive will have less than " & minimumFreeSpaceMB.ToString("0") & " MB free after creating a " & outputFileExpectedSizeMB.ToString("0") & " MB file : " & freeSpaceMB.ToString("0.0") & " MB available prior to file creation"
-
-                            Return False
-                        End If
-
-                    ElseIf freeSpaceMB < minimumFreeSpaceMB Then
-                        errorMessage = "Target drive has less than " & minimumFreeSpaceMB.ToString("0") & " MB free: " & freeSpaceMB.ToString("0.0") & " MB available"
-
-                        Return False
-
-                    End If
-
-                Else
-                    errorMessage = "Error validating target drive free space (GetDiskFreeSpaceEx returned false): " & diFolderInfo.FullName
-                    Return False
-
-                End If
-
-
-            Catch ex As Exception
-                errorMessage = "Exception validating target drive free space for " & outputFilePath & ": " & ex.Message
-                Return False
-            End Try
-
-            Return True
-        End Function
-
-        Public Sub WaitForLockFileQueue(
-          lockFileTimestamp As Int64,
-          diLockFolderSource As DirectoryInfo,
-          fiSourceFile As FileInfo,
-          maxWaitTimeMinutes As Integer)
-
-            WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, Nothing, fiSourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes)
-
-        End Sub
-
-        Public Sub WaitForLockFileQueue(
-          lockFileTimestamp As Int64,
-          diLockFolderSource As DirectoryInfo,
-          diLockFolderTarget As DirectoryInfo,
-          fiSourceFile As FileInfo,
-          strTargetFilePath As String,
-          maxWaitTimeMinutes As Integer)
-
-            ' Find the recent LockFiles present in the source and/or target lock folders
-            ' These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
-            Dim lstLockFileMBSource As List(Of Integer)
-            Dim lstLockFileMBTarget As List(Of Integer)
-
-            Dim intMBBacklogSource As Integer
-            Dim intMBBacklogTarget As Integer
-
-            Dim dtWaitTimeStart = DateTime.UtcNow
-
-            Dim intSourceFileSizeMB = CInt(fiSourceFile.Length / 1024.0 / 1024.0)
-
-            ' Wait for up to 180 minutes (3 hours) for the server resources to free up
-
-            ' However, if retrieving files from adms.emsl.pnl.gov only wait for a maximum of 30 minutes
-            ' because sometimes that folder's permissions get messed up and we can create files there, but cannot delete them
-
-            Dim maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES
-            Dim maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES
-
-            ' Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
-            ' Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
-            If Not diLockFolderSource Is Nothing AndAlso diLockFolderSource.FullName.ToLower().StartsWith("\\adms.emsl.pnl.gov\") Then
-                maxWaitTimeSource = 30
-            End If
-
-            If Not diLockFolderTarget Is Nothing AndAlso diLockFolderTarget.FullName.ToLower().StartsWith("\\adms.emsl.pnl.gov\") Then
-                maxWaitTimeTarget = 30
-            End If
-
-            Do While True
-
-                ' Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
-                lstLockFileMBSource = FindLockFiles(diLockFolderSource, lockFileTimestamp)
-                lstLockFileMBTarget = FindLockFiles(diLockFolderTarget, lockFileTimestamp)
-
-                Dim stopWaiting = False
-
-                If lstLockFileMBSource.Count <= 1 AndAlso lstLockFileMBTarget.Count <= 1 Then
-                    stopWaiting = True
-                Else
-
-                    intMBBacklogSource = lstLockFileMBSource.Sum()
-                    intMBBacklogTarget = lstLockFileMBTarget.Sum()
-
-                    If intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeSource) Then
-                        ' The source server has enough resources available to allow the copy
-                        If intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB OrElse WaitedTooLong(dtWaitTimeStart, maxWaitTimeTarget) Then
-                            ' The target server has enough resources available to allow the copy
-                            ' Copy the file
-                            stopWaiting = True
-                        End If
-                    End If
-                End If
-
-                If stopWaiting Then
-                    RaiseEvent LockQueueWaitComplete(fiSourceFile.FullName, strTargetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes)
-                    Exit Do
-                End If
-
-                ' Server resources exceed the thresholds
-                ' Sleep for 1 to 30 seconds, depending on intMBBacklogSource and intMBBacklogTarget
-                ' We compute intSleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
-                ' This is faster than reality, but helps minimize waiting too long between checking
-
-                Dim dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0
-
-                If dblSleepTimeSec < 1 Then dblSleepTimeSec = 1
-                If dblSleepTimeSec > 30 Then dblSleepTimeSec = 30
-
-                RaiseEvent WaitingForLockQueue(fiSourceFile.FullName, strTargetFilePath, intMBBacklogSource, intMBBacklogTarget)
-
-                Thread.Sleep(CInt(dblSleepTimeSec) * 1000)
-
-                If WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES) Then
-                    RaiseEvent LockQueueTimedOut(fiSourceFile.FullName, strTargetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes)
-                    Exit Do
-                End If
-            Loop
-
-        End Sub
-
-        Private Function WaitedTooLong(dtWaitTimeStart As Date, maxLockfileWaitTimeMinutes As Integer) As Boolean
-            If DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes Then
-                Return False
-            Else
-                Return True
-            End If
-        End Function
-
-#End Region
-
-#Region "GetDiskFreeSpace"
-
-        <DllImport("Kernel32.dll", EntryPoint:="GetDiskFreeSpaceEx", SetLastError:=True, CharSet:=CharSet.Auto)>
-        Private Shared Function GetDiskFreeSpaceEx(
-          lpDirectoryName As String,
-          ByRef lpFreeBytesAvailable As UInt64,
-          ByRef lpTotalNumberOfBytes As UInt64,
-          ByRef lpTotalNumberOfFreeBytes As UInt64) As Boolean
-        End Function
-
-        Protected Shared Function GetDiskFreeSpace(directoryPath As String, ByRef freeBytesAvailableToUser As Long, ByRef totalDriveCapacityBytes As Long, ByRef totalNumberOfFreeBytes As Long) As Boolean
-
-            Dim freeAvailableUser As ULong
-            Dim totalDriveCapacity As ULong
-            Dim totalFree As ULong
-
-            Dim bResult As Boolean
-
-            ' Make sure directoryPath ends in a forward slash
-            If Not directoryPath.EndsWith(Path.DirectorySeparatorChar) Then directoryPath &= Path.DirectorySeparatorChar
-
-            bResult = GetDiskFreeSpaceEx(directoryPath, freeAvailableUser, totalDriveCapacity, totalFree)
-
-            If Not bResult Then
-                freeBytesAvailableToUser = 0
-                totalDriveCapacityBytes = 0
-                totalNumberOfFreeBytes = 0
-
-                Return False
-            Else
-                freeBytesAvailableToUser = CLng(freeAvailableUser)
-                totalDriveCapacityBytes = CLng(totalDriveCapacity)
-                totalNumberOfFreeBytes = CLng(totalFree)
-
-                Return True
-            End If
-
-        End Function
-
-#End Region
-
-    End Class
-End Namespace
+    /// <summary>
+    /// Tools to manipulate paths and directories.
+    /// </summary>
+    /// <remarks>
+    /// There is a set of functions to properly terminate directory paths.
+    /// There is a set of functions to copy an entire directory tree.
+    /// There is a set of functions to copy an entire directory tree and resume copying interrupted files.
+    /// There is a set of functions to get the size of an entire directory tree, including the number of files and directories.
+    ///</remarks>
+    public class clsFileTools : clsEventNotifier
+    {
+
+        #region "Events"
+
+        public event CopyingFileEventHandler CopyingFile;
+
+        /// <summary>
+        /// Event is raised before copying begins.
+        /// </summary>
+        /// <param name="filename">The file's full path.</param>
+        public delegate void CopyingFileEventHandler(string filename);
+
+        public event ResumingFileCopyEventHandler ResumingFileCopy;
+
+        /// <summary>
+        /// Event is raised before copying begins.
+        /// </summary>
+        /// <param name="filename">The file's full path.</param>
+        public delegate void ResumingFileCopyEventHandler(string filename);
+
+        public event FileCopyProgressEventHandler FileCopyProgress;
+
+        /// <summary>
+        /// Event is raised before copying begins.
+        /// </summary>
+        /// <param name="filename">The file name (not full path)</param>
+        /// <param name="percentComplete">Percent complete (value between 0 and 100)</param>
+        public delegate void FileCopyProgressEventHandler(string filename, float percentComplete);
+
+        public event WaitingForLockQueueEventHandler WaitingForLockQueue;
+        public delegate void WaitingForLockQueueEventHandler(string sourceFilePath, string targetFilePath, int backlogSourceMB, int backlogTargetMB);
+
+        public event LockQueueTimedOutEventHandler LockQueueTimedOut;
+        public delegate void LockQueueTimedOutEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
+
+        public event LockQueueWaitCompleteEventHandler LockQueueWaitComplete;
+        public delegate void LockQueueWaitCompleteEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
+
+        #endregion
+
+        #region "Module constants and variables"
+
+        private const int MAX_LOCKFILE_WAIT_TIME_MINUTES = 180;
+        public const int LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB = 20;
+        private const int LOCKFILE_TRANSFER_THRESHOLD_MB = 1000;
+
+        private const string LOCKFILE_EXTENSION = ".lock";
+
+        private const int DEFAULT_VERSION_COUNT_TO_KEEP = 9;
+
+        const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
+
+        private int mChunkSizeMB = DEFAULT_CHUNK_SIZE_MB;
+
+        private int mFlushThresholdMB = DEFAULT_FLUSH_THRESHOLD_MB;
+        private int mDebugLevel;
+
+        private DateTime mLastGC = DateTime.UtcNow;
+
+        private readonly Regex mInvalidDosChars;
+
+        private readonly Regex mParseLockFileName;
+
+        #endregion
+
+        #region "Public constants"
+
+        /// <summary>
+        /// Used by CopyFileWithResume and CopyDirectoryWithResume when copying a file byte-by-byte and supporting resuming the copy if interrupted
+        /// </summary>
+        /// <remarks></remarks>
+        public const int DEFAULT_CHUNK_SIZE_MB = 1;
+
+        /// <summary>
+        /// Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
+        /// </summary>
+        /// <remarks></remarks>
+        public const int DEFAULT_FLUSH_THRESHOLD_MB = 25;
+
+        #endregion
+
+        #region "Enums"
+        public enum FileOverwriteMode
+        {
+            DoNotOverwrite = 0,
+            AlwaysOverwrite = 1,
+            OverwriteIfSourceNewer = 2,
+            // overWrite if source date newer (or if same date but length differs)
+            OverWriteIfDateOrLengthDiffer = 3
+            // overWrite if any difference in size or date; note that newer files in target folder will get overwritten since their date doesn't match
+        }
+
+        public enum CopyStatus
+        {
+            Idle = 0,
+            // Not copying a file
+            NormalCopy = 1,
+            // File is geing copied via .NET and cannot be resumed
+            BufferedCopy = 2,
+            // File is being copied in chunks and can be resumed
+            BufferedCopyResume = 3
+            // Resuming copying a file in chunks
+        }
+        #endregion
+
+        #region "Properties"
+
+        public int CopyChunkSizeMB
+        {
+            get { return mChunkSizeMB; }
+            set
+            {
+                if (value < 1)
+                    value = 1;
+                mChunkSizeMB = value;
+            }
+        }
+
+        public int CopyFlushThresholdMB
+        {
+            get { return mFlushThresholdMB; }
+            set
+            {
+                if (value < 1)
+                    value = 1;
+                mFlushThresholdMB = value;
+            }
+        }
+
+        public CopyStatus CurrentCopyStatus { get; set; } = CopyStatus.Idle;
+
+        public string CurrentSourceFile { get; set; } = string.Empty;
+
+        public int DebugLevel
+        {
+            get { return mDebugLevel; }
+            set { mDebugLevel = value; }
+        }
+
+        public string ManagerName { get; set; }
+
+        #endregion
+
+        #region "Constructor"
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <remarks></remarks>
+        public clsFileTools() : this("Unknown-Manager", 1)
+        {
+        }
+
+        public clsFileTools(string managerName, int intDebugLevel)
+        {
+            ManagerName = managerName;
+            mDebugLevel = intDebugLevel;
+
+            mInvalidDosChars = new Regex(@"[\\/:*?""<>| ]", RegexOptions.Compiled);
+
+            mParseLockFileName = new Regex(@"^(\d+)_(\d+)_", RegexOptions.Compiled);
+        }
+        #endregion
+
+        #region "CheckTerminator function"
+
+        //Functions
+        /// <summary>
+        /// Modifies input directory path string depending on optional settings.
+        /// </summary>
+        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="addTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
+        /// <param name="termChar">The specified directory separation character.</param>
+        /// <returns>The modified directory path.</returns>
+        public static string CheckTerminator(string folderPath, bool addTerm, char termChar)
+        {
+
+            //Overload for all parameters specified
+            return CheckTerminatorEX(folderPath, addTerm, termChar);
+
+        }
+
+        /// <summary>
+        /// Adds or removes the DOS path separation character from the end of the directory path.
+        /// </summary>
+        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="addTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
+        /// <returns>The modified directory path.</returns>
+        public static string CheckTerminator(string folderPath, bool addTerm)
+        {
+
+            return CheckTerminatorEX(folderPath, addTerm, Path.DirectorySeparatorChar);
+
+        }
+
+        /// <summary>
+        /// Assures the directory path ends with the specified path separation character.
+        /// </summary>
+        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="termChar">The specified directory separation character.</param>
+        /// <returns>The modified directory path.</returns>
+        public static string CheckTerminator(string folderPath, string termChar)
+        {
+            return CheckTerminatorEX(folderPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
+
+        }
+
+        /// <summary>
+        /// Assures the directory path ends with the DOS path separation character.
+        /// </summary>
+        /// <param name="folderPath">The input directory path.</param>
+        /// <returns>The modified directory path.</returns>
+        public static string CheckTerminator(string folderPath)
+        {
+
+            // Overload for using all defaults (add DOS terminator char)
+            return CheckTerminatorEX(folderPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
+
+        }
+
+        /// <summary>
+        /// Modifies input directory path string depending on addTerm
+        /// </summary>
+        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="addTerm">Specifies whether the directory path should end with the specified directory separation character</param>
+        /// <param name="termChar">The specified directory separation character.</param>
+        /// <returns>The modified directory path.</returns>
+        /// <remarks>addTerm=True forces the path to end with specified termChar while addTerm=False will remove termChar from the end if present</remarks>
+        private static string CheckTerminatorEX(string folderPath, bool addTerm, char termChar)
+        {
+
+            if (string.IsNullOrWhiteSpace(folderPath))
+            {
+                return folderPath;
+            }
+
+            if (addTerm)
+            {
+                if (folderPath.EndsWith(termChar.ToString()))
+                {
+                    return folderPath;
+                }
+                return folderPath + termChar;
+            }
+
+            if (folderPath.EndsWith(termChar.ToString()))
+            {
+                return folderPath.TrimEnd(termChar);
+            }
+
+            return folderPath;
+        }
+        #endregion
+
+        #region "CopyFile function"
+
+        /// <summary>
+        /// Copies a source file to the destination file. Does not allow overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source file path.</param>
+        /// <param name="destPath">The destination file path.</param>
+        public void CopyFile(string sourcePath, string destPath)
+        {
+            //Overload with overWrite set to default (FALSE)
+            const bool backupDestFileBeforeCopy = false;
+            CopyFileEx(sourcePath, destPath, overWrite: false, backupDestFileBeforeCopy: backupDestFileBeforeCopy);
+
+        }
+
+        public void CopyFile(string sourcePath, string destPath, bool overWrite)
+        {
+            const bool backupDestFileBeforeCopy = false;
+            CopyFile(sourcePath, destPath, overWrite, backupDestFileBeforeCopy);
+        }
+
+        public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy)
+        {
+            CopyFile(sourcePath, destPath, overWrite, backupDestFileBeforeCopy, DEFAULT_VERSION_COUNT_TO_KEEP);
+        }
+
+        /// <summary>
+        /// Copies a source file to the destination file. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source file path.</param>
+        /// <param name="destPath">The destination file path.</param>
+        /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="backupDestFileBeforeCopy"></param>
+        /// <param name="versionCountToKeep"></param>
+        public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy, int versionCountToKeep)
+        {
+            //Overload with no defaults
+            CopyFileEx(sourcePath, destPath, overWrite, backupDestFileBeforeCopy, versionCountToKeep);
+
+        }
+
+        /// <summary>
+        /// Copies a source file to the destination file. Allows overwriting.
+        /// </summary>
+        /// <remarks>
+        /// This function is unique in that it allows you to specify a destination path where
+        /// some of the directories do not already exist.  It will create them if they don't.
+        /// The last parameter specifies whether a file already present in the
+        /// destination directory will be overwritten
+        /// - Note: requires Imports System.IO
+        /// - Usage: CopyFile("C:\Misc\Bob.txt", "D:\MiscBackup\Bob.txt")
+        /// </remarks>
+        /// <param name="sourcePath">The source file path.</param>
+        /// <param name="destPath">The destination file path.</param>
+        /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="backupDestFileBeforeCopy"></param>
+        /// <param name="versionCountToKeep"></param>
+        /// /// <summary>
+        /// Copies a source file to the destination file. Allows overwriting.
+        /// </summary>
+        private void CopyFileEx(string sourcePath, string destPath, bool overWrite,
+            bool backupDestFileBeforeCopy, int versionCountToKeep = DEFAULT_VERSION_COUNT_TO_KEEP)
+        {
+            var folderPath = Path.GetDirectoryName(destPath);
+
+            if (folderPath == null)
+            {
+                throw new DirectoryNotFoundException("Unable to determine the parent directory for " + destPath);
+            }
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+
+            if (backupDestFileBeforeCopy)
+            {
+                BackupFileBeforeCopy(destPath, versionCountToKeep);
+            }
+
+            if (mDebugLevel >= 3)
+            {
+                OnDebugEvent("Copying file with CopyFileEx", sourcePath + " to " + destPath);
+            }
+
+            UpdateCurrentStatus(CopyStatus.NormalCopy, sourcePath);
+            File.Copy(sourcePath, destPath, overWrite);
+            UpdateCurrentStatusIdle();
+        }
+
+        #endregion
+
+        #region "Lock File Copying functions"
+
+        /// <summary>
+        /// Copy the source file to the target path; do not overWrite existing files
+        /// </summary>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="managerName">Manager name (included in the lock file name)</param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>If the file exists, will not copy the file but will still return true</remarks>
+        public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, string managerName)
+        {
+            return CopyFileUsingLocks(new FileInfo(sourceFilePath), targetFilePath, managerName, overWrite: false);
+        }
+
+        /// <summary>
+        /// Copy the source file to the target path
+        /// </summary>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="managerName">Manager name (included in the lock file name)</param>
+        /// <param name="overWrite">True to overWrite existing files</param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
+        public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, string managerName, bool overWrite)
+        {
+            return CopyFileUsingLocks(new FileInfo(sourceFilePath), targetFilePath, managerName, overWrite);
+        }
+
+        /// <summary>
+        /// Copy the source file to the target path
+        /// </summary>
+        /// <param name="fiSource">Source file object</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="managerName">Manager name (included in the lock file name)</param>
+        /// <param name="overWrite">True to overWrite existing files</param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
+        public bool CopyFileUsingLocks(FileInfo fiSource, string targetFilePath, string managerName, bool overWrite)
+        {
+
+            var useLockFile = false;
+            var success = false;
+
+            if (!overWrite && File.Exists(targetFilePath))
+            {
+                return true;
+            }
+
+            var fiTarget = new FileInfo(targetFilePath);
+
+            var lockFolderPathSource = GetLockFolder(fiSource);
+            var lockFolderPathTarget = GetLockFolder(fiTarget);
+
+            if (!string.IsNullOrEmpty(lockFolderPathSource) || !string.IsNullOrEmpty(lockFolderPathTarget))
+            {
+                useLockFile = true;
+            }
+
+            if (useLockFile)
+            {
+                success = CopyFileUsingLocks(lockFolderPathSource, lockFolderPathTarget, fiSource, targetFilePath, managerName,
+                                                overWrite);
+                return success;
+            }
+
+            var expectedSourceLockFolder = GetLockFolderPath(fiSource);
+            var expectedTargetLockFolder = GetLockFolderPath(fiTarget);
+
+            if (string.IsNullOrEmpty(expectedSourceLockFolder) && string.IsNullOrEmpty(expectedTargetLockFolder))
+            {
+                // File is being copied locally; we don't use lock folders
+                // Do not raise this as a DebugEvent
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(expectedSourceLockFolder))
+                {
+                    // Source file is local; lock folder would not be used
+                    expectedSourceLockFolder = "Source file is local";
+                }
+
+                if (string.IsNullOrEmpty(expectedTargetLockFolder))
+                {
+                    // Target file is local; lock folder would not be used
+                    expectedTargetLockFolder = "Target file is local";
+                }
+
+                if (mDebugLevel >= 1)
+                {
+                    OnDebugEvent("Lock file folder not found on the source or target",
+                                 expectedSourceLockFolder + " and " + expectedTargetLockFolder);
+                }
+
+                const bool backupDestFileBeforeCopy = false;
+                CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
+                success = true;
+            }
+
+            return success;
+        }
+
+
+        /// <summary>
+        /// Given a file path, return the lock file folder if it exsists
+        /// </summary>
+        /// <param name="fiFile"></param>
+        /// <returns>Lock folder path if it exists</returns>
+        /// <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
+        public string GetLockFolder(FileInfo fiFile)
+        {
+
+            var lockFolderPath = GetLockFolderPath(fiFile);
+
+            if (!string.IsNullOrEmpty(lockFolderPath) && Directory.Exists(lockFolderPath))
+            {
+                return lockFolderPath;
+            }
+
+            return string.Empty;
+
+        }
+
+        /// <summary>
+        /// Given a file path, return the lock file folder path (does not verify that it exists)
+        /// </summary>
+        /// <param name="fiFile"></param>
+        /// <returns>Lock folder path</returns>
+        /// <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
+        private string GetLockFolderPath(FileInfo fiFile)
+        {
+
+            if (Path.IsPathRooted(fiFile.FullName))
+            {
+                if (fiFile.Directory != null && fiFile.Directory.Root.FullName.StartsWith(@"\\"))
+                {
+                    return Path.Combine(GetServerShareBase(fiFile.Directory.Root.FullName), "DMS_LockFiles");
+                }
+            }
+
+            return string.Empty;
+
+        }
+
+        /// <summary>
+        /// Copy the source file to the target path
+        /// </summary>
+        /// <param name="lockFolderPathSource">Path to the lock folder for the source file; can be an empty string</param>
+        /// <param name="lockFolderPathTarget">Path to the lock folder for the target file; can be an empty string</param>
+        /// <param name="fiSource">Source file object</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="managerName">Manager name (included in the lock file name)</param>
+        /// <param name="overWrite">True to overWrite existing files</param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
+        public bool CopyFileUsingLocks(
+            string lockFolderPathSource, string lockFolderPathTarget,
+            FileInfo fiSource, string targetFilePath, string managerName, bool overWrite)
+        {
+            if (!overWrite && File.Exists(targetFilePath))
+            {
+                if (mDebugLevel >= 2)
+                {
+                    OnDebugEvent("Skipping file since target exists", targetFilePath);
+                }
+                return true;
+            }
+
+            // Examine the size of the source file
+            // If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
+            // copy the file normally
+            var intSourceFileSizeMB = Convert.ToInt32(fiSource.Length / 1024.0 / 1024.0);
+            if (intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || (string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget)))
+            {
+                const bool backupDestFileBeforeCopy = false;
+                if (mDebugLevel >= 2)
+                {
+                    var debugMsg = string.Format("File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}", fiSource.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, fiSource.Name);
+                    OnDebugEvent(debugMsg, fiSource.FullName);
+                }
+
+                CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
+                return true;
+            }
+
+
+            var lockFilePathSource = string.Empty;
+            var lockFilePathTarget = string.Empty;
+
+            try
+            {
+                // Create a new lock file on the source and/or target server
+                // This file indicates an intent to copy a file
+
+                DirectoryInfo diLockFolderSource = null;
+                DirectoryInfo diLockFolderTarget = null;
+                var lockFileTimestamp = GetLockFileTimeStamp();
+
+                if (!string.IsNullOrWhiteSpace(lockFolderPathSource))
+                {
+                    diLockFolderSource = new DirectoryInfo(lockFolderPathSource);
+                    lockFilePathSource = CreateLockFile(diLockFolderSource, lockFileTimestamp, fiSource, targetFilePath, managerName);
+                }
+
+                if (!string.IsNullOrWhiteSpace(lockFolderPathTarget))
+                {
+                    diLockFolderTarget = new DirectoryInfo(lockFolderPathTarget);
+                    lockFilePathTarget = CreateLockFile(diLockFolderTarget, lockFileTimestamp, fiSource, targetFilePath, managerName);
+                }
+
+                WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, diLockFolderTarget, fiSource, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
+
+                if (mDebugLevel >= 1)
+                {
+                    OnDebugEvent("Copying " + fiSource.Name + " using Locks", fiSource.FullName + " to " + targetFilePath);
+                }
+
+                // Perform the copy
+                const bool backupDestFileBeforeCopy = false;
+                CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
+
+                // Delete the lock file(s)
+                DeleteFileIgnoreErrors(lockFilePathSource);
+                DeleteFileIgnoreErrors(lockFilePathTarget);
+
+            }
+            catch (Exception)
+            {
+                // Error occurred
+                // Delete the lock file then throw the exception
+                DeleteFileIgnoreErrors(lockFilePathSource);
+                DeleteFileIgnoreErrors(lockFilePathTarget);
+
+                throw;
+            }
+
+            return true;
+
+        }
+
+        /// <summary>
+        /// Create a lock file in the specified lock folder
+        /// </summary>
+        /// <param name="diLockFolder"></param>
+        /// <param name="lockFileTimestamp"></param>
+        /// <param name="fiSource"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="managerName"></param>
+        /// <returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
+        /// <remarks></remarks>
+        public string CreateLockFile(DirectoryInfo diLockFolder, long lockFileTimestamp, FileInfo fiSource, string targetFilePath, string managerName)
+        {
+
+            if (diLockFolder == null)
+            {
+                return string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(managerName))
+            {
+                managerName = "UnknownManager";
+            }
+
+            // Define the lock file name
+            var lockFileName = GenerateLockFileName(lockFileTimestamp, fiSource, managerName);
+            var lockFilePath = Path.Combine(diLockFolder.FullName, lockFileName);
+            while (File.Exists(lockFilePath))
+            {
+                // File already exists for this manager; append a dash to the path
+                lockFileName = Path.GetFileNameWithoutExtension(lockFileName) + "-" + Path.GetExtension(lockFileName);
+                lockFilePath = Path.Combine(diLockFolder.FullName, lockFileName);
+            }
+
+            try
+            {
+                // Create the lock file
+                using (var swLockFile = new StreamWriter(new FileStream(lockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                {
+                    swLockFile.WriteLine("Date: " + DateTime.Now.ToString(DATE_TIME_FORMAT));
+                    swLockFile.WriteLine("Source: " + fiSource.FullName);
+                    swLockFile.WriteLine("Target: " + targetFilePath);
+                    swLockFile.WriteLine("Size_Bytes: " + fiSource.Length);
+                    swLockFile.WriteLine("Manager: " + managerName);
+                }
+
+                OnDebugEvent("Created lock file in " + diLockFolder.FullName, lockFilePath);
+
+            }
+            catch (Exception ex)
+            {
+                // Error creating the lock file
+                // Return an empty string
+                OnWarningEvent("Error creating lock file in " + diLockFolder.FullName + ": " + ex.Message);
+                return string.Empty;
+            }
+
+            return lockFilePath;
+
+        }
+
+        /// <summary>
+        ///  Deletes the specified directory and all subdirectories
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks></remarks>
+        public bool DeleteDirectory(string directoryPath)
+        {
+            return DeleteDirectory(directoryPath, ignoreErrors: false);
+        }
+
+        /// <summary>
+        ///  Deletes the specified directory and all subdirectories
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <param name="ignoreErrors"></param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks></remarks>
+        public bool DeleteDirectory(string directoryPath, bool ignoreErrors)
+        {
+
+            var diLocalDotDFolder = new DirectoryInfo(directoryPath);
+
+            try
+            {
+                diLocalDotDFolder.Delete(true);
+            }
+            catch (Exception)
+            {
+                // Problems deleting one or more of the files
+                if (!ignoreErrors)
+                    throw;
+
+                // Collect garbage, then delete the files one-by-one
+                clsProgRunner.GarbageCollectNow();
+
+                return DeleteDirectoryFiles(directoryPath, deleteFolderIfEmpty: true);
+            }
+
+            return true;
+
+        }
+
+        /// <summary>
+        /// Deletes the specified directory and all subdirectories; does not delete the target folder
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+        public bool DeleteDirectoryFiles(string directoryPath)
+        {
+            return DeleteDirectoryFiles(directoryPath, deleteFolderIfEmpty: false);
+        }
+
+        /// <summary>
+        /// Deletes the specified directory and all subdirectories
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <param name="deleteFolderIfEmpty">Set to True to delete the folder, if it is empty</param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+        public bool DeleteDirectoryFiles(string directoryPath, bool deleteFolderIfEmpty)
+        {
+
+            var diFolderToDelete = new DirectoryInfo(directoryPath);
+            var errorCount = 0;
+
+            foreach (var fiFile in diFolderToDelete.GetFiles("*", SearchOption.AllDirectories))
+            {
+                if (!DeleteFileIgnoreErrors(fiFile.FullName))
+                {
+                    errorCount += 1;
+                }
+            }
+
+            if (errorCount == 0 && deleteFolderIfEmpty)
+            {
+                try
+                {
+                    diFolderToDelete.Delete(true);
+                }
+                catch (Exception ex)
+                {
+                    OnWarningEvent("Error removing empty directory", "Unable to delete directory " + diFolderToDelete.FullName + ": " + ex.Message);
+                    errorCount += 1;
+                }
+            }
+
+            if (errorCount == 0)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Delete the specified file
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
+        /// <remarks>If the initial attempt fails, then checks the readonly bit and tries again.  If not readonly, then performs a garbage collection (every 500 msec)</remarks>
+        private bool DeleteFileIgnoreErrors(string filePath)
+        {
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                return true;
+
+            var fiFile = new FileInfo(filePath);
+
+            try
+            {
+                if ((fiFile.Exists))
+                {
+                    fiFile.Delete();
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                // Ignore errors here
+            }
+
+            try
+            {
+                // The file might be readonly; check for this then re-try the delete
+                if (fiFile.IsReadOnly)
+                {
+                    fiFile.IsReadOnly = false;
+                }
+                else
+                {
+                    if (DateTime.UtcNow.Subtract(mLastGC).TotalMilliseconds >= 500)
+                    {
+                        mLastGC = DateTime.UtcNow;
+                        clsProgRunner.GarbageCollectNow();
+                    }
+                }
+
+                fiFile.Delete();
+
+            }
+            catch (Exception ex)
+            {
+                // Ignore errors here
+                OnWarningEvent("Error deleting file " + fiFile.Name, "Unable to delete file " + fiFile.FullName + ": " + ex.Message);
+
+                return false;
+            }
+
+            return true;
+
+        }
+
+        /// <summary>
+        /// Finds lock files with a timestamp less than
+        /// </summary>
+        /// <param name="diLockFolder"></param>
+        /// <param name="lockFileTimestamp"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        private List<int> FindLockFiles(DirectoryInfo diLockFolder, long lockFileTimestamp)
+        {
+            var lstLockFiles = new List<int>();
+
+            if (diLockFolder == null)
+            {
+                return lstLockFiles;
+            }
+
+            diLockFolder.Refresh();
+
+            foreach (var fiLockFile in diLockFolder.GetFiles("*" + LOCKFILE_EXTENSION))
+            {
+                var reMatch = mParseLockFileName.Match(fiLockFile.Name);
+
+                if (reMatch.Success)
+                {
+                    long intQueueTimeMSec;
+                    if (long.TryParse(reMatch.Groups[1].Value, out intQueueTimeMSec))
+                    {
+                        int intFileSizeMB;
+                        if (int.TryParse(reMatch.Groups[2].Value, out intFileSizeMB))
+                        {
+                            if (intQueueTimeMSec < lockFileTimestamp)
+                            {
+                                // Lock file fiLockFile was created prior to the current one
+                                // Make sure it's less than 1 hour old
+                                if (Math.Abs((lockFileTimestamp - intQueueTimeMSec) / 1000.0 / 60.0) < MAX_LOCKFILE_WAIT_TIME_MINUTES)
+                                {
+                                    lstLockFiles.Add(intFileSizeMB);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return lstLockFiles;
+
+        }
+
+        /// <summary>
+        /// Generate the lock file name, which starts with a msec-based timestamp, then has the source file size (in MB), then has information on the machine creating the file
+        /// </summary>
+        /// <param name="lockFileTimestamp"></param>
+        /// <param name="fiSource"></param>
+        /// <param name="managerName"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        private string GenerateLockFileName(long lockFileTimestamp, FileInfo fiSource, string managerName)
+        {
+
+            if (string.IsNullOrWhiteSpace(managerName))
+            {
+                managerName = "UnknownManager";
+            }
+
+            var lockFileName = lockFileTimestamp + "_" + (fiSource.Length / 1024.0 / 1024.0).ToString("0000") + "_" + Environment.MachineName + "_" + managerName + LOCKFILE_EXTENSION;
+
+            // Replace any invalid characters (including spaces) with an underscore
+            return mInvalidDosChars.Replace(lockFileName, "_");
+
+        }
+
+        public long GetLockFileTimeStamp()
+        {
+            return (long)Math.Round(DateTime.UtcNow.Subtract(new DateTime(2010, 1, 1)).TotalMilliseconds, 0);
+        }
+
+        /// <summary>
+        /// Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
+        /// </summary>
+        /// <param name="serverSharePath"></param>
+        /// <returns></returns>
+        /// <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
+        public string GetServerShareBase(string serverSharePath)
+        {
+            if (serverSharePath.StartsWith(@"\\"))
+            {
+                var intSlashIndex = serverSharePath.IndexOf('\\', 2);
+                if (intSlashIndex > 0)
+                {
+                    var serverShareBase = serverSharePath.Substring(0, intSlashIndex);
+                    if (serverShareBase.ToLower() == @"\\picfs")
+                    {
+                        serverShareBase = @"\\picfs\projects\DMS";
+                    }
+                    return serverShareBase;
+                }
+
+                return serverSharePath;
+            }
+
+            return string.Empty;
+        }
+        #endregion
+
+        #region "CopyDirectory function"
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Does not allow overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        public void CopyDirectory(string sourcePath, string destPath)
+        {
+            CopyDirectory(sourcePath, destPath, overWrite: false);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Does not allow overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="managerName"></param>
+        public void CopyDirectory(string sourcePath, string destPath, string managerName)
+        {
+            CopyDirectory(sourcePath, destPath, overWrite: false, managerName: managerName);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Does not allow overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        public void CopyDirectory(string sourcePath, string destPath, List<string> fileNamesToSkip)
+        {
+            CopyDirectory(sourcePath, destPath, overWrite: false, fileNamesToSkip: fileNamesToSkip);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        public void CopyDirectory(string sourcePath, string destPath, bool overWrite)
+        {
+            //Overload with no defaults
+            const bool readOnly = false;
+            CopyDirectory(sourcePath, destPath, overWrite, readOnly);
+
+        }
+
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="managerName"></param>
+        public void CopyDirectory(string sourcePath, string destPath, bool overWrite, string managerName)
+        {
+            //Overload with no defaults
+            const bool readOnly = false;
+            CopyDirectory(sourcePath, destPath, overWrite, readOnly, new List<string>(), managerName);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        public void CopyDirectory(string sourcePath, string destPath, bool overWrite, List<string> fileNamesToSkip)
+        {
+            //Overload with no defaults
+            const bool readOnly = false;
+            CopyDirectory(sourcePath, destPath, overWrite, readOnly, fileNamesToSkip);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly)
+        {
+            //Overload with no defaults
+            const bool setAttribute = true;
+            CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, new List<string>(), ManagerName);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip)
+        {
+            //Overload with no defaults
+            const bool setAttribute = true;
+            CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, fileNamesToSkip, ManagerName);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        /// <param name="fileNamesToSkip">
+        /// List of file names to skip when copying the directory (and subdirectories); 
+        /// can optionally contain full path names to skip</param>
+        /// <param name="managerName"></param>
+        public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip, string managerName)
+        {
+            //Overload with no defaults
+            const bool setAttribute = true;
+            CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. Allows overwriting.
+        /// </summary>
+        /// <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
+        /// Original code obtained from vb2themax.com
+        /// </remarks>
+        /// <param name="sourcePath">The source directory path.</param>
+        /// <param name="destPath">The destination directory path.</param>
+        /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
+        /// <param name="setAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
+        /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        /// <param name="fileNamesToSkip">
+        /// List of file names to skip when copying the directory (and subdirectories); 
+        /// can optionally contain full path names to skip</param>
+        /// <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
+        private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
+            List<string> fileNamesToSkip, string managerName)
+        {
+            var sourceDir = new DirectoryInfo(sourcePath);
+            var destDir = new DirectoryInfo(destPath);
+
+            // the source directory must exist, otherwise throw an exception
+            if (sourceDir.Exists)
+            {
+                // If destination SubDir's parent SubDir does not exist throw an exception
+                if (destDir.Parent != null && !destDir.Parent.Exists)
+                {
+                    throw new DirectoryNotFoundException("Destination directory does not exist: " + destDir.Parent.FullName);
+                }
+
+                if (!destDir.Exists)
+                {
+                    destDir.Create();
+                }
+
+                // Populate dctFileNamesToSkip
+                var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+                if ((fileNamesToSkip != null))
+                {
+                    foreach (var strItem in fileNamesToSkip)
+                    {
+                        dctFileNamesToSkip.Add(strItem, "");
+                    }
+                }
+
+                // Copy all the files of the current directory
+                foreach (var childFile in sourceDir.GetFiles())
+                {
+                    // Look for both the file name and the full path in dctFileNamesToSkip
+                    // If either matches, then to not copy the file
+                    bool copyFile;
+                    if (dctFileNamesToSkip.ContainsKey(childFile.Name))
+                    {
+                        copyFile = false;
+                    }
+                    else if (dctFileNamesToSkip.ContainsKey(childFile.FullName))
+                    {
+                        copyFile = false;
+                    }
+                    else
+                    {
+                        copyFile = true;
+                    }
+
+
+                    if (copyFile)
+                    {
+                        var targetFilePath = Path.Combine(destDir.FullName, childFile.Name);
+
+                        if (overWrite)
+                        {
+                            UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
+                            CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: true);
+                        }
+                        else
+                        {
+                            // If overWrite = false, copy the file only if it does not exist
+                            // this is done to avoid an IOException if a file already exists
+                            // this way the other files can be copied anyway...
+                            if (!File.Exists(targetFilePath))
+                            {
+                                UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
+                                CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: false);
+                            }
+                        }
+
+                        if (setAttribute)
+                        {
+                            UpdateReadonlyAttribute(childFile, targetFilePath, readOnly);
+                        }
+
+                        UpdateCurrentStatusIdle();
+                    }
+                }
+
+                // Copy all the sub-directories by recursively calling this same routine
+                foreach (var subFolder in sourceDir.GetDirectories())
+                {
+                    if (subFolder.FullName.Equals(destDir.FullName))
+                    {
+                        // Skip this subdirectory since it is our destination folder
+                        continue;
+                    }
+                    CopyDirectoryEx(subFolder.FullName, Path.Combine(destDir.FullName, subFolder.Name), overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
+                }
+            }
+            else
+            {
+                throw new DirectoryNotFoundException("Source directory does not exist: " + sourceDir.FullName);
+            }
+
+        }
+
+        /// <summary>
+        /// Copies the file attributes from a source file to a target file, explicitly updating the read-only bit based on readOnly
+        /// </summary>
+        /// <param name="fiSourceFile">Source FileInfo</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="readOnly">True to force the ReadOnly bit on, False to force it off</param>
+        /// <remarks></remarks>
+        protected void UpdateReadonlyAttribute(FileInfo fiSourceFile, string targetFilePath, bool readOnly)
+        {
+            // Get the file attributes from the source file
+            var fa = fiSourceFile.Attributes;
+            FileAttributes faNew;
+
+            // Change the read-only attribute to the desired value
+            if (readOnly)
+            {
+                faNew = fa | FileAttributes.ReadOnly;
+            }
+            else
+            {
+                faNew = fa & ~FileAttributes.ReadOnly;
+            }
+
+            if (fa != faNew)
+            {
+                // Set the attributes of the destination file
+                File.SetAttributes(targetFilePath, fa);
+            }
+
+        }
+
+        #endregion
+
+        #region "CopyDirectoryWithResume function"
+
+        /// <summary>
+        /// Copies a source directory to the destination directory.
+        /// Overwrites existing files if they differ in modification time or size.
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceFolderPath">The source directory path.</param>
+        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(string sourceFolderPath, string targetFolderPath)
+        {
+
+            const bool recurse = false;
+            const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
+            var fileNamesToSkip = new List<string>();
+
+            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, fileNamesToSkip);
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory.
+        /// Overwrites existing files if they differ in modification time or size.
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceFolderPath">The source directory path.</param>
+        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(string sourceFolderPath, string targetFolderPath, bool recurse)
+        {
+
+            const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
+            var fileNamesToSkip = new List<string>();
+
+            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, fileNamesToSkip);
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. 
+        /// overWrite behavior is governed by fileOverwriteMode
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceFolderPath">The source directory path.</param>
+        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(
+            string sourceFolderPath, string targetFolderPath,
+            bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip)
+        {
+
+            int fileCountSkipped;
+            int fileCountResumed;
+            int fileCountNewlyCopied;
+            const bool setAttribute = false;
+            const bool readOnly = false;
+
+            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. 
+        /// overWrite behavior is governed by fileOverwriteMode
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceFolderPath">The source directory path.</param>
+        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
+        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
+        /// <param name="fileCountResumed">Number of files resumed (output)</param>
+        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(
+            string sourceFolderPath, string targetFolderPath,
+            bool recurse, FileOverwriteMode fileOverwriteMode,
+            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
+        {
+
+            const bool setAttribute = false;
+            const bool readOnly = false;
+            var fileNamesToSkip = new List<string>();
+
+            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. 
+        /// overWrite behavior is governed by fileOverwriteMode
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceFolderPath">The source directory path.</param>
+        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
+        /// <param name="fileCountResumed">Number of files resumed (output)</param>
+        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(
+            string sourceFolderPath, string targetFolderPath,
+            bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip,
+            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
+        {
+
+            const bool setAttribute = false;
+            const bool readOnly = false;
+
+            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
+
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory. 
+        /// overWrite behavior is governed by fileOverwriteMode
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceFolderPath">The source directory path.</param>
+        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
+        /// <param name="setAttribute">True if the read-only attribute of the destination file is to be modified, false otherwise.</param>
+        /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
+        /// <param name="fileCountResumed">Number of files resumed (output)</param>
+        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(
+            string sourceFolderPath, string targetFolderPath,
+            bool recurse, FileOverwriteMode fileOverwriteMode,
+            bool setAttribute, bool readOnly, List<string> fileNamesToSkip,
+            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
+        {
+            var success = true;
+
+            fileCountSkipped = 0;
+            fileCountResumed = 0;
+            fileCountNewlyCopied = 0;
+
+            var diSourceFolder = new DirectoryInfo(sourceFolderPath);
+            var diTargetFolder = new DirectoryInfo(targetFolderPath);
+
+            // The source directory must exist, otherwise throw an exception
+            if (!diSourceFolder.Exists)
+            {
+                throw new DirectoryNotFoundException("Source directory does not exist: " + diSourceFolder.FullName);
+            }
+
+            if (diTargetFolder.Parent == null)
+            {
+                throw new DirectoryNotFoundException("Unable to determine the parent folder of " + diTargetFolder.FullName);
+            }
+            // If destination SubDir's parent directory does not exist throw an exception
+            if (!diTargetFolder.Parent.Exists)
+            {
+                throw new DirectoryNotFoundException("Destination directory does not exist: " + diTargetFolder.Parent.FullName);
+            }
+
+            if (diSourceFolder.FullName == diTargetFolder.FullName)
+            {
+                throw new IOException("Source and target directories cannot be the same: " + diTargetFolder.FullName);
+            }
+
+
+            try
+            {
+                // Create the target folder if necessary
+                if (!diTargetFolder.Exists)
+                {
+                    diTargetFolder.Create();
+                }
+
+                // Populate objFileNamesToSkipCaseInsensitive
+                var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+                if ((fileNamesToSkip != null))
+                {
+                    // Copy the values from fileNamesToSkip to dctFileNamesToSkip so that we can perform case-insensitive searching
+                    foreach (var strItem in fileNamesToSkip)
+                    {
+                        dctFileNamesToSkip.Add(strItem, string.Empty);
+                    }
+                }
+
+                // Copy all the files of the current directory
+
+                foreach (var fiSourceFile in diSourceFolder.GetFiles())
+                {
+                    // Look for both the file name and the full path in dctFileNamesToSkip
+                    // If either matches, then do not copy the file
+                    bool copyFile;
+                    if (dctFileNamesToSkip.ContainsKey(fiSourceFile.Name))
+                    {
+                        copyFile = false;
+                    }
+                    else if (dctFileNamesToSkip.ContainsKey(fiSourceFile.FullName))
+                    {
+                        copyFile = false;
+                    }
+                    else
+                    {
+                        copyFile = true;
+                    }
+
+                    if (copyFile)
+                    {
+                        // Does file already exist?
+                        var fiExistingFile = new FileInfo(Path.Combine(diTargetFolder.FullName, fiSourceFile.Name));
+
+                        if (fiExistingFile.Exists)
+                        {
+                            switch (fileOverwriteMode)
+                            {
+                                case FileOverwriteMode.AlwaysOverwrite:
+                                    copyFile = true;
+
+                                    break;
+                                case FileOverwriteMode.DoNotOverwrite:
+                                    copyFile = false;
+
+                                    break;
+                                case FileOverwriteMode.OverwriteIfSourceNewer:
+                                    if (fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc || (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length))
+                                    {
+                                        copyFile = false;
+                                    }
+
+                                    break;
+                                case FileOverwriteMode.OverWriteIfDateOrLengthDiffer:
+                                    // File exists; if size and last modified time are the same then don't copy
+
+                                    if (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length)
+                                    {
+                                        copyFile = false;
+                                    }
+
+                                    break;
+                                default:
+                                    // Unknown mode; assume DoNotOverwrite
+                                    copyFile = false;
+                                    break;
+                            }
+
+                        }
+                    }
+
+                    if (!copyFile)
+                    {
+                        fileCountSkipped += 1;
+
+                    }
+                    else
+                    {
+                        bool copyResumed;
+                        var targetFilePath = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name);
+                        success = CopyFileWithResume(fiSourceFile, targetFilePath, out copyResumed);
+
+                        if (!success)
+                            break;
+
+                        if (copyResumed)
+                        {
+                            fileCountResumed += 1;
+                        }
+                        else
+                        {
+                            fileCountNewlyCopied += 1;
+                        }
+
+                        if (setAttribute)
+                        {
+                            UpdateReadonlyAttribute(fiSourceFile, targetFilePath, readOnly);
+                        }
+
+                    }
+
+                }
+
+                if (success && recurse)
+                {
+                    // Process each subdirectory
+                    foreach (var fiSourceFolder in diSourceFolder.GetDirectories())
+                    {
+                        var strSubDirtargetFolderPath = Path.Combine(targetFolderPath, fiSourceFolder.Name);
+                        success = CopyDirectoryWithResume(
+                            fiSourceFolder.FullName, strSubDirtargetFolderPath,
+                            recurse, fileOverwriteMode, setAttribute, readOnly, fileNamesToSkip,
+                            out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new IOException("Exception copying directory with resume: " + ex.Message, ex);
+            }
+
+            return success;
+
+        }
+
+        /// <summary>
+        /// Copy a file using chunks, thus allowing for resuming
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="copyResumed"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public bool CopyFileWithResume(string sourceFilePath, string targetFilePath, out bool copyResumed)
+        {
+            var fiSourceFile = new FileInfo(sourceFilePath);
+            return CopyFileWithResume(fiSourceFile, targetFilePath, out copyResumed);
+
+        }
+
+        /// <summary>
+        /// Copy fiSourceFile to diTargetFolder
+        /// Copies the file using chunks, thus allowing for resuming
+        /// </summary>
+        /// <param name="fiSourceFile"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="copyResumed">Output parameter; true if copying was resumed</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks></remarks>
+        public bool CopyFileWithResume(FileInfo fiSourceFile, string targetFilePath, out bool copyResumed)
+        {
+
+            const string FILE_PART_TAG = ".#FilePart#";
+            const string FILE_PART_INFO_TAG = ".#FilePartInfo#";
+
+            long lngFileOffsetStart = 0;
+
+            FileStream swFilePart = null;
+
+            try
+            {
+                if (mChunkSizeMB < 1)
+                    mChunkSizeMB = 1;
+                var intChunkSizeBytes = mChunkSizeMB * 1024 * 1024;
+
+                if (mFlushThresholdMB < mChunkSizeMB)
+                {
+                    mFlushThresholdMB = mChunkSizeMB;
+                }
+                var intFlushThresholdBytes = mFlushThresholdMB * 1024 * 1024;
+
+                var blnResumeCopy = false;
+
+                if (fiSourceFile.Length <= intChunkSizeBytes)
+                {
+                    // Simply copy the file
+
+                    UpdateCurrentStatus(CopyStatus.NormalCopy, fiSourceFile.FullName);
+                    fiSourceFile.CopyTo(targetFilePath, true);
+
+                    UpdateCurrentStatusIdle();
+                    copyResumed = false;
+                    return true;
+
+                }
+
+                // Delete the target file if it already exists
+                if (File.Exists(targetFilePath))
+                {
+                    File.Delete(targetFilePath);
+                    Thread.Sleep(25);
+                }
+
+                // Check for a #FilePart# file
+                var fiFilePart = new FileInfo(targetFilePath + FILE_PART_TAG);
+
+                var fiFilePartInfo = new FileInfo(targetFilePath + FILE_PART_INFO_TAG);
+
+                var dtSourceFileLastWriteTimeUTC = fiSourceFile.LastWriteTimeUtc;
+                var sourceFileLastWriteTime = dtSourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt");
+
+                if (fiFilePart.Exists)
+                {
+                    // Possibly resume copying
+                    // First inspect the FilePartInfo file
+
+                    if (fiFilePartInfo.Exists)
+                    {
+                        // Open the file and read the file length and file modification time
+                        // If they match fiSourceFile then set blnResumeCopy to true and update lngFileOffsetStart
+
+                        using (var srFilePartInfo = new StreamReader(new FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                        {
+
+                            var lstSourceLines = new List<string>();
+
+                            while (!srFilePartInfo.EndOfStream)
+                            {
+                                lstSourceLines.Add(srFilePartInfo.ReadLine());
+                            }
+
+                            if (lstSourceLines.Count >= 3)
+                            {
+                                // The first line contains the source file path
+                                // The second contains the file length, in bytes
+                                // The third contains the file modification time (UTC)
+
+
+                                if (lstSourceLines[0] == fiSourceFile.FullName && lstSourceLines[1] == fiSourceFile.Length.ToString())
+                                {
+                                    // Name and size are the same
+                                    // See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
+
+                                    DateTime dtCachedLastWriteTimeUTC;
+                                    if (DateTime.TryParse(lstSourceLines[2], out dtCachedLastWriteTimeUTC))
+                                    {
+
+                                        if (NearlyEqualFileTimes(dtSourceFileLastWriteTimeUTC, dtCachedLastWriteTimeUTC))
+                                        {
+                                            // Source file is unchanged; safe to resume
+
+                                            lngFileOffsetStart = fiFilePart.Length;
+                                            blnResumeCopy = true;
+
+                                        }
+                                    }
+
+                                }
+
+                            }
+                        }
+
+                    }
+
+                }
+
+                if (blnResumeCopy)
+                {
+                    UpdateCurrentStatus(CopyStatus.BufferedCopyResume, fiSourceFile.FullName);
+                    swFilePart = new FileStream(fiFilePart.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
+                    copyResumed = true;
+                }
+                else
+                {
+                    UpdateCurrentStatus(CopyStatus.BufferedCopy, fiSourceFile.FullName);
+
+                    // Delete FilePart file in the target folder if it already exists
+                    if (fiFilePart.Exists)
+                    {
+                        fiFilePart.Delete();
+                        Thread.Sleep(25);
+                    }
+
+                    // Create the FILE_PART_INFO_TAG file
+                    using (var swFilePartInfo = new StreamWriter(new FileStream(fiFilePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                    {
+
+                        // The first line contains the source file path
+                        // The second contains the file length, in bytes
+                        // The third contains the file modification time (UTC)
+                        swFilePartInfo.WriteLine(fiSourceFile.FullName);
+                        swFilePartInfo.WriteLine(fiSourceFile.Length);
+                        swFilePartInfo.WriteLine(sourceFileLastWriteTime);
+                    }
+
+                    // Open the FilePart file
+                    swFilePart = new FileStream(fiFilePart.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
+                    copyResumed = false;
+                }
+
+                // Now copy the file, appending data to swFilePart
+                // Open the source and seek to lngFileOffsetStart if > 0
+                using (var srSourceFile = new FileStream(fiSourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+
+                    if (lngFileOffsetStart > 0)
+                    {
+                        srSourceFile.Seek(lngFileOffsetStart, SeekOrigin.Begin);
+                    }
+
+                    int intBytesRead;
+
+                    var lngBytesWritten = lngFileOffsetStart;
+                    float sngTotalBytes = srSourceFile.Length;
+
+                    var buffer = new byte[intChunkSizeBytes + 1];
+                    long intBytesSinceLastFlush = 0;
+
+                    do
+                    {
+                        // Read data in 1MB chunks and append to swFilePart
+                        intBytesRead = srSourceFile.Read(buffer, 0, intChunkSizeBytes);
+                        swFilePart.Write(buffer, 0, intBytesRead);
+                        lngBytesWritten += intBytesRead;
+
+                        // Flush out the data periodically 
+                        intBytesSinceLastFlush += intBytesRead;
+                        if (intBytesSinceLastFlush >= intFlushThresholdBytes)
+                        {
+                            swFilePart.Flush();
+                            intBytesSinceLastFlush = 0;
+
+                            // Value between 0 and 100
+                            var sngProgress = lngBytesWritten / sngTotalBytes * 100;
+                            FileCopyProgress?.Invoke(fiSourceFile.Name, sngProgress);
+                        }
+
+                        if (intBytesRead < intChunkSizeBytes)
+                        {
+                            break;
+                        }
+                    } while (intBytesRead > 0);
+
+                    FileCopyProgress?.Invoke(fiSourceFile.Name, 100);
+                }
+
+                swFilePart.Close();
+
+                UpdateCurrentStatusIdle();
+
+                // Copy is complete
+                // Update last write time UTC to match source UTC
+                fiFilePart.Refresh();
+                fiFilePart.LastWriteTimeUtc = dtSourceFileLastWriteTimeUTC;
+
+                // Rename fiFilePart to targetFilePath
+                fiFilePart.MoveTo(targetFilePath);
+
+                // Delete fiFilePartInfo
+                fiFilePartInfo.Delete();
+
+            }
+            catch (Exception ex)
+            {
+                swFilePart?.Close();
+                clsProgRunner.GarbageCollectNow();
+
+                throw new IOException("Exception copying file with resume: " + ex.Message, ex);
+            }
+
+            return true;
+
+        }
+
+        /// <summary>
+        /// Compares two timestamps (typically the LastWriteTime for a file)
+        /// If they agree within 2 seconds, then returns True, otherwise false
+        /// </summary>
+        /// <param name="dtTime1">First file time</param>
+        /// <param name="dtTime2">Second file time</param>
+        /// <returns>True if the times agree within 2 seconds</returns>
+        /// <remarks></remarks>
+        protected bool NearlyEqualFileTimes(DateTime dtTime1, DateTime dtTime2)
+        {
+            if (Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2.05)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private void OnDebugEvent(string message, string detailedMessage)
+        {
+            OnStatusEvent(message);
+            OnDebugEvent("  " + detailedMessage);
+        }
+
+        private void OnWarningEvent(string message, string detailedMessage)
+        {
+            OnWarningEvent(message);
+            OnStatusEvent("  " + detailedMessage);
+        }
+
+        protected void UpdateCurrentStatusIdle()
+        {
+            UpdateCurrentStatus(CopyStatus.Idle, string.Empty);
+        }
+
+        protected void UpdateCurrentStatus(CopyStatus eStatus, string ssourceFilePath)
+        {
+            CurrentCopyStatus = eStatus;
+
+            if (eStatus == CopyStatus.Idle)
+            {
+                CurrentSourceFile = string.Empty;
+            }
+            else
+            {
+                CurrentSourceFile = string.Copy(ssourceFilePath);
+
+                if (eStatus == CopyStatus.BufferedCopyResume)
+                {
+                    ResumingFileCopy?.Invoke(ssourceFilePath);
+                }
+                else if (eStatus == CopyStatus.NormalCopy)
+                {
+                    CopyingFile?.Invoke(ssourceFilePath);
+                }
+
+            }
+        }
+
+        #endregion
+
+        #region "GetDirectorySize function"
+        /// <summary>
+        /// Get the directory size.
+        /// </summary>
+        /// <param name="folderPath">The path to the directory.</param>
+        /// <returns>The directory size.</returns>
+        public long GetDirectorySize(string folderPath)
+        {
+
+            // Overload for returning directory size only
+
+            long DumfileCount = 0;
+            long DumDirCount = 0;
+
+            return GetDirectorySizeEX(folderPath, ref DumfileCount, ref DumDirCount);
+
+        }
+
+        /// <summary>
+        /// Get the directory size, file count, and directory count for the entire directory tree.
+        /// </summary>
+        /// <param name="folderPath">The path to the directory.</param>
+        /// <param name="fileCount">The number of files in the entire directory tree.</param>
+        /// <param name="subFolderCount">The number of directories in the entire directory tree.</param>
+        /// <returns>The directory size.</returns>
+        public long GetDirectorySize(string folderPath, ref long fileCount, ref long subFolderCount)
+        {
+
+            //Overload for returning directory size, file count and directory count for entire directory tree
+            return GetDirectorySizeEX(folderPath, ref fileCount, ref subFolderCount);
+
+        }
+
+        /// <summary>
+        /// Get the directory size, file count, and directory count for the entire directory tree.
+        /// </summary>
+        /// <param name="folderPath">The path to the directory.</param>
+        /// <param name="fileCount">The number of files in the entire directory tree.</param>
+        /// <param name="subFolderCount">The number of directories in the entire directory tree.</param>
+        /// <returns>The directory size.</returns>
+        private long GetDirectorySizeEX(string folderPath, ref long fileCount, ref long subFolderCount)
+        {
+
+            // Returns the size of the specified directory, number of files in the directory tree, and number of subdirectories
+            // - Note: requires Imports System.IO
+            // - Usage: Dim DirSize As Long = GetDirectorySize("D:\Projects")
+            //
+            // Original code obtained from vb2themax.com
+            long folderSize = 0;
+            var diFolder = new DirectoryInfo(folderPath);
+
+            // add the size of each file
+            foreach (var childFile in diFolder.GetFiles())
+            {
+                folderSize += childFile.Length;
+                fileCount += 1;
+            }
+
+            // add the size of each sub-directory, that is retrieved by recursively
+            // calling this same routine
+            foreach (var subDir in diFolder.GetDirectories())
+            {
+                folderSize += GetDirectorySizeEX(subDir.FullName, ref fileCount, ref subFolderCount);
+                subFolderCount += 1;
+            }
+
+            return folderSize;
+
+        }
+        #endregion
+
+        #region "MoveDirectory Function"
+
+        public bool MoveDirectory(string sourceFolderPath, string targetFolderPath, bool overwriteFiles)
+        {
+            return MoveDirectory(sourceFolderPath, targetFolderPath, overwriteFiles, ManagerName);
+        }
+
+        public bool MoveDirectory(string sourceFolderPath, string targetFolderPath, bool overwriteFiles, string managerName)
+        {
+            bool success;
+
+            var diSourceFolder = new DirectoryInfo(sourceFolderPath);
+
+            // Recursively call this function for each subdirectory
+            foreach (var fiFolder in diSourceFolder.GetDirectories())
+            {
+                success = MoveDirectory(fiFolder.FullName, Path.Combine(targetFolderPath, fiFolder.Name), overwriteFiles, managerName);
+                if (!success)
+                {
+                    throw new Exception("Error moving directory " + fiFolder.FullName + " to " + targetFolderPath + "; MoveDirectory returned False");
+                }
+            }
+
+            foreach (var fiFile in diSourceFolder.GetFiles())
+            {
+                success = CopyFileUsingLocks(fiFile.FullName, Path.Combine(targetFolderPath, fiFile.Name), managerName, overwriteFiles);
+                if (!success)
+                {
+                    throw new Exception("Error copying file " + fiFile.FullName + " to " + targetFolderPath + "; CopyFileUsingLocks returned False");
+                }
+
+                // Delete the source file
+                DeleteFileIgnoreErrors(fiFile.FullName);
+            }
+
+            diSourceFolder.Refresh();
+            if (diSourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Length == 0)
+            {
+                // This folder is now empty; delete it
+                try
+                {
+                    diSourceFolder.Delete(true);
+                }
+                catch (Exception)
+                {
+                    // Ignore errors here
+                }
+            }
+
+            return true;
+
+        }
+        #endregion
+
+        #region "Utility Functions"
+
+        /// <summary>
+        /// Renames targetFilePath to have _Old1 before the file extension
+        /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
+        /// Use this function to backup old versions of a file before copying a new version to a target folder
+        /// Keeps up to 9 old versions of a file
+        /// </summary>
+        /// <param name="targetFilePath">Full path to the file to backup</param>
+        /// <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
+        /// <remarks></remarks>
+        public static bool BackupFileBeforeCopy(string targetFilePath)
+        {
+            return BackupFileBeforeCopy(targetFilePath, DEFAULT_VERSION_COUNT_TO_KEEP);
+        }
+
+        /// <summary>
+        /// Renames targetFilePath to have _Old1 before the file extension
+        /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
+        /// Use this function to backup old versions of a file before copying a new version to a target folder
+        /// </summary>
+        /// <param name="targetFilePath">Full path to the file to backup</param>
+        /// <param name="versionCountToKeep">Maximum backup copies of the file to keep</param>
+        /// <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
+        /// <remarks></remarks>
+        public static bool BackupFileBeforeCopy(string targetFilePath, int versionCountToKeep)
+        {
+
+            var fiTargetFile = new FileInfo(targetFilePath);
+
+            if (!fiTargetFile.Exists)
+            {
+                // Target file does not exist; nothing to backup
+                return true;
+            }
+
+            if (versionCountToKeep == 0)
+                versionCountToKeep = 2;
+            if (versionCountToKeep < 1)
+                versionCountToKeep = 1;
+
+            var strBaseName = Path.GetFileNameWithoutExtension(fiTargetFile.Name);
+            var strExtension = Path.GetExtension(fiTargetFile.Name);
+            if (string.IsNullOrEmpty(strExtension))
+            {
+                strExtension = ".bak";
+            }
+
+            if (fiTargetFile.Directory == null)
+                return true;
+
+            var targetFolderPath = fiTargetFile.Directory.FullName;
+
+            // Backup any existing copies of targetFilePath
+
+            for (var intRevision = versionCountToKeep - 1; intRevision >= 0; intRevision += -1)
+            {
+                var strBaseNameCurrent = string.Copy(strBaseName);
+                if (intRevision > 0)
+                {
+                    strBaseNameCurrent += "_Old" + intRevision.ToString();
+                }
+                strBaseNameCurrent += strExtension;
+
+                var ioFileToRename = new FileInfo(Path.Combine(targetFolderPath, strBaseNameCurrent));
+                var strNewFilePath = Path.Combine(targetFolderPath, strBaseName + "_Old" + (intRevision + 1).ToString() + strExtension);
+
+                // Confirm that strNewFilePath doesn't exist; delete it if it does
+                if (File.Exists(strNewFilePath))
+                {
+                    File.Delete(strNewFilePath);
+                }
+
+                // Rename the current file to strNewFilePath
+                if (ioFileToRename.Exists)
+                {
+                    ioFileToRename.MoveTo(strNewFilePath);
+                }
+
+            }
+
+            return true;
+
+        }
+
+        public static string CompactPathString(string pathToCompact, int maxLength = 40)
+        {
+            // Recursive function to shorten pathToCompact to a maximum length of maxLength
+
+            // The following is example output
+            // Note that when drive letters or subdirectories are present, a minimum length is imposed
+            // For "C:\My Documents\Readme.txt"
+            //   Minimum string returned=  C:\M..\Rea..
+            //   Length for 20 characters= C:\My D..\Readme.txt
+            //   Length for 25 characters= C:\My Docume..\Readme.txt
+
+            // For "C:\My Documents\Word\Business\Finances.doc"
+            //   Minimum string returned=  C:\...\B..\Fin..
+            //   Length for 20 characters= C:\...\B..\Finance..
+            //   Length for 25 characters= C:\...\Bus..\Finances.doc
+            //   Length for 32 characters= C:\...\W..\Business\Finances.doc
+            //   Length for 40 characters= C:\My Docum..\Word\Business\Finances.doc
+
+            var pathSepChars = new char[2];
+            pathSepChars[0] = '\\';
+            pathSepChars[1] = '/';
+
+            var pathSepCharPreferred = '\\';
+
+            // 0-based array
+            var pathParts = new string[5];
+
+            int pathPartCount;
+
+            string shortenedPath;
+
+            int charIndex;
+            int shortLength;
+            int leadingCharsLength;
+
+            if (maxLength < 3)
+                maxLength = 3;
+
+            for (pathPartCount = 0; pathPartCount <= pathParts.Length - 1; pathPartCount++)
+            {
+                pathParts[pathPartCount] = string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(pathToCompact))
+            {
+                return string.Empty;
+            }
+
+            var intFirstPathSepChar = pathToCompact.IndexOfAny(pathSepChars);
+            if (intFirstPathSepChar >= 0)
+            {
+                pathSepCharPreferred = pathToCompact[intFirstPathSepChar];
+            }
+
+            pathToCompact = pathToCompact.Trim();
+            if (pathToCompact.Length <= maxLength)
+            {
+                return pathToCompact;
+            }
+
+            pathPartCount = 1;
+            var leadingChars = string.Empty;
+
+            if (pathToCompact.StartsWith("\\\\"))
+            {
+                leadingChars = "\\\\";
+                charIndex = pathToCompact.IndexOfAny(pathSepChars, 2);
+
+                if (charIndex > 0)
+                {
+                    leadingChars = "\\\\" + pathToCompact.Substring(2, charIndex - 1);
+                    pathParts[0] = pathToCompact.Substring(charIndex + 1);
+                }
+                else
+                {
+                    pathParts[0] = pathToCompact.Substring(2);
+                }
+            }
+            else if (pathToCompact.StartsWith("\\") || pathToCompact.StartsWith("/"))
+            {
+                leadingChars = pathToCompact.Substring(0, 1);
+                pathParts[0] = pathToCompact.Substring(1);
+            }
+            else if (pathToCompact.StartsWith(".\\") || pathToCompact.StartsWith("./"))
+            {
+                leadingChars = pathToCompact.Substring(0, 2);
+                pathParts[0] = pathToCompact.Substring(2);
+            }
+            else if (pathToCompact.StartsWith("..\\") || pathToCompact.Substring(1, 2) == ":\\" || pathToCompact.StartsWith("../") || pathToCompact.Substring(1, 2) == ":/")
+            {
+                leadingChars = pathToCompact.Substring(0, 3);
+                pathParts[0] = pathToCompact.Substring(3);
+            }
+            else
+            {
+                pathParts[0] = pathToCompact;
+            }
+
+            // Examine pathParts[0] to see if there are 1, 2, or more subdirectories
+            var loopCount = 0;
+            do
+            {
+                charIndex = pathParts[pathPartCount - 1].IndexOfAny(pathSepChars);
+                if (charIndex >= 0)
+                {
+                    pathParts[pathPartCount] = pathParts[pathPartCount - 1].Substring(charIndex + 1);
+                    pathParts[pathPartCount - 1] = pathParts[pathPartCount - 1].Substring(0, charIndex + 1);
+                    pathPartCount += 1;
+                }
+                else
+                {
+                    break;
+                }
+                loopCount += 1;
+            } while (loopCount < 3);
+
+
+            if (pathPartCount == 1)
+            {
+                // No \ or / found, we're forced to shorten the filename (though if a UNC, then can shorten part of the UNC)
+
+                if (leadingChars.StartsWith("\\\\"))
+                {
+                    leadingCharsLength = leadingChars.Length;
+                    if (leadingCharsLength > 5)
+                    {
+                        // Can shorten the server name as needed
+                        shortLength = maxLength - pathParts[0].Length - 3;
+                        if (shortLength < leadingCharsLength)
+                        {
+                            if (shortLength < 3)
+                                shortLength = 3;
+                            leadingChars = leadingChars.Substring(0, shortLength) + "..\\";
+                        }
+
+                    }
+                }
+
+                shortLength = maxLength - leadingChars.Length - 2;
+                if (shortLength < 3)
+                    shortLength = 3;
+                if (shortLength < pathParts[0].Length - 2)
+                {
+                    if (shortLength < 4)
+                    {
+                        shortenedPath = leadingChars + pathParts[0].Substring(0, shortLength) + "..";
+                    }
+                    else
+                    {
+                        // Shorten by removing the middle portion of the filename
+                        var leftLength = Convert.ToInt32(Math.Ceiling(shortLength / 2.0));
+                        var rightLength = shortLength - leftLength;
+                        shortenedPath = leadingChars + pathParts[0].Substring(0, leftLength) + ".." + pathParts[0].Substring(pathParts[0].Length - rightLength);
+                    }
+                }
+                else
+                {
+                    shortenedPath = leadingChars + pathParts[0];
+                }
+            }
+            else
+            {
+                // Found one (or more) subdirectories
+
+                // First check if pathParts[1] = "...\" or ".../"
+                short multiPathCorrection;
+                if (pathParts[0] == "...\\" || pathParts[0] == ".../")
+                {
+                    multiPathCorrection = 4;
+                    pathParts[0] = pathParts[1];
+                    pathParts[1] = pathParts[2];
+                    pathParts[2] = pathParts[3];
+                    pathParts[3] = string.Empty;
+                    pathPartCount = 3;
+                }
+                else
+                {
+                    multiPathCorrection = 0;
+                }
+
+                // Shorten the first to as little as possible
+                // If not short enough, replace the first with ... and call this function again
+                shortLength = maxLength - leadingChars.Length - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 3 - multiPathCorrection;
+                if (shortLength < 1 & pathParts[2].Length > 0)
+                {
+                    // Not short enough, but other subdirectories are present
+                    // Thus, can call this function recursively
+                    shortenedPath = leadingChars + "..." + pathSepCharPreferred + pathParts[1] + pathParts[2] + pathParts[3];
+                    shortenedPath = CompactPathString(shortenedPath, maxLength);
+                }
+                else
+                {
+                    if (leadingChars.StartsWith("\\\\"))
+                    {
+                        leadingCharsLength = leadingChars.Length;
+                        if (leadingCharsLength > 5)
+                        {
+                            // Can shorten the server name as needed
+                            shortLength = maxLength - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 7 - multiPathCorrection;
+                            if (shortLength < leadingCharsLength - 3)
+                            {
+                                if (shortLength < 3)
+                                    shortLength = 3;
+                                leadingChars = leadingChars.Substring(0, shortLength) + "..\\";
+                            }
+
+                            // Recompute shortLength
+                            shortLength = maxLength - leadingChars.Length - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 3 - multiPathCorrection;
+                        }
+                    }
+
+                    if (multiPathCorrection > 0)
+                    {
+                        leadingChars = leadingChars + "..." + pathSepCharPreferred;
+                    }
+
+                    if (shortLength < 1)
+                        shortLength = 1;
+                    pathParts[0] = pathParts[0].Substring(0, shortLength) + ".." + pathSepCharPreferred;
+                    shortenedPath = leadingChars + pathParts[0] + pathParts[1] + pathParts[2] + pathParts[3];
+
+                    // See if still too long
+                    // If it is, then will need to shorten the filename too
+                    var overLength = shortenedPath.Length - maxLength;
+                    if (overLength > 0)
+                    {
+                        // Need to shorten filename too
+                        // Determine which index the filename is in
+                        int fileNameIndex;
+                        for (fileNameIndex = pathPartCount - 1; fileNameIndex >= 0; fileNameIndex += -1)
+                        {
+                            if (pathParts[fileNameIndex].Length > 0)
+                                break;
+                        }
+
+                        shortLength = pathParts[fileNameIndex].Length - overLength - 2;
+                        if (shortLength < 4)
+                        {
+                            pathParts[fileNameIndex] = pathParts[fileNameIndex].Substring(0, 3) + "..";
+                        }
+                        else
+                        {
+                            // Shorten by removing the middle portion of the filename
+                            var leftLength = Convert.ToInt32(Math.Ceiling(shortLength / 2.0));
+                            var rightLength = shortLength - leftLength;
+                            pathParts[fileNameIndex] = pathParts[fileNameIndex].Substring(0, leftLength) + ".." +
+                                pathParts[fileNameIndex].Substring(pathParts[fileNameIndex].Length - rightLength);
+                        }
+
+                        shortenedPath = leadingChars + pathParts[0] + pathParts[1] + pathParts[2] + pathParts[3];
+                    }
+
+                }
+            }
+
+            return shortenedPath;
+        }
+
+        /// <summary>
+        /// Delete the file, retrying up to 3 times
+        /// </summary>
+        /// <param name="fiFile">File to delete</param>
+        /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public bool DeleteFileWithRetry(FileInfo fiFile, out string errorMessage)
+        {
+            return DeleteFileWithRetry(fiFile, 3, out errorMessage);
+        }
+
+        /// <summary>
+        /// Delete the file, retrying up to retryCount times
+        /// </summary>
+        /// <param name="fiFile">File to delete</param>
+        /// <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
+        /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public bool DeleteFileWithRetry(FileInfo fiFile, int retryCount, out string errorMessage)
+        {
+
+            var fileDeleted = false;
+            var sleepTimeMsec = 500;
+
+            var retriesRemaining = retryCount - 1;
+            if (retriesRemaining < 0)
+                retriesRemaining = 0;
+
+            errorMessage = string.Empty;
+
+            while (!fileDeleted && retriesRemaining >= 0)
+            {
+                retriesRemaining -= 1;
+
+                try
+                {
+                    fiFile.Delete();
+                    fileDeleted = true;
+                }
+                catch (Exception ex)
+                {
+                    if (IsVimSwapFile(fiFile.Name))
+                    {
+                        // Ignore this error
+                        errorMessage = string.Empty;
+                        return true;
+                    }
+
+                    // Make sure the readonly bit is not set
+                    if ((fiFile.IsReadOnly))
+                    {
+                        var attributes = fiFile.Attributes;
+                        fiFile.Attributes = attributes & ~FileAttributes.ReadOnly;
+
+                        try
+                        {
+                            // Retry the delete
+                            fiFile.Delete();
+                            fileDeleted = true;
+                        }
+                        catch (Exception ex2)
+                        {
+                            errorMessage = "Error deleting file " + fiFile.FullName + ": " + ex2.Message;
+                        }
+                    }
+                    else
+                    {
+                        errorMessage = "Error deleting file " + fiFile.FullName + ": " + ex.Message;
+                    }
+                }
+
+                if (!fileDeleted)
+                {
+                    // Sleep for 0.5 second (or longer) then try again
+                    Thread.Sleep(sleepTimeMsec);
+
+                    // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
+                    if (sleepTimeMsec < 5)
+                    {
+                        sleepTimeMsec = Convert.ToInt32(Math.Round(sleepTimeMsec * 1.5, 0));
+                    }
+                }
+
+            }
+
+            if (fileDeleted)
+            {
+                errorMessage = string.Empty;
+            }
+            else if (string.IsNullOrWhiteSpace(errorMessage))
+            {
+                errorMessage = "Unknown error deleting file " + fiFile.FullName;
+            }
+
+            // ReSharper disable once NotAssignedOutParameter
+            return true;
+
+        }
+
+        /// <summary>
+        /// Returns true if the file is _.swp or starts with a . and ends with .swp
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        /// <remarks></remarks>
+        public static bool IsVimSwapFile(string filePath)
+        {
+
+            var fileName = Path.GetFileName(filePath);
+            if (fileName == null)
+                return false;
+
+            if (fileName.ToLower() == "_.swp" || fileName.StartsWith(".") && fileName.ToLower().EndsWith(".swp"))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Confirms that the drive for the target output file has a minimum amount of free disk space
+        /// </summary>
+        /// <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
+        /// <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative</param>
+        /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
+        /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
+        /// <remarks></remarks>
+        public static bool ValidateFreeDiskSpace(string outputFilePath, double minimumFreeSpaceMB, out string errorMessage)
+        {
+            double outputFileExpectedSizeMB = 0;
+
+            return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, out errorMessage));
+        }
+
+        /// <summary>
+        /// Confirms that the drive for the target output file has a minimum amount of free disk space
+        /// </summary>
+        /// <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
+        /// <param name="outputFileExpectedSizeMB">Expected size of the output file</param>
+        /// <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative.  Takes into account outputFileExpectedSizeMB</param>
+        /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
+        /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
+        /// <remarks></remarks>
+        public static bool ValidateFreeDiskSpace(string outputFilePath, double outputFileExpectedSizeMB, double minimumFreeSpaceMB, out string errorMessage)
+        {
+
+            const int DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150;
+
+            try
+            {
+                if (minimumFreeSpaceMB <= 0)
+                    minimumFreeSpaceMB = DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB;
+                if (outputFileExpectedSizeMB < 0)
+                    outputFileExpectedSizeMB = 0;
+
+                var diFolderInfo = new FileInfo(outputFilePath).Directory;
+                if (diFolderInfo == null)
+                {
+                    errorMessage = "Unable to determine the parent directory of the destination file";
+                    return false;
+                }
+
+                while (!diFolderInfo.Exists && diFolderInfo.Parent != null)
+                {
+                    diFolderInfo = diFolderInfo.Parent;
+                }
+
+                long freeBytesAvailableToUser;
+                long totalDriveCapacityBytes;
+                long totalNumberOfFreeBytes;
+
+                if (GetDiskFreeSpace(diFolderInfo.FullName, out freeBytesAvailableToUser, out totalDriveCapacityBytes, out totalNumberOfFreeBytes))
+                {
+                    var freeSpaceMB = totalNumberOfFreeBytes / 1024.0 / 1024.0;
+
+
+                    if (outputFileExpectedSizeMB > 0)
+                    {
+                        if (freeSpaceMB - outputFileExpectedSizeMB < minimumFreeSpaceMB)
+                        {
+                            errorMessage = "Target drive will have less than " + minimumFreeSpaceMB.ToString("0") + " MB free after creating a " + outputFileExpectedSizeMB.ToString("0") + " MB file : " + freeSpaceMB.ToString("0.0") + " MB available prior to file creation";
+
+                            return false;
+                        }
+
+                    }
+                    else if (freeSpaceMB < minimumFreeSpaceMB)
+                    {
+                        errorMessage = "Target drive has less than " + minimumFreeSpaceMB.ToString("0") + " MB free: " + freeSpaceMB.ToString("0.0") + " MB available";
+                        return false;
+
+                    }
+
+                }
+                else
+                {
+                    errorMessage = "Error validating target drive free space (GetDiskFreeSpaceEx returned false): " + diFolderInfo.FullName;
+                    return false;
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                errorMessage = "Exception validating target drive free space for " + outputFilePath + ": " + ex.Message;
+                return false;
+            }
+
+            errorMessage = string.Empty;
+            return true;
+        }
+
+
+        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo diLockFolderSource, FileInfo fiSourceFile, int maxWaitTimeMinutes)
+        {
+            WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, null, fiSourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
+
+        }
+
+
+        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo diLockFolderSource, DirectoryInfo diLockFolderTarget, FileInfo fiSourceFile, string targetFilePath, int maxWaitTimeMinutes)
+        {
+            // Find the recent LockFiles present in the source and/or target lock folders
+            // These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
+
+            var intMBBacklogSource = 0;
+            var intMBBacklogTarget = 0;
+
+            var dtWaitTimeStart = DateTime.UtcNow;
+
+            var intSourceFileSizeMB = Convert.ToInt32(fiSourceFile.Length / 1024.0 / 1024.0);
+
+            // Wait for up to 180 minutes (3 hours) for the server resources to free up
+
+            // However, if retrieving files from adms.emsl.pnl.gov only wait for a maximum of 30 minutes
+            // because sometimes that folder's permissions get messed up and we can create files there, but cannot delete them
+
+            var maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES;
+            var maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES;
+
+            // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
+            // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
+            if ((diLockFolderSource != null) && diLockFolderSource.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            {
+                maxWaitTimeSource = 30;
+            }
+
+            if ((diLockFolderTarget != null) && diLockFolderTarget.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            {
+                maxWaitTimeTarget = 30;
+            }
+
+
+            while (true)
+            {
+                // Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
+                var lstLockFileMBSource = FindLockFiles(diLockFolderSource, lockFileTimestamp);
+                var lstLockFileMBTarget = FindLockFiles(diLockFolderTarget, lockFileTimestamp);
+
+                var stopWaiting = false;
+
+                if (lstLockFileMBSource.Count <= 1 && lstLockFileMBTarget.Count <= 1)
+                {
+                    stopWaiting = true;
+
+                }
+                else
+                {
+                    intMBBacklogSource = lstLockFileMBSource.Sum();
+                    intMBBacklogTarget = lstLockFileMBTarget.Sum();
+
+                    if (intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(dtWaitTimeStart, maxWaitTimeSource))
+                    {
+                        // The source server has enough resources available to allow the copy
+                        if (intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(dtWaitTimeStart, maxWaitTimeTarget))
+                        {
+                            // The target server has enough resources available to allow the copy
+                            // Copy the file
+                            stopWaiting = true;
+                        }
+                    }
+                }
+
+                if (stopWaiting)
+                {
+                    LockQueueWaitComplete?.Invoke(fiSourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes);
+                    break;
+                }
+
+                // Server resources exceed the thresholds
+                // Sleep for 1 to 30 seconds, depending on intMBBacklogSource and intMBBacklogTarget
+                // We compute intSleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
+                // This is faster than reality, but helps minimize waiting too long between checking
+
+                var dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0;
+
+                if (dblSleepTimeSec < 1)
+                    dblSleepTimeSec = 1;
+                if (dblSleepTimeSec > 30)
+                    dblSleepTimeSec = 30;
+
+                WaitingForLockQueue?.Invoke(fiSourceFile.FullName, targetFilePath, intMBBacklogSource, intMBBacklogTarget);
+
+                Thread.Sleep(Convert.ToInt32(dblSleepTimeSec) * 1000);
+
+                if (WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES))
+                {
+                    LockQueueTimedOut?.Invoke(fiSourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes);
+                    break;
+                }
+            }
+
+        }
+
+        private bool WaitedTooLong(DateTime dtWaitTimeStart, int maxLockfileWaitTimeMinutes)
+        {
+            if (DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region "GetDiskFreeSpace"
+
+        [DllImport("Kernel32.dll", EntryPoint = "GetDiskFreeSpaceEx", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, ref UInt64 lpFreeBytesAvailable, ref UInt64 lpTotalNumberOfBytes, ref UInt64 lpTotalNumberOfFreeBytes);
+
+        protected static bool GetDiskFreeSpace(
+            string directoryPath,
+            out long freeBytesAvailableToUser,
+            out long totalDriveCapacityBytes,
+            out long totalNumberOfFreeBytes)
+        {
+
+            ulong freeAvailableUser = 0;
+            ulong totalDriveCapacity = 0;
+            ulong totalFree = 0;
+
+            // Make sure directoryPath ends in a forward slash
+            if (!directoryPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                directoryPath += Path.DirectorySeparatorChar;
+
+            var bResult = GetDiskFreeSpaceEx(directoryPath, ref freeAvailableUser, ref totalDriveCapacity, ref totalFree);
+
+            if (!bResult)
+            {
+                freeBytesAvailableToUser = 0;
+                totalDriveCapacityBytes = 0;
+                totalNumberOfFreeBytes = 0;
+
+                return false;
+            }
+
+            freeBytesAvailableToUser = Convert.ToInt64(freeAvailableUser);
+            totalDriveCapacityBytes = Convert.ToInt64(totalDriveCapacity);
+            totalNumberOfFreeBytes = Convert.ToInt64(totalFree);
+
+            return true;
+        }
+
+        #endregion
+
+    }
+}
