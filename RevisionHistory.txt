@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.3.6257; February 17, 2017
+	- Convert to C#
+
 Version 2.2.6116; September 29, 2016
 	- Added GetQueryResults to clsDBTools
 	- Deprecated method UpdateDatabase
