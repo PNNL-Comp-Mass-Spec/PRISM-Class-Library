@@ -2,11 +2,9 @@ Option Strict On
 
 Imports System.Runtime.InteropServices
 
-Namespace Files.Forms
+Delegate Function BrowseCallBackProc(hwnd As IntPtr, msg As Integer, lp As IntPtr, wp As IntPtr) As Integer
 
-    Delegate Function BrowseCallBackProc(hwnd As IntPtr, msg As Integer, lp As IntPtr, wp As IntPtr) As Integer
-
-    <StructLayout(LayoutKind.Sequential)>
+<StructLayout(LayoutKind.Sequential)>
     Friend Structure BrowseInfo
         Public hwndOwner As IntPtr
         Public pidlRoot As IntPtr
@@ -71,4 +69,3 @@ Namespace Files.Forms
             End If
         End Sub
     End Class
-End Namespace

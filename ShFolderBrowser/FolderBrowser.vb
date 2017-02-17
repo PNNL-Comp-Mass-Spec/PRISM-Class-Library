@@ -2,8 +2,10 @@ Option Strict On
 
 Imports System.ComponentModel
 Imports System.Text
+Imports ShFolderBrowser.Files.Forms
+Imports ShFolderBrowser.FolderBrowser
 
-Namespace Files
+Namespace FolderBrowser
 
     ''' <summary>
     ''' Wrapper class to call Files.Forms.ShellFolderBrowser and highlight an initial folder
@@ -13,21 +15,21 @@ Namespace Files
 
 #Region "Classwide Variables"
 
-        Private WithEvents mFolderBrowserDialog As Forms.ShellFolderBrowser
+        Private WithEvents mFolderBrowserDialog As ShellFolderBrowser
 
         Private mCurrentFolderPath As String
-        Private mBrowseFlags As Forms.BrowseFlags
+        Private mBrowseFlags As BrowseFlags
         Private mTitle As String
 
 #End Region
 
 #Region "Interface Functions"
         ''' <summary>Browsing flags</summary>
-        Public Property BrowseFlags() As Forms.BrowseFlags
+        Public Property BrowseFlags() As BrowseFlags
             Get
                 Return mBrowseFlags
             End Get
-            Set(Value As Forms.BrowseFlags)
+            Set(Value As BrowseFlags)
                 mBrowseFlags = Value
             End Set
         End Property
@@ -70,7 +72,7 @@ Namespace Files
                     mCurrentFolderPath = strFolderStartPath
                 End If
 
-                mFolderBrowserDialog = New Forms.ShellFolderBrowser() With {
+                mFolderBrowserDialog = New ShellFolderBrowser() With {
                     .Title = mTitle,
                     .BrowseFlags = mBrowseFlags
                 }
@@ -91,7 +93,7 @@ Namespace Files
             Return blnSuccess
 
         End Function
-        
+
         ''' <summary>Handles the folder browser initialization event</summary>
         Private Sub mFolderBrowserDialog_Initialized(sender As Object, e As EventArgs) Handles mFolderBrowserDialog.Initialized
             If Not mCurrentFolderPath Is Nothing AndAlso mCurrentFolderPath.Length > 0 Then
@@ -109,12 +111,12 @@ Namespace Files
             mTitle = "Select Folder"
 
             ' Define the default Browse Flags
-            mBrowseFlags = Forms.BrowseFlags.ReturnOnlyFSDirs Or
-                           Forms.BrowseFlags.DontGoBelowDomain Or
-                           Forms.BrowseFlags.ShowStatusText Or
-                           Forms.BrowseFlags.EditBox Or
-                           Forms.BrowseFlags.Validate Or
-                           Forms.BrowseFlags.NewDialogStyle
+            mBrowseFlags = BrowseFlags.ReturnOnlyFSDirs Or
+                           BrowseFlags.DontGoBelowDomain Or
+                           BrowseFlags.ShowStatusText Or
+                           BrowseFlags.EditBox Or
+                           BrowseFlags.Validate Or
+                           BrowseFlags.NewDialogStyle
         End Sub
 
     End Class
@@ -291,7 +293,7 @@ Namespace Files.Forms
         ''' Shows the dialog
         ''' </summary>
         ''' <param name="owner">The window to use as the owner</param>
-        Public Function ShowDialog(owner As Windows.Forms.IWin32Window) As Boolean
+        Public Function ShowDialog(owner As System.Windows.Forms.IWin32Window) As Boolean
             If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -307,7 +309,7 @@ Namespace Files.Forms
         ''' Shows the dialog using active window as the owner
         ''' </summary>
         Public Function ShowDialog() As Boolean
-            Return ShowDialog(Windows.Forms.Form.ActiveForm)
+            Return ShowDialog(System.Windows.Forms.Form.ActiveForm)
         End Function
 
         Const WM_USER As Integer = &H400
