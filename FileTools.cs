@@ -24,6 +24,9 @@ namespace PRISM
 
         #region "Events"
 
+        /// <summary>
+        /// File copy starting event
+        /// </summary>
         public event CopyingFileEventHandler CopyingFile;
 
         /// <summary>
@@ -32,30 +35,67 @@ namespace PRISM
         /// <param name="filename">The file's full path.</param>
         public delegate void CopyingFileEventHandler(string filename);
 
+        /// <summary>
+        /// Event is raised before copying begins (when resuming a file copy)
+        /// </summary>
         public event ResumingFileCopyEventHandler ResumingFileCopy;
 
         /// <summary>
-        /// Event is raised before copying begins.
+        /// Event is raised before copying begins (when resuming a file copy)
         /// </summary>
         /// <param name="filename">The file's full path.</param>
         public delegate void ResumingFileCopyEventHandler(string filename);
 
+        /// <summary>
+        /// Event is raised before copying begins
+        /// </summary>
         public event FileCopyProgressEventHandler FileCopyProgress;
 
         /// <summary>
-        /// Event is raised before copying begins.
+        /// Event is raised before copying begins
         /// </summary>
         /// <param name="filename">The file name (not full path)</param>
         /// <param name="percentComplete">Percent complete (value between 0 and 100)</param>
         public delegate void FileCopyProgressEventHandler(string filename, float percentComplete);
 
+        /// <summary>
+        /// Waiting for the lock queue
+        /// </summary>
         public event WaitingForLockQueueEventHandler WaitingForLockQueue;
+
+        /// <summary>
+        /// Waiting for the lock queue
+        /// </summary>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="backlogSourceMB">Source computer backlog, in MB</param>
+        /// <param name="backlogTargetMB">Target computer backlog, in MB</param>
         public delegate void WaitingForLockQueueEventHandler(string sourceFilePath, string targetFilePath, int backlogSourceMB, int backlogTargetMB);
 
+        /// <summary>
+        /// Event is raised if we wait to long for our turn in the lock file queue
+        /// </summary>
         public event LockQueueTimedOutEventHandler LockQueueTimedOut;
+
+        /// <summary>
+        /// Event is raised if we wait to long for our turn in the lock file queue
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="waitTimeMinutes"></param>
         public delegate void LockQueueTimedOutEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
 
+        /// <summary>
+        /// Event is raised when we are done waiting waiting for our turn in the lock file queue
+        /// </summary>
         public event LockQueueWaitCompleteEventHandler LockQueueWaitComplete;
+
+        /// <summary>
+        /// Event is raised when we are done waiting waiting for our turn in the lock file queue
+        /// </summary>
+        /// <param name="sourceFilePath"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="waitTimeMinutes"></param>
         public delegate void LockQueueWaitCompleteEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
 
         #endregion
@@ -63,13 +103,21 @@ namespace PRISM
         #region "Module constants and variables"
 
         private const int MAX_LOCKFILE_WAIT_TIME_MINUTES = 180;
+
+        /// <summary>
+        /// Minimum source file size (in MB) for the lock queue to be used
+        /// </summary>
         public const int LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB = 20;
+
         private const int LOCKFILE_TRANSFER_THRESHOLD_MB = 1000;
 
         private const string LOCKFILE_EXTENSION = ".lock";
 
         private const int DEFAULT_VERSION_COUNT_TO_KEEP = 9;
 
+        /// <summary>
+        /// Standard date/time formatting
+        /// </summary>
         public const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
 
         private int mChunkSizeMB = DEFAULT_CHUNK_SIZE_MB;
@@ -102,31 +150,61 @@ namespace PRISM
         #endregion
 
         #region "Enums"
+
+        /// <summary>
+        /// File overwrite options
+        /// </summary>
         public enum FileOverwriteMode
         {
+            /// <summary>
+            /// Do not overwrite
+            /// </summary>
+            /// <remarks>An exception will be thrown if you try to overwrite an existing file</remarks>
             DoNotOverwrite = 0,
+            /// <summary>
+            /// Always overwrite
+            /// </summary>
             AlwaysOverwrite = 1,
+            /// <summary>
+            /// OverWrite if source date newer (or if same date but length differs)
+            /// </summary>
             OverwriteIfSourceNewer = 2,
-            // overWrite if source date newer (or if same date but length differs)
+            /// <summary>
+            /// OverWrite if any difference in size or date; note that newer files in target folder will get overwritten since their date doesn't match
+            /// </summary>
             OverWriteIfDateOrLengthDiffer = 3
-            // overWrite if any difference in size or date; note that newer files in target folder will get overwritten since their date doesn't match
         }
 
+        /// <summary>
+        /// Copy status
+        /// </summary>
         public enum CopyStatus
         {
+            /// <summary>
+            /// Not copying a file
+            /// </summary>
             Idle = 0,
-            // Not copying a file
+            /// <summary>
+            /// File is geing copied via .NET and cannot be resumed
+            /// </summary>
             NormalCopy = 1,
-            // File is geing copied via .NET and cannot be resumed
+            /// <summary>
+            /// File is being copied in chunks and can be resumed
+            /// </summary>
             BufferedCopy = 2,
-            // File is being copied in chunks and can be resumed
+            /// <summary>
+            /// Resuming copying a file in chunks
+            /// </summary>
             BufferedCopyResume = 3
-            // Resuming copying a file in chunks
         }
         #endregion
 
         #region "Properties"
 
+        /// <summary>
+        /// Copy chunk size, in MB
+        /// </summary>
+        /// <remarks>Used by CopyFileWithResume</remarks>
         public int CopyChunkSizeMB
         {
             get { return mChunkSizeMB; }
@@ -138,6 +216,11 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Copy flush threshold, in MB
+        /// Cached data is written to disk when this threshold is reached
+        /// </summary>
+        /// <remarks>Used by CopyFileWithResume</remarks>
         public int CopyFlushThresholdMB
         {
             get { return mFlushThresholdMB; }
@@ -149,21 +232,34 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Current copy status
+        /// </summary>
         public CopyStatus CurrentCopyStatus { get; set; } = CopyStatus.Idle;
 
+        /// <summary>
+        /// Current source file path
+        /// </summary>
         public string CurrentSourceFile { get; set; } = string.Empty;
 
+        /// <summary>
+        /// Debug level
+        /// </summary>
         public int DebugLevel
         {
             get { return mDebugLevel; }
             set { mDebugLevel = value; }
         }
 
+        /// <summary>
+        /// Manager name (used when creating lock files)
+        /// </summary>
         public string ManagerName { get; set; }
 
         #endregion
 
-        #region "Constructor"
+        #region "Constructors"
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -172,6 +268,11 @@ namespace PRISM
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="managerName"></param>
+        /// <param name="intDebugLevel"></param>
         public clsFileTools(string managerName, int intDebugLevel)
         {
             ManagerName = managerName;
@@ -288,12 +389,25 @@ namespace PRISM
 
         }
 
+        /// <summary>
+        /// Copies a source file to the destination file
+        /// </summary>
+        /// <param name="sourcePath">The source file path.</param>
+        /// <param name="destPath">The destination file path.</param>
+        /// <param name="overWrite">True to overwrite</param>
         public void CopyFile(string sourcePath, string destPath, bool overWrite)
         {
             const bool backupDestFileBeforeCopy = false;
             CopyFile(sourcePath, destPath, overWrite, backupDestFileBeforeCopy);
         }
 
+        /// <summary>
+        /// Copies a source file to the destination file
+        /// </summary>
+        /// <param name="sourcePath">The source file path.</param>
+        /// <param name="destPath">The destination file path.</param>
+        /// <param name="overWrite">True to overwrite</param>
+        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
         public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy)
         {
             CopyFile(sourcePath, destPath, overWrite, backupDestFileBeforeCopy, DEFAULT_VERSION_COUNT_TO_KEEP);
@@ -305,11 +419,10 @@ namespace PRISM
         /// <param name="sourcePath">The source file path.</param>
         /// <param name="destPath">The destination file path.</param>
         /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false.</param>
-        /// <param name="backupDestFileBeforeCopy"></param>
-        /// <param name="versionCountToKeep"></param>
+        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
+        /// <param name="versionCountToKeep">Number of backup copies to keep</param>
         public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy, int versionCountToKeep)
         {
-            //Overload with no defaults
             CopyFileEx(sourcePath, destPath, overWrite, backupDestFileBeforeCopy, versionCountToKeep);
 
         }
@@ -328,11 +441,8 @@ namespace PRISM
         /// <param name="sourcePath">The source file path.</param>
         /// <param name="destPath">The destination file path.</param>
         /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false.</param>
-        /// <param name="backupDestFileBeforeCopy"></param>
-        /// <param name="versionCountToKeep"></param>
-        /// /// <summary>
-        /// Copies a source file to the destination file. Allows overwriting.
-        /// </summary>
+        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
+        /// <param name="versionCountToKeep">Number of backup copies to keep</param>
         private void CopyFileEx(string sourcePath, string destPath, bool overWrite,
             bool backupDestFileBeforeCopy, int versionCountToKeep = DEFAULT_VERSION_COUNT_TO_KEEP)
         {
@@ -890,6 +1000,10 @@ namespace PRISM
 
         }
 
+        /// <summary>
+        /// Get the time stamp to be used when naming a lock file
+        /// </summary>
+        /// <returns></returns>
         public long GetLockFileTimeStamp()
         {
             return (long)Math.Round(DateTime.UtcNow.Subtract(new DateTime(2010, 1, 1)).TotalMilliseconds, 0);
@@ -1175,7 +1289,7 @@ namespace PRISM
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="readOnly">True to force the ReadOnly bit on, False to force it off</param>
         /// <remarks></remarks>
-        protected void UpdateReadonlyAttribute(FileInfo fiSourceFile, string targetFilePath, bool readOnly)
+        private void UpdateReadonlyAttribute(FileInfo fiSourceFile, string targetFilePath, bool readOnly)
         {
             // Get the file attributes from the source file
             var fa = fiSourceFile.Attributes;
@@ -1764,7 +1878,7 @@ namespace PRISM
         /// <param name="dtTime2">Second file time</param>
         /// <returns>True if the times agree within 2 seconds</returns>
         /// <remarks></remarks>
-        protected bool NearlyEqualFileTimes(DateTime dtTime1, DateTime dtTime2)
+        private bool NearlyEqualFileTimes(DateTime dtTime1, DateTime dtTime2)
         {
             if (Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2.05)
             {
@@ -1786,12 +1900,12 @@ namespace PRISM
             OnStatusEvent("  " + detailedMessage);
         }
 
-        protected void UpdateCurrentStatusIdle()
+        private void UpdateCurrentStatusIdle()
         {
             UpdateCurrentStatus(CopyStatus.Idle, string.Empty);
         }
 
-        protected void UpdateCurrentStatus(CopyStatus eStatus, string ssourceFilePath)
+        private void UpdateCurrentStatus(CopyStatus eStatus, string sourceFilePath)
         {
             CurrentCopyStatus = eStatus;
 
@@ -1801,15 +1915,15 @@ namespace PRISM
             }
             else
             {
-                CurrentSourceFile = string.Copy(ssourceFilePath);
+                CurrentSourceFile = string.Copy(sourceFilePath);
 
                 if (eStatus == CopyStatus.BufferedCopyResume)
                 {
-                    ResumingFileCopy?.Invoke(ssourceFilePath);
+                    ResumingFileCopy?.Invoke(sourceFilePath);
                 }
                 else if (eStatus == CopyStatus.NormalCopy)
                 {
-                    CopyingFile?.Invoke(ssourceFilePath);
+                    CopyingFile?.Invoke(sourceFilePath);
                 }
 
             }
@@ -1890,11 +2004,26 @@ namespace PRISM
 
         #region "MoveDirectory Function"
 
+        /// <summary>
+        /// Move a directory
+        /// </summary>
+        /// <param name="sourceFolderPath"></param>
+        /// <param name="targetFolderPath"></param>
+        /// <param name="overwriteFiles"></param>
+        /// <returns></returns>
         public bool MoveDirectory(string sourceFolderPath, string targetFolderPath, bool overwriteFiles)
         {
             return MoveDirectory(sourceFolderPath, targetFolderPath, overwriteFiles, ManagerName);
         }
 
+        /// <summary>
+        /// Move a directory
+        /// </summary>
+        /// <param name="sourceFolderPath"></param>
+        /// <param name="targetFolderPath"></param>
+        /// <param name="overwriteFiles"></param>
+        /// <param name="managerName"></param>
+        /// <returns></returns>
         public bool MoveDirectory(string sourceFolderPath, string targetFolderPath, bool overwriteFiles, string managerName)
         {
             bool success;
@@ -1940,6 +2069,7 @@ namespace PRISM
             return true;
 
         }
+
         #endregion
 
         #region "Utility Functions"
@@ -2027,9 +2157,18 @@ namespace PRISM
 
         }
 
+        /// <summary>
+        /// Shorten pathToCompact to a maximum length of maxLength
+        /// Examples:
+        /// C:\...\B..\Finance..
+        /// C:\...\W..\Business\Finances.doc
+        /// C:\My Docum..\Word\Business\Finances.doc
+        /// </summary>
+        /// <param name="pathToCompact"></param>
+        /// <param name="maxLength">Maximum length of the shortened path</param>
+        /// <returns>Shortened path</returns>
         public static string CompactPathString(string pathToCompact, int maxLength = 40)
         {
-            // Recursive function to shorten pathToCompact to a maximum length of maxLength
 
             // The following is example output
             // Note that when drive letters or subdirectories are present, a minimum length is imposed
@@ -2501,15 +2640,31 @@ namespace PRISM
             return true;
         }
 
-
+        /// <summary>
+        /// Wait for the lock file queue to drop below a threshold
+        /// </summary>
+        /// <param name="lockFileTimestamp"></param>
+        /// <param name="diLockFolderSource"></param>
+        /// <param name="fiSourceFile"></param>
+        /// <param name="maxWaitTimeMinutes"></param>
         public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo diLockFolderSource, FileInfo fiSourceFile, int maxWaitTimeMinutes)
         {
             WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, null, fiSourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
 
         }
 
-
-        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo diLockFolderSource, DirectoryInfo diLockFolderTarget, FileInfo fiSourceFile, string targetFilePath, int maxWaitTimeMinutes)
+        /// <summary>
+        /// Wait for the lock file queue to drop below a threshold
+        /// </summary>
+        /// <param name="lockFileTimestamp"></param>
+        /// <param name="diLockFolderSource"></param>
+        /// <param name="diLockFolderTarget"></param>
+        /// <param name="fiSourceFile"></param>
+        /// <param name="targetFilePath"></param>
+        /// <param name="maxWaitTimeMinutes"></param>
+        public void WaitForLockFileQueue(
+            long lockFileTimestamp, DirectoryInfo diLockFolderSource, 
+            DirectoryInfo diLockFolderTarget, FileInfo fiSourceFile, string targetFilePath, int maxWaitTimeMinutes)
         {
             // Find the recent LockFiles present in the source and/or target lock folders
             // These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
@@ -2620,7 +2775,7 @@ namespace PRISM
         [DllImport("Kernel32.dll", EntryPoint = "GetDiskFreeSpaceEx", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, ref UInt64 lpFreeBytesAvailable, ref UInt64 lpTotalNumberOfBytes, ref UInt64 lpTotalNumberOfFreeBytes);
 
-        protected static bool GetDiskFreeSpace(
+        private static bool GetDiskFreeSpace(
             string directoryPath,
             out long freeBytesAvailableToUser,
             out long totalDriveCapacityBytes,

@@ -19,7 +19,16 @@ namespace PRISM
         private string m_connection_str;
 
         private SqlConnection m_DBCn;
+
+        /// <summary>
+        /// Error event
+        /// </summary>
         public event ErrorEventEventHandler ErrorEvent;
+
+        /// <summary>
+        /// error event delegate
+        /// </summary>
+        /// <param name="errorMessage"></param>
         public delegate void ErrorEventEventHandler(string errorMessage);
 
         #endregion

@@ -11,6 +11,9 @@ namespace PRISM
     /// </summary>
     public class DirectoryScanner
     {
+        /// <summary>
+        /// A file was found when scanning the directory
+        /// </summary>
         public event FoundFileEventHandler FoundFile;
 
         /// <summary>
@@ -101,6 +104,7 @@ namespace PRISM
                 mFileList.Add(f);
                 FoundFile?.Invoke(f);
             }
+
             foreach (var d in Directory.GetDirectories(searchDir))
             {
                 RecursiveFileSearch(d, filePattern);

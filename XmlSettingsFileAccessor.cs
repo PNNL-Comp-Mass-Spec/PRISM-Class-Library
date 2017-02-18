@@ -718,7 +718,7 @@ namespace PRISM
                 return m_XMLFileAccessor.SetXMLValue(sectionNameInFile, keyNameInFile, newValue);
             }
 
-            // Section is present, but the Key isn't; add teh key
+            // Section is present, but the Key isn't; add the key
             return m_XMLFileAccessor.SetXMLValue(sectionNameInFile, keyName, newValue);
 
             // If we get here, then either mCaseSensitive = True or the section and key weren't found

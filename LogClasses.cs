@@ -48,9 +48,19 @@ namespace PRISM
     public interface ILogger
     {
 
+        /// <summary>
+        /// Current log file path
+        /// </summary>
         string CurrentLogFilePath { get; }
+
+        /// <summary>
+        /// Most recent log message
+        /// </summary>
         string MostRecentLogMessage { get; }
 
+        /// <summary>
+        /// Most recent error
+        /// </summary>
         string MostRecentErrorMessage { get; }
 
         /// <summary>
@@ -117,6 +127,9 @@ namespace PRISM
     }
     #endregion
 
+    /// <summary>
+    /// Utility functions
+    /// </summary>
     public class Utilities
     {
 
@@ -372,7 +385,9 @@ namespace PRISM
         // db error list
         private readonly StringCollection m_error_list = new StringCollection();
 
-        // module name
+        /// <summary>
+        /// Module name
+        /// </summary>
         protected string m_moduleName;
 
         /// <summary>
@@ -616,8 +631,19 @@ namespace PRISM
         /// <remarks>It holds the three arguments to PostEntry.</remarks>
         public class clsLogEntry
         {
+            /// <summary>
+            /// Log message
+            /// </summary>
             public string message;
+
+            /// <summary>
+            /// Log message type
+            /// </summary>
             public logMsgType entryType;
+
+            /// <summary>
+            /// When true, log to the local file but not to the database
+            /// </summary>
             public bool localOnly;
         }
 

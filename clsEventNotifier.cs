@@ -1,26 +1,71 @@
-﻿
-using System;
+﻿using System;
 
+[assembly: CLSCompliant(true)]
 namespace PRISM
 {
+    /// <summary>
+    /// This class implements various status events, including status, debug, error, and warning
+    /// </summary>
     public abstract class clsEventNotifier
     {
 
         #region "Events and Event Handlers"
 
+        /// <summary>
+        /// Debug event
+        /// </summary>
         public event DebugEventEventHandler DebugEvent;
+
+        /// <summary>
+        /// Debug event
+        /// </summary>
+        /// <param name="strMessage"></param>
         public delegate void DebugEventEventHandler(string strMessage);
 
+        /// <summary>
+        /// Error event
+        /// </summary>
         public event ErrorEventEventHandler ErrorEvent;
+
+        /// <summary>
+        /// Error event
+        /// </summary>
+        /// <param name="strMessage"></param>
+        /// <param name="ex"></param>
         public delegate void ErrorEventEventHandler(string strMessage, Exception ex);
 
+        /// <summary>
+        /// Progress updated
+        /// </summary>
         public event ProgressUpdateEventHandler ProgressUpdate;
+
+        /// <summary>
+        /// Progress updated
+        /// </summary>
+        /// <param name="progressMessage"></param>
+        /// <param name="percentComplete">Value between 0 and 100</param>
         public delegate void ProgressUpdateEventHandler(string progressMessage, float percentComplete);
 
+        /// <summary>
+        /// Status event
+        /// </summary>
         public event StatusEventEventHandler StatusEvent;
+
+        /// <summary>
+        /// Status event
+        /// </summary>
+        /// <param name="strMessage"></param>
         public delegate void StatusEventEventHandler(string strMessage);
 
+        /// <summary>
+        /// Warning event
+        /// </summary>
         public event WarningEventEventHandler WarningEvent;
+
+        /// <summary>
+        /// Warning event
+        /// </summary>
+        /// <param name="strMessage"></param>
         public delegate void WarningEventEventHandler(string strMessage);
 
         /// <summary>
