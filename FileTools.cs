@@ -517,7 +517,6 @@ namespace PRISM
         {
 
             var useLockFile = false;
-            var success = false;
 
             if (!overWrite && File.Exists(targetFilePath))
             {
@@ -536,8 +535,10 @@ namespace PRISM
 
             if (useLockFile)
             {
-                success = CopyFileUsingLocks(lockFolderPathSource, lockFolderPathTarget, fiSource, targetFilePath, managerName,
-                                                overWrite);
+                var success = CopyFileUsingLocks(
+                    lockFolderPathSource, lockFolderPathTarget, 
+                    fiSource, targetFilePath, 
+                    managerName, overWrite);
                 return success;
             }
 
@@ -568,13 +569,11 @@ namespace PRISM
                     OnDebugEvent("Lock file folder not found on the source or target",
                                  expectedSourceLockFolder + " and " + expectedTargetLockFolder);
                 }
-
-                const bool backupDestFileBeforeCopy = false;
-                CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
-                success = true;
             }
 
-            return success;
+            CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy: false);
+
+            return true;
         }
 
 
@@ -2663,7 +2662,7 @@ namespace PRISM
         /// <param name="targetFilePath"></param>
         /// <param name="maxWaitTimeMinutes"></param>
         public void WaitForLockFileQueue(
-            long lockFileTimestamp, DirectoryInfo diLockFolderSource, 
+            long lockFileTimestamp, DirectoryInfo diLockFolderSource,
             DirectoryInfo diLockFolderTarget, FileInfo fiSourceFile, string targetFilePath, int maxWaitTimeMinutes)
         {
             // Find the recent LockFiles present in the source and/or target lock folders

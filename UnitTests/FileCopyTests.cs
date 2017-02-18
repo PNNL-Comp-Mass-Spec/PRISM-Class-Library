@@ -80,6 +80,8 @@ namespace PRISMTest
                   @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_trembl_2015-10-14.fasta")]
         [TestCase(@"\\gigasax\DMS_Organism_Files\Homo_sapiens\Fasta\H_sapiens_Uniprot_SPROT_2015-04-22.fasta",
                   @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_SPROT_2015-04-22.fasta")]
+        [TestCase(@"C:\Windows\win.ini",
+                  @"C:\temp\win.ini")]
         public void CopyFileUsingLocks(string sourceFilePath, string targetFilePath)
         {
             var sourceFile = new FileInfo(sourceFilePath);
@@ -112,5 +114,6 @@ namespace PRISMTest
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
 
         }
+
     }
 }
