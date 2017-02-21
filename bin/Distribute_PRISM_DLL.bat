@@ -114,11 +114,20 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Space_Manager\
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Managers\Space_Manager\DMS_Space_Manager\RefLib" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\Mage\lib" /Y /D
+xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageConcatenator" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageExtractor" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageFilePackager" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageFileProcessor" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageMetaDataProcessor" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\Ranger" /Y /D
+
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\Mage\lib" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageConcatenator" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageExtractor" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageFilePackager" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageFileProcessor" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\MageMetaDataProcessor" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\DMS_Programs\Mage\DeployedFiles\Ranger" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\MASIC\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\MASIC\Lib" /Y /D
