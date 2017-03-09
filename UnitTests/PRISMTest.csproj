@@ -50,6 +50,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="DotNETVersionTest.cs" />
     <Compile Include="FileCopyTests.cs" />
     <Compile Include="PathTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

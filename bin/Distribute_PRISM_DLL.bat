@@ -5,6 +5,9 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\CodeTest\bin" /Y /D
 xcopy PRISM.dll "F:\My Documents\projects\dataMining\Database_Tools\DB_Schema_Export_Tool\Lib" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\Database_Tools\DB_Schema_Export_Tool\bin" /Y /D
 
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\projects\dataMining\Database_Tools\DB_Schema_Export_Tool\Lib" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\DataMining\Database_Tools\DB_Schema_Export_Tool\bin" /Y /D
+
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_EMail_Manager\Lib" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_EMail_Manager\Bin" /Y /D
 
@@ -152,7 +155,7 @@ xcopy PRISM.dll "F:\My Documents\Projects\DataMining\ProteinNmerGenerator\bin\Re
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\QRollupExport\bin" /Y /D
 
-xcopy PRISM.dll "F:\My Documents\Projects\GordonSlysz\DeconTools_IQ\Library" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\GordonSlysz\DeconTools_IQ\Library" /Y /D
 
 xcopy PRISM.dll "F:\My Documents\Projects\KenAuberry\Organism_Database_Handler\Shared Libraries" /Y /D
 

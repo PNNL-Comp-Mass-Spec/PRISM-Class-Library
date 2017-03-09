@@ -81,6 +81,43 @@
             <param name="affectedRows">Affected Rows to be updated.</param>
             <return>Returns Boolean showing if the database was updated.</return>
         </member>
+        <member name="T:PRISM.clsDotNETVersionChecker">
+            <summary>
+            This classes examines the registry to determine the newest version of .NET installed
+            </summary>
+        </member>
+        <member name="M:PRISM.clsDotNETVersionChecker.CheckFor45DotVersion(System.Int32)">
+            <summary>
+            Determine the human-readable version of .NET
+            </summary>
+            <param name="releaseKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PRISM.clsDotNETVersionChecker.GetInstalledDotNETVersions">
+            <summary>
+            Get all installed versions of .NET
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:PRISM.clsDotNETVersionChecker.GetInstalledDotNETVersions(System.Boolean)">
+            <summary>
+            Get all installed versions of .NET
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:PRISM.clsDotNETVersionChecker.GetLatestDotNETVersion">
+            <summary>
+            Lookup the newest version of .NET in the registry
+            </summary>
+            <returns>.NET version</returns>
+        </member>
+        <member name="M:PRISM.clsDotNETVersionChecker.GetMajorVersion(System.String)">
+            <summary>
+            Look for the version integer in versionKeyName
+            </summary>
+            <param name="versionKeyName"></param>
+            <returns></returns>
+        </member>
         <member name="T:PRISM.clsEventNotifier">
             <summary>
             This class implements various status events, including status, debug, error, and warning

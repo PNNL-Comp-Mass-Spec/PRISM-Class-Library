@@ -1,5 +1,9 @@
 Prism Class Library Log
 
+Version 2.3.6276; March 8, 2017
+	- Added clsDotNETVersionChecker
+		- Only supports Windows since it uses the Registry
+
 Version 2.3.6257; February 17, 2017
 	- Convert to C#
 

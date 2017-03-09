@@ -1,0 +1,330 @@
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace PRISM
+{
+    /// <summary>
+    /// This classes examines the registry to determine the newest version of .NET installed
+    /// </summary>
+    public class clsDotNETVersionChecker : clsEventNotifier
+    {
+        private const string EARLIER_THAN_45 = "Earlier than 4.5";
+        private const string UNKNOWN_VERSION = "Unknown .NET version";
+
+        /// <summary>
+        /// Determine the human-readable version of .NET
+        /// </summary>
+        /// <param name="releaseKey"></param>
+        /// <returns></returns>
+        private string CheckFor45DotVersion(int releaseKey)
+        {
+            // Checking the version using >= will enable forward compatibility,  
+            // however you should always compile your code on newer versions of 
+            // the framework to ensure your app works the same. 
+
+            if (releaseKey >= 394802)
+            {
+                return "4.6.2 or later";
+            }
+            if (releaseKey >= 394254)
+            {
+                return "4.6.1";
+            }
+            if (releaseKey >= 393295)
+            {
+                return "4.6";
+            }
+            if (releaseKey >= 379893)
+            {
+                return "4.5.2";
+            }
+            if (releaseKey >= 378675)
+            {
+                return "4.5.1";
+            }
+            if (releaseKey >= 378389)
+            {
+                return "4.5";
+            }
+
+            // This line should never execute. A non-null release key should mean 
+            // that 4.5 or later is installed. 
+            return EARLIER_THAN_45;
+        }
+
+        private string GetDotNetVersion45OrLater()
+        {
+            // Alternative to RegistryKey.OpenRemoteBaseKey is RegistryKey.OpenBaseKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full")
+            // However, that can give odd behavior with 32-bit code on 64-bit Windows
+            // This workaround seems to work, but .OpenRemoteBaseKey() works even better
+            //
+            // using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            // {
+            //    var softwareKey = hklm.OpenSubKey("SOFTWARE");
+            //    var microsoftKey = softwareKey.OpenSubKey("Microsoft");
+            //    var netFrameworkKey = microsoftKey.OpenSubKey("NET Framework Setup");
+            //    var ndpKey = netFrameworkKey.OpenSubKey("NDP");
+            //    var v4Key = ndpKey.OpenSubKey("v4");
+            //    var v4FullKey = v4Key.OpenSubKey("Full");
+
+            //    var releaseValue = v4FullKey?.GetValue("Release");
+            //    if (releaseValue != null)
+            //    {
+            //        var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
+            //        return latestVersion;
+            //    }
+            // }
+
+            using (var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, ""))
+            {
+
+                var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
+
+                var releaseValue = v4FullKey?.GetValue("Release");
+                if (releaseValue != null)
+                {
+                    var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
+                    return latestVersion;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// Get all installed versions of .NET
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<int, List<string>> GetInstalledDotNETVersions()
+        {
+            return GetInstalledDotNETVersions(false);
+        }
+
+        /// <summary>
+        /// Get all installed versions of .NET
+        /// </summary>
+        /// <returns></returns>
+        private Dictionary<int, List<string>> GetInstalledDotNETVersions(bool findingLegacyVersions)
+        {
+            // Keys in dotNETVersions are major versions (2, 3, or 4)
+            // Values are a list of minor versions
+            var dotNETVersions = new Dictionary<int, List<string>>();
+
+
+            if (!findingLegacyVersions)
+            {
+                var latestVersion = GetDotNetVersion45OrLater();
+
+                if (!string.Equals(latestVersion, EARLIER_THAN_45))
+                {
+                    var majorVersion = GetMajorVersion(latestVersion);
+                    if (majorVersion > 0)
+                    {
+                        StoreVersion(dotNETVersions, majorVersion, latestVersion);
+                    }
+                }
+            }
+
+            // Opens the registry key for the .NET Framework entry.
+            using (var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
+                OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
+            {
+                if (ndpKey == null)
+                    return dotNETVersions;
+
+                foreach (var versionKeyName in ndpKey.GetSubKeyNames())
+                {
+                    if (!versionKeyName.StartsWith("v"))
+                        continue;
+
+                    var versionKey = ndpKey.OpenSubKey(versionKeyName);
+                    if (versionKey == null)
+                        continue;
+
+                    var majorVersion = GetMajorVersion(versionKeyName);
+
+                    var versionName = (string)versionKey.GetValue("Version", "");
+                    var versionSP = versionKey.GetValue("SP", "").ToString();
+                    var versionInstall = versionKey.GetValue("Install", "").ToString();
+                    if (versionInstall == "")
+                    {
+                        // No service pack install; store this version
+                        StoreVersion(dotNETVersions, majorVersion, versionName);
+                    }
+                    else
+                    {
+                        if (versionSP != "" && versionInstall == "1")
+                        {
+                            StoreVersion(dotNETVersions, majorVersion, versionName + "  SP" + versionSP);
+                        }
+
+                    }
+
+                    if (versionName != "")
+                    {
+                        continue;
+                    }
+
+                    foreach (var subKeyName in versionKey.GetSubKeyNames())
+                    {
+                        var subKey = versionKey.OpenSubKey(subKeyName);
+                        if (subKey == null)
+                            continue;
+
+                        var subKeyVersionName = (string)subKey.GetValue("Version", "");
+                        var subKeySP = "";
+
+                        if (subKeyVersionName != "")
+                            subKeySP = subKey.GetValue("SP", "").ToString();
+
+                        var subKeyInstall = subKey.GetValue("Install", "").ToString();
+                        if (subKeyInstall == "")
+                        {
+                            // No service pack install; store this version
+                            StoreVersion(dotNETVersions, majorVersion, subKeyVersionName);
+                        }
+                        else
+                        {
+                            if (subKeySP != "" && subKeyInstall == "1")
+                            {
+                                StoreVersion(dotNETVersions, majorVersion, subKeyName + "  " + subKeyVersionName + "  SP" + subKeySP);
+                            }
+                            else if (subKeyInstall == "1")
+                            {
+                                StoreVersion(dotNETVersions, majorVersion, subKeyName + "  " + subKeyVersionName);
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            return dotNETVersions;
+        }
+
+
+        /// <summary>
+        /// Lookup the newest version of .NET in the registry
+        /// </summary>
+        /// <returns>.NET version</returns>
+        public string GetLatestDotNETVersion()
+        {
+            try
+            {
+                var latestVersion = GetDotNetVersion45OrLater();
+                if (!string.Equals(latestVersion, EARLIER_THAN_45))
+                {
+                    return latestVersion;
+                }
+
+                var dotNETVersions = GetInstalledDotNETVersions(true);
+
+                // Find the newest version in dotNETVersions
+                var newestMajorVersion = (from item in dotNETVersions orderby item.Key select item.Value).Last();
+                if (newestMajorVersion.Count <= 0)
+                {
+                    return UNKNOWN_VERSION;
+                }
+
+                var reVersionMatch = new Regex(@"(?<Major>\d+)\.(?<Minor>\d+)\.(?<Build>\d+)");
+
+                // Find the highest version in newestMajorVersion
+                var newestVersion = "";
+                var newestMajor = 0;
+                var newestMinor = 0;
+                var newestBuild = 0;
+
+                foreach (var installedVersion in newestMajorVersion)
+                {
+                    var match = reVersionMatch.Match(installedVersion);
+                    if (!match.Success)
+                        continue;
+
+                    var major = int.Parse(match.Groups["Major"].Value);
+                    var minor = int.Parse(match.Groups["Minor"].Value);
+                    var build = int.Parse(match.Groups["Build"].Value);
+
+                    var updateNewest = false;
+                    if (string.IsNullOrWhiteSpace(newestVersion))
+                    {
+                        updateNewest = true;
+                    }
+                    else
+                    {
+                        if (major > newestMajor)
+                            updateNewest = true;
+                        else if (major == newestMajor && minor > newestMinor)
+                            updateNewest = true;
+                        else if (major == newestMajor && minor == newestMinor && build > newestBuild)
+                            updateNewest = true;
+                    }
+
+
+                    if (updateNewest)
+                    {
+                        newestVersion = string.Copy(installedVersion);
+                        newestMajor = major;
+                        newestMinor = minor;
+                        newestBuild = build;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(newestVersion))
+                    return UNKNOWN_VERSION;
+
+                return newestVersion;
+
+            }
+            catch (Exception ex)
+            {
+                OnErrorEvent("Error determining the .NET version: " + ex.Message, ex);
+                return UNKNOWN_VERSION;
+            }
+
+        }
+
+        /// <summary>
+        /// Look for the version integer in versionKeyName
+        /// </summary>
+        /// <param name="versionKeyName"></param>
+        /// <returns></returns>
+        private int GetMajorVersion(string versionKeyName)
+        {
+            // This RegEx is used to find the first integer in a string
+            var reVersionMatch = new Regex(@"(?<Version>\d+)");
+
+            var versionMatch = reVersionMatch.Match(versionKeyName);
+            if (versionMatch.Success)
+            {
+                return int.Parse(versionMatch.Groups["Version"].Value);
+            }
+
+            return 0;
+
+        }
+
+        private void StoreVersion(IDictionary<int, List<string>> dotNETVersions, int majorVersion, string specificVersion)
+        {
+            if (string.IsNullOrWhiteSpace(specificVersion))
+                return;
+
+            if (dotNETVersions.TryGetValue(majorVersion, out var installedVariants))
+            {
+                installedVariants.Add(specificVersion);
+            }
+            else
+            {
+                installedVariants = new List<string>()
+                {
+                    specificVersion
+                };
+
+                dotNETVersions.Add(majorVersion, installedVariants);
+            }
+        }
+
+    }
+}
