@@ -24,10 +24,15 @@ namespace PRISM
             // Checking the version using >= will enable forward compatibility,  
             // however you should always compile your code on newer versions of 
             // the framework to ensure your app works the same. 
+            // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
 
+            if (releaseKey > 394806)
+            {
+                return "Later than 4.6.2 (build " + releaseKey + ")";
+            }
             if (releaseKey >= 394802)
             {
-                return "4.6.2 or later";
+                return "4.6.2";
             }
             if (releaseKey >= 394254)
             {
