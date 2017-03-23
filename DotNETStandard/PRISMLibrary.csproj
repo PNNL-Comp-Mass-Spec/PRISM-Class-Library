@@ -1,28 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>netstandard1.5</TargetFramework>
     <RootNamespace>PRISM</RootNamespace>
     <AssemblyName>PRISM</AssemblyName>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="CopyWithResume\**" />
-    <Compile Remove="ShFolderBrowser\**" />
-    <Compile Remove="SourceCode\**" />
-    <Compile Remove="UnitTests\**" />
-    <Compile Remove="_Trash\**" />
-    <EmbeddedResource Remove="CopyWithResume\**" />
-    <EmbeddedResource Remove="ShFolderBrowser\**" />
-    <EmbeddedResource Remove="SourceCode\**" />
-    <EmbeddedResource Remove="UnitTests\**" />
-    <EmbeddedResource Remove="_Trash\**" />
-    <None Remove="CopyWithResume\**" />
-    <None Remove="ShFolderBrowser\**" />
-    <None Remove="SourceCode\**" />
-    <None Remove="UnitTests\**" />
-    <None Remove="_Trash\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Remove="clsDotNETVersionChecker.cs" />
