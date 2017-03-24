@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="clsDiskInfo.cs" />
     <Compile Include="clsDotNETVersionChecker.cs" />
     <Compile Include="clsProcessStats.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
