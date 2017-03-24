@@ -13,6 +13,12 @@ namespace PRISM
     {
 
         /// <summary>
+        /// XML file path
+        /// </summary>
+        /// <remarks>Call LoadSettings to initialize, even if simply saving settings</remarks>
+        public string XMLFilePath => m_XMLFilePath;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public XmlSettingsFileAccessor()
@@ -96,11 +102,17 @@ namespace PRISM
             return false;
         }
 
+        /// <summary>
+        /// Parse an XML settings file
+        /// </summary>
+        /// <param name="strFilePath"></param>
+        /// <returns></returns>
+        [Obsolete("Use LoadSettings")]
         public bool ManualParseXmlOrIniFile(string strFilePath)
         {
             m_XMLFilePath = strFilePath;
 
-            // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles 
+            // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles
             //       case sensitivity mapping internally
             m_XMLFileAccessor = new XMLFileReader(string.Empty, true);
 
@@ -200,11 +212,11 @@ namespace PRISM
                     string strKeyNameToStore;
                     if (mCaseSensitive)
                     {
-                        strKeyNameToStore = string.Copy(strKeys[intIndex]);
+                        strKeyNameToStore = strKeys[intIndex];
                     }
                     else
                     {
-                        strKeyNameToStore = string.Copy(strKeys[intIndex].ToLower());
+                        strKeyNameToStore = strKeys[intIndex].ToLower();
                     }
 
                     if (!mCachedSection.dtKeys.ContainsKey(strKeyNameToStore))
@@ -233,11 +245,11 @@ namespace PRISM
                 string strSectionNameToStore;
                 if (mCaseSensitive)
                 {
-                    strSectionNameToStore = string.Copy(strSections[intIndex]);
+                    strSectionNameToStore = strSections[intIndex];
                 }
                 else
                 {
-                    strSectionNameToStore = string.Copy(strSections[intIndex].ToLower());
+                    strSectionNameToStore = strSections[intIndex].ToLower();
                 }
 
                 if (!dtSectionNames.ContainsKey(strSectionNameToStore))
