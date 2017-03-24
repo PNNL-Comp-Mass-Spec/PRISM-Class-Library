@@ -27,12 +27,15 @@ namespace PRISMTest
                     Assert.Fail("Setting not found, section {0}, setting {1}", sectionName, settingName);
                 }
                 Assert.AreEqual(expectedBool, actualBool, "Unexpected boolean for section {0}, setting {1}: {2}", sectionName, settingName, actualBool);
+
+                Console.WriteLine("Value for section {0}, setting {1} is {2}", sectionName, settingName, actualBool);
                 return;
             }
 
             var actualValue = reader.GetParam(sectionName, settingName, "", out valueNotPresent);
             Assert.AreEqual(expectedValue, actualValue, "Unexpected value for section {0}, setting {1}: {2}", sectionName, settingName, actualValue);
 
+            Console.WriteLine("Value for section {0}, setting {1} is {2}", sectionName, settingName, actualValue);
         }
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "TestOptions", "SaveDate", "Now")]
@@ -46,7 +49,10 @@ namespace PRISMTest
                 value = DateTime.Now.ToString(clsFileTools.DATE_TIME_FORMAT);
 
             reader.SetParam(sectionName, settingName, value);
+
             reader.SaveSettings();
+
+            Console.WriteLine("Setting {0} updated in file {1}", settingName, reader.XMLFilePath);
 
         }
 

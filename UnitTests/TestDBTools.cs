@@ -34,14 +34,14 @@ namespace PRISMTest
                 if (colIndex >= expectedValues.Length)
                     break;
 
-                Assert.AreEqual(firstRow[colIndex], expectedValues[colIndex].Trim(), 
-                    "Data value mismatch, column {0}, expected {1} but actually {2}", 
+                Assert.AreEqual(firstRow[colIndex], expectedValues[colIndex].Trim(),
+                    "Data value mismatch, column {0}, expected {1} but actually {2}",
                     colIndex + 1, expectedValues[colIndex], firstRow[colIndex]);
             }
 
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
-        
+
         private string GetConnectionString(string server, string database)
         {
             return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);
