@@ -9,7 +9,7 @@ namespace PRISM
 {
     /// <summary>
     /// This class produces an easier-to read stack trace for an exception
-    /// See the descriptions for functions GetExceptionStackTrace and 
+    /// See the descriptions for functions GetExceptionStackTrace and
     /// GetExceptionStackTraceMultiLine for example text
     /// </summary>
     /// <remarks></remarks>
@@ -20,7 +20,7 @@ namespace PRISM
         public const string STACK_CHAIN_SEPARATOR = "-:-";
 
         public const string FINAL_FILE_PREFIX = " in ";
-    
+
         /// <summary>
         /// Parses the StackTrace text of the given exception to return a compact description of the current stack
         /// </summary>
@@ -58,10 +58,10 @@ namespace PRISM
         /// </summary>
         /// <param name="ex">Exception</param>
         /// <returns>
-        /// Stack trace: 
+        /// Stack trace:
         ///   clsCodeTest.Test
         ///   clsCodeTest.TestException
-        ///   clsCodeTest.InnerTestException 
+        ///   clsCodeTest.InnerTestException
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
@@ -77,7 +77,7 @@ namespace PRISM
             {
                 sbStackTrace.AppendLine("  " + traceItem);
             }
-       
+
             return sbStackTrace.ToString();
 
         }
@@ -90,7 +90,7 @@ namespace PRISM
         /// List of function names; for example:
         ///   clsCodeTest.Test
         ///   clsCodeTest.TestException
-        ///   clsCodeTest.InnerTestException 
+        ///   clsCodeTest.InnerTestException
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks></remarks>
@@ -107,7 +107,7 @@ namespace PRISM
         /// List of function names; for example:
         ///   clsCodeTest.Test
         ///   clsCodeTest.TestException
-        ///   clsCodeTest.InnerTestException 
+        ///   clsCodeTest.InnerTestException
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks></remarks>

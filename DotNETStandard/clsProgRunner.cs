@@ -16,8 +16,14 @@ namespace PRISM
 
         #region "Constants and Enums"
 
+        /// <summary>
+        /// Default monitoring interval, in milliseconds
+        /// </summary>
         public const int DEFAULT_MONITOR_INTERVAL_MSEC = 5000;
 
+        /// <summary>
+        /// Minimum monitoring interval, in milliseconds
+        /// </summary>
         public const int MINIMUM_MONITOR_INTERVAL_MSEC = 250;
 
         /// <summary>
@@ -25,11 +31,29 @@ namespace PRISM
         /// </summary>
         public enum States
         {
+            /// <summary>
+            /// Not Monitoring
+            /// </summary>
             NotMonitoring,
+            /// <summary>
+            /// Monitoring
+            /// </summary>
             Monitoring,
+            /// <summary>
+            /// Waiting
+            /// </summary>
             Waiting,
+            /// <summary>
+            /// Cleaning up
+            /// </summary>
             CleaningUp,
+            /// <summary>
+            /// Initializing
+            /// </summary>
             Initializing,
+            /// <summary>
+            /// Starting the process
+            /// </summary>
             StartingProcess
         }
         #endregion
@@ -112,21 +136,32 @@ namespace PRISM
         /// </summary>
         /// <remarks>Raised every m_monitorInterval milliseconds</remarks>
         public event ProgChangedEventHandler ProgChanged;
+
+        /// <summary>
+        /// Progress changed event delegate
+        /// </summary>
+        /// <param name="obj"></param>
         public delegate void ProgChangedEventHandler(clsProgRunner obj);
 
+        /// <summary>
+        /// This event is raised when new text is written to the console
+        /// </summary>
         public event ConsoleOutputEventEventHandler ConsoleOutputEvent;
 
         /// <summary>
-        /// This event is raised when the external program writes text to the console
+        /// Console output event delegate
         /// </summary>
         /// <param name="NewText"></param>
         /// <remarks></remarks>
         public delegate void ConsoleOutputEventEventHandler(string NewText);
 
+        /// <summary>
+        /// This event is raised when the external program writes text to the console's error stream
+        /// </summary>
         public event ConsoleErrorEventEventHandler ConsoleErrorEvent;
 
         /// <summary>
-        /// This event is raised when the external program writes text to the console's error stream
+        /// Console error event delegate
         /// </summary>
         /// <param name="NewText"></param>
         /// <remarks></remarks>
@@ -481,7 +516,10 @@ namespace PRISM
             return Path.Combine(WorkDir, consoleOutputFileName);
         }
 
-        [Obsolete("This method is no longer used")]
+        /// <summary>
+        /// Attempt to re-join the thread running the external process
+        /// </summary>
+        [Obsolete("This method is no longer valid due to a change in how threads are started")]
         public void JoinThreadNow()
         {
             /*
@@ -831,6 +869,10 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Return True if the program is starting or running
+        /// </summary>
+        /// <returns></returns>
         protected bool StartingOrMonitoring()
         {
             if (m_state == States.Initializing || m_state == States.StartingProcess || m_state == States.Monitoring)

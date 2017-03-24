@@ -651,6 +651,7 @@ namespace PRISM
 
         protected ConcurrentQueue<clsLogEntry> m_queue;
 
+        // Internal thread for outputting entries from queue
         protected Timer m_ThreadTimer;
 
         // logger object to use for outputting entries from queue
@@ -707,7 +708,7 @@ namespace PRISM
 
             m_queue = new ConcurrentQueue<clsLogEntry>();
 
-            // Log every 1 seconds
+            // Log every 1 second
             m_ThreadTimer = new Timer(LogFromQueue, this, 0, 1000);
         }
 

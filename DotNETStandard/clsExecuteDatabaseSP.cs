@@ -82,7 +82,7 @@ namespace PRISM
         /// <remarks></remarks>
         public clsExecuteDatabaseSP(string connectionString)
         {
-            m_ConnStr =connectionString;
+            m_ConnStr = connectionString;
 
         }
 

@@ -18,8 +18,14 @@ namespace PRISM
 
         #region "Constants and Enums"
 
+        /// <summary>
+        /// Default monitoring interval, in milliseconds
+        /// </summary>
         public const int DEFAULT_MONITOR_INTERVAL_MSEC = 5000;
 
+        /// <summary>
+        /// Minimum monitoring interval, in milliseconds
+        /// </summary>
         public const int MINIMUM_MONITOR_INTERVAL_MSEC = 250;
 
         /// <summary>
@@ -27,11 +33,29 @@ namespace PRISM
         /// </summary>
         public enum States
         {
+            /// <summary>
+            /// Not Monitoring
+            /// </summary>
             NotMonitoring,
+            /// <summary>
+            /// Monitoring
+            /// </summary>
             Monitoring,
+            /// <summary>
+            /// Waiting
+            /// </summary>
             Waiting,
+            /// <summary>
+            /// Cleaning up
+            /// </summary>
             CleaningUp,
+            /// <summary>
+            /// Initializing
+            /// </summary>
             Initializing,
+            /// <summary>
+            /// Starting the process
+            /// </summary>
             StartingProcess
         }
         #endregion
@@ -127,21 +151,32 @@ namespace PRISM
         /// </summary>
         /// <remarks>Raised every m_monitorInterval milliseconds</remarks>
         public event ProgChangedEventHandler ProgChanged;
+
+        /// <summary>
+        /// Progress changed event delegate
+        /// </summary>
+        /// <param name="obj"></param>
         public delegate void ProgChangedEventHandler(clsProgRunner obj);
 
+        /// <summary>
+        /// This event is raised when new text is written to the console
+        /// </summary>
         public event ConsoleOutputEventEventHandler ConsoleOutputEvent;
 
         /// <summary>
-        /// This event is raised when the external program writes text to the console
+        /// Console output event delegate
         /// </summary>
         /// <param name="NewText"></param>
         /// <remarks></remarks>
         public delegate void ConsoleOutputEventEventHandler(string NewText);
 
+        /// <summary>
+        /// This event is raised when the external program writes text to the console's error stream
+        /// </summary>
         public event ConsoleErrorEventEventHandler ConsoleErrorEvent;
 
         /// <summary>
-        /// This event is raised when the external program writes text to the console's error stream
+        /// Console error event delegate
         /// </summary>
         /// <param name="NewText"></param>
         /// <remarks></remarks>
@@ -214,7 +249,7 @@ namespace PRISM
         public bool CreateNoWindow { get; set; }
 
         /// <summary>
-        /// When true, then echoes, in real time, text written to the Console by the external program 
+        /// When true, then echoes, in real time, text written to the Console by the external program
         /// Ignored if CreateNoWindow = False
         /// </summary>
         public bool EchoOutputToConsole { get; set; }

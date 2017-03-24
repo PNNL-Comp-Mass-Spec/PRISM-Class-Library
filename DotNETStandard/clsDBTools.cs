@@ -6,7 +6,7 @@ namespace PRISM
 {
 
     /// <summary>
-    /// Tools to manipulates the database.
+    /// Tools to retrieve data from a database
     /// </summary>
     public class clsDBTools : clsEventNotifier
     {

@@ -51,6 +51,7 @@ namespace PRISM
         /// <param name="results">An array of file paths found; unchanged if no matches</param>
         /// <param name="searchPatterns">An array of regular expressions to use in the search.</param>
         /// <returns>Always returns true</returns>
+        [Obsolete("Use PerformScan that returns a List of strings")]
         public bool PerformScan(ref ArrayList results, params string[] searchPatterns)
         {
             var files = PerformScan(searchPatterns);
