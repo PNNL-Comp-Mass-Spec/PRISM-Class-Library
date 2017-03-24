@@ -2171,6 +2171,34 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Convert a size, bytes, to a string representation
+        /// For example, 165342 will return 161.5 KB
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string BytesToHumanReadable(long bytes)
+        {
+            if (bytes < 2048)
+                return string.Format("{0:F1} bytes", bytes);
+
+            var scaledBytes = bytes / 1024.0;
+            if (scaledBytes < 1000)
+                return string.Format("{0:F1} KB", scaledBytes);
+
+            scaledBytes /= 1024.0;
+            if (scaledBytes < 1000)
+                return string.Format("{0:F1} MB", scaledBytes);
+
+            scaledBytes /= 1024.0;
+            if (scaledBytes < 1000)
+                return string.Format("{0:F1} GB", scaledBytes);
+
+            scaledBytes /= 1024.0;
+            return string.Format("{0:F1} TB", scaledBytes);
+
+        }
+
+        /// <summary>
         /// Shorten pathToCompact to a maximum length of maxLength
         /// Examples:
         /// C:\...\B..\Finance..
