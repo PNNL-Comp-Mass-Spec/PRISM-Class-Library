@@ -26,10 +26,8 @@ namespace PRISM
         private string m_SaveFilename;
 
         private bool m_initialized;
-        private readonly bool NotifyOnEvent;
 
         private readonly bool NotifyOnException;
-        public event XmlSettingsFileAccessor.InformationMessageEventHandler InformationMessage;
 
         /// <summary>
         /// Initializes a new instance of the XMLFileReader (non case-sensitive)
@@ -37,10 +35,8 @@ namespace PRISM
         /// <param name="xmlFilename">The name of the XML file.</param>
         /// <param name="isCaseSensitive"></param>
         /// <param name="notifyOnException">When true, raise event InformationMessage if an exception occurs</param>
-        /// <param name="notifyOnEvent">When true, raise event InformationMessage when the XML file is saved</param>
-        public XMLFileReader(string xmlFilename, bool isCaseSensitive, bool notifyOnException = true, bool notifyOnEvent = false)
+        public XMLFileReader(string xmlFilename, bool isCaseSensitive, bool notifyOnException = true)
         {
-            NotifyOnEvent = notifyOnEvent;
             NotifyOnException = notifyOnException;
 
             CaseSensitive = isCaseSensitive;
@@ -54,7 +50,10 @@ namespace PRISM
             // Try to load the file as an XML file
             try
             {
-                m_XmlDoc.Load(new FileStream(xmlFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                using (var settingsFile = new FileStream(xmlFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    m_XmlDoc.Load(settingsFile);
+                }
                 UpdateSections();
                 m_XmlFilename = xmlFilename;
                 m_initialized = true;
@@ -756,7 +755,10 @@ namespace PRISM
                 {
                     // File doesn't exist; create a new, blank .XML file
                     m_XmlFilename = strFilePath;
-                    m_XmlDoc.Save(new FileStream(m_XmlFilename, FileMode.Create, FileAccess.Write));
+                    using (var settingsFile = new FileStream(m_XmlFilename, FileMode.Create, FileAccess.Write))
+                    {
+                        m_XmlDoc.Save(settingsFile);
+                    }
                     m_initialized = true;
                 }
 
@@ -988,12 +990,12 @@ namespace PRISM
                 {
                     fi.Delete();
                 }
-                m_XmlDoc.Save(new FileStream(OutputFilename, FileMode.Open, FileAccess.Write));
 
-                if (NotifyOnEvent)
+                using (var settingsFile = new FileStream(OutputFilename, FileMode.Create, FileAccess.Write))
                 {
-                    InformationMessage?.Invoke("File save complete.");
+                    m_XmlDoc.Save(settingsFile);
                 }
+
             }
             else
             {

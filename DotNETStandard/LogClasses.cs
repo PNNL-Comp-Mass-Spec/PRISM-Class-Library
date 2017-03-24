@@ -66,10 +66,16 @@ namespace PRISM
         /// <summary>
         /// Posts a message to the log.
         /// </summary>
+        /// <param name="messages">The messages to post.</param>
+        void PostEntries(List<clsLogEntry> messages);
+
+        /// <summary>
+        /// Posts a message to the log.
+        /// </summary>
         /// <param name="message">The message to post.</param>
-        /// <param name="EntryType">The ILogger error type.</param>
+        /// <param name="entryType">The ILogger error type.</param>
         /// <param name="localOnly">Post message locally only.</param>
-        void PostEntry(string message, logMsgType EntryType, bool localOnly);
+        void PostEntry(string message, logMsgType entryType, bool localOnly);
 
         /// <summary>
         /// Posts an error to the log.
@@ -175,12 +181,15 @@ namespace PRISM
     /// </remarks>
     public class clsFileLogger : ILogger
     {
+        public const string FILENAME_DATESTAMP = "MM-dd-yyyy";
+
         const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
 
         /// <summary>
-        /// Log file path
+        /// Base log file name (either a file name or a full path)
         /// </summary>
-        private string m_logFileName = "";
+        /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
+        private string m_logFileBaseName = "";
 
         /// <summary>
         /// Program name
@@ -211,7 +220,7 @@ namespace PRISM
         /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
         public clsFileLogger(string filePath)
         {
-            m_logFileName = filePath;
+            m_logFileBaseName = filePath;
         }
 
         public string CurrentLogFilePath => m_CurrentLogFilePath;
@@ -252,8 +261,8 @@ namespace PRISM
         /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
         public string LogFilePath
         {
-            get { return m_logFileName; }
-            set { m_logFileName = value; }
+            get { return m_logFileBaseName; }
+            set { m_logFileBaseName = value; }
         }
 
         /// <summary>
@@ -269,12 +278,11 @@ namespace PRISM
         /// <summary>
         /// Writes a message to the log file.
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="EntryType">The ILogger error type.</param>
-        private void LogToFile(string message, logMsgType EntryType)
+        /// <param name="messages">List of messages to post.</param>
+        private void LogToFile(IEnumerable<clsLogEntry> messages)
         {
             // don't log to file if no file name given
-            if (string.IsNullOrEmpty(m_logFileName))
+            if (string.IsNullOrEmpty(m_logFileBaseName))
             {
                 return;
             }
@@ -282,27 +290,32 @@ namespace PRISM
             // Set up date values for file name
 
             // Create log file name by appending specified file name and date
-            m_CurrentLogFilePath = m_logFileName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + ".txt";
+            m_CurrentLogFilePath = m_logFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATESTAMP) + ".txt";
 
             try
             {
-                var FormattedLogMessage =
-                    DateTime.Now.ToString(DATE_TIME_FORMAT) + ", " +
-                    message + ", " +
-                    TypeToString(EntryType) + ", ";
-
                 using (var swLogFile = new StreamWriter(new FileStream(m_CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
                 {
-                    swLogFile.WriteLine(FormattedLogMessage);
-                }
 
-                if (EntryType == logMsgType.logError)
-                {
-                    m_MostRecentErrorMessage = FormattedLogMessage;
-                }
-                else
-                {
-                    m_MostRecentLogMessage = FormattedLogMessage;
+                    foreach (var item in messages)
+                    {
+
+                        var FormattedLogMessage =
+                        DateTime.Now.ToString(DATE_TIME_FORMAT) + ", " +
+                        item.Message + ", " +
+                        TypeToString(item.EntryType) + ", ";
+
+                        swLogFile.WriteLine(FormattedLogMessage);
+
+                        if (item.EntryType == logMsgType.logError)
+                        {
+                            m_MostRecentErrorMessage = FormattedLogMessage;
+                        }
+                        else
+                        {
+                            m_MostRecentLogMessage = FormattedLogMessage;
+                        }
+                    }
                 }
 
             }
@@ -349,12 +362,25 @@ namespace PRISM
         /// <summary>
         /// Posts a message to the log.
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="EntryType">The ILogger error type.</param>
-        /// <param name="localOnly">Post message locally only.</param>
-        public virtual void PostEntry(string message, logMsgType EntryType, bool localOnly)
+        /// <param name="messages">The messages to post.</param>
+        public virtual void PostEntries(List<clsLogEntry> messages)
         {
-            LogToFile(message, EntryType);
+            LogToFile(messages);
+        }
+
+        /// <summary>
+        /// Posts a message to the log.
+        /// </summary>
+        /// <param name="message">The message to post.</param>
+        /// <param name="entryType">The ILogger error type.</param>
+        /// <param name="localOnly">Post message locally only.</param>
+        public virtual void PostEntry(string message, logMsgType entryType, bool localOnly)
+        {
+            var messages = new List<clsLogEntry>{
+                new clsLogEntry(message, entryType, localOnly)
+            };
+
+            LogToFile(messages);
         }
 
         /// <summary>
@@ -365,7 +391,11 @@ namespace PRISM
         /// <param name="localOnly">Post message locally only.</param>
         public virtual void PostError(string message, Exception ex, bool localOnly)
         {
-            LogToFile(message + ": " + ex.Message, logMsgType.logError);
+            var messages = new List<clsLogEntry>{
+                new clsLogEntry(message + ": " + ex.Message, logMsgType.logError, localOnly)
+            };
+
+            LogToFile(messages);
         }
 
     }
@@ -382,7 +412,9 @@ namespace PRISM
         // connection string
         private string m_connection_str;
 
-        // db error list
+        /// <summary>
+        /// List of database errors
+        /// </summary>
         private readonly List<string> m_error_list = new List<string>();
 
         /// <summary>
@@ -398,9 +430,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Initializes a new instance of the clsDBLogger class which logs to the specified database.
+        /// Initializes a new instance of the clsDBLogger class which logs to the specified database
         /// </summary>
         /// <param name="connectionStr">The connection string used to access the database.</param>
+        /// <remarks>Only logs to a local file if a file name is defined using LogFilePath</remarks>
         public clsDBLogger(string connectionStr)
         {
             m_connection_str = connectionStr;
@@ -492,27 +525,48 @@ namespace PRISM
         /// Writes a message to the log table.
         /// </summary>
         /// <param name="message">The message to post.</param>
-        /// <param name="EntryType">The ILogger error type.</param>
-        protected virtual void LogToDB(string message, logMsgType EntryType)
+        /// <param name="entryType">The ILogger error type.</param>
+        protected virtual void LogToDB(string message, logMsgType entryType)
         {
-            PostLogEntry(TypeToString(EntryType), message);
+            PostLogEntry(TypeToString(entryType), message);
+        }
+
+        /// <summary>
+        /// Posts a message to the log.
+        /// </summary>
+        /// <param name="messages">The messages to post.</param>
+        public override void PostEntries(List<clsLogEntry> messages)
+        {
+            if(!string.IsNullOrWhiteSpace(LogFilePath))
+            {
+                base.PostEntries(messages);
+            }
+
+            foreach (var item in messages)
+            {
+                if (!item.LocalOnly)
+                {
+                    LogToDB(item.Message, item.EntryType);
+                }
+            }
         }
 
         /// <summary>
         /// Posts a message to the log.
         /// </summary>
         /// <param name="message">The message to post.</param>
-        /// <param name="EntryType">The ILogger error type.</param>
+        /// <param name="entryType">The ILogger error type.</param>
         /// <param name="localOnly">Post message locally only.</param>
-        public override void PostEntry(string message, logMsgType EntryType, bool localOnly)
+        public override void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
-            if (LogFilePath != null)
+            if (!string.IsNullOrWhiteSpace(LogFilePath))
             {
-                base.PostEntry(message, EntryType, localOnly);
+                base.PostEntry(message, entryType, localOnly);
             }
+
             if (!localOnly)
             {
-                LogToDB(message, EntryType);
+                LogToDB(message, entryType);
             }
         }
 
@@ -544,6 +598,7 @@ namespace PRISM
             try
             {
                 m_error_list.Clear();
+
                 // create the database connection
                 //
                 var cnStr = m_connection_str;
@@ -613,7 +668,40 @@ namespace PRISM
     }
     #endregion
 
+    #region "Log Entry Class"
+
+    /// <summary>
+    /// A class to hold a log entry
+    /// </summary>
+    public class clsLogEntry
+    {
+        /// <summary>
+        /// Log message
+        /// </summary>
+        public string Message;
+
+        /// <summary>
+        /// Log message type
+        /// </summary>
+        public logMsgType EntryType;
+
+        /// <summary>
+        /// When true, log to the local file but not to the database
+        /// </summary>
+        public bool LocalOnly;
+
+        public clsLogEntry(string message, logMsgType entryType, bool localOnly = true)
+        {
+            Message = message;
+            EntryType = entryType;
+            LocalOnly = localOnly;
+        }
+    }
+
+    #endregion
+
     #region "Queue Logger Class"
+
     /// <summary>
     /// Wraps a queuing mechanism around any object that implements ILogger interface.
     /// </summary>
@@ -624,28 +712,6 @@ namespace PRISM
     /// in the constructor for this class.</remarks>
     public class clsQueLogger : ILogger
     {
-
-        /// <summary>
-        /// A class to hold a log entry in the internal queue.
-        /// </summary>
-        /// <remarks>It holds the three arguments to PostEntry.</remarks>
-        public class clsLogEntry
-        {
-            /// <summary>
-            /// Log message
-            /// </summary>
-            public string message;
-
-            /// <summary>
-            /// Log message type
-            /// </summary>
-            public logMsgType entryType;
-
-            /// <summary>
-            /// When true, log to the local file but not to the database
-            /// </summary>
-            public bool localOnly;
-        }
 
         // queue to hold entries to be output
 
@@ -701,11 +767,10 @@ namespace PRISM
         /// <param name="logger">The target logger object.</param>
         public clsQueLogger(ILogger logger)
         {
-            // remember my logging object
+            // Remember my logging object
             m_logger = logger;
 
-            // create a thread safe queue for log entries
-
+            // Create a thread safe queue for log entries
             m_queue = new ConcurrentQueue<clsLogEntry>();
 
             // Log every 1 second
@@ -717,15 +782,35 @@ namespace PRISM
         /// </summary>
         protected void LogFromQueue(object o)
         {
+            if (m_queue.Count == 0)
+                return;
+
+            var messages = new List<clsLogEntry>();
+
             while (true)
             {
-                if (m_queue.Count == 0)
-                    break;
-
                 if (m_queue.TryDequeue(out var le))
                 {
-                    m_logger.PostEntry(le.message, le.entryType, le.localOnly);
+                    messages.Add(le);
                 }
+
+                if (m_queue.Count == 0)
+                    break;
+            }
+
+            m_logger.PostEntries(messages);
+
+        }
+
+        /// <summary>
+        /// Posts a message to the log.
+        /// </summary>
+        /// <param name="messages">The messages to post.</param>
+        public virtual void PostEntries(List<clsLogEntry> messages)
+        {
+            foreach (var item in messages)
+            {
+                m_queue.Enqueue(item);
             }
         }
 
@@ -733,16 +818,11 @@ namespace PRISM
         /// Writes a message to the log.
         /// </summary>
         /// <param name="message">The message to post.</param>
-        /// <param name="EntryType">The ILogger error type.</param>
+        /// <param name="entryType">The ILogger error type.</param>
         /// <param name="localOnly"></param>
-        public void PostEntry(string message, logMsgType EntryType, bool localOnly)
+        public void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
-            var le = new clsLogEntry
-            {
-                message = message,
-                entryType = EntryType,
-                localOnly = localOnly
-            };
+            var le = new clsLogEntry(message, entryType, localOnly);
             m_queue.Enqueue(le);
         }
 
@@ -754,12 +834,7 @@ namespace PRISM
         /// <param name="localOnly">Post message locally only.</param>
         public void PostError(string message, Exception e, bool localOnly)
         {
-            var le = new clsLogEntry
-            {
-                message = message + ": " + e.Message,
-                entryType = logMsgType.logError,
-                localOnly = localOnly
-            };
+            var le = new clsLogEntry(message + ": " + e.Message, logMsgType.logError, localOnly);
             m_queue.Enqueue(le);
         }
     }
@@ -889,7 +964,7 @@ namespace PRISM
     //	/// <summary>Posts a message.</summary>
     //	/// <param name="message">The message to post.</param>
     //	/// <param name="EntryType">The ILogger error type.</param>
-    //	private void LogToControl(string message, logMsgType EntryType)
+    //	private void LogToControl(string message, logMsgType entryType)
     //	{
     //		string localMsg = null;
     //		localMsg = DateTime.Now.ToString(DATE_TIME_FORMAT) + ", " + ", " + ExecutableName + ", " + ExecutableVersion + ", " + message + ", " + TypeToString(EntryType);
@@ -926,7 +1001,7 @@ namespace PRISM
     //	/// <summary>Posts a message to the listview control.</summary>
     //	/// <param name="message">The message to post.</param>
     //	/// <param name="EntryType">The ILogger error type.</param>
-    //	private void PostEntryListview(string message, logMsgType EntryType)
+    //	private void PostEntryListview(string message, logMsgType entryType)
     //	{
     //		if ((m_loglsViewCtl == null))
     //			return;
@@ -976,7 +1051,7 @@ namespace PRISM
     //	/// <param name="message">The message to post.</param>
     //	/// <param name="EntryType">The ILogger error type.</param>
     //	/// <param name="localOnly">Post message locally only.</param>
-    //	public virtual void PostEntry(string message, logMsgType EntryType, bool localOnly)
+    //	public virtual void PostEntry(string message, logMsgType entryType, bool localOnly)
     //	{
     //		LogToControl(message, EntryType);
     //	}

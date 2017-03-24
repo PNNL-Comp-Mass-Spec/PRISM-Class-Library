@@ -13,6 +13,9 @@ namespace PRISM
 
         #region "Constants"
 
+        /// <summary>
+        /// Return value indicating everything is ok
+        /// </summary>
         public const int RET_VAL_OK = 0;
 
         /// <summary>
@@ -25,10 +28,19 @@ namespace PRISM
         /// </summary>
         public const int RET_VAL_DEADLOCK = -4;
 
+        /// <summary>
+        /// Default number of times to retry calling the stored prcoedure
+        /// </summary>
         public const int DEFAULT_SP_RETRY_COUNT = 3;
 
+        /// <summary>
+        /// Default delay, in seconds, when retrying a stored procedure call
+        /// </summary>
         public const int DEFAULT_SP_RETRY_DELAY_SEC = 20;
 
+        /// <summary>
+        /// Default timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// </summary>
         public const int DEFAULT_SP_TIMEOUT_SEC = 30;
 
         #endregion
@@ -37,11 +49,18 @@ namespace PRISM
 
         private string m_ConnStr;
 
+        /// <summary>
+        /// Timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// </summary>
         private int mTimeoutSeconds = DEFAULT_SP_TIMEOUT_SEC;
 
         #endregion
 
         #region "Properties"
+
+        /// <summary>
+        /// Database connection string
+        /// </summary>
         public string DBconnectionString
         {
             get { return m_ConnStr; }
@@ -55,8 +74,14 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Set to True to raise debug events
+        /// </summary>
         public bool DebugMessagesEnabled { get; set; }
 
+        /// <summary>
+        /// Timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// </summary>
         public int TimeoutSeconds
         {
             get { return mTimeoutSeconds; }

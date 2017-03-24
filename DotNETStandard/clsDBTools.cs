@@ -13,6 +13,9 @@ namespace PRISM
 
         #region "Constants"
 
+        /// <summary>
+        /// Default timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// </summary>
         public const int DEFAULT_SP_TIMEOUT_SEC = 30;
 
         #endregion
@@ -28,6 +31,9 @@ namespace PRISM
 
         #region "Properties"
 
+        /// <summary>
+        /// Timeout length, in seconds, when waiting for a query to finish executing
+        /// </summary>
         public int TimeoutSeconds
         {
             get { return mTimeoutSeconds; }

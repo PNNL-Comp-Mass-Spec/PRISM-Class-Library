@@ -522,24 +522,6 @@ namespace PRISM
         [Obsolete("This method is no longer valid due to a change in how threads are started")]
         public void JoinThreadNow()
         {
-            /*
-            if (m_Thread == null)
-                return;
-
-            try
-            {
-                // Attempt to re-join the thread (wait for 5 seconds, at most)
-                m_Thread.Join(5000);
-            }
-            catch (ThreadStateException ex)
-            {
-                ThrowConditionalException(ex, "Caught ThreadStateException while trying to join thread.");
-            }
-            catch (Exception ex)
-            {
-                ThrowConditionalException(ex, "Caught exception while trying to join thread.");
-            }
-            */
 
         }
 
@@ -849,17 +831,12 @@ namespace PRISM
 
                 m_CancellationToken = new CancellationTokenSource();
 
-                // arrange to start the program as an external process
+                // Arrange to start the program as an external process
                 // and monitor it in a separate internal thread
                 //
                 try
                 {
                     ThreadPool.QueueUserWorkItem(StartProcess, m_CancellationToken.Token);
-
-                    // Old:
-                    // var m_ThreadStart = new ThreadStart(StartProcess);
-                    // m_Thread = new Thread(m_ThreadStart);
-                    // m_Thread.Start();
                 }
                 catch (Exception ex)
                 {
@@ -894,9 +871,9 @@ namespace PRISM
                 try
                 {
                     // m_Process.Kill();
-                    m_CancellationToken.Cancel();
-                    SleepMilliseconds(1000);
-                    m_CancellationToken.Dispose();
+                    m_CancellationToken?.Cancel();
+                    SleepMilliseconds(500);
+                    m_CancellationToken?.Dispose();
                 }
                 catch (System.ComponentModel.Win32Exception ex)
                 {
@@ -930,23 +907,6 @@ namespace PRISM
             {
                 m_state = States.CleaningUp;
                 m_doCleanup = true;
-
-                /*
-                try
-                {
-                    // Attempt to re-join the thread (wait for 5 seconds, at most)
-                    m_Thread.Join(5000);
-                }
-                catch (ThreadStateException ex)
-                {
-                    ThrowConditionalException(ex, "Caught ThreadStateException while trying to join thread.");
-                }
-                catch (Exception ex)
-                {
-                    ThrowConditionalException(ex, "Caught exception while trying to join thread.");
-                }
-                */
-
                 m_state = States.NotMonitoring;
             }
         }
