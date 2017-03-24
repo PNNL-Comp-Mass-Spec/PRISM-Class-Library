@@ -1844,6 +1844,7 @@ namespace PRISM
                 }
 
                 swFilePart.Flush();
+                swFilePart.Dispose();
 
                 UpdateCurrentStatusIdle();
 
