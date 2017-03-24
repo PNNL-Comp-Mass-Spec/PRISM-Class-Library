@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -649,13 +649,10 @@ namespace PRISM
 
         // queue to hold entries to be output
 
-        protected Queue m_queue;
+        protected ConcurrentQueue<clsLogEntry> m_queue;
 
-        // internal thread for outputting entries from queue
-        protected Thread m_Thread;
-        protected bool m_threadRunning;
-
-        protected ThreadStart m_ThreadStart;
+        // Internal thread for outputting entries from queue
+        protected Timer m_ThreadTimer;
 
         // logger object to use for outputting entries from queue
         protected ILogger m_logger;
@@ -704,27 +701,39 @@ namespace PRISM
         /// <param name="logger">The target logger object.</param>
         public clsQueLogger(ILogger logger)
         {
-            // remember my logging object
+            // Remember my logging object
             m_logger = logger;
 
-            // create a thread safe queue for log entries
-            var q = new Queue();
-            m_queue = Queue.Synchronized(q);
+            // Create a thread safe queue for log entries
+            m_queue = new ConcurrentQueue<clsLogEntry>();
 
-            m_ThreadStart = new ThreadStart(LogFromQueue);
+            // Log every 1 second
+            m_ThreadTimer = new Timer(LogFromQueue, this, 0, 1000);
         }
 
         /// <summary>
-        /// Start the log output thread if it isn't already running.
+        /// Pull all entries from the queue and output them to the log streams.
         /// </summary>
-        protected void KickTheOutputThread()
+        protected void LogFromQueue(object o)
         {
-            if (!m_threadRunning)
+            if (m_queue.Count == 0)
+                return;
+
+            var messages = new List<clsLogEntry>();
+
+            while (true)
             {
-                m_threadRunning = true;
-                m_Thread = new Thread(m_ThreadStart);
-                m_Thread.Start();
+                if (m_queue.TryDequeue(out var le))
+                {
+                    messages.Add(le);
+                }
+
+                if (m_queue.Count == 0)
+                    break;
             }
+
+            m_logger.PostEntries(messages);
+
         }
 
         /// <summary>
@@ -751,14 +760,8 @@ namespace PRISM
         /// <param name="localOnly"></param>
         public void PostEntry(string message, logMsgType EntryType, bool localOnly)
         {
-            var le = new clsLogEntry
-            {
-                message = message,
-                entryType = EntryType,
-                localOnly = localOnly
-            };
+            var le = new clsLogEntry(message, entryType, localOnly);
             m_queue.Enqueue(le);
-            KickTheOutputThread();
         }
 
         /// <summary>
@@ -769,14 +772,8 @@ namespace PRISM
         /// <param name="localOnly">Post message locally only.</param>
         public void PostError(string message, Exception e, bool localOnly)
         {
-            var le = new clsLogEntry
-            {
-                message = message + ": " + e.Message,
-                entryType = logMsgType.logError,
-                localOnly = localOnly
-            };
+            var le = new clsLogEntry(message + ": " + e.Message, logMsgType.logError, localOnly);
             m_queue.Enqueue(le);
-            KickTheOutputThread();
         }
     }
     #endregion
