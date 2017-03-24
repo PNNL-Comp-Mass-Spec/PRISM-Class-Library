@@ -4,15 +4,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PRISM
+namespace PRISMWin
 {
     /// <summary>
     /// This classes examines the registry to determine the newest version of .NET installed
     /// </summary>
-    public class clsDotNETVersionChecker : clsEventNotifier
+    public class clsDotNETVersionChecker
     {
+        #region "Constants"
+
         private const string EARLIER_THAN_45 = "Earlier than 4.5";
         private const string UNKNOWN_VERSION = "Unknown .NET version";
+
+        #endregion
+
+        #region "Events and Event Handlers"
+
+        /// <summary>
+        /// Error event
+        /// </summary>
+        public event ErrorEventEventHandler ErrorEvent;
+
+        /// <summary>
+        /// Error event
+        /// </summary>
+        /// <param name="strMessage"></param>
+        /// <param name="ex"></param>
+        public delegate void ErrorEventEventHandler(string strMessage, Exception ex);
+
+        #endregion
 
         /// <summary>
         /// Determine the human-readable version of .NET
@@ -21,9 +41,9 @@ namespace PRISM
         /// <returns></returns>
         private string CheckFor45DotVersion(int releaseKey)
         {
-            // Checking the version using >= will enable forward compatibility,  
-            // however you should always compile your code on newer versions of 
-            // the framework to ensure your app works the same. 
+            // Checking the version using >= will enable forward compatibility,
+            // however you should always compile your code on newer versions of
+            // the framework to ensure your app works the same.
             // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
 
             if (releaseKey > 394806)
@@ -55,8 +75,8 @@ namespace PRISM
                 return "4.5";
             }
 
-            // This line should never execute. A non-null release key should mean 
-            // that 4.5 or later is installed. 
+            // This line should never execute. A non-null release key should mean
+            // that 4.5 or later is installed.
             return EARLIER_THAN_45;
         }
 
@@ -309,6 +329,16 @@ namespace PRISM
 
             return 0;
 
+        }
+
+        /// <summary>
+        /// Report an error
+        /// </summary>
+        /// <param name="strMessage"></param>
+        /// <param name="ex">Exception (allowed to be nothing)</param>
+        protected void OnErrorEvent(string strMessage, Exception ex)
+        {
+            ErrorEvent?.Invoke(strMessage, ex);
         }
 
         private void StoreVersion(IDictionary<int, List<string>> dotNETVersions, int majorVersion, string specificVersion)
