@@ -8,11 +8,12 @@ namespace PRISM
 {
 
     /// <summary>
-    /// Tools to manipulates the database.
+    /// Tools to retrieve data from a database
     /// </summary>
-    public class clsDBTools
+    public class clsDBTools : clsEventNotifier
     {
 
+        #region "Constants"
         #region "Member Variables"
 
         // DB access
@@ -20,10 +21,6 @@ namespace PRISM
 
         private SqlConnection m_DBCn;
 
-        /// <summary>
-        /// Error event
-        /// </summary>
-        public event ErrorEventEventHandler ErrorEvent;
 
         /// <summary>
         /// error event delegate
@@ -103,7 +100,7 @@ namespace PRISM
                 s += ", LineNumber: " + err.LineNumber;
                 s += ", Procedure:" + err.Procedure;
                 s += ", Server: " + err.Server;
-                OnError(s);
+                OnErrorEvent(s);
             }
         }
 
@@ -237,9 +234,9 @@ namespace PRISM
                     {
                         callingFunction = "Unknown";
                     }
-                    var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, m_connection_str, retryCount, sqlQuery);
+                    var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, m_ConnStr, retryCount, sqlQuery);
 
-                    OnError(errorMessage);
+                    OnErrorEvent(errorMessage);
 
                     // Delay for 5 seconds before trying again
                     Thread.Sleep(5000);
@@ -249,22 +246,6 @@ namespace PRISM
 
             return false;
 
-        }
-
-        private void OnError(string errorMessage)
-        {
-            if (!string.IsNullOrWhiteSpace(errorMessage))
-            {
-                ErrorEvent?.Invoke(errorMessage);
-            }
-        }
-
-        private void OnError(string errorMessage, Exception ex)
-        {
-            if (!string.IsNullOrWhiteSpace(errorMessage))
-            {
-                ErrorEvent?.Invoke(errorMessage + ": " + ex.Message);
-            }
         }
 
         /// <summary>

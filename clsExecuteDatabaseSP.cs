@@ -9,7 +9,7 @@ namespace PRISM
     /// <summary>
     /// Tools to execute a stored procedure
     /// </summary>
-    public class clsExecuteDatabaseSP
+    public class clsExecuteDatabaseSP : clsEventNotifier
     {
 
         #region "Constants"
@@ -51,12 +51,6 @@ namespace PRISM
         protected string m_ConnStr;
 
         protected int mTimeoutSeconds = DEFAULT_SP_TIMEOUT_SEC;
-
-        public event DebugEventEventHandler DebugEvent;
-        public delegate void DebugEventEventHandler(string message);
-
-        public event DBErrorEventEventHandler DBErrorEvent;
-        public delegate void DBErrorEventEventHandler(string message);
 
         #endregion
 
@@ -125,14 +119,6 @@ namespace PRISM
 
         }
 
-        private void OnError(string errorMessage)
-        {
-            if (!string.IsNullOrWhiteSpace(errorMessage))
-            {
-                DBErrorEvent?.Invoke(errorMessage);
-            }
-        }
-
         /// <summary>
         /// Event handler for InfoMessage event
         /// </summary>
@@ -153,7 +139,7 @@ namespace PRISM
                         ", Procedure:" + err.Procedure +
                         ", Server: " + err.Server;
 
-                OnError(s);
+                OnErrorEvent(s);
             }
 
         }
@@ -251,7 +237,7 @@ namespace PRISM
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                     errorMessage += "; " + Utilities.GetExceptionStackTrace(ex);
 
-                    OnError(errorMessage);
+                    OnErrorEvent(errorMessage);
                     Console.WriteLine(errorMessage);
 
                     if (ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
@@ -269,7 +255,8 @@ namespace PRISM
                     {
                         var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(dtStartTime).TotalSeconds.ToString("##0.000") +
                                            " seconds for SP " + spCmd.CommandText;
-                        DebugEvent?.Invoke(debugMessage);
+
+                        OnDebugEvent(debugMessage);
                     }
                 }
 
@@ -429,8 +416,7 @@ namespace PRISM
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                     errorMessage += "; " + Utilities.GetExceptionStackTrace(ex);
 
-                    OnError(errorMessage);
-                    Console.WriteLine(errorMessage);
+                    OnErrorEvent(errorMessage);
 
                     if (ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
                     {
@@ -446,7 +432,7 @@ namespace PRISM
                     if (DebugMessagesEnabled)
                     {
                         var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(dtStartTime).TotalSeconds.ToString("##0.000") + " seconds for SP " + spCmd.CommandText;
-                        DebugEvent?.Invoke(debugMessage);
+                        OnDebugEvent(debugMessage);
                     }
                 }
 
@@ -466,8 +452,7 @@ namespace PRISM
                 }
                 errorMessage += " executing SP " + spCmd.CommandText;
 
-                OnError(errorMessage);
-                Console.WriteLine(errorMessage);
+                OnErrorEvent(errorMessage);
 
                 if (blnDeadlockOccurred)
                 {
