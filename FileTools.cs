@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 // Required for call to GetDiskFreeSpaceEx
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace PRISM
 {
@@ -536,8 +536,8 @@ namespace PRISM
             if (useLockFile)
             {
                 var success = CopyFileUsingLocks(
-                    lockFolderPathSource, lockFolderPathTarget, 
-                    fiSource, targetFilePath, 
+                    lockFolderPathSource, lockFolderPathTarget,
+                    fiSource, targetFilePath,
                     managerName, overWrite);
                 return success;
             }
@@ -992,7 +992,20 @@ namespace PRISM
                 managerName = "UnknownManager";
             }
 
-            var lockFileName = lockFileTimestamp + "_" + (fiSource.Length / 1024.0 / 1024.0).ToString("0000") + "_" + Environment.MachineName + "_" + managerName + LOCKFILE_EXTENSION;
+            var hostName = Dns.GetHostName();
+
+            if (hostName.Contains("."))
+            {
+                hostName = hostName.Substring(0, hostName.IndexOf('.'));
+            }
+
+            foreach (var invalidChar in Path.GetInvalidPathChars())
+            {
+                if (hostName.Contains(invalidChar))
+                    hostName = hostName.Replace(invalidChar, '_');
+            }
+
+            var lockFileName = lockFileTimestamp + "_" + (fiSource.Length / 1024.0 / 1024.0).ToString("0000") + "_" + hostName + "_" + managerName + LOCKFILE_EXTENSION;
 
             // Replace any invalid characters (including spaces) with an underscore
             return mInvalidDosChars.Replace(lockFileName, "_");
@@ -1157,7 +1170,7 @@ namespace PRISM
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
         /// <param name="fileNamesToSkip">
-        /// List of file names to skip when copying the directory (and subdirectories); 
+        /// List of file names to skip when copying the directory (and subdirectories);
         /// can optionally contain full path names to skip</param>
         /// <param name="managerName"></param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip, string managerName)
@@ -1180,7 +1193,7 @@ namespace PRISM
         /// <param name="setAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
         /// <param name="fileNamesToSkip">
-        /// List of file names to skip when copying the directory (and subdirectories); 
+        /// List of file names to skip when copying the directory (and subdirectories);
         /// can optionally contain full path names to skip</param>
         /// <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
         private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
@@ -1355,7 +1368,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Copies a source directory to the destination directory. 
+        /// Copies a source directory to the destination directory.
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
@@ -1383,7 +1396,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Copies a source directory to the destination directory. 
+        /// Copies a source directory to the destination directory.
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
@@ -1412,7 +1425,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Copies a source directory to the destination directory. 
+        /// Copies a source directory to the destination directory.
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
@@ -1441,7 +1454,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Copies a source directory to the destination directory. 
+        /// Copies a source directory to the destination directory.
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
@@ -1695,7 +1708,7 @@ namespace PRISM
                 if (File.Exists(targetFilePath))
                 {
                     File.Delete(targetFilePath);
-                    Thread.Sleep(25);
+                    clsProgRunner.SleepMilliseconds(25);
                 }
 
                 // Check for a #FilePart# file
@@ -1775,7 +1788,7 @@ namespace PRISM
                     if (fiFilePart.Exists)
                     {
                         fiFilePart.Delete();
-                        Thread.Sleep(25);
+                        clsProgRunner.SleepMilliseconds(25);
                     }
 
                     // Create the FILE_PART_INFO_TAG file
@@ -1820,7 +1833,7 @@ namespace PRISM
                         swFilePart.Write(buffer, 0, intBytesRead);
                         lngBytesWritten += intBytesRead;
 
-                        // Flush out the data periodically 
+                        // Flush out the data periodically
                         intBytesSinceLastFlush += intBytesRead;
                         if (intBytesSinceLastFlush >= intFlushThresholdBytes)
                         {
@@ -1841,7 +1854,8 @@ namespace PRISM
                     FileCopyProgress?.Invoke(fiSourceFile.Name, 100);
                 }
 
-                swFilePart.Close();
+                swFilePart.Flush();
+                swFilePart.Dispose();
 
                 UpdateCurrentStatusIdle();
 
@@ -1859,7 +1873,7 @@ namespace PRISM
             }
             catch (Exception ex)
             {
-                swFilePart?.Close();
+                swFilePart?.Flush();
                 clsProgRunner.GarbageCollectNow();
 
                 throw new IOException("Exception copying file with resume: " + ex.Message, ex);
@@ -1914,7 +1928,7 @@ namespace PRISM
             }
             else
             {
-                CurrentSourceFile = string.Copy(sourceFilePath);
+                CurrentSourceFile = sourceFilePath;
 
                 if (eStatus == CopyStatus.BufferedCopyResume)
                 {
@@ -2128,7 +2142,7 @@ namespace PRISM
 
             for (var intRevision = versionCountToKeep - 1; intRevision >= 0; intRevision += -1)
             {
-                var strBaseNameCurrent = string.Copy(strBaseName);
+                var strBaseNameCurrent = strBaseName;
                 if (intRevision > 0)
                 {
                     strBaseNameCurrent += "_Old" + intRevision.ToString();
@@ -2499,7 +2513,7 @@ namespace PRISM
                 if (!fileDeleted)
                 {
                     // Sleep for 0.5 second (or longer) then try again
-                    Thread.Sleep(sleepTimeMsec);
+                    clsProgRunner.SleepMilliseconds(sleepTimeMsec);
 
                     // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
                     if (sleepTimeMsec < 5)
@@ -2746,7 +2760,7 @@ namespace PRISM
 
                 WaitingForLockQueue?.Invoke(fiSourceFile.FullName, targetFilePath, intMBBacklogSource, intMBBacklogTarget);
 
-                Thread.Sleep(Convert.ToInt32(dblSleepTimeSec) * 1000);
+                clsProgRunner.SleepMilliseconds(Convert.ToInt32(dblSleepTimeSec) * 1000);
 
                 if (WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES))
                 {
