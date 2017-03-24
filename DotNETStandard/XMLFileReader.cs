@@ -782,7 +782,7 @@ namespace PRISM
         /// <param name="strLine">The name of the string to be parse.</param>
         /// <param name="doc">The name of the System.Xml.XmlDocument.</param>
         /// <returns>True if success, false if not a recognized line format</returns>
-        private bool ParseLineManual(string strLine, XmlDocument doc)
+        private void ParseLineManual(string strLine, XmlDocument doc)
         {
             const string SECTION_NAME_TAG = "<section name=";
             const string KEY_TAG = "key=";
@@ -791,7 +791,7 @@ namespace PRISM
             strLine = strLine.TrimStart();
             if (strLine.Length == 0)
             {
-                return true;
+                return;
             }
 
             switch (strLine.Substring(0, 1))
@@ -904,7 +904,6 @@ namespace PRISM
                     break;
             }
 
-            return false;
         }
 
         private bool ParseLineManualCheckTag(string strLine, string strTagTofind, out string strTagValue)
@@ -984,6 +983,7 @@ namespace PRISM
                     }
                     return;
                 }
+
                 if (fi.Exists)
                 {
                     fi.Delete();
@@ -1048,9 +1048,15 @@ namespace PRISM
 
     }
 
+    /// <summary>
+    /// Exception thrown when a method is accessed before the reader has been initialized
+    /// </summary>
     public class XMLFileReaderNotInitializedException : Exception
     {
-        public override string Message => "The XMLFileReader instance has not been properly initialized.";
+        /// <summary>
+        /// Returns a message describing this exception
+        /// </summary>
+        public override string Message { get; } = "The XMLFileReader instance has not been properly initialized.";
     }
 
 }
