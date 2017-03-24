@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Threading;
 
 namespace PRISM
 {
@@ -14,19 +13,41 @@ namespace PRISM
     {
 
         #region "Constants"
+
+        /// <summary>
+        /// Default timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// </summary>
+        public const int DEFAULT_SP_TIMEOUT_SEC = 30;
+
+        #endregion
+
         #region "Member Variables"
 
         // DB access
-        private string m_connection_str;
+        private string m_ConnStr;
 
-        private SqlConnection m_DBCn;
+        private int mTimeoutSeconds;
 
+        #endregion
+
+        #region "Properties"
 
         /// <summary>
-        /// error event delegate
+        /// Timeout length, in seconds, when waiting for a query to finish executing
         /// </summary>
-        /// <param name="errorMessage"></param>
-        public delegate void ErrorEventEventHandler(string errorMessage);
+        public int TimeoutSeconds
+        {
+            get { return mTimeoutSeconds; }
+            set
+            {
+                if (value == 0)
+                    value = DEFAULT_SP_TIMEOUT_SEC;
+                if (value < 10)
+                    value = 10;
+
+                mTimeoutSeconds = value;
+            }
+        }
 
         #endregion
 
@@ -36,7 +57,7 @@ namespace PRISM
         /// <param name="connectionString">Database connection string</param>
         public clsDBTools(string connectionString)
         {
-            m_connection_str = connectionString;
+            m_ConnStr = connectionString;
         }
 
         /// <summary>
@@ -44,41 +65,8 @@ namespace PRISM
         /// </summary>
         public string ConnectStr
         {
-            get { return m_connection_str; }
-            set { m_connection_str = value; }
-        }
-
-        /// <summary>
-        /// The function opens a database connection.
-        /// </summary>
-        /// <return>True if the connection was successfully opened</return>
-        /// <remarks>Retries the connection up to 3 times</remarks>
-        private bool OpenConnection()
-        {
-            var retryCount = 3;
-            var sleepTimeMsec = 300;
-            while (retryCount > 0)
-            {
-                try
-                {
-                    m_DBCn = new SqlConnection(m_connection_str);
-                    m_DBCn.InfoMessage += OnInfoMessage;
-                    m_DBCn.Open();
-                    retryCount = 0;
-                    return true;
-                }
-                catch (SqlException e)
-                {
-                    retryCount -= 1;
-                    m_DBCn.Close();
-                    OnError("Connection problem", e);
-                    Thread.Sleep(sleepTimeMsec);
-                    sleepTimeMsec *= 2;
-                }
-            }
-
-            OnError("Unable to open connection after multiple tries");
-            return false;
+            get { return m_ConnStr; }
+            set { m_ConnStr = value; }
         }
 
         /// <summary>
@@ -160,8 +148,8 @@ namespace PRISM
         /// <param name="lstResults">Results (list of list of strings)</param>
         /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="timeoutSeconds">Query timeout (in seconds); minimum is 5 seconds; suggested value is 30 seconds</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -169,13 +157,20 @@ namespace PRISM
         /// Numbers are converted to their string equivalent
         /// By default, retries the query up to 3 times
         /// </remarks>
-        public bool GetQueryResults(string sqlQuery, out List<List<string>> lstResults, string callingFunction, short retryCount = 3, int timeoutSeconds = 30, int maxRowsToReturn = 0)
+        public bool GetQueryResults(
+            string sqlQuery,
+            out List<List<string>> lstResults,
+            string callingFunction,
+            short retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5)
         {
 
             if (retryCount < 1)
                 retryCount = 1;
-            if (timeoutSeconds < 5)
-                timeoutSeconds = 5;
+
+            if (retryDelaySeconds < 1)
+                retryDelaySeconds = 1;
 
             lstResults = new List<List<string>>();
 
@@ -183,12 +178,14 @@ namespace PRISM
             {
                 try
                 {
-                    using (var dbConnection = new SqlConnection(m_connection_str))
+                    using (var dbConnection = new SqlConnection(m_ConnStr))
                     {
+                        dbConnection.InfoMessage += OnInfoMessage;
+
                         using (var cmd = new SqlCommand(sqlQuery, dbConnection))
                         {
 
-                            cmd.CommandTimeout = timeoutSeconds;
+                            cmd.CommandTimeout = TimeoutSeconds;
 
                             dbConnection.Open();
 
@@ -239,8 +236,8 @@ namespace PRISM
                     OnErrorEvent(errorMessage);
 
                     // Delay for 5 seconds before trying again
-                    Thread.Sleep(5000);
-                    
+                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+
                 }
             }
 
@@ -263,7 +260,7 @@ namespace PRISM
 
             /*
                 // Updates a database table as specified in the SQL statement
-          
+
                 affectedRows = 0;
 
                 // Verify database connection is open

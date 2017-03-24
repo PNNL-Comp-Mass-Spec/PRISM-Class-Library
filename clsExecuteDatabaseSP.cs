@@ -1,7 +1,6 @@
 using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Threading;
 
 namespace PRISM
 {
@@ -48,9 +47,12 @@ namespace PRISM
 
         #region "Module variables"
 
-        protected string m_ConnStr;
+        private string m_ConnStr;
 
-        protected int mTimeoutSeconds = DEFAULT_SP_TIMEOUT_SEC;
+        /// <summary>
+        /// Timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// </summary>
+        private int mTimeoutSeconds = DEFAULT_SP_TIMEOUT_SEC;
 
         #endregion
 
@@ -93,6 +95,7 @@ namespace PRISM
                 mTimeoutSeconds = value;
             }
         }
+
         #endregion
 
         #region "Methods"
@@ -104,7 +107,7 @@ namespace PRISM
         /// <remarks></remarks>
         public clsExecuteDatabaseSP(string connectionString)
         {
-            m_ConnStr = string.Copy(connectionString);
+            m_ConnStr = connectionString;
 
         }
 
@@ -114,7 +117,7 @@ namespace PRISM
         /// <remarks></remarks>
         public clsExecuteDatabaseSP(string connectionString, int timoutSeconds)
         {
-            m_ConnStr = string.Copy(connectionString);
+            m_ConnStr = connectionString;
             mTimeoutSeconds = timoutSeconds;
 
         }
@@ -144,50 +147,36 @@ namespace PRISM
 
         }
 
-
-        /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned; will retry the call to the procedure up to DEFAULT_SP_RETRY_COUNT=3 times
-        /// </summary>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="outTable">If SP successful, contains data table on return</param>
-        /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
-        public int ExecuteSP(SqlCommand spCmd, out DataTable outTable)
-        {
-            return ExecuteSP(spCmd, out outTable, DEFAULT_SP_RETRY_COUNT, DEFAULT_SP_RETRY_DELAY_SEC);
-        }
-
-
-
         /// <summary>
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="outTable">If SP successful, contains data table on return</param>
-        /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="lstResults">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         /// <remarks></remarks>
-        public int ExecuteSP(SqlCommand spCmd, out DataTable outTable, int maxRetryCount, int retryDelaySeconds)
+        public int ExecuteSP(
+            SqlCommand spCmd,
+            out List<List<string>> lstResults,
+            short retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5)
         {
             // If this value is in error msg, then exception occurred before resultCode was set
             var resultCode = -9999;
 
             string errorMessage;
             var dtStartTime = DateTime.UtcNow;
-            var retryCount = maxRetryCount;
 
-            outTable = new DataTable("EmptyTable");
+            lstResults = new List<List<string>>();
 
             if (retryCount < 1)
-            {
                 retryCount = 1;
-            }
 
             if (retryDelaySeconds < 1)
-            {
                 retryDelaySeconds = 1;
-            }
 
             var blnDeadlockOccurred = false;
 
@@ -199,34 +188,47 @@ namespace PRISM
 
                 try
                 {
-                    using (var Cn = new SqlConnection(m_ConnStr))
+                    using (var dbConnection = new SqlConnection(m_ConnStr))
                     {
-                        Cn.InfoMessage += OnInfoMessage;
+                        dbConnection.InfoMessage += OnInfoMessage;
 
-                        using (var Da = new SqlDataAdapter())
-                        using (var Ds = new DataSet())
+                        spCmd.Connection = dbConnection;
+                        spCmd.CommandTimeout = TimeoutSeconds;
+
+                        dbConnection.Open();
+
+                        var reader = spCmd.ExecuteReader();
+
+                        while (reader.Read())
                         {
-                            // NOTE: The connection has to be added here because it didn't exist at the time the command object was created
+                            var lstCurrentRow = new List<string>();
 
+                            for (var columnIndex = 0; columnIndex <= reader.FieldCount - 1; columnIndex++)
                             {
-                                spCmd.Connection = Cn;
+                                var value = reader.GetValue(columnIndex);
 
-                                spCmd.CommandTimeout = TimeoutSeconds;
-                                Da.SelectCommand = spCmd;
-
-                                dtStartTime = DateTime.UtcNow;
-                                Da.Fill(Ds);
-
-                                resultCode = Convert.ToInt32(Da.SelectCommand.Parameters["@Return"].Value);
-
-                                if (Ds.Tables.Count > 0)
+                                if (DBNull.Value.Equals(value))
                                 {
-                                    outTable = Ds.Tables[0];
+                                    lstCurrentRow.Add(string.Empty);
                                 }
+                                else
+                                {
+                                    lstCurrentRow.Add(value.ToString());
+                                }
+
+                            }
+
+                            lstResults.Add(lstCurrentRow);
+
+                            if (maxRowsToReturn > 0 && lstResults.Count >= maxRowsToReturn)
+                            {
+                                break;
                             }
                         }
 
-                        Cn.InfoMessage -= OnInfoMessage;
+                        if (spCmd.Parameters.Contains("@Return"))
+                            resultCode = Convert.ToInt32(spCmd.Parameters["@Return"].Value);
+
                     }
                     success = true;
                 }
@@ -265,7 +267,7 @@ namespace PRISM
 
                 if (retryCount > 0)
                 {
-                    Thread.Sleep(retryDelaySeconds * 1000);
+                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
@@ -279,8 +281,7 @@ namespace PRISM
                 }
                 errorMessage += " executing SP " + spCmd.CommandText;
 
-                OnError(errorMessage);
-                Console.WriteLine(errorMessage);
+                OnErrorEvent(errorMessage);
 
                 if (blnDeadlockOccurred)
                 {
@@ -365,7 +366,7 @@ namespace PRISM
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, out string errorMessage, int retryDelaySeconds)
         {
 
-            // If this value is in error msg, then exception occurred before resultCode was set			
+            // If this value is in error msg, then exception occurred before resultCode was set
             var resultCode = -9999;
 
             var dtStartTime = DateTime.UtcNow;
@@ -438,7 +439,7 @@ namespace PRISM
 
                 if (retryCount > 0)
                 {
-                    Thread.Sleep(retryDelaySeconds * 1000);
+                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
