@@ -57,7 +57,7 @@ namespace PRISM
             while ((zipper.State != clsProgRunner.States.NotMonitoring))
             {
                 m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
-                System.Threading.Thread.Sleep(m_WaitInterval);
+                clsProgRunner.SleepMilliseconds(m_WaitInterval);
             }
 
             // Check for valid return value after completion
@@ -122,7 +122,7 @@ namespace PRISM
             while ((zipper.State != clsProgRunner.States.NotMonitoring))
             {
                 m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
-                System.Threading.Thread.Sleep(m_WaitInterval);
+                clsProgRunner.SleepMilliseconds(m_WaitInterval);
             }
 
             // Check for valid return value after completion
@@ -232,7 +232,7 @@ namespace PRISM
             while ((zipper.State != clsProgRunner.States.NotMonitoring))
             {
                 m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
-                System.Threading.Thread.Sleep(m_WaitInterval);
+                clsProgRunner.SleepMilliseconds(m_WaitInterval);
             }
 
             // Check for valid return value after completion
