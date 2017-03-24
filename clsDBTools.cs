@@ -110,36 +110,49 @@ namespace PRISM
         /// <summary>
         /// The function gets a disconnected dataset as specified by the SQL statement.
         /// </summary>
-        /// <param name="SQL">A SQL string.</param>
+        /// <param name="sqlQuery">A SQL string.</param>
         /// <param name="DS">A dataset.</param>
         /// <param name="rowCount">A row counter.</param>
         /// <return>Returns a disconnected dataset as specified by the SQL statement.</return>
-        public bool GetDiscDataSet(string SQL, ref DataSet DS, ref int rowCount)
+        [Obsolete("Use GetQueryResults since support for DataSet objects is dropped in .NET Standard")]
+        public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
+            var retryCount = 3;
+            var retryDelaySeconds = 5;
 
-            // Verify database connection is open
-            if (!OpenConnection())
-                return false;
+            while (retryCount > 0)
+            {
+                try
+                {
+                    using (var dbConnection = new SqlConnection(m_ConnStr))
+                    {
+                        dbConnection.InfoMessage += OnInfoMessage;
 
-            try
-            {
-                // Get the dataset
-                var adapter = new SqlDataAdapter(SQL, m_DBCn);
-                DS = new DataSet();
-                rowCount = adapter.Fill(DS);
-                return true;
+                        // Get the dataset
+                        var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
+                        DS = new DataSet();
+                        rowCount = adapter.Fill(DS);
+                        return true;
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    retryCount -= 1;
+                    var errorMessage =
+                        string.Format("Exception querying database ({0}; " + "ConnectionString: {1}, RetryCount = {2}, Query {3}",
+                                      ex.Message, m_ConnStr, retryCount, sqlQuery);
+
+                    OnErrorEvent(errorMessage);
+
+                    // Delay for 5 seconds before trying again
+                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+
+                }
             }
-            catch (Exception ex)
-            {
-                // If error happened, log it
-                OnError("Error reading database", ex);
-                return false;
-            }
-            finally
-            {
-                // Be sure connection is closed
-                m_DBCn.Close();
-            }
+
+            return false;
 
         }
 
