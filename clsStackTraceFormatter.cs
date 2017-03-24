@@ -153,12 +153,12 @@ namespace PRISM
 
                     if (fileMatch.Success) {
                         currentFunctionFile = fileMatch.Groups[1].Value;
-                        if (strFinalFile.Length == 0) {
+                        if (strFinalFile != null && strFinalFile.Length == 0) {
                             var lineMatchFinalFile = reLineInCode.Match(currentFunctionFile);
                             if (lineMatchFinalFile.Success) {
                                 strFinalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index);
                             } else {
-                                strFinalFile = string.Copy(currentFunctionFile);
+                                strFinalFile = currentFunctionFile;
                             }
                         }
                     } else {
@@ -186,10 +186,12 @@ namespace PRISM
 
                     }
 
-                    var functionDescription = string.Copy(strCurrentFunction);
+                    var functionDescription = strCurrentFunction;
 
                     if (!string.IsNullOrEmpty(currentFunctionFile)) {
-                        if (string.IsNullOrEmpty(strFinalFile) || !TrimLinePrefix(strFinalFile, CODE_LINE_PREFIX).Equals(TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.InvariantCulture)) {
+                        if (string.IsNullOrEmpty(strFinalFile) ||
+                            !TrimLinePrefix(strFinalFile, CODE_LINE_PREFIX).Equals(TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.OrdinalIgnoreCase))
+                        {
                             functionDescription += FINAL_FILE_PREFIX + currentFunctionFile;
                         }
                     }
