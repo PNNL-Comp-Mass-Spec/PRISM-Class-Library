@@ -1,6 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
-using PRISM;
+using PRISMWin;
 
 namespace PRISMTest
 {
@@ -29,7 +29,7 @@ namespace PRISMTest
                 foreach (var installedVersion in majorVersion.Value)
                     Console.WriteLine(installedVersion);
             }
-            
+
         }
     }
 }
