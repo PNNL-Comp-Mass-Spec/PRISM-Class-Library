@@ -8,9 +8,6 @@ namespace PRISM
     /// This class can be used to read or write settings in an Xml settings file
     ///   Based on a class from the DMS Analysis Manager software written by Dave Clark and Gary Kiebel (PNNL, Richland, WA)
     ///   Additional features added by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in October 2003
-    /// Updated in October 2004 to truly be case-insensitive if isCaseSensitive = False when calling LoadSettings()
-    /// Updated in August 2007 to remove the PRISM.Logging functionality and to include class XMLFileReader inside class XmlSettingsFileAccessor
-    /// Updated in December 2010 to rename vars from Ini to XML
     /// </summary>
     public class XmlSettingsFileAccessor
     {
@@ -323,7 +320,7 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as a String.</return>
+        /// <return>The function returns the name of the "value" attribute as a string.</return>
         public string GetParam(string sectionName, string keyName, string valueIfMissing, out bool valueNotPresent)
         {
             var strResult = string.Empty;
@@ -388,42 +385,91 @@ namespace PRISM
             return false;
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>A short</returns>
         public short GetParam(string sectionName, string keyName, short valueIfMissing)
         {
             bool valueNotPresent;
             return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>An integer</returns>
         public int GetParam(string sectionName, string keyName, int valueIfMissing)
         {
             bool valueNotPresent;
             return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>A long</returns>
         public long GetParam(string sectionName, string keyName, long valueIfMissing)
         {
             bool valueNotPresent;
             return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>A float</returns>
         public float GetParam(string sectionName, string keyName, float valueIfMissing)
         {
             bool valueNotPresent;
             return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>A double</returns>
         public double GetParam(string sectionName, string keyName, double valueIfMissing)
         {
             bool valueNotPresent;
             return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>A string</returns>
         public string GetParam(string sectionName, string keyName, string valueIfMissing)
         {
             bool valueNotPresent;
             return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
         }
 
+        /// <summary>
+        /// Get the value for a given parameter in a given section
+        /// </summary>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Parameter name</param>
+        /// <param name="valueIfMissing">Value if missing</param>
+        /// <returns>A boolean</returns>
         public bool GetParam(string sectionName, string keyName, bool valueIfMissing)
         {
             bool valueNotPresent;
@@ -437,7 +483,10 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as a Short.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+        /// <return>
+        /// The function returns the name of the "value" attribute as a short.
+        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
+        /// </return>
         public short GetParam(string sectionName, string keyName, short valueIfMissing, out bool valueNotPresent)
         {
             bool blnNotFound;
@@ -485,7 +534,10 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as an Integer.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+        /// <return>
+        /// The function returns the name of the "value" attribute as an integer.
+        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
+        /// </return>
         public int GetParam(string sectionName, string keyName, int valueIfMissing, out bool valueNotPresent)
         {
             bool blnNotFound;
@@ -533,7 +585,10 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as a Long.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+        /// <return>
+        /// The function returns the name of the "value" attribute as a long.
+        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
+        /// </return>
         public long GetParam(string sectionName, string keyName, long valueIfMissing, out bool valueNotPresent)
         {
             bool blnNotFound;
@@ -581,7 +636,10 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as a Single.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+        /// <return>
+        /// The function returns the name of the "value" attribute as a float.
+        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
+        /// </return>
         public float GetParam(string sectionName, string keyName, float valueIfMissing, out bool valueNotPresent)
         {
             bool blnNotFound;
@@ -629,7 +687,10 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
         /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as a Double.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+        /// <return>
+        /// The function returns the name of the "value" attribute as a double.
+        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
+        /// </return>
         public double GetParam(string sectionName, string keyName, double valueIfMissing, out bool valueNotPresent)
         {
             bool blnNotFound;
