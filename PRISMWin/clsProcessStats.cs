@@ -8,7 +8,10 @@ using System.Threading;
 
 namespace PRISMWin
 {
-    class clsProcessStats
+    /// <summary>
+    /// Monitor running processes to determine CPU usage
+    /// </summary>
+    public class clsProcessStats
     {
 
         /// <summary>

@@ -6,19 +6,18 @@
     <members>
         <member name="T:PRISM.clsDBTools">
             <summary>
-            Tools to manipulates the database.
+            Tools to retrieve data from a database
             </summary>
         </member>
-        <member name="E:PRISM.clsDBTools.ErrorEvent">
+        <member name="F:PRISM.clsDBTools.DEFAULT_SP_TIMEOUT_SEC">
             <summary>
-            Error event
+            Default timeout length, in seconds, when waiting for a stored procedure to finish executing
             </summary>
         </member>
-        <member name="T:PRISM.clsDBTools.ErrorEventEventHandler">
+        <member name="P:PRISM.clsDBTools.TimeoutSeconds">
             <summary>
-            error event delegate
+            Timeout length, in seconds, when waiting for a query to finish executing
             </summary>
-            <param name="errorMessage"></param>
         </member>
         <member name="M:PRISM.clsDBTools.#ctor(System.String)">
             <summary>
@@ -30,13 +29,6 @@
             <summary>
             The property sets and gets a connection string.
             </summary>
-        </member>
-        <member name="M:PRISM.clsDBTools.OpenConnection">
-            <summary>
-            The function opens a database connection.
-            </summary>
-            <return>True if the connection was successfully opened</return>
-            <remarks>Retries the connection up to 3 times</remarks>
         </member>
         <member name="M:PRISM.clsDBTools.OnInfoMessage(System.Object,System.Data.SqlClient.SqlInfoMessageEventArgs)">
             <summary>
@@ -50,7 +42,7 @@
             <summary>
             The function gets a disconnected dataset as specified by the SQL statement.
             </summary>
-            <param name="SQL">A SQL string.</param>
+            <param name="sqlQuery">A SQL string.</param>
             <param name="DS">A dataset.</param>
             <param name="rowCount">A row counter.</param>
             <return>Returns a disconnected dataset as specified by the SQL statement.</return>
@@ -63,8 +55,8 @@
             <param name="lstResults">Results (list of list of strings)</param>
             <param name="callingFunction">Name of the calling function (for logging purposes)</param>
             <param name="retryCount">Number of times to retry (in case of a problem)</param>
-            <param name="timeoutSeconds">Query timeout (in seconds); minimum is 5 seconds; suggested value is 30 seconds</param>
             <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+            <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
             <returns>True if success, false if an error</returns>
             <remarks>
             Uses the connection string passed to the constructor of this class
@@ -229,6 +221,11 @@
             Tools to execute a stored procedure
             </summary>
         </member>
+        <member name="F:PRISM.clsExecuteDatabaseSP.RET_VAL_OK">
+            <summary>
+            Return value indicating everything is ok
+            </summary>
+        </member>
         <member name="F:PRISM.clsExecuteDatabaseSP.RET_VAL_EXCESSIVE_RETRIES">
             <summary>
             Typically caused by timeout expired
@@ -237,6 +234,41 @@
         <member name="F:PRISM.clsExecuteDatabaseSP.RET_VAL_DEADLOCK">
             <summary>
             Typically caused by transaction (Process ID 143) was deadlocked on lock resources with another process and has been chosen as the deadlock victim
+            </summary>
+        </member>
+        <member name="F:PRISM.clsExecuteDatabaseSP.DEFAULT_SP_RETRY_COUNT">
+            <summary>
+            Default number of times to retry calling the stored prcoedure
+            </summary>
+        </member>
+        <member name="F:PRISM.clsExecuteDatabaseSP.DEFAULT_SP_RETRY_DELAY_SEC">
+            <summary>
+            Default delay, in seconds, when retrying a stored procedure call
+            </summary>
+        </member>
+        <member name="F:PRISM.clsExecuteDatabaseSP.DEFAULT_SP_TIMEOUT_SEC">
+            <summary>
+            Default timeout length, in seconds, when waiting for a stored procedure to finish executing
+            </summary>
+        </member>
+        <member name="F:PRISM.clsExecuteDatabaseSP.mTimeoutSeconds">
+            <summary>
+            Timeout length, in seconds, when waiting for a stored procedure to finish executing
+            </summary>
+        </member>
+        <member name="P:PRISM.clsExecuteDatabaseSP.DBconnectionString">
+            <summary>
+            Database connection string
+            </summary>
+        </member>
+        <member name="P:PRISM.clsExecuteDatabaseSP.DebugMessagesEnabled">
+            <summary>
+            Set to True to raise debug events
+            </summary>
+        </member>
+        <member name="P:PRISM.clsExecuteDatabaseSP.TimeoutSeconds">
+            <summary>
+            Timeout length, in seconds, when waiting for a stored procedure to finish executing
             </summary>
         </member>
         <member name="M:PRISM.clsExecuteDatabaseSP.#ctor(System.String)">
@@ -259,22 +291,14 @@
             <param name="args"></param>
             <remarks>Errors and warnings from SQL Server are caught here</remarks>
         </member>
-        <member name="M:PRISM.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Data.DataTable@)">
-            <summary>
-            Method for executing a db stored procedure if a data table is to be returned; will retry the call to the procedure up to DEFAULT_SP_RETRY_COUNT=3 times
-            </summary>
-            <param name="spCmd">SQL command object containing stored procedure params</param>
-            <param name="outTable">If SP successful, contains data table on return</param>
-            <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:PRISM.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Data.DataTable@,System.Int32,System.Int32)">
+        <member name="M:PRISM.clsExecuteDatabaseSP.ExecuteSP(System.Data.SqlClient.SqlCommand,System.Collections.Generic.List{System.Collections.Generic.List{System.String}}@,System.Int16,System.Int32,System.Int32)">
             <summary>
             Method for executing a db stored procedure if a data table is to be returned
             </summary>
             <param name="spCmd">SQL command object containing stored procedure params</param>
-            <param name="outTable">If SP successful, contains data table on return</param>
-            <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+            <param name="lstResults">If SP successful, contains Results (list of list of strings)</param>
+            <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
+            <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
             <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
             <returns>Result code returned by SP; -1 if unable to execute SP</returns>
             <remarks></remarks>
@@ -332,9 +356,49 @@
             This class runs a single program as an external process and monitors it with an internal thread
             </summary>
         </member>
+        <member name="F:PRISM.clsProgRunner.DEFAULT_MONITOR_INTERVAL_MSEC">
+            <summary>
+            Default monitoring interval, in milliseconds
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.MINIMUM_MONITOR_INTERVAL_MSEC">
+            <summary>
+            Minimum monitoring interval, in milliseconds
+            </summary>
+        </member>
         <member name="T:PRISM.clsProgRunner.States">
             <summary>
             clsProgRunner states
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.States.NotMonitoring">
+            <summary>
+            Not Monitoring
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.States.Monitoring">
+            <summary>
+            Monitoring
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.States.Waiting">
+            <summary>
+            Waiting
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.States.CleaningUp">
+            <summary>
+            Cleaning up
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.States.Initializing">
+            <summary>
+            Initializing
+            </summary>
+        </member>
+        <member name="F:PRISM.clsProgRunner.States.StartingProcess">
+            <summary>
+            Starting the process
             </summary>
         </member>
         <member name="F:PRISM.clsProgRunner.m_ExceptionLogger">
@@ -362,19 +426,10 @@
             The process id of the currently running incarnation of the external program
             </summary>
         </member>
-        <member name="F:PRISM.clsProgRunner.m_processIdInstanceName">
+        <member name="F:PRISM.clsProgRunner.m_CancellationToken">
             <summary>
-            The instance name of the most recent performance counter used by GetCoreUsageByProcessID
+            Thread cancellation token
             </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:PRISM.clsProgRunner.m_Thread">
-            <summary>
-            The internal thread used to run the monitoring code
-            </summary>
-            <remarks>
-            That starts and monitors the external program
-            </remarks>
         </member>
         <member name="F:PRISM.clsProgRunner.m_doCleanup">
             <summary>
@@ -403,34 +458,38 @@
             Caches the text written to the Error buffer by the external program
             </summary>
         </member>
-        <member name="F:PRISM.clsProgRunner.mCachedCoreCount">
-            <summary>
-            Number of cores on this computer
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="F:PRISM.clsProgRunner.mCachedPerfCounters">
-            <summary>
-            Maps processId to a PerformanceCounter instance
-            </summary>
-            <remarks>The KeyValuePair tracks the performance counter instance name (could be empty string) and the PerformanceCounter instance</remarks>
-        </member>
         <member name="E:PRISM.clsProgRunner.ProgChanged">
             <summary>
             This event is raised at regular intervals while monitoring the program
             </summary>
             <remarks>Raised every m_monitorInterval milliseconds</remarks>
         </member>
+        <member name="T:PRISM.clsProgRunner.ProgChangedEventHandler">
+            <summary>
+            Progress changed event delegate
+            </summary>
+            <param name="obj"></param>
+        </member>
+        <member name="E:PRISM.clsProgRunner.ConsoleOutputEvent">
+            <summary>
+            This event is raised when new text is written to the console
+            </summary>
+        </member>
         <member name="T:PRISM.clsProgRunner.ConsoleOutputEventEventHandler">
             <summary>
-            This event is raised when the external program writes text to the console
+            Console output event delegate
             </summary>
             <param name="NewText"></param>
             <remarks></remarks>
         </member>
-        <member name="T:PRISM.clsProgRunner.ConsoleErrorEventEventHandler">
+        <member name="E:PRISM.clsProgRunner.ConsoleErrorEvent">
             <summary>
             This event is raised when the external program writes text to the console's error stream
+            </summary>
+        </member>
+        <member name="T:PRISM.clsProgRunner.ConsoleErrorEventEventHandler">
+            <summary>
+            Console error event delegate
             </summary>
             <param name="NewText"></param>
             <remarks></remarks>
@@ -477,7 +536,7 @@
         </member>
         <member name="P:PRISM.clsProgRunner.EchoOutputToConsole">
             <summary>
-            When true, then echoes, in real time, text written to the Console by the external program 
+            When true, then echoes, in real time, text written to the Console by the external program
             Ignored if CreateNoWindow = False
             </summary>
         </member>
@@ -568,18 +627,6 @@
             </summary>
             <remarks></remarks>
         </member>
-        <member name="M:PRISM.clsProgRunner.ClearCachedPerformanceCounters">
-            <summary>
-            Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
-            </summary>
-            <remarks></remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.ClearCachedPerformanceCounterForProcessID(System.Int32)">
-            <summary>
-            Clear the performance counter cached for the given Process ID
-            </summary>
-            <remarks></remarks>
-        </member>
         <member name="M:PRISM.clsProgRunner.ClearCachedConsoleError">
             <summary>
             Clears any console error text that is currently cached
@@ -615,94 +662,10 @@
             <returns></returns>
             <remarks>Before calling this function, define WorkDir (working directory folder) and Program (full path to the .exe to run)</remarks>
         </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreCount">
+        <member name="M:PRISM.clsProgRunner.JoinThreadNow">
             <summary>
-            Returns the number of cores
+            Attempt to re-join the thread running the external process
             </summary>
-            <returns>The number of cores on this computer</returns>
-            <remarks>Should not be affected by hyperthreading, so a computer with two 4-core chips will report 8 cores</remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreUsage">
-            <summary>
-            Reports the number of cores in use by the program started with StartAndMonitorProgram
-            This method takes at least 1000 msec to execute
-            </summary>
-            <returns>Number of cores in use; -1 if an error</returns>
-            <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreUsageByProcessID(System.Int32)">
-            <summary>
-            Reports the number of cores in use by the given process
-            This method takes at least 1000 msec to execute
-            </summary>
-            <param name="processId">Process ID for the program</param>
-            <returns>Number of cores in use; 0 if the process is terminated.  Exception is thrown if a problem</returns>
-            <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreUsageByProcessID(System.Int32,System.String@)">
-            <summary>
-            Reports the number of cores in use by the given process
-            This method takes at least 1000 msec to execute
-            </summary>
-            <param name="processId">Process ID for the program</param>
-            <param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
-            <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
-            <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreUsageForPerfCounter(System.Diagnostics.PerformanceCounter,System.Int32)">
-            <summary>
-            Sample the given performance counter to determine the CPU usage
-            </summary>
-            <param name="perfCounter">Performance counter instance</param>
-            <param name="maxAttempts">Number of attempts</param>
-            <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
-            <remarks>
-            The first time perfCounter.NextSample() is called a Permissions exception is sometimes thrown
-            Set maxAttempts to 2 or higher to gracefully handle this
-            </remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreUsageByProcessName(System.String)">
-            <summary>
-            Reports the number of cores in use by the given process
-            This method takes at least 1000 msec to execute
-            </summary>
-            <param name="processName">Process name, for example chrome (do not include .exe)</param>
-            <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
-            <remarks>
-            Core count is typically an integer, but can be a fractional number if not using a core 100%
-            If multiple processes are running with the given name then returns the total core usage for all of them
-            </remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetCoreUsageByProcessName(System.String,System.Collections.Generic.List{System.Int32}@)">
-            <summary>
-            Reports the number of cores in use by the given process
-            This method takes at least 1000 msec to execute
-            </summary>
-            <param name="processName">Process name, for example chrome (do not include .exe)</param>
-            <param name="processIDs">List of ProcessIDs matching the given process name</param>
-            <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
-            <remarks>
-            Core count is typically an integer, but can be a fractional number if not using a core 100%
-            If multiple processes are running with the given name then returns the total core usage for all of them
-            </remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetPerfCounterForProcessID(System.Int32,System.String@,System.String)">
-            <summary>
-            Obtain the performance counter for the given process
-            </summary>
-            <param name="processId">Process ID</param>
-            <param name="instanceName">Output: instance name corresponding to processId</param>
-            <param name="processCounterName">Performance counter to return</param>
-            <returns></returns>
-            <remarks></remarks>
-        </member>
-        <member name="M:PRISM.clsProgRunner.GetInstanceNameForProcessId(System.Int32)">
-            <summary>
-            Get the specific Windows instance name for a program
-            </summary>
-            <param name="processId">Process ID</param>
-            <returns>Instance name if found, otherwise an empty string</returns>
-            <remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
         </member>
         <member name="M:PRISM.clsProgRunner.RegisterExceptionLogger(PRISM.ILogger)">
             <summary>
@@ -714,7 +677,19 @@
             Sets the name of the event logger
             </summary>
         </member>
-        <member name="M:PRISM.clsProgRunner.StartProcess">
+        <member name="M:PRISM.clsProgRunner.SleepMilliseconds(System.Int32)">
+            <summary>
+            Pause program execution for the specific number of milliseconds
+            </summary>
+            <param name="sleepTimeMsec">Value between 10 and 10000 (i.e. between 10 msec and 10 seconds)</param>
+        </member>
+        <member name="M:PRISM.clsProgRunner.SleepMillisecondsAsync(System.Int32)">
+            <summary>
+            Pause program execution for the specific number of milliseconds
+            </summary>
+            <param name="sleepTimeMsec">Value between 10 and 10000 (i.e. between 10 msec and 10 seconds)</param>
+        </member>
+        <member name="M:PRISM.clsProgRunner.StartProcess(System.Object)">
             <summary>
             Start program as external process and monitor its state
             </summary>
@@ -724,6 +699,12 @@
             Creates a new thread and starts code that runs and monitors a program in it
             </summary>
         </member>
+        <member name="M:PRISM.clsProgRunner.StartingOrMonitoring">
+            <summary>
+            Return True if the program is starting or running
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:PRISM.clsProgRunner.StopMonitoringProgram(System.Boolean)">
             <summary>
             Causes monitoring thread to exit on its next monitoring cycle
@@ -732,7 +713,7 @@
         <member name="T:PRISM.clsStackTraceFormatter">
             <summary>
             This class produces an easier-to read stack trace for an exception
-            See the descriptions for functions GetExceptionStackTrace and 
+            See the descriptions for functions GetExceptionStackTrace and
             GetExceptionStackTraceMultiLine for example text
             </summary>
             <remarks></remarks>
@@ -755,10 +736,10 @@
             </summary>
             <param name="ex">Exception</param>
             <returns>
-            Stack trace: 
+            Stack trace:
               clsCodeTest.Test
               clsCodeTest.TestException
-              clsCodeTest.InnerTestException 
+              clsCodeTest.InnerTestException
                in clsCodeTest.vb:line 86
             </returns>
             <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
@@ -772,7 +753,7 @@
             List of function names; for example:
               clsCodeTest.Test
               clsCodeTest.TestException
-              clsCodeTest.InnerTestException 
+              clsCodeTest.InnerTestException
                in clsCodeTest.vb:line 86
             </returns>
             <remarks></remarks>
@@ -786,7 +767,7 @@
             List of function names; for example:
               clsCodeTest.Test
               clsCodeTest.TestException
-              clsCodeTest.InnerTestException 
+              clsCodeTest.InnerTestException
                in clsCodeTest.vb:line 86
             </returns>
             <remarks></remarks>
@@ -1407,7 +1388,7 @@
             <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
             <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
             <param name="fileNamesToSkip">
-            List of file names to skip when copying the directory (and subdirectories); 
+            List of file names to skip when copying the directory (and subdirectories);
             can optionally contain full path names to skip</param>
             <param name="managerName"></param>
         </member>
@@ -1424,7 +1405,7 @@
             <param name="setAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
             <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
             <param name="fileNamesToSkip">
-            List of file names to skip when copying the directory (and subdirectories); 
+            List of file names to skip when copying the directory (and subdirectories);
             can optionally contain full path names to skip</param>
             <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
         </member>
@@ -1462,7 +1443,7 @@
         </member>
         <member name="M:PRISM.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.clsFileTools.FileOverwriteMode,System.Collections.Generic.List{System.String})">
             <summary>
-            Copies a source directory to the destination directory. 
+            Copies a source directory to the destination directory.
             overWrite behavior is governed by fileOverwriteMode
             Copies large files in chunks and allows resuming copying a large file if interrupted.
             </summary>
@@ -1476,7 +1457,7 @@
         </member>
         <member name="M:PRISM.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.clsFileTools.FileOverwriteMode,System.Int32@,System.Int32@,System.Int32@)">
             <summary>
-            Copies a source directory to the destination directory. 
+            Copies a source directory to the destination directory.
             overWrite behavior is governed by fileOverwriteMode
             Copies large files in chunks and allows resuming copying a large file if interrupted.
             </summary>
@@ -1492,7 +1473,7 @@
         </member>
         <member name="M:PRISM.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.clsFileTools.FileOverwriteMode,System.Collections.Generic.List{System.String},System.Int32@,System.Int32@,System.Int32@)">
             <summary>
-            Copies a source directory to the destination directory. 
+            Copies a source directory to the destination directory.
             overWrite behavior is governed by fileOverwriteMode
             Copies large files in chunks and allows resuming copying a large file if interrupted.
             </summary>
@@ -1509,7 +1490,7 @@
         </member>
         <member name="M:PRISM.clsFileTools.CopyDirectoryWithResume(System.String,System.String,System.Boolean,PRISM.clsFileTools.FileOverwriteMode,System.Boolean,System.Boolean,System.Collections.Generic.List{System.String},System.Int32@,System.Int32@,System.Int32@)">
             <summary>
-            Copies a source directory to the destination directory. 
+            Copies a source directory to the destination directory.
             overWrite behavior is governed by fileOverwriteMode
             Copies large files in chunks and allows resuming copying a large file if interrupted.
             </summary>
@@ -1779,7 +1760,7 @@
             Defines the logging aware interface.
             </summary>
             <remarks>
-            This interface is used by any class that wants to optionally support 
+            This interface is used by any class that wants to optionally support
             logging to a logger that implements the ILogger interface.  The key
             here is the phrase optionally.  The class allows, but does not
             require the class user to supply an ILogger.  If the Logger is not
@@ -1839,10 +1820,10 @@
             </summary>
             <param name="ex">Exception</param>
             <returns>
-            Stack trace: 
+            Stack trace:
               clsCodeTest.Test
               clsCodeTest.TestException
-              clsCodeTest.InnerTestException 
+              clsCodeTest.InnerTestException
                in clsCodeTest.vb:line 86
             </returns>
             <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
@@ -1942,6 +1923,11 @@
             Provides logging to a database and local file.
             </summary>
             <remarks>The module name identifies the logging process; if not defined, will use MachineName:UserName</remarks>
+        </member>
+        <member name="F:PRISM.clsDBLogger.m_error_list">
+            <summary>
+            List of database errors
+            </summary>
         </member>
         <member name="F:PRISM.clsDBLogger.m_moduleName">
             <summary>
@@ -2075,12 +2061,7 @@
             </summary>
             <param name="logger">The target logger object.</param>
         </member>
-        <member name="M:PRISM.clsQueLogger.KickTheOutputThread">
-            <summary>
-            Start the log output thread if it isn't already running.
-            </summary>
-        </member>
-        <member name="M:PRISM.clsQueLogger.LogFromQueue">
+        <member name="M:PRISM.clsQueLogger.LogFromQueue(System.Object)">
             <summary>
             Pull all entries from the queue and output them to the log streams.
             </summary>
@@ -2201,14 +2182,13 @@
             Tools for manipulating XML settings files
             </summary>
         </member>
-        <member name="M:PRISM.XMLFileReader.#ctor(System.String,System.Boolean,System.Boolean,System.Boolean)">
+        <member name="M:PRISM.XMLFileReader.#ctor(System.String,System.Boolean,System.Boolean)">
             <summary>
             Initializes a new instance of the XMLFileReader (non case-sensitive)
             </summary>
             <param name="xmlFilename">The name of the XML file.</param>
             <param name="isCaseSensitive"></param>
             <param name="notifyOnException">When true, raise event InformationMessage if an exception occurs</param>
-            <param name="notifyOnEvent">When true, raise event InformationMessage when the XML file is saved</param>
         </member>
         <member name="P:PRISM.XMLFileReader.IniFilename">
             <summary>
@@ -2473,14 +2453,21 @@
             </summary>
             <return>It returns the XML document formatted as a string.</return>
         </member>
+        <member name="T:PRISM.XMLFileReaderNotInitializedException">
+            <summary>
+            Exception thrown when a method is accessed before the reader has been initialized
+            </summary>
+        </member>
+        <member name="P:PRISM.XMLFileReaderNotInitializedException.Message">
+            <summary>
+            Returns a message describing this exception
+            </summary>
+        </member>
         <member name="T:PRISM.XmlSettingsFileAccessor">
             <summary>
             This class can be used to read or write settings in an Xml settings file
               Based on a class from the DMS Analysis Manager software written by Dave Clark and Gary Kiebel (PNNL, Richland, WA)
               Additional features added by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in October 2003
-            Updated in October 2004 to truly be case-insensitive if isCaseSensitive = False when calling LoadSettings()
-            Updated in August 2007 to remove the PRISM.Logging functionality and to include class XMLFileReader inside class XmlSettingsFileAccessor
-            Updated in December 2010 to rename vars from Ini to XML
             </summary>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.#ctor">
@@ -2509,6 +2496,13 @@
             <param name="isCaseSensitive">Case sensitive names if True. Non-case sensitive if false.</param>
             <remarks>If case sensitive names are in place, all section and key names must be lowercase</remarks>
         </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.ManualParseXmlOrIniFile(System.String)">
+            <summary>
+            Parse an XML settings file
+            </summary>
+            <param name="strFilePath"></param>
+            <returns></returns>
+        </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.SaveSettings">
             <summary>
             Saves the settings for the defined Xml Settings File.  Note that you must call LoadSettings to initialize the class prior to setting any values.
@@ -2530,7 +2524,7 @@
             <param name="keyName">The name of the key.</param>
             <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-            <return>The function returns the name of the "value" attribute as a String.</return>
+            <return>The function returns the name of the "value" attribute as a string.</return>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Boolean,System.Boolean@)">
             <summary>
@@ -2542,6 +2536,69 @@
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
             <return>The function returns boolean True if the "value" attribute is "true".  Otherwise, returns boolean False.</return>
         </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Int16)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>A short</returns>
+        </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Int32)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>An integer</returns>
+        </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Int64)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>A long</returns>
+        </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Single)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>A float</returns>
+        </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Double)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>A double</returns>
+        </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.String)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>A string</returns>
+        </member>
+        <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Boolean)">
+            <summary>
+            Get the value for a given parameter in a given section
+            </summary>
+            <param name="sectionName">Section name</param>
+            <param name="keyName">Parameter name</param>
+            <param name="valueIfMissing">Value if missing</param>
+            <returns>A boolean</returns>
+        </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Int16,System.Boolean@)">
             <summary>
             The function gets the name of the "value" attribute in section "sectionName".
@@ -2550,7 +2607,10 @@
             <param name="keyName">The name of the key.</param>
             <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-            <return>The function returns the name of the "value" attribute as a Short.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+            <return>
+            The function returns the name of the "value" attribute as a short.
+            If "value" is "true" returns -1.  If "value" is "false" returns 0.
+            </return>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Int32,System.Boolean@)">
             <summary>
@@ -2560,7 +2620,10 @@
             <param name="keyName">The name of the key.</param>
             <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-            <return>The function returns the name of the "value" attribute as an Integer.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+            <return>
+            The function returns the name of the "value" attribute as an integer.
+            If "value" is "true" returns -1.  If "value" is "false" returns 0.
+            </return>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Int64,System.Boolean@)">
             <summary>
@@ -2570,7 +2633,10 @@
             <param name="keyName">The name of the key.</param>
             <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-            <return>The function returns the name of the "value" attribute as a Long.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+            <return>
+            The function returns the name of the "value" attribute as a long.
+            If "value" is "true" returns -1.  If "value" is "false" returns 0.
+            </return>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Single,System.Boolean@)">
             <summary>
@@ -2580,7 +2646,10 @@
             <param name="keyName">The name of the key.</param>
             <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-            <return>The function returns the name of the "value" attribute as a Single.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+            <return>
+            The function returns the name of the "value" attribute as a float.
+            If "value" is "true" returns -1.  If "value" is "false" returns 0.
+            </return>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.GetParam(System.String,System.String,System.Double,System.Boolean@)">
             <summary>
@@ -2590,7 +2659,10 @@
             <param name="keyName">The name of the key.</param>
             <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
             <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-            <return>The function returns the name of the "value" attribute as a Double.  If "value" is "true" returns -1.  If "value" is "false" returns 0.</return>
+            <return>
+            The function returns the name of the "value" attribute as a double.
+            If "value" is "true" returns -1.  If "value" is "false" returns 0.
+            </return>
         </member>
         <member name="M:PRISM.XmlSettingsFileAccessor.SetIniFilePath(System.String)">
             <summary>
