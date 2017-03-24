@@ -613,6 +613,38 @@ namespace PRISM
     }
     #endregion
 
+    #region "Log Entry Class"
+
+    /// <summary>
+    /// A class to hold a log entry
+    /// </summary>
+    public class clsLogEntry
+    {
+        /// <summary>
+        /// Log message
+        /// </summary>
+        public string Message;
+
+        /// <summary>
+        /// Log message type
+        /// </summary>
+        public logMsgType EntryType;
+
+        /// <summary>
+        /// When true, log to the local file but not to the database
+        /// </summary>
+        public bool LocalOnly;
+
+        public clsLogEntry(string message, logMsgType entryType, bool localOnly = true)
+        {
+            Message = message;
+            EntryType = entryType;
+            LocalOnly = localOnly;
+        }
+    }
+
+    #endregion
+
     #region "Queue Logger Class"
     /// <summary>
     /// Wraps a queuing mechanism around any object that implements ILogger interface.
@@ -624,28 +656,6 @@ namespace PRISM
     /// in the constructor for this class.</remarks>
     public class clsQueLogger : ILogger
     {
-
-        /// <summary>
-        /// A class to hold a log entry in the internal queue.
-        /// </summary>
-        /// <remarks>It holds the three arguments to PostEntry.</remarks>
-        public class clsLogEntry
-        {
-            /// <summary>
-            /// Log message
-            /// </summary>
-            public string message;
-
-            /// <summary>
-            /// Log message type
-            /// </summary>
-            public logMsgType entryType;
-
-            /// <summary>
-            /// When true, log to the local file but not to the database
-            /// </summary>
-            public bool localOnly;
-        }
 
         // queue to hold entries to be output
 
