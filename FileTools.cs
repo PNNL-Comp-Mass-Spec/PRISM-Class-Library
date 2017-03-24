@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-// Required for call to GetDiskFreeSpaceEx
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace PRISM
@@ -2669,7 +2667,6 @@ namespace PRISM
 
                 }
 
-
             }
             catch (Exception ex)
             {
@@ -2805,46 +2802,6 @@ namespace PRISM
             {
                 return false;
             }
-
-            return true;
-        }
-
-        #endregion
-
-        #region "GetDiskFreeSpace"
-
-        [DllImport("Kernel32.dll", EntryPoint = "GetDiskFreeSpaceEx", SetLastError = true, CharSet = CharSet.Auto)]
-        private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, ref UInt64 lpFreeBytesAvailable, ref UInt64 lpTotalNumberOfBytes, ref UInt64 lpTotalNumberOfFreeBytes);
-
-        private static bool GetDiskFreeSpace(
-            string directoryPath,
-            out long freeBytesAvailableToUser,
-            out long totalDriveCapacityBytes,
-            out long totalNumberOfFreeBytes)
-        {
-
-            ulong freeAvailableUser = 0;
-            ulong totalDriveCapacity = 0;
-            ulong totalFree = 0;
-
-            // Make sure directoryPath ends in a forward slash
-            if (!directoryPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                directoryPath += Path.DirectorySeparatorChar;
-
-            var bResult = GetDiskFreeSpaceEx(directoryPath, ref freeAvailableUser, ref totalDriveCapacity, ref totalFree);
-
-            if (!bResult)
-            {
-                freeBytesAvailableToUser = 0;
-                totalDriveCapacityBytes = 0;
-                totalNumberOfFreeBytes = 0;
-
-                return false;
-            }
-
-            freeBytesAvailableToUser = Convert.ToInt64(freeAvailableUser);
-            totalDriveCapacityBytes = Convert.ToInt64(totalDriveCapacity);
-            totalNumberOfFreeBytes = Convert.ToInt64(totalFree);
 
             return true;
         }
