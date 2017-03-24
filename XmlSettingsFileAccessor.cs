@@ -50,8 +50,6 @@ namespace PRISM
         private readonly Dictionary<string, string> dtSectionNames;
 
         private udtRecentSectionType mCachedSection;
-        public event InformationMessageEventHandler InformationMessage;
-        public delegate void InformationMessageEventHandler(string msg);
 
         /// <summary>
         /// Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
@@ -63,7 +61,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Loads the settings for the defined Xml Settings File.   Assumes names are not case sensitive
+        /// Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
         /// </summary>
         /// <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         /// <return>The function returns a boolean that shows if the file was successfully loaded.</return>
@@ -84,15 +82,13 @@ namespace PRISM
 
             m_XMLFilePath = XmlSettingsFilePath;
 
-            // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles 
+            // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles
             //       case sensitivity mapping internally
             m_XMLFileAccessor = new XMLFileReader(m_XMLFilePath, true);
             if (m_XMLFileAccessor == null)
             {
                 return false;
             }
-
-            m_XMLFileAccessor.InformationMessage += m_XMLFileAccessor_InformationMessage;
 
             if (m_XMLFileAccessor.Initialized)
             {
@@ -820,11 +816,6 @@ namespace PRISM
 
         }
 
-        void m_XMLFileAccessor_InformationMessage(string msg)
-        {
-            InformationMessage?.Invoke(msg);
-        }
-        
     }
 
 }

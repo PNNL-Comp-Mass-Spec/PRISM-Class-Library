@@ -27,10 +27,8 @@ namespace PRISM
         private string m_SaveFilename;
 
         private bool m_initialized;
-        private readonly bool NotifyOnEvent;
 
         private readonly bool NotifyOnException;
-        public event XmlSettingsFileAccessor.InformationMessageEventHandler InformationMessage;
 
         /// <summary>
         /// Initializes a new instance of the XMLFileReader (non case-sensitive)
@@ -38,12 +36,10 @@ namespace PRISM
         /// <param name="xmlFilename">The name of the XML file.</param>
         /// <param name="isCaseSensitive"></param>
         /// <param name="notifyOnException">When true, raise event InformationMessage if an exception occurs</param>
-        /// <param name="notifyOnEvent">When true, raise event InformationMessage when the XML file is saved</param>
-        public XMLFileReader(string xmlFilename, bool isCaseSensitive, bool notifyOnException = true, bool notifyOnEvent = false)
+        public XMLFileReader(string xmlFilename, bool isCaseSensitive, bool notifyOnException = true)
         {
-            NotifyOnEvent = notifyOnEvent;
             NotifyOnException = notifyOnException;
-      
+
             CaseSensitive = isCaseSensitive;
             m_XmlDoc = new XmlDocument();
 
@@ -55,7 +51,10 @@ namespace PRISM
             // Try to load the file as an XML file
             try
             {
-                m_XmlDoc.Load(xmlFilename);
+                using (var settingsFile = new FileStream(xmlFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    m_XmlDoc.Load(settingsFile);
+                }
                 UpdateSections();
                 m_XmlFilename = xmlFilename;
                 m_initialized = true;
@@ -63,7 +62,7 @@ namespace PRISM
             }
             catch
             {
-                // Exception occurred parsing XmlFilename 
+                // Exception occurred parsing XmlFilename
                 // Manually parse the file line-by-line
                 ManualParseXmlOrIniFile(xmlFilename);
             }
@@ -785,7 +784,10 @@ namespace PRISM
                 {
                     // File doesn't exist; create a new, blank .XML file
                     m_XmlFilename = strFilePath;
-                    m_XmlDoc.Save(m_XmlFilename);
+                    using (var settingsFile = new FileStream(m_XmlFilename, FileMode.Create, FileAccess.Write))
+                    {
+                        m_XmlDoc.Save(settingsFile);
+                    }
                     m_initialized = true;
                 }
 
@@ -811,7 +813,7 @@ namespace PRISM
         /// <param name="strLine">The name of the string to be parse.</param>
         /// <param name="doc">The name of the System.Xml.XmlDocument.</param>
         /// <returns>True if success, false if not a recognized line format</returns>
-        private bool ParseLineManual(string strLine, XmlDocument doc)
+        private void ParseLineManual(string strLine, XmlDocument doc)
         {
             const string SECTION_NAME_TAG = "<section name=";
             const string KEY_TAG = "key=";
@@ -820,7 +822,7 @@ namespace PRISM
             strLine = strLine.TrimStart();
             if (strLine.Length == 0)
             {
-                return true;
+                return;
             }
 
             switch (strLine.Substring(0, 1))
@@ -933,7 +935,6 @@ namespace PRISM
                     break;
             }
 
-            return false;
         }
 
         private bool ParseLineManualCheckTag(string strLine, string strTagTofind, out string strTagValue)
@@ -1013,19 +1014,17 @@ namespace PRISM
                     }
                     return;
                 }
+
                 if (fi.Exists)
                 {
                     fi.Delete();
-                    m_XmlDoc.Save(OutputFilename);
                 }
-                else
+
+                using (var settingsFile = new FileStream(OutputFilename, FileMode.Create, FileAccess.Write))
                 {
-                    m_XmlDoc.Save(OutputFilename);
+                    m_XmlDoc.Save(settingsFile);
                 }
-                if (NotifyOnEvent)
-                {
-                    InformationMessage?.Invoke("File save complete.");
-                }
+
             }
             else
             {
@@ -1063,22 +1062,32 @@ namespace PRISM
 
                 var sb = new System.Text.StringBuilder();
 
-                using (var xw = new XmlTextWriter(new StringWriter(sb)))
+                var settings = new XmlWriterSettings
                 {
-                    xw.Indentation = 3;
-                    xw.Formatting = Formatting.Indented;
+                    Indent = true,
+                    IndentChars = "   "
+                };
 
+                using (var xw = XmlWriter.Create(new StringWriter(sb), settings))
+                {
                     m_XmlDoc.WriteContentTo(xw);
                 }
+
                 return sb.ToString();
             }
         }
 
     }
 
-    public class XMLFileReaderNotInitializedException : ApplicationException
+    /// <summary>
+    /// Exception thrown when a method is accessed before the reader has been initialized
+    /// </summary>
+    public class XMLFileReaderNotInitializedException : Exception
     {
-        public override string Message => "The XMLFileReader instance has not been properly initialized.";
+        /// <summary>
+        /// Returns a message describing this exception
+        /// </summary>
+        public override string Message { get; } = "The XMLFileReader instance has not been properly initialized.";
     }
 
 }
