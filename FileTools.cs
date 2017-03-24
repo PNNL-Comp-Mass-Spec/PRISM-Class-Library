@@ -2589,15 +2589,22 @@ namespace PRISM
         /// Confirms that the drive for the target output file has a minimum amount of free disk space
         /// </summary>
         /// <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
-        /// <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative</param>
+        /// <param name="minimumFreeSpaceMB">
+        /// Minimum free disk space, in MB.
+        /// Will default to 150 MB if zero or negative.
+        /// Takes into account outputFileExpectedSizeMB</param>
+        /// <param name="currentDiskFreeSpaceBytes">
+        /// Amount of free space on the given disk
+        /// Determine on Windows using clsDiskInfo.GetDiskFreeSpace in PRISMWin.dll
+        /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
         /// <remarks></remarks>
-        public static bool ValidateFreeDiskSpace(string outputFilePath, double minimumFreeSpaceMB, out string errorMessage)
+        public static bool ValidateFreeDiskSpace(string outputFilePath, double minimumFreeSpaceMB, long currentDiskFreeSpaceBytes, out string errorMessage)
         {
             double outputFileExpectedSizeMB = 0;
 
-            return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, out errorMessage));
+            return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage));
         }
 
         /// <summary>
@@ -2605,14 +2612,27 @@ namespace PRISM
         /// </summary>
         /// <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
         /// <param name="outputFileExpectedSizeMB">Expected size of the output file</param>
-        /// <param name="minimumFreeSpaceMB">Minimum free disk space, in MB.  Will default to 150 MB if zero or negative.  Takes into account outputFileExpectedSizeMB</param>
+        /// <param name="minimumFreeSpaceMB">
+        /// Minimum free disk space, in MB.
+        /// Will default to 150 MB if zero or negative.
+        /// Takes into account outputFileExpectedSizeMB</param>
+        /// <param name="currentDiskFreeSpaceBytes">
+        /// Amount of free space on the given disk
+        /// Determine on Windows using clsDiskInfo.GetDiskFreeSpace in PRISMWin.dll
+        /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
-        /// <remarks></remarks>
-        public static bool ValidateFreeDiskSpace(string outputFilePath, double outputFileExpectedSizeMB, double minimumFreeSpaceMB, out string errorMessage)
+        /// <remarks>If currentDiskFreeSpaceBytes is negative, this function always returns true (provided the target directory exists)</remarks>
+        public static bool ValidateFreeDiskSpace(
+            string outputFilePath,
+            double outputFileExpectedSizeMB,
+            double minimumFreeSpaceMB,
+            long currentDiskFreeSpaceBytes,
+            out string errorMessage)
         {
 
             const int DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150;
+            errorMessage = string.Empty;
 
             try
             {
@@ -2633,36 +2653,30 @@ namespace PRISM
                     diFolderInfo = diFolderInfo.Parent;
                 }
 
-                long freeBytesAvailableToUser;
-                long totalDriveCapacityBytes;
-                long totalNumberOfFreeBytes;
-
-                if (GetDiskFreeSpace(diFolderInfo.FullName, out freeBytesAvailableToUser, out totalDriveCapacityBytes, out totalNumberOfFreeBytes))
+                if (currentDiskFreeSpaceBytes < 0)
                 {
-                    var freeSpaceMB = totalNumberOfFreeBytes / 1024.0 / 1024.0;
+                    // The folder exists, but currentDiskFreeSpaceBytes is negative
+                    return true;
+                }
 
+                var freeSpaceMB = currentDiskFreeSpaceBytes / 1024.0 / 1024.0;
 
-                    if (outputFileExpectedSizeMB > 0)
+                if (outputFileExpectedSizeMB > 0)
+                {
+                    if (freeSpaceMB - outputFileExpectedSizeMB < minimumFreeSpaceMB)
                     {
-                        if (freeSpaceMB - outputFileExpectedSizeMB < minimumFreeSpaceMB)
-                        {
-                            errorMessage = "Target drive will have less than " + minimumFreeSpaceMB.ToString("0") + " MB free after creating a " + outputFileExpectedSizeMB.ToString("0") + " MB file : " + freeSpaceMB.ToString("0.0") + " MB available prior to file creation";
+                        errorMessage = "Target drive will have less than " + minimumFreeSpaceMB.ToString("0") + " MB free " +
+                                       "after creating a " + outputFileExpectedSizeMB.ToString("0") + " MB file : " +
+                                       freeSpaceMB.ToString("0.0") + " MB available prior to file creation";
 
-                            return false;
-                        }
-
-                    }
-                    else if (freeSpaceMB < minimumFreeSpaceMB)
-                    {
-                        errorMessage = "Target drive has less than " + minimumFreeSpaceMB.ToString("0") + " MB free: " + freeSpaceMB.ToString("0.0") + " MB available";
                         return false;
-
                     }
 
                 }
-                else
+                else if (freeSpaceMB < minimumFreeSpaceMB)
                 {
-                    errorMessage = "Error validating target drive free space (GetDiskFreeSpaceEx returned false): " + diFolderInfo.FullName;
+                    errorMessage = "Target drive has less than " + minimumFreeSpaceMB.ToString("0") + " MB free: " +
+                        freeSpaceMB.ToString("0.0") + " MB available";
                     return false;
 
                 }
