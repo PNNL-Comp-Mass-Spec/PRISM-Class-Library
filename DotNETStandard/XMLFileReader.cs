@@ -1031,11 +1031,14 @@ namespace PRISM
 
                 var sb = new System.Text.StringBuilder();
 
-                using (var xw = XmlWriter.Create(new StringWriter(sb)))
+                var settings = new XmlWriterSettings
                 {
-                    xw.Settings.Indent = true;
-                    xw.Settings.IndentChars = "   ";
+                    Indent = true,
+                    IndentChars = "   "
+                };
 
+                using (var xw = XmlWriter.Create(new StringWriter(sb), settings))
+                {
                     m_XmlDoc.WriteContentTo(xw);
                 }
 
