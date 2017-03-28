@@ -50,17 +50,12 @@
     <None Remove="SourceCode\**" />
     <None Remove="UnitTests\**" />
     <None Remove="Utilities\**" />
-    <None Remove="_Trash\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove=".gitignore" />
     <None Remove="README.txt" />
     <None Remove="RevisionHistory.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
