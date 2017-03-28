@@ -6,9 +6,17 @@
     <AssemblyName>PRISM</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>PRISM-Library</PackageId>
-    <AssemblyVersion>2.4.0.0</AssemblyVersion>
-    <FileVersion>2.4.0.0</FileVersion>
-    <Description>Library of functions used by software applications that automated tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
+    <AssemblyVersion>2.4.1.0</AssemblyVersion>
+    <FileVersion>2.4.1.0</FileVersion>
+    <Description>Library of functions used by software applications that automate tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
+    <Version>1.0.1</Version>
+    <Company>Pacific Northwest National Laboratory</Company>
+    <Product>PRISM Library</Product>
+    <Authors>PNNL-Comp-Mass-Spec</Authors>
+    <RepositoryUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageLicenseUrl>https://opensource.org/licenses/ECL-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
