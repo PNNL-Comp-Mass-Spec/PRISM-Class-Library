@@ -1,5 +1,13 @@
 Prism Class Library Log
 
+Version 2.4.2.0; March 29, 2017
+	- Added clsParseCommandLine
+
+Version 2.4.1.0; March 28, 2017
+	- Updated to new .csproj format
+	- Split out Windows-specific utilities to PRISMWin.dll
+	- Uploaded to NuGet
+
 Version 2.3.6276; March 8, 2017
 	- Added clsDotNETVersionChecker
 		- Only supports Windows since it uses the Registry
