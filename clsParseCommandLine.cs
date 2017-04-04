@@ -44,8 +44,6 @@ namespace PRISM
         private readonly List<string> mNonSwitchParameters = new List<string>();
         private bool mShowHelp;
 
-        private bool mDebugMode;
-
         /// <summary>
         /// If true, we need to show the syntax to the user due to a switch error, invalid switch, or the presence of /? or /help
         /// </summary>
@@ -64,11 +62,7 @@ namespace PRISM
         /// <summary>
         /// Set to true to see extra debug information
         /// </summary>
-        public bool DebugMode
-        {
-            get { return mDebugMode; }
-            set { mDebugMode = value; }
-        }
+        public bool DebugMode { get; set; }
 
         /// <summary>
         /// Compares the parameter names in objParameterList with the parameters at the command line
@@ -280,7 +274,7 @@ namespace PRISM
                     return false;
                 }
 
-                if (mDebugMode)
+                if (DebugMode)
                 {
                     Console.WriteLine();
                     Console.WriteLine(@"Debugging command line parsing");
@@ -289,7 +283,7 @@ namespace PRISM
 
                 var paramList = SplitCommandLineParams(commandLine);
 
-                if (mDebugMode)
+                if (DebugMode)
                 {
                     Console.WriteLine();
                 }
@@ -357,7 +351,7 @@ namespace PRISM
                         // Remove the switch character from paramName
                         paramName = paramName.Substring(1).Trim();
 
-                        if (mDebugMode)
+                        if (DebugMode)
                         {
                             Console.WriteLine(@"SwitchParam: " + paramName + @"=" + paramValue);
                         }
@@ -372,7 +366,7 @@ namespace PRISM
                         // Remove any starting and ending quotation marks
                         paramName = paramName.Trim('"');
 
-                        if (mDebugMode)
+                        if (DebugMode)
                         {
                             Console.WriteLine(@"NonSwitchParam " + mNonSwitchParameters.Count + @": " + paramName);
                         }
@@ -387,7 +381,7 @@ namespace PRISM
                 throw new Exception("Error in ParseCommandLine", ex);
             }
 
-            if (mDebugMode)
+            if (DebugMode)
             {
                 Console.WriteLine();
                 Console.WriteLine(@"Switch Count = " + mSwitches.Count);
@@ -433,7 +427,7 @@ namespace PRISM
             {
                 Console.Write('.');
 
-                System.Threading.Thread.Sleep(millisecondsBetweenDots);
+                clsProgRunner.SleepMilliseconds(millisecondsBetweenDots);                
 
                 iteration += 1;
             } while (iteration < totalIterations);
@@ -612,7 +606,7 @@ namespace PRISM
 
                                 if (!string.IsNullOrEmpty(paramName))
                                 {
-                                    if (mDebugMode)
+                                    if (DebugMode)
                                     {
                                         Console.WriteLine(@"Param " + paramList.Count + @": " + paramName);
                                     }
