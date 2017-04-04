@@ -10,13 +10,30 @@ namespace PRISMTest
     class TestDBTools
     {
 
-        [TestCase("Gigasax", "DMS5", "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
-        [TestCase("Gigasax", "DMS5",
+        [TestCase("Gigasax", "DMS5", "Integrated", "",
+            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
+        [TestCase("Gigasax", "DMS5", "Integrated", "",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residues WHERE (Residue_Symbol IN ('K', 'R')) ORDER BY Residue_Symbol", 2,
             "6, 12, 2, 1, 0")]
-        public void TestQueryTable(string server, string database, string query, int expectedRowCount, string expectedValueList)
+        [Category("DatabaseIntegrated")]
+        public void TestQueryTableIntegrated(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
         {
-            var connectionString = GetConnectionString(server, database);
+            TestQueryTable(server, database, user, password, query, expectedRowCount, expectedValueList);
+        }
+
+        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
+        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+            "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residues WHERE (Residue_Symbol IN ('K', 'R')) ORDER BY Residue_Symbol", 2,
+            "6, 12, 2, 1, 0")]
+        public void TestQueryTableNamedUser(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
+        {
+            TestQueryTable(server, database, user, password, query, expectedRowCount, expectedValueList);
+        }
+
+        private void TestQueryTable(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
+        {
+            var connectionString = GetConnectionString(server, database, user, password);
             var dbTools = new clsDBTools(connectionString);
 
             Console.WriteLine("Running query " + query);
@@ -42,6 +59,7 @@ namespace PRISMTest
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
 
+
         [TestCase("Gigasax", "DMS5", "Integrated", "",
             "SELECT U_PRN, U_Name, U_HID FROM T_FakeTable WHERE U_Name = 'AutoUser'", 0, "")]
         [TestCase("Gigasax", "DMS5", "Integrated", "",
@@ -50,11 +68,33 @@ namespace PRISMTest
             "SELECT * FROM T_LogEntries WHERE ID = 5", 0, "")]
         [TestCase("Gigasax", "NonExistentDatabase", "Integrated", "",
             "SELECT * FROM T_FakeTable", 0, "")]
+        [Category("DatabaseIntegrated")]
+        public void TestQueryFailuresIntegrated(string server, string database, string user, string password,
+                                      string query, int expectedRowCount, string expectedValueList)
+        {
+            TestQueryFailures(server, database, user, password, query, expectedRowCount, expectedValueList);
+        }
+
+        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+            "SELECT U_PRN, U_Name, U_HID FROM T_FakeTable WHERE U_Name = 'AutoUser'", 0, "")]
+        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+            "SELECT FakeColumn FROM T_Log_Entries WHERE ID = 5", 0, "")]
+        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+            "SELECT * FROM T_LogEntries WHERE ID = 5", 0, "")]
+        [TestCase("Gigasax", "NonExistentDatabase", "dmsreader", "dms4fun",
+            "SELECT * FROM T_FakeTable", 0, "")]
         [TestCase("Gigasax", "DMS5", "dmsreader", "WrongPassword",
             "SELECT * FROM T_Log_Entries WHERE ID = 5", 0, "")]
         [TestCase("Gigasax", "Ontology_Lookup", "dmsreader", "dms4fun",
             "SELECT * FROM T_Permissions_Test_Table", 0, "")]
-        public void TestQueryFailures(string server, string database, string user, string password,
+        public void TestQueryFailuresNamedUser(string server, string database, string user, string password,
+                                      string query, int expectedRowCount, string expectedValueList)
+        {
+            TestQueryFailures(server, database, user, password, query, expectedRowCount, expectedValueList);
+        }
+
+
+        private void TestQueryFailures(string server, string database, string user, string password,
             string query, int expectedRowCount, string expectedValueList)
         {
             var connectionString = GetConnectionString(server, database, user, password);
