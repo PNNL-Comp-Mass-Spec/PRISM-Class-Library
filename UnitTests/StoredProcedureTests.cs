@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using PRISM;
 
@@ -14,13 +10,28 @@ namespace PRISMTest
     [TestFixture]
     class StoredProcedureTests
     {
+        private const string MTS_READER = "mtuser";
+        private const string MTS_READER_PASSWORD = "mt4fun";
+
         [TestCase("Gigasax", "DMS5")]
-        public void TestSearchLogs(string server, string database)
+        [Category("DatabaseIntegrated")]
+        public void TestSearchLogsIntegrated(string server, string database)
         {
-            var connectionString = GetConnectionString(server, database);
+            TestSearchLogs(server, database, "Integrated", "");
+        }
+
+        [TestCase("Gigasax", "DMS5")]
+        public void TestSearchLogsNamedUser(string server, string database)
+        {
+            TestSearchLogs(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+        }
+
+        private void TestSearchLogs(string server, string database, string user, string password)
+        {
+            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
             var dbTools = new clsExecuteDatabaseSP(connectionString);
 
-            var spCmd = new SqlCommand()
+            var spCmd = new SqlCommand
             {
                 CommandType = CommandType.StoredProcedure,
                 CommandText = "FindLogEntry"
@@ -34,7 +45,7 @@ namespace PRISMTest
             var messageTextParam = spCmd.Parameters.Add(new SqlParameter("@MessageText", SqlDbType.VarChar, 500));
             messageTextParam.Value = "complete";
 
-            Console.WriteLine("Running stored procedure " + spCmd.CommandText);
+            Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
             List<List<string>> lstResults;
             var returnCode = dbTools.ExecuteSP(spCmd, out lstResults);
@@ -69,12 +80,24 @@ namespace PRISMTest
         }
 
         [TestCase("Pogo", "MTS_Master")]
-        public void TestGetAllPeptideDatabases(string server, string database)
+        [Category("DatabaseIntegrated")]
+        public void TestGetAllPeptideDatabasesIntegrated(string server, string database)
         {
-            var connectionString = GetConnectionString(server, database);
+            TestGetAllPeptideDatabases(server, database, "Integrated", "");
+        }
+
+        [TestCase("Pogo", "MTS_Master")]
+        public void TestGetAllPeptideDatabasesNamedUser(string server, string database)
+        {
+            TestGetAllPeptideDatabases(server, database, MTS_READER, MTS_READER_PASSWORD);
+        }
+
+        private void TestGetAllPeptideDatabases(string server, string database, string user, string password)
+        {
+            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
             var dbTools = new clsExecuteDatabaseSP(connectionString);
 
-            var spCmd = new SqlCommand()
+            var spCmd = new SqlCommand
             {
                 CommandType = CommandType.StoredProcedure,
                 CommandText = "GetAllPeptideDatabases"
@@ -84,7 +107,7 @@ namespace PRISMTest
             spCmd.Parameters.Add(new SqlParameter("@IncludeUnused", SqlDbType.Int)).Value = 0;
             spCmd.Parameters.Add(new SqlParameter("@IncludeDeleted", SqlDbType.Int)).Value = 0;
 
-            Console.WriteLine("Running stored procedure " + spCmd.CommandText);
+            Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
             List<List<string>> lstResults;
             var returnCode = dbTools.ExecuteSP(spCmd, out lstResults);
@@ -130,11 +153,6 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Rows returned: " + lstResults.Count);
-        }
-
-        private string GetConnectionString(string server, string database)
-        {
-            return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);
         }
 
     }

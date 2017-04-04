@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using PRISM;
 
@@ -86,20 +83,30 @@ namespace PRISMTest
 
         [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
         [TestCase(@"Gigasax", "DMS5", "", "")]
-        public void TestDBLogger(string server, string database, string logFolder, string logFileNameBase)
+        [Category("DatabaseIntegrated")]
+        public void TestDBLoggerIntegrated(string server, string database, string logFolder, string logFileNameBase)
         {
-            var connectionString = GetConnectionString(server, database);
+            TestDBLogger(server, database, "Integrated", "", logFolder, logFileNameBase);
+        }
+
+        [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
+        [TestCase(@"Gigasax", "DMS5", "", "")]
+        public void TestDBLoggerNamedUser(string server, string database, string logFolder, string logFileNameBase)
+        {
+            TestDBLogger(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD, logFolder, logFileNameBase);
+        }
+
+        private void TestDBLogger(string server, string database, string user, string password, string logFolder, string logFileNameBase)
+        {
+            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
 
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
             var logger = new clsDBLogger(connectionString, logFilePath);
 
+            Console.WriteLine("Calling logger.PostEntry using " + database + " as user " + user);
+
             // Call stored procedure PostLogEntry
             logger.PostEntry("Test log entry on " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"), logMsgType.logDebug, false);
-        }
-
-        private string GetConnectionString(string server, string database)
-        {
-            return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);
         }
 
     }

@@ -9,26 +9,28 @@ namespace PRISMTest
     [TestFixture]
     class TestDBTools
     {
+        public const string DMS_READER = "dmsreader";
+        public const string DMS_READER_PASSWORD = "dms4fun";
 
-        [TestCase("Gigasax", "DMS5", "Integrated", "",
+        [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
-        [TestCase("Gigasax", "DMS5", "Integrated", "",
+        [TestCase("Gigasax", "DMS5",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residues WHERE (Residue_Symbol IN ('K', 'R')) ORDER BY Residue_Symbol", 2,
             "6, 12, 2, 1, 0")]
         [Category("DatabaseIntegrated")]
-        public void TestQueryTableIntegrated(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
+        public void TestQueryTableIntegrated(string server, string database, string query, int expectedRowCount, string expectedValueList)
         {
-            TestQueryTable(server, database, user, password, query, expectedRowCount, expectedValueList);
+            TestQueryTable(server, database, "Integrated", "", query, expectedRowCount, expectedValueList);
         }
 
-        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+        [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
-        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+        [TestCase("Gigasax", "DMS5",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residues WHERE (Residue_Symbol IN ('K', 'R')) ORDER BY Residue_Symbol", 2,
             "6, 12, 2, 1, 0")]
-        public void TestQueryTableNamedUser(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
+        public void TestQueryTableNamedUser(string server, string database, string query, int expectedRowCount, string expectedValueList)
         {
-            TestQueryTable(server, database, user, password, query, expectedRowCount, expectedValueList);
+            TestQueryTable(server, database, DMS_READER, DMS_READER_PASSWORD, query, expectedRowCount, expectedValueList);
         }
 
         private void TestQueryTable(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
@@ -36,7 +38,7 @@ namespace PRISMTest
             var connectionString = GetConnectionString(server, database, user, password);
             var dbTools = new clsDBTools(connectionString);
 
-            Console.WriteLine("Running query " + query);
+            Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
             List<List<string>> lstResults;
             dbTools.GetQueryResults(query, out lstResults, "Unit Tests");
@@ -60,19 +62,20 @@ namespace PRISMTest
         }
 
 
-        [TestCase("Gigasax", "DMS5", "Integrated", "",
+        [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_FakeTable WHERE U_Name = 'AutoUser'", 0, "")]
-        [TestCase("Gigasax", "DMS5", "Integrated", "",
+        [TestCase("Gigasax", "DMS5",
             "SELECT FakeColumn FROM T_Log_Entries WHERE ID = 5", 0, "")]
-        [TestCase("Gigasax", "DMS5", "Integrated", "",
+        [TestCase("Gigasax", "DMS5",
             "SELECT * FROM T_LogEntries WHERE ID = 5", 0, "")]
-        [TestCase("Gigasax", "NonExistentDatabase", "Integrated", "",
+        [TestCase("Gigasax", "NonExistentDatabase",
             "SELECT * FROM T_FakeTable", 0, "")]
         [Category("DatabaseIntegrated")]
-        public void TestQueryFailuresIntegrated(string server, string database, string user, string password,
-                                      string query, int expectedRowCount, string expectedValueList)
+        public void TestQueryFailuresIntegrated(
+            string server, string database,
+            string query, int expectedRowCount, string expectedValueList)
         {
-            TestQueryFailures(server, database, user, password, query, expectedRowCount, expectedValueList);
+            TestQueryFailures(server, database, "Integrated", "", query, expectedRowCount, expectedValueList);
         }
 
         [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
@@ -87,12 +90,12 @@ namespace PRISMTest
             "SELECT * FROM T_Log_Entries WHERE ID = 5", 0, "")]
         [TestCase("Gigasax", "Ontology_Lookup", "dmsreader", "dms4fun",
             "SELECT * FROM T_Permissions_Test_Table", 0, "")]
-        public void TestQueryFailuresNamedUser(string server, string database, string user, string password,
-                                      string query, int expectedRowCount, string expectedValueList)
+        public void TestQueryFailuresNamedUser(
+            string server, string database, string user, string password,
+            string query, int expectedRowCount, string expectedValueList)
         {
             TestQueryFailures(server, database, user, password, query, expectedRowCount, expectedValueList);
         }
-
 
         private void TestQueryFailures(string server, string database, string user, string password,
             string query, int expectedRowCount, string expectedValueList)
@@ -100,7 +103,7 @@ namespace PRISMTest
             var connectionString = GetConnectionString(server, database, user, password);
             var dbTools = new clsDBTools(connectionString);
 
-            Console.WriteLine("Running query " + query);
+            Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
             List<List<string>> lstResults;
             dbTools.GetQueryResults(query, out lstResults, "Unit Tests");
@@ -130,7 +133,7 @@ namespace PRISMTest
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
 
-        private string GetConnectionString(string server, string database, string user = "Integrated", string password = "")
+        public static string GetConnectionString(string server, string database, string user = "Integrated", string password = "")
         {
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))
                 return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);
