@@ -130,7 +130,7 @@ namespace PRISMTest
                     if (!dataLine.ToLower().Contains(exeName))
                     {
                         Assert.Fail("The first line of the ConsoleOutput file does not contain " + exeName + ": " + newFilePath);
-                    }                    
+                    }
                 }
             }
 
