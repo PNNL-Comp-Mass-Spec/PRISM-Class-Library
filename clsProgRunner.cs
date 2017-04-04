@@ -584,6 +584,8 @@ namespace PRISM
             //     tmpEvent.WaitOne(TimeSpan.FromMilliseconds(sleepTimeMsec));
             // }
 
+            // Option 3, though this will be deprecated in .NET Standard
+            // System.Threading.Thread.Sleep(sleepTimeMsec);
         }
 
         /// <summary>
