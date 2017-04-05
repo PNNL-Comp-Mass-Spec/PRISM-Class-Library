@@ -10,13 +10,37 @@ namespace PRISMTest
     {
         private const string UTILITIES_FOLDER = @"\\proto-2\unitTest_Files\PRISM\Utilities";
 
+        /// <summary>
+        /// Start long running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
+        /// </summary>
+        /// <param name="exeName"></param>
+        /// <param name="cmdArgs"></param>
+        /// <param name="createNoWindow"></param>
+        /// <param name="writeConsoleOutput"></param>
+        /// <param name="maxRuntimeSeconds"></param>
+        /// <remarks>
+        /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account
+        /// Thus the SkipNetworkService category
+        /// </remarks>
         [Test]
-        [TestCase("sleep.exe", "3", false, false, 10, false)]
-        [TestCase("sleep.exe", "3", true, false, 10, false)]
-        [TestCase("sleep.exe", "20", false, true, 6, true)]
-        [TestCase("ls.exe", @"-alF c:\", false, false, 10, false)]
-        [TestCase("ls.exe", @"-alFR c:\", true, true, 10, true)]
-        public void TestRunProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds, bool programAbortExpected)
+        [TestCase("sleep.exe", "20", false, true, 6)]
+        [TestCase("ls.exe", @"-alFR c:\", true, true, 3)]
+        [Category("SkipNetworkService")]
+        public void TestAbortRunningProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
+        {
+            TestRunProgram(exeName, cmdArgs, createNoWindow, writeConsoleOutput, maxRuntimeSeconds, programAbortExpected: true);
+        }
+
+        [Test]
+        [TestCase("sleep.exe", "3", false, false, 10)]
+        [TestCase("sleep.exe", "3", true, false, 10)]
+        [TestCase("ls.exe", @"-alF c:\", false, false, 10)]
+        public void TestRunProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
+        {
+            TestRunProgram(exeName, cmdArgs, createNoWindow, writeConsoleOutput, maxRuntimeSeconds, programAbortExpected: false);
+        }
+
+        private void TestRunProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds, bool programAbortExpected)
         {
             const int MONITOR_INTERVAL_MSEC = 500;
 
