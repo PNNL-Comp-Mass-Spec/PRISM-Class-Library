@@ -1,3 +1,14 @@
+@echo off
+
+echo.
+echo.
+echo This batch file is deprecated
+echo.
+echo Use https://github.com/PNNL-Comp-Mass-Spec/VSProj-NuGet-Version-Updater
+echo.
+
+pause
+Goto Done
 
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\CodeTest\Lib" /Y /D
 
@@ -165,3 +176,5 @@ xcopy PRISM.dll "F:\My Documents\Projects\JohnSandoval\APE_DLL\Lib" /Y /D
 xcopy PRISM.dll "F:\My Documents\Projects\DataMining\SharedVBNetRoutines" /Y /D
 
 pause
+
+:Done
