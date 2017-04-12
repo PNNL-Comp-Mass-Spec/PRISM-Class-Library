@@ -19,7 +19,11 @@ namespace PRISMTest
         [TestCase(ExceptionTypes.General, 1, false)]
         [TestCase(ExceptionTypes.General, 2, false)]
         [TestCase(ExceptionTypes.General, 3, false)]
-        [TestCase(ExceptionTypes.General, 3, true)]
+        [TestCase(ExceptionTypes.General, 4, false)]
+        [TestCase(ExceptionTypes.General, 5, false)]
+        [TestCase(ExceptionTypes.General, 6, false)]
+        [TestCase(ExceptionTypes.General, 7, false)]
+        [TestCase(ExceptionTypes.General, 8, true)]
         [TestCase(ExceptionTypes.FileNotFound, 3, false)]
         [TestCase(ExceptionTypes.FileNotFound, 10, true)]
         public void VerifyStackTrace(ExceptionTypes targetException, int depth, bool multiLine)
@@ -52,19 +56,7 @@ namespace PRISMTest
                 ThrowExceptionNow(targetException, parents, depth);
             }
 
-            switch (depth % 3)
-            {
-                case 0:
-                    RecursiveMethodA(targetException, parents, depth + 1, maxDepth);
-                    break;
-                case 1:
-                    RecursiveMethodB(targetException, parents, depth + 1, maxDepth);
-                    break;
-                default:
-                    RecursiveMethodC(targetException, parents, depth + 1, maxDepth);
-                    break;
-            }
-
+            RecursiveMethodB(targetException, parents, depth + 1, maxDepth);
         }
 
         private void RecursiveMethodB(ExceptionTypes targetException, List<string> parents, int depth, int maxDepth)
@@ -75,18 +67,7 @@ namespace PRISMTest
                 ThrowExceptionNow(targetException, parents, depth);
             }
 
-            switch (depth % 3)
-            {
-                case 0:
-                    RecursiveMethodA(targetException, parents, depth + 1, maxDepth);
-                    break;
-                case 1:
-                    RecursiveMethodB(targetException, parents, depth + 1, maxDepth);
-                    break;
-                default:
-                    RecursiveMethodC(targetException, parents, depth + 1, maxDepth);
-                    break;
-            }
+            RecursiveMethodC(targetException, parents, depth + 1, maxDepth);
         }
 
         private void RecursiveMethodC(ExceptionTypes targetException, List<string> parents, int depth, int maxDepth)
@@ -97,23 +78,10 @@ namespace PRISMTest
                 ThrowExceptionNow(targetException, parents, depth);
             }
 
-            switch (depth % 3)
-            {
-                case 0:
-                    RecursiveMethodA(targetException, parents, depth + 1, maxDepth);
-                    break;
-                case 1:
-                    RecursiveMethodB(targetException, parents, depth + 1, maxDepth);
-                    break;
-                default:
-                    RecursiveMethodC(targetException, parents, depth + 1, maxDepth);
-                    break;
-            }
-
-
+            RecursiveMethodA(targetException, parents, depth + 1, maxDepth);
         }
 
-        private void ThrowExceptionNow(ExceptionTypes targetException, List<string> parents, int depth)
+        private void ThrowExceptionNow(ExceptionTypes targetException, IReadOnlyCollection<string> parents, int depth)
         {
             Assert.AreEqual(depth, parents.Count, "Parent list length invalid");
 
