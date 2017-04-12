@@ -19,22 +19,33 @@ namespace PRISMTest
         /// <param name="writeConsoleOutput"></param>
         /// <param name="maxRuntimeSeconds"></param>
         /// <remarks>
-        /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account
-        /// Thus the SkipNetworkService category
+        /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account; thus the SkipNetworkService category
+        /// Category PNL_Domain is included here because these tests do not work on AppVeyor
         /// </remarks>
         [Test]
         [TestCase("sleep.exe", "20", false, true, 6)]
         [TestCase("ls.exe", @"-alFR c:\", true, true, 3)]
         [Category("SkipNetworkService")]
+        [Category("PNL_Domain")]
         public void TestAbortRunningProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
         {
             TestRunProgram(exeName, cmdArgs, createNoWindow, writeConsoleOutput, maxRuntimeSeconds, programAbortExpected: true);
         }
 
+        /// <summary>
+        /// Test starting a process
+        /// </summary>
+        /// <param name="exeName"></param>
+        /// <param name="cmdArgs"></param>
+        /// <param name="createNoWindow"></param>
+        /// <param name="writeConsoleOutput"></param>
+        /// <param name="maxRuntimeSeconds"></param>
+        /// <remarks>Category PNL_Domain is included here because these tests do not work on AppVeyor</remarks>
         [Test]
         [TestCase("sleep.exe", "3", false, false, 10)]
         [TestCase("sleep.exe", "3", true, false, 10)]
         [TestCase("ls.exe", @"-alF c:\", false, false, 10)]
+        [Category("PNL_Domain")]
         public void TestRunProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
         {
             TestRunProgram(exeName, cmdArgs, createNoWindow, writeConsoleOutput, maxRuntimeSeconds, programAbortExpected: false);
