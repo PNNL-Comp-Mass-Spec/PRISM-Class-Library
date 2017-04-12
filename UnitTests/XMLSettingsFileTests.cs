@@ -10,6 +10,7 @@ namespace PRISMTest
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "MasicExportOptions", "WriteExtendedStats", "True")]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "SICOptions", "SICTolerance", "10.0000")]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "BinningOptions", "BinEndX", "2000")]
+        [Category("PNL_Domain")]
         public void ReadSettings(string settingsFilePath, string sectionName, string settingName, string expectedValue)
         {
             var reader = new XmlSettingsFileAccessor();
@@ -40,6 +41,7 @@ namespace PRISMTest
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "TestOptions", "SaveDate", "Now")]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "TestOptions", "Version", "1.0.2")]
+        [Category("PNL_Domain")]
         public void SaveSettings(string settingsFilePath, string sectionName, string settingName, string value)
         {
             var reader = new XmlSettingsFileAccessor();

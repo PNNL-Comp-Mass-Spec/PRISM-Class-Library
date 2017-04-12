@@ -17,7 +17,51 @@ namespace PRISMTest
             mFileTools = new clsFileTools();
         }
 
+        [TestCase(@"C:\Temp\PRISM", @"C:\Temp\PRISMCopy")]
+        public void CopyDirectoryLocal(string sourceFolderPath, string targetFolderPath)
+        {
+            var sourceFolder = new DirectoryInfo(sourceFolderPath);
+            if (!sourceFolder.Exists)
+            {
+                try
+                {
+                    sourceFolder.Create();
+
+                    var rand = new Random();
+
+                    for (var i = 1; i <= 4; i++)
+                    {
+                        var testFilePath = Path.Combine(sourceFolder.FullName, "TestFile" + i + ".txt");
+
+                        using (var testFile = new StreamWriter(new FileStream(testFilePath, FileMode.Create, FileAccess.Write)))
+                        {
+                            testFile.WriteLine("X\tY");
+                            for (var j = 1; j <= 10000 * i; j++)
+                            {
+                                testFile.WriteLine("{0}\t{1}", j, rand.Next(0, 1000));
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Error creating test folder and/or test files at " + sourceFolder + ": " + ex.Message);
+                }
+
+            }
+
+            CopyDirectory(sourceFolderPath, targetFolderPath);
+        }
+
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", @"\\proto-2\UnitTest_Files\PRISM\FolderCopyTest")]
+        [Category("PNL_Domain")]
+        public void CopyDirectoryRemote(string sourceFolderPath, string targetFolderPath)
+        {
+            CopyDirectory(sourceFolderPath, targetFolderPath);
+        }
+
+        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", @"\\proto-2\UnitTest_Files\PRISM\FolderCopyTest")]
+        [Category("PNL_Domain")]
         public void CopyDirectory(string sourceFolderPath, string targetFolderPath)
         {
             var sourceFolder = new DirectoryInfo(sourceFolderPath);
@@ -35,9 +79,21 @@ namespace PRISMTest
             mFileTools.CopyDirectory(sourceFolderPath, targetFolderPath, true, filesToSkip);
         }
 
+        [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
+        public void CopyFileLocal(string sourceFilePath, string targetFilePath)
+        {
+            CopyFile(sourceFilePath, targetFilePath);
+        }
+
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\Tryp_Pig_Bov.fasta", @"\\proto-2\UnitTest_Files\PRISM\FileCopyTest\Tryp_Pig_Bov.fasta")]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\HumanContam.fasta", @"\\proto-2\UnitTest_Files\PRISM\FileCopyTest\HumanContam_Renamed.fasta")]
-        public void CopyFile(string sourceFilePath, string targetFilePath)
+        [Category("PNL_Domain")]
+        public void CopyFileRemote(string sourceFilePath, string targetFilePath)
+        {
+            CopyFile(sourceFilePath, targetFilePath);
+        }
+
+        private void CopyFile(string sourceFilePath, string targetFilePath)
         {
             var sourceFile = new FileInfo(sourceFilePath);
             if (!sourceFile.Exists)
@@ -76,13 +132,23 @@ namespace PRISMTest
 
         }
 
+        [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
+        public void CopyFileUsingLocksLocal(string sourceFilePath, string targetFilePath)
+        {
+            CopyFileUsingLocks(sourceFilePath, targetFilePath);
+        }
+
         [TestCase(@"\\gigasax\DMS_Organism_Files\Homo_sapiens\Fasta\H_sapiens_Uniprot_trembl_2015-10-14.fasta",
-                  @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_trembl_2015-10-14.fasta")]
+            @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_trembl_2015-10-14.fasta")]
         [TestCase(@"\\gigasax\DMS_Organism_Files\Homo_sapiens\Fasta\H_sapiens_Uniprot_SPROT_2015-04-22.fasta",
-                  @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_SPROT_2015-04-22.fasta")]
-        [TestCase(@"C:\Windows\win.ini",
-                  @"C:\temp\win.ini")]
-        public void CopyFileUsingLocks(string sourceFilePath, string targetFilePath)
+            @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_SPROT_2015-04-22.fasta")]
+        [Category("PNL_Domain")]
+        public void CopyFileUsingLocksRemote(string sourceFilePath, string targetFilePath)
+        {
+            CopyFileUsingLocks(sourceFilePath, targetFilePath);
+        }
+
+        private void CopyFileUsingLocks(string sourceFilePath, string targetFilePath)
         {
             var sourceFile = new FileInfo(sourceFilePath);
             if (!sourceFile.Exists)
@@ -115,13 +181,23 @@ namespace PRISMTest
 
         }
 
-
         [TestCase(@"C:\Temp")]
         [TestCase(@"C:\Temp\")]
+        public void GetDriveFreeSpaceForDirectoryLocal(string directoryPath)
+        {
+            GetDriveFreeSpaceForDirectory(directoryPath);
+        }
+
         [TestCase(@"\\proto-2\UnitTest_Files")]
         [TestCase(@"\\proto-2\UnitTest_Files\")]
         [TestCase(@"\\protoapps\UserData\Matt\")]
-        public void GetDriveFreeSpaceForDirectory(string directoryPath)
+        [Category("PNL_Domain")]
+        public void GetDriveFreeSpaceForDirectoryRemote(string directoryPath)
+        {
+            GetDriveFreeSpaceForDirectory(directoryPath);
+        }
+
+        private void GetDriveFreeSpaceForDirectory(string directoryPath)
         {
             long freeBytesAvailableToUser;
             long totalDriveCapacityBytes;
@@ -139,9 +215,20 @@ namespace PRISMTest
         }
 
         [TestCase(@"C:\Temp\Testfile.txt", false)]
+        public void GetDriveFreeSpaceForFileLocal(string targetFilePath, bool reportFreeSpaceAvailableToUser)
+        {
+            GetDriveFreeSpaceForFile(targetFilePath, reportFreeSpaceAvailableToUser);
+        }
+
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestFile.txt", false)]
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", false)]
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", true)]
+        [Category("PNL_Domain")]
+        public void GetDriveFreeSpaceForFileRemote(string targetFilePath, bool reportFreeSpaceAvailableToUser)
+        {
+            GetDriveFreeSpaceForFile(targetFilePath, reportFreeSpaceAvailableToUser);
+        }
+
         public void GetDriveFreeSpaceForFile(string targetFilePath, bool reportFreeSpaceAvailableToUser)
         {
             long freeSpaceBytes;
@@ -165,12 +252,23 @@ namespace PRISMTest
         [TestCase(@"C:\Temp\TestHugeFile.raw", 100000)]
         [TestCase(@"C:\Temp\TestHugeFile.raw", 1000000)]
         [TestCase(@"C:\Temp\TestHugeFile.raw", 10000000)]
+        public void ValidateFreeDiskSpaceLocal(string targetFilePath, long minimumFreeSpaceMB)
+        {
+            ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB);
+        }
+
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestFile.txt", 150)]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestHugeFile.raw", 100000)]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestHugeFile.raw", 1000000)]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestHugeFile.raw", 10000000)]
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", 0)]
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", 500)]
+        [Category("PNL_Domain")]
+        public void ValidateFreeDiskSpaceRemote(string targetFilePath, long minimumFreeSpaceMB)
+        {
+            ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB);
+        }
+
         public void ValidateFreeDiskSpace(string targetFilePath, long minimumFreeSpaceMB)
         {
             string errorMessage;
