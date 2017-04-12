@@ -21,6 +21,7 @@ namespace PRISMTest
         }
 
         [TestCase("Gigasax", "DMS5")]
+        [Category("DatabaseNamedUser")]
         public void TestSearchLogsNamedUser(string server, string database)
         {
             TestSearchLogs(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
@@ -87,6 +88,7 @@ namespace PRISMTest
         }
 
         [TestCase("Pogo", "MTS_Master")]
+        [Category("DatabaseNamedUser")]
         public void TestGetAllPeptideDatabasesNamedUser(string server, string database)
         {
             TestGetAllPeptideDatabases(server, database, MTS_READER, MTS_READER_PASSWORD);
