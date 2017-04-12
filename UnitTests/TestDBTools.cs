@@ -28,6 +28,7 @@ namespace PRISMTest
         [TestCase("Gigasax", "DMS5",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residues WHERE (Residue_Symbol IN ('K', 'R')) ORDER BY Residue_Symbol", 2,
             "6, 12, 2, 1, 0")]
+        [Category("PNL_Domain")]
         public void TestQueryTableNamedUser(string server, string database, string query, int expectedRowCount, string expectedValueList)
         {
             TestQueryTable(server, database, DMS_READER, DMS_READER_PASSWORD, query, expectedRowCount, expectedValueList);
@@ -90,6 +91,7 @@ namespace PRISMTest
             "SELECT * FROM T_Log_Entries WHERE ID = 5", 0, "")]
         [TestCase("Gigasax", "Ontology_Lookup", "dmsreader", "dms4fun",
             "SELECT * FROM T_Permissions_Test_Table", 0, "")]
+        [Category("PNL_Domain")]
         public void TestQueryFailuresNamedUser(
             string server, string database, string user, string password,
             string query, int expectedRowCount, string expectedValueList)
