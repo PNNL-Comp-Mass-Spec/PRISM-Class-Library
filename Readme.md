@@ -9,14 +9,14 @@ The PRISM Windows class Library (PRISMWin.dll) is a set of Windows-specific util
 ### NuGet
 
 PRISM.Dll is available on NuGet at:
-* https://www.nuget.org/packages/PRISM-Library/1.0.1
+* https://www.nuget.org/packages/PRISM-Library/
 
 PRISMWin.dll is available on NuGet at:
 * https://www.nuget.org/packages/PRISMWin-Library/
 
 ### Continuous Integration
 
-[![Build status](https://ci.appveyor.com/api/projects/status/jksrpug2p49jev2i?svg=true)](https://ci.appveyor.com/project/alchemistmatt/prism-class-library)
+[![Build status](https://ci.appveyor.com/api/projects/status/xfpaypc30b8po1je?svg=true)](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library)
 
 ### Important Classes in PRISM.dll
 
