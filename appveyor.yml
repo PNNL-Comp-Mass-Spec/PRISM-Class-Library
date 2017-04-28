@@ -1,0 +1,19 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+before_build:
+- cmd: nuget.exe restore PRISM.sln
+build:
+  project: PRISM.sln
+  verbosity: minimal
+test:
+  categories:
+    except:
+    - DatabaseIntegrated
+    - SkipNetworkService
+    - DatabaseNamedUser
+    - PNL_Domain
+artifacts:
+- path: bin\net462\PRISM.dll
+- path: PRISMWin\bin\net462\PRISMWin.dll
+- path: bin\PRISM-Library*.nupkg
+- path: PRISMWin\bin\PRISMWin-Library*.nupkg
