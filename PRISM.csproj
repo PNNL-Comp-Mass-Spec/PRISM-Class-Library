@@ -27,6 +27,7 @@
     <Compile Remove="CopyWithResume\**" />
     <Compile Remove="DotNETStandard\**" />
     <Compile Remove="DotNETStandard_UnitTests\**" />
+    <Compile Remove="LinuxTestFiles\**" />
     <Compile Remove="PRISMWin\**" />
     <Compile Remove="ShFolderBrowser\**" />
     <Compile Remove="SourceCode\**" />
@@ -36,6 +37,7 @@
     <EmbeddedResource Remove="CopyWithResume\**" />
     <EmbeddedResource Remove="DotNETStandard\**" />
     <EmbeddedResource Remove="DotNETStandard_UnitTests\**" />
+    <EmbeddedResource Remove="LinuxTestFiles\**" />
     <EmbeddedResource Remove="PRISMWin\**" />
     <EmbeddedResource Remove="ShFolderBrowser\**" />
     <EmbeddedResource Remove="SourceCode\**" />
@@ -45,6 +47,7 @@
     <None Remove="CopyWithResume\**" />
     <None Remove="DotNETStandard\**" />
     <None Remove="DotNETStandard_UnitTests\**" />
+    <None Remove="LinuxTestFiles\**" />
     <None Remove="PRISMWin\**" />
     <None Remove="ShFolderBrowser\**" />
     <None Remove="SourceCode\**" />
