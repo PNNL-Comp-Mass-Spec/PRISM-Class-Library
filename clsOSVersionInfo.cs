@@ -87,7 +87,11 @@ namespace PRISM
                             versionInfo = GetOSReleaseVersion(reader);
                             break;
                         default:
-                            versionInfo = GetFirstLineVersion(reader, versionFileInfo.Key);
+                            var versionText = GetFirstLineVersion(reader, versionFileInfo.Key);
+                            versionInfo = new List<string>
+                            {
+                                versionText
+                            };
                             break;
                     }
                 }
@@ -125,7 +129,7 @@ namespace PRISM
                 {
                     while (!reader.EndOfStream)
                     {
-                        var dataLine = reader.ReadLine();
+                        var dataLine = StripQuotes(reader.ReadLine());
 
                         if (string.IsNullOrWhiteSpace(dataLine))
                         {
@@ -146,27 +150,91 @@ namespace PRISM
             return "Unknown";
         }
 
-        private List<string> GetFirstLineVersion(StreamReader reader, string osName)
+        /// <summary>
+        /// Return the first line of an operating system version file
+        /// </summary>
+        /// <param name="versionFilePath"></param>
+        /// <param name="osName">Operating system name (empty by default); if non-blank, the version returned is guaranteed to contain this text</param>
+        /// <returns></returns>
+        public string GetFirstLineVersion(string versionFilePath, string osName = "")
+        {
+            var versionFile = new FileInfo(versionFilePath);
+            if (!versionFile.Exists)
+            {
+                return string.IsNullOrWhiteSpace(osName) ? string.Empty : osName;
+            }
+
+            using (var reader = new StreamReader(new FileStream(versionFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                return GetFirstLineVersion(reader, osName);
+            }
+
+        }
+
+        private string GetFirstLineVersion(StreamReader reader, string osName)
         {
 
             // The first line should have the version info
             while (!reader.EndOfStream)
             {
-                var dataLine = reader.ReadLine();
+                var dataLine = StripQuotes(reader.ReadLine());
                 if (string.IsNullOrWhiteSpace(dataLine))
                     continue;
 
-                var versionInfo = new List<string>();
+                if (!string.IsNullOrWhiteSpace(osName) && !dataLine.ToLower().Contains(osName))
+                    return osName + " " + dataLine.Trim();
 
-                if (string.Equals(osName, "Debian", StringComparison.OrdinalIgnoreCase) && !dataLine.ToLower().Contains("debian"))
-                    versionInfo.Add("Debian " + dataLine);
-                else
-                    versionInfo.Add(dataLine);
-
-                return versionInfo;
+                return dataLine.Trim();
             }
 
-            return new List<string>();
+            return string.IsNullOrWhiteSpace(osName) ? string.Empty : osName;
+        }
+
+        private IEnumerable<string> GetFirstNValues(Dictionary<string, string> contents, int valuesToReturn)
+        {
+            var uniqueValues = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var item in contents)
+            {
+                if (uniqueValues.Contains(item.Value))
+                    continue;
+
+                uniqueValues.Add(item.Value);
+                yield return item.Value;
+
+                if (uniqueValues.Count == valuesToReturn)
+                    break;
+            }
+
+        }
+
+        /// <summary>
+        /// Parse version information from an os-release file
+        /// </summary>
+        /// <param name="osReleaseFilePath"></param>
+        /// <returns></returns>
+        public string GetOSReleaseVersion(string osReleaseFilePath)
+        {
+            var versionFile = new FileInfo(osReleaseFilePath);
+            if (!versionFile.Exists)
+                return string.Empty;
+
+            List<string> versionInfo;
+
+            using (var reader = new StreamReader(new FileStream(versionFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                versionInfo = GetOSReleaseVersion(reader);
+            }
+
+            if (versionInfo.Count == 0)
+                return string.Empty;
+
+            if (versionInfo.Count == 1)
+            {
+                return versionInfo.First();
+            }
+
+            return string.Join("; ", versionInfo);
         }
 
         private List<string> GetOSReleaseVersion(StreamReader reader)
@@ -196,9 +264,38 @@ namespace PRISM
                 }
             }
 
-            // Not in the expected format; add the first 5 values
-            versionInfo.AddRange((from item in contents select item.Value).Take(5));
+            // Not in the expected format; add the first 4 non-duplicate values
+            versionInfo.AddRange(GetFirstNValues(contents, 4));
             return versionInfo;
+        }
+
+        /// <summary>
+        /// Parse version information from an Ubuntu lsb-release file
+        /// </summary>
+        /// <param name="lsbReleaseFilePath"></param>
+        /// <returns></returns>
+        public string GetUbuntuVersion(string lsbReleaseFilePath)
+        {
+            var versionFile = new FileInfo(lsbReleaseFilePath);
+            if (!versionFile.Exists)
+                return string.Empty;
+
+            List<string> versionInfo;
+
+            using (var reader = new StreamReader(new FileStream(versionFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                versionInfo = GetUbuntuVersion(reader);
+            }
+
+            if (versionInfo.Count == 0)
+                return string.Empty;
+
+            if (versionInfo.Count == 1)
+            {
+                return versionInfo.First();
+            }
+
+            return string.Join("; ", versionInfo);
         }
 
         private List<string> GetUbuntuVersion(StreamReader reader)
@@ -227,8 +324,8 @@ namespace PRISM
                 }
             }
 
-            // Not in the expected format; add the first 5 values
-            versionInfo.AddRange((from item in contents select item.Value).Take(5));
+            // Not in the expected format; add the first 4 non-duplicate values
+            versionInfo.AddRange(GetFirstNValues(contents, 4));
             return versionInfo;
         }
 
@@ -338,7 +435,7 @@ namespace PRISM
                 var lineParts = dataLine.Split(sepChars, 2);
                 if (lineParts.Length > 1)
                 {
-                    osInfo.Add(lineParts[0], lineParts[1]);
+                    osInfo.Add(lineParts[0], StripQuotes(lineParts[1]));
                 }
             }
 
@@ -353,6 +450,19 @@ namespace PRISM
 
             return osInfo;
 
+        }
+
+        /// <summary>
+        /// Remove leading and trailing double quotes
+        /// </summary>
+        /// <param name="dataLine"></param>
+        /// <returns></returns>
+        private string StripQuotes(string dataLine)
+        {
+            if (string.IsNullOrWhiteSpace(dataLine))
+                return string.Empty;
+
+            return dataLine.TrimStart('"').TrimEnd('"');
         }
 
     }
