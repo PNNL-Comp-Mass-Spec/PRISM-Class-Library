@@ -27,6 +27,8 @@ namespace PRISM
 
         #region "Classwide Variables"
 
+        private int mCoreCountCached;
+
         private readonly bool mLimitLoggingByTimeOfDay;
 
         private DateTime mLastDebugInfoTimeCoreCount;
@@ -46,6 +48,8 @@ namespace PRISM
         /// </summary>
         public clsLinuxSystemInfo(bool limitLoggingByTimeOfDay)
         {
+            mCoreCountCached = 0;
+
             mLimitLoggingByTimeOfDay = limitLoggingByTimeOfDay;
 
             mLastDebugInfoTimeCoreCount = DateTime.UtcNow.AddMinutes(-1);
@@ -155,9 +159,13 @@ namespace PRISM
         /// <returns>The number of cores on this computer</returns>
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// The computed core count is cached to avoid needing to re-parse /proc/cpuinfo repeatedly
         /// </remarks>
         public int GetCoreCount()
         {
+
+            if (mCoreCountCached > 0)
+                return mCoreCountCached;
 
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreCount).TotalSeconds > 15;
             if (showDebugInfo)
@@ -165,12 +173,13 @@ namespace PRISM
 
             try
             {
+                var cpuInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, CPUINFO_FILE);
 
-                var cpuInfoFile = new FileInfo(CPUINFO_FILE_PATH);
+                var cpuInfoFile = new FileInfo(cpuInfoFilePath);
                 if (!cpuInfoFile.Exists)
                 {
                     if (showDebugInfo)
-                        ConditionalLogError("CPU info file not found: " + CPUINFO_FILE_PATH);
+                        ConditionalLogError("CPU info file not found: " + cpuInfoFilePath);
 
                     return -1;
                 }
@@ -247,22 +256,25 @@ namespace PRISM
                 if (coreCountIgnoreHyperthreading > 0 && hyperthreadedCoreCount % coreCountIgnoreHyperthreading == 0)
                 {
                     // hyperthreadedCoreCount is a multiple of coreCountIgnoreHyperthreading (typically 2x difference)
+                    mCoreCountCached = coreCountIgnoreHyperthreading;
                     return coreCountIgnoreHyperthreading;
                 }
 
                 if (hyperthreadedCoreCount >= coreCountIgnoreHyperthreading * 2)
                 {
                     // hyperthreadedCoreCount is at least double coreCountIgnoreHyperthreading
+                    mCoreCountCached = coreCountIgnoreHyperthreading;
                     return coreCountIgnoreHyperthreading;
                 }
 
                 if (hyperthreadedCoreCount > 0)
                 {
+                    mCoreCountCached = hyperthreadedCoreCount;
                     return hyperthreadedCoreCount;
                 }
 
                 if (showDebugInfo)
-                    ConditionalLogError("Cannot determine core count; expected fields not found in " + CPUINFO_FILE_PATH);
+                    ConditionalLogError("Cannot determine core count; expected fields not found in " + cpuInfoFilePath);
 
                 return -1;
 
