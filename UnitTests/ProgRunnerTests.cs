@@ -61,12 +61,14 @@ namespace PRISMTest
                 Assert.Fail("Exe not found: " + utilityExe.FullName);
             }
 
+            var processStats = new PRISMWin.clsProcessStats();
+
             var workDir = @"C:\Temp";
             var tempFolder = new DirectoryInfo(workDir);
             if (!tempFolder.Exists)
                 tempFolder.Create();
 
-            var coreCount = PRISMWin.clsProcessStats.GetCoreCount();
+            var coreCount = processStats.GetCoreCount();
             Console.WriteLine("Machine has {0} cores", coreCount);
 
             Assert.GreaterOrEqual(coreCount, 2, "Core count less than 2");
@@ -104,7 +106,7 @@ namespace PRISMTest
                 {
                     if (cachedProcessID > 0)
                     {
-                        var cpuUsage = PRISMWin.clsProcessStats.GetCoreUsageByProcessID(cachedProcessID);
+                        var cpuUsage = processStats.GetCoreUsageByProcessID(cachedProcessID);
                         Console.WriteLine("CPU Usage: " + cpuUsage);
                     }
                 }
@@ -128,7 +130,7 @@ namespace PRISMTest
                     progRunner.StopMonitoringProgram(kill: true);
             }
 
-            PRISMWin.clsProcessStats.ClearCachedPerformanceCounterForProcessID(cachedProcessID);
+            processStats.ClearCachedPerformanceCounterForProcessID(cachedProcessID);
 
             if (writeConsoleOutput)
             {

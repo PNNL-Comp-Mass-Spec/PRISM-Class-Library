@@ -13,30 +13,68 @@ namespace PRISMWin
     /// </summary>
     public class clsProcessStats
     {
+        #region "Events and Event Handlers"
+
+        /// <summary>
+        /// Error event
+        /// </summary>
+        public event ErrorEventEventHandler ErrorEvent;
+
+        /// <summary>
+        /// Error event
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="ex"></param>
+        public delegate void ErrorEventEventHandler(string message, Exception ex);
+
+        #endregion
 
         /// <summary>
         /// Number of cores on this computer
         /// </summary>
         /// <remarks></remarks>
-        private static int mCachedCoreCount;
+        private int mCachedCoreCount;
+
+        /// <summary>
+        /// Used to determine overal CPU utilization
+        /// </summary>
+        private PerformanceCounter mCPUUsagePerformanceCounter;
 
         /// <summary>
         /// Maps processId to a PerformanceCounter instance
         /// </summary>
         /// <remarks>The KeyValuePair tracks the performance counter instance name (could be empty string) and the PerformanceCounter instance</remarks>
-        private static readonly ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>> mCachedPerfCounters = new ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>>();
+        private readonly ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>> mCachedPerfCounters = new ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>>();
+
+        private readonly bool mLimitLoggingByTimeOfDay;
 
         /// <summary>
         /// The instance name of the most recent performance counter used by GetCoreUsageByProcessID
         /// </summary>
         /// <remarks></remarks>
-        private static string mProcessIdInstanceName;
+        private string mProcessIdInstanceName;
+
+        private bool mPerformanceCountersInitialized;
+
+        private int mPerformanceCounterInitAttempts;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="limitLoggingByTimeOfDay">When true, only log errors between 12 am and 12:30 am</param>
+        public clsProcessStats(bool limitLoggingByTimeOfDay = false)
+        {
+            mLimitLoggingByTimeOfDay = limitLoggingByTimeOfDay;
+
+            mPerformanceCountersInitialized = false;
+            mPerformanceCounterInitAttempts = 0;
+        }
 
         /// <summary>
         /// Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
         /// </summary>
         /// <remarks></remarks>
-        public static void ClearCachedPerformanceCounters()
+        public void ClearCachedPerformanceCounters()
         {
             mCachedPerfCounters.Clear();
         }
@@ -45,7 +83,7 @@ namespace PRISMWin
         /// Clear the performance counter cached for the given Process ID
         /// </summary>
         /// <remarks></remarks>
-        public static void ClearCachedPerformanceCounterForProcessID(int processId)
+        public void ClearCachedPerformanceCounterForProcessID(int processId)
         {
             try
             {
@@ -64,6 +102,23 @@ namespace PRISMWin
 
         }
 
+        private void ConditionalLogError(string message, Exception ex = null)
+        {
+            if (mLimitLoggingByTimeOfDay)
+            {
+
+                // To avoid seeing this in the logs continually, we will only post this log message between 12 am and 12:30 am
+                if (DateTime.Now.Hour == 0 && DateTime.Now.Minute <= 30)
+                {
+                    OnErrorEvent(message + " (this message is only logged between 12 am and 12:30 am)", ex);
+                }
+            }
+            else
+            {
+                OnErrorEvent(message);
+            }
+        }
+
         /// <summary>
         /// Returns the number of cores
         /// </summary>
@@ -71,7 +126,7 @@ namespace PRISMWin
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 4-core chips will report 8 cores, even if Hyperthreading is enabled
         /// </remarks>
-        public static int GetCoreCount()
+        public int GetCoreCount()
         {
 
             try
@@ -109,7 +164,7 @@ namespace PRISMWin
         /// <param name="processId">Process ID for the program</param>
         /// <returns>Number of cores in use; 0 if the process is terminated.  Exception is thrown if a problem</returns>
         /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
-        public static float GetCoreUsageByProcessID(int processId)
+        public float GetCoreUsageByProcessID(int processId)
         {
             return GetCoreUsageByProcessID(processId, ref mProcessIdInstanceName);
         }
@@ -122,7 +177,7 @@ namespace PRISMWin
         /// <param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
         /// <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
         /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
-        public static float GetCoreUsageByProcessID(int processId, ref string processIdInstanceName)
+        public float GetCoreUsageByProcessID(int processId, ref string processIdInstanceName)
         {
 
 
@@ -217,7 +272,7 @@ namespace PRISMWin
         /// The first time perfCounter.NextSample() is called a Permissions exception is sometimes thrown
         /// Set maxAttempts to 2 or higher to gracefully handle this
         /// </remarks>
-        private static float GetCoreUsageForPerfCounter(PerformanceCounter perfCounter, int maxAttempts)
+        private float GetCoreUsageForPerfCounter(PerformanceCounter perfCounter, int maxAttempts)
         {
 
             if (maxAttempts < 1)
@@ -268,12 +323,11 @@ namespace PRISMWin
         /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
         /// <remarks>
         /// Core count is typically an integer, but can be a fractional number if not using a core 100%
-        /// If multiple processes are running with the given name then returns the total core usage for all of them
+        /// If multiple processes are running with the given name, returns the total core usage for all of them
         /// </remarks>
-        public static float GetCoreUsageByProcessName(string processName)
+        public float GetCoreUsageByProcessName(string processName)
         {
-            List<int> processIDs;
-            return GetCoreUsageByProcessName(processName, out processIDs);
+            return GetCoreUsageByProcessName(processName, out var _);
         }
 
         /// <summary>
@@ -285,9 +339,9 @@ namespace PRISMWin
         /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
         /// <remarks>
         /// Core count is typically an integer, but can be a fractional number if not using a core 100%
-        /// If multiple processes are running with the given name then returns the total core usage for all of them
+        /// If multiple processes are running with the given name, returns the total core usage for all of them
         /// </remarks>
-        public static float GetCoreUsageByProcessName(string processName, out List<int> processIDs)
+        public float GetCoreUsageByProcessName(string processName, out List<int> processIDs)
         {
 
             processIDs = new List<int>();
@@ -321,7 +375,7 @@ namespace PRISMWin
         /// <param name="processCounterName">Performance counter to return</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public static PerformanceCounter GetPerfCounterForProcessID(int processId, out string instanceName, string processCounterName = "% Processor Time")
+        public PerformanceCounter GetPerfCounterForProcessID(int processId, out string instanceName, string processCounterName = "% Processor Time")
         {
 
             instanceName = GetInstanceNameForProcessId(processId);
@@ -340,7 +394,7 @@ namespace PRISMWin
         /// <param name="processId">Process ID</param>
         /// <returns>Instance name if found, otherwise an empty string</returns>
         /// <remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
-        public static string GetInstanceNameForProcessId(int processId)
+        public string GetInstanceNameForProcessId(int processId)
         {
 
             try
@@ -375,6 +429,25 @@ namespace PRISMWin
 
             return string.Empty;
 
+        }
+
+        /// <summary>
+        /// Report an error
+        /// </summary>
+        /// <param name="message"></param>
+        private void OnErrorEvent(string message)
+        {
+            ErrorEvent?.Invoke(message, null);
+        }
+
+        /// <summary>
+        /// Report an error
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="ex">Exception (allowed to be nothing)</param>
+        private void OnErrorEvent(string message, Exception ex)
+        {
+            ErrorEvent?.Invoke(message, ex);
         }
     }
 }
