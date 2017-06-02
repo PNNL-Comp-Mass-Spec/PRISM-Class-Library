@@ -51,6 +51,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="clsTestFileCopyInfo.cs" />
     <Compile Include="DotNETVersionTest.cs" />
     <Compile Include="FileCopyTests.cs" />
     <Compile Include="LoggerTests.cs" />
@@ -60,6 +61,9 @@
     <Compile Include="StackTraceFormatterTests.cs" />
     <Compile Include="StoredProcedureTests.cs" />
     <Compile Include="TestDBTools.cs" />
+    <Compile Include="TestLinuxSystemInfo.cs" />
+    <Compile Include="TestOSVersionInfo.cs" />
+    <Compile Include="TestPathUtils.cs" />
     <Compile Include="TestValueToString.cs" />
     <Compile Include="XMLSettingsFileTests.cs" />
   </ItemGroup>
