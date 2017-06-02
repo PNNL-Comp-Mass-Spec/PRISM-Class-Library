@@ -217,15 +217,15 @@ namespace PRISM
 
         }
 
-        private static string TrimLinePrefix(string strFileDescription, string codeLinePrefix)
+        private static string TrimLinePrefix(string fileDescription, string codeLinePrefix)
         {
 
-            var matchIndex = strFileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal);
+            var matchIndex = fileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal);
             if (matchIndex > 0) {
-                return strFileDescription.Substring(0, matchIndex);
+                return fileDescription.Substring(0, matchIndex);
             }
 
-            return strFileDescription;
+            return fileDescription;
         }
 
     }

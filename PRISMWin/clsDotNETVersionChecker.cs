@@ -28,9 +28,9 @@ namespace PRISMWin
         /// <summary>
         /// Error event
         /// </summary>
-        /// <param name="strMessage"></param>
+        /// <param name="message"></param>
         /// <param name="ex"></param>
-        public delegate void ErrorEventEventHandler(string strMessage, Exception ex);
+        public delegate void ErrorEventEventHandler(string message, Exception ex);
 
         #endregion
 
@@ -334,11 +334,11 @@ namespace PRISMWin
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="strMessage"></param>
+        /// <param name="message"></param>
         /// <param name="ex">Exception (allowed to be nothing)</param>
-        protected void OnErrorEvent(string strMessage, Exception ex)
+        protected void OnErrorEvent(string message, Exception ex)
         {
-            ErrorEvent?.Invoke(strMessage, ex);
+            ErrorEvent?.Invoke(message, ex);
         }
 
         private void StoreVersion(IDictionary<int, List<string>> dotNETVersions, int majorVersion, string specificVersion)

@@ -19,8 +19,8 @@ namespace PRISM
         /// <summary>
         /// Debug event
         /// </summary>
-        /// <param name="strMessage"></param>
-        public delegate void DebugEventEventHandler(string strMessage);
+        /// <param name="message"></param>
+        public delegate void DebugEventEventHandler(string message);
 
         /// <summary>
         /// Error event
@@ -30,9 +30,9 @@ namespace PRISM
         /// <summary>
         /// Error event
         /// </summary>
-        /// <param name="strMessage"></param>
+        /// <param name="message"></param>
         /// <param name="ex"></param>
-        public delegate void ErrorEventEventHandler(string strMessage, Exception ex);
+        public delegate void ErrorEventEventHandler(string message, Exception ex);
 
         /// <summary>
         /// Progress updated
@@ -54,8 +54,8 @@ namespace PRISM
         /// <summary>
         /// Status event
         /// </summary>
-        /// <param name="strMessage"></param>
-        public delegate void StatusEventEventHandler(string strMessage);
+        /// <param name="message"></param>
+        public delegate void StatusEventEventHandler(string message);
 
         /// <summary>
         /// Warning event
@@ -65,35 +65,35 @@ namespace PRISM
         /// <summary>
         /// Warning event
         /// </summary>
-        /// <param name="strMessage"></param>
-        public delegate void WarningEventEventHandler(string strMessage);
+        /// <param name="message"></param>
+        public delegate void WarningEventEventHandler(string message);
 
         /// <summary>
         /// Report a debug message
         /// </summary>
-        /// <param name="strMessage"></param>
-        protected void OnDebugEvent(string strMessage)
+        /// <param name="message"></param>
+        protected void OnDebugEvent(string message)
         {
-            DebugEvent?.Invoke(strMessage);
+            DebugEvent?.Invoke(message);
         }
 
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="strMessage"></param>
-        protected void OnErrorEvent(string strMessage)
+        /// <param name="message"></param>
+        protected void OnErrorEvent(string message)
         {
-            ErrorEvent?.Invoke(strMessage, null);
+            ErrorEvent?.Invoke(message, null);
         }
 
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="strMessage"></param>
+        /// <param name="message"></param>
         /// <param name="ex">Exception (allowed to be nothing)</param>
-        protected void OnErrorEvent(string strMessage, Exception ex)
+        protected void OnErrorEvent(string message, Exception ex)
         {
-            ErrorEvent?.Invoke(strMessage, ex);
+            ErrorEvent?.Invoke(message, ex);
         }
 
         /// <summary>
@@ -109,19 +109,19 @@ namespace PRISM
         /// <summary>
         /// Report a status message
         /// </summary>
-        /// <param name="strMessage"></param>
-        protected void OnStatusEvent(string strMessage)
+        /// <param name="message"></param>
+        protected void OnStatusEvent(string message)
         {
-            StatusEvent?.Invoke(strMessage);
+            StatusEvent?.Invoke(message);
         }
 
         /// <summary>
         /// Report a warning
         /// </summary>
-        /// <param name="strMessage"></param>
-        protected void OnWarningEvent(string strMessage)
+        /// <param name="message"></param>
+        protected void OnWarningEvent(string message)
         {
-            WarningEvent?.Invoke(strMessage);
+            WarningEvent?.Invoke(message);
         }
 
         /// <summary>
