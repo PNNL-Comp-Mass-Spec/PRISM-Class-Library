@@ -192,7 +192,7 @@ namespace PRISM
         /// Parse the parameters and switches at the command line; uses / for the switch character and : for the switch parameter character
         /// </summary>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
-        /// <remarks>If /? or /help is found, then returns False and sets mShowHelp to True</remarks>
+        /// <remarks>If /? or /help is found, returns False and sets mShowHelp to True</remarks>
         public bool ParseCommandLine()
         {
             return ParseCommandLine(DEFAULT_SWITCH_CHAR, DEFAULT_SWITCH_PARAM_CHAR);
@@ -202,7 +202,7 @@ namespace PRISM
         /// Parse the parameters and switches at the command line; uses : for the switch parameter character
         /// </summary>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
-        /// <remarks>If /? or /help is found, then returns False and sets mShowHelp to True</remarks>
+        /// <remarks>If /? or /help is found, returns False and sets mShowHelp to True</remarks>
         public bool ParseCommandLine(char switchStartChar)
         {
             return ParseCommandLine(switchStartChar, DEFAULT_SWITCH_PARAM_CHAR);
@@ -214,13 +214,13 @@ namespace PRISM
         /// <param name="switchStartChar"></param>
         /// <param name="switchParameterChar"></param>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
-        /// <remarks>If /? or /help is found, then returns False and sets mShowHelp to True</remarks>
+        /// <remarks>If /? or /help is found, returns False and sets mShowHelp to True</remarks>
         public bool ParseCommandLine(char switchStartChar, char switchParameterChar)
         {
             // Returns True if any command line parameters were found
             // Otherwise, returns false
             //
-            // If /? or /help is found, then returns False and sets mShowHelp to True
+            // If /? or /help is found, returns False and sets mShowHelp to True
 
             mSwitches.Clear();
             mNonSwitchParameters.Clear();

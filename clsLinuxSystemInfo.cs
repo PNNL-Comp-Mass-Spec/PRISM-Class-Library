@@ -67,25 +67,34 @@ namespace PRISM
 
             mRegexMemorySizeNoUnits = new Regex(@"(?<Size>\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-            // Stat fields are:
+            // Stat fields (for details, see: man proc)
+            //
             //  Field          Content
-            //   pid           process id
-            //   tcomm         filename of the executable
-            //   state         state (R is running, S is sleeping, D is waiting, Z is zombie, T is stopped, t is TraceStopped, W is paging, X or x is dead, K is Wakekill, W is waking, P is parked)
-            //   ppid          process id of the parent process
-            //   pgrp          pgrp of the process; all threads in a tree having the same pgrp value, equivalent to the pid of the primary (initial) process
-            //   sid           session id
-            //   tty_nr        tty the process uses
-            //   tty_pgrp      pgrp of the tty
-            //   flags         task flags
-            //   min_flt       number of minor faults
-            //   cmin_flt      number of minor faults with child's
-            //   maj_flt       number of major faults
-            //   cmaj_flt      number of major faults with child's
-            //   utime         user mode jiffies
-            //   stime         kernel mode jiffies
-            //   cutime        user mode jiffies with child's
-            //   cstime        kernel mode jiffies with child's
+            //  -----          -------
+            //  pid            Process id
+            //  tcomm          Filename of the executable, in parentheses
+            //  state          State (R is running, S is sleeping, D is waiting, Z is zombie, T is stopped, t is TraceStopped, W is paging, X or x is dead, K is Wakekill, W is waking, P is parked)
+            //  ppid           Process id of the parent process
+            //  pgrp           Process group id; child threads of a parent process all have the same pgrp value, equivalent to the pid of the parent (initial) process
+            //  sid            Session id
+            //  tty_nr         Controlling terminal of the process
+            //  tty_pgrp       ID of the foreground process group of the controlling terminal of the process
+            //  flags          Task flags
+            //  min_flt        Number of minor faults
+            //  cmin_flt       Number of minor faults that the process's waited-for children have made
+            //  maj_flt        Number of major faults
+            //  cmaj_flt       Number of major faults that the process's waited-for children have made
+            //  utime          Amount of time that the process has been scheduled in user mode, in jiffies
+            //  stime          Amount of time that the process has been scheduled in kernel mode, in jiffies
+            //  cutime         Amount of time that the process's waited-for children have been scheduled in user mode, in jiffies
+            //  cstime         Amount of time that the process's waited-for children have been scheduled in kernel mode, in jiffies
+            //  priority       Value between 0 (high priority) and 39 (low priority), default 20; corresponds to the user-visible nice range of -20 to 19
+            //  nice           Value in the range -20 (high priority) to 19 (low priority), default 0
+            //  numthreads     Number of threads in the process
+            //  it_real_value  Obsolete (always 0)
+            //  start_time     The time in jiffies the process started after system boot
+            //  vsize          Virtual memory size in bytes
+            //  rss            Resident Set Size: number of pages the process has in real memory
 
             // This regex matches the ProcessID and command name, plus the various stats
             mStatLineWithCommand = new Regex(@"(?<pid>\d+) (?<command>\([^)]+\)) (?<state>\S) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
@@ -139,7 +148,7 @@ namespace PRISM
 
                 return totalJiffies;
             }
-            
+
         }
 
         private void ConditionalLogError(string message, Exception ex = null)
@@ -158,7 +167,6 @@ namespace PRISM
                 OnErrorEvent(message);
             }
         }
-
 
         private bool ExtractCPUTimes(FileSystemInfo statFile, out long utime, out long stime)
         {
@@ -437,6 +445,16 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Reports the number of cores in use by the given process
+        /// This method takes at least 1000 msec to execute
+        /// </summary>
+        /// <param name="processName">Process name, for example chrome (do not include .exe)</param>
+        /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
+        /// <remarks>
+        /// Core count is typically an integer, but can be a fractional number if not using a core 100%
+        /// If multiple processes are running with the given name, returns the total core usage for all of them
+        /// </remarks>
         public float GetCoreUsageByProcessName(string processName, out List<int> processIDs)
         {
             throw new NotImplementedException();

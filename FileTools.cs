@@ -1883,7 +1883,7 @@ namespace PRISM
 
         /// <summary>
         /// Compares two timestamps (typically the LastWriteTime for a file)
-        /// If they agree within 2 seconds, then returns True, otherwise false
+        /// If they agree within 2 seconds, returns True, otherwise false
         /// </summary>
         /// <param name="dtTime1">First file time</param>
         /// <param name="dtTime2">Second file time</param>
