@@ -368,6 +368,36 @@ namespace PRISMWin
         }
 
         /// <summary>
+        /// Returns the CPU usage
+        /// </summary>
+        /// <returns>Value between 0 and 100</returns>
+        /// <remarks>
+        /// This is CPU usage for all running applications, not just this application
+        /// For CPU usage of a single application use SystemProcessInfo.GetCoreUsageByProcessID()
+        /// </remarks>
+        public float GetCPUUtilization()
+        {
+            float cpuUtilization = 0;
+
+            InitializePerformanceCounters();
+
+            try
+            {
+                if (mCPUUsagePerformanceCounter != null)
+                {
+                    cpuUtilization = mCPUUsagePerformanceCounter.NextValue();
+                }
+            }
+            catch (Exception)
+            {
+                // Ignore errors here
+            }
+
+            return cpuUtilization;
+
+        }
+
+        /// <summary>
         /// Obtain the performance counter for the given process
         /// </summary>
         /// <param name="processId">Process ID</param>
@@ -428,6 +458,38 @@ namespace PRISMWin
             }
 
             return string.Empty;
+
+        }
+
+        private void InitializePerformanceCounters()
+        {
+            if (mPerformanceCountersInitialized)
+                return;
+
+            try
+            {
+
+                if (mPerformanceCounterInitAttempts > 2)
+                {
+                    // Initialization has failed 3 times
+                    // Stop trying to initialize the performance counters
+                    mPerformanceCountersInitialized = true;
+                    return;
+                }
+
+                mPerformanceCounterInitAttempts++;
+
+                mCPUUsagePerformanceCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total")
+                {
+                    ReadOnly = true
+                };
+
+                mPerformanceCountersInitialized = true;
+            }
+            catch (Exception ex)
+            {
+                ConditionalLogError("Error instantiating the Processor.[% Processor Time] performance counter: " + ex.Message, ex);
+            }
 
         }
 
