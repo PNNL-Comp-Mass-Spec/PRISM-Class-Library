@@ -18,8 +18,9 @@ namespace PRISM
 
         public const string ROOT_PROC_DIRECTORY = "/proc";
 
-        public const string MEMINFO_FILE_PATH = "/proc/meminfo";
         public const string CPUINFO_FILE = "cpuinfo";
+
+        public const string MEMINFO_FILE = "meminfo";
 
         #endregion
 
@@ -147,9 +148,6 @@ namespace PRISM
             {
 
                 // To avoid seeing this in the logs continually, we will only post this log message between 12 am and 12:30 am
-                // A possible fix for this is to add the user who is running this process to the "Performance Monitor Users" group
-                // in "Local Users and Groups" on the machine showing this error.  Alternatively, add the user to the "Administrators" group.
-                // In either case, you will need to reboot the computer for the change to take effect
                 if (DateTime.Now.Hour == 0 && DateTime.Now.Minute <= 30)
                 {
                     OnErrorEvent(message + " (this message is only logged between 12 am and 12:30 am)", ex);
@@ -576,12 +574,13 @@ namespace PRISM
 
             try
             {
+                var memInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
 
-                var memInfoFile = new FileInfo(MEMINFO_FILE_PATH);
+                var memInfoFile = new FileInfo(memInfoFilePath);
                 if (!memInfoFile.Exists)
                 {
                     if (showDebugInfo)
-                        ConditionalLogError("Memory info file not found: " + MEMINFO_FILE_PATH);
+                        ConditionalLogError("Memory info file not found: " + memInfoFilePath);
 
                     return -1;
                 }
@@ -661,7 +660,7 @@ namespace PRISM
                 }
 
                 if (showDebugInfo)
-                    ConditionalLogError("MemFree statistic not found in " + MEMINFO_FILE_PATH);
+                    ConditionalLogError("MemFree statistic not found in " + memInfoFilePath);
 
                 return -1;
 
