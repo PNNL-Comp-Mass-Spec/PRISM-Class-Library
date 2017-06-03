@@ -66,34 +66,6 @@ namespace PRISM
 
             mLastDebugInfoTimeMemory = DateTime.UtcNow.AddMinutes(-1);
 
-            // Stat fields (for details, see: man proc)
-            //
-            //  Field          Content
-            //  -----          -------
-            //  pid            Process id
-            //  tcomm          Filename of the executable, in parentheses
-            //  state          State (R is running, S is sleeping, D is waiting, Z is zombie, T is stopped, t is TraceStopped, W is paging, X or x is dead, K is Wakekill, W is waking, P is parked)
-            //  ppid           Process id of the parent process
-            //  pgrp           Process group id; child threads of a parent process all have the same pgrp value, equivalent to the pid of the parent (initial) process
-            //  sid            Session id
-            //  tty_nr         Controlling terminal of the process
-            //  tty_pgrp       ID of the foreground process group of the controlling terminal of the process
-            //  flags          Task flags
-            //  min_flt        Number of minor faults
-            //  cmin_flt       Number of minor faults that the process's waited-for children have made
-            //  maj_flt        Number of major faults
-            //  cmaj_flt       Number of major faults that the process's waited-for children have made
-            //  utime          Amount of time that the process has been scheduled in user mode, in jiffies
-            //  stime          Amount of time that the process has been scheduled in kernel mode, in jiffies
-            //  cutime         Amount of time that the process's waited-for children have been scheduled in user mode, in jiffies
-            //  cstime         Amount of time that the process's waited-for children have been scheduled in kernel mode, in jiffies
-            //  priority       Value between 0 (high priority) and 39 (low priority), default 20; corresponds to the user-visible nice range of -20 to 19
-            //  nice           Value in the range -20 (high priority) to 19 (low priority), default 0
-            //  numthreads     Number of threads in the process
-            //  it_real_value  Obsolete (always 0)
-            //  start_time     The time in jiffies the process started after system boot
-            //  vsize          Virtual memory size in bytes
-            //  rss            Resident Set Size: number of pages the process has in real memory
             mMemorySizeMatcher = new Regex(@"(?<Size>\d+) +(?<Units>(KB|MB|GB|TB|))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             mMemorySizeMatcherNoUnits = new Regex(@"(?<Size>\d+)", RegexOptions.Compiled);
@@ -254,9 +226,34 @@ namespace PRISM
                     // 166488 (mono) S 88338 166488 87940 34818 166488 4202496 3181 0 0 0 14990 9 0 0 20 0 21 0 576435325 1486651392 6596 18446744073709551615 4194304 7975508 140724251272320 140724251268432 237064205964 0 0 4096 1260 18446744073709551615 0 0 17 0 0 0 0 0 0
                     // 166497 (Threadpool work) R 88338 166488 87940 34818 166488 4202560 3228 0 0 0 67591 10 0 0 20 0 17 0 576435333 1486585856 6137 18446744073709551615 4194304 7975508 140724251272320 139666082726648 1086447976 0 0 4096 1260 18446744073709551615 0 0 -1 13 0 0 0 0 0
 
-                    // The second field is the filename of the executable, and it should be surrounded by parentheses
-
-
+                    // Process Stat fields (for details, see: man proc)
+                    //
+                    //  Field          Content
+                    //  -----          -------
+                    //  pid            Process id
+                    //  tcomm          Filename of the executable, in parentheses
+                    //  state          State (R is running, S is sleeping, D is waiting, Z is zombie, T is stopped, t is TraceStopped, W is paging, X or x is dead, K is Wakekill, W is waking, P is parked)
+                    //  ppid           Process id of the parent process
+                    //  pgrp           Process group id; child threads of a parent process all have the same pgrp value, equivalent to the pid of the parent (initial) process
+                    //  sid            Session id
+                    //  tty_nr         Controlling terminal of the process
+                    //  tty_pgrp       ID of the foreground process group of the controlling terminal of the process
+                    //  flags          Task flags
+                    //  min_flt        Number of minor faults
+                    //  cmin_flt       Number of minor faults that the process's waited-for children have made
+                    //  maj_flt        Number of major faults
+                    //  cmaj_flt       Number of major faults that the process's waited-for children have made
+                    //  utime          Amount of time that the process has been scheduled in user mode, in jiffies
+                    //  stime          Amount of time that the process has been scheduled in kernel mode, in jiffies
+                    //  cutime         Amount of time that the process's waited-for children have been scheduled in user mode, in jiffies
+                    //  cstime         Amount of time that the process's waited-for children have been scheduled in kernel mode, in jiffies
+                    //  priority       Value between 0 (high priority) and 39 (low priority), default 20; corresponds to the user-visible nice range of -20 to 19
+                    //  nice           Value in the range -20 (high priority) to 19 (low priority), default 0
+                    //  numthreads     Number of threads in the process
+                    //  it_real_value  Obsolete (always 0)
+                    //  start_time     The time in jiffies the process started after system boot
+                    //  vsize          Virtual memory size in bytes
+                    //  rss            Resident Set Size: number of pages the process has in real memory
 
                     var match = mStatLineMatcher.Match(dataLine);
 

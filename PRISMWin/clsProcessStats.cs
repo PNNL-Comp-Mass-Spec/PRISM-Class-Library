@@ -180,7 +180,6 @@ namespace PRISMWin
         public float GetCoreUsageByProcessID(int processId, ref string processIdInstanceName)
         {
 
-
             try
             {
                 if (mCachedCoreCount == 0)
@@ -373,7 +372,7 @@ namespace PRISMWin
         /// <returns>Value between 0 and 100</returns>
         /// <remarks>
         /// This is CPU usage for all running applications, not just this application
-        /// For CPU usage of a single application use SystemProcessInfo.GetCoreUsageByProcessID()
+        /// For CPU usage of a single application use GetCoreUsageByProcessID()
         /// </remarks>
         public float GetCPUUtilization()
         {
