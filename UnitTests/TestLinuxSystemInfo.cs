@@ -127,6 +127,139 @@ namespace PRISMTest
         }
 
         [Test]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "", 0.48)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "cpuloadtest", 0.48)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 0.92)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "InvalidArgs", -1)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "InvalidProgram", "", -1)]
+        public void TestGetCoreUsageByProcessName(string sourceProcFolderPath, int processID, string processName, string arguments, double expectedCoreUsageTotal)
+        {
+            const int SAMPLING_TIME_SECONDS = 3;
+
+            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
+            if (!procFolder.Exists)
+            {
+                // Proc folder not found; try to make it
+                try
+                {
+                    procFolder.Create();
+                }
+                catch (Exception)
+                {
+                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
+                }
+            }
+
+            // Update the cpu stat file in the local proc folder using sourceProcFolderPath
+            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
+            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
+            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
+
+            if (targetCpuStatFile.Exists)
+            {
+                try
+                {
+                    targetCpuStatFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local cpu stat file at " + targetCpuStatFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            sourceCpuStatFile1.CopyTo(targetCpuStatFile.FullName);
+            // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceCpuStatFile1.FullName, targetCpuStatFile.FullName);
+
+            // Update the process stat file in the local proc folder using sourceProcFolderPath
+            var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
+            var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
+            var targetStatFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\stat"));
+
+            if (targetStatFile.Exists)
+            {
+                try
+                {
+                    targetStatFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local process stat file at " + targetStatFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            try
+            {
+                var parentFolder = targetStatFile.Directory;
+                if (parentFolder == null)
+                    Assert.Fail("Unable to determine the parent directory of " + targetStatFile.FullName);
+
+                if (!parentFolder.Exists)
+                    parentFolder.Create();
+
+                sourceStatFile1.CopyTo(targetStatFile.FullName, true);
+                // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceStatFile1.FullName, targetStatFile.FullName);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Could not copy the stat file to " + targetStatFile.FullName + ": " + ex.Message);
+            }
+
+            // Update the process cmdline file in the local proc folder using sourceProcFolderPath
+            var sourceCmdLineFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\cmdline"));
+            var targetCmdLineFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\cmdline"));
+
+            if (targetCmdLineFile.Exists)
+            {
+                try
+                {
+                    targetCmdLineFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local process cmdline file at " + targetCmdLineFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            try
+            {
+                sourceCmdLineFile.CopyTo(targetCmdLineFile.FullName, true);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Could not copy the cmdline file to " + targetCmdLineFile.FullName + ": " + ex.Message);
+            }
+
+            var linuxSystemInfo = new clsLinuxSystemInfo();
+
+            var filesToCopy = new List<clsTestFileCopyInfo>
+            {
+                new clsTestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
+                new clsTestFileCopyInfo(sourceStatFile2, targetStatFile)
+            };
+
+            // Start a timer to replace the stat file in 2 seconds
+            var fileReplacerTimer = new Timer(ReplaceFiles, filesToCopy, (SAMPLING_TIME_SECONDS - 1) * 1000, -1);
+
+            var coreUsage = linuxSystemInfo.GetCoreUsageByProcessName(processName, arguments, out var processIDs, SAMPLING_TIME_SECONDS);
+
+            fileReplacerTimer.Dispose();
+
+            // Delay 1 second to allow threads to finish up
+            var startTime = DateTime.UtcNow;
+            while (true)
+            {
+                Thread.Sleep(250);
+                if (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds >= 1000)
+                    break;
+            }
+
+            Console.WriteLine("Core usage: {0:F2}", coreUsage);
+
+            Assert.AreEqual(expectedCoreUsageTotal, coreUsage, 0.1, "Core usage mismatch");
+
+        }
+
+        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 0.48, 24)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 0.92, 46)]
         public void TestGetCoreUsageByProcessID(string sourceProcFolderPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
@@ -241,7 +374,74 @@ namespace PRISMTest
             foreach (var fileToCopy in filesToCopy)
             {
                 fileToCopy.CopyToTargetNow();                
+
+        [Test]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 24.100)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 46.366)]
+        public void TestGetCPUUtilization(string sourceProcFolderPath, int processID, double expectedCpuUsageTotal)
+        {
+            const int SAMPLING_TIME_SECONDS = 3;
+
+            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
+            if (!procFolder.Exists)
+            {
+                // Proc folder not found; try to make it
+                try
+                {
+                    procFolder.Create();
+                }
+                catch (Exception)
+                {
+                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
+                }
             }
+
+            // Update the cpu stat file in the local proc folder using sourceProcFolderPath
+            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
+            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
+            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
+
+            if (targetCpuStatFile.Exists)
+            {
+                try
+                {
+                    targetCpuStatFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local cpu stat file at " + targetCpuStatFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            sourceCpuStatFile1.CopyTo(targetCpuStatFile.FullName);
+            // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceCpuStatFile1.FullName, targetCpuStatFile.FullName);
+
+            var linuxSystemInfo = new clsLinuxSystemInfo();
+
+            var filesToCopy = new List<clsTestFileCopyInfo>
+            {
+                new clsTestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
+            };
+
+            // Start a timer to replace the stat file in 2 seconds
+            var fileReplacerTimer = new Timer(ReplaceFiles, filesToCopy, (SAMPLING_TIME_SECONDS - 1) * 1000, -1);
+
+            var cpuUsageTotal = linuxSystemInfo.GetCPUUtilization(SAMPLING_TIME_SECONDS);
+
+            fileReplacerTimer.Dispose();
+
+            // Delay 1 second to allow threads to finish up
+            var startTime = DateTime.UtcNow;
+            while (true)
+            {
+                Thread.Sleep(250);
+                if (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds >= 1000)
+                    break;
+            }
+
+            Console.WriteLine("Overall CPU usage: {0:F1}%", cpuUsageTotal);
+
+            Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.01, "CPU usage mismatch");
 
         }
 
