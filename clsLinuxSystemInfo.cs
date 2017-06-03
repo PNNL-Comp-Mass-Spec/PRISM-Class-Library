@@ -36,13 +36,16 @@ namespace PRISM
 
         private DateTime mLastDebugInfoTimeMemory;
 
-        private readonly Regex mRegexMemorySize;
+        private readonly Regex mMemorySizeMatcher;
 
-        private readonly Regex mRegexMemorySizeNoUnits;
+        private readonly Regex mMemorySizeMatcherNoUnits;
 
-        private readonly Regex mStatLineWithCommand;
+        private readonly Regex mCpuIdleTimeMatcher;
+        private readonly Regex mCpuIdleTimeMatcherNoIOWait;
 
-        private readonly Regex mStatLineNoCommand;
+        private readonly Regex mStatLineMatcher;
+        private readonly Regex mStatLineMatcherNoCommand;
+
         #endregion
 
         #region "Methods"
@@ -62,10 +65,6 @@ namespace PRISM
             mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow.AddMinutes(-1);
 
             mLastDebugInfoTimeMemory = DateTime.UtcNow.AddMinutes(-1);
-
-            mRegexMemorySize = new Regex(@"(?<Size>\d+) +(?<Units>(KB|MB|GB|TB|))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
-            mRegexMemorySizeNoUnits = new Regex(@"(?<Size>\d+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             // Stat fields (for details, see: man proc)
             //
@@ -95,12 +94,23 @@ namespace PRISM
             //  start_time     The time in jiffies the process started after system boot
             //  vsize          Virtual memory size in bytes
             //  rss            Resident Set Size: number of pages the process has in real memory
+            mMemorySizeMatcher = new Regex(@"(?<Size>\d+) +(?<Units>(KB|MB|GB|TB|))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            mMemorySizeMatcherNoUnits = new Regex(@"(?<Size>\d+)", RegexOptions.Compiled);
+
+            // CPU time fields are described in method ComputeTotalCPUTime
+            mCpuIdleTimeMatcher = new Regex(@"^\S+\s+(?<User>\d+) (?<Nice>\d+) (?<System>\d+) (?<Idle>\d+) (?<IOWait>\d+)", RegexOptions.Compiled);
+
+            mCpuIdleTimeMatcherNoIOWait = new Regex(@"^\S+\s+(?<User>\d+) (?<Nice>\d+) (?<System>\d+) (?<Idle>\d+)", RegexOptions.Compiled);
+
+            // The following two Regex are used to parse stat files for running processes
+            // Fields are described in method ExtractCPUTimes
 
             // This regex matches the ProcessID and command name, plus the various stats
-            mStatLineWithCommand = new Regex(@"(?<pid>\d+) (?<command>\([^)]+\)) (?<state>\S) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
+            mStatLineMatcher = new Regex(@"^(?<pid>\d+) (?<command>\([^)]+\)) (?<state>\S) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
-            // This is  fallback Regex that starts at state in case mStatLineWithCommand fails
-            mStatLineNoCommand = new Regex(@"(?<state>[A-Za-z]) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
+            // This is a fallback Regex that starts at state in case mStatLineMatcher fails
+            mStatLineMatcherNoCommand = new Regex(@"(?<state>[A-Za-z]) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
         }
 
@@ -247,11 +257,12 @@ namespace PRISM
                     // The second field is the filename of the executable, and it should be surrounded by parentheses
 
 
-                    var match = mStatLineWithCommand.Match(dataLine);
+
+                    var match = mStatLineMatcher.Match(dataLine);
 
                     if (!match.Success)
                     {
-                        match = mStatLineNoCommand.Match(dataLine);
+                        match = mStatLineMatcherNoCommand.Match(dataLine);
                     }
 
                     if (!match.Success)
@@ -300,7 +311,7 @@ namespace PRISM
             Match match;
             string units;
 
-            var matchUnits = mRegexMemorySize.Match(dataLine);
+            var matchUnits = mMemorySizeMatcher.Match(dataLine);
 
             if (matchUnits.Success)
             {
@@ -309,7 +320,7 @@ namespace PRISM
             }
             else
             {
-                var matchNoUnits = mRegexMemorySizeNoUnits.Match(dataLine);
+                var matchNoUnits = mMemorySizeMatcherNoUnits.Match(dataLine);
 
                 if (matchNoUnits.Success)
                 {
@@ -345,7 +356,7 @@ namespace PRISM
                     memorySizeMB = (float)(memorySize / 1024.0);
                     break;
                 case "mb":
-                    memorySizeMB = (float)(memorySize);
+                    memorySizeMB = memorySize;
                     break;
                 case "gb":
                     memorySizeMB = (float)(memorySize * 1024.0);
