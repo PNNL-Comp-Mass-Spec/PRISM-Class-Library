@@ -473,6 +473,19 @@ namespace PRISM
         /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
         public float GetCoreUsageByProcessID(int processID, out float cpuUsageTotal, float samplingTimeSeconds = 1)
         {
+            return GetCoreUsageByProcessID(new List<int> { processID }, out cpuUsageTotal, samplingTimeSeconds);
+        }
+
+        /// <summary>
+        /// Determine the total core usage for a list of Process IDs
+        /// </summary>
+        /// <param name="processIDs">List of Process IDs to examine</param>
+        /// <param name="cpuUsageTotal">Output: Total CPU usage (value between 0 and 100)</param>
+        /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
+        /// <returns>Core usage, or 0 if process not found</returns>
+        /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
+        public float GetCoreUsageByProcessID(List<int> processIDs, out float cpuUsageTotal, float samplingTimeSeconds = 1)
+        {
             // Use approach described at
             // https://stackoverflow.com/questions/1420426/how-to-calculate-the-cpu-usage-of-a-process-by-pid-in-linux-from-c
             // See also https://github.com/scaidermern/top-processes/blob/master/top_proc.c
@@ -486,28 +499,11 @@ namespace PRISM
 
             try
             {
-
-                var statFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
-                    ROOT_PROC_DIRECTORY, processID.ToString()), "stat");
-
-                var statFile = new FileInfo(statFilePath);
-                if (!statFile.Exists)
+                var coreCount = GetCoreCount();
+                if (coreCount < 1)
                 {
                     if (showDebugInfo)
-                        OnDebugEvent("stat file not found for ProcessID "+ processID);
-
-                    return 0;
-                }
-
-                // Read utime and stime from the stat file for this process ID
-                // Wait samplingTimeSeconds seconds, then read the values again
-
-                var successStart = ExtractCPUTimes(statFile, out var utime1, out var stime1);
-
-                if (!successStart)
-                {
-                    if (showDebugInfo)
-                        OnDebugEvent("stat file could not be parsed for ProcessID " + processID);
+                        OnDebugEvent("Could not determine the number of cores on this system");
 
                     return 0;
                 }
@@ -516,11 +512,48 @@ namespace PRISM
                 if (timeTotal1 == 0)
                 {
                     if (showDebugInfo)
-                        OnDebugEvent("system stat file could not be parsed to determine total CPU time");
+                        OnDebugEvent("System stat file could not be parsed to determine total CPU time");
 
                     return 0;
                 }
 
+                // Keys in this dictionary are paths to stat files, values are utime and stime values parsed from the stat flie
+                var statFileTimes = new Dictionary<FileInfo, Tuple<long, long>>();
+                var errorMessage = string.Empty;
+
+                foreach (var processID in processIDs)
+                {
+                    var statFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
+                        ROOT_PROC_DIRECTORY, processID.ToString()), "stat");
+
+                    var statFile = new FileInfo(statFilePath);
+                    if (!statFile.Exists)
+                    {
+                        errorMessage = "Stat file not found for ProcessID " + processID;
+                        continue;
+                    }
+
+                    // Read utime and stime from the stat file for processID
+                    var success = ExtractCPUTimes(statFile, out var utime, out var stime);
+
+                    if (!success)
+                    {
+                        errorMessage = "Stat file could not be parsed for ProcessID " + processID;
+                        continue;
+                    }
+
+                    statFileTimes.Add(statFile, new Tuple<long, long>(utime, stime));
+                }
+
+                if (processIDs.Count == 1 && statFileTimes.Count == 0)
+                {
+                    if (showDebugInfo && !string.IsNullOrWhiteSpace(errorMessage))
+                        OnDebugEvent(errorMessage);
+
+                    return 0;
+                }
+
+                // Wait samplingTimeSeconds seconds, then read the values again
                 if (samplingTimeSeconds < 0.1)
                     Thread.Sleep(100);
                 if (samplingTimeSeconds > 10)
@@ -528,25 +561,11 @@ namespace PRISM
                 else
                     Thread.Sleep((int)(samplingTimeSeconds * 1000));
 
-                statFile.Refresh();
-                if (!statFile.Exists)
-                {
-                    // Stat file no longer exists; the process has ended
-                    return 0;
-                }
-
-                var successEnd = ExtractCPUTimes(statFile, out var utime2, out var stime2);
-                if (!successEnd)
-                {
-                    // Stat file no longer exists; the process has ended
-                    return 0;
-                }
-
                 var timeTotal2 = ComputeTotalCPUTime();
                 if (timeTotal2 == 0)
                 {
                     if (showDebugInfo)
-                        OnDebugEvent("system stat file could not be parsed to determine total CPU time");
+                        OnDebugEvent("System stat file could not be parsed to determine total CPU time");
 
                     return 0;
                 }
@@ -554,20 +573,58 @@ namespace PRISM
                 var deltaTimeTotal = timeTotal2 - timeTotal1;
                 if (deltaTimeTotal < 1)
                 {
+                    // No increase in CPU time
                     return 0;
                 }
 
-                var cpuUsageUser = 100 * (utime2 - utime1) / deltaTimeTotal;
-                var cpuUsageSystem = 100 * (stime2 - stime1) / deltaTimeTotal;
+                float totalCoreUsage = 0;
 
-                cpuUsageTotal = cpuUsageUser + cpuUsageSystem;
-                if (cpuUsageTotal > 100)
-                    cpuUsageTotal = 100;
+                foreach (var item in statFileTimes)
+                {
+                    var statFile = item.Key;
+                    var utime1 = item.Value.Item1;
+                    var stime1 = item.Value.Item2;
 
-                var coreCount = GetCoreCount();
-                var coreUsage = coreCount * cpuUsageTotal / 100;
+                    statFile.Refresh();
+                    if (!statFile.Exists)
+                    {
+                        // Stat file no longer exists; the process has ended
+                        continue;
+                    }
 
-                return coreUsage;
+                    var success = ExtractCPUTimes(statFile, out var utime2, out var stime2);
+                    if (!success)
+                    {
+                        // Stat file no longer exists; the process has ended
+                        continue;
+                    }
+
+                    var cpuUsage = 0f;
+
+                    var deltaUserTime = utime2 - utime1;
+                    if (deltaUserTime > 0)
+                    {
+                        var cpuUsageUser = deltaUserTime / (float)deltaTimeTotal * 100;
+                        cpuUsage += cpuUsageUser;
+                    }
+
+                    var deltaSystemTime = stime2 - stime1;
+                    if (deltaSystemTime > 0)
+                    {
+                        var cpuUsageSystem = deltaSystemTime / (float)deltaTimeTotal * 100;
+                        cpuUsage += cpuUsageSystem;
+                    }
+
+                    if (cpuUsage > 100)
+                        cpuUsage = 100;
+
+                    var coreUsage = coreCount * cpuUsage / 100;
+
+                    totalCoreUsage += coreUsage;
+                    cpuUsageTotal += cpuUsage;
+                }
+
+                return totalCoreUsage;
 
             }
             catch (Exception ex)
