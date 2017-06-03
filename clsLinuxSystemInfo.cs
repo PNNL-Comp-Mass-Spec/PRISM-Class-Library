@@ -104,8 +104,24 @@ namespace PRISM
 
         }
 
+        /// <summary>
+        /// Compute total CPU time (sum of processing times, idle times, wait times, etc.)
+        /// </summary>
+        /// <returns>Total CPU time, in jiffies</returns>
         private long ComputeTotalCPUTime()
         {
+            return ComputeTotalCPUTime(out var _);
+        }
+
+        /// <summary>
+        /// Compute total CPU time (sum of processing times, idle times, wait times, etc.)
+        /// </summary>
+        /// <param name="idleTime">Idle time, in jiffies (sum of idle and iowait times)</param>
+        /// <returns>Total CPU time, in jiffies</returns>
+        private long ComputeTotalCPUTime(out long idleTime)
+        {
+
+            idleTime = 0;
 
             var cpuStatFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, "stat");
             var cpuStatFile = new FileInfo(cpuStatFilePath);
@@ -131,6 +147,18 @@ namespace PRISM
                 // Example data line:
                 // cpu  37404353 50864 14997555 18383015477 7107004 462 218065 0 0
 
+                // Fields are:
+                //  user       Running normal processes executing in user mode
+                //  nice       Running user processes with low priority
+                //  system     Running system processes
+                //  idle       Idle time
+                //  iowait     Waiting for I/O to complete
+                //  irq        Servicing interrupts
+                //  softirq    Servicing softirqs
+                //  steal      Time spent in other operating systems when running in a virtualized environment
+                //  guest      Time spent running a virtual CPU for guest operating systems (included in user)
+                //  guest_nice Time spent running a virtual CPU with low priority for guest operating systems (included in nice)
+
                 // Sum all of the numbers following cpu
                 var fields = dataLine.Split(' ');
                 if (fields.Length < 2)
@@ -140,9 +168,30 @@ namespace PRISM
 
                 for (var i = 1; i < fields.Length; i++)
                 {
+                    if (i > 8)
+                    {
+                        // Do not include the "guest" columns
+                        // This is mentioned at https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
+                        break;
+                    }
+
                     if (long.TryParse(fields[i], out var clockTimeJiffies))
                     {
                         totalJiffies += clockTimeJiffies;
+                    }
+                }
+
+                var match = mCpuIdleTimeMatcher.Match(dataLine);
+                if (match.Success)
+                {
+                    idleTime = long.Parse(match.Groups["Idle"].Value) + long.Parse(match.Groups["IOWait"].Value);
+                }
+                else
+                {
+                    var match2 = mCpuIdleTimeMatcherNoIOWait.Match(dataLine);
+                    if (match2.Success)
+                    {
+                        idleTime = long.Parse(match2.Groups["Idle"].Value);
                     }
                 }
 
@@ -168,6 +217,13 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Parse utime and stime from a stat file for a given process
+        /// </summary>
+        /// <param name="statFile"></param>
+        /// <param name="utime">Amount of time that the process has been scheduled in user mode, in jiffies</param>
+        /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
+        /// <returns></returns>
         private bool ExtractCPUTimes(FileSystemInfo statFile, out long utime, out long stime)
         {
 
@@ -310,6 +366,47 @@ namespace PRISM
             return memorySizeMB;
         }
 
+        private bool GetCmdLineFileInfo(FileSystemInfo cmdLineFile, out string program, out List<string> arguments)
+        {
+            program = string.Empty;
+            arguments = new List<string>();
+
+            try
+            {
+                using (var reader = new StreamReader(new FileStream(cmdLineFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    if (reader.EndOfStream)
+                        return false;
+
+                    var dataLine = reader.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(dataLine))
+                        return false;
+
+                    // Split dataLine on the null terminator
+                    var fields = dataLine.Split('\0');
+
+                    if (fields.Length == 0)
+                        return false;
+
+                    for (var i = 0; i < fields.Length; i++)
+                    {
+                        if (i == 0)
+                            program = fields[i];
+                        else
+                            arguments.Add(fields[i]);
+                    }
+
+                    return true;
+                }
+            }
+            catch
+            {
+                // Ignore errors
+                return false;
+            }
+        }
+
         /// <summary>
         /// Report the number of cores on this system
         /// </summary>
@@ -396,7 +493,7 @@ namespace PRISM
                     }
                 }
 
-                var hyperthreadedCoreCount= processorList.Count;
+                var hyperthreadedCoreCount = processorList.Count;
 
                 var uniquePhysicalCoreIDs = new SortedSet<string>();
 
@@ -449,18 +546,96 @@ namespace PRISM
         /// Reports the number of cores in use by the given process
         /// This method takes at least 1000 msec to execute
         /// </summary>
-        /// <param name="processName">Process name, for example chrome (do not include .exe)</param>
-        /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
+        /// <param name="processName">
+        /// Process name, for example mono (full matches only; partial matches are ignored)
+        /// Can either be just a program name like mono, or the full path to the program (e.g. /usr/local/bin/mono)</param>
+        /// <param name="argumentText">Optional text to require is contained in one of the command line arguments passed to the program</param>
+        /// <param name="processIDs">Output: list of matching process IDs</param>
+        /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
+        /// <returns>Number of cores in use; -1 if process not found or if a problem</returns>
         /// <remarks>
         /// Core count is typically an integer, but can be a fractional number if not using a core 100%
         /// If multiple processes are running with the given name, returns the total core usage for all of them
         /// </remarks>
-        public float GetCoreUsageByProcessName(string processName, out List<int> processIDs)
+        public float GetCoreUsageByProcessName(string processName, string argumentText, out List<int> processIDs, float samplingTimeSeconds = 1)
         {
-            throw new NotImplementedException();
+
+            var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreUseByProcessID).TotalSeconds > 15;
+            if (showDebugInfo)
+                mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow;
 
             processIDs = new List<int>();
-            return 0;
+
+            try
+            {
+                // Get a list of process IDs in the /proc folder
+                var procFolder = new DirectoryInfo(ROOT_PROC_DIRECTORY);
+                if (!procFolder.Exists)
+                {
+                    if (showDebugInfo)
+                        OnDebugEvent("Proc folder not found at " + ROOT_PROC_DIRECTORY);
+
+                    return -1;
+                }
+
+                var matchProgramNameOnly = !processName.Contains("/");
+
+                foreach (var processIdFolder in procFolder.GetDirectories())
+                {
+                    // Open the cmdline file (if it exists) to determine the process name and commandline arguments
+                    var cmdLineFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
+                        ROOT_PROC_DIRECTORY, processIdFolder.Name), "cmdline");
+
+                    var cmdLineFile = new FileInfo(cmdLineFilePath);
+                    if (!cmdLineFile.Exists)
+                        continue;
+
+                    var success = GetCmdLineFileInfo(cmdLineFile, out var processIdProgram, out var processIdArgs);
+                    if (!success)
+                        continue;
+
+                    if (matchProgramNameOnly)
+                    {
+                        var processIdProgName = Path.GetFileName(processIdProgram);
+                        if (string.IsNullOrWhiteSpace(processIdProgName))
+                            continue;
+
+                        if (!processIdProgName.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                            continue;
+                    }
+                    else
+                    {
+                        if (!processIdProgram.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                            continue;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(argumentText))
+                    {
+                        var validMatch = processIdArgs.Any(argument => argument.IndexOf(argumentText, StringComparison.OrdinalIgnoreCase) >= 0);
+                        if (!validMatch)
+                            continue;
+                    }
+
+                    if (!int.TryParse(processIdFolder.Name, out var processId))
+                        continue;
+
+                    processIDs.Add(processId);
+                }
+
+                if (processIDs.Count == 0)
+                    return -1;
+
+                var coreUsage = GetCoreUsageByProcessID(processIDs, out var _, samplingTimeSeconds);
+                return coreUsage;
+
+            }
+            catch (Exception ex)
+            {
+                if (showDebugInfo)
+                    ConditionalLogError("Error in GetCoreUsageByProcessName: " + ex.Message);
+
+                return -1;
+            }
         }
 
         /// <summary>
@@ -631,6 +806,57 @@ namespace PRISM
             {
                 if (showDebugInfo)
                     ConditionalLogError("Error in GetCoreUsageByProcessID: " + ex.Message);
+
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Returns the CPU usage
+        /// </summary>
+        /// <returns>Value between 0 and 100</returns>
+        /// <remarks>
+        /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
+        /// This is CPU usage for all running applications, not just this application
+        /// For CPU usage of a single application use GetCoreUsageByProcessID()
+        /// </remarks>
+        public float GetCPUUtilization(float samplingTimeSeconds = 1)
+        {
+            try
+            {
+                var timeTotal1 = ComputeTotalCPUTime(out var idleTime1);
+                if (timeTotal1 == 0)
+                {
+                    return 0;
+                }
+
+                if (samplingTimeSeconds < 0.1)
+                    Thread.Sleep(100);
+                if (samplingTimeSeconds > 10)
+                    Thread.Sleep(10000);
+                else
+                    Thread.Sleep((int)(samplingTimeSeconds * 1000));
+
+
+                var timeTotal2 = ComputeTotalCPUTime(out var idleTime2);
+                if (timeTotal2 == 0)
+                {
+                    return 0;
+                }
+
+                var deltaTimeTotal = timeTotal2 - timeTotal1;
+                if (deltaTimeTotal < 1)
+                {
+                    return 0;
+                }
+
+                var cpuUtilization = 100 - (idleTime2 - idleTime1) / (float)deltaTimeTotal * 100;
+
+                return cpuUtilization;
+            }
+            catch (Exception ex)
+            {
+                ConditionalLogError("Error in GetCPUUtilization: " + ex.Message);
 
                 return 0;
             }
