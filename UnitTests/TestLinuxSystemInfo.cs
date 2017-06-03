@@ -264,6 +264,8 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 0.92, 46)]
         public void TestGetCoreUsageByProcessID(string sourceProcFolderPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
         {
+            const int SAMPLING_TIME_SECONDS = 3;
+
             var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
             if (!procFolder.Exists)
             {
@@ -341,9 +343,9 @@ namespace PRISMTest
             };
 
             // Start a timer to replace the stat file in 2 seconds
-            var fileReplacerTimer = new Timer(ReplaceFiles, filesToCopy, 2000, -1);
+            var fileReplacerTimer = new Timer(ReplaceFiles, filesToCopy, (SAMPLING_TIME_SECONDS - 1) * 1000, -1);
 
-            var coreUsage = linuxSystemInfo.GetCoreUsageByProcessID(processID, out var cpuUsageTotal, 3);
+            var coreUsage = linuxSystemInfo.GetCoreUsageByProcessID(processID, out var cpuUsageTotal, SAMPLING_TIME_SECONDS);
 
             fileReplacerTimer.Dispose();
 
@@ -356,14 +358,19 @@ namespace PRISMTest
                     break;
             }
 
-            Console.WriteLine("Core usage: {0}", coreUsage);
-            Console.WriteLine("Total CPU usage: {0}%", cpuUsageTotal);
+            Console.WriteLine("Core usage: {0:F2}", coreUsage);
+            Console.WriteLine("Total CPU usage: {0:F1}%", cpuUsageTotal);
 
             Assert.AreEqual(expectedCoreUsage, coreUsage, 0.01, "Core usage mismatch");
             Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.1, "Total CPU usage mismatch");
 
         }
 
+        /// <summary>
+        /// Copy files from a source location to a target location
+        /// </summary>
+        /// <param name="state">List of clsTestFileCopyInfo</param>
+        /// <remarks>The state parameter is an object because this method is a callback for a timer</remarks>
         private void ReplaceFiles(object state)
         {
             var filesToCopy = state as List<clsTestFileCopyInfo>;
@@ -373,7 +380,10 @@ namespace PRISMTest
 
             foreach (var fileToCopy in filesToCopy)
             {
-                fileToCopy.CopyToTargetNow();                
+                fileToCopy.CopyToTargetNow();
+            }
+
+        }
 
         [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 24.100)]
