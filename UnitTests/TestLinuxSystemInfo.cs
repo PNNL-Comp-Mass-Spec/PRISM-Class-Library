@@ -96,9 +96,9 @@ namespace PRISMTest
         }
 
         [Test]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "", 0.48)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "cpuloadtest", 0.48)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 0.92)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "", 3.841)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "cpuloadtest", 3.841)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 7.408)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "InvalidArgs", -1)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "InvalidProgram", "", -1)]
         public void TestGetCoreUsageByProcessName(string sourceProcFolderPath, int processID, string processName, string arguments, double expectedCoreUsageTotal)
@@ -181,8 +181,8 @@ namespace PRISMTest
 
         [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 0.48, 24)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 0.92, 46.3)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 3.841, 24)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 7.408, 46.3)]
         public void TestGetCoreUsageByProcessID(string sourceProcFolderPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
