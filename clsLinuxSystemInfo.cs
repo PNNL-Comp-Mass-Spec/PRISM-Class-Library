@@ -48,6 +48,12 @@ namespace PRISM
 
         #endregion
 
+        #region "Properties"
+
+        public bool TraceEnabled { get; set; }
+
+        #endregion
+
         #region "Methods"
 
         /// <summary>
@@ -112,6 +118,11 @@ namespace PRISM
             {
                 OnDebugEvent("CPU stats file not found at " + cpuStatFilePath);
                 return 0;
+            }
+
+            if (TraceEnabled)
+            {
+                OnDebugEvent("Opening " + cpuStatFile.FullName);
             }
 
             using (var reader = new StreamReader(new FileStream(cpuStatFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
@@ -208,6 +219,11 @@ namespace PRISM
         /// <returns></returns>
         private bool ExtractCPUTimes(FileSystemInfo statFile, out long utime, out long stime)
         {
+
+            if (TraceEnabled)
+            {
+                OnDebugEvent("Opening " + statFile.FullName);
+            }
 
             using (var reader = new StreamReader(new FileStream(statFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
             {
@@ -381,6 +397,11 @@ namespace PRISM
 
             try
             {
+                if (TraceEnabled)
+                {
+                    OnDebugEvent("Opening " + cmdLineFile.FullName);
+                }
+
                 using (var reader = new StreamReader(new FileStream(cmdLineFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     if (reader.EndOfStream)
@@ -441,11 +462,15 @@ namespace PRISM
                 if (!cpuInfoFile.Exists)
                 {
                     if (showDebugInfo)
-                        ConditionalLogError("CPU info file not found: " + cpuInfoFilePath);
+                        ConditionalLogError("CPU info file not found: " + cpuInfoFile.FullName);
 
                     return -1;
                 }
 
+                if (TraceEnabled)
+                {
+                    OnDebugEvent("Opening " + cpuInfoFile.FullName);
+                }
 
                 var processorList = new Dictionary<int, clsProcessorCoreInfo>();
                 var currentProcessorID = -1;
@@ -892,6 +917,11 @@ namespace PRISM
                         ConditionalLogError("Memory info file not found: " + memInfoFilePath);
 
                     return -1;
+                }
+
+                if (TraceEnabled)
+                {
+                    OnDebugEvent("Opening " + memInfoFile.FullName);
                 }
 
                 // CentOS 7 and Ubuntu report statistic MemAvailable:

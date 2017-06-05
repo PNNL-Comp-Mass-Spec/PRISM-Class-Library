@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 using PRISM;
@@ -11,6 +12,8 @@ namespace PRISMTest
     class TestLinuxSystemInfo
     {
         private const string SHARE_PATH = @"\\proto-2\unitTest_Files\PRISM";
+
+        internal const bool SHOW_TRACE_MESSAGES = false;
 
         [Test]
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
@@ -170,6 +173,10 @@ namespace PRISMTest
 
             Assert.AreEqual(expectedCoreUsageTotal, coreUsage, 0.1, "Core usage mismatch");
 
+            if (processIDs.Count == 1)
+                Console.WriteLine("Process ID: " + processIDs.First());
+            else
+                Console.WriteLine("Process IDs: " + string.Join(", ", processIDs));
         }
 
         [Test]
@@ -451,6 +458,15 @@ namespace PRISMTest
             return null;
         }
 
+        private void ShowTraceMessage(string message)
+        {
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (SHOW_TRACE_MESSAGES)
+#pragma warning disable 162
+                Console.WriteLine("{0:HH:mm:ss.fff}: {1}", DateTime.Now, message);
+#pragma warning restore 162
+        }
+
         private DirectoryInfo ValidateLocalProcFolder()
         {
             var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
@@ -469,6 +485,21 @@ namespace PRISMTest
 
             return procFolder;
         }
+
+        #region "Event Handlers"
+
+        private void LinuxSystemInfo_DebugEvent(string message)
+        {
+            ShowTraceMessage(message);
+        }
+
+        private void LinuxSystemInfo_ErrorEvent(string message, Exception ex)
+        {
+            Console.WriteLine("Error: " + message);
+            Console.WriteLine(clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex));
+        }
+
+        #endregion
 
     }
 }
