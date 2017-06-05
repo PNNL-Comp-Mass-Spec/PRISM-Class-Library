@@ -199,18 +199,23 @@ namespace PRISMTest
 
         private void GetDriveFreeSpaceForDirectory(string directoryPath)
         {
-            long freeBytesAvailableToUser;
-            long totalDriveCapacityBytes;
-            long totalNumberOfFreeBytes;
 
-            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(directoryPath, out freeBytesAvailableToUser, out totalDriveCapacityBytes, out totalNumberOfFreeBytes);
-            if (!success)
-                Assert.Fail("GetDiskFreeSpace reported false");
-
-            Console.WriteLine("Free space at {0} is {1}; space for user is {2}",
+            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(
                 directoryPath,
-                clsFileTools.BytesToHumanReadable(totalNumberOfFreeBytes),
-                clsFileTools.BytesToHumanReadable(freeBytesAvailableToUser));
+                out var freeBytesAvailableToUser,
+                out var totalDriveCapacityBytes,
+                out var totalNumberOfFreeBytes);
+
+            if (!success)
+            {
+                Assert.Fail("GetDiskFreeSpace reported false for " + directoryPath);
+            }
+
+            Console.WriteLine("Free space stats for" + directoryPath);
+
+            Console.WriteLine("{0,-25} {1}", "Free Space", clsFileTools.BytesToHumanReadable(totalNumberOfFreeBytes));
+            Console.WriteLine("{0,-25} {1}", "Space available to User", clsFileTools.BytesToHumanReadable(freeBytesAvailableToUser));
+            Console.WriteLine("{0,-25} {1}", "Drive Capacity", clsFileTools.BytesToHumanReadable(totalDriveCapacityBytes));
 
         }
 
@@ -231,17 +236,15 @@ namespace PRISMTest
 
         public void GetDriveFreeSpaceForFile(string targetFilePath, bool reportFreeSpaceAvailableToUser)
         {
-            long freeSpaceBytes;
-            string errorMessage;
 
-            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(targetFilePath, out freeSpaceBytes, out errorMessage, reportFreeSpaceAvailableToUser);
-
-            var directoryPath = new FileInfo(targetFilePath).DirectoryName;
+            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(targetFilePath, out var freeSpaceBytes, out var errorMessage, reportFreeSpaceAvailableToUser);
 
             if (!success)
             {
-                Assert.Fail("GetDiskFreeSpace reported false: " + errorMessage);
+                Assert.Fail("GetDiskFreeSpace reported false for " + targetFilePath + ": " + errorMessage);
             }
+
+            var directoryPath = new FileInfo(targetFilePath).DirectoryName;
 
             Console.WriteLine("Free space at {0} is {1} (ReportFreeSpaceAvailableToUse = {2}))",
                 directoryPath, clsFileTools.BytesToHumanReadable(freeSpaceBytes), reportFreeSpaceAvailableToUser);
@@ -271,13 +274,12 @@ namespace PRISMTest
 
         public void ValidateFreeDiskSpace(string targetFilePath, long minimumFreeSpaceMB)
         {
-            string errorMessage;
 
-            long currentDiskFreeSpaceBytes;
-            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(targetFilePath, out currentDiskFreeSpaceBytes, out errorMessage);
+            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(targetFilePath, out var currentDiskFreeSpaceBytes, out var errorMessage);
+
             if (!success)
             {
-                Assert.Fail("GetDiskFreeSpace reported false: " + errorMessage);
+                Assert.Fail("GetDiskFreeSpace reported false for " + targetFilePath + ": " + errorMessage);
             }
 
             var safeToCopy = clsFileTools.ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage);

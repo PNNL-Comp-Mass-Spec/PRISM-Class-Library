@@ -262,7 +262,7 @@ namespace PRISMTest
         [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 0.48, 24)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 0.92, 46)]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 0.92, 46.3)]
         public void TestGetCoreUsageByProcessID(string sourceProcFolderPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
