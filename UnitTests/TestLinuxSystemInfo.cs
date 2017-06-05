@@ -77,44 +77,10 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 2)]
         public void TestGetCoreCount(string sourceProcFolderPath, int expectedCoreCount)
         {
-            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
-            if (!procFolder.Exists)
-            {
-                // Proc folder not found; try to make it
-                try
-                {
-                    procFolder.Create();
-                }
-                catch (Exception)
-                {
-                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
-                }
-            }
+            var procFolder = ValidateLocalProcFolder();
 
-            // Update the cpuinfo file in the local proc folder using sourceProcFolderPath
-            var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.CPUINFO_FILE));
-            var targetCpuInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.CPUINFO_FILE));
-
-            if (targetCpuInfoFile.Exists)
-            {
-                try
-                {
-                    targetCpuInfoFile.Delete();
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail("Could not replace the local CpuInfo file at " + targetCpuInfoFile.FullName + ": " + ex.Message);
-                }
-            }
-
-            try
-            {
-                sourceCpuInfoFile.CopyTo(targetCpuInfoFile.FullName);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Could not copy the CpuInfo file to " + targetCpuInfoFile.FullName + ": " + ex.Message);
-            }
+            // Update the cpuinfo file in the local proc folder
+            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
             var linuxSystemInfo = new clsLinuxSystemInfo();
 
@@ -136,73 +102,20 @@ namespace PRISMTest
         {
             const int SAMPLING_TIME_SECONDS = 3;
 
-            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
-            if (!procFolder.Exists)
-            {
-                // Proc folder not found; try to make it
-                try
-                {
-                    procFolder.Create();
-                }
-                catch (Exception)
-                {
-                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
-                }
-            }
+            var procFolder = ValidateLocalProcFolder();
+
+            // Update the cpuinfo file in the local proc folder
+            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
             // Update the cpu stat file in the local proc folder using sourceProcFolderPath
             var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
-            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
-
-            if (targetCpuStatFile.Exists)
-            {
-                try
-                {
-                    targetCpuStatFile.Delete();
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail("Could not replace the local cpu stat file at " + targetCpuStatFile.FullName + ": " + ex.Message);
-                }
-            }
-
-            sourceCpuStatFile1.CopyTo(targetCpuStatFile.FullName);
-            // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceCpuStatFile1.FullName, targetCpuStatFile.FullName);
+            var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
 
             // Update the process stat file in the local proc folder using sourceProcFolderPath
             var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
             var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
-            var targetStatFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\stat"));
-
-            if (targetStatFile.Exists)
-            {
-                try
-                {
-                    targetStatFile.Delete();
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail("Could not replace the local process stat file at " + targetStatFile.FullName + ": " + ex.Message);
-                }
-            }
-
-            try
-            {
-                var parentFolder = targetStatFile.Directory;
-                if (parentFolder == null)
-                    Assert.Fail("Unable to determine the parent directory of " + targetStatFile.FullName);
-
-                if (!parentFolder.Exists)
-                    parentFolder.Create();
-
-                sourceStatFile1.CopyTo(targetStatFile.FullName, true);
-                // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceStatFile1.FullName, targetStatFile.FullName);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Could not copy the stat file to " + targetStatFile.FullName + ": " + ex.Message);
-            }
+            var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
 
             // Update the process cmdline file in the local proc folder using sourceProcFolderPath
             var sourceCmdLineFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\cmdline"));
@@ -267,75 +180,27 @@ namespace PRISMTest
         {
             const int SAMPLING_TIME_SECONDS = 3;
 
-            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
-            if (!procFolder.Exists)
-            {
-                // Proc folder not found; try to make it
-                try
-                {
-                    procFolder.Create();
-                }
-                catch (Exception)
-                {
-                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
-                }
-            }
+            var procFolder = ValidateLocalProcFolder();
+
+            // Update the cpuinfo file in the local proc folder
+            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
             // Update the cpu stat file in the local proc folder using sourceProcFolderPath
             var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
-            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
-
-            if (targetCpuStatFile.Exists)
-            {
-                try
-                {
-                    targetCpuStatFile.Delete();
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail("Could not replace the local cpu stat file at " + targetCpuStatFile.FullName + ": " + ex.Message);
-                }
-            }
-
-            sourceCpuStatFile1.CopyTo(targetCpuStatFile.FullName);
-            // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceCpuStatFile1.FullName, targetCpuStatFile.FullName);
+            var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
 
             // Update the process stat file in the local proc folder using sourceProcFolderPath
             var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
             var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
-            var targetStatFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\stat"));
+            var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
 
-            if (targetStatFile.Exists)
-            {
-                try
-                {
-                    targetStatFile.Delete();
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail("Could not replace the local process stat file at " + targetStatFile.FullName + ": " + ex.Message);
-                }
-            }
+            var linuxSystemInfo = new clsLinuxSystemInfo {
+                TraceEnabled = true
+            };
 
-            try
-            {
-                var parentFolder = targetStatFile.Directory;
-                if (parentFolder == null)
-                    Assert.Fail("Unable to determine the parent directory of " + targetStatFile.FullName);
-
-                if (!parentFolder.Exists)
-                    parentFolder.Create();
-
-                sourceStatFile1.CopyTo(targetStatFile.FullName, true);
-                // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceStatFile1.FullName, targetStatFile.FullName);
-            }
-            catch (Exception ex)
-            {
-                Assert.Fail("Could not copy the stat file to " + targetStatFile.FullName + ": " + ex.Message);
-            }
-
-            var linuxSystemInfo = new clsLinuxSystemInfo();
+            linuxSystemInfo.DebugEvent += LinuxSystemInfo_DebugEvent;
+            linuxSystemInfo.ErrorEvent += LinuxSystemInfo_ErrorEvent;
 
             var filesToCopy = new List<clsTestFileCopyInfo>
             {
@@ -367,6 +232,96 @@ namespace PRISMTest
 
         }
 
+        private void CopyCPUInfoFile(FileSystemInfo procFolder, string sourceProcFolderPath)
+        {
+
+            // Update the cpuinfo file in the local proc folder using sourceProcFolderPath
+            var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.CPUINFO_FILE));
+            var targetCpuInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.CPUINFO_FILE));
+
+            if (targetCpuInfoFile.Exists)
+            {
+                try
+                {
+                    targetCpuInfoFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local CpuInfo file at " + targetCpuInfoFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            try
+            {
+                sourceCpuInfoFile.CopyTo(targetCpuInfoFile.FullName);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Could not copy the CpuInfo file to " + targetCpuInfoFile.FullName + ": " + ex.Message);
+            }
+
+        }
+
+        private FileInfo CopyCPUStatFile(FileSystemInfo procFolder, FileInfo sourceCpuStatFile)
+        {
+            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
+
+            if (targetCpuStatFile.Exists)
+            {
+                try
+                {
+                    targetCpuStatFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local cpu stat file at " + targetCpuStatFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            sourceCpuStatFile.CopyTo(targetCpuStatFile.FullName);
+
+            ShowTraceMessage(string.Format("Copied CPU stat file from {0} to {1}", sourceCpuStatFile.FullName, targetCpuStatFile.FullName));
+
+            return targetCpuStatFile;
+        }
+
+        private FileInfo CopyProcessStatFile(FileSystemInfo procFolder, int processID, FileInfo sourceStatFile)
+        {
+            var targetStatFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\stat"));
+
+            if (targetStatFile.Exists)
+            {
+                try
+                {
+                    targetStatFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local process stat file at " + targetStatFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            try
+            {
+                var parentFolder = targetStatFile.Directory;
+                if (parentFolder == null)
+                    Assert.Fail("Unable to determine the parent directory of " + targetStatFile.FullName);
+
+                if (!parentFolder.Exists)
+                    parentFolder.Create();
+
+                sourceStatFile.CopyTo(targetStatFile.FullName, true);
+
+                ShowTraceMessage(string.Format("Copied process stat file from {0} to {1}", sourceStatFile.FullName, targetStatFile.FullName));
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Could not copy the stat file to " + targetStatFile.FullName + ": " + ex.Message);
+            }
+
+            return targetStatFile;
+        }
+
         /// <summary>
         /// Copy files from a source location to a target location
         /// </summary>
@@ -393,39 +348,15 @@ namespace PRISMTest
         {
             const int SAMPLING_TIME_SECONDS = 3;
 
-            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
-            if (!procFolder.Exists)
-            {
-                // Proc folder not found; try to make it
-                try
-                {
-                    procFolder.Create();
-                }
-                catch (Exception)
-                {
-                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
-                }
-            }
+            var procFolder = ValidateLocalProcFolder();
+
+            // Update the cpuinfo file in the local proc folder
+            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
             // Update the cpu stat file in the local proc folder using sourceProcFolderPath
             var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
-            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
-
-            if (targetCpuStatFile.Exists)
-            {
-                try
-                {
-                    targetCpuStatFile.Delete();
-                }
-                catch (Exception ex)
-                {
-                    Assert.Fail("Could not replace the local cpu stat file at " + targetCpuStatFile.FullName + ": " + ex.Message);
-                }
-            }
-
-            sourceCpuStatFile1.CopyTo(targetCpuStatFile.FullName);
-            // Console.WriteLine("{0:HH:mm:ss.fff}: Copied stat file from {1} to {2}", DateTime.Now, sourceCpuStatFile1.FullName, targetCpuStatFile.FullName);
+            var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
 
             var linuxSystemInfo = new clsLinuxSystemInfo();
 
@@ -462,19 +393,7 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 1276)]
         public void TestGetFreeMemory(string sourceProcFolderPath, float expectedFreeMemoryMB)
         {
-            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
-            if (!procFolder.Exists)
-            {
-                // Proc folder not found; try to make it
-                try
-                {
-                    procFolder.Create();
-                }
-                catch (Exception)
-                {
-                    Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
-                }
-            }
+            var procFolder = ValidateLocalProcFolder();
 
             // Update the meminfo file in the local proc folder using sourceProcFolderPath
             var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.MEMINFO_FILE));
@@ -531,5 +450,25 @@ namespace PRISMTest
             Assert.Fail("File not found: " + testFile.FullName);
             return null;
         }
+
+        private DirectoryInfo ValidateLocalProcFolder()
+        {
+            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
+            if (procFolder.Exists)
+                return procFolder;
+
+            // Proc folder not found; try to make it
+            try
+            {
+                procFolder.Create();
+            }
+            catch (Exception)
+            {
+                Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
+            }
+
+            return procFolder;
+        }
+
     }
 }
