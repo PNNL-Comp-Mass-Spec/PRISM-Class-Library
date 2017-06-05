@@ -216,7 +216,14 @@ namespace PRISM
         /// <param name="statFile"></param>
         /// <param name="utime">Amount of time that the process has been scheduled in user mode, in jiffies</param>
         /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
-        /// <returns></returns>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>
+        /// For multithreaded applications, the task folder below the ProcessID folder will have
+        /// separate ProcessID folders for each thread.  Those folders could be parsed to determine
+        /// the processing time for each thread.  However, the stat file in the base ProcessID folder
+        /// has the combined processing time for all threads, so parsing of individual thread stat times
+        /// is not necessary to determine overall processing time.
+        /// </remarks>
         private bool ExtractCPUTimes(FileSystemInfo statFile, out long utime, out long stime)
         {
 
