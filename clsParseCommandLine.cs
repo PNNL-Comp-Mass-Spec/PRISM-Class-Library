@@ -42,12 +42,16 @@ namespace PRISM
         private readonly Dictionary<string, string> mSwitches = new Dictionary<string, string>();
 
         private readonly List<string> mNonSwitchParameters = new List<string>();
-        private bool mShowHelp;
 
         /// <summary>
         /// If true, we need to show the syntax to the user due to a switch error, invalid switch, or the presence of /? or /help
         /// </summary>
-        public bool NeedToShowHelp => mShowHelp;
+        public bool NeedToShowHelp { get; private set; }
+
+        /// <summary>
+        /// This will be true after calling ParseCommandLine if the command line has no arguments (either non-switch or switch based)
+        /// </summary>
+        public bool NoParameters { get; private set; }
 
         /// <summary>
         /// Number of switches
@@ -192,7 +196,10 @@ namespace PRISM
         /// Parse the parameters and switches at the command line; uses / for the switch character and : for the switch parameter character
         /// </summary>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
-        /// <remarks>If /? or /help is found, returns False and sets mShowHelp to True</remarks>
+        /// <remarks>
+        /// If /? or /help is found, returns False and sets mShowHelp to True
+        /// If there are no arguments at the commandline, returns false, but sets NoArgumentsProvided to true
+        /// </remarks>
         public bool ParseCommandLine()
         {
             return ParseCommandLine(DEFAULT_SWITCH_CHAR, DEFAULT_SWITCH_PARAM_CHAR);
@@ -202,7 +209,10 @@ namespace PRISM
         /// Parse the parameters and switches at the command line; uses : for the switch parameter character
         /// </summary>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
-        /// <remarks>If /? or /help is found, returns False and sets mShowHelp to True</remarks>
+        /// <remarks>
+        /// If /? or /help is found, returns False and sets mShowHelp to True
+        /// If there are no arguments at the commandline, returns false, but sets NoArgumentsProvided to true
+        /// </remarks>
         public bool ParseCommandLine(char switchStartChar)
         {
             return ParseCommandLine(switchStartChar, DEFAULT_SWITCH_PARAM_CHAR);
@@ -214,14 +224,12 @@ namespace PRISM
         /// <param name="switchStartChar"></param>
         /// <param name="switchParameterChar"></param>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
-        /// <remarks>If /? or /help is found, returns False and sets mShowHelp to True</remarks>
+        /// <remarks>
+        /// If /? or /help is found, returns False and sets mShowHelp to True
+        /// If there are no arguments at the commandline, returns false, but sets NoArgumentsProvided to true
+        /// </remarks>
         public bool ParseCommandLine(char switchStartChar, char switchParameterChar)
         {
-            // Returns True if any command line parameters were found
-            // Otherwise, returns false
-            //
-            // If /? or /help is found, returns False and sets mShowHelp to True
-
             mSwitches.Clear();
             mNonSwitchParameters.Clear();
 
@@ -270,7 +278,7 @@ namespace PRISM
 
                     PauseAtConsole(5000, 1000);
 
-                    mShowHelp = true;
+                    NeedToShowHelp = true;
                     return false;
                 }
 
@@ -290,13 +298,29 @@ namespace PRISM
 
                 if (string.IsNullOrWhiteSpace(commandLine))
                 {
+                    if (DebugMode)
+                    {
+                        Console.WriteLine("Command line is empty (not even the Executable name is present)");
+                    }
+                    NoParameters = true;
                     return false;
                 }
 
                 if (commandLine.IndexOf(switchStartChar + "?", StringComparison.Ordinal) > 0 ||
                     commandLine.ToLower().IndexOf(switchStartChar + "help", StringComparison.CurrentCultureIgnoreCase) > 0)
                 {
-                    mShowHelp = true;
+                    NeedToShowHelp = true;
+                    return false;
+                }
+
+                if (paramList.Length == 1)
+                {
+                    if (DebugMode)
+                    {
+                        Console.WriteLine("No arguments were provided");
+                    }
+
+                    NoParameters = true;
                     return false;
                 }
 

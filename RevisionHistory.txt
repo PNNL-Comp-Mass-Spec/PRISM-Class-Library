@@ -1,5 +1,13 @@
 Prism Class Library Log
 
+Version 2.4.5.0; June 6, 2017
+	- Add classes clsOSVersionInfo and clsLinuxSystemInfo
+	- Add property NoParameters to clsParseCommandLine
+	- Add unit tests
+
+Version 2.4.4.0; May 1, 2017
+	- Add class StringUtilities
+
 Version 2.4.2.0; March 29, 2017
 	- Added clsParseCommandLine
 
