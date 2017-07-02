@@ -124,7 +124,9 @@ xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide_File_Extractor\Peptide_File_Extractor_Console\bin" /Y /D
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide_File_Extractor\Peptide_File_Extractor_DLL\bin" /Y /D
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide_File_Extractor\Release\Executable" /Y /D
-xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide_File_Extractor\Required_DLLs" /Y /D
+
+rem FileConcatenator now gets PRISM.dll from NuGet
+rem xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Peptide_File_Extractor\Required_DLLs" /Y /D
 
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Space_Manager\DMS_Space_Manager\bin\Debug" /Y /D
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Space_Manager\DMS_Space_Manager\bin\Release" /Y /D
