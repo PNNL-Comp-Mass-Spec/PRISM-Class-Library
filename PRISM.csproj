@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;netstandard1.5;netstandard1.6;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;net462;netstandard1.5;netstandard1.6;netstandard2.0</TargetFrameworks>
     <RootNamespace>PRISM</RootNamespace>
     <AssemblyName>PRISM</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
