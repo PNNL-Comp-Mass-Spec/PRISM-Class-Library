@@ -46,6 +46,7 @@ namespace PRISM
             mFileList = new List<string>();
         }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
         /// </summary>
@@ -77,6 +78,7 @@ namespace PRISM
             return true;
 
         }
+#endif
 
         /// <summary>
         /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.

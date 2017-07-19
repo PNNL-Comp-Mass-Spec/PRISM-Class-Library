@@ -18,7 +18,9 @@ namespace PRISM
         private ILogger m_EventLogger;
         private bool m_CreateNoWindow;
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         private ProcessWindowStyle m_WindowStyle;
+#endif
 
         /// <summary>
         /// Create a zip file.
@@ -112,7 +114,9 @@ namespace PRISM
                 Repeat = false,
                 RepeatHoldOffTime = 0,
                 CreateNoWindow = m_CreateNoWindow,
-                WindowStyle = m_WindowStyle
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+                WindowStyle = m_WindowStyle,
+#endif
             };
 
             // Start the unzip program
@@ -144,6 +148,7 @@ namespace PRISM
             set { m_CreateNoWindow = value; }
         }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// Window style to use when CreateNoWindow is False.
         /// </summary>
@@ -152,7 +157,7 @@ namespace PRISM
             get { return m_WindowStyle; }
             set { m_WindowStyle = value; }
         }
-
+#endif
 
         /// <summary>
         /// The working directory for the zipping process.
@@ -222,7 +227,9 @@ namespace PRISM
                 Repeat = false,
                 RepeatHoldOffTime = 0,
                 CreateNoWindow = m_CreateNoWindow,
-                WindowStyle = m_WindowStyle
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+                WindowStyle = m_WindowStyle,
+#endif
             };
 
             // Start the zip program

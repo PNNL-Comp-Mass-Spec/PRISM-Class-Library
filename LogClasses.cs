@@ -492,7 +492,21 @@ namespace PRISM
         /// <summary>
         /// The module name identifies the logging process.
         /// </summary>
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         public string UserName => WindowsIdentity.GetCurrent().Name;
+#else
+        public string UserName
+        {
+            get
+            {
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                {
+                    return WindowsIdentity.GetCurrent()?.Name;
+                }
+                return "Unknown";
+            }
+        }
+#endif
 
         /// <summary>
         /// Construct the string MachineName:UserName.

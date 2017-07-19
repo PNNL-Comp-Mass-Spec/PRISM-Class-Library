@@ -52,6 +52,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="clsTestFileCopyInfo.cs" />
+    <Compile Include="CommandLineParserTests.cs" />
     <Compile Include="DotNETVersionTest.cs" />
     <Compile Include="FileCopyTests.cs" />
     <Compile Include="LoggerTests.cs" />

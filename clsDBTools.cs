@@ -92,6 +92,7 @@ namespace PRISM
             }
         }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// The function gets a disconnected dataset as specified by the SQL statement.
         /// </summary>
@@ -140,6 +141,7 @@ namespace PRISM
             return false;
 
         }
+#endif
 
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings

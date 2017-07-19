@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace PRISM
 {
@@ -20,6 +22,7 @@ namespace PRISM
         /// <remarks>For Windows and Linux, reports details about the OS version</remarks>
         public string GetOSVersion()
         {
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
             var osInfo = Environment.OSVersion;
 
             switch (osInfo.Platform)
@@ -43,7 +46,21 @@ namespace PRISM
                 default:
                     return "Unknown";
             }
-
+#else
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return GetWindowsVersion(RuntimeInformation.OSDescription);
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return GetLinuxVersion();
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "MacOSX";
+            }
+            return "Unknown";
+#endif
         }
 
         /// <summary>
@@ -329,6 +346,7 @@ namespace PRISM
             return versionInfo;
         }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// For old windows kernel
         /// </summary>
@@ -404,6 +422,59 @@ namespace PRISM
                 default:
                     if (osInfo.Version.Major > 10)
                         return "Windows " + osInfo.Version.Major;
+
+                    break;
+            }
+
+            return "Unknown";
+        }
+#endif
+
+        private string GetWindowsVersion(string osDescription)
+        {
+            var versionMatch = new Regex(@" (?<Major>\d+)\.(?<Minor>\d+)\.(?<Build>\d+)");
+            var version = versionMatch.Match(osDescription);
+            var versionMajor = int.Parse(version.Groups["Major"].Value);
+            var versionMinor = int.Parse(version.Groups["Minor"].Value);
+            //var versionBuild = int.Parse(version.Groups["Build"].Value);
+
+            // Code to determine specific version of Windows NT 3.51,
+            // Windows NT 4.0, Windows 2000, or Windows XP.
+            switch (versionMajor)
+            {
+                case 3:
+                    return "Windows NT 3.51";
+                case 4:
+                    return "Windows NT 4.0";
+                case 5:
+                    switch (versionMinor)
+                    {
+                        case 0:
+                            return "Windows 2000";
+                        case 1:
+                            return "Windows XP";
+                        case 2:
+                            return "Windows 2003";
+                    }
+                    break;
+                case 6:
+                    switch (versionMinor)
+                    {
+                        case 0:
+                            return "Windows Vista";
+                        case 1:
+                            return "Windows 7";
+                        case 2:
+                            return "Windows 8";
+                        case 3:
+                            return "Windows 8.1";
+                    }
+                    break;
+                case 10:
+                    return "Windows 10";
+                default:
+                    if (versionMajor > 10)
+                        return "Windows " + versionMajor;
 
                     break;
             }

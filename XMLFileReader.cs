@@ -367,6 +367,7 @@ namespace PRISM
             return setting?.Attributes?.GetNamedItem("value").Value;
         }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// Legacy function name; calls GetXmlSectionComments
         /// </summary>
@@ -381,6 +382,7 @@ namespace PRISM
 
             return commentCollection;
         }
+#endif
 
         /// <summary>
         /// The function gets the comments for a section name.
@@ -416,6 +418,7 @@ namespace PRISM
             return sectionComments;
         }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// Legacy function name; calls SetXMLComments
         /// </summary>
@@ -428,6 +431,7 @@ namespace PRISM
 
             return SetXMLComments(sectionName, commentList);
         }
+#endif
 
         /// <summary>
         /// The function sets a the comments for a section name.
