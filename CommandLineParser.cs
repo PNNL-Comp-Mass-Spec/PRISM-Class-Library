@@ -143,7 +143,6 @@ namespace PRISM
             {
                 if (onErrorOutputHelp)
                 {
-                    Results.OutputErrors();
                     PrintHelp();
                 }
                 Results.Failed();
@@ -156,7 +155,6 @@ namespace PRISM
                 {
                     if (onErrorOutputHelp)
                     {
-                        Results.OutputErrors();
                         PrintHelp();
                     }
                     Results.Failed();
@@ -241,7 +239,6 @@ namespace PRISM
 
             if (!Results.Success && onErrorOutputHelp)
             {
-                Results.OutputErrors();
                 PrintHelp();
             }
 
