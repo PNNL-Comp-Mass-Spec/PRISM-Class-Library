@@ -20,12 +20,30 @@ namespace PRISM
         private static readonly char[] defaultParamChars = new char[] { '-', '/' };
         private static readonly char[] defaultSeparatorChars = new char[] { ' ', ':', '=' };
 
+        /// <summary>
+        /// Results from the parsing
+        /// </summary>
         public class ParserResults
         {
+            /// <summary>
+            /// Parsing status - false if parsing failed
+            /// </summary>
             public bool Success { get; private set; }
+
+            /// <summary>
+            /// Errors that occurred during parsing
+            /// </summary>
             public List<string> ParseErrors { get; private set; }
+
+            /// <summary>
+            /// Target object, populated with the parsed arguments when the parsing completes
+            /// </summary>
             public T ParsedResults { get; private set; }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="parsed"></param>
             public ParserResults(T parsed)
             {
                 Success = true;
@@ -33,11 +51,17 @@ namespace PRISM
                 ParsedResults = parsed;
             }
 
+            /// <summary>
+            /// Set the parsing status to failed
+            /// </summary>
             internal void Failed()
             {
                 Success = false;
             }
 
+            /// <summary>
+            /// Print the parsing errors to console
+            /// </summary>
             public void OutputErrors()
             {
                 foreach (var error in ParseErrors)
@@ -52,6 +76,9 @@ namespace PRISM
         private char[] paramChars = defaultParamChars;
         private char[] separatorChars = defaultSeparatorChars;
 
+        /// <summary>
+        /// Parsing results. Contains success value, target object, and error list
+        /// </summary>
         public ParserResults Results { get; private set; }
 
         /// <summary>
@@ -66,12 +93,18 @@ namespace PRISM
             Results = new ParserResults(new T());
         }
 
+        /// <summary>
+        /// Get or set the characters allowed at the beginning of an argument specifier
+        /// </summary>
         public IEnumerable<char> ParamFlagCharacters
         {
             get { return paramChars; }
             set { paramChars = value.Distinct().ToArray(); }
         }
 
+        /// <summary>
+        /// Get or set the characters allowed as separators between an argument specifier and argument value
+        /// </summary>
         public IEnumerable<char> ParamSeparatorCharacters
         {
             get { return separatorChars; }
@@ -135,27 +168,39 @@ namespace PRISM
         /// Parse the arguments, returning the parsing results
         /// </summary>
         /// <param name="args"></param>
-        /// <param name="onErrorOutputHelp"></param>
+        /// <param name="onErrorOutputHelp">When an error occurs, display the error and output the help</param>
+        /// <param name="outputErrors">When an error occurs, output the error</param>
         /// <returns></returns>
-        public ParserResults ParseArgs(string[] args, bool onErrorOutputHelp = true)
+        public ParserResults ParseArgs(string[] args, bool onErrorOutputHelp = true, bool outputErrors = true)
         {
             if (args.Length == 0)
             {
+                // Automatically output help when no arguments are supplied
                 if (onErrorOutputHelp)
                 {
                     PrintHelp();
+                }
+                else if (outputErrors)
+                {
+                    Results.OutputErrors();
                 }
                 Results.Failed();
                 return Results;
             }
             try
             {
+                // Parse the arguments into a dictionary
                 var preprocessed = ArgsPreprocess(args);
                 if (preprocessed == null)
                 {
+                    // Preprocessing failed, tell the user why
                     if (onErrorOutputHelp)
                     {
                         PrintHelp();
+                    }
+                    else if (outputErrors)
+                    {
+                        Results.OutputErrors();
                     }
                     Results.Failed();
                     return Results;
@@ -167,6 +212,7 @@ namespace PRISM
                     var specified = false;
                     var keyGiven = "";
                     List<string> value = null;
+                    // Find any arguments that match this property
                     foreach (var key in prop.Value.ParamKeys)
                     {
                         if (preprocessed.ContainsKey(key))
@@ -197,6 +243,7 @@ namespace PRISM
 
                     try
                     {
+                        // parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
                         object castValue = null;
                         if (prop.Key.PropertyType.IsArray)
                         {
@@ -237,14 +284,29 @@ namespace PRISM
                 Results.Failed();
             }
 
-            if (!Results.Success && onErrorOutputHelp)
+            if (!Results.Success)
             {
-                PrintHelp();
+                if (onErrorOutputHelp)
+                {
+                    PrintHelp();
+                }
+                else if (outputErrors)
+                {
+                    Results.OutputErrors();
+                }
             }
 
             return Results;
         }
 
+        /// <summary>
+        /// Parses a value to the specified type, checking min and max limits
+        /// </summary>
+        /// <param name="propertyType"></param>
+        /// <param name="parseData"></param>
+        /// <param name="argKey"></param>
+        /// <param name="valueToParse"></param>
+        /// <returns></returns>
         private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
         {
             object castValue = null;
@@ -308,6 +370,11 @@ namespace PRISM
             return castValue;
         }
 
+        /// <summary>
+        /// Parse the arguments to a dictionary
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private Dictionary<string, List<string>> ArgsPreprocess(string[] args)
         {
             var validArgs = GetValidArgs();
@@ -424,12 +491,14 @@ namespace PRISM
 
             var outputFormatString = "  {0,-" + paramKeysWidth + "}    {1}";
 
+            // Output the help contents, creating columns with wrapping before outputting
             foreach (var option in contents)
             {
                 var overflow = new List<Tuple<string, string>>();
                 var keyOverflow = new List<string>();
                 var textOverflow = new List<string>();
 
+                // Wrap the argument names
                 if (option.Key.Length <= paramKeysWidth)
                 {
                     keyOverflow.Add(option.Key);
@@ -460,6 +529,7 @@ namespace PRISM
                     }
                 }
 
+                // Wrap the argument help text
                 if (option.Value.Length <= helpTextWidth)
                 {
                     textOverflow.Add(option.Value);
@@ -490,6 +560,7 @@ namespace PRISM
                     }
                 }
 
+                // Join the wrapped argument names and help text
                 for (var i = 0; i < keyOverflow.Count || i < textOverflow.Count; i++)
                 {
                     var key = "";
@@ -505,6 +576,7 @@ namespace PRISM
                     overflow.Add(new Tuple<string, string>(key, text));
                 }
 
+                // Output the argument data with proper spacing
                 Console.WriteLine();
                 foreach (var line in overflow)
                 {
@@ -515,6 +587,10 @@ namespace PRISM
             Console.WriteLine();
         }
 
+        /// <summary>
+        /// Create the help text and argument name list for each argument
+        /// </summary>
+        /// <returns></returns>
         private Dictionary<string, string> CreateHelpContents()
         {
             var contents = new Dictionary<string, string>();
@@ -569,30 +645,13 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Get the valid args
+        /// Get the arguments that are valid for the class, dealing with argument name collision and invalid characters as needed
         /// </summary>
         /// <returns></returns>
         private Dictionary<string, ArgInfo> GetValidArgs()
         {
             var validArgs = new Dictionary<string, ArgInfo>();
-            var argCollisions = new Dictionary<string, bool>();
             var props = GetPropertiesAttributes();
-
-            foreach (var prop in props)
-            {
-                foreach (var key in prop.Value.ParamKeys)
-                {
-                    var lower = key.ToLower();
-                    if (!argCollisions.ContainsKey(lower))
-                    {
-                        argCollisions.Add(lower, false);
-                    }
-                    else
-                    {
-                        argCollisions[lower] = true;
-                    }
-                }
-            }
 
             foreach (var prop in props)
             {
@@ -601,6 +660,7 @@ namespace PRISM
                 {
                     var lower = key.ToLower();
                     ArgInfo info = null;
+                    // Check for name collision on the same spelling
                     if (!validArgs.ContainsKey(lower))
                     {
                         info = new ArgInfo();
@@ -624,7 +684,7 @@ namespace PRISM
                     {
                         if (key.StartsWith(invalidChar.ToString()))
                         {
-                            // ERROR: Parameter marker character in parameter!
+                            // ERROR: Parameter marker character at start of parameter!
                             Results.ParseErrors.Add(string.Format(@"Error: bad character in argument key ""{0}"" in {1}; key cannot start with char '{2}'", key, typeof(T).Name, invalidChar));
                             return null;
                         }
@@ -633,7 +693,7 @@ namespace PRISM
                     {
                         if (key.Contains(invalidChar.ToString()))
                         {
-                            // ERROR: Parameter marker character in parameter!
+                            // ERROR: Parameter separator character in parameter!
                             Results.ParseErrors.Add(string.Format(@"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'", key, typeof(T).Name, invalidChar));
                             return null;
                         }
@@ -646,13 +706,34 @@ namespace PRISM
             return validArgs;
         }
 
+        /// <summary>
+        /// Data about a single spelling of an argument name (name and NAME will be in the same instance)
+        /// </summary>
         private class ArgInfo
         {
+            /// <summary>
+            /// The first listed argument name
+            /// </summary>
             public string ArgNormalCase { get; set; }
+
+            /// <summary>
+            /// All arguments with the same name that differ only in capitalization
+            /// </summary>
             public List<string> AllArgNormalCase { get; private set; }
+
+            /// <summary>
+            /// If the name is case sensitive
+            /// </summary>
             public bool CaseSensitive { get; set; }
+
+            /// <summary>
+            /// If one of the arguments with this spelling is a bool
+            /// </summary>
             public bool CanBeSwitch { get; set; }
 
+            /// <summary>
+            /// Constructor
+            /// </summary>
             public ArgInfo()
             {
                 ArgNormalCase = "";
@@ -662,6 +743,10 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Parse the properties of the templated class
+        /// </summary>
+        /// <returns>PropertyInfo and the OptionAttribute instance for each property that has the attribute</returns>
         private Dictionary<PropertyInfo, OptionAttribute> GetPropertiesAttributes()
         {
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
