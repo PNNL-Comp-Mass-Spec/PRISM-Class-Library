@@ -15,10 +15,10 @@ test:
     - DatabaseNamedUser
     - PNL_Domain
 artifacts:
-- path: bin\net462\PRISM.dll
-- path: PRISMWin\bin\net462\PRISMWin.dll
-- path: bin\PRISM-Library*.nupkg
-- path: PRISMWin\bin\PRISMWin-Library*.nupkg
+- path: bin\Release\net462\PRISM.dll
+- path: PRISMWin\bin\Release\net462\PRISMWin.dll
+- path: bin\Release\PRISM-Library*.nupkg
+- path: PRISMWin\bin\Release\PRISMWin-Library*.nupkg
 deploy:
 - provider: NuGet
   api_key:
