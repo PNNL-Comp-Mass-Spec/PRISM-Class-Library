@@ -10,7 +10,7 @@ namespace PRISMTest
         public void TestBadKey1()
         {
             var options = new BadKey1();
-            var result = CommandLineParser<BadKey1>.ParseArgs(new[] { "-bad-name", "b" }, options);
+            var result = CommandLineParser<BadKey1>.ParseArgs(new[] { "-bad-name", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with '-' at start of arg key");
         }
 
@@ -18,7 +18,7 @@ namespace PRISMTest
         public void TestBadKey2()
         {
             var options = new BadKey2();
-            var result = CommandLineParser<BadKey2>.ParseArgs(new[] { "/bad/name", "b" }, options);
+            var result = CommandLineParser<BadKey2>.ParseArgs(new[] { "/bad/name", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with '/' at start of arg key");
         }
 
@@ -26,7 +26,7 @@ namespace PRISMTest
         public void TestBadKey3()
         {
             var options = new BadKey3();
-            var result = CommandLineParser<BadKey3>.ParseArgs(new[] { "-badname", "b" }, options);
+            var result = CommandLineParser<BadKey3>.ParseArgs(new[] { "-badname", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with duplicate arg keys");
         }
 
@@ -34,14 +34,14 @@ namespace PRISMTest
         public void TestBadKey4()
         {
             var options = new BadKey4();
-            var result = CommandLineParser<BadKey4>.ParseArgs(new[] { "-badname", "b" }, options);
+            var result = CommandLineParser<BadKey4>.ParseArgs(new[] { "-badname", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with duplicate arg keys");
         }
         [Test]
         public void TestBadKey5()
         {
             var options = new BadKey5();
-            var result = CommandLineParser<BadKey5>.ParseArgs(new[] { "-bad name", "b" }, options);
+            var result = CommandLineParser<BadKey5>.ParseArgs(new[] { "-bad name", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with ' ' in arg key");
         }
 
@@ -49,7 +49,7 @@ namespace PRISMTest
         public void TestBadKey6()
         {
             var options = new BadKey6();
-            var result = CommandLineParser<BadKey6>.ParseArgs(new[] { "/bad:name", "b" }, options);
+            var result = CommandLineParser<BadKey6>.ParseArgs(new[] { "/bad:name", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with ':' in arg key");
         }
 
@@ -57,7 +57,7 @@ namespace PRISMTest
         public void TestBadKey7()
         {
             var options = new BadKey7();
-            var result = CommandLineParser<BadKey7>.ParseArgs(new[] { "-bad=name", "b" }, options);
+            var result = CommandLineParser<BadKey7>.ParseArgs(new[] { "-bad=name", "b" }, options, "", "");
             Assert.IsFalse(result, "Parser did not fail with '=' in arg key");
         }
 
@@ -119,7 +119,7 @@ namespace PRISMTest
         public void TestOkayKey1()
         {
             var options = new OkayKey1();
-            var result = CommandLineParser<OkayKey1>.ParseArgs(new[] { "-okay-name", "b" }, options);
+            var result = CommandLineParser<OkayKey1>.ParseArgs(new[] { "-okay-name", "b" }, options, "", "");
             Assert.IsTrue(result, "Parser failed with '-' not at start of arg key");
         }
 
@@ -127,7 +127,7 @@ namespace PRISMTest
         public void TestOkayKey2()
         {
             var options = new OkayKey2();
-            var result = CommandLineParser<OkayKey2>.ParseArgs(new[] { "/okay/name", "b" }, options);
+            var result = CommandLineParser<OkayKey2>.ParseArgs(new[] { "/okay/name", "b" }, options, "", "");
             Assert.IsTrue(result, "Parser failed with '/' not at start of arg key");
         }
 
@@ -163,12 +163,21 @@ namespace PRISMTest
                 "-AB=TestAb4",
                 "-b1", "true",
                 "-b2", "False",
-                "-b3",
+                "/b3",
                 "-1",
                 "-over", "This string should be used",
+                "-strArray", "value1",
+                "-strArray", "value2",
+                "-strArray", "value3",
+                "-intArray", "0",
+                "-intArray", "1",
+                "-intArray", "2",
+                "-intArray", "3",
+                "-intArray", "4",
+                "-dblArray", "1.0",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsTrue(result, "Parser failed to parse valid args");
             Assert.AreEqual(11, options.IntMinOnly);
             Assert.AreEqual(5, options.IntMaxOnly);
@@ -187,6 +196,18 @@ namespace PRISMTest
             Assert.AreEqual(true, options.BoolCheck3);
             Assert.AreEqual(true, options.NumericArg);
             Assert.AreEqual("This string should be used", options.Overrides);
+            Assert.AreEqual(3, options.StringArray.Length);
+            Assert.AreEqual("value1", options.StringArray[0]);
+            Assert.AreEqual("value2", options.StringArray[1]);
+            Assert.AreEqual("value3", options.StringArray[2]);
+            Assert.AreEqual(5, options.IntArray.Length);
+            Assert.AreEqual(0, options.IntArray[0]);
+            Assert.AreEqual(1, options.IntArray[1]);
+            Assert.AreEqual(2, options.IntArray[2]);
+            Assert.AreEqual(3, options.IntArray[3]);
+            Assert.AreEqual(4, options.IntArray[4]);
+            Assert.AreEqual(1, options.DblArray.Length);
+            Assert.AreEqual(1.0, options.DblArray[0]);
         }
 
         [Test]
@@ -197,7 +218,7 @@ namespace PRISMTest
                 "-minInt", "5",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -209,7 +230,7 @@ namespace PRISMTest
                 "-minMaxInt", "-15",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -221,7 +242,7 @@ namespace PRISMTest
                 "-minIntBad", "15",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -233,7 +254,7 @@ namespace PRISMTest
                 "-minInt", "15.0",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -245,7 +266,7 @@ namespace PRISMTest
                 "-maxInt", "15",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -257,7 +278,7 @@ namespace PRISMTest
                 "-maxIntBad", "5",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -269,7 +290,7 @@ namespace PRISMTest
                 "-maxInt", "9.0",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -281,7 +302,7 @@ namespace PRISMTest
                 "-minDbl", "5",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -293,7 +314,7 @@ namespace PRISMTest
                 "-minMaxDbl", "-15",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -305,7 +326,7 @@ namespace PRISMTest
                 "-minDblBad", "15",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -317,7 +338,7 @@ namespace PRISMTest
                 "-minDbl", "15n",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -329,7 +350,7 @@ namespace PRISMTest
                 "-maxDbl", "15",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -341,7 +362,7 @@ namespace PRISMTest
                 "-maxDblBad", "5",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -353,7 +374,7 @@ namespace PRISMTest
                 "-maxDbl", "5t",
             };
             var options = new ArgsVariety();
-            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options);
+            var result = CommandLineParser<ArgsVariety>.ParseArgs(args, options, "", "");
             Assert.IsFalse(result, "Parser did not fail on invalid min");
         }
 
@@ -421,6 +442,15 @@ namespace PRISMTest
 
             [Option("over")]
             public string Overrides { get; set; }
+
+            [Option("strArray")]
+            public string[] StringArray { get; set; }
+
+            [Option("intArray")]
+            public int[] IntArray { get; set; }
+
+            [Option("dblArray")]
+            public double[] DblArray { get; set; }
         }
     }
 }

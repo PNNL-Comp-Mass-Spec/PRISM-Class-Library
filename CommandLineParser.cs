@@ -2,25 +2,316 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PRISM
 {
     /// <summary>
     /// Basic class for keeping parameters flags and properties for command line arguments tied together.
+    /// Only supports properties of primitive types (and arrays of primitive types)
     /// Supports parameter flags similar to /d -dd --dir, with case sensitivity when needed,
     /// with the separator between parameter flag and parameter as ' ' or ':',
     /// and also supports using a parameter flag as a switch (if the associated property is a bool).
-    /// Doesn't currently support supplying multiple values for an argument (it only keeps the last one supplied)
+    /// If an argument is supplied multiple times, it only keeps the last one supplied
+    /// If the property is an array, multiple values are provided using '-paramName value -paramName value ...' or similar
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class CommandLineParser<T> where T : class, new()
     {
-        private static char[] paramChars = new char[] { '-', '/' };
-        private static char[] separatorChars = new char[] { ' ', ':', '=' };
+        private static readonly char[] defaultParamChars = new char[] { '-', '/' };
+        private static readonly char[] defaultSeparatorChars = new char[] { ' ', ':', '=' };
 
-        private static Dictionary<string, string> ArgsPreprocess(string[] args)
+        public class ParserResults
+        {
+            public bool Success { get; private set; }
+            public List<string> ParseErrors { get; private set; }
+            public T ParsedResults { get; private set; }
+
+            public ParserResults(T parsed)
+            {
+                Success = true;
+                ParseErrors = new List<string>();
+                ParsedResults = parsed;
+            }
+
+            internal void Failed()
+            {
+                Success = false;
+            }
+
+            public void OutputErrors()
+            {
+                foreach (var error in ParseErrors)
+                {
+                    Console.WriteLine(error);
+                }
+            }
+        }
+
+        private readonly string entryAssemblyName;
+        private readonly string versionInfo;
+        private char[] paramChars = defaultParamChars;
+        private char[] separatorChars = defaultSeparatorChars;
+
+        public ParserResults Results { get; private set; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="entryAsmName">Name of the executing assembly</param>
+        /// <param name="versionInfo"></param>
+        public CommandLineParser(string entryAsmName = "", string versionInfo = "")
+        {
+            this.entryAssemblyName = entryAsmName;
+            this.versionInfo = versionInfo;
+            Results = new ParserResults(new T());
+        }
+
+        public IEnumerable<char> ParamFlagCharacters
+        {
+            get { return paramChars; }
+            set { paramChars = value.Distinct().ToArray(); }
+        }
+
+        public IEnumerable<char> ParamSeparatorCharacters
+        {
+            get { return separatorChars; }
+            set { separatorChars = value.Distinct().ToArray(); }
+        }
+
+        /// <summary>
+        /// Parse the arguments into <paramref name="options"/>, returning a bool. Entry assembly name is retrieved via reflection.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="options"></param>
+        /// <param name="versionInfo">Executable version info</param>
+        /// <returns>false if argument parse failed</returns>
+        public static bool ParseArgs(string[] args, T options, string versionInfo = "")
+        {
+            var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+            return ParseArgs(args, entryAssemblyName, versionInfo).Success;
+        }
+
+        /// <summary>
+        /// Parse the arguments into <paramref name="options"/>, returning a bool.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="options"></param>
+        /// <param name="entryAssemblyName">Name of the executable</param>
+        /// <param name="versionInfo">Executable version info</param>
+        /// <returns>false if argument parse failed</returns>
+        public static bool ParseArgs(string[] args, T options, string entryAssemblyName, string versionInfo)
+        {
+            var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
+            parser.Results = new ParserResults(options);
+            return parser.ParseArgs(args).Success;
+        }
+
+        /// <summary>
+        /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>. Entry assembly name is retrieved via reflection.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="versionInfo">Executable version info</param>
+        /// <returns></returns>
+        public static ParserResults ParseArgs(string[] args, string versionInfo)
+        {
+            var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+            return ParseArgs(args, entryAssemblyName, versionInfo);
+        }
+
+        /// <summary>
+        /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="entryAssemblyName">Name of the executable</param>
+        /// <param name="versionInfo">Executable version info</param>
+        /// <returns></returns>
+        public static ParserResults ParseArgs(string[] args, string entryAssemblyName, string versionInfo)
+        {
+            var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
+            return parser.ParseArgs(args);
+        }
+
+        /// <summary>
+        /// Parse the arguments, returning the parsing results
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="onErrorOutputHelp"></param>
+        /// <returns></returns>
+        public ParserResults ParseArgs(string[] args, bool onErrorOutputHelp = true)
+        {
+            if (args.Length == 0)
+            {
+                if (onErrorOutputHelp)
+                {
+                    Results.OutputErrors();
+                    PrintHelp();
+                }
+                Results.Failed();
+                return Results;
+            }
+            try
+            {
+                var preprocessed = ArgsPreprocess(args);
+                if (preprocessed == null)
+                {
+                    if (onErrorOutputHelp)
+                    {
+                        Results.OutputErrors();
+                        PrintHelp();
+                    }
+                    Results.Failed();
+                    return Results;
+                }
+                var props = GetPropertiesAttributes();
+
+                foreach (var prop in props)
+                {
+                    var specified = false;
+                    var keyGiven = "";
+                    List<string> value = null;
+                    foreach (var key in prop.Value.ParamKeys)
+                    {
+                        if (preprocessed.ContainsKey(key))
+                        {
+                            specified = true;
+                            keyGiven = key;
+                            value = preprocessed[key];
+                        }
+                    }
+
+                    if (prop.Value.Required && (!specified || value == null || value.Count == 0))
+                    {
+                        Results.ParseErrors.Add(string.Format(@"Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]));
+                        Results.Failed();
+                    }
+
+                    if (!specified)
+                    {
+                        continue;
+                    }
+
+                    // switch handling - no value specified
+                    if (prop.Key.PropertyType == typeof(bool) && (value == null || value.Count == 0 || string.IsNullOrWhiteSpace(value.Last())))
+                    {
+                        prop.Key.SetValue(Results.ParsedResults, true);
+                        continue;
+                    }
+
+                    try
+                    {
+                        object castValue = null;
+                        if (prop.Key.PropertyType.IsArray)
+                        {
+                            var castVals = Array.CreateInstance(prop.Key.PropertyType.GetElementType(), value.Count);
+                            var i = 0;
+                            foreach (var val in value)
+                            {
+                                var castVal = ParseValueToType(prop.Key.PropertyType.GetElementType(), prop.Value, keyGiven, val);
+                                castVals.SetValue(castVal, i++);
+                            }
+                            castValue = castVals;
+                        }
+                        else
+                        {
+                            castValue = ParseValueToType(prop.Key.PropertyType, prop.Value, keyGiven, value.Last());
+                        }
+                        prop.Key.SetValue(Results.ParsedResults, castValue);
+                    }
+                    catch (InvalidCastException)
+                    {
+                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""", keyGiven, value, prop.Key.PropertyType.Name));
+                        Results.Failed();
+                    }
+                    catch (FormatException)
+                    {
+                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""", keyGiven, value, prop.Key.PropertyType.Name));
+                        Results.Failed();
+                    }
+                    catch (OverflowException)
+                    {
+                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)", keyGiven, value, prop.Key.PropertyType.Name));
+                        Results.Failed();
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Results.Failed();
+            }
+
+            if (!Results.Success && onErrorOutputHelp)
+            {
+                Results.OutputErrors();
+                PrintHelp();
+            }
+
+            return Results;
+        }
+
+        private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
+        {
+            object castValue = null;
+            if (!"null".Equals(valueToParse, StringComparison.OrdinalIgnoreCase))
+            {
+                castValue = Convert.ChangeType(valueToParse, propertyType);
+            }
+            try
+            {
+                // Test the min/max, if supplied to the options attribute
+                if (parseData.Min != null)
+                {
+                    // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
+                    if (Convert.ChangeType(parseData.Min.ToString(), propertyType) is IComparable castMin)
+                    {
+                        if (castMin.CompareTo(castValue) > 0)
+                        {
+                            Results.ParseErrors.Add(string.Format(@"Error: argument {0}, value of {1} is less than minimum of {2}", argKey, castValue, castMin));
+                            Results.Failed();
+                        }
+                    }
+                    else
+                    {
+                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""", argKey, castValue, parseData.Min, propertyType.Name));
+                        Results.Failed();
+                    }
+                }
+                if (parseData.Max != null)
+                {
+                    // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
+                    if (Convert.ChangeType(parseData.Max.ToString(), propertyType) is IComparable castMax)
+                    {
+                        if (castMax.CompareTo(castValue) < 0)
+                        {
+                            Results.ParseErrors.Add(string.Format(@"Error: argument {0}, value of {1} is greater than maximum of {2}", argKey, castValue, castMax));
+                            Results.Failed();
+                        }
+                    }
+                    else
+                    {
+                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""", argKey, castValue, parseData.Max, propertyType.Name));
+                        Results.Failed();
+                    }
+                }
+            }
+            catch (InvalidCastException)
+            {
+                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
+                Results.Failed();
+            }
+            catch (FormatException)
+            {
+                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
+                Results.Failed();
+            }
+            catch (OverflowException)
+            {
+                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)", argKey, propertyType.Name));
+                Results.Failed();
+            }
+            return castValue;
+        }
+
+        private Dictionary<string, List<string>> ArgsPreprocess(string[] args)
         {
             var validArgs = GetValidArgs();
             if (validArgs == null)
@@ -28,7 +319,7 @@ namespace PRISM
                 return null;
             }
 
-            var processed = new Dictionary<string, string>();
+            var processed = new Dictionary<string, List<string>>();
 
             for (var i = 0; i < args.Length; i++)
             {
@@ -37,7 +328,7 @@ namespace PRISM
                     var key = args[i].TrimStart(paramChars);
                     var value = "";
                     var nextArgIsNumber = false;
-                    if (i + 1 < args.Length && args[i + 1].StartsWith("-"))
+                    if (paramChars.Contains('-') && i + 1 < args.Length && args[i + 1].StartsWith("-"))
                     {
                         double x;
                         // Try converting to most forgiving number format
@@ -62,7 +353,7 @@ namespace PRISM
                             key = key.Substring(0, pos);
                         }
                     }
-                    if (!containedSeparator && i + 1 < args.Length && (nextArgIsNumber || !args[i + 1].StartsWith("-")))
+                    if (!containedSeparator && i + 1 < args.Length && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
                     {
                         value = args[i + 1];
                         i++;
@@ -76,7 +367,7 @@ namespace PRISM
                         // if argument is case-sensitive, make sure it matches an argument
                         if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
                         {
-                            Console.WriteLine("Error: Arg " + key + "does not match valid argument");
+                            Results.ParseErrors.Add(string.Format("Error: Arg " + key + "does not match valid argument"));
                             return null;
                         }
                         else if (!argInfo.CaseSensitive)
@@ -86,162 +377,15 @@ namespace PRISM
                     }
 
                     // The last duplicate option gets priority
-                    processed[key] = value;
+                    if (!processed.ContainsKey(key))
+                    {
+                        processed.Add(key, new List<string>());
+                    }
+                    processed[key].Add(value);
                 }
             }
 
             return processed;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="options"></param>
-        /// <param name="entryAssemblyName">Name of the executable</param>
-        /// <param name="versionInfo">Executable version info</param>
-        /// <returns></returns>
-        public static bool ParseArgs(string[] args, T options, string entryAssemblyName = "", string versionInfo = "")
-        {
-            var success = true;
-            if (args.Length == 0)
-            {
-                ShowHelp(entryAssemblyName, versionInfo);
-                return false;
-            }
-            try
-            {
-                var preprocessed = ArgsPreprocess(args);
-                if (preprocessed == null)
-                {
-                    ShowHelp(entryAssemblyName, versionInfo);
-                    return false;
-                }
-                var props = GetPropertiesAttributes();
-
-                foreach (var prop in props)
-                {
-                    var specified = false;
-                    var keyGiven = "";
-                    var value = "";
-                    foreach (var key in prop.Value.ParamKeys)
-                    {
-                        if (preprocessed.ContainsKey(key))
-                        {
-                            specified = true;
-                            keyGiven = key;
-                            value = preprocessed[key];
-                        }
-                    }
-
-                    if (prop.Value.Required && (!specified || string.IsNullOrWhiteSpace(value)))
-                    {
-                        Console.WriteLine(@"Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]);
-                        success = false;
-                    }
-
-                    if (!specified)
-                    {
-                        continue;
-                    }
-
-                    // switch handling - no value specified
-                    if (prop.Key.PropertyType == typeof(bool) && string.IsNullOrWhiteSpace(value))
-                    {
-                        prop.Key.SetValue(options, true);
-                        continue;
-                    }
-
-                    try
-                    {
-                        object castValue = null;
-                        if (!"null".Equals(value, StringComparison.OrdinalIgnoreCase))
-                        {
-                            castValue = Convert.ChangeType(value, prop.Key.PropertyType);
-                        }
-                        try
-                        {
-                            // Test the min/max, if supplied to the options attribute
-                            if (prop.Value.Min != null)
-                            {
-                                // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
-                                if (Convert.ChangeType(prop.Value.Min.ToString(), prop.Key.PropertyType) is IComparable castMin)
-                                {
-                                    if (castMin.CompareTo(castValue) > 0)
-                                    {
-                                        Console.WriteLine(@"Error: argument {0}, value of {1} is less than minimum of {2}", keyGiven, castValue, castMin);
-                                        success = false;
-                                    }
-                                }
-                                else
-                                {
-                                    Console.WriteLine(@"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""", keyGiven, castValue, prop.Value.Min, prop.Key.PropertyType.Name);
-                                    success = false;
-                                }
-                            }
-                            if (prop.Value.Max != null)
-                            {
-                                // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
-                                if (Convert.ChangeType(prop.Value.Max.ToString(), prop.Key.PropertyType) is IComparable castMax)
-                                {
-                                    if (castMax.CompareTo(castValue) < 0)
-                                    {
-                                        Console.WriteLine(@"Error: argument {0}, value of {1} is greater than maximum of {2}", keyGiven, castValue, castMax);
-                                        success = false;
-                                    }
-                                }
-                                else
-                                {
-                                    Console.WriteLine(@"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""", keyGiven, castValue, prop.Value.Max, prop.Key.PropertyType.Name);
-                                    success = false;
-                                }
-                            }
-                        }
-                        catch (InvalidCastException)
-                        {
-                            Console.WriteLine(@"Error: argument {0}, cannot cast min or max to type ""{1}""", keyGiven, prop.Key.PropertyType.Name);
-                            success = false;
-                        }
-                        catch (FormatException)
-                        {
-                            Console.WriteLine(@"Error: argument {0}, cannot cast min or max to type ""{1}""", keyGiven, prop.Key.PropertyType.Name);
-                            success = false;
-                        }
-                        catch (OverflowException)
-                        {
-                            Console.WriteLine(@"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)", keyGiven, prop.Key.PropertyType.Name);
-                            success = false;
-                        }
-                        prop.Key.SetValue(options, castValue);
-                    }
-                    catch (InvalidCastException)
-                    {
-                        Console.WriteLine(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""", keyGiven, value, prop.Key.PropertyType.Name);
-                        success = false;
-                    }
-                    catch (FormatException)
-                    {
-                        Console.WriteLine(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""", keyGiven, value, prop.Key.PropertyType.Name);
-                        success = false;
-                    }
-                    catch (OverflowException)
-                    {
-                        Console.WriteLine(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)", keyGiven, value, prop.Key.PropertyType.Name);
-                        success = false;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                success = false;
-            }
-
-            if (!success)
-            {
-                ShowHelp(entryAssemblyName, versionInfo);
-            }
-
-            return success;
         }
 
         /// <summary>
@@ -251,9 +395,21 @@ namespace PRISM
         /// <param name="versionInfo">Executable version info</param>
         public static void ShowHelp(string entryAssemblyName = "", string versionInfo = "")
         {
+            var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
+            parser.PrintHelp();
+        }
+
+        /// <summary>
+        /// Display the help contents, using the information supplied by the Option attributes and the default constructor for the templated type
+        /// </summary>
+        public void PrintHelp()
+        {
             const int paramKeysWidth = 22;
             const int helpTextWidth = 52;
             var contents = CreateHelpContents();
+
+            // Output any errors that occurring while creating the help content
+            Results.OutputErrors();
 
             Console.WriteLine();
             if (!string.IsNullOrWhiteSpace(versionInfo))
@@ -362,7 +518,7 @@ namespace PRISM
             Console.WriteLine();
         }
 
-        private static Dictionary<string, string> CreateHelpContents()
+        private Dictionary<string, string> CreateHelpContents()
         {
             var contents = new Dictionary<string, string>();
 
@@ -419,7 +575,7 @@ namespace PRISM
         /// Get the valid args
         /// </summary>
         /// <returns></returns>
-        private static Dictionary<string, ArgInfo> GetValidArgs()
+        private Dictionary<string, ArgInfo> GetValidArgs()
         {
             var validArgs = new Dictionary<string, ArgInfo>();
             var argCollisions = new Dictionary<string, bool>();
@@ -464,7 +620,7 @@ namespace PRISM
                     if (info.AllArgNormalCase.Contains(key))
                     {
                         // ERROR: Duplicate arguments!
-                        Console.WriteLine(@"Error: Duplicate option keys specified in class {0}; key is ""{1}""", typeof(T).Name, key);
+                        Results.ParseErrors.Add(string.Format(@"Error: Duplicate option keys specified in class {0}; key is ""{1}""", typeof(T).Name, key));
                         return null;
                     }
                     foreach (var invalidChar in paramChars)
@@ -472,7 +628,7 @@ namespace PRISM
                         if (key.StartsWith(invalidChar.ToString()))
                         {
                             // ERROR: Parameter marker character in parameter!
-                            Console.WriteLine(@"Error: bad character in argument key ""{0}"" in {1}; key cannot start with char '{2}'", key, typeof(T).Name, invalidChar);
+                            Results.ParseErrors.Add(string.Format(@"Error: bad character in argument key ""{0}"" in {1}; key cannot start with char '{2}'", key, typeof(T).Name, invalidChar));
                             return null;
                         }
                     }
@@ -481,7 +637,7 @@ namespace PRISM
                         if (key.Contains(invalidChar.ToString()))
                         {
                             // ERROR: Parameter marker character in parameter!
-                            Console.WriteLine(@"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'", key, typeof(T).Name, invalidChar);
+                            Results.ParseErrors.Add(string.Format(@"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'", key, typeof(T).Name, invalidChar));
                             return null;
                         }
                     }
@@ -509,7 +665,7 @@ namespace PRISM
             }
         }
 
-        private static Dictionary<PropertyInfo, OptionAttribute> GetPropertiesAttributes()
+        private Dictionary<PropertyInfo, OptionAttribute> GetPropertiesAttributes()
         {
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
 
@@ -594,6 +750,11 @@ namespace PRISM
             this.ParamKeys = paramKeys;
             this.Max = null;
             this.Min = null;
+        }
+
+        public override string ToString()
+        {
+            return ParamKeys[0];
         }
     }
 }
