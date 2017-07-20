@@ -82,6 +82,11 @@ namespace PRISM
         public ParserResults Results { get; private set; }
 
         /// <summary>
+        /// Usage examples to display to the user at the end of the help text
+        /// </summary>
+        public List<string> UsageExamples { get; private set; }
+
+        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="entryAsmName">Name of the executing assembly</param>
@@ -91,6 +96,7 @@ namespace PRISM
             this.entryAssemblyName = entryAsmName;
             this.versionInfo = versionInfo;
             Results = new ParserResults(new T());
+            UsageExamples = new List<string>();
         }
 
         /// <summary>
@@ -585,6 +591,18 @@ namespace PRISM
             }
 
             Console.WriteLine();
+
+            if (UsageExamples.Count > 0)
+            {
+                Console.WriteLine("Examples:");
+                Console.WriteLine();
+
+                foreach (var example in UsageExamples)
+                {
+                    Console.WriteLine(example);
+                    Console.WriteLine();
+                }
+            }
         }
 
         /// <summary>
