@@ -13,12 +13,14 @@ namespace PRISM
     /// and also supports using a parameter flag as a switch (if the associated property is a bool).
     /// If an argument is supplied multiple times, it only keeps the last one supplied
     /// If the property is an array, multiple values are provided using '-paramName value -paramName value ...' or similar
+    /// Includes support for showing help with no args supplied, or with argument names of "?" and "help" (can be overridden)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class CommandLineParser<T> where T : class, new()
     {
         private static readonly char[] defaultParamChars = new char[] { '-', '/' };
         private static readonly char[] defaultSeparatorChars = new char[] { ' ', ':', '=' };
+        private static readonly string[] defaultHelpArgs = new string[] {"?", "help"};
 
         /// <summary>
         /// Results from the parsing
@@ -75,6 +77,8 @@ namespace PRISM
         private readonly string versionInfo;
         private char[] paramChars = defaultParamChars;
         private char[] separatorChars = defaultSeparatorChars;
+        private Dictionary<string, ArgInfo> validArguments = null;
+        private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes = null;
 
         /// <summary>
         /// Parsing results. Contains success value, target object, and error list
@@ -105,7 +109,14 @@ namespace PRISM
         public IEnumerable<char> ParamFlagCharacters
         {
             get { return paramChars; }
-            set { paramChars = value.Distinct().ToArray(); }
+            set
+            {
+                var distinct = value.Distinct().ToArray();
+                if (distinct.Length > 0)
+                {
+                    paramChars = distinct;
+                }
+            }
         }
 
         /// <summary>
@@ -114,7 +125,14 @@ namespace PRISM
         public IEnumerable<char> ParamSeparatorCharacters
         {
             get { return separatorChars; }
-            set { separatorChars = value.Distinct().ToArray(); }
+            set
+            {
+                var distinct = value.Distinct().ToArray();
+                if (distinct.Length > 0)
+                {
+                    separatorChars = distinct;
+                }
+            }
         }
 
         /// <summary>
@@ -212,6 +230,22 @@ namespace PRISM
                     return Results;
                 }
                 var props = GetPropertiesAttributes();
+                var validArgs = GetValidArgs();
+
+                // Show the help if a default help argument is provided, but only if the templated class does not define the arg provided
+                foreach (var helpArg in defaultHelpArgs)
+                {
+                    if (preprocessed.ContainsKey(helpArg) && validArgs.ContainsKey(helpArg.ToLower()))
+                    {
+                        // Make sure the help arg is not defined in the template class
+                        if (validArgs[helpArg.ToLower()].IsBuiltInArg)
+                        {
+                            PrintHelp();
+                            Results.Failed();
+                            return Results;
+                        }
+                    }
+                }
 
                 foreach (var prop in props)
                 {
@@ -616,6 +650,27 @@ namespace PRISM
             var optionsForDefaults = new T();
 
             var props = GetPropertiesAttributes();
+            var validArgs = GetValidArgs();
+            var helpArgString = "";
+            // Add the default help string
+            foreach (var helpArg in defaultHelpArgs)
+            {
+                if (validArgs.ContainsKey(helpArg.ToLower()))
+                {
+                    if (validArgs[helpArg.ToLower()].IsBuiltInArg)
+                    {
+                        if (!string.IsNullOrWhiteSpace(helpArgString))
+                        {
+                            helpArgString += ", ";
+                        }
+                        helpArgString += paramChars[0] + helpArg;
+                    }
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(helpArgString))
+            {
+                contents.Add(helpArgString, "Show this help screen");
+            }
 
             foreach (var prop in props)
             {
@@ -634,7 +689,7 @@ namespace PRISM
                         keys += ", ";
                     }
 
-                    keys += "-" + key;
+                    keys += paramChars[0] + key;
                 }
 
                 var helpText = "";
@@ -668,6 +723,10 @@ namespace PRISM
         /// <returns></returns>
         private Dictionary<string, ArgInfo> GetValidArgs()
         {
+            if (this.validArguments != null)
+            {
+                return this.validArguments;
+            }
             var validArgs = new Dictionary<string, ArgInfo>();
             var props = GetPropertiesAttributes();
 
@@ -721,6 +780,23 @@ namespace PRISM
                 }
             }
 
+            foreach (var helpArg in defaultHelpArgs)
+            {
+                if (!validArgs.ContainsKey(helpArg.ToLower()))
+                {
+                    var info = new ArgInfo()
+                    {
+                        ArgNormalCase = helpArg,
+                        CanBeSwitch = true,
+                        IsBuiltInArg = true,
+                    };
+                    info.AllArgNormalCase.Add(helpArg);
+
+                    validArgs.Add(helpArg, info);
+                }
+            }
+
+            this.validArguments = validArgs;
             return validArgs;
         }
 
@@ -750,6 +826,11 @@ namespace PRISM
             public bool CanBeSwitch { get; set; }
 
             /// <summary>
+            /// If the argument key is internally defined
+            /// </summary>
+            public bool IsBuiltInArg { get; set; }
+
+            /// <summary>
             /// Constructor
             /// </summary>
             public ArgInfo()
@@ -758,6 +839,7 @@ namespace PRISM
                 AllArgNormalCase = new List<string>(2);
                 CaseSensitive = false;
                 CanBeSwitch = false;
+                IsBuiltInArg = false;
             }
         }
 
@@ -767,6 +849,10 @@ namespace PRISM
         /// <returns>PropertyInfo and the OptionAttribute instance for each property that has the attribute</returns>
         private Dictionary<PropertyInfo, OptionAttribute> GetPropertiesAttributes()
         {
+            if (propertiesAndAttributes != null)
+            {
+                return propertiesAndAttributes;
+            }
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
 
 #if !(NETSTANDARD1_x || NETSTANDARD2_0)
@@ -800,6 +886,7 @@ namespace PRISM
                 props.Add(property, attribList[0] as OptionAttribute);
             }
 
+            propertiesAndAttributes = props;
             return props;
         }
     }

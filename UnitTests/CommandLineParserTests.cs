@@ -144,6 +144,25 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
         }
 
+        [Test]
+        public void TestHelpKey1()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            var result = parser.ParseArgs(new[] { "--help" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+        }
+
+        [Test]
+        public void TestHelpKey2()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            parser.ParamFlagCharacters = new[] {'/', '-'};
+            var result = parser.ParseArgs(new[] { "/?" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+        }
+
         private class OkayKey1
         {
             [Option("okay-name")]
