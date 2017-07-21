@@ -16,10 +16,19 @@ namespace PRISM
 
         #region "Constants and Enums"
 
+        /// <summary>
+        /// Path to proc virtual filesystem
+        /// </summary>
         public const string ROOT_PROC_DIRECTORY = "/proc";
 
+        /// <summary>
+        /// Name of cpuinfo file
+        /// </summary>
         public const string CPUINFO_FILE = "cpuinfo";
 
+        /// <summary>
+        /// name of meminfo file
+        /// </summary>
         public const string MEMINFO_FILE = "meminfo";
 
         #endregion
@@ -50,6 +59,9 @@ namespace PRISM
 
         #region "Properties"
 
+        /// <summary>
+        /// If debugging messages should be output
+        /// </summary>
         public bool TraceEnabled { get; set; }
 
         #endregion

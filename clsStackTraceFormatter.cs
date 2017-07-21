@@ -15,10 +15,19 @@ namespace PRISM
     /// <remarks></remarks>
     public class clsStackTraceFormatter
     {
-
+        /// <summary>
+        /// Stack trace label string
+        /// </summary>
         public const string STACK_TRACE_TITLE = "Stack trace: ";
+
+        /// <summary>
+        /// String interpolated between parts of the stack trace
+        /// </summary>
         public const string STACK_CHAIN_SEPARATOR = "-:-";
 
+        /// <summary>
+        /// Prefix added before the final file is listed in the stacktrace
+        /// </summary>
         public const string FINAL_FILE_PREFIX = " in ";
 
         /// <summary>

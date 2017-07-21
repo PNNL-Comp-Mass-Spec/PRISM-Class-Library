@@ -86,14 +86,6 @@ namespace PRISM
         private int m_pid;
 
         /// <summary>
-        /// The internal thread used to run the monitoring code
-        /// </summary>
-        /// <remarks>
-        /// That starts and monitors the external program
-        /// </remarks>
-        // private Thread m_Thread;
-
-        /// <summary>
         /// Thread cancellation token
         /// </summary>
         private CancellationTokenSource m_CancellationToken;

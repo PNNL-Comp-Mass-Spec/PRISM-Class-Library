@@ -5,6 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace PRISM
 {
+    /// <summary>
+    /// Utilities for advanced output formatting of doubles
+    /// </summary>
     public class StringUtilities
     {
         private const string SCIENTIFIC_NOTATION_CLEANUP_REGEX = "0+E";

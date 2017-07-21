@@ -181,6 +181,9 @@ namespace PRISM
     /// </remarks>
     public class clsFileLogger : ILogger
     {
+        /// <summary>
+        /// Default filename timestamp format string
+        /// </summary>
         public const string FILENAME_DATESTAMP = "MM-dd-yyyy";
 
         const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
@@ -201,9 +204,19 @@ namespace PRISM
         /// </summary>
         private string m_programVersion;
 
+        /// <summary>
+        /// Current log file path
+        /// </summary>
         protected string m_CurrentLogFilePath = string.Empty;
+
+        /// <summary>
+        /// Most recent log message
+        /// </summary>
         protected string m_MostRecentLogMessage = string.Empty;
 
+        /// <summary>
+        /// Most recent error message
+        /// </summary>
         protected string m_MostRecentErrorMessage = string.Empty;
 
         /// <summary>
@@ -223,6 +236,9 @@ namespace PRISM
             m_logFileBaseName = filePath;
         }
 
+        /// <summary>
+        /// Path to the current log file
+        /// </summary>
         public string CurrentLogFilePath => m_CurrentLogFilePath;
 
         /// <summary>
@@ -704,6 +720,12 @@ namespace PRISM
         /// </summary>
         public bool LocalOnly;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="entryType"></param>
+        /// <param name="localOnly"></param>
         public clsLogEntry(string message, logMsgType entryType, bool localOnly = true)
         {
             Message = message;
@@ -726,16 +748,24 @@ namespace PRISM
     /// in the constructor for this class.</remarks>
     public class clsQueLogger : ILogger
     {
-
-        // queue to hold entries to be output
-
+        /// <summary>
+        /// queue to hold entries to be output
+        /// </summary>
         protected ConcurrentQueue<clsLogEntry> m_queue;
 
-        // Internal thread for outputting entries from queue
+        /// <summary>
+        /// Internal thread for outputting entries from queue
+        /// </summary>
         protected Timer m_ThreadTimer;
 
-        // logger object to use for outputting entries from queue
+        /// <summary>
+        /// logger object to use for outputting entries from queue
+        /// </summary>
         protected ILogger m_logger;
+
+        /// <summary>
+        /// Path to the current log file
+        /// </summary>
         public string CurrentLogFilePath
         {
             get
@@ -749,6 +779,9 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Most recent log message
+        /// </summary>
         public string MostRecentLogMessage
         {
             get
@@ -762,6 +795,9 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Most recent error message
+        /// </summary>
         public string MostRecentErrorMessage
         {
             get

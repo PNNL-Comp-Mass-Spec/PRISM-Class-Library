@@ -20,6 +20,8 @@ namespace PRISM
     {
 
         private string mErrorMessage = "";
+
+#pragma warning disable 1591
         public enum ResourceScope
         {
             Connected = 1,
@@ -52,6 +54,7 @@ namespace PRISM
             Tree = 0xa,
             Ndscontainer = 0xb
         }
+#pragma warning restore 1591
 
         /// <summary>
         /// This structure is used to group a bunch of member variables.

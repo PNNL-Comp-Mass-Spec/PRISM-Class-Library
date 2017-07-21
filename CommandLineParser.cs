@@ -852,6 +852,10 @@ namespace PRISM
             this.Min = null;
         }
 
+        /// <summary>
+        /// ToString overload (for debugging ease)
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return ParamKeys[0];

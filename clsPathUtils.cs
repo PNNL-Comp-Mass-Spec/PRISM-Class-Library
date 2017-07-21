@@ -5,33 +5,71 @@ using System.Text.RegularExpressions;
 
 namespace PRISM
 {
+    /// <summary>
+    /// Cross-platform path utilities
+    /// </summary>
     public static class clsPathUtils
     {
+        /// <summary>
+        /// Convert a path to be linux-compatible (backslash to forward slash
+        /// </summary>
+        /// <param name="pathSpec"></param>
+        /// <returns></returns>
         public static string AssureLinuxPath(string pathSpec)
         {
             return pathSpec.Replace('\\', '/');
         }
 
+        /// <summary>
+        /// Convert a path to be Windows-compatible (forward slash to backslash
+        /// </summary>
+        /// <param name="pathSpec"></param>
+        /// <returns></returns>
         public static string AssureWindowsPath(string pathSpec)
         {
             return pathSpec.Replace('/', '\\');
         }
 
+        /// <summary>
+        /// Combine paths using the system default path separator character
+        /// </summary>
+        /// <param name="path1"></param>
+        /// <param name="path2"></param>
+        /// <returns></returns>
         public static string CombinePathsLocalSepChar(string path1, string path2)
         {
             return CombinePaths(path1, path2, Path.DirectorySeparatorChar);
         }
 
+        /// <summary>
+        /// Combine paths using a forward slash as a path separator character
+        /// </summary>
+        /// <param name="path1"></param>
+        /// <param name="path2"></param>
+        /// <returns></returns>
         public static string CombineLinuxPaths(string path1, string path2)
         {
             return CombinePaths(path1, path2, '/');
         }
 
+        /// <summary>
+        /// Combine paths using a backslash as a path separator character
+        /// </summary>
+        /// <param name="path1"></param>
+        /// <param name="path2"></param>
+        /// <returns></returns>
         public static string CombineWindowsPaths(string path1, string path2)
         {
             return CombinePaths(path1, path2, '\\');
         }
 
+        /// <summary>
+        /// Combine paths using the specified path separator character
+        /// </summary>
+        /// <param name="path1"></param>
+        /// <param name="path2"></param>
+        /// <param name="directorySepChar"></param>
+        /// <returns></returns>
         public static string CombinePaths(string path1, string path2, char directorySepChar)
         {
             if (path1 == null || path2 == null)
@@ -177,6 +215,12 @@ namespace PRISM
             return filePath;
         }
 
+        /// <summary>
+        /// Replace the filename in the path with a new filename
+        /// </summary>
+        /// <param name="existingFilePath"></param>
+        /// <param name="newFileName"></param>
+        /// <returns></returns>
         public static string ReplaceFilenameInPath(string existingFilePath, string newFileName)
         {
             if (string.IsNullOrWhiteSpace(existingFilePath))

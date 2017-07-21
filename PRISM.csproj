@@ -13,6 +13,7 @@
     <Company>Pacific Northwest National Laboratory</Company>
     <Product>PRISM Library</Product>
     <Authors>PNNL-Comp-Mass-Spec</Authors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageLicenseUrl>https://opensource.org/licenses/ECL-2.0</PackageLicenseUrl>
