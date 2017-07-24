@@ -145,7 +145,7 @@ namespace PRISM
         public static bool ParseArgs(string[] args, T options, string versionInfo = "")
         {
             var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
-            return ParseArgs(args, entryAssemblyName, versionInfo).Success;
+            return ParseArgs(args, options, entryAssemblyName, versionInfo);
         }
 
         /// <summary>
