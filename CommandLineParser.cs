@@ -616,8 +616,8 @@ namespace PRISM
         /// </summary>
         public void PrintHelp()
         {
-            const int paramKeysWidth = 22;
-            const int helpTextWidth = 52;
+            const int paramKeysWidth = 18;
+            const int helpTextWidth = 56;
             var contents = CreateHelpContents();
 
             // Output any errors that occurring while creating the help content
@@ -643,7 +643,7 @@ namespace PRISM
                 Console.WriteLine(@"Usage:");
             }
 
-            var outputFormatString = "  {0,-" + paramKeysWidth + "}    {1}";
+            var outputFormatString = "  {0,-" + paramKeysWidth + "}  {1}";
 
             // Output the help contents, creating columns with wrapping before outputting
             foreach (var option in contents)
