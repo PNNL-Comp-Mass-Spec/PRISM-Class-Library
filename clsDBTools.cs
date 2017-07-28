@@ -15,7 +15,7 @@ namespace PRISM
         #region "Constants"
 
         /// <summary>
-        /// Default timeout length, in seconds, when waiting for a stored procedure to finish executing
+        /// Default timeout length, in seconds, when waiting for a query to finish running
         /// </summary>
         public const int DEFAULT_SP_TIMEOUT_SEC = 30;
 
@@ -23,9 +23,9 @@ namespace PRISM
 
         #region "Member Variables"
 
-        // DB access
-        private string m_ConnStr;
-
+        /// <summary>
+        /// Timeout length, in seconds, when waiting for a query to finish running
+        /// </summary>
         private int mTimeoutSeconds;
 
         #endregion
@@ -33,15 +33,21 @@ namespace PRISM
         #region "Properties"
 
         /// <summary>
+        /// Database connection string.
+        /// </summary>
+        public string ConnectStr { get; set; }
+
+        /// <summary>
         /// Timeout length, in seconds, when waiting for a query to finish executing
         /// </summary>
         public int TimeoutSeconds
         {
-            get { return mTimeoutSeconds; }
+            get => mTimeoutSeconds;
             set
             {
                 if (value == 0)
                     value = DEFAULT_SP_TIMEOUT_SEC;
+
                 if (value < 10)
                     value = 10;
 
@@ -57,16 +63,12 @@ namespace PRISM
         /// <param name="connectionString">Database connection string</param>
         public clsDBTools(string connectionString)
         {
-            m_ConnStr = connectionString;
+            ConnectStr = connectionString;
         }
 
         /// <summary>
-        /// The property sets and gets a connection string.
         /// </summary>
-        public string ConnectStr
         {
-            get { return m_ConnStr; }
-            set { m_ConnStr = value; }
         }
 
         /// <summary>
@@ -110,7 +112,7 @@ namespace PRISM
             {
                 try
                 {
-                    using (var dbConnection = new SqlConnection(m_ConnStr))
+                    using (var dbConnection = new SqlConnection(ConnectStr))
                     {
                         dbConnection.InfoMessage += OnInfoMessage;
 
@@ -128,7 +130,7 @@ namespace PRISM
                     retryCount -= 1;
                     var errorMessage =
                         string.Format("Exception querying database ({0}; " + "ConnectionString: {1}, RetryCount = {2}, Query {3}",
-                                      ex.Message, m_ConnStr, retryCount, sqlQuery);
+                                      ex.Message, ConnectStr, retryCount, sqlQuery);
 
                     OnErrorEvent(errorMessage);
 
@@ -180,7 +182,7 @@ namespace PRISM
             {
                 try
                 {
-                    using (var dbConnection = new SqlConnection(m_ConnStr))
+                    using (var dbConnection = new SqlConnection(ConnectStr))
                     {
                         dbConnection.InfoMessage += OnInfoMessage;
 
@@ -233,7 +235,7 @@ namespace PRISM
                     {
                         callingFunction = "Unknown";
                     }
-                    var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, m_ConnStr, retryCount, sqlQuery);
+                    var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, ConnectStr, retryCount, sqlQuery);
 
                     OnErrorEvent(errorMessage);
 
