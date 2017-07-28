@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace PRISM
 {
@@ -299,6 +300,14 @@ namespace PRISM
                         }
                     }
 
+                    var positionalArgName = GetPositionalArgName(prop.Value.ArgPosition);
+                    if (prop.Value.ArgPosition > 0 && preprocessed.ContainsKey(positionalArgName))
+                    {
+                        specified = true;
+                        keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
+                        value = preprocessed[positionalArgName];
+                    }
+
                     if (prop.Value.Required && (!specified || value == null || value.Count == 0))
                     {
                         Results.ParseErrors.Add(string.Format(@"Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]));
@@ -450,8 +459,8 @@ namespace PRISM
         /// Parse the arguments to a dictionary
         /// </summary>
         /// <param name="args"></param>
-        /// <returns></returns>
-        private Dictionary<string, List<string>> ArgsPreprocess(string[] args)
+        /// <returns>Dictionary where keys are argument names and values are the setting for the argument</returns>
+        private Dictionary<string, List<string>> ArgsPreprocess(IReadOnlyList<string> args)
         {
             var validArgs = GetValidArgs();
             if (validArgs == null)
@@ -460,72 +469,101 @@ namespace PRISM
             }
 
             var processed = new Dictionary<string, List<string>>();
+            var positionArgumentNumber = 0;
 
-            for (var i = 0; i < args.Length; i++)
+            for (var i = 0; i < args.Count; i++)
             {
-                if (paramChars.Contains(args[i][0]))
+                if (!paramChars.Contains(args[i][0]))
                 {
-                    var key = args[i].TrimStart(paramChars);
-                    var value = "";
-                    var nextArgIsNumber = false;
-                    if (paramChars.Contains('-') && i + 1 < args.Length && args[i + 1].StartsWith("-"))
-                    {
-                        double x;
-                        // Try converting to most forgiving number format
-                        nextArgIsNumber = double.TryParse(args[i + 1], out x);
+                    // Positional argument
+                    positionArgumentNumber++;
+                    var argName = GetPositionalArgName(positionArgumentNumber);
 
-                        // Check if the program supports a numeric argument (but we only need to remove a '-', because a '/' won't parse as a double)
-                        if (nextArgIsNumber && validArgs.ContainsKey(args[i + 1].TrimStart('-')))
-                        {
-                            nextArgIsNumber = false;
-                        }
-                    }
-                    var containedSeparator = false;
-                    foreach (var separatorChar in separatorChars)
-                    {
-                        var separator = separatorChar.ToString();
-                        if (key.Contains(separator))
-                        {
-                            containedSeparator = true;
-                            // Only split off the first separator, since others may be part of drive specifiers
-                            var pos = key.IndexOf(separatorChar);
-                            value = key.Substring(pos + 1);
-                            key = key.Substring(0, pos);
-                        }
-                    }
-                    if (!containedSeparator && i + 1 < args.Length && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
-                    {
-                        value = args[i + 1];
-                        i++;
-                    }
+                    if (!validArgs.TryGetValue(argName, out var argInfo))
+                        continue;
 
-                    // Key normalization - usually allow case-insensitivity
-                    var ciKey = key.ToLower();
-                    if (validArgs.ContainsKey(ciKey))
+                    if (!processed.ContainsKey(argName))
                     {
-                        var argInfo = validArgs[ciKey];
-                        // if argument is case-sensitive, make sure it matches an argument
-                        if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
-                        {
-                            Results.ParseErrors.Add(string.Format("Error: Arg " + key + "does not match valid argument"));
-                            return null;
-                        }
-                        else if (!argInfo.CaseSensitive)
-                        {
-                            key = argInfo.ArgNormalCase;
-                        }
+                        processed.Add(argName, new List<string>());
                     }
+                    processed[argName].Add(args[i]);
 
-                    // The last duplicate option gets priority
-                    if (!processed.ContainsKey(key))
-                    {
-                        processed.Add(key, new List<string>());
-                    }
-                    processed[key].Add(value);
+                    continue;
                 }
+
+                var key = args[i].TrimStart(paramChars);
+                var value = "";
+                var nextArgIsNumber = false;
+                if (paramChars.Contains('-') && i + 1 < args.Count && args[i + 1].StartsWith("-"))
+                {
+                    double x;
+                    // Try converting to most forgiving number format
+                    nextArgIsNumber = double.TryParse(args[i + 1], out x);
+
+                    // Check if the program supports a numeric argument (but we only need to remove a '-', because a '/' won't parse as a double)
+                    if (nextArgIsNumber && validArgs.ContainsKey(args[i + 1].TrimStart('-')))
+                    {
+                        nextArgIsNumber = false;
+                    }
+                }
+
+                var containedSeparator = false;
+                foreach (var separatorChar in separatorChars)
+                {
+                    var separator = separatorChar.ToString();
+                    if (key.Contains(separator))
+                    {
+                        containedSeparator = true;
+                        // Only split off the first separator, since others may be part of drive specifiers
+                        var pos = key.IndexOf(separatorChar);
+                        value = key.Substring(pos + 1);
+                        key = key.Substring(0, pos);
+                    }
+                }
+
+                if (!containedSeparator && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
+                {
+                    value = args[i + 1];
+                    i++;
+                }
+
+                // Key normalization - usually allow case-insensitivity
+                var ciKey = key.ToLower();
+                if (validArgs.ContainsKey(ciKey))
+                {
+                    var argInfo = validArgs[ciKey];
+                    // if argument is case-sensitive, make sure it matches an argument
+                    if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
+                    {
+                        Results.ParseErrors.Add(string.Format("Error: Arg " + key + "does not match valid argument"));
+                        return null;
+                    }
+
+                    if (!argInfo.CaseSensitive)
+                    {
+                        key = argInfo.ArgNormalCase;
+                    }
+                }
+
+                // The last duplicate option gets priority
+                if (!processed.ContainsKey(key))
+                {
+                    processed.Add(key, new List<string>());
+                }
+                processed[key].Add(value);
             }
 
             return processed;
+        }
+
+        /// <summary>
+        /// Generate the special argument name used to track positional arguments
+        /// </summary>
+        /// <param name="argPosition"></param>
+        /// <returns></returns>
+        private string GetPositionalArgName(int argPosition)
+        {
+            return "##" + argPosition + "##";
         }
 
         /// <summary>
@@ -784,7 +822,8 @@ namespace PRISM
                 foreach (var key in prop.Value.ParamKeys)
                 {
                     var lower = key.ToLower();
-                    ArgInfo info = null;
+                    ArgInfo info;
+
                     // Check for name collision on the same spelling
                     if (!validArgs.ContainsKey(lower))
                     {
@@ -802,9 +841,12 @@ namespace PRISM
                     if (info.AllArgNormalCase.Contains(key))
                     {
                         // ERROR: Duplicate arguments!
-                        Results.ParseErrors.Add(string.Format(@"Error: Duplicate option keys specified in class {0}; key is ""{1}""", typeof(T).Name, key));
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: Duplicate option keys specified in class {0}; key is ""{1}""", typeof(T).Name,
+                            key));
                         return null;
                     }
+
                     foreach (var invalidChar in paramChars)
                     {
                         if (key.StartsWith(invalidChar.ToString()))
@@ -825,6 +867,26 @@ namespace PRISM
                     }
 
                     info.AllArgNormalCase.Add(key);
+                }
+
+                var argPosition = prop.Value.ArgPosition;
+                if (argPosition > 0)
+                {
+                    var info = new ArgInfo();
+                    var argName = GetPositionalArgName(argPosition);
+
+                    if (validArgs.ContainsKey(argName))
+                    {
+                        // ERROR: Duplicate position specified
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: Multiple properties in class {0} specify ArgPosition {1}; conflict involves ""{2}""",
+                            typeof(T).Name, argPosition, prop.Key.Name));
+                        return null;
+                    }
+
+                    validArgs.Add(argName, info);
+                    info.ArgNormalCase = argName;
+                    info.AllArgNormalCase.Add(argName);
                 }
             }
 
@@ -960,6 +1022,17 @@ namespace PRISM
         /// Strings that mark a command line argument (when parsing the command line)
         /// </summary>
         public string[] ParamKeys { get; private set; }
+
+        /// <summary>
+        /// Maps a given unnamed argument to this parameter
+        /// Defaults to 0 meaning not mapped to any unnamed arguments
+        /// </summary>
+        /// <remarks>
+        /// For example, in MyUtility.exe InputFilePath.txt OutputFilePath.txt
+        /// InputFilePath.txt is at position 1 and
+        /// OutputFilePath.txt is at position 2
+        /// </remarks>
+        public int ArgPosition { get; set; }
 
         /// <summary>
         /// If the help screen should show the default value for an argument (value pulled from the default constructor)
