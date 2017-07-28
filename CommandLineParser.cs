@@ -1043,9 +1043,17 @@ namespace PRISM
         /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
         public OptionAttribute(params string[] paramKeys)
         {
-            this.ParamKeys = paramKeys;
-            this.Max = null;
-            this.Min = null;
+            ParamKeys = paramKeys ?? throw new ArgumentNullException(nameof(paramKeys), "Argument cannot be null");
+
+            if (ParamKeys.Length == 0)
+                throw new ArgumentException("At least one argument name must be provided", nameof(paramKeys));
+
+            if (string.IsNullOrWhiteSpace(ParamKeys[0]))
+                throw new ArgumentException("Argument name cannot be whitespace", nameof(paramKeys));
+
+            ArgPosition = 0;
+            Max = null;
+            Min = null;
         }
 
         /// <summary>
