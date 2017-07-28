@@ -9,7 +9,7 @@ namespace PRISMTest
     class CommandLineParserTests
     {
         private const bool showHelpOnError = false;
-        private const bool outputErrors = true;
+        private const bool outputErrors = false;
 
         [Test]
         public void TestBadKey1()

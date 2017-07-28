@@ -1034,7 +1034,6 @@ namespace PRISM
     /// Attribute class to flag properties that are command line arguments
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    [CLSCompliant(false)]
     public class OptionAttribute : Attribute
     {
         /// <summary>
@@ -1079,12 +1078,14 @@ namespace PRISM
         public object Max { get; set; }
 
         /// <summary>
-        /// Constructor
+        /// Constructor supporting any number of param keys.
         /// </summary>
         /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
+        /// <remarks>Not CLS compliant</remarks>
         public OptionAttribute(params string[] paramKeys)
         {
-            ParamKeys = paramKeys ?? throw new ArgumentNullException(nameof(paramKeys), "Argument cannot be null");
+            // Check for null and remove blank entries
+            ParamKeys = paramKeys?.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray() ?? throw new ArgumentNullException(nameof(paramKeys), "Argument cannot be null");
 
             if (ParamKeys.Length == 0)
                 throw new ArgumentException("At least one argument name must be provided", nameof(paramKeys));
@@ -1095,6 +1096,27 @@ namespace PRISM
             ArgPosition = 0;
             Max = null;
             Min = null;
+        }
+
+        /// <summary>
+        /// Constructor, taking a single paramKey or a multiple param keys separated by a space
+        /// </summary>
+        /// <param name="paramKey">Must supply at least one key for the argument, and it must be distinct within the class; multiple keys can be specified, separated by a space</param>
+        /// <remarks>CLS compliant</remarks>
+        public OptionAttribute(string paramKey) : this(paramKey?.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries))
+        {
+        }
+
+        /// <summary>
+        /// Constructor supporting up to 4 param keys
+        /// </summary>
+        /// <param name="paramKey1"></param>
+        /// <param name="paramKey2"></param>
+        /// <param name="paramKey3"></param>
+        /// <param name="paramKey4"></param>
+        /// <remarks>CLS compliant</remarks>
+        public OptionAttribute(string paramKey1, string paramKey2, string paramKey3 = "", string paramKey4 = "") : this(new[] {paramKey1, paramKey2, paramKey3, paramKey4})
+        {
         }
 
         /// <summary>

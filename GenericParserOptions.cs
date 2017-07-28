@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace PRISM
@@ -6,7 +7,6 @@ namespace PRISM
     /// <summary>
     /// This class demonstrates how decorate properties in a class so that the CommandLineParser can use them to match command line arguments
     /// </summary>
-    [CLSCompliant(false)]
     internal class GenericParserOptions
     {
         public GenericParserOptions()
