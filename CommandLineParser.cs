@@ -27,6 +27,8 @@ namespace PRISM
         /// </summary>
         public class ParserResults
         {
+            #region Properties
+
             /// <summary>
             /// Parsing status - false if parsing failed
             /// </summary>
@@ -35,12 +37,14 @@ namespace PRISM
             /// <summary>
             /// Errors that occurred during parsing
             /// </summary>
-            public List<string> ParseErrors { get; private set; }
+            public List<string> ParseErrors { get; }
 
             /// <summary>
             /// Target object, populated with the parsed arguments when the parsing completes
             /// </summary>
-            public T ParsedResults { get; private set; }
+            public T ParsedResults { get; }
+
+            #endregion
 
             /// <summary>
             /// Constructor
@@ -73,42 +77,35 @@ namespace PRISM
             }
         }
 
-        private readonly string entryAssemblyName;
-        private readonly string versionInfo;
         private char[] paramChars = defaultParamChars;
         private char[] separatorChars = defaultSeparatorChars;
-        private Dictionary<string, ArgInfo> validArguments = null;
-        private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes = null;
+        private Dictionary<string, ArgInfo> validArguments;
+        private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes;
+
+        #region Properties
 
         /// <summary>
-        /// Parsing results. Contains success value, target object, and error list
+        /// Developer contact info
         /// </summary>
-        public ParserResults Results { get; private set; }
+        /// <remarks>If defined, shown at the end of PrintHelp</remarks>
+        public string ContactInfo { get; set; }
 
         /// <summary>
-        /// Usage examples to display to the user at the end of the help text
+        /// Entry assembly name
         /// </summary>
-        public List<string> UsageExamples { get; private set; }
+        public string EntryAssemblyName { get; }
 
         /// <summary>
-        /// Constructor
+        /// Executable version info
         /// </summary>
-        /// <param name="entryAsmName">Name of the executing assembly</param>
-        /// <param name="versionInfo"></param>
-        public CommandLineParser(string entryAsmName = "", string versionInfo = "")
-        {
-            this.entryAssemblyName = entryAsmName;
-            this.versionInfo = versionInfo;
-            Results = new ParserResults(new T());
-            UsageExamples = new List<string>();
-        }
+        public string ExeVersionInfo { get; }
 
         /// <summary>
         /// Get or set the characters allowed at the beginning of an argument specifier
         /// </summary>
         public IEnumerable<char> ParamFlagCharacters
         {
-            get { return paramChars; }
+            get => paramChars;
             set
             {
                 var distinct = value.Distinct().ToArray();
@@ -124,7 +121,7 @@ namespace PRISM
         /// </summary>
         public IEnumerable<char> ParamSeparatorCharacters
         {
-            get { return separatorChars; }
+            get => separatorChars;
             set
             {
                 var distinct = value.Distinct().ToArray();
@@ -133,6 +130,43 @@ namespace PRISM
                     separatorChars = distinct;
                 }
             }
+        }
+
+        /// <summary>
+        /// Description of the program's purpose / usage
+        /// </summary>
+        /// <remarks>If defined, shown at the start of PrintHelp (though after any error messages)</remarks>
+        public string ProgramInfo { get; set; }
+
+        /// <summary>
+        /// Parsing results. Contains success value, target object, and error list
+        /// </summary>
+        public ParserResults Results { get; private set; }
+
+        /// <summary>
+        /// Usage examples to display to the user at the end of the help text
+        /// </summary>
+        public List<string> UsageExamples { get; }
+
+        #endregion
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="entryAsmName">Name of the executing assembly</param>
+        /// <param name="versionInfo">Executable version info</param>
+        public CommandLineParser(string entryAsmName = "", string versionInfo = "")
+        {
+            EntryAssemblyName = entryAsmName;
+            ExeVersionInfo = versionInfo;
+
+            Results = new ParserResults(new T());
+            propertiesAndAttributes = null;
+            validArguments = null;
+
+            ProgramInfo = string.Empty;
+            ContactInfo = string.Empty;
+            UsageExamples = new List<string>();
         }
 
         /// <summary>
@@ -158,8 +192,10 @@ namespace PRISM
         /// <returns>false if argument parse failed</returns>
         public static bool ParseArgs(string[] args, T options, string entryAssemblyName, string versionInfo)
         {
-            var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
-            parser.Results = new ParserResults(options);
+            var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo)
+            {
+                Results = new ParserResults(options)
+            };
             return parser.ParseArgs(args).Success;
         }
 
@@ -515,14 +551,20 @@ namespace PRISM
             // Output any errors that occurring while creating the help content
             Results.OutputErrors();
 
-            Console.WriteLine();
-            if (!string.IsNullOrWhiteSpace(versionInfo))
+            if (!string.IsNullOrWhiteSpace(ProgramInfo))
             {
-                Console.WriteLine(@"{0} {1}", entryAssemblyName, versionInfo);
+                Console.WriteLine();
+                Console.WriteLine(WrapParagraph(ProgramInfo));
             }
-            if (!string.IsNullOrWhiteSpace(entryAssemblyName))
+
+            Console.WriteLine();
+            if (!string.IsNullOrWhiteSpace(ExeVersionInfo))
             {
-                Console.WriteLine(@"Usage: {0}", entryAssemblyName + ".exe");
+                Console.WriteLine(@"{0} {1}", EntryAssemblyName, ExeVersionInfo);
+            }
+            if (!string.IsNullOrWhiteSpace(EntryAssemblyName))
+            {
+                Console.WriteLine(@"Usage: {0}", EntryAssemblyName + ".exe");
             }
             else
             {
@@ -636,6 +678,12 @@ namespace PRISM
                     Console.WriteLine(example);
                     Console.WriteLine();
                 }
+            }
+
+            if (!string.IsNullOrWhiteSpace(ContactInfo))
+            {
+                Console.WriteLine();
+                Console.WriteLine(WrapParagraph(ContactInfo));
             }
         }
 
