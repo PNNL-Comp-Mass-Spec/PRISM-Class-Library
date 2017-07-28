@@ -1,5 +1,12 @@
 Prism Class Library Log
 
+Version 2.4.11.0; July 28, 2017
+	- Extend the command line parser to support positional arguments
+
+Version 2.4.6.0; July 19, 2017
+	- Add .NET standard support
+	- Add new CommandLineParser class
+
 Version 2.4.5.0; June 6, 2017
 	- Add classes clsOSVersionInfo and clsLinuxSystemInfo
 	- Add property NoParameters to clsParseCommandLine
