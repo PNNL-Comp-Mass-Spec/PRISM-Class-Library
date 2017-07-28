@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using PRISM;
 
@@ -8,7 +9,7 @@ namespace PRISMTest
     class CommandLineParserTests
     {
         private const bool showHelpOnError = false;
-        private const bool outputErrors = false;
+        private const bool outputErrors = true;
 
         [Test]
         public void TestBadKey1()
@@ -171,8 +172,16 @@ namespace PRISMTest
 
         private class OkayKey2
         {
-            [Option("okay/name")]
+            [Option("okay/name", HelpText = "This switch has a slash in the name; that's unusual, but allowed")]
             public string OkayName { get; set; }
+
+            [Option("verbose", "alternativeNameForVerbose", "wordy", "detailed",
+                HelpText = "Use this switch to include verbose output, in homage to which this help text includes lorem ipsum dolor sit amet, " +
+                           "elit phasellus, penatibus sed eget quis suspendisse. Quam suspendisse accumsan in vestibulum, ante donec dolor nibh, " +
+                           "mauris sodales, orci mollis et convallis felis porta. Felis eu, metus sed, a quam nulla commodo nulla sit, diam sed morbi " +
+                           "ut euismod et, diam vestibulum cursus. Dolor sit scelerisque tellus, wisi nec, mauris etiam potenti laoreet non, " +
+                           "leo aliquam nonummy. Pulvinar tortor, leo rutrum blandit velit, quis lacus.")]
+            public string Verbose { get; set; }
         }
 
         [Test]
@@ -180,6 +189,7 @@ namespace PRISMTest
         {
             var args = new string[]
             {
+                "MyInputFile.txt",
                 "-minInt", "11",
                 "-maxInt:5",
                 "/minMaxInt", "2",
@@ -191,6 +201,7 @@ namespace PRISMTest
                 "-over", "This string should be overwritten",
                 "-ab", "TestAb1",
                 "-aB", "TestAb2",
+                "RandomlyPlacedOutputFile.txt",
                 "-Ab", "TestAb3",
                 "-AB=TestAb4",
                 "-b1", "true",
@@ -201,12 +212,13 @@ namespace PRISMTest
                 "-strArray", "value1",
                 "-strArray", "value2",
                 "-strArray", "value3",
+                "UnusedPositionalArg.txt",
                 "-intArray", "0",
                 "-intArray", "1",
                 "-intArray", "2",
                 "-intArray", "3",
                 "-intArray", "4",
-                "-dblArray", "1.0",
+                "-dblArray", "1.0"
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
@@ -228,6 +240,8 @@ namespace PRISMTest
             Assert.AreEqual(true, options.BoolCheck1);
             Assert.AreEqual(false, options.BoolCheck2);
             Assert.AreEqual(true, options.BoolCheck3);
+            Assert.AreEqual("MyInputFile.txt", options.InputFilePath);
+            Assert.AreEqual("RandomlyPlacedOutputFile.txt", options.OutputFilePath);
             Assert.AreEqual(true, options.NumericArg);
             Assert.AreEqual("This string should be used", options.Overrides);
             Assert.AreEqual(3, options.StringArray.Length);
@@ -242,6 +256,27 @@ namespace PRISMTest
             Assert.AreEqual(4, options.IntArray[4]);
             Assert.AreEqual(1, options.DblArray.Length);
             Assert.AreEqual(1.0, options.DblArray[0]);
+        }
+
+        [Test]
+        public void TestPositionalArgs()
+        {
+            var args = new string[]
+            {
+                "MyInputFile.txt",
+                "OutputFile.txt",
+                "UnusedPositionalArg.txt",
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+
+            Assert.AreEqual("MyInputFile.txt", options.InputFilePath);
+            Assert.AreEqual("OutputFile.txt", options.OutputFilePath);
         }
 
         [Test]
@@ -485,8 +520,14 @@ namespace PRISMTest
             [Option("b3")]
             public bool BoolCheck3 { get; set; }
 
+            [Option("i", ArgPosition = 1)]
+            public string InputFilePath { get; set; }
+
             [Option("1")]
             public bool NumericArg { get; set; }
+
+            [Option("o", ArgPosition = 2)]
+            public string OutputFilePath { get; set; }
 
             [Option("over")]
             public string Overrides { get; set; }
@@ -499,6 +540,18 @@ namespace PRISMTest
 
             [Option("dblArray")]
             public double[] DblArray { get; set; }
+        }
+
+
+        private class ArgsPositionalOnly
+        {
+
+            [Option("i", ArgPosition = 1)]
+            public string InputFilePath { get; set; }
+
+            [Option("o", ArgPosition = 2)]
+            public string OutputFilePath { get; set; }
+
         }
     }
 }
