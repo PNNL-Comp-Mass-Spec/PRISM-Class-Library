@@ -67,8 +67,172 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Get a mapping from column name to column index, based on column order
         /// </summary>
+        /// <param name="columns"></param>
+        /// <returns>Mapping from column name to column index</returns>
+        /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
+        public Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
         {
+
+            var columnMap = new Dictionary<string, int>();
+
+            for (var i = 0; i < columns.Count; i++)
+            {
+                columnMap.Add(columns[i], i);
+            }
+
+            return columnMap;
+        }
+
+        /// <summary>
+        /// Get the string value for the specified column
+        /// </summary>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column Name</param>
+        /// <returns>String value</returns>
+        /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.empty</remarks>
+        public string GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName)
+        {
+            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+                throw new Exception("Invalid column name: " + columnName);
+
+            var value = resultRow[columnIndex];
+
+            return value;
+        }
+
+        /// <summary>
+        /// Get the integer value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        public int GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            int defaultValue)
+        {
+            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+        }
+
+        /// <summary>
+        /// Get the integer value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column Name</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="validNumber">Output: set to true if the column contains an integer</param>
+        /// <returns>Integer value</returns>
+        public int GetColumnValue(
+        IReadOnlyList<string> resultRow,
+        IReadOnlyDictionary<string, int> columnMap,
+        string columnName,
+        int defaultValue,
+        out bool validNumber)
+        {
+            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+                throw new Exception("Invalid column name: " + columnName);
+
+            var valueText = resultRow[columnIndex];
+
+            if (int.TryParse(valueText, out var value))
+            {
+                validNumber = true;
+                return value;
+            }
+
+            validNumber = false;
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Get the double value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        public double GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            double defaultValue)
+        {
+            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+        }
+
+        /// <summary>
+        /// Get the double value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column Name</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="validNumber">Output: set to true if the column contains a double (or integer)</param>
+        /// <returns>Double value</returns>
+        public double GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            double defaultValue,
+            out bool validNumber)
+        {
+            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+                throw new Exception("Invalid column name: " + columnName);
+
+            var valueText = resultRow[columnIndex];
+
+            if (double.TryParse(valueText, out var value))
+            {
+                validNumber = true;
+                return value;
+            }
+
+            validNumber = false;
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Get the date value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        public DateTime GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            DateTime defaultValue)
+        {
+            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+        }
+
+        /// <summary>
+        /// Get the date value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column Name</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="validNumber">Output: set to true if the column contains a valid date</param>
+        /// <returns>True or false</returns>
+        public DateTime GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            DateTime defaultValue,
+            out bool validNumber)
+        {
+            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+                throw new Exception("Invalid column name: " + columnName);
+
+            var valueText = resultRow[columnIndex];
+
+            if (DateTime.TryParse(valueText, out var value))
+            {
+                validNumber = true;
+                return value;
+            }
+
+            validNumber = false;
+            return defaultValue;
         }
 
         /// <summary>
