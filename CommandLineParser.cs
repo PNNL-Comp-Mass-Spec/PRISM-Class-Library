@@ -615,70 +615,12 @@ namespace PRISM
             foreach (var option in contents)
             {
                 var overflow = new List<Tuple<string, string>>();
-                var keyOverflow = new List<string>();
-                var textOverflow = new List<string>();
 
                 // Wrap the argument names
-                if (option.Key.Length <= paramKeysWidth)
-                {
-                    keyOverflow.Add(option.Key);
-                }
-                else
-                {
-                    var split = option.Key.Split(' ');
-                    var line = "";
-                    foreach (var key in split)
-                    {
-                        if (!string.IsNullOrWhiteSpace(line))
-                        {
-                            if (key.Length + line.Length > paramKeysWidth)
-                            {
-                                keyOverflow.Add(line);
-                                line = "";
-                            }
-                            else
-                            {
-                                line += " ";
-                            }
-                        }
-                        line += key;
-                    }
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        keyOverflow.Add(line);
-                    }
-                }
+                var keyOverflow = WrapParagraphAsList(option.Key, paramKeysWidth);
 
                 // Wrap the argument help text
-                if (option.Value.Length <= helpTextWidth)
-                {
-                    textOverflow.Add(option.Value);
-                }
-                else
-                {
-                    var split = option.Value.Split(' ');
-                    var line = "";
-                    foreach (var word in split)
-                    {
-                        if (!string.IsNullOrWhiteSpace(line))
-                        {
-                            if (word.Length + line.Length > helpTextWidth)
-                            {
-                                textOverflow.Add(line);
-                                line = "";
-                            }
-                            else
-                            {
-                                line += " ";
-                            }
-                        }
-                        line += word;
-                    }
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        textOverflow.Add(line);
-                    }
-                }
+                var textOverflow = WrapParagraphAsList(option.Value, helpTextWidth);
 
                 // Join the wrapped argument names and help text
                 for (var i = 0; i < keyOverflow.Count || i < textOverflow.Count; i++)
@@ -801,6 +743,52 @@ namespace PRISM
             }
 
             return contents;
+        }
+
+        private string WrapParagraph(string textToWrap, int wrapWidth = 80)
+        {
+            var wrappedText = new StringBuilder();
+            foreach (var line in WrapParagraphAsList(textToWrap, wrapWidth))
+            {
+                if (wrappedText.Length > 0)
+                    wrappedText.AppendLine();
+
+                wrappedText.Append(line);
+            }
+
+            return wrappedText.ToString();
+        }
+
+        private List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
+        {
+            var split = textToWrap.Split(' ');
+            var wrappedText = new List<string>();
+
+            var line = string.Empty;
+
+            foreach (var key in split)
+            {
+                if (!string.IsNullOrWhiteSpace(line))
+                {
+                    if (key.Length + line.Length > wrapWidth)
+                    {
+                        wrappedText.Add(line);
+                        line = "";
+                    }
+                    else
+                    {
+                        line += " ";
+                    }
+                }
+                line += key;
+            }
+
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+                wrappedText.Add(line);
+            }
+
+            return wrappedText;
         }
 
         /// <summary>
