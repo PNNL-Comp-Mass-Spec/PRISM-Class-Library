@@ -7,21 +7,38 @@ using System.Text;
 namespace PRISM
 {
     /// <summary>
-    /// Basic class for keeping parameters flags and properties for command line arguments tied together.
-    /// Only supports properties of primitive types (and arrays of primitive types)
+    /// Basic class for keeping parameters flags and properties for command line arguments tied together,
+    /// supporting properties of primitive types (and arrays of primitive types).
+    ///
     /// Supports parameter flags similar to /d -dd --dir, with case sensitivity when needed,
     /// with the separator between parameter flag and parameter as ' ' or ':',
     /// and also supports using a parameter flag as a switch (if the associated property is a bool).
-    /// If an argument is supplied multiple times, it only keeps the last one supplied
-    /// If the property is an array, multiple values are provided using '-paramName value -paramName value ...' or similar
-    /// Includes support for showing help with no args supplied, or with argument names of "?" and "help" (can be overridden)
+    ///
+    /// If an argument is supplied multiple times, it only keeps the last one supplied.
+    /// If the property is an array, multiple values are provided using '-paramName value -paramName value ...' or similar.
+    /// Includes support for showing help with no args supplied, or with argument names of "?" and "help" (can be overridden).
     /// </summary>
+    /// <remarks>
+    /// Either call static method ParseArgs like this:
+    ///   var options = new ValidatorOptions();
+    ///   var asmName = typeof(Program).GetTypeInfo().Assembly.GetName();
+    ///   if (!CommandLineParser&lt;ValidatorOptions&gt;.ParseArgs(args, options, asmName.Name, version) || !options.ValidateArgs()) { return false; }
+    ///
+    /// Or instantiate this class, which allows for suppressing the auto-display of the syntax if an argument error is encountered
+    ///   var parser = new CommandLineParser(asmName.Name, version);
+    ///   parser.Options = options;
+    ///   parser.ParseArgs(args);
+    ///
+    /// Note that args comes from the entry method, static int Main(string[] args)
+    ///
+    /// An example class suitable for use when instantiating the CommandLineParser is GenericParserOptions in this project
+    /// </remarks>
     /// <typeparam name="T"></typeparam>
     public class CommandLineParser<T> where T : class, new()
     {
-        private static readonly char[] defaultParamChars = new char[] { '-', '/' };
-        private static readonly char[] defaultSeparatorChars = new char[] { ' ', ':', '=' };
-        private static readonly string[] defaultHelpArgs = new string[] {"?", "help"};
+        private static readonly char[] defaultParamChars = { '-', '/' };
+        private static readonly char[] defaultSeparatorChars = { ' ', ':', '=' };
+        private static readonly string[] defaultHelpArgs = { "?", "help" };
 
         /// <summary>
         /// Results from the parsing
@@ -176,7 +193,7 @@ namespace PRISM
         /// <param name="args"></param>
         /// <param name="options"></param>
         /// <param name="versionInfo">Executable version info</param>
-        /// <returns>false if argument parse failed</returns>
+        /// <returns>True on success, false if argument parse failed</returns>
         public static bool ParseArgs(string[] args, T options, string versionInfo = "")
         {
             var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
@@ -190,7 +207,7 @@ namespace PRISM
         /// <param name="options"></param>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
-        /// <returns>false if argument parse failed</returns>
+        /// <returns>True on success, false if argument parse failed</returns>
         public static bool ParseArgs(string[] args, T options, string entryAssemblyName, string versionInfo)
         {
             var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo)
@@ -236,18 +253,20 @@ namespace PRISM
         {
             if (args.Length == 0)
             {
-                // Automatically output help when no arguments are supplied
                 if (onErrorOutputHelp)
                 {
+                    // Automatically output help when no arguments are supplied
                     PrintHelp();
                 }
                 else if (outputErrors)
                 {
+                    // Show errors
                     Results.OutputErrors();
                 }
                 Results.Failed();
                 return Results;
             }
+
             try
             {
                 // Parse the arguments into a dictionary
@@ -266,6 +285,7 @@ namespace PRISM
                     Results.Failed();
                     return Results;
                 }
+
                 var props = GetPropertiesAttributes();
                 var validArgs = GetValidArgs();
 
@@ -289,6 +309,7 @@ namespace PRISM
                     var specified = false;
                     var keyGiven = "";
                     List<string> value = null;
+
                     // Find any arguments that match this property
                     foreach (var key in prop.Value.ParamKeys)
                     {
@@ -329,7 +350,7 @@ namespace PRISM
                     try
                     {
                         // parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
-                        object castValue = null;
+                        object castValue;
                         if (prop.Key.PropertyType.IsArray)
                         {
                             var castVals = Array.CreateInstance(prop.Key.PropertyType.GetElementType(), value.Count);
@@ -349,17 +370,23 @@ namespace PRISM
                     }
                     catch (InvalidCastException)
                     {
-                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""", keyGiven, value, prop.Key.PropertyType.Name));
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
+                            keyGiven, value, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (FormatException)
                     {
-                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""", keyGiven, value, prop.Key.PropertyType.Name));
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
+                            keyGiven, value, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (OverflowException)
                     {
-                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)", keyGiven, value, prop.Key.PropertyType.Name));
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)",
+                            keyGiven, value, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                 }
@@ -399,6 +426,7 @@ namespace PRISM
             {
                 castValue = Convert.ChangeType(valueToParse, propertyType);
             }
+
             try
             {
                 // Test the min/max, if supplied to the options attribute
@@ -415,7 +443,9 @@ namespace PRISM
                     }
                     else
                     {
-                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""", argKey, castValue, parseData.Min, propertyType.Name));
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""",
+                            argKey, castValue, parseData.Min, propertyType.Name));
                         Results.Failed();
                     }
                 }
@@ -426,13 +456,17 @@ namespace PRISM
                     {
                         if (castMax.CompareTo(castValue) < 0)
                         {
-                            Results.ParseErrors.Add(string.Format(@"Error: argument {0}, value of {1} is greater than maximum of {2}", argKey, castValue, castMax));
+                            Results.ParseErrors.Add(string.Format(
+                                @"Error: argument {0}, value of {1} is greater than maximum of {2}",
+                                argKey, castValue, castMax));
                             Results.Failed();
                         }
                     }
                     else
                     {
-                        Results.ParseErrors.Add(string.Format(@"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""", argKey, castValue, parseData.Max, propertyType.Name));
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""",
+                            argKey, castValue, parseData.Max, propertyType.Name));
                         Results.Failed();
                     }
                 }
@@ -665,6 +699,7 @@ namespace PRISM
                 Console.WriteLine();
                 Console.WriteLine(WrapParagraph(ContactInfo));
             }
+
         }
 
         /// <summary>
@@ -680,6 +715,7 @@ namespace PRISM
             var props = GetPropertiesAttributes();
             var validArgs = GetValidArgs();
             var helpArgString = "";
+
             // Add the default help string
             foreach (var helpArg in defaultHelpArgs)
             {
@@ -695,6 +731,7 @@ namespace PRISM
                     }
                 }
             }
+
             if (!string.IsNullOrWhiteSpace(helpArgString))
             {
                 contents.Add(helpArgString, "Show this help screen");
@@ -794,13 +831,15 @@ namespace PRISM
         /// <summary>
         /// Get the arguments that are valid for the class, dealing with argument name collision and invalid characters as needed
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Dictionary where key is argument name, and value is Argument Info</returns>
+        /// <remarks>Position arguments are tracked via special flags: ##1##, ##2##, etc.</remarks>
         private Dictionary<string, ArgInfo> GetValidArgs()
         {
-            if (this.validArguments != null)
+            if (validArguments != null)
             {
-                return this.validArguments;
+                return validArguments;
             }
+
             var validArgs = new Dictionary<string, ArgInfo>();
             var props = GetPropertiesAttributes();
 
@@ -824,6 +863,7 @@ namespace PRISM
                         info = validArgs[lower];
                         info.CaseSensitive = true;
                     }
+
                     info.CanBeSwitch |= canBeSwitch;
 
                     if (info.AllArgNormalCase.Contains(key))
@@ -840,16 +880,21 @@ namespace PRISM
                         if (key.StartsWith(invalidChar.ToString()))
                         {
                             // ERROR: Parameter marker character at start of parameter!
-                            Results.ParseErrors.Add(string.Format(@"Error: bad character in argument key ""{0}"" in {1}; key cannot start with char '{2}'", key, typeof(T).Name, invalidChar));
+                            Results.ParseErrors.Add(string.Format(
+                                @"Error: bad character in argument key ""{0}"" in {1}; key cannot start with char '{2}'",
+                                key, typeof(T).Name, invalidChar));
                             return null;
                         }
                     }
+
                     foreach (var invalidChar in separatorChars)
                     {
                         if (key.Contains(invalidChar.ToString()))
                         {
                             // ERROR: Parameter separator character in parameter!
-                            Results.ParseErrors.Add(string.Format(@"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'", key, typeof(T).Name, invalidChar));
+                            Results.ParseErrors.Add(string.Format(
+                                @"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'",
+                                key, typeof(T).Name, invalidChar));
                             return null;
                         }
                     }
@@ -894,7 +939,7 @@ namespace PRISM
                 }
             }
 
-            this.validArguments = validArgs;
+            validArguments = validArgs;
             return validArgs;
         }
 
@@ -911,7 +956,7 @@ namespace PRISM
             /// <summary>
             /// All arguments with the same name that differ only in capitalization
             /// </summary>
-            public List<string> AllArgNormalCase { get; private set; }
+            public List<string> AllArgNormalCase { get; }
 
             /// <summary>
             /// If the name is case sensitive
@@ -970,10 +1015,6 @@ namespace PRISM
 #endif
 
                 var attrib = property.GetCustomAttributes(typeof(OptionAttribute), true);
-                if (attrib == null)
-                {
-                    continue;
-                }
                 var attribList = attrib.ToArray();
                 if (attribList.Length == 0)
                 {
@@ -1002,14 +1043,14 @@ namespace PRISM
         public string HelpText { get; set; }
 
         /// <summary>
-        /// If the argument is required
+        /// True if the argument is required
         /// </summary>
         public bool Required { get; set; }
 
         /// <summary>
-        /// Strings that mark a command line argument (when parsing the command line)
+        /// Valid command line argument name (or names)
         /// </summary>
-        public string[] ParamKeys { get; private set; }
+        public string[] ParamKeys { get; }
 
         /// <summary>
         /// Maps a given unnamed argument to this parameter
@@ -1057,7 +1098,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// ToString overload (for debugging ease)
+        /// ToString overload (show the first supported argument name)
         /// </summary>
         /// <returns></returns>
         public override string ToString()
