@@ -1099,11 +1099,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Constructor, taking a single paramKey or a multiple param keys separated by a space
+        /// Constructor, taking a single paramKey or a multiple param keys separated by a '|'
         /// </summary>
-        /// <param name="paramKey">Must supply at least one key for the argument, and it must be distinct within the class; multiple keys can be specified, separated by a space</param>
+        /// <param name="paramKey">Must supply at least one key for the argument, and it must be distinct within the class; multiple keys can be specified, separated by a '|'</param>
         /// <remarks>CLS compliant</remarks>
-        public OptionAttribute(string paramKey) : this(paramKey?.Split(new [] {' '}, StringSplitOptions.RemoveEmptyEntries))
+        public OptionAttribute(string paramKey) : this(paramKey?.Split(new [] {'|'}, StringSplitOptions.RemoveEmptyEntries))
         {
         }
 
