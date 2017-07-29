@@ -97,7 +97,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Progress udpate
+        /// Progress update
         /// </summary>
         /// <param name="progressMessage">Progress message</param>
         /// <param name="percentComplete">Value between 0 and 100</param>
