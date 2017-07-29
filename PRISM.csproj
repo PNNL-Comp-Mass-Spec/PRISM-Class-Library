@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>PRISM-Library</PackageId>
     <AssemblyVersion>2.4.11.0</AssemblyVersion>
-    <FileVersion>2.4.9.11</FileVersion>
+    <FileVersion>2.4.11.0</FileVersion>
     <Description>Library of functions used by software applications that automate tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
     <Version>1.0.11</Version>
     <Company>Pacific Northwest National Laboratory</Company>
