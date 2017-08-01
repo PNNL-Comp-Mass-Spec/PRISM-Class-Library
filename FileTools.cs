@@ -121,7 +121,6 @@ namespace PRISM
         private int mChunkSizeMB = DEFAULT_CHUNK_SIZE_MB;
 
         private int mFlushThresholdMB = DEFAULT_FLUSH_THRESHOLD_MB;
-        private int mDebugLevel;
 
         private DateTime mLastGC = DateTime.UtcNow;
 
@@ -243,11 +242,7 @@ namespace PRISM
         /// <summary>
         /// Debug level
         /// </summary>
-        public int DebugLevel
-        {
-            get { return mDebugLevel; }
-            set { mDebugLevel = value; }
-        }
+        public int DebugLevel { get; set; }
 
         /// <summary>
         /// Manager name (used when creating lock files)
@@ -274,7 +269,7 @@ namespace PRISM
         public clsFileTools(string managerName, int intDebugLevel)
         {
             ManagerName = managerName;
-            mDebugLevel = intDebugLevel;
+            DebugLevel = intDebugLevel;
 
             mInvalidDosChars = new Regex(@"[\\/:*?""<>| ]", RegexOptions.Compiled);
 
@@ -461,7 +456,7 @@ namespace PRISM
                 BackupFileBeforeCopy(destPath, versionCountToKeep);
             }
 
-            if (mDebugLevel >= 3)
+            if (DebugLevel >= 3)
             {
                 OnDebugEvent("Copying file with CopyFileEx", sourcePath + " to " + destPath);
             }
@@ -578,7 +573,7 @@ namespace PRISM
                     expectedTargetLockFolder = "Target file is local";
                 }
 
-                if (mDebugLevel >= 1)
+                if (DebugLevel >= 1)
                 {
                     OnDebugEvent("Lock file folder not found on the source or target",
                                  expectedSourceLockFolder + " and " + expectedTargetLockFolder);
@@ -649,7 +644,7 @@ namespace PRISM
         {
             if (!overWrite && File.Exists(targetFilePath))
             {
-                if (mDebugLevel >= 2)
+                if (DebugLevel >= 2)
                 {
                     OnDebugEvent("Skipping file since target exists", targetFilePath);
                 }
@@ -663,7 +658,7 @@ namespace PRISM
             if (intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || (string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget)))
             {
                 const bool backupDestFileBeforeCopy = false;
-                if (mDebugLevel >= 2)
+                if (DebugLevel >= 2)
                 {
                     var debugMsg = string.Format("File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}", fiSource.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, fiSource.Name);
                     OnDebugEvent(debugMsg, fiSource.FullName);
@@ -700,7 +695,7 @@ namespace PRISM
 
                 WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, diLockFolderTarget, fiSource, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
 
-                if (mDebugLevel >= 1)
+                if (DebugLevel >= 1)
                 {
                     OnDebugEvent("Copying " + fiSource.Name + " using Locks", fiSource.FullName + " to " + targetFilePath);
                 }
