@@ -716,6 +716,11 @@ namespace PRISM
             var validArgs = GetValidArgs();
             var helpArgString = "";
 
+            if (props.Values.Any(x => x.ArgPosition > 0))
+            {
+                contents.Add("NOTE:", "arg#1, arg#2, etc. refer to positional arguments, used like \"myexe.exe [arg#1] [arg#2] [other args]\".");
+            }
+
             // Add the default help string
             foreach (var helpArg in defaultHelpArgs)
             {
@@ -755,6 +760,16 @@ namespace PRISM
                     }
 
                     keys += paramChars[0] + key;
+                }
+
+                if (prop.Value.ArgPosition > 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(keys))
+                    {
+                        keys += ", ";
+                    }
+
+                    keys += $"arg#{prop.Value.ArgPosition}";
                 }
 
                 var helpText = "";
