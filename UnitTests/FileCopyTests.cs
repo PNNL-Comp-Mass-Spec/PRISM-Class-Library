@@ -14,7 +14,7 @@ namespace PRISMTest
         [OneTimeSetUp]
         public void Setup()
         {
-            mFileTools = new clsFileTools();
+            mFileTools = new clsFileTools("PrismUnitTests", 1);
         }
 
         [TestCase(@"C:\Temp\PRISM", @"C:\Temp\PRISMCopy")]
@@ -156,10 +156,20 @@ namespace PRISMTest
                 Assert.Fail("Source file not found: " + sourceFile);
             }
 
-            mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, "PrismUnitTests", true);
+            // This copy will overwrite the file
+            mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, true);
 
             System.Threading.Thread.Sleep(150);
-            mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, "PrismUnitTests", false);
+
+            // This copy will not overwrite the file, though CopyFileUsingLocks returns True because the file exists
+            var success1 = mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, false);
+
+            Assert.IsTrue(success1, "CopyFileUsingLocks did not return true (test 1)");
+
+            // This copy will not overwrite the file, though CopyFileUsingLocks returns True because the file exists
+            var success2 = mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, "TestClass");
+
+            Assert.IsTrue(success2, "CopyFileUsingLocks did not return true (test 2)");
 
             System.Threading.Thread.Sleep(150);
 
