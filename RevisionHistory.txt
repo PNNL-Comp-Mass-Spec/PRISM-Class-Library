@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.4.12.0; July 31, 2017
+	- Add default values for CopyFilesUsingLocks arguments
+
 Version 2.4.11.0; July 28, 2017
 	- Extend the command line parser to support positional arguments
 

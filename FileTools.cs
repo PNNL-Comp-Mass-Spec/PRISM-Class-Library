@@ -480,12 +480,12 @@ namespace PRISM
         /// </summary>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetFilePath">Target file path</param>
-        /// <param name="managerName">Manager name (included in the lock file name)</param>
+        /// <param name="overWrite">True to overWrite existing files</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists, will not copy the file but will still return true</remarks>
-        public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, string managerName)
+        public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, bool overWrite)
         {
-            return CopyFileUsingLocks(new FileInfo(sourceFilePath), targetFilePath, managerName, overWrite: false);
+            return CopyFileUsingLocks(new FileInfo(sourceFilePath), targetFilePath, ManagerName, overWrite);
         }
 
         /// <summary>
@@ -497,9 +497,25 @@ namespace PRISM
         /// <param name="overWrite">True to overWrite existing files</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
-        public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, string managerName, bool overWrite)
+        public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, string managerName = "", bool overWrite = false)
         {
+            if (string.IsNullOrWhiteSpace(managerName))
+                managerName = ManagerName;
+
             return CopyFileUsingLocks(new FileInfo(sourceFilePath), targetFilePath, managerName, overWrite);
+        }
+
+        /// <summary>
+        /// Copy the source file to the target path
+        /// </summary>
+        /// <param name="fiSource">Source file object</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="overWrite">True to overWrite existing files</param>
+        /// <returns>True if success, false if an error</returns>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
+        public bool CopyFileUsingLocks(FileInfo fiSource, string targetFilePath, bool overWrite)
+        {
+            return CopyFileUsingLocks(fiSource, targetFilePath, ManagerName, overWrite);
         }
 
         /// <summary>
@@ -511,7 +527,7 @@ namespace PRISM
         /// <param name="overWrite">True to overWrite existing files</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
-        public bool CopyFileUsingLocks(FileInfo fiSource, string targetFilePath, string managerName, bool overWrite)
+        public bool CopyFileUsingLocks(FileInfo fiSource, string targetFilePath, string managerName = "", bool overWrite = false)
         {
 
             var useLockFile = false;
