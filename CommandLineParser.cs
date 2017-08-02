@@ -714,6 +714,11 @@ namespace PRISM
 
             var props = GetPropertiesAttributes();
             var validArgs = GetValidArgs();
+            if (validArgs == null)
+            {
+                contents.Add("ERROR!!!", "Cannot determine arguments. Fix errors in code!");
+                return contents;
+            }
             var helpArgString = "";
 
             if (props.Values.Any(x => x.ArgPosition > 0))
@@ -782,7 +787,16 @@ namespace PRISM
 
                 if (prop.Value.HelpShowsDefault)
                 {
-                    helpText += string.Format(" (Default: {0})", defaultValue);
+                    helpText = $" (Default: {defaultValue}";
+                    if (prop.Value.Min != null)
+                    {
+                        helpText += $", Min: {prop.Value.Min}";
+                    }
+                    if (prop.Value.Max != null)
+                    {
+                        helpText += $", Max: {prop.Value.Max}";
+                    }
+                    helpText += ")";
                 }
 
                 if (contents.ContainsKey(keys))
