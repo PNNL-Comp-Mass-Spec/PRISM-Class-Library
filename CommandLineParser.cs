@@ -787,7 +787,7 @@ namespace PRISM
 
                 if (prop.Value.HelpShowsDefault)
                 {
-                    helpText = $" (Default: {defaultValue}";
+                    helpText += $" (Default: {defaultValue}";
                     if (prop.Value.Min != null)
                     {
                         helpText += $", Min: {prop.Value.Min}";
