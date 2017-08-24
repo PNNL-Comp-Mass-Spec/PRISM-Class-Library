@@ -329,7 +329,7 @@ namespace PRISM
             }
         }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
         /// <summary>
         /// Window style to use when CreateNoWindow is False
         /// </summary>
@@ -611,7 +611,7 @@ namespace PRISM
             m_Process.StartInfo.WorkingDirectory = WorkDir;
             m_Process.StartInfo.Arguments = Arguments;
             m_Process.StartInfo.CreateNoWindow = CreateNoWindow;
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
             if (m_Process.StartInfo.CreateNoWindow)
             {
                 m_Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -903,7 +903,7 @@ namespace PRISM
                 {
                     ThrowConditionalException(ex, "Caught InvalidOperationException while trying to kill thread.");
                 }
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
                 catch (SystemException ex)
                 {
                     ThrowConditionalException(ex, "Caught SystemException while trying to kill thread.");

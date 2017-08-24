@@ -508,7 +508,7 @@ namespace PRISM
         /// <summary>
         /// The module name identifies the logging process.
         /// </summary>
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
         public string UserName => WindowsIdentity.GetCurrent().Name;
 #else
         public string UserName

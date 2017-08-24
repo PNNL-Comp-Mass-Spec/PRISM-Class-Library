@@ -18,7 +18,7 @@ namespace PRISM
         private ILogger m_EventLogger;
         private bool m_CreateNoWindow;
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
         private ProcessWindowStyle m_WindowStyle;
 #endif
 
@@ -114,7 +114,7 @@ namespace PRISM
                 Repeat = false,
                 RepeatHoldOffTime = 0,
                 CreateNoWindow = m_CreateNoWindow,
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
                 WindowStyle = m_WindowStyle,
 #endif
             };
@@ -148,7 +148,7 @@ namespace PRISM
             set { m_CreateNoWindow = value; }
         }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
         /// <summary>
         /// Window style to use when CreateNoWindow is False.
         /// </summary>
@@ -227,7 +227,7 @@ namespace PRISM
                 Repeat = false,
                 RepeatHoldOffTime = 0,
                 CreateNoWindow = m_CreateNoWindow,
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
                 WindowStyle = m_WindowStyle,
 #endif
             };

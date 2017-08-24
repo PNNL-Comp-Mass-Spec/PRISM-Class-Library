@@ -22,7 +22,7 @@ namespace PRISM
         /// <remarks>For Windows and Linux, reports details about the OS version</remarks>
         public string GetOSVersion()
         {
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
             var osInfo = Environment.OSVersion;
 
             switch (osInfo.Platform)
@@ -346,7 +346,7 @@ namespace PRISM
             return versionInfo;
         }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
         /// <summary>
         /// For old windows kernel
         /// </summary>

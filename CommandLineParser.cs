@@ -1027,7 +1027,7 @@ namespace PRISM
             }
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
             var properties = typeof(T).GetProperties();
 #else
             var properties = typeof(T).GetTypeInfo().GetProperties();
@@ -1035,7 +1035,7 @@ namespace PRISM
 
             foreach (var property in properties)
             {
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
                 // Check for the attribute
                 if (!Attribute.IsDefined(property, typeof(OptionAttribute)))
                 {

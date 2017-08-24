@@ -16,7 +16,7 @@ using System.Linq;
 // Last modified February 13, 2017
 
 // NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking. Instead use the CommandLineParser class.
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD1_x)
 namespace PRISM
 {
     /// <summary>
