@@ -143,14 +143,14 @@ namespace PRISM
         /// <summary>
         /// Write a message to the error stream
         /// </summary>
-        /// <param name="strErrorMessage"></param>
-        public static void WriteToErrorStream(string strErrorMessage)
+        /// <param name="errorMessage"></param>
+        public static void WriteToErrorStream(string errorMessage)
         {
             try
             {
                 using (var swErrorStream = new System.IO.StreamWriter(Console.OpenStandardError()))
                 {
-                    swErrorStream.WriteLine(strErrorMessage);
+                    swErrorStream.WriteLine(errorMessage);
                 }
             }
             catch
