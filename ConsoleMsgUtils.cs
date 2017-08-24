@@ -27,6 +27,18 @@ namespace PRISM
         /// </summary>
         public static ConsoleColor WarningFontColor { get; set; } = ConsoleColor.Yellow;
 
+        /// <summary>
+        /// Display an error message at the console with color ErrorFontColor (defaults to Red)
+        /// If an exception is included, the stack trace is shown using StackTraceFontColor
+        /// </summary>
+        /// <param name="message">Error message</param>
+        /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
+        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
+        public static string ShowError(string message, bool includeSeparator = true, bool writeToErrorStream = true)
+        {
+            return ShowError(message, null, includeSeparator, writeToErrorStream);
+        }
 
         /// <summary>
         /// Display an error message at the console with color ErrorFontColor (defaults to Red)
@@ -36,7 +48,8 @@ namespace PRISM
         /// <param name="ex">Exception (can be null)</param>
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
         /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
-        public static void ShowError(string message, Exception ex = null, bool includeSeparator = true, bool writeToErrorStream = true)
+        /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
+        public static string ShowError(string message, Exception ex = null, bool includeSeparator = true, bool writeToErrorStream = true)
         {
             const string SEPARATOR = "------------------------------------------------------------------------------";
 
@@ -76,8 +89,10 @@ namespace PRISM
 
             if (writeToErrorStream)
             {
-                WriteToErrorStream(message);
+                WriteToErrorStream(formattedError);
             }
+
+            return formattedError;
         }
 
         /// <summary>
