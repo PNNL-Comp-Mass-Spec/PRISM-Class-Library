@@ -51,7 +51,7 @@ namespace PRISM
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
         /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
         /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
-        public static string ShowError(string message, Exception ex = null, bool includeSeparator = true, bool writeToErrorStream = true)
+        public static string ShowError(string message, Exception ex, bool includeSeparator = true, bool writeToErrorStream = true)
         {
             const string SEPARATOR = "------------------------------------------------------------------------------";
 
