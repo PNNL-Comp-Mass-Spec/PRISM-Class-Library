@@ -6,10 +6,10 @@
     <AssemblyName>PRISM</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>PRISM-Library</PackageId>
-    <AssemblyVersion>2.4.18.0</AssemblyVersion>
-    <FileVersion>2.4.18.0</FileVersion>
+    <AssemblyVersion>2.4.19.0</AssemblyVersion>
+    <FileVersion>2.4.19.0</FileVersion>
     <Description>Library of functions used by software applications that automate tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
-    <Version>1.0.18</Version>
+    <Version>1.0.19</Version>
     <Company>Pacific Northwest National Laboratory</Company>
     <Product>PRISM Library</Product>
     <Authors>PNNL-Comp-Mass-Spec</Authors>
@@ -38,6 +38,7 @@
     <Compile Remove="DotNETStandard_UnitTests\**" />
     <Compile Remove="LinuxTestFiles\**" />
     <Compile Remove="PRISMWin\**" />
+    <Compile Remove="Properties\**" />
     <Compile Remove="ShFolderBrowser\**" />
     <Compile Remove="SourceCode\**" />
     <Compile Remove="UnitTests\**" />
