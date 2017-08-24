@@ -1,5 +1,11 @@
 Prism Class Library Log
 
+Version 2.4.19.0; August 24, 2017
+	- Add class ConsoleMsgUtils
+
+Version 2.4.16.0; August 8, 2017
+	- Update Pending Windows Update logic to reflect a new policy delaying forced push of updates by one week
+
 Version 2.4.12.0; July 31, 2017
 	- Add default values for CopyFilesUsingLocks arguments
 

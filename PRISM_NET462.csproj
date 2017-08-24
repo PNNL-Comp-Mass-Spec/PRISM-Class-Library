@@ -66,4 +66,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>rem Remove the project.assets.json file created by project PRISM.csproj
+if exist "$(ProjectDir)obj\project.assets.json" (del "$(ProjectDir)obj\project.assets.json")</PreBuildEvent>
+  </PropertyGroup>
 </Project>
