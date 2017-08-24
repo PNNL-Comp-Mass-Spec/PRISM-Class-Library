@@ -7,6 +7,8 @@ namespace PRISM
     /// </summary>
     public static class ConsoleMsgUtils
     {
+        private static bool mAutoCheckedDebugFontColor;
+
         /// <summary>
         /// Debug message font color
         /// </summary>
@@ -102,6 +104,17 @@ namespace PRISM
         /// <param name="indentChars">Characters to use to indent the message</param>
         public static void ShowDebug(string message, string indentChars = "  ")
         {
+            if (System.IO.Path.DirectorySeparatorChar == '/' && !mAutoCheckedDebugFontColor)
+            {
+                // Running on Linux
+                // Dark gray appears as black when using Putty; use blue instead
+                if (DebugFontColor == ConsoleColor.DarkGray)
+                {
+                    DebugFontColor = ConsoleColor.Blue;
+                }
+                mAutoCheckedDebugFontColor = true;
+            }
+
             Console.WriteLine();
             Console.ForegroundColor = DebugFontColor;
             if (string.IsNullOrEmpty(indentChars))
