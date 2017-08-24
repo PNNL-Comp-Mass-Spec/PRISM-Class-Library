@@ -10,22 +10,23 @@ namespace PRISM
         /// <summary>
         /// Debug message font color
         /// </summary>
-        public static ConsoleColor DebugFontColor = ConsoleColor.DarkGray;
+        public static ConsoleColor DebugFontColor { get; set; } = ConsoleColor.DarkGray;
 
         /// <summary>
         /// Error message font color
         /// </summary>
-        public static ConsoleColor ErrorFontColor = ConsoleColor.Red;
+        public static ConsoleColor ErrorFontColor { get; set; } = ConsoleColor.Red;
 
         /// <summary>
         /// Stack trace font color
         /// </summary>
-        public static ConsoleColor StackTraceFontColor = ConsoleColor.Cyan;
+        public static ConsoleColor StackTraceFontColor { get; set; } = ConsoleColor.Cyan;
 
         /// <summary>
         /// Warning message font color
         /// </summary>
-        public static ConsoleColor WarningFontColor = ConsoleColor.Yellow;
+        public static ConsoleColor WarningFontColor { get; set; } = ConsoleColor.Yellow;
+
 
         /// <summary>
         /// Display an error message at the console with color ErrorFontColor (defaults to Red)
