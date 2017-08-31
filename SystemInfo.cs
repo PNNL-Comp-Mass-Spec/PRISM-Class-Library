@@ -23,6 +23,14 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Get the implementation of <see cref="ISystemInfo"/> that is providing the data
+        /// </summary>
+        public ISystemInfo SystemInfoObject
+        {
+            get { return SysInfo; }
+        }
+
+        /// <summary>
         /// Report the number of cores on this system
         /// </summary>
         /// <returns>The number of cores on this computer</returns>
@@ -71,6 +79,15 @@ namespace PRISM
         public static float GetFreeMemoryMB()
         {
             return SysInfo.GetFreeMemoryMB();
+        }
+
+        /// <summary>
+        /// Determine the total system memory, in MB
+        /// </summary>
+        /// <returns>Total memory, or -1 if an error</returns>
+        public static float GetTotalMemoryMB()
+        {
+            return SysInfo.GetTotalMemoryMB();
         }
     }
 }
