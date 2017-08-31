@@ -11,7 +11,7 @@ namespace PRISM
     /// <summary>
     /// Methods to determine memory usage, CPU usage, and Linux system version
     /// </summary>
-    public class clsLinuxSystemInfo : clsEventNotifier
+    public class clsLinuxSystemInfo : clsEventNotifier, ISystemInfo
     {
 
         #region "Constants and Enums"
@@ -36,6 +36,9 @@ namespace PRISM
         #region "Classwide Variables"
 
         private int mCoreCountCached;
+        private int mProcessorPackageCountCached;
+
+        private float mTotalMemoryMBCached;
 
         private readonly bool mLimitLoggingByTimeOfDay;
 
@@ -75,6 +78,8 @@ namespace PRISM
         public clsLinuxSystemInfo(bool limitLoggingByTimeOfDay = false)
         {
             mCoreCountCached = 0;
+
+            mTotalMemoryMBCached = 0;
 
             mLimitLoggingByTimeOfDay = limitLoggingByTimeOfDay;
 
@@ -473,6 +478,8 @@ namespace PRISM
             if (showDebugInfo)
                 mLastDebugInfoTimeCoreCount = DateTime.UtcNow;
 
+            // Can also use lscpu (if installed) to quickly get this and more processor information
+
             try
             {
                 var cpuInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, CPUINFO_FILE);
@@ -557,6 +564,9 @@ namespace PRISM
                         uniquePhysicalCoreIDs.Add(key);
                 }
 
+                // Distinct processor packages
+                mProcessorPackageCountCached = processorList.Select(x => x.Value.PhysicalID).Distinct().Count();
+
                 var coreCountIgnoreHyperthreading = uniquePhysicalCoreIDs.Count;
 
                 if (coreCountIgnoreHyperthreading > 0 && hyperthreadedCoreCount % coreCountIgnoreHyperthreading == 0)
@@ -592,6 +602,47 @@ namespace PRISM
 
                 return -1;
             }
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Report the number of logical cores on this system
+        /// </summary>
+        /// <returns>The number of logical cores on this computer</returns>
+        /// <remarks>
+        /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if Hyperthreading is enabled
+        /// </remarks>
+        public int GetLogicalCoreCount()
+        {
+            return Environment.ProcessorCount;
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Report the number of processor packages on this system
+        /// </summary>
+        /// <returns>The number of processor packages on this computer</returns>
+        public int GetProcessorPackageCount()
+        {
+            if (mProcessorPackageCountCached > 0)
+            {
+                return mProcessorPackageCountCached;
+            }
+
+            GetCoreCount();
+
+            return mProcessorPackageCountCached;
+        }
+
+        /// <inheritdoc />
+        /// <summary>
+        /// Report the number of NUMA Nodes on this system
+        /// </summary>
+        /// <returns>The number of NUMA Nodes on this computer</returns>
+        public int GetNumaNodeCount()
+        {
+            // TODO: actually get the number of NUMA nodes in a generally-supported way. lscpu is one potential option.
+            return GetProcessorPackageCount();
         }
 
         /// <summary>
@@ -961,8 +1012,6 @@ namespace PRISM
 
                 float totalAvailableMemoryMB = 0;
 
-                Console.WriteLine();
-
                 using (var reader = new StreamReader(new FileStream(memInfoFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     while (!reader.EndOfStream)
@@ -1027,6 +1076,76 @@ namespace PRISM
             {
                 if (showDebugInfo)
                     ConditionalLogError("Error in GetFreeMemoryMB: " + ex.Message);
+
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Determine the total system memory, in MB
+        /// </summary>
+        /// <returns>Total memory, or -1 if an error</returns>
+        public float GetTotalMemoryMB()
+        {
+            if (mTotalMemoryMBCached > 0)
+            {
+                return mTotalMemoryMBCached;
+            }
+
+            var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeMemory).TotalSeconds > 15;
+            if (showDebugInfo)
+                mLastDebugInfoTimeMemory = DateTime.UtcNow;
+
+            try
+            {
+                var memInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
+
+                var memInfoFile = new FileInfo(memInfoFilePath);
+                if (!memInfoFile.Exists)
+                {
+                    if (showDebugInfo)
+                        ConditionalLogError("Memory info file not found: " + memInfoFilePath);
+
+                    return -1;
+                }
+
+                if (TraceEnabled)
+                {
+                    OnDebugEvent("Opening " + memInfoFile.FullName);
+                }
+
+                using (var reader = new StreamReader(new FileStream(memInfoFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var dataLine = reader.ReadLine();
+                        if (string.IsNullOrWhiteSpace(dataLine))
+                            continue;
+
+                        if (dataLine.ToLower().StartsWith("MemTotal", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var memTotalMB = ExtractMemoryMB(dataLine, showDebugInfo);
+
+                            if (showDebugInfo)
+                                OnDebugEvent(string.Format("  {0,17}: {1,6:0} MB", "Total memory", memTotalMB));
+
+                            mTotalMemoryMBCached = memTotalMB;
+
+                            return memTotalMB;
+                        }
+                    }
+                }
+
+                if (showDebugInfo)
+                    ConditionalLogError("MemTotal statistic not found in " + memInfoFilePath);
+
+                return -1;
+
+            }
+            catch (Exception ex)
+            {
+                if (showDebugInfo)
+                    ConditionalLogError("Error in GetTotalMemoryMB: " + ex.Message);
 
                 return -1;
             }

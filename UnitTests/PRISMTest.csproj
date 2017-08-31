@@ -67,6 +67,7 @@
     <Compile Include="TestOSVersionInfo.cs" />
     <Compile Include="TestPathUtils.cs" />
     <Compile Include="TestValueToString.cs" />
+    <Compile Include="TestWindowsSystemInfo.cs" />
     <Compile Include="XMLSettingsFileTests.cs" />
   </ItemGroup>
   <ItemGroup>
