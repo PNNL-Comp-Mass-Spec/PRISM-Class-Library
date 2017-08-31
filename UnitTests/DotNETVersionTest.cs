@@ -1,12 +1,15 @@
 ﻿using System;
 using NUnit.Framework;
+#if !(NETCOREAPP2_0)
 using PRISMWin;
+#endif
 
 namespace PRISMTest
 {
     [TestFixture]
     class DotNETVersionTest
     {
+#if !(NETCOREAPP2_0)
         [Test]
         public void TestGetLatestDotNETVersion()
         {
@@ -31,5 +34,6 @@ namespace PRISMTest
             }
 
         }
+#endif
     }
 }

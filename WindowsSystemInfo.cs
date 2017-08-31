@@ -121,8 +121,7 @@ namespace PRISM
 
         private static bool GetGlobalMemoryStatusEx(out MEMORYSTATUSEX memStatus)
         {
-            memStatus = new MEMORYSTATUSEX();
-            memStatus.dwLength = (uint) Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+            memStatus = new MEMORYSTATUSEX {dwLength = (uint) Marshal.SizeOf(typeof(MEMORYSTATUSEX))};
             var ret = GlobalMemoryStatusEx(ref memStatus);
             totalMemoryMBCached = memStatus.ullTotalPhys / 1024f / 1024f;
             return ret;
@@ -547,7 +546,7 @@ namespace PRISM
             public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_UNION ProcessorInformation;
         }*/
 
-        private interface SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+        private interface ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
             /// The type of relationship between the logical processors.
@@ -561,7 +560,7 @@ namespace PRISM
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private struct SLPI_PROCESSOR_RELATIONSHIP : SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+        private struct SLPI_PROCESSOR_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
             /// The type of relationship between the logical processors.
@@ -587,7 +586,7 @@ namespace PRISM
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private struct SLPI_NUMA_NODE_RELATIONSHIP : SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+        private struct SLPI_NUMA_NODE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
             /// The type of relationship between the logical processors.
@@ -613,7 +612,7 @@ namespace PRISM
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private struct SLPI_CACHE_RELATIONSHIP : SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+        private struct SLPI_CACHE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
             /// The type of relationship between the logical processors.
@@ -639,7 +638,7 @@ namespace PRISM
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        private struct SLPI_GROUP_RELATIONSHIP : SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+        private struct SLPI_GROUP_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
             /// The type of relationship between the logical processors.
@@ -668,7 +667,7 @@ namespace PRISM
 
         private int GetProcessorInfo(LOGICAL_PROCESSOR_RELATIONSHIP coreCountType)
         {
-            List<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> buffer = new List<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
+            List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> buffer = new List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
             uint returnLength = 0;
             GetLogicalProcessorInformationEx(coreCountType, IntPtr.Zero, ref returnLength);
             if (Marshal.GetLastWin32Error() == ERROR_INSUFFICIENT_BUFFER)

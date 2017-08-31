@@ -8,6 +8,7 @@ namespace PRISMTest
     [TestFixture]
     class ProgRunnerTests
     {
+#if !(NETCOREAPP2_0)
         private const string UTILITIES_FOLDER = @"\\proto-2\unitTest_Files\PRISM\Utilities";
 
         /// <summary>
@@ -180,5 +181,6 @@ namespace PRISMTest
                 Assert.False(abortProcess, "Process was aborted due to excessive runtime; this is unexpected");
             }
         }
+#endif
     }
 }

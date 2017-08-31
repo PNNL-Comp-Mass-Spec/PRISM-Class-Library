@@ -57,9 +57,12 @@
     <Compile Include="DirectoryScanner.cs" />
     <Compile Include="FileTools.cs" />
     <Compile Include="GenericParserOptions.cs" />
+    <Compile Include="ISystemInfo.cs" />
     <Compile Include="LogClasses.cs" />
     <Compile Include="ShareConnector.cs" />
     <Compile Include="StringUtilities.cs" />
+    <Compile Include="SystemInfo.cs" />
+    <Compile Include="WindowsSystemInfo.cs" />
     <Compile Include="XMLFileReader.cs" />
     <Compile Include="XmlSettingsFileAccessor.cs" />
     <Compile Include="ZipTools.cs" />

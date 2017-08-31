@@ -191,6 +191,7 @@ namespace PRISMTest
 
         }
 
+#if !(NETCOREAPP2_0)
         [TestCase(@"C:\Temp")]
         [TestCase(@"C:\Temp\")]
         public void GetDriveFreeSpaceForDirectoryLocal(string directoryPath)
@@ -304,6 +305,6 @@ namespace PRISMTest
 
 
         }
-
+#endif
     }
 }

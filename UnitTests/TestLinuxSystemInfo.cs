@@ -75,10 +75,10 @@ namespace PRISMTest
         }
 
         [Test]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 16)]
-        [TestCase(@"LinuxTestFiles\Cygwin\proc", 4)]
-        [TestCase(@"LinuxTestFiles\Ubuntu\proc", 2)]
-        public void TestGetCoreCount(string sourceProcFolderPath, int expectedCoreCount)
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 16, 2)]
+        [TestCase(@"LinuxTestFiles\Cygwin\proc", 4, 1)]
+        [TestCase(@"LinuxTestFiles\Ubuntu\proc", 2, 1)]
+        public void TestGetCoreCount(string sourceProcFolderPath, int expectedCoreCount, int expectedProcessorPackages)
         {
             var procFolder = ValidateLocalProcFolder();
 
@@ -93,6 +93,9 @@ namespace PRISMTest
 
             Assert.AreEqual(expectedCoreCount, coreCount);
 
+            Console.WriteLine("Processor Packages: {0}", linuxSystemInfo.GetProcessorPackageCount());
+
+            Assert.AreEqual(expectedProcessorPackages, linuxSystemInfo.GetProcessorPackageCount());
         }
 
         [Test]
@@ -434,6 +437,49 @@ namespace PRISMTest
             Console.WriteLine("Free memory: {0:F0} MB", freeMemoryMB);
 
             Assert.AreEqual(expectedFreeMemoryMB, freeMemoryMB, 1);
+
+        }
+
+        [Test]
+        [TestCase(@"LinuxTestFiles\Centos6\proc", 64183)]
+        [TestCase(@"LinuxTestFiles\Cygwin\proc", 32672)]
+        [TestCase(@"LinuxTestFiles\Ubuntu\proc", 3938)]
+        public void TestGetTotalMemory(string sourceProcFolderPath, float expectedTotalMemoryMB)
+        {
+            var procFolder = ValidateLocalProcFolder();
+
+            // Update the meminfo file in the local proc folder using sourceProcFolderPath
+            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.MEMINFO_FILE));
+            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.MEMINFO_FILE));
+
+            if (targetMemInfoFile.Exists)
+            {
+                try
+                {
+                    targetMemInfoFile.Delete();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Could not replace the local meminfo file at " + targetMemInfoFile.FullName + ": " + ex.Message);
+                }
+            }
+
+            try
+            {
+                sourceMemInfoFile.CopyTo(targetMemInfoFile.FullName);
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Could not copy the meminfo file to " + targetMemInfoFile.FullName + ": " + ex.Message);
+            }
+
+            var linuxSystemInfo = new clsLinuxSystemInfo();
+
+            var totalMemoryMB = linuxSystemInfo.GetTotalMemoryMB();
+
+            Console.WriteLine("Total memory: {0:F0} MB", totalMemoryMB);
+
+            Assert.AreEqual(expectedTotalMemoryMB, totalMemoryMB, 1);
 
         }
 
