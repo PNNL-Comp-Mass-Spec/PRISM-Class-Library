@@ -811,7 +811,7 @@ namespace PRISM
             return contents;
         }
 
-        private string WrapParagraph(string textToWrap, int wrapWidth = 80)
+        private static string WrapParagraph(string textToWrap, int wrapWidth = 80)
         {
             var wrappedText = new StringBuilder();
             foreach (var line in WrapParagraphAsList(textToWrap, wrapWidth))
@@ -825,33 +825,46 @@ namespace PRISM
             return wrappedText.ToString();
         }
 
-        private List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
+        private static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
         {
-            var split = textToWrap.Split(' ');
+            // Check for newline characters
+            var textLinesToWrap = textToWrap.Split('\r', '\n');
+
+            // List of wrapped text lines
             var wrappedText = new List<string>();
 
-            var line = string.Empty;
-
-            foreach (var key in split)
+            foreach (var lineToWrap in textLinesToWrap)
             {
-                if (!string.IsNullOrWhiteSpace(line))
+
+                var split = lineToWrap.Split(' ');
+
+                var line = string.Empty;
+
+                foreach (var key in split)
                 {
-                    if (key.Length + line.Length > wrapWidth)
+                    if (!string.IsNullOrWhiteSpace(line))
                     {
-                        wrappedText.Add(line);
-                        line = "";
+                        if (key.Length + line.Length > wrapWidth)
+                        {
+                            wrappedText.Add(line);
+                            line = "";
+                        }
+                        else
+                        {
+                            line += " ";
+                        }
                     }
-                    else
-                    {
-                        line += " ";
-                    }
+                    line += key;
                 }
-                line += key;
-            }
 
-            if (!string.IsNullOrWhiteSpace(line))
-            {
-                wrappedText.Add(line);
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    wrappedText.Add(string.Empty);
+                }
+                else
+                {
+                    wrappedText.Add(line);
+                }
             }
 
             return wrappedText;
