@@ -461,6 +461,45 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x => x.ToLower().Contains("maxdbl") && x.Contains("cannot cast") && x.Contains("to type")), "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
         }
 
+        [Test]
+        public void TestPrintHelp()
+        {
+            var exeName = "Test.exe";
+
+            var parser = new CommandLineParser<OkayKey2>(){
+                ProgramInfo = "This program sed tempor urna. Proin porta scelerisque nisi, " +
+                              "non vestibulum elit varius vel. Sed sed tristique orci, sit amet " +
+                              "feugiat risus. \n\n" +
+                              "Vivamus ac fermentum eros. Aliquam accumsan est vitae quam rhoncus, " +
+                              "et consectetur ante egestas. Donec in enim id arcu mollis sagittis. " +
+                              "Nulla venenatis tellus at urna feugiat, et placerat tortor dapibus. " +
+                              "Proin in bibendum dui. Phasellus bibendum purus non mi semper, vel rhoncus " +
+                              "massa viverra. Aenean quis neque sit amet nisi posuere congue. \n\n " +
+                              "Options for EnumTypeMode are:\n" +
+                              "\t0 for feugiat risu\n" +
+                              "\t1 for porttitor libero\n" +
+                              "\t2 for sapien maximus varius\n" +
+                              "\t3 for lorem luctus\n" +
+                              "\t4 for pulvinar quam at libero dapibus\n" +
+                              "\t5 for tortor loborti\n" +
+                              "\t6 for ante nec nisi consequat\n" +
+                              "\t7 for facilisis vestibulum risus",
+
+                ContactInfo = "Program written by Maecenas cursus for fermentum ullamcorper velit in 2017" +
+                              Environment.NewLine +
+                              "E-mail: person@place.org or alternate@place.org" + Environment.NewLine +
+                              "Website: http://panomics.pnnl.gov/ or http://omics.pnl.gov or http://www.sysbio.org/resources/staff/",
+
+                UsageExamples = {
+                    exeName + " InputFile.txt",
+                    exeName + " InputFile.txt /Start:2",
+                    exeName + " InputFile.txt /Start:2 /EnumTypeMode:2 /Smooth:7"
+                }
+            };
+
+            parser.PrintHelp();
+        }
+
         private class ArgsVariety
         {
             [Option("minInt", Min = 10)]
