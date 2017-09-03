@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PRISM
 {
@@ -39,6 +40,8 @@ namespace PRISM
         private static readonly char[] defaultParamChars = { '-', '/' };
         private static readonly char[] defaultSeparatorChars = { ' ', ':', '=' };
         private static readonly string[] defaultHelpArgs = { "?", "help" };
+
+        private static readonly Regex leadingWhitespaceMatcher = new Regex("^ +");
 
         /// <summary>
         /// Results from the parsing
@@ -835,10 +838,13 @@ namespace PRISM
 
             foreach (var lineToWrap in textLinesToWrap)
             {
+                var reMatch = leadingWhitespaceMatcher.Match(lineToWrap);
+
+                var leadingWhitespace = reMatch.Success ? reMatch.Value : string.Empty;
 
                 var split = lineToWrap.Split(' ');
 
-                var line = string.Empty;
+                var line = leadingWhitespace;
 
                 foreach (var key in split)
                 {
@@ -847,7 +853,7 @@ namespace PRISM
                         if (key.Length + line.Length > wrapWidth)
                         {
                             wrappedText.Add(line);
-                            line = "";
+                            line = leadingWhitespace;
                         }
                         else
                         {

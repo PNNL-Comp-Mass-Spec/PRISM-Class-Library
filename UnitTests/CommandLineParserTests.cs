@@ -474,16 +474,16 @@ namespace PRISMTest
                               "et consectetur ante egestas. Donec in enim id arcu mollis sagittis. " +
                               "Nulla venenatis tellus at urna feugiat, et placerat tortor dapibus. " +
                               "Proin in bibendum dui. Phasellus bibendum purus non mi semper, vel rhoncus " +
-                              "massa viverra. Aenean quis neque sit amet nisi posuere congue. \n\n " +
+                              "massa viverra. Aenean quis neque sit amet nisi posuere congue. \n\n" +
                               "Options for EnumTypeMode are:\n" +
-                              "\t0 for feugiat risu\n" +
-                              "\t1 for porttitor libero\n" +
-                              "\t2 for sapien maximus varius\n" +
-                              "\t3 for lorem luctus\n" +
-                              "\t4 for pulvinar quam at libero dapibus\n" +
-                              "\t5 for tortor loborti\n" +
-                              "\t6 for ante nec nisi consequat\n" +
-                              "\t7 for facilisis vestibulum risus",
+                              "  0 for feugiat risu\n" +
+                              "  1 for porttitor libero\n" +
+                              "  2 for sapien maximus varius\n" +
+                              "  3 for lorem luctus\n" +
+                              "  4 for pulvinar quam at libero dapibus\n" +
+                              "  5 for tortor loborti\n" +
+                              "  6 for ante nec nisi consequat\n" +
+                              "  7 for facilisis vestibulum risus",
 
                 ContactInfo = "Program written by Maecenas cursus for fermentum ullamcorper velit in 2017" +
                               Environment.NewLine +
