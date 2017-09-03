@@ -310,7 +310,7 @@ namespace PRISM
                 foreach (var prop in props)
                 {
                     var specified = false;
-                    var keyGiven = "";
+                    var keyGiven = string.Empty;
                     List<string> value = null;
 
                     // Find any arguments that match this property
@@ -529,7 +529,7 @@ namespace PRISM
                 }
 
                 var key = args[i].TrimStart(paramChars);
-                var value = "";
+                var value = string.Empty;
                 var nextArgIsNumber = false;
                 if (paramChars.Contains('-') && i + 1 < args.Count && args[i + 1].StartsWith("-"))
                 {
@@ -662,8 +662,8 @@ namespace PRISM
                 // Join the wrapped argument names and help text
                 for (var i = 0; i < keyOverflow.Count || i < textOverflow.Count; i++)
                 {
-                    var key = "";
-                    var text = "";
+                    var key = string.Empty;
+                    var text = string.Empty;
                     if (i < keyOverflow.Count)
                     {
                         key = keyOverflow[i];
@@ -722,7 +722,7 @@ namespace PRISM
                 contents.Add("ERROR!!!", "Cannot determine arguments. Fix errors in code!");
                 return contents;
             }
-            var helpArgString = "";
+            var helpArgString = string.Empty;
 
             if (props.Values.Any(x => x.ArgPosition > 0))
             {
@@ -759,7 +759,7 @@ namespace PRISM
                     defaultValue = defaultValueObj.ToString();
                 }
 
-                var keys = "";
+                var keys = string.Empty;
                 foreach (var key in prop.Value.ParamKeys)
                 {
                     if (!string.IsNullOrWhiteSpace(keys))
@@ -780,7 +780,7 @@ namespace PRISM
                     keys += $"arg#{prop.Value.ArgPosition}";
                 }
 
-                var helpText = "";
+                var helpText = string.Empty;
                 if (prop.Value.Required)
                 {
                     helpText += "Required. ";
@@ -1026,7 +1026,7 @@ namespace PRISM
             /// </summary>
             public ArgInfo()
             {
-                ArgNormalCase = "";
+                ArgNormalCase = string.Empty;
                 AllArgNormalCase = new List<string>(2);
                 CaseSensitive = false;
                 CanBeSwitch = false;
