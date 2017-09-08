@@ -617,7 +617,7 @@ namespace PRISM
 
             if (Path.IsPathRooted(fiFile.FullName))
             {
-                if (fiFile.Directory != null && fiFile.Directory.Root.FullName.StartsWith(@"\\"))
+                if (fiFile.Directory.Root.FullName.StartsWith(@"\\"))
                 {
                     return Path.Combine(GetServerShareBase(fiFile.Directory.Root.FullName), "DMS_LockFiles");
                 }
@@ -959,25 +959,23 @@ namespace PRISM
             {
                 var reMatch = mParseLockFileName.Match(fiLockFile.Name);
 
-                if (reMatch.Success)
+                if (!reMatch.Success)
+                    continue;
+
+                if (!long.TryParse(reMatch.Groups[1].Value, out var intQueueTimeMSec))
+                    continue;
+
+                if (!int.TryParse(reMatch.Groups[2].Value, out var intFileSizeMB))
+                    continue;
+
+                if (intQueueTimeMSec >= lockFileTimestamp)
+                    continue;
+
+                // Lock file fiLockFile was created prior to the current one
+                // Make sure it's less than 1 hour old
+                if (Math.Abs((lockFileTimestamp - intQueueTimeMSec) / 1000.0 / 60.0) < MAX_LOCKFILE_WAIT_TIME_MINUTES)
                 {
-                    long intQueueTimeMSec;
-                    if (long.TryParse(reMatch.Groups[1].Value, out intQueueTimeMSec))
-                    {
-                        int intFileSizeMB;
-                        if (int.TryParse(reMatch.Groups[2].Value, out intFileSizeMB))
-                        {
-                            if (intQueueTimeMSec < lockFileTimestamp)
-                            {
-                                // Lock file fiLockFile was created prior to the current one
-                                // Make sure it's less than 1 hour old
-                                if (Math.Abs((lockFileTimestamp - intQueueTimeMSec) / 1000.0 / 60.0) < MAX_LOCKFILE_WAIT_TIME_MINUTES)
-                                {
-                                    lstLockFiles.Add(intFileSizeMB);
-                                }
-                            }
-                        }
-                    }
+                    lstLockFiles.Add(intFileSizeMB);
                 }
             }
 
@@ -1038,23 +1036,19 @@ namespace PRISM
         /// <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
         public string GetServerShareBase(string serverSharePath)
         {
-            if (serverSharePath.StartsWith(@"\\"))
-            {
-                var intSlashIndex = serverSharePath.IndexOf('\\', 2);
-                if (intSlashIndex > 0)
-                {
-                    var serverShareBase = serverSharePath.Substring(0, intSlashIndex);
-                    if (serverShareBase.ToLower() == @"\\picfs")
-                    {
-                        serverShareBase = @"\\picfs\projects\DMS";
-                    }
-                    return serverShareBase;
-                }
+            if (!serverSharePath.StartsWith(@"\\"))
+                return string.Empty;
 
+            var intSlashIndex = serverSharePath.IndexOf('\\', 2);
+            if (intSlashIndex <= 0)
                 return serverSharePath;
-            }
 
-            return string.Empty;
+            var serverShareBase = serverSharePath.Substring(0, intSlashIndex);
+            if (serverShareBase.ToLower() == @"\\picfs")
+            {
+                serverShareBase = @"\\picfs\projects\DMS";
+            }
+            return serverShareBase;
         }
         #endregion
 
@@ -1249,34 +1243,34 @@ namespace PRISM
                     }
 
 
-                    if (copyFile)
-                    {
-                        var targetFilePath = Path.Combine(destDir.FullName, childFile.Name);
+                    if (!copyFile)
+                        continue;
 
-                        if (overWrite)
+                    var targetFilePath = Path.Combine(destDir.FullName, childFile.Name);
+
+                    if (overWrite)
+                    {
+                        UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
+                        CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: true);
+                    }
+                    else
+                    {
+                        // If overWrite = false, copy the file only if it does not exist
+                        // this is done to avoid an IOException if a file already exists
+                        // this way the other files can be copied anyway...
+                        if (!File.Exists(targetFilePath))
                         {
                             UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
-                            CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: true);
+                            CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: false);
                         }
-                        else
-                        {
-                            // If overWrite = false, copy the file only if it does not exist
-                            // this is done to avoid an IOException if a file already exists
-                            // this way the other files can be copied anyway...
-                            if (!File.Exists(targetFilePath))
-                            {
-                                UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
-                                CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: false);
-                            }
-                        }
-
-                        if (setAttribute)
-                        {
-                            UpdateReadonlyAttribute(childFile, targetFilePath, readOnly);
-                        }
-
-                        UpdateCurrentStatusIdle();
                     }
+
+                    if (setAttribute)
+                    {
+                        UpdateReadonlyAttribute(childFile, targetFilePath, readOnly);
+                    }
+
+                    UpdateCurrentStatusIdle();
                 }
 
                 // Copy all the sub-directories by recursively calling this same routine
@@ -2136,9 +2130,6 @@ namespace PRISM
                 strExtension = ".bak";
             }
 
-            if (fiTargetFile.Directory == null)
-                return true;
-
             var targetFolderPath = fiTargetFile.Directory.FullName;
 
             // Backup any existing copies of targetFilePath
@@ -2647,11 +2638,6 @@ namespace PRISM
                     outputFileExpectedSizeMB = 0;
 
                 var diFolderInfo = new FileInfo(outputFilePath).Directory;
-                if (diFolderInfo == null)
-                {
-                    errorMessage = "Unable to determine the parent directory of the destination file";
-                    return false;
-                }
 
                 while (!diFolderInfo.Exists && diFolderInfo.Parent != null)
                 {
