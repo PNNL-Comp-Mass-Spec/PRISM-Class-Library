@@ -188,6 +188,9 @@ namespace PRISMTest
             /// </summary>
             [Option("smooth", "alternativeLongNameForSmooth", HelpText = "Number of points to smooth; default is ## points")]
             public int Smooth { get; set; }
+
+            [Option("smooth2", "alternativeLongNameForSmooth2", HelpText = "Number of points to smooth", DefaultValueFormatString = "; default is {0} points")]
+            public int Smooth2 { get; set; }
         }
 
         [Test]

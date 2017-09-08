@@ -841,18 +841,30 @@ namespace PRISM
 
                 helpText += prop.Value.HelpText;
 
-                if (prop.Value.HelpShowsDefault)
+                if (prop.Value.HelpShowsDefault || !string.IsNullOrWhiteSpace(prop.Value.DefaultValueFormatString))
                 {
-                    helpText += $" (Default: {defaultValue}";
-                    if (prop.Value.Min != null)
+                    if (!string.IsNullOrWhiteSpace(prop.Value.DefaultValueFormatString))
                     {
-                        helpText += $", Min: {prop.Value.Min}";
+                        // Enforce a whitespace character between the help text and the default value
+                        if (!char.IsWhiteSpace(prop.Value.DefaultValueFormatString[0]))
+                        {
+                            helpText += " ";
+                        }
+                        helpText += string.Format(prop.Value.DefaultValueFormatString, defaultValue, prop.Value.Min, prop.Value.Max);
                     }
-                    if (prop.Value.Max != null)
+                    else
                     {
-                        helpText += $", Max: {prop.Value.Max}";
+                        helpText += $" (Default: {defaultValue}";
+                        if (prop.Value.Min != null)
+                        {
+                            helpText += $", Min: {prop.Value.Min}";
+                        }
+                        if (prop.Value.Max != null)
+                        {
+                            helpText += $", Max: {prop.Value.Max}";
+                        }
+                        helpText += ")";
                     }
-                    helpText += ")";
                 }
 
                 if (contents.ContainsKey(keys))
@@ -1168,6 +1180,13 @@ namespace PRISM
         /// If the help screen should show the default value for an argument (value pulled from the default constructor); Defaults to true.
         /// </summary>
         public bool HelpShowsDefault { get; set; }
+
+        /// <summary>
+        /// Format string for adding default values to end of help text. If this is not set, and <see cref="HelpShowsDefault"/>
+        /// is true, the default will be displayed as " (Default: [value][, min (if set)][, max (if set)])".
+        /// Use "{0}" for default value, "{1}" for min, and "{2}" for max.
+        /// </summary>
+        public string DefaultValueFormatString { get; set; }
 
         /// <summary>
         /// Minimum value, for a numeric argument
