@@ -795,7 +795,7 @@ namespace PRISM
         }
 
         /// <summary>
-        ///  Deletes the specified directory and all subdirectories
+        /// Deletes the specified directory and all subdirectories
         /// </summary>
         /// <param name="directoryPath"></param>
         /// <param name="ignoreErrors"></param>
@@ -1103,7 +1103,6 @@ namespace PRISM
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite)
         {
-            //Overload with no defaults
             const bool readOnly = false;
             CopyDirectory(sourcePath, destPath, overWrite, readOnly);
 
@@ -1119,7 +1118,6 @@ namespace PRISM
         /// <param name="managerName"></param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, string managerName)
         {
-            //Overload with no defaults
             const bool readOnly = false;
             CopyDirectory(sourcePath, destPath, overWrite, readOnly, new List<string>(), managerName);
 
@@ -1134,7 +1132,6 @@ namespace PRISM
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, List<string> fileNamesToSkip)
         {
-            //Overload with no defaults
             const bool readOnly = false;
             CopyDirectory(sourcePath, destPath, overWrite, readOnly, fileNamesToSkip);
 
@@ -1149,7 +1146,6 @@ namespace PRISM
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly)
         {
-            //Overload with no defaults
             const bool setAttribute = true;
             CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, new List<string>(), ManagerName);
 
@@ -1165,7 +1161,6 @@ namespace PRISM
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip)
         {
-            //Overload with no defaults
             const bool setAttribute = true;
             CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, fileNamesToSkip, ManagerName);
 
@@ -1184,7 +1179,6 @@ namespace PRISM
         /// <param name="managerName"></param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip, string managerName)
         {
-            //Overload with no defaults
             const bool setAttribute = true;
             CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
 
@@ -1515,7 +1509,6 @@ namespace PRISM
                 throw new IOException("Source and target directories cannot be the same: " + diTargetFolder.FullName);
             }
 
-
             try
             {
                 // Create the target folder if necessary
@@ -1566,19 +1559,19 @@ namespace PRISM
                             {
                                 case FileOverwriteMode.AlwaysOverwrite:
                                     copyFile = true;
-
                                     break;
+
                                 case FileOverwriteMode.DoNotOverwrite:
                                     copyFile = false;
-
                                     break;
+
                                 case FileOverwriteMode.OverwriteIfSourceNewer:
                                     if (fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc || (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length))
                                     {
                                         copyFile = false;
                                     }
-
                                     break;
+
                                 case FileOverwriteMode.OverWriteIfDateOrLengthDiffer:
                                     // File exists; if size and last modified time are the same then don't copy
 
@@ -1586,8 +1579,8 @@ namespace PRISM
                                     {
                                         copyFile = false;
                                     }
-
                                     break;
+
                                 default:
                                     // Unknown mode; assume DoNotOverwrite
                                     copyFile = false;
@@ -1858,6 +1851,7 @@ namespace PRISM
                         {
                             break;
                         }
+
                     } while (intBytesRead > 0);
 
                     FileCopyProgress?.Invoke(fiSourceFile.Name, 100);

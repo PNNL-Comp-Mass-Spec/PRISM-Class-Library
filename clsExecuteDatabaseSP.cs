@@ -164,7 +164,7 @@ namespace PRISM
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {
-            // If this value is in error msg, then exception occurred before resultCode was set
+            // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
             string errorMessage;
@@ -366,7 +366,7 @@ namespace PRISM
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, out string errorMessage, int retryDelaySeconds)
         {
 
-            // If this value is in error msg, then exception occurred before resultCode was set
+            // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
             var dtStartTime = DateTime.UtcNow;
