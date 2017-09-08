@@ -826,6 +826,10 @@ namespace PRISM
                 {
                     defaultValue = defaultValueObj.ToString();
                 }
+                if (string.IsNullOrWhiteSpace(defaultValue))
+                {
+                    defaultValue = $"\"{defaultValue}\"";
+                }
 
                 var keys = string.Empty;
                 foreach (var key in prop.Value.ParamKeys)
