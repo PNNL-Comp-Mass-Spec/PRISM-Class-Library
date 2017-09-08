@@ -387,6 +387,13 @@ namespace PRISM
                             keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
+                    catch (ArgumentException)
+                    {
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
+                            keyGiven, lastVal, prop.Key.PropertyType.Name));
+                        Results.Failed();
+                    }
                     catch (OverflowException)
                     {
                         Results.ParseErrors.Add(string.Format(
@@ -429,7 +436,7 @@ namespace PRISM
             object castValue = null;
             if (!"null".Equals(valueToParse, StringComparison.OrdinalIgnoreCase))
             {
-                castValue = Convert.ChangeType(valueToParse, propertyType);
+                castValue = ConvertToType(valueToParse, propertyType);
             }
 
             try
@@ -438,7 +445,7 @@ namespace PRISM
                 if (parseData.Min != null)
                 {
                     // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
-                    if (Convert.ChangeType(parseData.Min.ToString(), propertyType) is IComparable castMin)
+                    if (ConvertToType(parseData.Min.ToString(), propertyType) is IComparable castMin)
                     {
                         if (castMin.CompareTo(castValue) > 0)
                         {
@@ -457,7 +464,7 @@ namespace PRISM
                 if (parseData.Max != null)
                 {
                     // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
-                    if (Convert.ChangeType(parseData.Max.ToString(), propertyType) is IComparable castMax)
+                    if (ConvertToType(parseData.Max.ToString(), propertyType) is IComparable castMax)
                     {
                         if (castMax.CompareTo(castValue) < 0)
                         {
@@ -486,12 +493,37 @@ namespace PRISM
                 Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
                 Results.Failed();
             }
+            catch (ArgumentException)
+            {
+                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
+                Results.Failed();
+            }
             catch (OverflowException)
             {
                 Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)", argKey, propertyType.Name));
                 Results.Failed();
             }
             return castValue;
+        }
+
+        /// <summary>
+        /// Parse most objects normally, but parse enums using Enum.Parse
+        /// </summary>
+        /// <param name="valueToConvert"></param>
+        /// <param name="targetType"></param>
+        /// <returns></returns>
+        private object ConvertToType(object valueToConvert, Type targetType)
+        {
+            if (targetType.IsEnum)
+            {
+                var result = Enum.Parse(targetType, valueToConvert.ToString(), true);
+                if (!Enum.IsDefined(targetType, result) && targetType.CustomAttributes.All(x => x.AttributeType != typeof(FlagsAttribute)))
+                {
+                    throw new ArgumentException("Cast attempted to undefined enum!", nameof(valueToConvert));
+                }
+                return result;
+            }
+            return Convert.ChangeType(valueToConvert, targetType);
         }
 
         /// <summary>
@@ -854,6 +886,10 @@ namespace PRISM
                     }
                     else
                     {
+                        if (prop.Key.PropertyType.IsEnum)
+                        {
+                            defaultValue += $" (or {Convert.ChangeType(defaultValueObj, Enum.GetUnderlyingType(prop.Key.PropertyType))})";
+                        }
                         helpText += $" (Default: {defaultValue}";
                         if (prop.Value.Min != null)
                         {
@@ -864,6 +900,25 @@ namespace PRISM
                             helpText += $", Max: {prop.Value.Max}";
                         }
                         helpText += ")";
+                    }
+                }
+
+                if (prop.Key.PropertyType.IsEnum && !prop.Value.DoNotListEnumValues)
+                {
+                    helpText += "\nPossible values are: ";
+
+                    if (prop.Key.PropertyType.CustomAttributes.Any(x => x.AttributeType == typeof(FlagsAttribute)))
+                    {
+                        helpText += "(Bit flags)";
+                    }
+
+                    // List the valid enum values
+                    var enumVals = Enum.GetValues(prop.Key.PropertyType);
+                    foreach (var val in enumVals)
+                    {
+                        var valName = val.ToString();
+                        var valValue = Convert.ChangeType(val, Enum.GetUnderlyingType(prop.Key.PropertyType));
+                        helpText += $"\n  {valValue} or '{valName}'";
                     }
                 }
 
@@ -1197,6 +1252,11 @@ namespace PRISM
         /// Maximum value, for a numeric argument
         /// </summary>
         public object Max { get; set; }
+
+        /// <summary>
+        /// If the property is an enum, enum values are listed by default. Set this to 'true' to not list the enum values.
+        /// </summary>
+        public bool DoNotListEnumValues { get; set; }
 
         /// <summary>
         /// Constructor supporting any number of param keys.

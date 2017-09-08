@@ -427,7 +427,7 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.IsFalse(result.Success, "Parser did not fail on invalid type");
             Assert.IsTrue(result.ParseErrors.Any(x => x.ToLower().Contains("mindbl") && x.Contains("cannot cast") && x.Contains("to type")), "Error message does not contain \"minDbl\", \"cannot cast\", and \"to type\"");
         }
 
@@ -466,8 +466,112 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.IsFalse(result.Success, "Parser did not fail on invalid type");
             Assert.IsTrue(result.ParseErrors.Any(x => x.ToLower().Contains("maxdbl") && x.Contains("cannot cast") && x.Contains("to type")), "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
+        }
+
+        private class ArgsEnum
+        {
+            [Option("u", HelpText = "I Am Unknown")]
+            public TestEnum BeUnknown { get; set; }
+
+            [Option("2t", HelpText = "I Am Too True")]
+            public TestEnum TooTrue { get; set; }
+
+            [Option("l", HelpText = "I AM LEGEND!")]
+            public TestEnum Legendary { get; set; }
+
+            [Option("f", HelpText = "I lied.")]
+            public TestEnum TooBad { get; set; }
+
+            [Option("result", HelpText = "How bad will it be?")]
+            public TestEnumFlags ResultEffect { get; set; }
+
+            public ArgsEnum()
+            {
+                BeUnknown = TestEnum.Unknown;
+                TooTrue = TestEnum.CantBeTruer;
+                Legendary = TestEnum.Legend;
+                TooBad = TestEnum.False;
+                ResultEffect = TestEnumFlags.Good;
+            }
+        }
+
+        private enum TestEnum : int
+        {
+            Unknown = 0,
+            True = 1,
+            DoublyTrue = 2,
+            CantBeTruer = 3,
+            False = -1,
+            Legend = 100
+        }
+
+        [Flags]
+        private enum TestEnumFlags : int
+        {
+            Good = 0x0,
+            Bad = 0x1,
+            Ugly = 0x2,
+            Apocalypse = 0x4,
+            EndOfUniverse = 0x8
+        }
+
+        [Test]
+        public void TestEnumHelp()
+        {
+            var parser = new CommandLineParser<ArgsEnum>();
+            parser.PrintHelp();
+        }
+
+        [Test]
+        public void TestEnumArgs()
+        {
+            var args = new string[]
+            {
+                "-u", "doublytrue",
+                "-f", "100",
+                "-result", "14"
+            };
+            var parser = new CommandLineParser<ArgsEnum>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.AreEqual(TestEnum.DoublyTrue, options.BeUnknown);
+            Assert.AreEqual(TestEnum.Legend, options.TooBad);
+            Assert.AreEqual("Ugly, Apocalypse, EndOfUniverse", options.ResultEffect.ToString());
+            Assert.AreEqual(TestEnumFlags.Ugly | TestEnumFlags.Apocalypse | TestEnumFlags.EndOfUniverse, options.ResultEffect);
+        }
+
+        [Test]
+        public void TestEnumArgsBadArg()
+        {
+            var args = new string[]
+            {
+                "-u", "DoublyTrue",
+                "-f", "100",
+                "-2t", "5"
+            };
+            var parser = new CommandLineParser<ArgsEnum>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.ToLower().Contains("2t") && x.Contains("cannot cast") && x.Contains("to type")), "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
+        }
+
+        [Test]
+        public void TestEnumArgsBadArgString()
+        {
+            var args = new string[]
+            {
+                "-u", "doublytrue",
+                "-f", "100",
+                "-2t", "Legendary"
+            };
+            var parser = new CommandLineParser<ArgsEnum>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.ToLower().Contains("2t") && x.Contains("cannot cast") && x.Contains("to type")), "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
         }
 
         [Test]
