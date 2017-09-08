@@ -747,6 +747,7 @@ namespace PRISM
         private Dictionary<string, string> CreateHelpContents()
         {
             var contents = new Dictionary<string, string>();
+            var duplicateKeyCheck = new Dictionary<string, PropertyInfo>();
 
             var optionsForDefaults = new T();
 
@@ -802,6 +803,14 @@ namespace PRISM
                         keys += ", ";
                     }
 
+                    if (duplicateKeyCheck.ContainsKey(key))
+                    {
+                        // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
+                        contents.Clear();
+                        return contents;
+                    }
+                    duplicateKeyCheck.Add(key, prop.Key);
+
                     keys += paramChars[0] + key;
                 }
 
@@ -811,8 +820,17 @@ namespace PRISM
                     {
                         keys += ", ";
                     }
+                    var key = $"arg#{prop.Value.ArgPosition}";
 
-                    keys += $"arg#{prop.Value.ArgPosition}";
+                    if (duplicateKeyCheck.ContainsKey(key))
+                    {
+                        // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
+                        contents.Clear();
+                        return contents;
+                    }
+                    duplicateKeyCheck.Add(key, prop.Key);
+
+                    keys += key;
                 }
 
                 var helpText = string.Empty;
