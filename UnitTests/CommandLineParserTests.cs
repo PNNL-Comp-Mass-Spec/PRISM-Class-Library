@@ -175,13 +175,19 @@ namespace PRISMTest
             [Option("okay/name", HelpText = "This switch has a slash in the name; that's unusual, but allowed")]
             public string OkayName { get; set; }
 
-            [Option("verbose", "alternativeNameForVerbose", "wordy", "detailed",
+            [Option("verbose", "wordy", "detailed",
                 HelpText = "Use this switch to include verbose output, in homage to which this help text includes lorem ipsum dolor sit amet, " +
                            "elit phasellus, penatibus sed eget quis suspendisse. Quam suspendisse accumsan in vestibulum, ante donec dolor nibh, " +
                            "mauris sodales, orci mollis et convallis felis porta. Felis eu, metus sed, a quam nulla commodo nulla sit, diam sed morbi " +
                            "ut euismod et, diam vestibulum cursus. Dolor sit scelerisque tellus, wisi nec, mauris etiam potenti laoreet non, " +
                            "leo aliquam nonummy. Pulvinar tortor, leo rutrum blandit velit, quis lacus.")]
             public string Verbose { get; set; }
+
+            /// <summary>
+            /// Note that ## should be updated at runtime by calling UpdatePropertyHelpText
+            /// </summary>
+            [Option("smooth", "alternativeLongNameForSmooth", HelpText = "Number of points to smooth; default is ## points")]
+            public int Smooth { get; set; }
         }
 
         [Test]
@@ -497,6 +503,33 @@ namespace PRISMTest
                 }
             };
 
+            parser.PrintHelp();
+        }
+
+        [Test]
+        public void TestUpdateHelpText()
+        {
+            var exeName = "Test.exe";
+
+            var parser = new CommandLineParser<OkayKey2>()
+            {
+                ProgramInfo = "This program does some work",
+
+                ContactInfo = "Program written by an actual human",
+
+                UsageExamples = {
+                    exeName + " InputFile.txt",
+                    exeName + " InputFile.txt /Start:2",
+                    exeName + " InputFile.txt /Start:2 /EnumTypeMode:2 /Smooth:7"
+                }
+            };
+
+            parser.PrintHelp();
+
+            parser.UpdatePropertyHelpText("Smooth", "##", "15");
+            parser.PrintHelp();
+
+            parser.UpdatePropertyHelpText("Smooth", "New help text");
             parser.PrintHelp();
         }
 

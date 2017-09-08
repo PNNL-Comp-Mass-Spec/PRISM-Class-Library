@@ -706,6 +706,39 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Update the HelpText for a property at runtime
+        /// </summary>
+        /// <param name="propertyName">Property to update (case-sensitive)</param>
+        /// <param name="helpText">New help text</param>
+        public void UpdatePropertyHelpText(string propertyName, string helpText)
+        {
+            foreach (var property in GetPropertiesAttributes())
+            {
+                if (!string.Equals(property.Key.Name, propertyName))
+                    continue;
+
+                property.Value.HelpText = helpText;
+            }
+        }
+
+        /// <summary>
+        /// Change the HelpText for a property at runtime, searching for textToFind and replacing with replacementText
+        /// </summary>
+        /// <param name="propertyName">Property to update (case-sensitive)</param>
+        /// <param name="textToFind">Text to find</param>
+        /// <param name="replacementText">Text to use for a replacement</param>
+        public void UpdatePropertyHelpText(string propertyName, string textToFind, string replacementText)
+        {
+            foreach (var property in GetPropertiesAttributes())
+            {
+                if (!string.Equals(property.Key.Name, propertyName))
+                    continue;
+
+                property.Value.HelpText = property.Value.HelpText.Replace(textToFind, replacementText);
+            }
+        }
+
+        /// <summary>
         /// Create the help text and argument name list for each argument
         /// </summary>
         /// <returns></returns>
@@ -1044,6 +1077,7 @@ namespace PRISM
             {
                 return propertiesAndAttributes;
             }
+
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
 
 #if !(NETSTANDARD1_x)
