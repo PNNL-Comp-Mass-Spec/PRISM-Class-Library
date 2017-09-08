@@ -1147,7 +1147,7 @@ namespace PRISM
         public int ArgPosition { get; set; }
 
         /// <summary>
-        /// If the help screen should show the default value for an argument (value pulled from the default constructor)
+        /// If the help screen should show the default value for an argument (value pulled from the default constructor); Defaults to true.
         /// </summary>
         public bool HelpShowsDefault { get; set; }
 
@@ -1180,6 +1180,7 @@ namespace PRISM
             ArgPosition = 0;
             Max = null;
             Min = null;
+            HelpShowsDefault = true;
         }
 
         /// <summary>
