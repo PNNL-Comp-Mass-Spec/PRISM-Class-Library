@@ -204,7 +204,7 @@ namespace PRISM
         /// <remarks>Used by CopyFileWithResume</remarks>
         public int CopyChunkSizeMB
         {
-            get { return mChunkSizeMB; }
+            get => mChunkSizeMB;
             set
             {
                 if (value < 1)
@@ -220,7 +220,7 @@ namespace PRISM
         /// <remarks>Used by CopyFileWithResume</remarks>
         public int CopyFlushThresholdMB
         {
-            get { return mFlushThresholdMB; }
+            get => mFlushThresholdMB;
             set
             {
                 if (value < 1)
@@ -1194,7 +1194,7 @@ namespace PRISM
         /// can optionally contain full path names to skip</param>
         /// <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
         private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
-            List<string> fileNamesToSkip, string managerName)
+            IReadOnlyCollection<string> fileNamesToSkip, string managerName)
         {
             var sourceDir = new DirectoryInfo(sourcePath);
             var destDir = new DirectoryInfo(destPath);
@@ -1215,7 +1215,7 @@ namespace PRISM
 
                 // Populate dctFileNamesToSkip
                 var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-                if ((fileNamesToSkip != null))
+                if (fileNamesToSkip != null)
                 {
                     foreach (var strItem in fileNamesToSkip)
                     {
@@ -1298,7 +1298,7 @@ namespace PRISM
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="readOnly">True to force the ReadOnly bit on, False to force it off</param>
         /// <remarks></remarks>
-        private void UpdateReadonlyAttribute(FileInfo fiSourceFile, string targetFilePath, bool readOnly)
+        private void UpdateReadonlyAttribute(FileSystemInfo fiSourceFile, string targetFilePath, bool readOnly)
         {
             // Get the file attributes from the source file
             var fa = fiSourceFile.Attributes;
@@ -1380,15 +1380,11 @@ namespace PRISM
             string sourceFolderPath, string targetFolderPath,
             bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip)
         {
-
-            int fileCountSkipped;
-            int fileCountResumed;
-            int fileCountNewlyCopied;
             const bool setAttribute = false;
             const bool readOnly = false;
 
             return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
-                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
+                fileNamesToSkip, out _, out _, out _);
 
         }
 
@@ -1591,9 +1587,8 @@ namespace PRISM
                     }
                     else
                     {
-                        bool copyResumed;
                         var targetFilePath = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name);
-                        success = CopyFileWithResume(fiSourceFile, targetFilePath, out copyResumed);
+                        success = CopyFileWithResume(fiSourceFile, targetFilePath, out var copyResumed);
 
                         if (!success)
                             break;
@@ -1747,8 +1742,7 @@ namespace PRISM
                                     // Name and size are the same
                                     // See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
 
-                                    DateTime dtCachedLastWriteTimeUTC;
-                                    if (DateTime.TryParse(lstSourceLines[2], out dtCachedLastWriteTimeUTC))
+                                    if (DateTime.TryParse(lstSourceLines[2], out var dtCachedLastWriteTimeUTC))
                                     {
 
                                         if (NearlyEqualFileTimes(dtSourceFileLastWriteTimeUTC, dtCachedLastWriteTimeUTC))
