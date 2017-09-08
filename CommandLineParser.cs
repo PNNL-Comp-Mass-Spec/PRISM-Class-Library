@@ -350,6 +350,7 @@ namespace PRISM
                         continue;
                     }
 
+                    object lastVal = value.Last();
                     try
                     {
                         // parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
@@ -360,6 +361,7 @@ namespace PRISM
                             var i = 0;
                             foreach (var val in value)
                             {
+                                lastVal = val;
                                 var castVal = ParseValueToType(prop.Key.PropertyType.GetElementType(), prop.Value, keyGiven, val);
                                 castVals.SetValue(castVal, i++);
                             }
@@ -375,21 +377,21 @@ namespace PRISM
                     {
                         Results.ParseErrors.Add(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
-                            keyGiven, value, prop.Key.PropertyType.Name));
+                            keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (FormatException)
                     {
                         Results.ParseErrors.Add(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
-                            keyGiven, value, prop.Key.PropertyType.Name));
+                            keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (OverflowException)
                     {
                         Results.ParseErrors.Add(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)",
-                            keyGiven, value, prop.Key.PropertyType.Name));
+                            keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                 }
