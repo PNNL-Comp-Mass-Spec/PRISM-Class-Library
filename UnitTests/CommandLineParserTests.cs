@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using NUnit.Framework;
 using PRISM;
@@ -510,10 +511,15 @@ namespace PRISMTest
         [Flags]
         private enum TestEnumFlags : int
         {
+            [System.ComponentModel.Description("It's Okay")]
             Good = 0x0,
+            [System.ComponentModel.Description("It's Bad")]
             Bad = 0x1,
+            [System.ComponentModel.Description("It's really bad")]
             Ugly = 0x2,
+            [System.ComponentModel.Description("It's the end of the world")]
             Apocalypse = 0x4,
+            [System.ComponentModel.Description("You just blew up the universe")]
             EndOfUniverse = 0x8
         }
 

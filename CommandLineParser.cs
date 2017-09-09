@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -920,9 +921,15 @@ namespace PRISM
                     var enumVals = Enum.GetValues(prop.Key.PropertyType);
                     foreach (var val in enumVals)
                     {
-                        var valName = val.ToString();
-                        var valValue = Convert.ChangeType(val, Enum.GetUnderlyingType(prop.Key.PropertyType));
+                        var enumVal = (Enum)Convert.ChangeType(val, prop.Key.PropertyType);
+                        var valName = enumVal.ToString();
+                        var valValue = Convert.ChangeType(enumVal, Enum.GetUnderlyingType(prop.Key.PropertyType));
+                        var desc = enumVal.GetDescriptionAttribute(prop.Key.PropertyType);
                         helpText += $"\n  {valValue} or '{valName}'";
+                        if (desc != null && !desc.IsDefaultAttribute() && !string.IsNullOrWhiteSpace(desc.Description))
+                        {
+                            helpText += $": {desc.Description}";
+                        }
                     }
                 }
 
@@ -1319,6 +1326,21 @@ namespace PRISM
         public override string ToString()
         {
             return ParamKeys[0];
+        }
+    }
+
+    /// <summary>
+    /// Some extension methods for working with enums
+    /// </summary>
+    public static class EnumExtensions
+    {
+        /// <summary>
+        /// Get the string from the DescriptionAttribute of an enum value
+        /// </summary>
+        /// <remarks>From https://stackoverflow.com/questions/1799370/getting-attributes-of-enums-value</remarks>
+        public static DescriptionAttribute GetDescriptionAttribute(this Enum enumValue, Type enumType)
+        {
+            return enumType.GetMember(enumValue.ToString()).First().GetCustomAttribute<DescriptionAttribute>();
         }
     }
 }
