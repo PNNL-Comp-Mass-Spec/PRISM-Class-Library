@@ -524,6 +524,10 @@ namespace PRISM
                 }
                 return result;
             }
+            if (targetType == typeof(bool) && int.TryParse(valueToConvert.ToString(), out int bResult))
+            {
+                return bResult != 0;
+            }
             return Convert.ChangeType(valueToConvert, targetType);
         }
 
