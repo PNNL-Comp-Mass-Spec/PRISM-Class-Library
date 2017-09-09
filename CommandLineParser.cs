@@ -515,6 +515,7 @@ namespace PRISM
         /// <returns></returns>
         private object ConvertToType(object valueToConvert, Type targetType)
         {
+            // Properly parse enums
             if (targetType.IsEnum)
             {
                 var result = Enum.Parse(targetType, valueToConvert.ToString(), true);
@@ -524,10 +525,25 @@ namespace PRISM
                 }
                 return result;
             }
-            if (targetType == typeof(bool) && int.TryParse(valueToConvert.ToString(), out int bResult))
+
+            // Support using '0', '1', 'y', 'yes', 'n', 'no' with booleans
+            if (targetType == typeof(bool))
             {
-                return bResult != 0;
+                var valStr = valueToConvert.ToString().ToLowerInvariant();
+                if (int.TryParse(valStr, out int bResult))
+                {
+                    return bResult != 0;
+                }
+                if (valStr.Equals("n") || valStr.Equals("no"))
+                {
+                    return false;
+                }
+                if (valStr.Equals("y") || valStr.Equals("yes"))
+                {
+                    return true;
+                }
             }
+
             return Convert.ChangeType(valueToConvert, targetType);
         }
 
