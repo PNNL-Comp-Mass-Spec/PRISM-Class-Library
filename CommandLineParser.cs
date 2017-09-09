@@ -892,16 +892,16 @@ namespace PRISM
                     {
                         if (prop.Key.PropertyType.IsEnum)
                         {
-                            defaultValue += $" (or {Convert.ChangeType(defaultValueObj, Enum.GetUnderlyingType(prop.Key.PropertyType))})";
+                            defaultValue += $"\a(or\a{Convert.ChangeType(defaultValueObj, Enum.GetUnderlyingType(prop.Key.PropertyType))})";
                         }
-                        helpText += $" (Default: {defaultValue}";
+                        helpText += $" (Default:\a{defaultValue}";
                         if (prop.Value.Min != null)
                         {
-                            helpText += $", Min: {prop.Value.Min}";
+                            helpText += $", Min:\a{prop.Value.Min}";
                         }
                         if (prop.Value.Max != null)
                         {
-                            helpText += $", Max: {prop.Value.Max}";
+                            helpText += $", Max:\a{prop.Value.Max}";
                         }
                         helpText += ")";
                     }
@@ -952,6 +952,13 @@ namespace PRISM
             return wrappedText.ToString();
         }
 
+        /// <summary>
+        /// Wraps the strings to the set width (where possible)
+        /// </summary>
+        /// <param name="textToWrap"></param>
+        /// <param name="wrapWidth"></param>
+        /// <returns></returns>
+        /// <remarks>use the 'alert' character ('\a') to create a non-breaking space</remarks>
         private static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
         {
             // Check for newline characters
@@ -984,7 +991,7 @@ namespace PRISM
                             line += " ";
                         }
                     }
-                    line += key;
+                    line += key.Replace('\a', ' ');
                 }
 
                 if (string.IsNullOrWhiteSpace(line))
@@ -1243,7 +1250,7 @@ namespace PRISM
         /// <summary>
         /// Format string for adding default values to end of help text. If this is not set, and <see cref="HelpShowsDefault"/>
         /// is true, the default will be displayed as " (Default: [value][, min (if set)][, max (if set)])".
-        /// Use "{0}" for default value, "{1}" for min, and "{2}" for max.
+        /// Use "{0}" for default value, "{1}" for min, and "{2}" for max. Use '\a' for a non-breaking space.
         /// </summary>
         public string DefaultValueFormatString { get; set; }
 
