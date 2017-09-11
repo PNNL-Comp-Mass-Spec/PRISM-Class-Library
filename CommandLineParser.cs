@@ -841,6 +841,12 @@ namespace PRISM
 
             foreach (var prop in props)
             {
+                if (prop.Value.Hidden)
+                {
+                    continue;
+                }
+
+                // Get the default value to display
                 var defaultValueObj = prop.Key.GetValue(optionsForDefaults);
                 var defaultValue = "null";
                 if (defaultValueObj != null)
@@ -852,6 +858,7 @@ namespace PRISM
                     defaultValue = $"\"{defaultValue}\"";
                 }
 
+                // Create the list of parameter keys
                 var keys = string.Empty;
                 foreach (var key in prop.Value.ParamKeys)
                 {
@@ -890,6 +897,7 @@ namespace PRISM
                     keys += key;
                 }
 
+                // Create the help text
                 var helpText = string.Empty;
                 if (prop.Value.Required)
                 {
@@ -928,6 +936,7 @@ namespace PRISM
                     }
                 }
 
+                // For enums, list the possible values
                 if (prop.Key.PropertyType.IsEnum && !prop.Value.DoNotListEnumValues)
                 {
                     helpText += "\nPossible values are: ";
@@ -1295,6 +1304,12 @@ namespace PRISM
         /// If the property is an enum, enum values are listed by default. Set this to 'true' to not list the enum values.
         /// </summary>
         public bool DoNotListEnumValues { get; set; }
+
+        /// <summary>
+        /// Set to 'true' to hide the argument from the help out
+        /// </summary>
+        /// <remarks>This is useful for supporting obsolete arguments</remarks>
+        public bool Hidden { get; set; }
 
         /// <summary>
         /// Constructor supporting any number of param keys.

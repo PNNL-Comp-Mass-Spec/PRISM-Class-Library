@@ -192,6 +192,9 @@ namespace PRISMTest
 
             [Option("smooth2", "alternativeLongNameForSmooth2", HelpText = "Number of points to smooth", DefaultValueFormatString = "; default is {0} points")]
             public int Smooth2 { get; set; }
+
+            [Option("gnat", HelpText = "I'm a supported argument, but I don't get advertised.", Hidden = true)]
+            public int NoSeeUm { get; set; }
         }
 
         [Test]
