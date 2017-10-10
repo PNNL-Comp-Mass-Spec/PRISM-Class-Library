@@ -335,10 +335,7 @@ namespace PRISM
         /// <remarks></remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, int retryDelaySeconds)
         {
-
-            string errorMessage;
-            return ExecuteSP(spCmd, maxRetryCount, out errorMessage, retryDelaySeconds);
-
+            return ExecuteSP(spCmd, maxRetryCount, out _, retryDelaySeconds);
         }
 
         /// <summary>

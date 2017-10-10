@@ -92,8 +92,7 @@ namespace PRISMWin
                     return;
                 }
 
-                KeyValuePair<string, PerformanceCounter> removedCounter;
-                mCachedPerfCounters.TryRemove(processId, out removedCounter);
+                mCachedPerfCounters.TryRemove(processId, out _);
             }
             catch (Exception)
             {
@@ -187,13 +186,12 @@ namespace PRISMWin
                     mCachedCoreCount = GetCoreCount();
                 }
 
-                KeyValuePair<string, PerformanceCounter> perfCounterContainer;
                 var getNewPerfCounter = true;
                 var maxAttempts = 2;
 
                 // Look for a cached performance counter instance
 
-                if (mCachedPerfCounters.TryGetValue(processId, out perfCounterContainer))
+                if (mCachedPerfCounters.TryGetValue(processId, out var perfCounterContainer))
                 {
                     var cachedProcessIdInstanceName = perfCounterContainer.Key;
 
@@ -224,8 +222,7 @@ namespace PRISMWin
 
                 if (getNewPerfCounter)
                 {
-                    string newProcessIdInstanceName;
-                    var perfCounter = GetPerfCounterForProcessID(processId, out newProcessIdInstanceName);
+                    var perfCounter = GetPerfCounterForProcessID(processId, out var newProcessIdInstanceName);
 
                     if (perfCounter == null)
                     {
@@ -326,7 +323,7 @@ namespace PRISMWin
         /// </remarks>
         public float GetCoreUsageByProcessName(string processName)
         {
-            return GetCoreUsageByProcessName(processName, out var _);
+            return GetCoreUsageByProcessName(processName, out _);
         }
 
         /// <summary>

@@ -530,7 +530,7 @@ namespace PRISM
             if (targetType == typeof(bool))
             {
                 var valStr = valueToConvert.ToString().ToLowerInvariant();
-                if (int.TryParse(valStr, out int bResult))
+                if (int.TryParse(valStr, out var bResult))
                 {
                     return bResult != 0;
                 }
@@ -571,7 +571,7 @@ namespace PRISM
                     positionArgumentNumber++;
                     var argName = GetPositionalArgName(positionArgumentNumber);
 
-                    if (!validArgs.TryGetValue(argName, out var argInfo))
+                    if (!validArgs.TryGetValue(argName, out _))
                         continue;
 
                     if (!processed.ContainsKey(argName))
@@ -588,9 +588,8 @@ namespace PRISM
                 var nextArgIsNumber = false;
                 if (paramChars.Contains('-') && i + 1 < args.Count && args[i + 1].StartsWith("-"))
                 {
-                    double x;
                     // Try converting to most forgiving number format
-                    nextArgIsNumber = double.TryParse(args[i + 1], out x);
+                    nextArgIsNumber = double.TryParse(args[i + 1], out _);
 
                     // Check if the program supports a numeric argument (but we only need to remove a '-', because a '/' won't parse as a double)
                     if (nextArgIsNumber && validArgs.ContainsKey(args[i + 1].TrimStart('-')))

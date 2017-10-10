@@ -115,7 +115,7 @@ namespace PRISM
         /// <returns>Total CPU time, in jiffies</returns>
         private long ComputeTotalCPUTime()
         {
-            return ComputeTotalCPUTime(out var _);
+            return ComputeTotalCPUTime(out _);
         }
 
         /// <summary>
@@ -728,7 +728,7 @@ namespace PRISM
                 if (processIDs.Count == 0)
                     return -1;
 
-                var coreUsage = GetCoreUsageByProcessID(processIDs, out var _, samplingTimeSeconds);
+                var coreUsage = GetCoreUsageByProcessID(processIDs, out _, samplingTimeSeconds);
                 return coreUsage;
 
             }

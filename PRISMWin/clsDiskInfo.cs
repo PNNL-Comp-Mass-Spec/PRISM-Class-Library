@@ -52,7 +52,7 @@ namespace PRISMWin
                 if (GetDiskFreeSpace(
                     diFolderInfo.FullName,
                     out var freeBytesAvailableToUser,
-                    out var _,
+                    out _,
                     out var totalNumberOfFreeBytes))
                 {
                     if (reportFreeSpaceAvailableToUser)
