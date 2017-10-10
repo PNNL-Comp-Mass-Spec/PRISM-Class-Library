@@ -7,8 +7,9 @@ namespace PRISMWin
     /// </summary>
     public class WMISystemInfo
     {
-        private static int cachedCoreCount = 0;
-        private static float cachedTotalMemoryMB = 0;
+        private static int cachedCoreCount;
+        private static int cachedPhysicalProcessorCount;
+        private static float cachedTotalMemoryMB;
 
         /// <summary>
         /// Report the number of cores on this system

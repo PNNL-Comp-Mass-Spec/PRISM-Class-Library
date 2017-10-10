@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PRISM
+﻿namespace PRISM
 {
     /// <summary>
     /// Class for streamlined access to system processor and memory information

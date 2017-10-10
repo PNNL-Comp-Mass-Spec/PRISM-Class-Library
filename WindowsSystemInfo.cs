@@ -187,7 +187,7 @@ namespace PRISM
             //}
         }
 
-        private static float totalMemoryMBCached = 0;
+        private static float totalMemoryMBCached;
 
         #endregion
 
@@ -637,17 +637,17 @@ namespace PRISM
 
         private int GetProcessorInfo(LOGICAL_PROCESSOR_RELATIONSHIP coreCountType)
         {
-            List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> buffer = new List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
+            var buffer = new List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
             uint returnLength = 0;
             GetLogicalProcessorInformationEx(coreCountType, IntPtr.Zero, ref returnLength);
             if (Marshal.GetLastWin32Error() == ERROR_INSUFFICIENT_BUFFER)
             {
-                IntPtr ptr = Marshal.AllocHGlobal((int)returnLength);
+                var ptr = Marshal.AllocHGlobal((int)returnLength);
                 try
                 {
                     if (GetLogicalProcessorInformationEx(coreCountType, ptr, ref returnLength))
                     {
-                        IntPtr item = ptr;
+                        var item = ptr;
                         var readCount = 0;
                         //int size = Marshal.SizeOf(typeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX));
                         //int len = (int)returnLength / size;
@@ -710,11 +710,11 @@ namespace PRISM
             loadedProcessorInformation = true;
         }
 
-        private static int logicalCoreCount = 0;
-        private static int physicalCoreCount = 0;
-        private static int processorPackageCount = 0;
-        private static int numaNodeCount = 0;
-        private static bool loadedProcessorInformation = false;
+        private static int logicalCoreCount;
+        private static int physicalCoreCount;
+        private static int processorPackageCount;
+        private static int numaNodeCount;
+        private static bool loadedProcessorInformation;
 
         #endregion
 
