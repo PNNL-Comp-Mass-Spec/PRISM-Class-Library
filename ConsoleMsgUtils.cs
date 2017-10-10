@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace PRISM
 {
@@ -7,6 +8,8 @@ namespace PRISM
     /// </summary>
     public static class ConsoleMsgUtils
     {
+        private const string SEPARATOR = "------------------------------------------------------------------------------";
+
         private static bool mAutoCheckedDebugFontColor;
 
         /// <summary>
@@ -53,7 +56,6 @@ namespace PRISM
         /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
         public static string ShowError(string message, Exception ex, bool includeSeparator = true, bool writeToErrorStream = true)
         {
-            const string SEPARATOR = "------------------------------------------------------------------------------";
 
             Console.WriteLine();
             if (includeSeparator)
@@ -95,6 +97,40 @@ namespace PRISM
             }
 
             return formattedError;
+        }
+
+        /// <summary>
+        /// Display a set of error messages at the console with color ErrorFontColor (defaults to Red)
+        /// </summary>
+        /// <param name="title">Title text to be shown before the errors; can be null or blank</param>
+        /// <param name="errorMessages">Error messages to show</param>
+        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <param name="indentChars">Characters to add before each error message; defaults to 3 spaces</param>
+        /// <returns>The first error message</returns>
+        public static string ShowErrors(string title, IEnumerable<string> errorMessages, bool writeToErrorStream = true, string indentChars = "   ")
+        {
+            string firstError = null;
+
+            Console.WriteLine();
+            Console.WriteLine(SEPARATOR);
+
+            if (!string.IsNullOrWhiteSpace(title))
+                Console.WriteLine(title);
+
+            if (string.IsNullOrEmpty(indentChars))
+                indentChars = "";
+
+            foreach (var item in errorMessages)
+            {
+                if (firstError == null)
+                    firstError = item;
+
+                ShowError(indentChars + item, false, writeToErrorStream);
+            }
+            Console.WriteLine(SEPARATOR);
+            Console.WriteLine();
+
+            return firstError;
         }
 
         /// <summary>
