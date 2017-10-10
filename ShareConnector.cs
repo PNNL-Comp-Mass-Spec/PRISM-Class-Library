@@ -73,7 +73,8 @@ namespace PRISM
 
         private const short NO_ERROR = 0;
 
-        private const short CONNECT_UPDATE_PROFILE = 0x1;
+        // Unused constant
+        // private const short CONNECT_UPDATE_PROFILE = 0x1;
         // /// <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
         // private const short RESOURCE_CONNECTED As Short = &H1S
         // /// <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
@@ -96,12 +97,12 @@ namespace PRISM
         // private const short RESOURCEDISPLAYTYPE_SHARE As Short = &H3S
 
         /// <summary>
-        ///  Constant that may be used by NETRESOURCE->dwUsage 
+        ///  Constant that may be used by NETRESOURCE->dwUsage
         /// </summary>
         private const short RESOURCEUSAGE_CONNECTABLE = 0x1;
 
         /// <summary>
-        ///  Constant that may be used by NETRESOURCE->dwUsage 
+        ///  Constant that may be used by NETRESOURCE->dwUsage
         /// </summary>
         private const short RESOURCEUSAGE_CONTAINER = 0x2;
 
@@ -134,7 +135,7 @@ namespace PRISM
         /// <param name="shareName">The name of the file share to which you will connect.</param>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
-        /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>  /// 
+        /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ///
         public ShareConnector(string shareName, string userName, string userPwd)
         {
             DefineShareName(shareName);
@@ -171,7 +172,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Connects to specified share using account/password specified through the constructor and 
+        /// Connects to specified share using account/password specified through the constructor and
         /// the file share name passed as an argument.
         /// </summary>
         /// <param name="shareName">The name of the file share to which you will connect.</param>
@@ -219,7 +220,7 @@ namespace PRISM
 
         /// <summary>
         /// Connects to specified share using account/password specified previously.
-        /// This is the function that actually does the connection based on the setup 
+        /// This is the function that actually does the connection based on the setup
         /// from the Connect function.
         /// </summary>
         private bool RealConnect()

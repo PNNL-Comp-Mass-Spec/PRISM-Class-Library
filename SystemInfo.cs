@@ -5,6 +5,7 @@ namespace PRISM
     /// <summary>
     /// Class for streamlined access to system processor and memory information
     /// </summary>
+    /// <remarks>Supports by Windows and Linux</remarks>
     public class SystemInfo
     {
         private static readonly ISystemInfo SysInfo;
@@ -70,7 +71,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Determine the free system memory, in MB, on Linux
+        /// Determine the free system memory, in MB
         /// </summary>
         /// <returns>Free memory, or -1 if an error</returns>
         public static float GetFreeMemoryMB()

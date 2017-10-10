@@ -128,7 +128,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// contains information about the current state of both physical and virtual memory, including extended memory
+        /// Contains information about the current state of both physical and virtual memory, including extended memory
         /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         public struct MEMORYSTATUSEX
@@ -783,7 +783,8 @@ namespace PRISM
         public float GetFreeMemoryMB()
         {
             var result = GetGlobalMemoryStatusEx(out MEMORYSTATUSEX memData);
-            // Go from bytes to MB
+
+            // Convert from bytes to MB
             return memData.ullAvailPhys / 1024f / 1024f;
         }
 
@@ -799,7 +800,8 @@ namespace PRISM
             }
 
             var result = GetGlobalMemoryStatusEx(out MEMORYSTATUSEX memData);
-            // Go from bytes to MB
+
+            // Convert from bytes to MB
             return memData.ullTotalPhys / 1024f / 1024f;
         }
     }
