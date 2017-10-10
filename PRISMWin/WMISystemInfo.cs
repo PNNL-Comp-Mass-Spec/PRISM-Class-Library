@@ -83,19 +83,17 @@ namespace PRISMWin
         public float GetFreeMemoryMB()
         {
             double memoryFreeKB = 0;
+
             //var osVersion = Environment.OSVersion.Version;
             //if (osVersion < new Version(6, 0)) // Older than Vista
             //{
             //    // For pre-Vista: "SELECT * FROM Win32_LogicalMemoryConfiguration", and a different property.
             //    // Have no good systems to test on (Sequest head nodes??)
             //}
+
             foreach (var item in new System.Management.ManagementObjectSearcher("SELECT * FROM CIM_OperatingSystem").Get())
             {
                 memoryFreeKB += double.Parse(item["FreePhysicalMemory"].ToString());
-                //foreach (var p in item.Properties)
-                //{
-                //    Console.WriteLine("{0}: {1}", p.Name, p.Value);
-                //}
             }
 
             return (float)(memoryFreeKB / 1024);
@@ -113,15 +111,12 @@ namespace PRISMWin
             }
 
             double totalMemKB = 0;
+
             // Get total physical memory
             foreach (var item in new System.Management.ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem").Get())
             {
                 // TotalPhysicalMemory is in Bytes, so divide by 1024
                 totalMemKB += double.Parse(item["TotalPhysicalMemory"].ToString()) / 1024.0;
-                //foreach (var p in item.Properties)
-                //{
-                //    Console.WriteLine("{0}: {1}", p.Name, p.Value);
-                //}
             }
 
             var totalMemMB = (float)(totalMemKB / 1024);

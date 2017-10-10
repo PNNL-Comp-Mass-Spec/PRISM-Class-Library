@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Linq;
 using NUnit.Framework;
 using PRISM;
@@ -158,8 +157,9 @@ namespace PRISMTest
         [Test]
         public void TestHelpKey2()
         {
-            var parser = new CommandLineParser<OkayKey2>();
-            parser.ParamFlagCharacters = new[] {'/', '-'};
+            var parser = new CommandLineParser<OkayKey2> {
+                ParamFlagCharacters = new[] {'/', '-'}
+            };
             var result = parser.ParseArgs(new[] { "/?" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
             Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
@@ -200,7 +200,7 @@ namespace PRISMTest
         [Test]
         public void TestGood()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "MyInputFile.txt",
                 "-minInt", "11",
@@ -274,7 +274,7 @@ namespace PRISMTest
         [Test]
         public void TestPositionalArgs()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "MyInputFile.txt",
                 "OutputFile.txt",
@@ -295,7 +295,7 @@ namespace PRISMTest
         [Test]
         public void TestMinInt1()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minInt", "5",
             };
@@ -308,7 +308,7 @@ namespace PRISMTest
         [Test]
         public void TestMinInt2()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minMaxInt", "-15",
             };
@@ -321,7 +321,7 @@ namespace PRISMTest
         [Test]
         public void TestMinInt3()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minIntBad", "15",
             };
@@ -334,7 +334,7 @@ namespace PRISMTest
         [Test]
         public void TestBadMinInt()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minInt", "15.0",
             };
@@ -347,7 +347,7 @@ namespace PRISMTest
         [Test]
         public void TestMaxInt1()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-maxInt", "15",
             };
@@ -360,7 +360,7 @@ namespace PRISMTest
         [Test]
         public void TestMaxInt2()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-maxIntBad", "5",
             };
@@ -373,7 +373,7 @@ namespace PRISMTest
         [Test]
         public void TestBadMaxInt()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-maxInt", "9.0",
             };
@@ -386,7 +386,7 @@ namespace PRISMTest
         [Test]
         public void TestMinDbl1()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minDbl", "5",
             };
@@ -399,7 +399,7 @@ namespace PRISMTest
         [Test]
         public void TestMinDbl2()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minMaxDbl", "-15",
             };
@@ -412,7 +412,7 @@ namespace PRISMTest
         [Test]
         public void TestMinDbl3()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minDblBad", "15",
             };
@@ -425,7 +425,7 @@ namespace PRISMTest
         [Test]
         public void TestBadMinDbl()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-minDbl", "15n",
             };
@@ -438,7 +438,7 @@ namespace PRISMTest
         [Test]
         public void TestMaxDbl1()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-maxDbl", "15",
             };
@@ -451,7 +451,7 @@ namespace PRISMTest
         [Test]
         public void TestMaxDbl2()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-maxDblBad", "5",
             };
@@ -464,7 +464,7 @@ namespace PRISMTest
         [Test]
         public void TestBadMaxDbl()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-maxDbl", "5t",
             };
@@ -536,7 +536,7 @@ namespace PRISMTest
         [Test]
         public void TestEnumArgs()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-u", "doublytrue",
                 "-f", "100",
@@ -556,7 +556,7 @@ namespace PRISMTest
         [Test]
         public void TestEnumArgsBadArg()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-u", "DoublyTrue",
                 "-f", "100",
@@ -571,7 +571,7 @@ namespace PRISMTest
         [Test]
         public void TestEnumArgsBadArgString()
         {
-            var args = new string[]
+            var args = new[]
             {
                 "-u", "doublytrue",
                 "-f", "100",
