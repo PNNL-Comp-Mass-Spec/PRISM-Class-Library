@@ -16,12 +16,12 @@ namespace PRISMTest
 #if !(NETCOREAPP2_0)
             var windowsSystemInfo = new WMISystemInfo();
             var wmiMem = windowsSystemInfo.GetTotalMemoryMB();
-            Console.WriteLine("WMI Total memory: {0}", wmiMem);
+            Console.WriteLine("WMI Total memory:  {0:F2} MB", wmiMem);
 #endif
 
             var wpsi = new WindowsSystemInfo();
             var pinvMem = wpsi.GetTotalMemoryMB();
-            Console.WriteLine("PInv Total memory: {0}", pinvMem);
+            Console.WriteLine("PInv Total memory: {0:F2} MB", pinvMem);
 
 #if !(NETCOREAPP2_0)
             Assert.AreEqual(wmiMem, pinvMem, 0.001);
@@ -34,12 +34,12 @@ namespace PRISMTest
 #if !(NETCOREAPP2_0)
             var windowsSystemInfo = new WMISystemInfo();
             var wmiMem = windowsSystemInfo.GetFreeMemoryMB();
-            Console.WriteLine("WMI Free memory: {0}", wmiMem);
+            Console.WriteLine("WMI Free memory:  {0:F2} MB", wmiMem);
 #endif
 
             var wpsi = new WindowsSystemInfo();
             var pinvMem = wpsi.GetFreeMemoryMB();
-            Console.WriteLine("PInv Free memory: {0}", pinvMem);
+            Console.WriteLine("PInv Free memory: {0:F2} MB", pinvMem);
 
 #if !(NETCOREAPP2_0)
             Assert.AreEqual(wmiMem, pinvMem, 2);
@@ -51,15 +51,18 @@ namespace PRISMTest
         {
 #if !(NETCOREAPP2_0)
             var windowsSystemInfo = new WMISystemInfo();
-            var wmiCore = windowsSystemInfo.GetCoreCount();
-            Console.WriteLine("WMI Cores: {0}", wmiCore);
+            var wmiCore = windowsSystemInfo.GetCoreCount(out var wmiPhysicalProcs);
+            Console.WriteLine("WMI:  {0} processor(s) and {1} cores", wmiPhysicalProcs, wmiCore);
 #endif
 
             var wpsi = new WindowsSystemInfo();
             var pinvCore = wpsi.GetCoreCount();
-            Console.WriteLine("PInv Cores: {0}", pinvCore);
+            var pirvProcCount = wpsi.GetProcessorPackageCount();
+
+            Console.WriteLine("PInv: {0} processor(s) and {1} cores", pirvProcCount, pinvCore);
 
 #if !(NETCOREAPP2_0)
+            Assert.AreEqual(wmiPhysicalProcs, pirvProcCount);
             Assert.AreEqual(wmiCore, pinvCore);
 #endif
         }
@@ -69,15 +72,14 @@ namespace PRISMTest
         {
 #if !(NETCOREAPP2_0)
             var windowsSystemInfo = new WMISystemInfo();
-            var wmiCore = windowsSystemInfo.GetCoreCount();
-            Console.WriteLine("WMI Cores: {0}", wmiCore);
+            var wmiCore = windowsSystemInfo.GetCoreCount(out var wmiPhysicalProcs);
+            Console.WriteLine("WMI:  {0} processor(s) and {1} cores", wmiPhysicalProcs, wmiCore);
 #endif
 
             var wpsi = new WindowsSystemInfo();
-            Console.WriteLine("PInv Physical Cores: {0}", wpsi.GetCoreCount());
-            Console.WriteLine("PInv Logical Cores: {0}", wpsi.GetLogicalCoreCount());
-            Console.WriteLine("PInv Processor Packages: {0}", wpsi.GetProcessorPackageCount());
+            Console.WriteLine("PInv: {0} processor(s) and {1} cores", wpsi.GetProcessorPackageCount(), wpsi.GetCoreCount());
             Console.WriteLine("PInv NUMA Nodes: {0}", wpsi.GetNumaNodeCount());
+            Console.WriteLine("PInv Logical Cores: {0}", wpsi.GetLogicalCoreCount());
         }
     }
 }
