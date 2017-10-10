@@ -3,7 +3,7 @@
     /// <summary>
     /// Class for streamlined access to system processor and memory information
     /// </summary>
-    /// <remarks>Supports by Windows and Linux</remarks>
+    /// <remarks>Supports both Windows and Linux (uses clsOSVersionInfo to determine the OS at runtime)</remarks>
     public class SystemInfo
     {
         private static readonly ISystemInfo SysInfo;
