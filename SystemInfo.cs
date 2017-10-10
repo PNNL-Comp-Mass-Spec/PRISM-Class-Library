@@ -25,10 +25,7 @@ namespace PRISM
         /// <summary>
         /// Get the implementation of <see cref="ISystemInfo"/> that is providing the data
         /// </summary>
-        public ISystemInfo SystemInfoObject
-        {
-            get { return SysInfo; }
-        }
+        public ISystemInfo SystemInfoObject => SysInfo;
 
         /// <summary>
         /// Report the number of cores on this system

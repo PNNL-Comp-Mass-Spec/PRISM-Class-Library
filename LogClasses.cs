@@ -277,8 +277,8 @@ namespace PRISM
         /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
         public string LogFilePath
         {
-            get { return m_logFileBaseName; }
-            set { m_logFileBaseName = value; }
+            get => m_logFileBaseName;
+            set => m_logFileBaseName = value;
         }
 
         /// <summary>
@@ -483,8 +483,8 @@ namespace PRISM
         /// </summary>
         public string ConnectionString
         {
-            get { return m_connection_str; }
-            set { m_connection_str = value; }
+            get => m_connection_str;
+            set => m_connection_str = value;
         }
 
         /// <summary>
@@ -548,7 +548,7 @@ namespace PRISM
                 }
                 return m_moduleName;
             }
-            set { m_moduleName = value; }
+            set => m_moduleName = value;
         }
 
         /// <summary>

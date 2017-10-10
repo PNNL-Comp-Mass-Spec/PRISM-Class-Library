@@ -162,7 +162,7 @@ namespace PRISM
         /// </summary>
         public string Share
         {
-            get { return mShareName; }
+            get => mShareName;
             set
             {
                 DefineShareName(value);

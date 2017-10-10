@@ -242,7 +242,7 @@ namespace PRISM
         /// <remarks>Minimum allowed value is 100 milliseconds</remarks>
         public int MonitoringInterval
         {
-            get { return m_monitorInterval; }
+            get => m_monitorInterval;
             set
             {
                 if (value < MINIMUM_MONITOR_INTERVAL_MSEC)

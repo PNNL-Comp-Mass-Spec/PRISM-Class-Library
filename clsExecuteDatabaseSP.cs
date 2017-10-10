@@ -63,7 +63,7 @@ namespace PRISM
         /// </summary>
         public string DBconnectionString
         {
-            get { return m_ConnStr; }
+            get => m_ConnStr;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
@@ -84,7 +84,7 @@ namespace PRISM
         /// </summary>
         public int TimeoutSeconds
         {
-            get { return mTimeoutSeconds; }
+            get => mTimeoutSeconds;
             set
             {
                 if (value == 0)

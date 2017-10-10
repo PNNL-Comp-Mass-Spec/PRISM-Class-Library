@@ -144,8 +144,8 @@ namespace PRISM
         /// </summary>
         public bool CreateNoWindow
         {
-            get { return m_CreateNoWindow; }
-            set { m_CreateNoWindow = value; }
+            get => m_CreateNoWindow;
+            set => m_CreateNoWindow = value;
         }
 
 #if !(NETSTANDARD1_x)
@@ -154,8 +154,8 @@ namespace PRISM
         /// </summary>
         public ProcessWindowStyle WindowStyle
         {
-            get { return m_WindowStyle; }
-            set { m_WindowStyle = value; }
+            get => m_WindowStyle;
+            set => m_WindowStyle = value;
         }
 #endif
 
@@ -164,8 +164,8 @@ namespace PRISM
         /// </summary>
         public string WorkDir
         {
-            get { return m_WorkDir; }
-            set { m_WorkDir = value; }
+            get => m_WorkDir;
+            set => m_WorkDir = value;
         }
 
         /// <summary>
@@ -173,8 +173,8 @@ namespace PRISM
         /// </summary>
         public string ZipFilePath
         {
-            get { return m_ZipFilePath; }
-            set { m_ZipFilePath = value; }
+            get => m_ZipFilePath;
+            set => m_ZipFilePath = value;
         }
 
         /// <summary>

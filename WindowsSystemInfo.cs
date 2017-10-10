@@ -243,10 +243,7 @@ namespace PRISM
             /// A bitmap that specifies the affinity for zero or more processors within the specified group.
             /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
             /// </summary>
-            public UInt64 Mask
-            {
-                get { return (UInt64) MaskPtr.ToInt64(); }
-            }
+            public UInt64 Mask => (UInt64) MaskPtr.ToInt64();
 
             /// <summary>
             /// A platform-dependent method to get the Mask
@@ -440,10 +437,7 @@ namespace PRISM
             /// A bitmap that specifies the affinity for zero or more active processors within the group.
             /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
             /// </summary>
-            public UInt64 ActiveProcessorMask
-            {
-                get { return (UInt64)ActiveProcessorMaskPtr.ToInt64(); }
-            }
+            public UInt64 ActiveProcessorMask => (UInt64)ActiveProcessorMaskPtr.ToInt64();
 
             /// <summary>
             /// A platform-dependent method to get the Mask
@@ -574,15 +568,9 @@ namespace PRISM
 
             public PROCESSOR_RELATIONSHIP Processor;
 
-            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship
-            {
-                get { return Relationship; }
-            }
+            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship => Relationship;
 
-            public uint StructSize
-            {
-                get { return Size; }
-            }
+            public uint StructSize => Size;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -600,15 +588,9 @@ namespace PRISM
 
             public NUMA_NODE_RELATIONSHIP NumaNode;
 
-            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship
-            {
-                get { return Relationship; }
-            }
+            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship => Relationship;
 
-            public uint StructSize
-            {
-                get { return Size; }
-            }
+            public uint StructSize => Size;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -626,15 +608,9 @@ namespace PRISM
 
             public CACHE_RELATIONSHIP Cache;
 
-            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship
-            {
-                get { return Relationship; }
-            }
+            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship => Relationship;
 
-            public uint StructSize
-            {
-                get { return Size; }
-            }
+            public uint StructSize => Size;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -652,15 +628,9 @@ namespace PRISM
 
             public GROUP_RELATIONSHIP Group;
 
-            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship
-            {
-                get { return Relationship; }
-            }
+            public LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship => Relationship;
 
-            public uint StructSize
-            {
-                get { return Size; }
-            }
+            public uint StructSize => Size;
         }
 
         private const int ERROR_INSUFFICIENT_BUFFER = 122;
