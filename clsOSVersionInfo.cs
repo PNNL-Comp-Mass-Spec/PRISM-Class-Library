@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 namespace PRISM
 {
@@ -430,9 +428,10 @@ namespace PRISM
         }
 #endif
 
+#if (NETSTANDARD1_x)
         private string GetWindowsVersion(string osDescription)
         {
-            var versionMatch = new Regex(@" (?<Major>\d+)\.(?<Minor>\d+)\.(?<Build>\d+)");
+            var versionMatch = new System.Text.RegularExpressions.Regex(@" (?<Major>\d+)\.(?<Minor>\d+)\.(?<Build>\d+)");
             var version = versionMatch.Match(osDescription);
             var versionMajor = int.Parse(version.Groups["Major"].Value);
             var versionMinor = int.Parse(version.Groups["Minor"].Value);
@@ -481,6 +480,7 @@ namespace PRISM
 
             return "Unknown";
         }
+#endif
 
         /// <summary>
         /// Read a Linux os-release file or similar release file
