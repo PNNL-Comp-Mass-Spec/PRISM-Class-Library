@@ -38,11 +38,12 @@ namespace PRISM
     /// <typeparam name="T"></typeparam>
     public class CommandLineParser<T> where T : class, new()
     {
-        private static readonly char[] defaultParamChars = { '-', '/' };
-        private static readonly char[] defaultSeparatorChars = { ' ', ':', '=' };
-        private static readonly string[] defaultHelpArgs = { "?", "help" };
+        // ReSharper disable StaticMemberInGenericType
+        private static readonly char[] mDefaultParamChars = { '-', '/' };
+        private static readonly char[] mDefaultSeparatorChars = { ' ', ':', '=' };
+        private static readonly string[] mDefaultHelpArgs = { "?", "help" };
 
-        private static readonly Regex leadingWhitespaceMatcher = new Regex("^ +");
+        private static readonly Regex mLeadingWhitespaceMatcher = new Regex("^ +");
 
         /// <summary>
         /// Results from the parsing
@@ -99,8 +100,8 @@ namespace PRISM
             }
         }
 
-        private char[] paramChars = defaultParamChars;
-        private char[] separatorChars = defaultSeparatorChars;
+        private char[] paramChars = mDefaultParamChars;
+        private char[] separatorChars = mDefaultSeparatorChars;
         private Dictionary<string, ArgInfo> validArguments;
         private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes;
 
@@ -294,7 +295,7 @@ namespace PRISM
                 var validArgs = GetValidArgs();
 
                 // Show the help if a default help argument is provided, but only if the templated class does not define the arg provided
-                foreach (var helpArg in defaultHelpArgs)
+                foreach (var helpArg in mDefaultHelpArgs)
                 {
                     if (preprocessed.ContainsKey(helpArg) && validArgs.ContainsKey(helpArg.ToLower()))
                     {
@@ -818,7 +819,7 @@ namespace PRISM
             }
 
             // Add the default help string
-            foreach (var helpArg in defaultHelpArgs)
+            foreach (var helpArg in mDefaultHelpArgs)
             {
                 if (validArgs.ContainsKey(helpArg.ToLower()))
                 {
@@ -1004,7 +1005,7 @@ namespace PRISM
 
             foreach (var lineToWrap in textLinesToWrap)
             {
-                var reMatch = leadingWhitespaceMatcher.Match(lineToWrap);
+                var reMatch = mLeadingWhitespaceMatcher.Match(lineToWrap);
 
                 var leadingWhitespace = reMatch.Success ? reMatch.Value : string.Empty;
 
@@ -1137,11 +1138,11 @@ namespace PRISM
                 }
             }
 
-            foreach (var helpArg in defaultHelpArgs)
+            foreach (var helpArg in mDefaultHelpArgs)
             {
                 if (!validArgs.ContainsKey(helpArg.ToLower()))
                 {
-                    var info = new ArgInfo()
+                    var info = new ArgInfo
                     {
                         ArgNormalCase = helpArg,
                         CanBeSwitch = true,
@@ -1248,6 +1249,7 @@ namespace PRISM
     /// <summary>
     /// Attribute class to flag properties that are command line arguments
     /// </summary>
+    // ReSharper disable RedundantAttributeUsageProperty
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class OptionAttribute : Attribute
     {

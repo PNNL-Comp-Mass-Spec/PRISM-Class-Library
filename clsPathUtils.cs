@@ -227,6 +227,8 @@ namespace PRISM
                 return newFileName;
 
             var existingFile = new FileInfo(existingFilePath);
+
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (existingFile.DirectoryName == null)
                 return newFileName;
 
