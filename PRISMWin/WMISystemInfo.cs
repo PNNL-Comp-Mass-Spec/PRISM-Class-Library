@@ -20,15 +20,29 @@ namespace PRISMWin
         /// </remarks>
         public int GetCoreCount()
         {
+            return GetCoreCount(out _);
+        }
+
+        /// <summary>
+        /// Report the number of cores on this system
+        /// </summary>
+        /// <param name="numPhysicalProcessors">Number of physical processors</param>
+        /// <returns>The number of cores on this computer</returns>
+        /// <remarks>
+        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// </remarks>
+        public int GetCoreCount(out int numPhysicalProcessors)
+        {
             if (cachedCoreCount > 0)
             {
+                numPhysicalProcessors = cachedPhysicalProcessorCount;
                 return cachedCoreCount;
             }
 
             // Try to get the number of physical cores in the system - requires System.Management.dll and a WMI query, but the performance penalty for
             // using the number of logical processors in a hyperthreaded system is significant, and worse than the penalty for using fewer than all physical cores.
             var numPhysicalCores = 0;
-            var numPhysicalProcessors = 0;
+            numPhysicalProcessors = 0;
 
             try
             {
@@ -45,6 +59,7 @@ namespace PRISMWin
             }
 
             cachedCoreCount = numPhysicalCores;
+            cachedPhysicalProcessorCount = numPhysicalProcessors;
 
             return numPhysicalCores;
         }
