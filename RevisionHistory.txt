@@ -1,33 +1,52 @@
 Prism Class Library Log
 
-Version 2.4.19.0; August 24, 2017
+Version 2.4.35; October 13, 2017
+	- Move old log files into a year-based archive folder
+
+Version 2.4.34; October 11, 2017
+	- Add ShowErrors to ConsoleMsgUtils
+	- Add overload of GetCoreCount that returns the number of physical processors
+
+Version 2.4.32; September 11, 2017
+	- Expand CommandLineParser functionality
+
+Version 2.4.26; September 8, 2017
+	- Add UpdatePropertyHelpText
+
+Version 2.4.23; August 31, 2017
+	- Add code to get CPU and Memory information in a somewhat platform-agnostic way
+
+Version 2.4.21; August 25, 2017
+	- Add the DblToString functions from PNNLOmics to StringUtilities
+
+Version 2.4.19; August 24, 2017
 	- Add class ConsoleMsgUtils
 
-Version 2.4.16.0; August 8, 2017
+Version 2.4.16; August 8, 2017
 	- Update Pending Windows Update logic to reflect a new policy delaying forced push of updates by one week
 
-Version 2.4.12.0; July 31, 2017
+Version 2.4.12; July 31, 2017
 	- Add default values for CopyFilesUsingLocks arguments
 
-Version 2.4.11.0; July 28, 2017
+Version 2.4.11; July 28, 2017
 	- Extend the command line parser to support positional arguments
 
-Version 2.4.6.0; July 19, 2017
+Version 2.4.6; July 19, 2017
 	- Add .NET standard support
 	- Add new CommandLineParser class
 
-Version 2.4.5.0; June 6, 2017
+Version 2.4.5; June 6, 2017
 	- Add classes clsOSVersionInfo and clsLinuxSystemInfo
 	- Add property NoParameters to clsParseCommandLine
 	- Add unit tests
 
-Version 2.4.4.0; May 1, 2017
+Version 2.4.4; May 1, 2017
 	- Add class StringUtilities
 
-Version 2.4.2.0; March 29, 2017
+Version 2.4.2; March 29, 2017
 	- Added clsParseCommandLine
 
-Version 2.4.1.0; March 28, 2017
+Version 2.4.1; March 28, 2017
 	- Updated to new .csproj format
 	- Split out Windows-specific utilities to PRISMWin.dll
 	- Uploaded to NuGet

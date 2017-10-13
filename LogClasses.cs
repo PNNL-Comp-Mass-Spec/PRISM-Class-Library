@@ -75,7 +75,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="entryType">The ILogger error type.</param>
-        /// <param name="localOnly">Post message locally only.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         void PostEntry(string message, logMsgType entryType, bool localOnly);
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="e">The exception associated with the error.</param>
-        /// <param name="localOnly">Post message locally only.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         void PostError(string message, Exception e, bool localOnly);
     }
     #endregion
@@ -200,11 +200,13 @@ namespace PRISM
         /// <summary>
         /// Program name
         /// </summary>
+        /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
         private string m_programName;
 
         /// <summary>
         /// Program version
         /// </summary>
+        /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
         private string m_programVersion;
 
         private DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
@@ -212,6 +214,7 @@ namespace PRISM
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class.
         /// </summary>
+        /// <remarks>This constructor (without a file path) is required because clsDBLogger inherits clsFileLogger</remarks>
         public clsFileLogger()
         {
         }
@@ -219,8 +222,11 @@ namespace PRISM
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class which logs to the specified file.
         /// </summary>
-        /// <param name="filePath">The name of the file to use for the log.</param>
-        /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
+        /// <param name="logFileBaseName">The name of the file to use for the log (either a filename like UpdateManager, or a relative path, like Logs\UpdateManager</param>
+        /// <remarks>
+        /// The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt"
+        /// logFileBaseName is allowed to be blank (e.g. if using clsDBLogger and there is no need for a local log file)
+        /// </remarks>
         public clsFileLogger(string logFileBaseName)
         {
             LogFileBaseName = string.IsNullOrWhiteSpace(logFileBaseName) ? string.Empty : logFileBaseName;
@@ -411,7 +417,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="entryType">The ILogger error type.</param>
-        /// <param name="localOnly">Post message locally only.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         public virtual void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
             var messages = new List<clsLogEntry>{
@@ -426,7 +432,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="ex">The exception associated with the error.</param>
-        /// <param name="localOnly">Post message locally only.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         public virtual void PostError(string message, Exception ex, bool localOnly)
         {
             if (ex == null)
@@ -663,7 +669,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="entryType">The ILogger error type.</param>
-        /// <param name="localOnly">Post message locally only.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database</param>
         public override void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
             if (!string.IsNullOrWhiteSpace(LogFileBaseName))
@@ -945,7 +951,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="entryType">The ILogger error type.</param>
-        /// <param name="localOnly"></param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         public void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
             var le = new clsLogEntry(message, entryType, localOnly);
@@ -957,7 +963,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">The message to post.</param>
         /// <param name="e">The exception associated with the error.</param>
-        /// <param name="localOnly">Post message locally only.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         public void PostError(string message, Exception e, bool localOnly)
         {
             var le = new clsLogEntry(message + ": " + e.Message, logMsgType.logError, localOnly);
