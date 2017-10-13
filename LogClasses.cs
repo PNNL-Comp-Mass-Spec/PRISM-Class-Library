@@ -5,6 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace PRISM
@@ -186,8 +187,15 @@ namespace PRISM
         /// </summary>
         public const string FILENAME_DATESTAMP = "MM-dd-yyyy";
 
-        const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
+        private const string LOG_FILE_MATCH_SPEC = "??-??-????";
 
+        private const string LOG_FILE_DATE_REGEX = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
+
+        private const string LOG_FILE_EXTENSION = ".txt";
+
+        private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
+
+        private const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
 
         /// <summary>
         /// Program name
@@ -199,6 +207,7 @@ namespace PRISM
         /// </summary>
         private string m_programVersion;
 
+        private DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
 
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class.
@@ -215,10 +224,15 @@ namespace PRISM
         public clsFileLogger(string logFileBaseName)
         {
             LogFileBaseName = string.IsNullOrWhiteSpace(logFileBaseName) ? string.Empty : logFileBaseName;
+
+            UpdateCurrentLogFilePath();
         }
 
         /// <summary>
-        /// Path to the current log file
+        /// When true, auto-archive old log files daily
+        /// </summary>
+        public bool ArchiveOldLogFiles { get; set; } = true;
+
         /// <summary>
         /// Path to the current log file (readonly)
         /// </summary>
@@ -281,6 +295,54 @@ namespace PRISM
         /// </summary>
         public string MostRecentErrorMessage { get; private set; } = "";
 
+        /// <summary>
+        /// Move log files more than 32 days old into a year-based folder
+        /// </summary>
+        private void ArchiveOldLogs()
+        {
+            var targetPath = "??";
+
+            try
+            {
+                var currentLogFile = new FileInfo(CurrentLogFilePath);
+
+                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
+
+                var logDirectory = currentLogFile.Directory;
+                var logFiles = logDirectory.GetFiles(matchSpec);
+
+                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
+
+                foreach (var logFile in logFiles)
+                {
+                    var match = matcher.Match(logFile.Name);
+
+                    if (!match.Success)
+                        continue;
+
+                    var logFileYear = int.Parse(match.Groups["Year"].Value);
+                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
+                    var logFileDay = int.Parse(match.Groups["Day"].Value);
+
+                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
+
+                    if (DateTime.Now.Subtract(logDate).TotalDays <= OLD_LOG_FILE_AGE_THRESHOLD_DAYS)
+                        continue;
+
+                    var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
+                    if (!targetDirectory.Exists)
+                        targetDirectory.Create();
+
+                    targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
+
+                    logFile.MoveTo(targetPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                PostError("Error moving old log file to " + targetPath, ex, true);
+            }
+        }
 
         /// <summary>
         /// Writes a message to the log file.
@@ -295,10 +357,8 @@ namespace PRISM
                 return;
             }
 
-            // Set up date values for file name
-
-            // Create log file name by appending specified file name and date
-            m_CurrentLogFilePath = m_logFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATESTAMP) + ".txt";
+            // Make sure the log file name is up-to-date
+            UpdateCurrentLogFilePath();
 
             try
             {
@@ -330,6 +390,11 @@ namespace PRISM
                 // Ignore errors here
             }
 
+            if (!ArchiveOldLogFiles || DateTime.UtcNow.Subtract(m_LastCheckOldLogs).TotalHours < 24)
+                return;
+
+            m_LastCheckOldLogs = DateTime.UtcNow;
+            ArchiveOldLogs();
         }
 
         /// <summary>
@@ -410,6 +475,16 @@ namespace PRISM
             }
             return functionReturnValue;
         }
+
+        private void UpdateCurrentLogFilePath()
+        {
+            if (string.IsNullOrWhiteSpace(LogFileBaseName))
+                CurrentLogFilePath = string.Empty;
+            else
+                // Define log file name by appending the current date to m_logFileBaseName
+                CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATESTAMP) + LOG_FILE_EXTENSION;
+        }
+
 
     }
     #endregion
