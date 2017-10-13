@@ -277,13 +277,16 @@ namespace PRISM
         /// <summary>
         /// The base name of the the log file, e.g. UpdateManager or Logs\UpdateManager
         /// </summary>
-        /// <remarks>The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt".</remarks>
+        /// <remarks>
+        /// The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt"
+        /// This property is readonly; define when instantiating the logger using the constructor
+        /// </remarks>
         public string LogFileBaseName { get; private set; }
 
         /// <summary>
         /// The base name of the the log file, e.g. UpdateManager or Logs\UpdateManager
         /// </summary>
-        /// <remarks>The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt".</remarks>
+        /// <remarks>The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt"</remarks>
         [Obsolete("Use LogFileBaseName instead")]
         public string LogFilePath
         {
@@ -827,7 +830,8 @@ namespace PRISM
     /// onto the end of an internal queue and return very quickly to the caller.
     /// A separate thread within the class is used to perform the actual output of
     /// the log entries using the logging object that is specified
-    /// in the constructor for this class.</remarks>
+    /// in the constructor for this class.
+    /// </remarks>
     public class clsQueLogger : ILogger
     {
         /// <summary>
