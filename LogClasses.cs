@@ -188,11 +188,6 @@ namespace PRISM
 
         const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
 
-        /// <summary>
-        /// Base log file name (either a file name or a full path)
-        /// </summary>
-        /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
-        private string m_logFileBaseName = "";
 
         /// <summary>
         /// Program name
@@ -204,20 +199,6 @@ namespace PRISM
         /// </summary>
         private string m_programVersion;
 
-        /// <summary>
-        /// Current log file path
-        /// </summary>
-        protected string m_CurrentLogFilePath = string.Empty;
-
-        /// <summary>
-        /// Most recent log message
-        /// </summary>
-        protected string m_MostRecentLogMessage = string.Empty;
-
-        /// <summary>
-        /// Most recent error message
-        /// </summary>
-        protected string m_MostRecentErrorMessage = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class.
@@ -233,13 +214,15 @@ namespace PRISM
         /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
         public clsFileLogger(string filePath)
         {
-            m_logFileBaseName = filePath;
+            LogFileBaseName = string.IsNullOrWhiteSpace(logFileBaseName) ? string.Empty : logFileBaseName;
         }
 
         /// <summary>
         /// Path to the current log file
+        /// <summary>
+        /// Path to the current log file (readonly)
         /// </summary>
-        public string CurrentLogFilePath => m_CurrentLogFilePath;
+        public string CurrentLogFilePath { get; private set; } = "";
 
         /// <summary>
         /// Gets the product version associated with this application.
@@ -272,24 +255,32 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The name of the file being used as the log.
+        /// The base name of the the log file, e.g. UpdateManager or Logs\UpdateManager
         /// </summary>
-        /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
+        /// <remarks>The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt".</remarks>
+        public string LogFileBaseName { get; private set; }
+
+        /// <summary>
+        /// The base name of the the log file, e.g. UpdateManager or Logs\UpdateManager
+        /// </summary>
+        /// <remarks>The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt".</remarks>
+        [Obsolete("Use LogFileBaseName instead")]
         public string LogFilePath
         {
-            get => m_logFileBaseName;
-            set => m_logFileBaseName = value;
+            get => LogFileBaseName;
+            set => LogFileBaseName = value;
         }
 
         /// <summary>
         /// Most recent log message
         /// </summary>
-        public string MostRecentLogMessage => m_MostRecentLogMessage;
+        public string MostRecentLogMessage { get; private set; } = "";
 
         /// <summary>
         /// Most recent error message
         /// </summary>
-        public string MostRecentErrorMessage => m_MostRecentErrorMessage;
+        public string MostRecentErrorMessage { get; private set; } = "";
+
 
         /// <summary>
         /// Writes a message to the log file.
@@ -325,11 +316,11 @@ namespace PRISM
 
                         if (item.EntryType == logMsgType.logError)
                         {
-                            m_MostRecentErrorMessage = FormattedLogMessage;
+                            MostRecentErrorMessage = formattedLogMessage;
                         }
                         else
                         {
-                            m_MostRecentLogMessage = FormattedLogMessage;
+                            MostRecentLogMessage = formattedLogMessage;
                         }
                     }
                 }
@@ -488,6 +479,11 @@ namespace PRISM
         }
 
         /// <summary>
+        /// List of any database errors that occurred while posting the log entry to the database
+        /// </summary>
+        public IReadOnlyList<string> DBErrors => m_error_list;
+
+        /// <summary>
         /// The module name identifies the logging process.
         /// </summary>
         public string MachineName
@@ -567,7 +563,7 @@ namespace PRISM
         /// <param name="messages">The messages to post.</param>
         public override void PostEntries(List<clsLogEntry> messages)
         {
-            if(!string.IsNullOrWhiteSpace(LogFilePath))
+            if(!string.IsNullOrWhiteSpace(LogFileBaseName))
             {
                 base.PostEntries(messages);
             }
@@ -589,7 +585,7 @@ namespace PRISM
         /// <param name="localOnly">Post message locally only.</param>
         public override void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
-            if (!string.IsNullOrWhiteSpace(LogFilePath))
+            if (!string.IsNullOrWhiteSpace(LogFileBaseName))
             {
                 base.PostEntry(message, entryType, localOnly);
             }
