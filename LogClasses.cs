@@ -330,40 +330,7 @@ namespace PRISM
             {
                 // Ignore errors here
             }
-        }
 
-        /// <summary>
-        /// Converts enumerated error type to string for logging output.
-        /// </summary>
-        /// <param name="MyErrType">The ILogger error type.</param>
-        protected string TypeToString(logMsgType MyErrType)
-        {
-            string functionReturnValue;
-            switch (MyErrType)
-            {
-                case logMsgType.logNormal:
-                    functionReturnValue = "Normal";
-                    break;
-                case logMsgType.logError:
-                    functionReturnValue = "Error";
-                    break;
-                case logMsgType.logWarning:
-                    functionReturnValue = "Warning";
-                    break;
-                case logMsgType.logDebug:
-                    functionReturnValue = "Debug";
-                    break;
-                case logMsgType.logNA:
-                    functionReturnValue = "na";
-                    break;
-                case logMsgType.logHealth:
-                    functionReturnValue = "Health";
-                    break;
-                default:
-                    functionReturnValue = "??";
-                    break;
-            }
-            return functionReturnValue;
         }
 
         /// <summary>
@@ -403,6 +370,40 @@ namespace PRISM
             };
 
             LogToFile(messages);
+        }
+
+        /// <summary>
+        /// Converts enumerated error type to string for logging output.
+        /// </summary>
+        /// <param name="MyErrType">The ILogger error type.</param>
+        protected string TypeToString(logMsgType MyErrType)
+        {
+            string functionReturnValue;
+            switch (MyErrType)
+            {
+                case logMsgType.logNormal:
+                    functionReturnValue = "Normal";
+                    break;
+                case logMsgType.logError:
+                    functionReturnValue = "Error";
+                    break;
+                case logMsgType.logWarning:
+                    functionReturnValue = "Warning";
+                    break;
+                case logMsgType.logDebug:
+                    functionReturnValue = "Debug";
+                    break;
+                case logMsgType.logNA:
+                    functionReturnValue = "na";
+                    break;
+                case logMsgType.logHealth:
+                    functionReturnValue = "Health";
+                    break;
+                default:
+                    functionReturnValue = "??";
+                    break;
+            }
+            return functionReturnValue;
         }
 
     }
