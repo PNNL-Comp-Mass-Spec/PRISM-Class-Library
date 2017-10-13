@@ -212,7 +212,7 @@ namespace PRISM
         /// </summary>
         /// <param name="filePath">The name of the file to use for the log.</param>
         /// <remarks>The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".</remarks>
-        public clsFileLogger(string filePath)
+        public clsFileLogger(string logFileBaseName)
         {
             LogFileBaseName = string.IsNullOrWhiteSpace(logFileBaseName) ? string.Empty : logFileBaseName;
         }
@@ -288,8 +288,9 @@ namespace PRISM
         /// <param name="messages">List of messages to post.</param>
         private void LogToFile(IEnumerable<clsLogEntry> messages)
         {
-            // don't log to file if no file name given
-            if (string.IsNullOrEmpty(m_logFileBaseName))
+            // Don't log to file if no file name given
+            // This will be the case if logging to clsDBLogger and a filepath was not provided when the class was instantiated
+            if (string.IsNullOrEmpty(LogFileBaseName))
             {
                 return;
             }
@@ -301,18 +302,16 @@ namespace PRISM
 
             try
             {
-                using (var swLogFile = new StreamWriter(new FileStream(m_CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
+                using (var writer = new StreamWriter(new FileStream(CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
                 {
 
                     foreach (var item in messages)
                     {
 
-                        var FormattedLogMessage =
-                        DateTime.Now.ToString(DATE_TIME_FORMAT) + ", " +
-                        item.Message + ", " +
-                        TypeToString(item.EntryType) + ", ";
+                        var formattedLogMessage = string.Format("{0}, {1}, {2}",
+                            DateTime.Now.ToString(DATE_TIME_FORMAT), item.Message, TypeToString(item.EntryType));
 
-                        swLogFile.WriteLine(FormattedLogMessage);
+                        writer.WriteLine(formattedLogMessage);
 
                         if (item.EntryType == logMsgType.logError)
                         {
@@ -365,6 +364,12 @@ namespace PRISM
         /// <param name="localOnly">Post message locally only.</param>
         public virtual void PostError(string message, Exception ex, bool localOnly)
         {
+            if (ex == null)
+            {
+                PostEntry(message, logMsgType.logError, localOnly);
+                return;
+            }
+
             var messages = new List<clsLogEntry>{
                 new clsLogEntry(message + ": " + ex.Message, logMsgType.logError, localOnly)
             };
@@ -601,17 +606,17 @@ namespace PRISM
         /// Posts an error to the log.
         /// </summary>
         /// <param name="message">The message to post.</param>
-        /// <param name="e">The exception associated with the error.</param>
-        /// <param name="localOnly">Post message locally only.</param>
-        public override void PostError(string message, Exception e, bool localOnly)
+        /// <param name="ex">The exception associated with the error.</param>
+        /// <param name="localOnly">If true, only post the message to the local log file, not the database</param>
+        public override void PostError(string message, Exception ex, bool localOnly)
         {
-            if (LogFilePath != null)
+            if (!string.IsNullOrWhiteSpace(LogFileBaseName))
             {
-                base.PostError(message, e, localOnly);
+                base.PostError(message, ex, localOnly);
             }
             if (!localOnly)
             {
-                LogToDB(message + ": " + e.Message, logMsgType.logError);
+                LogToDB(message + ": " + ex.Message, logMsgType.logError);
             }
         }
 
@@ -679,15 +684,14 @@ namespace PRISM
         {
             foreach (SqlError err in args.Errors)
             {
-                var s = "";
-                s += "Message: " + err.Message;
-                s += ", Source: " + err.Source;
-                s += ", Class: " + err.Class;
-                s += ", State: " + err.State;
-                s += ", Number: " + err.Number;
-                s += ", LineNumber: " + err.LineNumber;
-                s += ", Procedure:" + err.Procedure;
-                s += ", Server: " + err.Server;
+                var s = "Message: " + err.Message +
+                        ", Source: " + err.Source +
+                        ", Class: " + err.Class +
+                        ", State: " + err.State +
+                        ", Number: " + err.Number +
+                        ", LineNumber: " + err.LineNumber +
+                        ", Procedure:" + err.Procedure +
+                        ", Server: " + err.Server;
                 m_error_list.Add(s);
             }
         }
