@@ -73,7 +73,7 @@ namespace PRISM
         public static string CombinePaths(string path1, string path2, char directorySepChar)
         {
             if (path1 == null || path2 == null)
-                throw new ArgumentNullException((path1 == null) ? "path1" : "path2");
+                throw new ArgumentNullException(path1 == null ? "path1" : "path2");
 
             if (string.IsNullOrWhiteSpace(path2))
                 return path1;

@@ -285,7 +285,7 @@ namespace PRISM
             if (Math.Abs(value) < double.Epsilon)
                 return "0";
 
-            if (Math.Abs(value) >= 10 && Math.Abs(value - (int)value) < 1 / (Math.Pow(10, digitsAfterDecimal)) / 2.0)
+            if (Math.Abs(value) >= 10 && Math.Abs(value - (int)value) < 1 / Math.Pow(10, digitsAfterDecimal) / 2.0)
             {
                 // Value 10 or larger and it is nearly an integer value (at least with respect to digitsOfPrecision)
                 // Return values like 10 or 150 instead of 10.000 or 150.000
@@ -301,7 +301,7 @@ namespace PRISM
 
             if (Math.Abs(value) > 1 && limitDecimalsForLargeValues)
             {
-                var digitsRightOfDecimal = digitsAfterDecimal - (byte)(Math.Floor(Math.Log10(value)));
+                var digitsRightOfDecimal = digitsAfterDecimal - (byte)Math.Floor(Math.Log10(value));
 
                 if (digitsRightOfDecimal >= 0)
                     effectiveDigitsAfterDecimal = (byte)digitsRightOfDecimal;

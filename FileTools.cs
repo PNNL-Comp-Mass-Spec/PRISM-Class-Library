@@ -655,7 +655,7 @@ namespace PRISM
             // If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
             // copy the file normally
             var intSourceFileSizeMB = Convert.ToInt32(fiSource.Length / 1024.0 / 1024.0);
-            if (intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || (string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget)))
+            if (intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget))
             {
                 const bool backupDestFileBeforeCopy = false;
                 if (DebugLevel >= 2)
@@ -895,7 +895,7 @@ namespace PRISM
 
             try
             {
-                if ((fiFile.Exists))
+                if (fiFile.Exists)
                 {
                     fiFile.Delete();
                 }
@@ -1509,7 +1509,7 @@ namespace PRISM
 
                 // Populate objFileNamesToSkipCaseInsensitive
                 var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-                if ((fileNamesToSkip != null))
+                if (fileNamesToSkip != null)
                 {
                     // Copy the values from fileNamesToSkip to dctFileNamesToSkip so that we can perform case-insensitive searching
                     foreach (var strItem in fileNamesToSkip)
@@ -1556,7 +1556,7 @@ namespace PRISM
                                     break;
 
                                 case FileOverwriteMode.OverwriteIfSourceNewer:
-                                    if (fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc || (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length))
+                                    if (fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc || NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length)
                                     {
                                         copyFile = false;
                                     }
@@ -2504,7 +2504,7 @@ namespace PRISM
                     }
 
                     // Make sure the readonly bit is not set
-                    if ((fiFile.IsReadOnly))
+                    if (fiFile.IsReadOnly)
                     {
                         var attributes = fiFile.Attributes;
                         fiFile.Attributes = attributes & ~FileAttributes.ReadOnly;
@@ -2594,7 +2594,7 @@ namespace PRISM
         {
             double outputFileExpectedSizeMB = 0;
 
-            return (ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage));
+            return ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage);
         }
 
         /// <summary>
@@ -2723,12 +2723,12 @@ namespace PRISM
 
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
-            if ((diLockFolderSource != null) && diLockFolderSource.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            if (diLockFolderSource != null && diLockFolderSource.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
             {
                 maxWaitTimeSource = 30;
             }
 
-            if ((diLockFolderTarget != null) && diLockFolderTarget.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            if (diLockFolderTarget != null && diLockFolderTarget.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
             {
                 maxWaitTimeTarget = 30;
             }

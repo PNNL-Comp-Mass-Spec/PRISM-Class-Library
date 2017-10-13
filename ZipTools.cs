@@ -33,7 +33,7 @@ namespace PRISM
 
 
             // Verify input file and output path have been specified
-            if ((string.IsNullOrEmpty(m_ZipFilePath)) | (string.IsNullOrEmpty(m_WorkDir)))
+            if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
             {
                 m_EventLogger?.PostEntry("Input file path and/or working path not specified.", logMsgType.logError, true);
                 return false;
@@ -56,7 +56,7 @@ namespace PRISM
             zipper.StartAndMonitorProgram();
 
             // Wait for zipper program to complete
-            while ((zipper.State != clsProgRunner.States.NotMonitoring))
+            while (zipper.State != clsProgRunner.States.NotMonitoring)
             {
                 m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
                 clsProgRunner.SleepMilliseconds(m_WaitInterval);
@@ -83,7 +83,7 @@ namespace PRISM
 
 
             // Verify input file and output path have been specified
-            if ((string.IsNullOrEmpty(m_ZipFilePath)) | (string.IsNullOrEmpty(m_WorkDir)))
+            if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
             {
                 m_EventLogger?.PostEntry("Input file path and/or working path not specified.", logMsgType.logError, true);
                 return false;
@@ -123,7 +123,7 @@ namespace PRISM
             zipper.StartAndMonitorProgram();
 
             // Wait for zipper program to complete
-            while ((zipper.State != clsProgRunner.States.NotMonitoring))
+            while (zipper.State != clsProgRunner.States.NotMonitoring)
             {
                 m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
                 clsProgRunner.SleepMilliseconds(m_WaitInterval);
@@ -210,7 +210,7 @@ namespace PRISM
             }
 
             // Verify Zip file and output path have been specified
-            if ((string.IsNullOrEmpty(m_ZipFilePath)) | (string.IsNullOrEmpty(m_WorkDir)))
+            if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
             {
                 m_EventLogger?.PostEntry("Zip file path and/or working path not specified.", logMsgType.logError, true);
                 return false;
@@ -236,7 +236,7 @@ namespace PRISM
             zipper.StartAndMonitorProgram();
 
             // Wait for zipper program to complete
-            while ((zipper.State != clsProgRunner.States.NotMonitoring))
+            while (zipper.State != clsProgRunner.States.NotMonitoring)
             {
                 m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
                 clsProgRunner.SleepMilliseconds(m_WaitInterval);
