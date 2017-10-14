@@ -75,8 +75,8 @@ if the network connection is lost (or the copy process is manually terminated).
 
 Written by Matthew Monroe, Dave Clark, Gary Kiebel, Nathan Trimble, and Bryson Gibbons for the Department of Energy (PNNL, Richland, WA) \
 Copyright 2017, Battelle Memorial Institute.  All Rights Reserved. \
-E-mail: matthew.monroe@pnnl.gov or matt@alchemistmatt.com \
-Website: http://panomics.pnl.gov/ or http://www.sysbio.org/resources/staff/
+E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov \
+Website: https://panomics.pnl.gov/ or https://omics.pnl.gov
 
 ## License
 
