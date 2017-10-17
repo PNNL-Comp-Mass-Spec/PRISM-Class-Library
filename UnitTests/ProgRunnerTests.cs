@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using NUnit.Framework;
 using PRISM;
 
@@ -31,6 +33,113 @@ namespace PRISMTest
         public void TestAbortRunningProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
         {
             TestRunProgram(exeName, cmdArgs, createNoWindow, writeConsoleOutput, maxRuntimeSeconds, programAbortExpected: true);
+        }
+
+        [Test]
+        [TestCase(2500000, 5, 250, 2500)]
+        public void TestGarbageCollection(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
+        {
+            // This method will create 2.5 million FileInfo objects (if iterations is 2500000) and store those in random locations in various dictionaries
+            // It will remove half of the dictionaries gcEvents times, calling GarbageCollectNow after each removal
+
+            var dictionaries = new List<Dictionary<int, List<FileInfo>>>();
+            var rand = new Random();
+
+            var keysRemoved = 0;
+            var valuesRemoved = 0;
+
+            var lastGC = DateTime.UtcNow;
+
+            var gcInterval = (int)Math.Floor(iterations / (double)gcEvents);
+
+            for (var i = 0; i < iterations; i++)
+            {
+                // Pick a dictionary at random (add new dictionaries if required)
+                var dictionaryIndex = rand.Next(0, dictionaryCount - 1);
+                while (dictionaries.Count < dictionaryIndex + 1)
+                {
+                    dictionaries.Add(new Dictionary<int, List<FileInfo>>());
+                }
+
+                var currentDictionary = dictionaries[dictionaryIndex];
+
+                // Create a random filename, 100 characters long, composed of upper and lowercase letters
+                var randomName = new StringBuilder();
+                for (var charIndex = 0; charIndex < 100; charIndex++)
+                {
+                    if (rand.NextDouble() > 0.85)
+                        randomName.Append((char)rand.Next(65, 91));
+                    else
+                        randomName.Append((char)rand.Next(97, 123));
+                }
+
+                // Create a FileInfo object
+                var randomFile = new FileInfo(randomName + ".txt");
+
+                // Pick a random key for selecting a list to append the FileInfo object to
+                var key = rand.Next(0, dictionarySize);
+                if (currentDictionary.TryGetValue(key, out var values))
+                {
+                    values.Add(randomFile);
+                }
+                else
+                {
+                    var newValues = new List<FileInfo> { randomFile };
+                    currentDictionary.Add(key, newValues);
+                }
+
+                if (i == 0 || i % gcInterval != 0) continue;
+
+                // Remove half of the dictionaries, at random
+                var targetCount = dictionaries.Count / 2;
+
+                for (var j = 0; j < targetCount; j++)
+                {
+                    var dictionaryIndexToRemove = rand.Next(0, dictionaries.Count - 1);
+
+                    var dictionaryToRemove = dictionaries[dictionaryIndexToRemove];
+
+                    keysRemoved = dictionaryToRemove.Keys.Count;
+
+                    foreach (var keyToRemove in dictionaryToRemove.Keys)
+                    {
+                        valuesRemoved += dictionaryToRemove[keyToRemove].Count;
+                    }
+
+                    dictionaries.RemoveAt(dictionaryIndexToRemove);
+                }
+
+                Console.WriteLine("Garbage collect at {0:yyyy-MM-dd hh:mm:ss tt} ({1:F1} seconds elapsed)",
+                    DateTime.Now, DateTime.UtcNow.Subtract(lastGC).TotalSeconds);
+
+                clsProgRunner.GarbageCollectNow();
+
+                lastGC = DateTime.UtcNow;
+            }
+
+            Console.WriteLine("{0} dictionaries", dictionaries.Count);
+
+            var totalKeys = 0;
+            var totalValues = 0;
+
+            foreach (var dictionary in dictionaries)
+            {
+                totalKeys += dictionary.Keys.Count;
+
+                foreach (var key in dictionary.Keys)
+                {
+                    totalValues += dictionary[key].Count;
+
+                }
+            }
+
+            Console.WriteLine("{0} total keys", totalKeys);
+            Console.WriteLine("{0} total values", totalValues);
+
+            Console.WriteLine("{0} keys removed", keysRemoved);
+            Console.WriteLine("{0} values removed", valuesRemoved);
+
+
         }
 
         /// <summary>
