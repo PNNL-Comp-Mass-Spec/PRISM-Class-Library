@@ -11,7 +11,6 @@ namespace PRISMTest
     [TestFixture]
     class TestLinuxSystemInfo
     {
-        private const string SHARE_PATH = @"\\proto-2\unitTest_Files\PRISM";
 
         internal const bool SHOW_TRACE_MESSAGES = false;
 
@@ -485,23 +484,7 @@ namespace PRISMTest
 
         private FileInfo VerifyTestFile(string filePath)
         {
-            var testFile = new FileInfo(filePath);
-            if (testFile.Exists)
-                return testFile;
-
-            string relativeDirectory;
-
-            if (filePath.Length > testFile.Name.Length)
-                relativeDirectory = filePath.Substring(0, filePath.Length - testFile.Name.Length);
-            else
-                relativeDirectory = string.Empty;
-
-            var alternateFile = new FileInfo(Path.Combine(SHARE_PATH, relativeDirectory, testFile.Name));
-            if (alternateFile.Exists)
-                return alternateFile;
-
-            Assert.Fail("File not found: " + testFile.FullName);
-            return null;
+            return FileRefs.GetTestFile(filePath);
         }
 
         private void ShowTraceMessage(string message)
