@@ -466,9 +466,8 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Force garbage collection
+        /// Force the garbage collector to run, waiting up to 1 second for it to finish
         /// </summary>
-        /// <remarks>Waits up to 1 second for the collection to finish</remarks>
         public static void GarbageCollectNow()
         {
             const int maxWaitTimeMSec = 1000;
@@ -476,17 +475,54 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Force garbage collection
+        /// Force the garbage collector to run
         /// </summary>
-        /// <remarks></remarks>
+        /// <param name="maxWaitTimeMSec"></param>
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {
+            const int THREAD_SLEEP_TIME_MSEC = 100;
 
-            SleepMilliseconds(100);
+            if (maxWaitTimeMSec < 100)
+                maxWaitTimeMSec = 100;
+            if (maxWaitTimeMSec > 5000)
+                maxWaitTimeMSec = 5000;
 
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            Thread.Sleep(100);
 
+            try
+            {
+                var gcThread = new Thread(GarbageCollectWaitForGC);
+                gcThread.Start();
+
+                var totalThreadWaitTimeMsec = 0;
+                while (gcThread.IsAlive && totalThreadWaitTimeMsec < maxWaitTimeMSec)
+                {
+                    Thread.Sleep(THREAD_SLEEP_TIME_MSEC);
+                    totalThreadWaitTimeMsec += THREAD_SLEEP_TIME_MSEC;
+                }
+
+                if (gcThread.IsAlive)
+                    gcThread.Abort();
+
+            }
+            catch
+            {
+                // Ignore errors here
+            }
+
+        }
+
+        private static void GarbageCollectWaitForGC()
+        {
+            try
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
+            catch
+            {
+                // Ignore errors here
+            }
         }
 
         /// <summary>
@@ -805,8 +841,7 @@ namespace PRISM
                 if (m_ConsoleOutputStreamWriter != null)
                 {
                     // Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
-                    var maxWaitTimeMSec = 1000;
-                    GarbageCollectNow(maxWaitTimeMSec);
+                    GarbageCollectNow();
                     m_ConsoleOutputStreamWriter.Flush();
                     m_ConsoleOutputStreamWriter.Dispose();
                 }
