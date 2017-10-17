@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace PRISMTest
     [TestFixture]
     class TestPathUtils
     {
+
         [Test]
         [TestCase(@"/proc/12343/stat", @"/proc/12343/stat")]
         [TestCase(@"/proc/subdir\filename", @"/proc/subdir/filename")]
@@ -83,6 +85,94 @@ namespace PRISMTest
         }
 
         [Test]
+        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
+        [Category("PNL_Domain")]
+        public void TestFindFilesWildcardInternal(string folderPath, string fileMask, string expectedFileNames, bool recurse)
+        {
+            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, recurse);
+        }
+
+        [Test]
+        [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini", false)]
+        [TestCase(@"c:\windows\", "*.ini", "system.ini, win.ini", false)]
+        [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini", true)]
+        [TestCase(@"c:\windows\", "*.dll", "perfos.dll, perfnet.dll", true)]
+        public void TestFindFilesWildcard(string folderPath, string fileMask, string expectedFileNames, bool recurse)
+        {
+            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, recurse);
+        }
+
+        [Test]
+        [TestCase(@"LinuxTestFiles\Ubuntu\proc\cpuinfo", "*info", "cpuinfo, meminfo", 6)]
+        public void TestFindFilesWildcardRelativeFolder(string filePath, string fileMask, string expectedFileNames, int expectedFileCount)
+        {
+            // Get the full path to the LinuxTestFiles folder, 3 levels up from the cpuinfo test file
+            var cpuInfoFile = FileRefs.GetTestFile(filePath);
+
+            var currentDirectory = cpuInfoFile.Directory;
+            for (var parentCount = 1; parentCount < 3; parentCount++)
+            {
+                var parentCandidate = currentDirectory.Parent;
+                if (parentCandidate == null)
+                    Assert.Fail("Cannot determine the parent directory of " + currentDirectory.FullName);
+
+                currentDirectory = parentCandidate;
+            }
+
+            TestFindFilesWildcardWork(currentDirectory.FullName, fileMask, expectedFileNames, true, expectedFileCount);
+        }
+
+        private void TestFindFilesWildcardWork(string folderPath, string fileMask, string expectedFileNames, bool recurse, int expectedFileCount = 0)
+        {
+            var folder = new DirectoryInfo(folderPath);
+
+            // Combine the folder path and the file mask
+            var pathSpec = Path.Combine(folder.FullName, fileMask);
+
+            var files1 = clsPathUtils.FindFilesWildcard(pathSpec, recurse);
+
+            // Separately, send the DirectoryInfo object plus the file mask
+            var files2 = clsPathUtils.FindFilesWildcard(folder, fileMask, recurse);
+
+            // The results should be the same
+            Assert.AreEqual(files1.Count, files2.Count, "File count mismatch");
+
+            if (string.IsNullOrWhiteSpace(expectedFileNames))
+                return;
+
+            // Make sure we found files with the expected names
+            var expectedFileList = expectedFileNames.Split(',');
+
+            var foundFileNames = new SortedSet<string>();
+            foreach (var foundFile in files1)
+            {
+                if (foundFileNames.Contains(foundFile.Name))
+                    continue;
+
+                foundFileNames.Add(foundFile.Name);
+                if (foundFileNames.Count == 1)
+                    Console.Write(foundFile.Name);
+                else if (foundFileNames.Count <= 5)
+                    Console.Write(", " + foundFile.Name);
+                else if (foundFileNames.Count == 6)
+                    Console.WriteLine(" ...");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Found {0} files (recurse={1})", files1.Count, recurse);
+
+            foreach (var expectedFile in expectedFileList)
+            {
+                if (!foundFileNames.Contains(expectedFile.Trim()))
+                    Assert.Fail("Did not an expected file in {0}: {1}", folderPath, expectedFile);
+            }
+
+            if (expectedFileCount > 0)
+                Assert.GreaterOrEqual(files1.Count, expectedFileCount, "Found {0} files; expected to find {1}", files1.Count, expectedFileCount);
+
+        }
+
+        [Test]
         [TestCase("Results.txt", "*.txt", true)]
         [TestCase("Results.txt", "*.zip", false)]
         [TestCase("Results.txt", "*", true)]
@@ -93,6 +183,11 @@ namespace PRISMTest
             var result = clsPathUtils.FitsMask(fileName, fileMask);
 
             Assert.AreEqual(expectedResult, result);
+
+            if (result)
+                Console.WriteLine("{0} matches\n{1}", fileName, fileMask);
+            else
+                Console.WriteLine("{0} does not match\n{1}", fileName, fileMask);
         }
 
         [Test]
@@ -169,5 +264,6 @@ namespace PRISMTest
             var newPath = clsPathUtils.ReplaceFilenameInPath(existingFilePath, newFileName);
             Assert.AreEqual(expectedResult, newPath);
         }
+
     }
 }
