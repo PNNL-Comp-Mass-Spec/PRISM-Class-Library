@@ -161,7 +161,16 @@ namespace PRISM
             else
                 totalDigitsOfPrecision = digitsOfPrecision;
 
+            if (Math.Abs(scientificNotationThreshold) < 1 && scientificNotationThreshold > float.Epsilon)
+            {
+                // scientificNotationThreshold is supposed to have a number like 10, 100, 1000
+                // Instead, it has a number like 0.1 or 0.01 or 0.001
+                // Take the inverse
+                scientificNotationThreshold = 1 / scientificNotationThreshold;
+            }
+
             double effectiveScientificNotationThreshold;
+
             if (Math.Abs(scientificNotationThreshold) < 10)
                 effectiveScientificNotationThreshold = 10;
             else
