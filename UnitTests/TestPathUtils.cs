@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using PRISM;
 
@@ -134,8 +131,20 @@ namespace PRISMTest
             // Separately, send the DirectoryInfo object plus the file mask
             var files2 = clsPathUtils.FindFilesWildcard(folder, fileMask, recurse);
 
-            // The results should be the same
-            Assert.AreEqual(files1.Count, files2.Count, "File count mismatch");
+            int allowedVariance;
+
+            // The results should be the same, though the number of .ini files in the Windows directory can vary so we allow some variance
+            if (folderPath.ToLower().Contains(@"\windows") || files1.Count > 1000)
+                allowedVariance = (int)Math.Floor(files1.Count * 0.05);
+            else
+                allowedVariance = 0;
+
+            Console.WriteLine("Files via pathSpec: {0}", files1.Count);
+            Console.WriteLine("Files via fileMask: {0}", files2.Count);
+
+            var fileCountDifference = Math.Abs(files1.Count - files2.Count);
+
+            Assert.LessOrEqual(fileCountDifference, allowedVariance, "File count mismatch; {1} > {0}", fileCountDifference, allowedVariance);
 
             if (string.IsNullOrWhiteSpace(expectedFileNames))
                 return;
