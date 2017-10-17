@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using NUnit.Framework;
 using PRISM;
 
@@ -88,6 +87,24 @@ namespace PRISMTest
             TestValue(5000.12345, 5, "5000.1");
             TestValue(50000.12345, 5, "50000");
             TestValue(500000.12345, 5, "500000");
+            Console.WriteLine();
+
+            TestValue(0.12345, 5, "0.12345", 1000);
+            TestValue(5.12345, 5, "5.1235", 1000);
+            TestValue(50.12345, 5, "50.123", 1000);
+            TestValue(500.12345, 5, "500.12", 1000);
+            TestValue(5000.12345, 5, "5.0001E+03", 1000);
+            TestValue(50000.12345, 5, "5.0E+04", 1000);
+            TestValue(500000.12345, 5, "5.0E+05", 1000);
+            Console.WriteLine();
+
+            TestValue(0.12345, 5, "0.12345", 0.001);
+            TestValue(5.12345, 5, "5.1235", 0.001);
+            TestValue(50.12345, 5, "50.123", 0.001);
+            TestValue(500.12345, 5, "500.12", 0.001);
+            TestValue(5000.12345, 5, "5.0001E+03", 0.001);
+            TestValue(50000.12345, 5, "5.0E+04", 0.001);
+            TestValue(500000.12345, 5, "5.0E+05", 0.001);
             Console.WriteLine();
 
             TestValue(0.12345, 7, "0.12345");
