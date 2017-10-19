@@ -1,11 +1,18 @@
 Prism Class Library Log
 
-Version 2.4.36; October 16, 2017
+Version 2.4.39; October 18, 2017
+	- clsEventNotifier events now display messages at the console if there are no listeners
+		- Disable with WriteToConsoleIfNoListener or the SkipConsoleWrite properties
+
+Version 2.4.38; October 17, 2017
+	- Auto-fix scientificNotationThreshold in ValueToString when less than 1
+
+Version 2.4.37; October 16, 2017
 	- Add FileRefs class for finding unit test files
 	- Add FindFilesWildcard
 		- Skips folders for which the user does not have permission
 
-Version 2.4.35; October 13, 2017
+Version 2.4.36; October 13, 2017
 	- Move old log files into a year-based archive folder
 
 Version 2.4.34; October 11, 2017

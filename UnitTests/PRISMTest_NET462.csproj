@@ -61,6 +61,7 @@
     <Compile Include="StackTraceFormatterTests.cs" />
     <Compile Include="StoredProcedureTests.cs" />
     <Compile Include="TestDBTools.cs" />
+    <Compile Include="TestEvents.cs" />
     <Compile Include="TestLinuxSystemInfo.cs" />
     <Compile Include="TestOSVersionInfo.cs" />
     <Compile Include="TestPathUtils.cs" />
