@@ -91,6 +91,7 @@ namespace PRISMTest
 
         [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
         [TestCase(@"Gigasax", "DMS5", "", "")]
+        [Category("DatabaseNamedUser")]
         public void TestDBLoggerNamedUser(string server, string database, string logFolder, string logFileNameBase)
         {
             TestDBLogger(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD, logFolder, logFileNameBase);

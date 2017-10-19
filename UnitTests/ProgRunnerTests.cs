@@ -36,8 +36,21 @@ namespace PRISMTest
         }
 
         [Test]
-        [TestCase(2500000, 5, 250, 2500)]
+        [TestCase(1000000, 5, 250, 2500)]
+        [Category("PNL_Domain")]
+        public void TestGarbageCollectionLarge(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
+        {
+            TestGarbageCollectionWork(iterations, gcEvents, dictionaryCount, dictionarySize);
+        }
+
+        [Test]
+        [TestCase(100000, 5, 250, 2500)]
         public void TestGarbageCollection(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
+        {
+            TestGarbageCollectionWork(iterations, gcEvents, dictionaryCount, dictionarySize);
+        }
+
+        private void TestGarbageCollectionWork(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
         {
             // This method will create 2.5 million FileInfo objects (if iterations is 2500000) and store those in random locations in various dictionaries
             // It will remove half of the dictionaries gcEvents times, calling GarbageCollectNow after each removal

@@ -90,13 +90,27 @@ namespace PRISMTest
         }
 
         [Test]
-        [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini", false)]
-        [TestCase(@"c:\windows\", "*.ini", "system.ini, win.ini", false)]
-        [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini", true)]
-        [TestCase(@"c:\windows\", "*.dll", "perfos.dll, perfnet.dll", true)]
-        public void TestFindFilesWildcard(string folderPath, string fileMask, string expectedFileNames, bool recurse)
+        [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
+        [TestCase(@"c:\windows\", "*.ini", "system.ini, win.ini")]
+        public void TestFindFilesWildcard(string folderPath, string fileMask, string expectedFileNames)
         {
-            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, recurse);
+            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, false);
+        }
+
+        /// <summary>
+        /// Find files recursively below C:\Windows
+        /// Only run this inside PNNL because it is slow on AppVeyor
+        /// </summary>
+        /// <param name="folderPath"></param>
+        /// <param name="fileMask"></param>
+        /// <param name="expectedFileNames"></param>
+        [Test]
+        [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
+        [TestCase(@"c:\windows\", "*.dll", "perfos.dll, perfnet.dll")]
+        [Category("PNL_Domain")]
+        public void TestFindFilesRecurse(string folderPath, string fileMask, string expectedFileNames)
+        {
+            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, true);
         }
 
         [Test]
