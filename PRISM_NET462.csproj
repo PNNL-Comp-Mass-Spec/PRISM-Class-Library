@@ -55,6 +55,9 @@
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="ConsoleMsgUtils.cs" />
     <Compile Include="DirectoryScanner.cs" />
+    <Compile Include="FileProcessor\ProcessFilesBase.cs" />
+    <Compile Include="FileProcessor\ProcessFilesOrFoldersBase.cs" />
+    <Compile Include="FileProcessor\ProcessFoldersBase.cs" />
     <Compile Include="FileTools.cs" />
     <Compile Include="GenericParserOptions.cs" />
     <Compile Include="ISystemInfo.cs" />

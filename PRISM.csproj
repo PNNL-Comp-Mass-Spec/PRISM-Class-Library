@@ -36,6 +36,7 @@
     <Compile Remove="CopyWithResume\**" />
     <Compile Remove="DotNETStandard\**" />
     <Compile Remove="DotNETStandard_UnitTests\**" />
+    <Compile Remove="FindFilesOrFolders\**" />
     <Compile Remove="LinuxTestFiles\**" />
     <Compile Remove="PRISMWin\**" />
     <Compile Remove="Properties\**" />
