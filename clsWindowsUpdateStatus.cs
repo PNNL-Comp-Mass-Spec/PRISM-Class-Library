@@ -7,7 +7,6 @@ namespace PRISM
     /// Windows desktop computers have Windows updates applied around 3 am on the first Thursday after the third Tuesday of the month
     /// Windows servers have Windows updates applied around 3 am or 10 am on the first Sunday after the second Tuesday of the month
     /// </summary>
-    /// <remarks></remarks>
     public class clsWindowsUpdateStatus
     {
 
