@@ -94,6 +94,21 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Shorten pathToCompact to a maximum length of maxLength
+        /// Examples:
+        /// C:\...\B..\Finance..
+        /// C:\...\W..\Business\Finances.doc
+        /// C:\My Docum..\Word\Business\Finances.doc
+        /// </summary>
+        /// <param name="pathToCompact"></param>
+        /// <param name="maxLength">Maximum length of the shortened path</param>
+        /// <returns>Shortened path</returns>
+        public static string CompactPathString(string pathToCompact, int maxLength = 40)
+        {
+            return clsFileTools.CompactPathString(pathToCompact, maxLength);
+        }
+
+        /// <summary>
         /// Find all files that match the given file name pattern, optionally recursing
         /// </summary>
         /// <param name="pathSpec">Folder/file search specification, e.g. C:\Windows\*.ini</param>
