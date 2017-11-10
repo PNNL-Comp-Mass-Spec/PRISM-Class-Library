@@ -366,7 +366,16 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         public static string GetAppPath()
         {
-            return Assembly.GetExecutingAssembly().Location;
+            return GetEntryOrExecutingAssembly().Location;
+        }
+
+        /// <summary>
+        /// Returns the entry assembly, if it is unavailable, returns the executing assembly
+        /// </summary>
+        /// <returns></returns>
+        public static Assembly GetEntryOrExecutingAssembly()
+        {
+            return Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
         }
 
         /// <summary>
@@ -377,7 +386,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         public static string GetAppVersion(string programDate)
         {
-            return Assembly.GetExecutingAssembly().GetName().Version + " (" + programDate + ")";
+            return GetEntryOrExecutingAssembly().GetName().Version + " (" + programDate + ")";
         }
 
         /// <summary>
@@ -386,13 +395,17 @@ namespace PRISM.FileProcessor
         /// <returns></returns>
         public abstract string GetErrorMessage();
 
+        /// <summary>
+        /// Gets the version for the entry assembly, if available
+        /// </summary>
+        /// <returns></returns>
         private string GetVersionForExecutingAssembly()
         {
             string version;
 
             try
             {
-                version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                version = GetEntryOrExecutingAssembly().GetName().Version.ToString();
             }
             catch (Exception)
             {

@@ -4,5 +4,8 @@
 /SVN_Path.txt
 /packages
 /DotNETStandard/packages
-
-/.vs
+**/.vs/
+**/bin/
+**/obj/
+*.suo
+*.user

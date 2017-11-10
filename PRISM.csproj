@@ -6,7 +6,7 @@
     <AssemblyName>PRISM</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>PRISM-Library</PackageId>
-    <Version>2.4.41</Version>
+    <Version>2.4.42</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Description>Library of functions used by software applications that automate tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
@@ -48,6 +48,7 @@
     <EmbeddedResource Remove="CopyWithResume\**" />
     <EmbeddedResource Remove="DotNETStandard\**" />
     <EmbeddedResource Remove="DotNETStandard_UnitTests\**" />
+    <EmbeddedResource Remove="FindFilesOrFolders\**" />
     <EmbeddedResource Remove="LinuxTestFiles\**" />
     <EmbeddedResource Remove="PRISMWin\**" />
     <EmbeddedResource Remove="ShFolderBrowser\**" />
@@ -58,6 +59,7 @@
     <None Remove="CopyWithResume\**" />
     <None Remove="DotNETStandard\**" />
     <None Remove="DotNETStandard_UnitTests\**" />
+    <None Remove="FindFilesOrFolders\**" />
     <None Remove="LinuxTestFiles\**" />
     <None Remove="PRISMWin\**" />
     <None Remove="ShFolderBrowser\**" />
