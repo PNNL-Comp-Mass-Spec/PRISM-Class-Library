@@ -33,7 +33,38 @@ namespace PRISM.FileProcessor
             /// <summary>
             /// Warninig message
             /// </summary>
-            Warning = 2
+            Warning = 2,
+
+            /// <summary>
+            /// Debugging message
+            /// </summary>
+            Debug = -1
+        }
+
+        /// <summary>
+        /// Log levels, specifying the severity of messages to be logged
+        /// </summary>
+        public enum LogLevel
+        {
+            /// <summary>
+            ///  All messages
+            /// </summary>
+            Debug = -1,
+
+            /// <summary>
+            /// All normal, warning, and error messages
+            /// </summary>
+            Normal = 0,
+
+            /// <summary>
+            /// Warning and error messages
+            /// </summary>
+            Warning = 2,
+
+            /// <summary>
+            /// Error messages only
+            /// </summary>
+            Error = 3,
         }
 
         #endregion
@@ -168,6 +199,11 @@ namespace PRISM.FileProcessor
         /// When true, if an error occurs a message will be logged, then the event will be re-thrown
         /// </summary>
         public bool ReThrowEvents { get; set; } = false;
+
+        /// <summary>
+        /// Minimum severity of messages to log
+        /// </summary>
+        public LogLevel LoggingLevel { get; set; } = LogLevel.Normal;
 
         #endregion
 
@@ -797,7 +833,7 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Update the current progres description
+        /// Update the current progress description
         /// </summary>
         /// <param name="progressStepDescription"></param>
         protected void UpdateProgress(string progressStepDescription)
@@ -850,8 +886,31 @@ namespace PRISM.FileProcessor
             OnProgressUpdate(ProgressStepDescription, ProgressPercentComplete);
         }
 
+        private LogLevel ConvertMessageTypeToLogLevel(eMessageTypeConstants messageType)
+        {
+            switch (messageType)
+            {
+                case eMessageTypeConstants.Debug:
+                    return LogLevel.Debug;
+                case eMessageTypeConstants.Normal:
+                    return LogLevel.Normal;
+                case eMessageTypeConstants.Warning:
+                    return LogLevel.Warning;
+                case eMessageTypeConstants.ErrorMsg:
+                    return LogLevel.Error;
+                default:
+                    return LogLevel.Normal;
+            }
+        }
+
         private void WriteToLogFile(string message, eMessageTypeConstants eMessageType, int duplicateHoldoffHours)
         {
+            var level = ConvertMessageTypeToLogLevel(eMessageType);
+            if (level < LoggingLevel)
+            {
+                return;
+            }
+
             string messageType;
 
             switch (eMessageType)
@@ -864,6 +923,9 @@ namespace PRISM.FileProcessor
                     break;
                 case eMessageTypeConstants.Warning:
                     messageType = "Warning";
+                    break;
+                case eMessageTypeConstants.Debug:
+                    messageType = "Debug";
                     break;
                 default:
                     messageType = "Unknown";
