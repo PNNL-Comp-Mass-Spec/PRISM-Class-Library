@@ -38,7 +38,12 @@ namespace PRISM.FileProcessor
             /// <summary>
             /// Debugging message
             /// </summary>
-            Debug = -1
+            Debug = -1,
+
+            /// <summary>
+            /// Message that should not be output
+            /// </summary>
+            Suppress = -100
         }
 
         /// <summary>
@@ -46,6 +51,11 @@ namespace PRISM.FileProcessor
         /// </summary>
         public enum LogLevel
         {
+            /// <summary>
+            /// Output suppressed messages with everything else
+            /// </summary>
+            Suppress = -100,
+
             /// <summary>
             ///  All messages
             /// </summary>
@@ -136,6 +146,8 @@ namespace PRISM.FileProcessor
 
         private const int MAX_LOGDATA_CACHE_SIZE = 100000;
 
+        private eMessageTypeConstants progressMessageType = eMessageTypeConstants.Normal;
+
         #endregion
 
         #region "Interface Functions"
@@ -204,6 +216,15 @@ namespace PRISM.FileProcessor
         /// Minimum severity of messages to log
         /// </summary>
         public LogLevel LoggingLevel { get; set; } = LogLevel.Normal;
+
+        /// <summary>
+        /// The severity of progress output; normally only used to suppress progress output in logs by setting this to <see cref="LogLevel.Suppress"/>
+        /// </summary>
+        public LogLevel ProgressOutputLevel
+        {
+            get => ConvertMessageTypeToLogLevel(progressMessageType);
+            set => progressMessageType = ConvertLogLevelToMessageType(value);
+        }
 
         #endregion
 
@@ -874,16 +895,33 @@ namespace PRISM.FileProcessor
             {
                 if (mProgressPercentComplete < float.Epsilon)
                 {
-                    LogMessage(ProgressStepDescription.Replace(Environment.NewLine, "; "));
+                    LogMessage(ProgressStepDescription.Replace(Environment.NewLine, "; "), progressMessageType);
                 }
                 else
                 {
                     LogMessage(ProgressStepDescription + " (" + mProgressPercentComplete.ToString("0.0") +
-                               "% complete)".Replace(Environment.NewLine, "; "));
+                               "% complete)".Replace(Environment.NewLine, "; "), progressMessageType);
                 }
             }
 
             OnProgressUpdate(ProgressStepDescription, ProgressPercentComplete);
+        }
+
+        private eMessageTypeConstants ConvertLogLevelToMessageType(LogLevel level)
+        {
+            switch (level)
+            {
+                case LogLevel.Debug:
+                    return eMessageTypeConstants.Debug;
+                case LogLevel.Normal:
+                    return eMessageTypeConstants.Normal;
+                case LogLevel.Warning:
+                    return eMessageTypeConstants.Warning;
+                case LogLevel.Error:
+                    return eMessageTypeConstants.ErrorMsg;
+                default:
+                    return eMessageTypeConstants.Normal;
+            }
         }
 
         private LogLevel ConvertMessageTypeToLogLevel(eMessageTypeConstants messageType)
