@@ -31,7 +31,7 @@ namespace PRISM.FileProcessor
             ErrorMsg = 1,
 
             /// <summary>
-            /// Warninig message
+            /// Warning message
             /// </summary>
             Warning = 2,
 
@@ -57,7 +57,7 @@ namespace PRISM.FileProcessor
             Suppress = -100,
 
             /// <summary>
-            ///  All messages
+            /// All messages
             /// </summary>
             Debug = -1,
 
