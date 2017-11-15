@@ -75,6 +75,10 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <param name="limitLoggingByTimeOfDay">When true, only log errors between 12 am and 12:30 am</param>
+        /// <remarks>
+        /// To view debug events raised by this class, either subscribe to event DebugEvent
+        /// or set SkipConsoleWriteIfNoDebugListener to false
+        /// </remarks>
         public clsLinuxSystemInfo(bool limitLoggingByTimeOfDay = false)
         {
             mCoreCountCached = 0;
@@ -107,6 +111,8 @@ namespace PRISM
             // This is a fallback Regex that starts at state in case mStatLineMatcher fails
             mStatLineMatcherNoCommand = new Regex(@"(?<state>[A-Za-z]) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
+            // Prevent DebugEvent messages from being displayed at console if the calling class has not subscribed to DebugEvent
+            SkipConsoleWriteIfNoDebugListener = true;
         }
 
         /// <summary>
