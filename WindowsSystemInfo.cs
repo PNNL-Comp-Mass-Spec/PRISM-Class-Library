@@ -4,11 +4,10 @@ using System.Runtime.InteropServices;
 
 namespace PRISM
 {
-    /// <inheritdoc />
     /// <summary>
     /// System information for Windows, pulled via P/Invoke
     /// </summary>
-    public class WindowsSystemInfo : ISystemInfo
+    public class WindowsSystemInfo : clsEventNotifier, ISystemInfo
     {
         /// <summary>
         /// Constructor
@@ -22,6 +21,7 @@ namespace PRISM
             }
 
             pData = new WindowsSystemInfoInternal();
+            RegisterEvents(pData);
         }
 
         private readonly WindowsSystemInfoInternal pData;
@@ -105,11 +105,10 @@ namespace PRISM
         }
     }
 
-    /// <inheritdoc />
     /// <summary>
     /// Internal implementation of WindowsSystemInfo. Internal to avoid big errors when trying to instantiate.
     /// </summary>
-    internal class WindowsSystemInfoInternal : ISystemInfo
+    internal class WindowsSystemInfoInternal : clsEventNotifier, ISystemInfo
     {
         #region Memory P/Invoke
 
