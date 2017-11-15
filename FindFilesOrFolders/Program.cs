@@ -7,7 +7,7 @@ namespace FindFilesOrFolders
     internal static class Program
     {
 
-        public const string PROGRAM_DATE = "November 8, 2017";
+        public const string PROGRAM_DATE = "November 15, 2017";
 
         private static string mInputFileOrFolderPath;
         private static string mOutputFileOrFolderPath;
@@ -52,6 +52,7 @@ namespace FindFilesOrFolders
                     return -1;
 
                 }
+
                 const string PARAM_FILE_PATH = "";
 
                 if (mProcessFolders)

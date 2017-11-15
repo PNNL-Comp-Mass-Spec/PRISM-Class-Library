@@ -54,9 +54,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="PRISM-Library">
-      <Version>2.4.44</Version>
-    </PackageReference>
+    <ProjectReference Include="..\PRISM_NET462.csproj">
+      <Project>{c37995a7-258d-4b76-9703-aff6c4c32c8c}</Project>
+      <Name>PRISM_NET462</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
