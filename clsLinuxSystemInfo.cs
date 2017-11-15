@@ -63,7 +63,7 @@ namespace PRISM
         #region "Properties"
 
         /// <summary>
-        /// If debugging messages should be output
+        /// When true, additional debug messages are reported using DebugEvent
         /// </summary>
         public bool TraceEnabled { get; set; }
 
