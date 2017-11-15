@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace PRISM
@@ -201,7 +202,7 @@ namespace PRISM
         /// See https://msdn.microsoft.com/en-us/library/windows/desktop/dd405488(v=vs.85).aspx
         /// See https://msdn.microsoft.com/en-us/library/windows/desktop/ms684197(v=vs.85).aspx
         /// </summary>
-        private enum LOGICAL_PROCESSOR_RELATIONSHIP : int
+        private enum LOGICAL_PROCESSOR_RELATIONSHIP
         {
             /// <summary>
             /// The specified logical processors share a single processor core.
@@ -231,10 +232,13 @@ namespace PRISM
             /// <summary>
             /// On input, retrieves information about all possible relationship types. This value is not used on output.
             /// </summary>
+            // ReSharper disable once UnusedMember.Local
             RelationAll = 0xfff
         }
 
         //https://stackoverflow.com/questions/6972437/pinvoke-for-getlogicalprocessorinformation-function
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct GROUP_AFFINITY
         {
@@ -242,6 +246,7 @@ namespace PRISM
             /// A bitmap that specifies the affinity for zero or more processors within the specified group.
             /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
             /// </summary>
+            // ReSharper disable once UnusedMember.Local
             public UInt64 Mask => (UInt64) MaskPtr.ToInt64();
 
             /// <summary>
@@ -265,6 +270,8 @@ namespace PRISM
             public ushort Reserved2;
         };
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct PROCESSOR_RELATIONSHIP
         {
@@ -299,6 +306,7 @@ namespace PRISM
             /// <summary>
             /// An array of GROUP_AFFINITY structures. The GroupCount member specifies the number of structures in the array. Each structure in the array specifies a group number and processor affinity within the group.
             /// </summary>
+            // ReSharper disable once UnusedMember.Local
             public GROUP_AFFINITY[] GroupMask
             {
                 get
@@ -321,6 +329,8 @@ namespace PRISM
             public IntPtr GroupMaskPtr;
         };
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct NUMA_NODE_RELATIONSHIP
         {
@@ -343,7 +353,8 @@ namespace PRISM
             public GROUP_AFFINITY GroupMask;
         }
 
-        private enum PROCESSOR_CACHE_TYPE : int
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private enum PROCESSOR_CACHE_TYPE
         {
             /// <summary>
             /// The cache is unified.
@@ -366,6 +377,8 @@ namespace PRISM
             CacheTrace = 3
         }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct CACHE_RELATIONSHIP
         {
@@ -408,6 +421,8 @@ namespace PRISM
             public GROUP_AFFINITY GroupMask;
         }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct PROCESSOR_GROUP_INFO
         {
@@ -436,6 +451,7 @@ namespace PRISM
             /// A bitmap that specifies the affinity for zero or more active processors within the group.
             /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
             /// </summary>
+            // ReSharper disable once UnusedMember.Local
             public UInt64 ActiveProcessorMask => (UInt64)ActiveProcessorMaskPtr.ToInt64();
 
             /// <summary>
@@ -445,6 +461,8 @@ namespace PRISM
             public IntPtr ActiveProcessorMaskPtr;
 }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct GROUP_RELATIONSHIP
         {
@@ -470,6 +488,7 @@ namespace PRISM
             /// An array of PROCESSOR_GROUP_INFO structures. Each structure represents the number and affinity of processors in an active group on the system.
             /// </summary>
             //[MarshalAs(UnmanagedType.LPArray)]
+            // ReSharper disable once UnusedMember.Local
             public PROCESSOR_GROUP_INFO[] GroupInfo
             {
                 get
@@ -552,6 +571,8 @@ namespace PRISM
             uint StructSize { get; }
         }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_PROCESSOR_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -572,6 +593,8 @@ namespace PRISM
             public uint StructSize => Size;
         }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_NUMA_NODE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -592,6 +615,8 @@ namespace PRISM
             public uint StructSize => Size;
         }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_CACHE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -612,6 +637,8 @@ namespace PRISM
             public uint StructSize => Size;
         }
 
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_GROUP_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -781,7 +808,8 @@ namespace PRISM
         /// <returns>Free memory, or -1 if an error</returns>
         public float GetFreeMemoryMB()
         {
-            var result = GetGlobalMemoryStatusEx(out MEMORYSTATUSEX memData);
+            // ReSharper disable once UnusedVariable
+            var result = GetGlobalMemoryStatusEx(out var memData);
 
             // Convert from bytes to MB
             return memData.ullAvailPhys / 1024f / 1024f;
@@ -798,7 +826,8 @@ namespace PRISM
                 return totalMemoryMBCached;
             }
 
-            var result = GetGlobalMemoryStatusEx(out MEMORYSTATUSEX memData);
+            // ReSharper disable once UnusedVariable
+            var result = GetGlobalMemoryStatusEx(out var memData);
 
             // Convert from bytes to MB
             return memData.ullTotalPhys / 1024f / 1024f;
