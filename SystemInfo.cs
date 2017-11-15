@@ -24,7 +24,7 @@
         /// <summary>
         /// Get the implementation of <see cref="ISystemInfo"/> that is providing the data
         /// </summary>
-        public ISystemInfo SystemInfoObject => SysInfo;
+        public static ISystemInfo SystemInfoObject => SysInfo;
 
         /// <summary>
         /// Report the number of cores on this system
