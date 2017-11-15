@@ -46,5 +46,27 @@
         /// </summary>
         /// <returns>Total memory, or -1 if an error</returns>
         float GetTotalMemoryMB();
+
+        #region "Event Viewer Events"
+
+        event clsEventNotifier.DebugEventEventHandler DebugEvent;
+        event clsEventNotifier.ErrorEventEventHandler ErrorEvent;
+        event clsEventNotifier.ProgressUpdateEventHandler ProgressUpdate;
+        event clsEventNotifier.StatusEventEventHandler StatusEvent;
+        event clsEventNotifier.WarningEventEventHandler WarningEvent;
+
+        #endregion
+
+        #region "Event Viewer Properties"
+
+        bool SkipConsoleWriteIfNoDebugListener { get; set; }
+        bool SkipConsoleWriteIfNoErrorListener { get; set; }
+        bool SkipConsoleWriteIfNoProgressListener { get; set; }
+        bool SkipConsoleWriteIfNoStatusListener { get; set; }
+        bool SkipConsoleWriteIfNoWarningListener { get; set; }
+
+        bool WriteToConsoleIfNoListener { get; set; }
+
+        #endregion
     }
 }
