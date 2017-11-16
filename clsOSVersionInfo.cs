@@ -10,8 +10,16 @@ namespace PRISM
     /// Based on https://code.msdn.microsoft.com/windowsapps/How-to-determine-the-263b1850
     /// </summary>
     /// <remarks>For Windows and Linux, reports details about the OS version</remarks>
-    public class clsOSVersionInfo
+    public class clsOSVersionInfo : clsEventNotifier
     {
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public clsOSVersionInfo()
+        {
+            SkipConsoleWriteIfNoDebugListener = true;
+        }
 
         /// <summary>
         /// Determine the operating system version
@@ -22,6 +30,8 @@ namespace PRISM
         {
 #if !(NETSTANDARD1_x)
             var osInfo = Environment.OSVersion;
+
+            OnDebugEvent("OS Platform: " + osInfo.Platform);
 
             switch (osInfo.Platform)
             {
@@ -49,10 +59,12 @@ namespace PRISM
             {
                 return GetWindowsVersion(RuntimeInformation.OSDescription);
             }
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return GetLinuxVersion();
             }
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 return "MacOSX";
@@ -66,7 +78,10 @@ namespace PRISM
         /// Determine the version of Linux that we're running
         /// </summary>
         /// <returns>String describing the OS version</returns>
-        /// <remarks>If run on Windows, will look for files in the \etc folder on the current drive</remarks>
+        /// <remarks>
+        /// If run on Windows, will look for files in the \etc folder on the current drive
+        /// If that folder does not exist, will return "Unknown Windows OS"
+        /// </remarks>
         public string GetLinuxVersion()
         {
             var versionFiles = new Dictionary<string, string>
@@ -89,6 +104,8 @@ namespace PRISM
                 var versionFile = new FileInfo(versionFileInfo.Value);
                 if (!versionFile.Exists)
                     continue;
+
+                OnDebugEvent("Examining file " + versionFile.FullName);
 
                 List<string> versionInfo;
 
@@ -267,6 +284,8 @@ namespace PRISM
         {
             var versionInfo = new List<string>();
 
+            OnDebugEvent("Parsing os-release file");
+
             // Expected format of the os-release file
             // NAME="Ubuntu"
             // VERSION="17.04 (Zesty Zeus)"
@@ -327,6 +346,8 @@ namespace PRISM
         private List<string> GetUbuntuVersion(StreamReader reader)
         {
             var versionInfo = new List<string>();
+
+            OnDebugEvent("Parsing Ubuntu version info");
 
             // Expected format of the lsb-release file
             // DISTRIB_ID=Ubuntu
