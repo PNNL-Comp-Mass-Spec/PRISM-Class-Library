@@ -22,6 +22,7 @@ namespace FindFilesOrFolders
 
         public static int Main(string[] args)
         {
+
             var objParseCommandLine = new clsParseCommandLine();
 
             mInputFileOrFolderPath = string.Empty;
@@ -100,9 +101,9 @@ namespace FindFilesOrFolders
                         }
                         else
                         {
-                            ConsoleMsgUtils.ShowDebug(
-                                "Calling fileProcessor.ProcessFilesAndRecurseFolders with default extensions: " +
-                                string.Join(", ", fileProcessor.GetDefaultExtensionsToParse()));
+                            ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesAndRecurseFolders with " +
+                                                      "input file [" + mInputFileOrFolderPath + "], output folder [" + mOutputFileOrFolderPath + "]" +
+                                                      " and extensions: " + string.Join(", ", fileProcessor.GetDefaultExtensionsToParse()));
 
                             success = fileProcessor.ProcessFilesAndRecurseFolders(
                                 mInputFileOrFolderPath, mOutputFileOrFolderPath, mOutputFolderAlternatePath,
@@ -113,12 +114,16 @@ namespace FindFilesOrFolders
                     }
                     else if (mAssumeNoWildcards)
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFile");
+                        ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFile with " +
+                                                  "input file [" + mInputFileOrFolderPath + "] and output folder [" + mOutputFileOrFolderPath + "]");
+
                         success = fileProcessor.ProcessFile(mInputFileOrFolderPath, mOutputFileOrFolderPath);
                     }
                     else
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesWildcard");
+                        ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesWildcard with " +
+                                                  "input file [" + mInputFileOrFolderPath + "] and output folder [" + mOutputFileOrFolderPath + "]");
+
                         success = fileProcessor.ProcessFilesWildcard(mInputFileOrFolderPath, mOutputFileOrFolderPath);
                     }
                 }
@@ -291,7 +296,7 @@ namespace FindFilesOrFolders
                 Console.WriteLine();
                 Console.WriteLine("Use /NoWild to not check for wildcards in the input path (ignored if /S is used)");
                 Console.WriteLine();
-                Console.WriteLine("Use /Ext define the list of known extenstions to match (only valid for /Files)");
+                Console.WriteLine("Use /Ext define the list of known extenstions to match; only valid for /Files and only valid if /S is used");
                 Console.WriteLine("For example, /Ext:.txt,.png");
 
                 Console.WriteLine();
