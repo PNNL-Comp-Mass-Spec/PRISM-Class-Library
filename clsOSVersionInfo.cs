@@ -42,7 +42,7 @@ namespace PRISM
                 case PlatformID.MacOSX:
                     return "MacOSX";
                 default:
-                    return "Unknown";
+                    return GetGenericOSVersion();
             }
 #else
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -57,7 +57,8 @@ namespace PRISM
             {
                 return "MacOSX";
             }
-            return "Unknown";
+
+            return GetGenericOSVersion();
 #endif
         }
 
@@ -133,7 +134,7 @@ namespace PRISM
 
             if (!etcFolder.Exists)
             {
-                return "Unknown";
+                return GetGenericOSVersion();
             }
 
             foreach (var releaseFile in etcFolder.GetFiles("*release"))
@@ -162,7 +163,7 @@ namespace PRISM
                     return string.Join("; ", dataDisplayed);
             }
 
-            return "Unknown";
+            return GetGenericOSVersion();
         }
 
         /// <summary>
@@ -197,7 +198,7 @@ namespace PRISM
                     continue;
 
                 if (!string.IsNullOrWhiteSpace(osName) && !dataLine.ToLower().Contains(osName))
-                    return osName + " " + dataLine.Trim();
+                    return osName + ": " + dataLine.Trim();
 
                 return dataLine.Trim();
             }
@@ -221,6 +222,16 @@ namespace PRISM
                     break;
             }
 
+        }
+
+        private static string GetGenericOSVersion()
+        {
+            if (Path.DirectorySeparatorChar == '/')
+            {
+                return "Unknown Linux OS";
+            }
+
+            return "Unknown Windows OS";
         }
 
         /// <summary>
@@ -370,7 +381,7 @@ namespace PRISM
                 case 90:
                     return "Windows Me";
                 default:
-                    return "Unknown";
+                    return GetGenericOSVersion();
             }
 
         }
@@ -424,7 +435,7 @@ namespace PRISM
                     break;
             }
 
-            return "Unknown";
+            return GetGenericOSVersion();
         }
 #endif
 
@@ -478,7 +489,7 @@ namespace PRISM
                     break;
             }
 
-            return "Unknown";
+            return GetGenericOSVersion();
         }
 #endif
 
