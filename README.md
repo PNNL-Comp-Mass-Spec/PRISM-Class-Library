@@ -1,8 +1,9 @@
 # PRISM Class Library
 
 The PRISM Class Library (PRISM.dll) is a collection of routines used by
-many of the software tools that support the Data Management System
-at PNNL.
+many of the software tools that support the Proteomics Research Information and Management System (PRISM)
+at PNNL.  Although written for use by PRISM tools, the methods in the PRISM class library
+are general utility methods, and are not dependent on any PNNL resources.
 
 The PRISM Windows class Library (PRISMWin.dll) is a set of Windows-specific utilities.
 
@@ -53,7 +54,7 @@ The latest versions of the DLLs are available on the [AppVeyor CI server](https:
 | clsProcessStats | Reports the number of CPU cores in use by a given process |
 
 
-### CopyWithResume
+## CopyWithResume
 
 Also included is the CopyWithResume console application.  Use this program to
 copy large files between computers, with the ability to resume the copy
