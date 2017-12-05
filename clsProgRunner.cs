@@ -11,7 +11,7 @@ namespace PRISM
     /// <summary>
     /// This class runs a single program as an external process and monitors it with an internal thread
     /// </summary>
-    public class clsProgRunner : ILoggerAware
+    public class clsProgRunner : clsEventNotifier, ILoggerAware
     {
 
         #region "Constants and Enums"
@@ -974,19 +974,19 @@ namespace PRISM
 
         private void ThrowConditionalException(Exception ex, string loggerMessage)
         {
-            m_ExceptionLogger?.PostError(loggerMessage, ex, true);
+            mExceptionLogger?.PostError(loggerMessage, ex, true);
 
-            if (NotifyOnException)
+            if (!NotifyOnException)
+                return;
+
+            if (mExceptionLogger == null)
             {
-                if (m_ExceptionLogger == null)
-                {
-                    Console.WriteLine("Exception caught (but ignored): " + loggerMessage + "; " + ex.Message);
-                }
-                else
-                {
-                    m_ExceptionLogger.PostError("Rethrowing exception", ex, true);
-                    throw ex;
-                }
+                OnWarningEvent("Exception caught (but ignored): " + loggerMessage + "; " + ex.Message);
+            }
+            else
+            {
+                OnWarningEvent("Rethrowing exception: " + ex.Message);
+                throw ex;
             }
         }
 
