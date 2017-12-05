@@ -70,20 +70,11 @@ namespace PRISM
         /// </summary>
         private ILogger m_EventLogger;
 
-        /// <summary>
-        /// overall state of this object
-        /// </summary>
-        private States m_state = States.NotMonitoring;
 
         /// <summary>
         /// Used to start and monitor the external program
         /// </summary>
         private readonly Process m_Process = new Process();
-
-        /// <summary>
-        /// The process id of the currently running incarnation of the external program
-        /// </summary>
-        private int m_pid;
 
         /// <summary>
         /// Thread cancellation token
@@ -268,9 +259,9 @@ namespace PRISM
 
 
         /// <summary>
-        /// Process id of currently running external program's process
+        /// Process id of the currently running external program's process
         /// </summary>
-        public int PID => m_pid;
+        public int PID { get; private set; }
 
         /// <summary>
         /// External program that prog runner will run
@@ -291,7 +282,7 @@ namespace PRISM
         /// <summary>
         /// Current state of prog runner (as number)
         /// </summary>
-        public States State => m_state;
+        public States State { get; private set; } = States.NotMonitoring;
 
         /// <summary>
         /// Current state of prog runner (as descriptive name)
@@ -301,7 +292,7 @@ namespace PRISM
             get
             {
                 string functionReturnValue;
-                switch (m_state)
+                switch (State)
                 {
                     case States.NotMonitoring:
                         functionReturnValue = "not monitoring";
@@ -676,14 +667,14 @@ namespace PRISM
             if (!File.Exists(m_Process.StartInfo.FileName))
             {
                 ThrowConditionalException(new Exception("Process filename " + m_Process.StartInfo.FileName + " not found."), "clsProgRunner m_ProgName was not set correctly.");
-                m_state = States.NotMonitoring;
+                State = States.NotMonitoring;
                 return;
             }
 
             if (!Directory.Exists(m_Process.StartInfo.WorkingDirectory))
             {
                 ThrowConditionalException(new Exception("Process working directory " + m_Process.StartInfo.WorkingDirectory + " not found."), "clsProgRunner m_WorkDir was not set correctly.");
-                m_state = States.NotMonitoring;
+                State = States.NotMonitoring;
                 return;
             }
 
@@ -733,26 +724,26 @@ namespace PRISM
                 //
                 try
                 {
-                    m_state = States.StartingProcess;
+                    State = States.StartingProcess;
                     m_Process.Start();
                 }
                 catch (Exception ex)
                 {
                     ThrowConditionalException(ex, "Problem starting process. Parameters: " + m_Process.StartInfo.WorkingDirectory + m_Process.StartInfo.FileName + " " + m_Process.StartInfo.Arguments + ".");
                     m_ExitCode = -1234567;
-                    m_state = States.NotMonitoring;
+                    State = States.NotMonitoring;
                     return;
                 }
 
                 try
                 {
-                    m_state = States.Monitoring;
-                    m_pid = m_Process.Id;
+                    State = States.Monitoring;
+                    PID = m_Process.Id;
                 }
                 catch (Exception)
                 {
                     // Exception looking up the process ID
-                    m_pid = 999999999;
+                    PID = 999999999;
                 }
 
                 if (blnStandardOutputRedirected)
@@ -807,7 +798,7 @@ namespace PRISM
                 // Need to free up resources used to keep
                 // track of the external process
                 //
-                m_pid = 0;
+                PID = 0;
 
                 try
                 {
@@ -854,19 +845,19 @@ namespace PRISM
                     // Repeat starting the process
                     // after waiting for minimum hold off time interval
                     //
-                    m_state = States.Waiting;
+                    State = States.Waiting;
 
                     RaiseConditionalProgChangedEvent(this);
 
                     var holdoffMilliseconds = Convert.ToInt32(RepeatHoldOffTime * 1000);
                     SleepMilliseconds(holdoffMilliseconds);
 
-                    m_state = States.Monitoring;
+                    State = States.Monitoring;
                 }
                 else
                 {
                     // Don't repeat starting the process - just quit
-                    m_state = States.NotMonitoring;
+                    State = States.NotMonitoring;
                     RaiseConditionalProgChangedEvent(this);
                     break;
                 }
@@ -879,25 +870,25 @@ namespace PRISM
         /// </summary>
         public void StartAndMonitorProgram()
         {
-            if (m_state == States.NotMonitoring)
+            if (State != States.NotMonitoring)
+                return;
+
+            State = States.Initializing;
+            m_doCleanup = false;
+
+            m_CancellationToken = new CancellationTokenSource();
+
+            // Arrange to start the program as an external process
+            // and monitor it in a separate internal thread
+            //
+            try
             {
-                m_state = States.Initializing;
-                m_doCleanup = false;
+                ThreadPool.QueueUserWorkItem(StartProcess, m_CancellationToken.Token);
+            }
+            catch (Exception ex)
+            {
+                ThrowConditionalException(ex, "Caught exception while trying to start thread.");
 
-                m_CancellationToken = new CancellationTokenSource();
-
-                // Arrange to start the program as an external process
-                // and monitor it in a separate internal thread
-                //
-                try
-                {
-                    ThreadPool.QueueUserWorkItem(StartProcess, m_CancellationToken.Token);
-                }
-                catch (Exception ex)
-                {
-                    ThrowConditionalException(ex, "Caught exception while trying to start thread.");
-
-                }
             }
         }
 
@@ -907,7 +898,7 @@ namespace PRISM
         /// <returns></returns>
         protected bool StartingOrMonitoring()
         {
-            if (m_state == States.Initializing || m_state == States.StartingProcess || m_state == States.Monitoring)
+            if (State == States.Initializing || State == States.StartingProcess || State == States.Monitoring)
             {
                 return true;
             }
@@ -951,7 +942,7 @@ namespace PRISM
             }
 
             // Program not running, just abort thread
-            if (m_state == States.Waiting & kill)
+            if (State == States.Waiting & kill)
             {
                 try
                 {
@@ -964,11 +955,11 @@ namespace PRISM
                 }
             }
 
-            if (StartingOrMonitoring() || m_state == States.Waiting)
+            if (StartingOrMonitoring() || State == States.Waiting)
             {
-                m_state = States.CleaningUp;
+                State = States.CleaningUp;
                 m_doCleanup = true;
-                m_state = States.NotMonitoring;
+                State = States.NotMonitoring;
             }
         }
 
