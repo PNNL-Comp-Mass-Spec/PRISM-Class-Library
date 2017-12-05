@@ -63,13 +63,12 @@ namespace PRISM
         /// <summary>
         /// Interface used for logging exceptions
         /// </summary>
-        private ILogger m_ExceptionLogger;
+        private ILogger mExceptionLogger;
 
         /// <summary>
         /// Interface used for logging errors and health related messages
         /// </summary>
-        private ILogger m_EventLogger;
-
+        private ILogger mEventLogger;
 
         /// <summary>
         /// Used to start and monitor the external program
@@ -134,9 +133,9 @@ namespace PRISM
         /// <summary>
         /// Console output event delegate
         /// </summary>
-        /// <param name="NewText"></param>
+        /// <param name="message"></param>
         /// <remarks></remarks>
-        public delegate void ConsoleOutputEventEventHandler(string NewText);
+        public delegate void ConsoleOutputEventEventHandler(string message);
 
         /// <summary>
         /// This event is raised when the external program writes text to the console's error stream
@@ -146,9 +145,9 @@ namespace PRISM
         /// <summary>
         /// Console error event delegate
         /// </summary>
-        /// <param name="NewText"></param>
+        /// <param name="message"></param>
         /// <remarks></remarks>
-        public delegate void ConsoleErrorEventEventHandler(string NewText);
+        public delegate void ConsoleErrorEventEventHandler(string message);
 
         #endregion
 
@@ -253,10 +252,9 @@ namespace PRISM
         public bool NotifyOnEvent { get; set; }
 
         /// <summary>
-        /// When true, and if m_ExceptionLogger is defined, re-throws the exception
+        /// When true, and if mExceptionLogger is defined, re-throws the exception
         /// </summary>
         public bool NotifyOnException { get; set; }
-
 
         /// <summary>
         /// Process id of the currently running external program's process
@@ -422,38 +420,35 @@ namespace PRISM
         /// </summary>
         private void ConsoleOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            // Collect the console output
+            if (outLine.Data == null)
+                return;
 
-            if (outLine.Data != null)
+            ConsoleOutputEvent?.Invoke(outLine.Data);
+
+            if (EchoOutputToConsole)
             {
-                ConsoleOutputEvent?.Invoke(outLine.Data);
-
-                if (EchoOutputToConsole)
-                {
-                    Console.WriteLine(outLine.Data);
-                }
-
-                if (CacheStandardOutput)
-                {
-                    // Add the text to the collected output
-                    m_CachedConsoleOutput.AppendLine(outLine.Data);
-                }
-
-                if (WriteConsoleOutputToFile && m_ConsoleOutputStreamWriter != null)
-                {
-                    // Write the standard output to the console output file
-                    try
-                    {
-                        m_ConsoleOutputStreamWriter.WriteLine(outLine.Data);
-                    }
-                    catch (Exception)
-                    {
-                        // Another thread is likely trying to write to a closed file
-                        // Ignore errors here
-                    }
-                }
+                Console.WriteLine(outLine.Data);
             }
 
+            if (CacheStandardOutput)
+            {
+                // Add the text to the collected output
+                m_CachedConsoleOutput.AppendLine(outLine.Data);
+            }
+
+            if (WriteConsoleOutputToFile && m_ConsoleOutputStreamWriter != null)
+            {
+                // Write the standard output to the console output file
+                try
+                {
+                    m_ConsoleOutputStreamWriter.WriteLine(outLine.Data);
+                }
+                catch (Exception)
+                {
+                    // Another thread is likely trying to write to a closed file
+                    // Ignore errors here
+                }
+            }
         }
 
         /// <summary>
@@ -556,7 +551,7 @@ namespace PRISM
         /// </summary>
         public void RegisterExceptionLogger(ILogger logger)
         {
-            m_ExceptionLogger = logger;
+            mExceptionLogger = logger;
         }
 
         void ILoggerAware.RegisterEventLogger(ILogger logger)
@@ -569,7 +564,7 @@ namespace PRISM
         /// </summary>
         public void RegisterEventLogger(ILogger logger)
         {
-            m_EventLogger = logger;
+            mEventLogger = logger;
         }
 
         void ILoggerAware.RegisterExceptionLogger(ILogger logger)
@@ -581,7 +576,7 @@ namespace PRISM
         {
             if (NotifyOnEvent)
             {
-                m_EventLogger?.PostEntry("Raising ProgChanged event for " + obj.Name + ".", logMsgType.logHealth, true);
+                mEventLogger?.PostEntry("Raising ProgChanged event for " + obj.Name + ".", logMsgType.logHealth, true);
                 ProgChanged?.Invoke(obj);
             }
         }
@@ -630,7 +625,7 @@ namespace PRISM
         {
             var token = (CancellationToken)obj;
 
-            bool blnStandardOutputRedirected;
+            bool standardOutputRedirected;
 
             // set up parameters for external process
             //
@@ -654,13 +649,13 @@ namespace PRISM
                 m_Process.StartInfo.UseShellExecute = false;
                 m_Process.StartInfo.RedirectStandardOutput = true;
                 m_Process.StartInfo.RedirectStandardError = true;
-                blnStandardOutputRedirected = true;
+                standardOutputRedirected = true;
             }
             else
             {
                 m_Process.StartInfo.UseShellExecute = true;
                 m_Process.StartInfo.RedirectStandardOutput = false;
-                blnStandardOutputRedirected = false;
+                standardOutputRedirected = false;
             }
 
 
@@ -678,7 +673,7 @@ namespace PRISM
                 return;
             }
 
-            if (blnStandardOutputRedirected)
+            if (standardOutputRedirected)
             {
                 // Add event handlers to asynchronously read the console output and error stream
                 m_Process.OutputDataReceived += ConsoleOutputHandler;
@@ -746,7 +741,7 @@ namespace PRISM
                     PID = 999999999;
                 }
 
-                if (blnStandardOutputRedirected)
+                if (standardOutputRedirected)
                 {
                     try
                     {
@@ -759,7 +754,7 @@ namespace PRISM
                     catch (Exception)
                     {
                         // Exception attaching the standard output
-                        blnStandardOutputRedirected = false;
+                        standardOutputRedirected = false;
                     }
                 }
 
@@ -819,13 +814,13 @@ namespace PRISM
                     // Exception closing the process; ignore
                 }
 
-                if (m_EventLogger != null)
+                if (mEventLogger != null)
                 {
-                    m_EventLogger.PostEntry("Process " + Name + " terminated with exit code " + m_ExitCode, logMsgType.logHealth, true);
+                    mEventLogger.PostEntry("Process " + Name + " terminated with exit code " + m_ExitCode, logMsgType.logHealth, true);
 
                     if (m_CachedConsoleError != null && m_CachedConsoleError.Length > 0)
                     {
-                        m_EventLogger.PostEntry("Cached error text for process " + Name + ": " + m_CachedConsoleError, logMsgType.logError, true);
+                        mEventLogger.PostEntry("Cached error text for process " + Name + ": " + m_CachedConsoleError, logMsgType.logError, true);
                     }
                 }
 
