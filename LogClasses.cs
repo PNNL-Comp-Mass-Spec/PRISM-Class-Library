@@ -494,7 +494,6 @@ namespace PRISM
                 CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATESTAMP) + LOG_FILE_EXTENSION;
         }
 
-
     }
     #endregion
 
@@ -715,43 +714,28 @@ namespace PRISM
             {
                 m_error_list.Clear();
 
-                // create the database connection
-                //
+                // Create the database connection
                 var cnStr = m_connection_str;
                 using (var dbCn = new SqlConnection(cnStr))
                 {
                     dbCn.InfoMessage += OnInfoMessage;
                     dbCn.Open();
 
-                    // create the command object
-                    //
+                    // Create the command object
                     var sc = new SqlCommand("PostLogEntry", dbCn)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
 
-                    //
-                    // define parameter for stored procedure's return value
-                    //
                     sc.Parameters.Add("@Return", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
-
-                    //
-                    // define parameters for the stored procedure's arguments
-                    //
                     sc.Parameters.Add("@type", SqlDbType.VarChar, 50).Value = type;
-
                     sc.Parameters.Add("@message", SqlDbType.VarChar, 500).Value = message;
-
                     sc.Parameters.Add("@postedBy", SqlDbType.VarChar, 50).Value = ModuleName;
 
-                    // execute the stored procedure
-                    //
+                    // Execute the stored procedure
                     sc.ExecuteNonQuery();
 
                 }
-
-                // if we made it this far, we succeeded
-                //
 
             }
             catch (Exception ex)
