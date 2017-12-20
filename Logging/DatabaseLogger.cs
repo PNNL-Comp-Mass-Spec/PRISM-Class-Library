@@ -35,12 +35,14 @@ namespace PRISM.Logging
 
         private static readonly Timer mQueueLogger = new Timer(LogQueuedMessages, null, 0, 0);
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// Tracks the number of successive dequeue failures
         /// </summary>
         private static int mFailedDequeueEvents;
+#endif
 
-        #endregion
+#endregion
 
         #region "Member variables"
 
