@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
 using System.Data.Odbc;
+#endif
 using System.Threading;
 
 namespace PRISM.Logging
@@ -102,11 +104,15 @@ namespace PRISM.Logging
         /// </summary>
         public static string StoredProcedureName { get; private set; }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         private static OdbcParameter LogTypeParam { get; set; }
 
         private static OdbcParameter MessageParam { get; set; }
 
         private static OdbcParameter PostedByParam { get; set; }
+#else
+        private static bool NotifiedNotSupported{ get; set; }
+#endif
 
         /// <summary>
         /// When true, also send any messages to the file logger
@@ -193,9 +199,11 @@ namespace PRISM.Logging
 
             ConnectionString = connectionString;
             StoredProcedureName = storedProcedure;
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
             LogTypeParam = new OdbcParameter(logTypeParamName, OdbcType.VarChar, logTypeParamSize);
             MessageParam = new OdbcParameter(messageParamName, OdbcType.VarChar, messageParamSize);
             PostedByParam = new OdbcParameter(postedByParamName, OdbcType.VarChar, postedByParamSize);
+#endif
         }
 
         private static void LogQueuedMessages(object state)
@@ -221,6 +229,25 @@ namespace PRISM.Logging
         {
             try
             {
+#if (NETSTANDARD1_x)
+                if (NotifiedNotSupported)
+                    return;
+
+                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 1.x");
+                NotifiedNotSupported = true;
+
+#endif
+
+#if (NETSTANDARD2_0)
+                if (NotifiedNotSupported)
+                    return;
+
+                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 2.x");
+                NotifiedNotSupported = true;
+
+#endif
+
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
                 // Set up the command object prior to SP execution
                 var spCmd = new OdbcCommand(StoredProcedureName) { CommandType = CommandType.StoredProcedure };
 
@@ -294,6 +321,7 @@ namespace PRISM.Logging
 
                     }
                 }
+#endif
 
             }
             catch (Exception ex)
@@ -325,7 +353,7 @@ namespace PRISM.Logging
             IsWarnEnabled = mLogLevel >= LogLevels.WARN;
         }
 
-        #region "Message logging methods"
+#region "Message logging methods"
 
         /// <summary>
         /// Log a debug message (provided LogLevel is LogLevels.DEBUG)
@@ -416,6 +444,6 @@ namespace PRISM.Logging
                 FileLogger.WriteLog(logMessage);
         }
 
-        #endregion
+#endregion
     }
 }
