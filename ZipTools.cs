@@ -17,7 +17,12 @@ namespace PRISM
         /// Working directory
         /// </summary>
         private string m_WorkDir;
-        private string m_ZipFilePath;
+
+        /// <summary>
+        /// Program used for zipping and unzipping files
+        /// </summary>
+        private string m_ZipProgramPath;
+
         /// <summary>
         /// Interval, in milliseconds, to sleep between checking the status of a zip or unzip task
         /// </summary>
@@ -42,15 +47,15 @@ namespace PRISM
         /// <summary>
         /// Create a zip file.
         /// </summary>
-        /// <param name="CmdOptions">The zip program command line arguments.</param>
-        /// <param name="OutputFile">The file path of the output zip file.</param>
-        /// <param name="InputSpec">The files and/or directorys to archive.</param>
-        public bool MakeZipFile(string CmdOptions, string OutputFile, string InputSpec)
+        /// <param name="cmdOptions">The zip program command line arguments.</param>
+        /// <param name="outputFile">The file path of the output zip file.</param>
+        /// <param name="inputSpec">The files and/or directories to archive.</param>
+        public bool MakeZipFile(string cmdOptions, string outputFile, string inputSpec)
         {
 
 
             // Verify input file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(m_ZipProgramPath) | string.IsNullOrEmpty(m_WorkDir))
             {
                 var msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
@@ -64,8 +69,8 @@ namespace PRISM
             // Setup the zip program
             var zipper = new clsProgRunner
             {
-                Arguments = "-Add " + CmdOptions + " \"" + OutputFile + "\" \"" + InputSpec + "\"",
-                Program = m_ZipFilePath,
+                Arguments = "-Add " + cmdOptions + " \"" + outputFile + "\" \"" + inputSpec + "\"",
+                Program = m_ZipProgramPath,
                 WorkDir = m_WorkDir,
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
@@ -78,34 +83,22 @@ namespace PRISM
             zipper.StartAndMonitorProgram();
 
             // Wait for zipper program to complete
-            while (zipper.State != clsProgRunner.States.NotMonitoring)
-            {
-                m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
-                clsProgRunner.SleepMilliseconds(m_WaitInterval);
-            }
+            var success = WaitForZipProgram(zipper);
 
-            // Check for valid return value after completion
-            if (zipper.ExitCode != 0)
-            {
-                m_EventLogger?.PostEntry("Zipper program exited with code: " + zipper.ExitCode, logMsgType.logError, true);
-                return false;
-            }
-
-            return true;
+            return success;
         }
 
         /// <summary>
         /// Extract files from a zip file.
         /// </summary>
-        /// <param name="CmdOptions">The zip program command line arguments.</param>
-        /// <param name="InputFile">The file path of the zip file from which to extract files.</param>
-        /// <param name="OutPath">The path where you want to put the extracted files.</param>
-        public bool UnzipFile(string CmdOptions, string InputFile, string OutPath)
+        /// <param name="cmdOptions">The zip program command line arguments.</param>
+        /// <param name="zipFilePath">The file path of the zip file from which to extract files.</param>
+        /// <param name="outFolderPath">The path where you want to put the extracted files.</param>
+        public bool UnzipFile(string cmdOptions, string zipFilePath, string outFolderPath)
         {
 
-
             // Verify input file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
             {
                 var msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
@@ -117,9 +110,8 @@ namespace PRISM
             }
 
             // Verify input file exists
-            if (!File.Exists(InputFile))
+            if (!File.Exists(zipFilePath))
             {
-                m_EventLogger?.PostEntry("Input file " + InputFile + " not found", logMsgType.logError, true);
                 var msg = "Input file not found: " + zipFilePath;
 #pragma warning disable 618
                 m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
@@ -130,7 +122,7 @@ namespace PRISM
             }
 
             // Verify output path exists
-            if (!Directory.Exists(OutPath))
+            if (!Directory.Exists(outFolderPath))
             {
                 var msg = "Output directory " + outFolderPath + " does not exist";
 #pragma warning disable 618
@@ -144,10 +136,10 @@ namespace PRISM
             // Setup the unzip program
             var zipper = new clsProgRunner
             {
-                Arguments = "-Extract " + CmdOptions + " \"" + InputFile + "\" \"" + OutPath + "\"",
+                Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outFolderPath + "\"",
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
-                Program = m_ZipFilePath,
+                Program = m_ZipProgramPath,
                 WorkDir = m_WorkDir,
                 Repeat = false,
                 RepeatHoldOffTime = 0,
@@ -161,20 +153,9 @@ namespace PRISM
             zipper.StartAndMonitorProgram();
 
             // Wait for zipper program to complete
-            while (zipper.State != clsProgRunner.States.NotMonitoring)
-            {
-                m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
-                clsProgRunner.SleepMilliseconds(m_WaitInterval);
-            }
+            var success = WaitForZipProgram(zipper);
 
-            // Check for valid return value after completion
-            if (zipper.ExitCode != 0)
-            {
-                m_EventLogger?.PostEntry("Zipper program exited with code: " + zipper.ExitCode, logMsgType.logError, true);
-                return false;
-            }
-
-            return true;
+            return success;
         }
 
         /// <summary>
@@ -211,19 +192,19 @@ namespace PRISM
         /// </summary>
         public string ZipFilePath
         {
-            get => m_ZipFilePath;
-            set => m_ZipFilePath = value;
+            get => m_ZipProgramPath;
+            set => m_ZipProgramPath = value;
         }
 
         /// <summary>
         /// Initializes a new instance of the ZipTools class.
         /// </summary>
-        /// <param name="WorkDir">The working directory for the zipping process.</param>
-        /// <param name="ZipFilePath">The path to the zipping program.</param>
-        public ZipTools(string WorkDir, string ZipFilePath)
+        /// <param name="workDir">The working directory for the zipping process.</param>
+        /// <param name="zipFilePath">The path to the zipping program.</param>
+        public ZipTools(string workDir, string zipFilePath)
         {
-            m_WorkDir = WorkDir;
-            m_ZipFilePath = ZipFilePath;
+            m_WorkDir = workDir;
+            m_ZipProgramPath = zipFilePath;
 
             // Time in milliseconds
             m_WaitInterval = 2000;
@@ -235,24 +216,24 @@ namespace PRISM
         /// <summary>
         /// Verifies the integrity of a zip file.
         /// </summary>
-        /// <param name="FilePath">The file path of the zip file to verify.</param>
-        public bool VerifyZippedFile(string FilePath)
+        /// <param name="zipFilePath">The file path of the zip file to verify.</param>
+        public bool VerifyZippedFile(string zipFilePath)
         {
 
-
             // Verify test file exists
-            if (!File.Exists(FilePath))
+            if (!File.Exists(zipFilePath))
             {
                 var msg = "Zip file not found; cannot verify: " + zipFilePath;
 #pragma warning disable 618
                 m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
                 m_Logger?.Error(msg);
+
                 return false;
             }
 
             // Verify Zip file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
             {
                 var msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
@@ -266,8 +247,8 @@ namespace PRISM
             // Setup the zip program
             var zipper = new clsProgRunner
             {
-                Arguments = "-test -nofix" + " " + FilePath,
-                Program = m_ZipFilePath,
+                Arguments = "-test -nofix" + " " + zipFilePath,
+                Program = m_ZipProgramPath,
                 WorkDir = m_WorkDir,
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
@@ -283,6 +264,13 @@ namespace PRISM
             zipper.StartAndMonitorProgram();
 
             // Wait for zipper program to complete
+            var success = WaitForZipProgram(zipper);
+
+            return success;
+        }
+
+        private bool WaitForZipProgram(clsProgRunner zipper)
+        {
             while (zipper.State != clsProgRunner.States.NotMonitoring)
             {
                 var msg = "Waiting for zipper program; sleeping for " + m_WaitInterval + " milliseconds";
