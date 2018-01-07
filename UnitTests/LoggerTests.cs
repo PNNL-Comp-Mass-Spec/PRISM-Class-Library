@@ -4,8 +4,14 @@ using System.IO;
 using NUnit.Framework;
 using PRISM;
 
+#pragma warning disable 618
+
 namespace PRISMTest
 {
+    /// <summary>
+    /// These unit tests apply to the log classes in LogClasses.cs
+    /// Those classes are obsolete, and thus this entire file is marked with a pragma to disable warnings regarding the use of obsolete classes
+    /// </summary>
     [TestFixture]
     class LoggerTests
     {
