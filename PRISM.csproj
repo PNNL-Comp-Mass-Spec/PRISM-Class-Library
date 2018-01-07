@@ -38,6 +38,7 @@
     <Compile Remove="DotNETStandard_UnitTests\**" />
     <Compile Remove="FindFilesOrFolders\**" />
     <Compile Remove="LinuxTestFiles\**" />
+    <Compile Remove="packages\**" />
     <Compile Remove="PRISMWin\**" />
     <Compile Remove="Properties\**" />
     <Compile Remove="ShFolderBrowser\**" />
@@ -50,6 +51,7 @@
     <EmbeddedResource Remove="DotNETStandard_UnitTests\**" />
     <EmbeddedResource Remove="FindFilesOrFolders\**" />
     <EmbeddedResource Remove="LinuxTestFiles\**" />
+    <EmbeddedResource Remove="packages\**" />
     <EmbeddedResource Remove="PRISMWin\**" />
     <EmbeddedResource Remove="ShFolderBrowser\**" />
     <EmbeddedResource Remove="SourceCode\**" />
@@ -61,6 +63,7 @@
     <None Remove="DotNETStandard_UnitTests\**" />
     <None Remove="FindFilesOrFolders\**" />
     <None Remove="LinuxTestFiles\**" />
+    <None Remove="packages\**" />
     <None Remove="PRISMWin\**" />
     <None Remove="ShFolderBrowser\**" />
     <None Remove="SourceCode\**" />
