@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.IO;
+using PRISM.Logging;
 
 namespace PRISM
 {
@@ -9,13 +11,28 @@ namespace PRISM
     /// <remarks>There are a routines to create an archive, extract files from an existing archive,
     /// and to verify an existing archive.
     /// </remarks>
-    public class ZipTools : ILoggerAware
+    public class ZipTools
     {
-
+        /// <summary>
+        /// Working directory
+        /// </summary>
         private string m_WorkDir;
         private string m_ZipFilePath;
+        /// <summary>
+        /// Interval, in milliseconds, to sleep between checking the status of a zip or unzip task
+        /// </summary>
         private readonly int m_WaitInterval;
+
+        /// <summary>
+        /// Logging class
+        /// </summary>
+        private BaseLogger m_Logger;
+
+#pragma warning disable 618
+        [Obsolete("Use m_Logger (typically a FileLogger)")]
         private ILogger m_EventLogger;
+#pragma warning restore 618
+
         private bool m_CreateNoWindow;
 
 #if !(NETSTANDARD1_x)
@@ -35,7 +52,12 @@ namespace PRISM
             // Verify input file and output path have been specified
             if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
             {
-                m_EventLogger?.PostEntry("Input file path and/or working path not specified.", logMsgType.logError, true);
+                var msg = "Zip program path and/or working path not specified";
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+#pragma warning restore 618
+                m_Logger?.Error(msg);
+
                 return false;
             }
 
@@ -85,7 +107,12 @@ namespace PRISM
             // Verify input file and output path have been specified
             if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
             {
-                m_EventLogger?.PostEntry("Input file path and/or working path not specified.", logMsgType.logError, true);
+                var msg = "Zip program path and/or working path not specified";
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+#pragma warning restore 618
+                m_Logger?.Error(msg);
+
                 return false;
             }
 
@@ -93,13 +120,24 @@ namespace PRISM
             if (!File.Exists(InputFile))
             {
                 m_EventLogger?.PostEntry("Input file " + InputFile + " not found", logMsgType.logError, true);
+                var msg = "Input file not found: " + zipFilePath;
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+#pragma warning restore 618
+                m_Logger?.Error(msg);
+
                 return false;
             }
 
             // Verify output path exists
             if (!Directory.Exists(OutPath))
             {
-                m_EventLogger?.PostEntry("Output directory " + OutPath + " does not exist.", logMsgType.logError, true);
+                var msg = "Output directory " + outFolderPath + " does not exist";
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+#pragma warning restore 618
+                m_Logger?.Error(msg);
+
                 return false;
             }
 
@@ -205,14 +243,23 @@ namespace PRISM
             // Verify test file exists
             if (!File.Exists(FilePath))
             {
-                m_EventLogger?.PostEntry("File path file " + FilePath + " not found", logMsgType.logError, true);
+                var msg = "Zip file not found; cannot verify: " + zipFilePath;
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+#pragma warning restore 618
+                m_Logger?.Error(msg);
                 return false;
             }
 
             // Verify Zip file and output path have been specified
             if (string.IsNullOrEmpty(m_ZipFilePath) | string.IsNullOrEmpty(m_WorkDir))
             {
-                m_EventLogger?.PostEntry("Zip file path and/or working path not specified.", logMsgType.logError, true);
+                var msg = "Zip program path and/or working path not specified";
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+#pragma warning restore 618
+                m_Logger?.Error(msg);
+
                 return false;
             }
 
@@ -238,30 +285,43 @@ namespace PRISM
             // Wait for zipper program to complete
             while (zipper.State != clsProgRunner.States.NotMonitoring)
             {
-                m_EventLogger?.PostEntry("Waiting for zipper program.  Going to sleep for " + m_WaitInterval + " milliseconds.", logMsgType.logHealth, true);
+                var msg = "Waiting for zipper program; sleeping for " + m_WaitInterval + " milliseconds";
+#pragma warning disable 618
+                m_EventLogger?.PostEntry(msg, logMsgType.logHealth, true);
+#pragma warning restore 618
+                m_Logger?.Debug(msg);
+
                 clsProgRunner.SleepMilliseconds(m_WaitInterval);
             }
 
             // Check for valid return value after completion
-            if (zipper.ExitCode != 0)
-            {
-                m_EventLogger?.PostEntry("Zipper program exited with code: " + zipper.ExitCode, logMsgType.logError, true);
-                return false;
-            }
+            if (zipper.ExitCode == 0)
+                return true;
 
-            return true;
+            var errorMsg = "Zipper program exited with code: " + zipper.ExitCode;
+#pragma warning disable 618
+            m_EventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
+#pragma warning restore 618
+            m_Logger?.Error(errorMsg);
+
+            return false;
         }
 
         /// <summary>
-        /// Sets the name of the event logger
+        /// Associate a logger with this class
         /// </summary>
+        public void RegisterEventLogger(BaseLogger logger)
+        {
+            m_Logger = logger;
+        }
+
+        /// <summary>
+        /// Associate an event logger with this class
+        /// </summary>
+        [Obsolete("Use RegisterEventLogger that takes a BaseLogger (typically a FileLogger)")]
         public void RegisterEventLogger(ILogger logger)
         {
             m_EventLogger = logger;
-        }
-        void ILoggerAware.RegisterExceptionLogger(ILogger logger)
-        {
-            RegisterEventLogger(logger);
         }
 
         /// <summary>

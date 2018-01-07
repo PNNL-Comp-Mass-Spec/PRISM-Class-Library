@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using PRISM.Logging;
 
 namespace PRISM
 {
@@ -11,7 +12,7 @@ namespace PRISM
     /// <summary>
     /// This class runs a single program as an external process and monitors it with an internal thread
     /// </summary>
-    public class clsProgRunner : clsEventNotifier, ILoggerAware
+    public class clsProgRunner : clsEventNotifier
     {
 
         #region "Constants and Enums"
@@ -61,14 +62,23 @@ namespace PRISM
         #region "Classwide Variables"
 
         /// <summary>
+        /// Log class
+        /// </summary>
+        private BaseLogger mLogger;
+
+#pragma warning disable 618
+        /// <summary>
         /// Interface used for logging exceptions
         /// </summary>
+        [Obsolete("Use mLogger (typically a FileLogger)")]
         private ILogger mExceptionLogger;
 
         /// <summary>
         /// Interface used for logging errors and health related messages
         /// </summary>
+        [Obsolete("Use mLogger (typically a FileLogger)")]
         private ILogger mEventLogger;
+#pragma warning restore 618
 
         /// <summary>
         /// Used to start and monitor the external program
@@ -252,7 +262,7 @@ namespace PRISM
         public bool NotifyOnEvent { get; set; }
 
         /// <summary>
-        /// When true, and if mExceptionLogger is defined, re-throws the exception
+        /// When true, and if mLogger or mExceptionLogger is defined, re-throws the exception
         /// </summary>
         public bool NotifyOnException { get; set; }
 
@@ -547,36 +557,41 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Sets the name of the exception logger
+        /// Associate a logger with this class
         /// </summary>
-        public void RegisterExceptionLogger(ILogger logger)
+        public void RegisterEventLogger(BaseLogger logger)
         {
-            mExceptionLogger = logger;
-        }
-
-        void ILoggerAware.RegisterEventLogger(ILogger logger)
-        {
-            RegisterExceptionLogger(logger);
+            mLogger = logger;
         }
 
         /// <summary>
-        /// Sets the name of the event logger
+        /// Associate an event logger with this class
         /// </summary>
+        [Obsolete("Use RegisterEventLogger that takes a BaseLogger (typically a FileLogger)")]
         public void RegisterEventLogger(ILogger logger)
         {
             mEventLogger = logger;
         }
 
-        void ILoggerAware.RegisterExceptionLogger(ILogger logger)
+        /// <summary>
+        /// Sets the name of the exception logger
+        /// </summary>
+        [Obsolete("Use RegisterEventLogger that takes a BaseLogger (typically a FileLogger)")]
+        public void RegisterExceptionLogger(ILogger logger)
         {
-            RegisterEventLogger(logger);
+            mExceptionLogger = logger;
         }
 
         private void RaiseConditionalProgChangedEvent(clsProgRunner obj)
         {
             if (NotifyOnEvent)
             {
-                mEventLogger?.PostEntry("Raising ProgChanged event for " + obj.Name + ".", logMsgType.logHealth, true);
+                var msg = "Raising ProgChanged event for " + obj.Name;
+#pragma warning disable 618
+                mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
+#pragma warning restore 618
+                mLogger.Debug(msg);
+
                 ProgChanged?.Invoke(obj);
             }
         }
@@ -691,9 +706,9 @@ namespace PRISM
 
                         var consoleOutStream = new FileStream(ConsoleOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
                         m_ConsoleOutputStreamWriter = new StreamWriter(consoleOutStream)
-                            {
-                                AutoFlush = true
-                            };
+                        {
+                            AutoFlush = true
+                        };
 
                         if (ConsoleOutputFileIncludesCommandLine)
                         {
@@ -724,7 +739,11 @@ namespace PRISM
                 }
                 catch (Exception ex)
                 {
-                    ThrowConditionalException(ex, "Problem starting process. Parameters: " + m_Process.StartInfo.WorkingDirectory + m_Process.StartInfo.FileName + " " + m_Process.StartInfo.Arguments + ".");
+                    var errorMsg = "Problem starting process. Parameters: " +
+                              Path.Combine(m_Process.StartInfo.WorkingDirectory, m_Process.StartInfo.FileName) + " " +
+                              m_Process.StartInfo.Arguments;
+
+                    ThrowConditionalException(ex, errorMsg);
                     m_ExitCode = -1234567;
                     State = States.NotMonitoring;
                     return;
@@ -749,7 +768,6 @@ namespace PRISM
 
                         m_Process.BeginOutputReadLine();
                         m_Process.BeginErrorReadLine();
-
                     }
                     catch (Exception)
                     {
@@ -787,7 +805,6 @@ namespace PRISM
                         // Exception calling .WaitForExit or .HasExited; most likely the process has exited
                         break;
                     }
-
                 }
 
                 // Need to free up resources used to keep
@@ -814,14 +831,20 @@ namespace PRISM
                     // Exception closing the process; ignore
                 }
 
-                if (mEventLogger != null)
-                {
-                    mEventLogger.PostEntry("Process " + Name + " terminated with exit code " + m_ExitCode, logMsgType.logHealth, true);
+                var msg = "Process " + Name + " terminated with exit code " + m_ExitCode;
+#pragma warning disable 618
+                mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
+#pragma warning restore 618
+                mLogger.Debug(msg);
 
-                    if (m_CachedConsoleError != null && m_CachedConsoleError.Length > 0)
-                    {
-                        mEventLogger.PostEntry("Cached error text for process " + Name + ": " + m_CachedConsoleError, logMsgType.logError, true);
-                    }
+                if (m_CachedConsoleError != null && m_CachedConsoleError.Length > 0)
+                {
+                    var errorMsg = "Cached error text for process " + Name + ": " + m_CachedConsoleError;
+#pragma warning disable 618
+                    mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
+#pragma warning restore 618
+                    mLogger.Error(errorMsg);
+
                 }
 
                 if (m_ConsoleOutputStreamWriter != null)
@@ -960,12 +983,19 @@ namespace PRISM
 
         private void ThrowConditionalException(Exception ex, string loggerMessage)
         {
+#pragma warning disable 618
             mExceptionLogger?.PostError(loggerMessage, ex, true);
+#pragma warning restore 618
+            mLogger?.Error(loggerMessage, ex);
 
             if (!NotifyOnException)
                 return;
 
-            if (mExceptionLogger == null)
+#pragma warning disable 618
+            var ignoreException = (mExceptionLogger == null && mLogger == null);
+#pragma warning restore 618
+
+            if (ignoreException)
             {
                 OnWarningEvent("Exception caught (but ignored): " + loggerMessage + "; " + ex.Message);
             }
