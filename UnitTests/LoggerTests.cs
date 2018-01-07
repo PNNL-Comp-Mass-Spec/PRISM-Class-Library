@@ -69,7 +69,7 @@ namespace PRISMTest
                 var messages = new List<clsLogEntry>();
                 for (var i = 0; i < logCount; i++)
                 {
-                    messages.Add(new clsLogEntry("Bulk " + message + " " + i, entryType, true));
+                    messages.Add(new clsLogEntry("Bulk " + message + " " + i, entryType));
                 }
                 queueLogger.PostEntries(messages);
             }

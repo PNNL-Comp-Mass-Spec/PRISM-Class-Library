@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using PRISM;
@@ -41,8 +40,7 @@ namespace PRISMTest
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
-            List<List<string>> lstResults;
-            dbTools.GetQueryResults(query, out lstResults, "Unit Tests");
+            dbTools.GetQueryResults(query, out var lstResults, "Unit Tests");
 
             var expectedValues = expectedValueList.Split(',');
 
@@ -107,8 +105,7 @@ namespace PRISMTest
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
-            List<List<string>> lstResults;
-            dbTools.GetQueryResults(query, out lstResults, "Unit Tests");
+            dbTools.GetQueryResults(query, out var lstResults, "Unit Tests");
 
             var expectedValues = expectedValueList.Split(',');
 
