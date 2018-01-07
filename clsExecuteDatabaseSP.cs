@@ -237,7 +237,7 @@ namespace PRISM
                     retryCount -= 1;
                     errorMessage = "Exception filling data adapter for " + spCmd.CommandText + ": " + ex.Message;
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                    errorMessage += "; " + Utilities.GetExceptionStackTrace(ex);
+                    errorMessage += "; " + clsStackTraceFormatter.GetExceptionStackTrace(ex);
 
                     OnErrorEvent(errorMessage);
                     Console.WriteLine(errorMessage);
@@ -412,7 +412,7 @@ namespace PRISM
                     retryCount -= 1;
                     errorMessage = "Exception calling stored procedure " + spCmd.CommandText + ": " + ex.Message;
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                    errorMessage += "; " + Utilities.GetExceptionStackTrace(ex);
+                    errorMessage += "; " + clsStackTraceFormatter.GetExceptionStackTrace(ex);
 
                     OnErrorEvent(errorMessage);
 
