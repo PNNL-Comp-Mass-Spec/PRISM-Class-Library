@@ -31,13 +31,13 @@ namespace PRISM.Logging
         /// Tracks the number of successive dequeue failures
         /// </summary>
         private static int mFailedDequeueEvents;
+#endif
 
         /// <summary>
         /// Module name
         /// </summary>
         private static string mModuleName;
 
-#endif
         #endregion
 
         #region "Properties"
