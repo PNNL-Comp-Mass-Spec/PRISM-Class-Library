@@ -66,7 +66,8 @@
     <Compile Include="Logging\DatabaseLogger.cs" />
     <Compile Include="Logging\FileLogger.cs" />
     <Compile Include="Logging\LogMessage.cs" />
-    <Compile Include="Logging\UsageFlag.cs" />
+    <Compile Include="Logging\ODBCDatabaseLogger.cs" />
+    <Compile Include="Logging\SqlServerDatabaseLogger.cs" />
     <Compile Include="ShareConnector.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="SystemInfo.cs" />
