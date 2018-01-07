@@ -1,48 +1,27 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data;
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
-using System.Data.Odbc;
-#endif
-using System.Threading;
+using System.Security.Principal;
 
 namespace PRISM.Logging
 {
     /// <summary>
     /// Logs messages to a database by calling a stored procedure
     /// </summary>
-    public class DatabaseLogger : BaseLogger
+    public abstract class DatabaseLogger : BaseLogger
     {
+
         #region "Constants"
 
         /// <summary>
         /// Interval, in milliseconds, between flushing log messages to the database
         /// </summary>
-        private const int LOG_INTERVAL_MILLISECONDS = 1000;
+        protected const int LOG_INTERVAL_MILLISECONDS = 1000;
 
-        private const int TIMEOUT_SECONDS = 5;
+        /// <summary>
+        /// Database timeout length, in seconds
+        /// </summary>
+        protected const int TIMEOUT_SECONDS = 15;
 
         #endregion
-
-        #region "Static variables"
-
-        private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new ConcurrentQueue<LogMessage>();
-
-        private static bool mQueueLoggerInitialized;
-
-        private static readonly List<string> mMessageQueueEntryFlag = new List<string>();
-
-        private static readonly Timer mQueueLogger = new Timer(LogQueuedMessages, null, 0, 0);
-
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
-        /// <summary>
-        /// Tracks the number of successive dequeue failures
-        /// </summary>
-        private static int mFailedDequeueEvents;
-#endif
-
-#endregion
 
         #region "Member variables"
 
@@ -51,6 +30,16 @@ namespace PRISM.Logging
         #endregion
 
         #region "Properties"
+
+        /// <summary>
+        /// When true, also send any messages to the file logger
+        /// </summary>
+        public bool EchoMessagesToFileLogger { get; set; } = true;
+
+        /// <summary>
+        /// When true, log type will be changed from all caps to InitialCaps (e.g. INFO to Info)
+        /// </summary>
+        public static bool InitialCapsLogTypes { get; set; } = true;
 
         /// <summary>
         /// True if info level logging is enabled (LogLevel is LogLevels.DEBUG or higher)
@@ -91,87 +80,45 @@ namespace PRISM.Logging
             set => SetLogLevel(value);
         }
 
-        /// <summary>
-        /// ODBC style connection string
-        /// </summary>
-        public static string ConnectionString { get; private set; }
 
         /// <summary>
-        /// Program name to pass to the PostedBy field when contacting the database
+        /// The module name identifies the logging process.
         /// </summary>
-        public static string ModuleName { get; set; } = "DatabaseLogger";
-
-        /// <summary>
-        /// Stored procedure where log messages will be posted
-        /// </summary>
-        public static string StoredProcedureName { get; private set; }
-
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
-        private static OdbcParameter LogTypeParam { get; set; }
-
-        private static OdbcParameter MessageParam { get; set; }
-
-        private static OdbcParameter PostedByParam { get; set; }
-#else
-        private static bool NotifiedNotSupported{ get; set; }
-#endif
-
-        /// <summary>
-        /// When true, also send any messages to the file logger
-        /// </summary>
-        public static bool EchoMessagesToFileLogger { get; set; } = true;
-
-        #endregion
-
-        /// <summary>
-        /// Constructor when the connection info is unknown
-        /// </summary>
-        /// <param name="logLevel"></param>
-        /// <remarks>No database logging will occur until ChangeConnectionInfo is called</remarks>
-        public DatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this("", "", "", "", "", "")
+        public static string MachineName
         {
-            LogLevel = logLevel;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="moduleName">Program name to pass to the postedByParamName field when contacting the database</param>
-        /// <param name="connectionString">ODBC-style connection string</param>
-        /// <param name="storedProcedure">Stored procedure to call</param>
-        /// <param name="logTypeParamName">LogType parameter name (string representation of logLevel</param>
-        /// <param name="messageParamName">Message parameter name</param>
-        /// <param name="postedByParamName">Log source parameter name</param>
-        /// <param name="logTypeParamSize">LogType parameter size</param>
-        /// <param name="messageParamSize">Message parameter size</param>
-        /// <param name="postedByParamSize">Log source parameter size</param>
-        /// <param name="logLevel">Log level</param>
-        public DatabaseLogger(
-            string moduleName,
-            string connectionString,
-            string storedProcedure,
-            string logTypeParamName,
-            string messageParamName,
-            string postedByParamName,
-            int logTypeParamSize = 128,
-            int messageParamSize = 4000,
-            int postedByParamSize = 128,
-            LogLevels logLevel = LogLevels.INFO)
-        {
-            ChangeConnectionInfo(
-                moduleName, connectionString, storedProcedure,
-                logTypeParamName, messageParamName, postedByParamName,
-                logTypeParamSize, messageParamSize, postedByParamSize);
-
-            LogLevel = logLevel;
-
-            if (!mQueueLoggerInitialized)
+            get
             {
-                mQueueLoggerInitialized = true;
-                mQueueLogger.Change(100, LOG_INTERVAL_MILLISECONDS);
+                var host = System.Net.Dns.GetHostName();
+
+                if (host.Contains("."))
+                {
+                    host = host.Substring(0, host.IndexOf('.'));
+                }
+
+                return host;
             }
         }
 
+        /// <summary>
+        /// The user name running this program
+        /// </summary>
+#if !(NETSTANDARD1_x)
+        public static string UserName => WindowsIdentity.GetCurrent().Name;
+#else
+        public static string UserName
+        {
+            get
+            {
+                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+                {
+                    return WindowsIdentity.GetCurrent()?.Name;
+                }
+                return "Unknown";
+            }
+        }
+#endif
+
+        #endregion
 
         /// <summary>
         /// Update the database connection info
@@ -186,7 +133,7 @@ namespace PRISM.Logging
         /// <param name="messageParamSize">Message parameter size</param>
         /// <param name="postedByParamSize">Log source parameter size</param>
         /// <remarks>Will append today's date to the base name</remarks>
-        public void ChangeConnectionInfo(
+        public abstract void ChangeConnectionInfo(
             string moduleName,
             string connectionString,
             string storedProcedure,
@@ -195,151 +142,47 @@ namespace PRISM.Logging
             string postedByParamName,
             int logTypeParamSize = 128,
             int messageParamSize = 4000,
-            int postedByParamSize = 128)
-        {
-            ModuleName = moduleName;
+            int postedByParamSize = 128);
 
-            ConnectionString = connectionString;
-            StoredProcedureName = storedProcedure;
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
-            LogTypeParam = new OdbcParameter(logTypeParamName, OdbcType.VarChar, logTypeParamSize);
-            MessageParam = new OdbcParameter(messageParamName, OdbcType.VarChar, messageParamSize);
-            PostedByParam = new OdbcParameter(postedByParamName, OdbcType.VarChar, postedByParamSize);
-#endif
+        /// <summary>
+        /// Immediately write out any queued messages (using the current thread)
+        /// </summary>
+        /// <remarks>
+        /// There is no need to call this method since you must create an instance of a database logging class to use it
+        /// and when that class is disposed, it calls StartLogQueuedMessages()
+        /// </remarks>
+        public override void FlushPendingMessages()
+        {
         }
 
-        private static void LogQueuedMessages(object state)
+        /// <summary>
+        /// Construct the string MachineName:UserName.
+        /// </summary>
+        protected static string GetDefaultModuleName()
         {
-            if (mMessageQueue.IsEmpty)
-                return;
-
-            if (Monitor.TryEnter(mMessageQueueEntryFlag))
-            {
-                try
-                {
-                    LogQueuedMessages();
-                }
-                finally
-                {
-                    Monitor.Exit(mMessageQueueEntryFlag);
-                }
-            }
-
+            var retVal = MachineName + ":" + UserName;
+            return retVal;
         }
 
-        private static void LogQueuedMessages()
+        /// <summary>
+        /// Convert log level to a string, optionally changing from all caps to initial caps
+        /// </summary>
+        /// <param name="logLevel"></param>
+        /// <returns></returns>
+        protected static string LogLevelToString(LogLevels logLevel)
         {
-            try
-            {
-#if (NETSTANDARD1_x)
-                if (NotifiedNotSupported)
-                    return;
+            var logLevelText = logLevel.ToString();
 
-                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 1.x");
-                NotifiedNotSupported = true;
+            if (!InitialCapsLogTypes)
+                return logLevelText;
 
-#endif
-
-#if (NETSTANDARD2_0)
-                if (NotifiedNotSupported)
-                    return;
-
-                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 2.x");
-                NotifiedNotSupported = true;
-
-#endif
-
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
-                // Set up the command object prior to SP execution
-                var spCmd = new OdbcCommand(StoredProcedureName) { CommandType = CommandType.StoredProcedure };
-
-                spCmd.Parameters.Add(new OdbcParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
-                var logTypeParam = spCmd.Parameters.Add(LogTypeParam);
-                var logMessageParam = spCmd.Parameters.Add(MessageParam);
-                spCmd.Parameters.Add(PostedByParam).Value = ModuleName;
-
-                using (var sqlConnection = new OdbcConnection(ConnectionString))
-                {
-                    sqlConnection.Open();
-                    spCmd.Connection = sqlConnection;
-                    spCmd.CommandTimeout = TIMEOUT_SECONDS;
-
-                    while (!mMessageQueue.IsEmpty)
-                    {
-                        if (!mMessageQueue.TryDequeue(out var logMessage))
-                        {
-                            mFailedDequeueEvents += 1;
-                            LogDequeueError(mFailedDequeueEvents, mMessageQueue.Count);
-                            return;
-                        }
-
-                        mFailedDequeueEvents = 0;
-
-                        if (logMessage.LogLevel <= LogLevels.ERROR)
-                        {
-                            MostRecentErrorMessage = logMessage.Message;
-                        }
-
-                        if (string.IsNullOrWhiteSpace(ConnectionString) || string.IsNullOrWhiteSpace(StoredProcedureName) || MessageParam == null)
-                            continue;
-
-                        logTypeParam.Value = logMessage.LogLevel.ToString();
-                        logMessageParam.Value = logMessage.Message;
-
-                        var retryCount = 2;
-
-                        while (retryCount > 0)
-                        {
-                            var returnValue = 0;
-
-                            try
-                            {
-                                spCmd.ExecuteNonQuery();
-                                returnValue = Convert.ToInt32(spCmd.Parameters["@Return"].Value);
-                            }
-                            catch (Exception ex)
-                            {
-                                --retryCount;
-                                var errorMessage = "Exception calling stored procedure " +
-                                    spCmd.CommandText + ": " + ex.Message +
-                                    "; resultCode = " + returnValue + "; Retry count = " + retryCount + "; " +
-                                    PRISM.Utilities.GetExceptionStackTrace(ex);
-
-                                if (retryCount ==0)
-                                    FileLogger.WriteLog(LogLevels.ERROR, errorMessage);
-                                else
-                                    FileLogger.WriteLog(LogLevels.WARN, errorMessage);
-
-                                if (!ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
-                                {
-                                    // Try again
-                                }
-                                else
-                                    break;
-                            }
-
-                        }
-
-
-                    }
-                }
-#endif
-
-            }
-            catch (Exception ex)
-            {
-                PRISM.ConsoleMsgUtils.ShowError("Error writing queued log messages to the database: " + ex.Message, ex, false, false);
-            }
-
+            return logLevelText.Substring(0, 1).ToUpper() + logLevelText.Substring(1).ToLower();
         }
 
         /// <summary>
         /// Disable database logging
         /// </summary>
-        public void RemoveConnectionInfo()
-        {
-            ChangeConnectionInfo(ModuleName, "", "", "", "", "");
-        }
+        public abstract void RemoveConnectionInfo();
 
         /// <summary>
         /// Update the Log Level (called by property LogLevel)
@@ -355,7 +198,7 @@ namespace PRISM.Logging
             IsWarnEnabled = mLogLevel >= LogLevels.WARN;
         }
 
-#region "Message logging methods"
+        #region "Message logging methods"
 
         /// <summary>
         /// Log a debug message (provided LogLevel is LogLevels.DEBUG)
@@ -428,7 +271,7 @@ namespace PRISM.Logging
         /// <param name="logLevel"></param>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-        public static void WriteLog(LogLevels logLevel, string message, Exception ex = null)
+        public void WriteLog(LogLevels logLevel, string message, Exception ex = null)
         {
             var logMessage = new LogMessage(logLevel, message, ex);
             WriteLog(logMessage);
@@ -438,14 +281,9 @@ namespace PRISM.Logging
         /// Log a message (regardless of base.LogLevel)
         /// </summary>
         /// <param name="logMessage"></param>
-        public static void WriteLog(LogMessage logMessage)
-        {
-            mMessageQueue.Enqueue(logMessage);
+        public abstract void WriteLog(LogMessage logMessage);
 
-            if (EchoMessagesToFileLogger)
-                FileLogger.WriteLog(logMessage);
-        }
+        #endregion
 
-#endregion
     }
 }

@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
 
-namespace AnalysisManagerBase.Logging
+namespace PRISM.Logging
 {
     /// <summary>
     /// Logs messages to a database by calling a stored procedure
@@ -29,19 +29,36 @@ namespace AnalysisManagerBase.Logging
         /// </summary>
         private static int mFailedDequeueEvents;
 
+        /// <summary>
+        /// Module name
+        /// </summary>
+        private static string mModuleName;
+
         #endregion
 
         #region "Properties"
 
         /// <summary>
-        /// ODBC style connection string
+        /// SQL Server style connection string
         /// </summary>
         public static string ConnectionString { get; private set; }
 
         /// <summary>
         /// Program name to pass to the PostedBy field when contacting the database
         /// </summary>
-        public static string ModuleName { get; set; } = "SQLServerDatabaseLogger";
+        /// <remarks>Will be auto-defined in LogQueuedMessages if blank</remarks>
+        public static string ModuleName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(mModuleName))
+                {
+                    mModuleName = GetDefaultModuleName();
+                }
+                return mModuleName;
+            }
+            set => mModuleName = value;
+        }
 
         /// <summary>
         /// Stored procedure where log messages will be posted
@@ -60,17 +77,20 @@ namespace AnalysisManagerBase.Logging
         /// Constructor when the connection info is unknown
         /// </summary>
         /// <param name="logLevel"></param>
-        /// <remarks>No database logging will occur until ChangeConnectionInfo is called</remarks>
-        public SQLServerDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this("", "", "", "", "", "")
+        /// <remarks>No database logging will occur until ChangeConnectionInfo is called (to define the connection string)</remarks>
+        public SQLServerDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this("", "", logLevel)
         {
-            LogLevel = logLevel;
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="moduleName">Program name to pass to the postedByParamName field when contacting the database</param>
-        /// <param name="connectionString">ODBC-style connection string</param>
+        /// <param name="moduleName">
+        /// Program name to pass to the postedByParamName field when contacting the database 
+        /// (will be auto-defined later if blank)
+        /// </param>
+        /// <param name="connectionString">SQL Server style connection string</param>
+        /// <param name="logLevel">Log level</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
         /// <param name="logTypeParamName">LogType parameter name (string representation of logLevel</param>
         /// <param name="messageParamName">Message parameter name</param>
@@ -78,18 +98,17 @@ namespace AnalysisManagerBase.Logging
         /// <param name="logTypeParamSize">LogType parameter size</param>
         /// <param name="messageParamSize">Message parameter size</param>
         /// <param name="postedByParamSize">Log source parameter size</param>
-        /// <param name="logLevel">Log level</param>
         public SQLServerDatabaseLogger(
             string moduleName,
             string connectionString,
-            string storedProcedure,
-            string logTypeParamName,
-            string messageParamName,
-            string postedByParamName,
+            LogLevels logLevel = LogLevels.INFO,
+            string storedProcedure = "PostLogEntry",
+            string logTypeParamName = "type",
+            string messageParamName = "message",
+            string postedByParamName = "postedBy",
             int logTypeParamSize = 128,
             int messageParamSize = 4000,
-            int postedByParamSize = 128,
-            LogLevels logLevel = LogLevels.INFO)
+            int postedByParamSize = 128)
         {
             ChangeConnectionInfo(
                 moduleName, connectionString, storedProcedure,
@@ -110,8 +129,11 @@ namespace AnalysisManagerBase.Logging
         /// <summary>
         /// Update the database connection info
         /// </summary>
-        /// <param name="moduleName">Program name to be sent to the PostedBy field when contacting the database</param>
-        /// <param name="connectionString">ODBC-style connection string</param>
+        /// <param name="moduleName">
+        /// Program name to pass to the postedByParamName field when contacting the database 
+        /// (will be auto-defined later if blank)
+        /// </param>
+        /// <param name="connectionString">SQL Server style connection string</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
         /// <param name="logTypeParamName">LogType parameter name</param>
         /// <param name="messageParamName">Message parameter name</param>
@@ -119,7 +141,6 @@ namespace AnalysisManagerBase.Logging
         /// <param name="logTypeParamSize">LogType parameter size</param>
         /// <param name="messageParamSize">Message parameter size</param>
         /// <param name="postedByParamSize">Log source parameter size</param>
-        /// <remarks>Will append today's date to the base name</remarks>
         public override void ChangeConnectionInfo(
             string moduleName,
             string connectionString,
@@ -152,18 +173,18 @@ namespace AnalysisManagerBase.Logging
 
         private static void LogQueuedMessages()
         {
-            var messagesWritten = 0;
 
             try
             {
-
                 ShowTraceMessage(string.Format("SQLServerDatabaseLogger connecting to {0}", ConnectionString));
+                var messagesWritten = 0;
 
                 using (var sqlConnection = new SqlConnection(ConnectionString))
                 {
                     sqlConnection.Open();
 
-                    var spCmd = new SqlCommand(StoredProcedureName) {
+                    var spCmd = new SqlCommand(StoredProcedureName)
+                    {
                         CommandType = CommandType.StoredProcedure
                     };
 
@@ -218,7 +239,7 @@ namespace AnalysisManagerBase.Logging
                                 var errorMessage = "Exception calling stored procedure " +
                                                    spCmd.CommandText + ": " + ex.Message +
                                                    "; resultCode = " + returnValue + "; Retry count = " + retryCount + "; " +
-                                                   PRISM.Utilities.GetExceptionStackTrace(ex);
+                                                   clsStackTraceFormatter.GetExceptionStackTrace(ex);
 
                                 if (retryCount == 0)
                                     FileLogger.WriteLog(LogLevels.ERROR, errorMessage);
@@ -240,11 +261,10 @@ namespace AnalysisManagerBase.Logging
                 }
 
                 ShowTraceMessage(string.Format("SQLServerDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
-
             }
             catch (Exception ex)
             {
-                PRISM.ConsoleMsgUtils.ShowError("Error writing queued log messages to the database using SQL Server: " + ex.Message, ex, false, false);
+                ConsoleMsgUtils.ShowError("Error writing queued log messages to the database using SQL Server: " + ex.Message, ex, false, false);
             }
 
         }

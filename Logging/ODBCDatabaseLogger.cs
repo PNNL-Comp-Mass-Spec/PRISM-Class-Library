@@ -2,10 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
 using System.Data.Odbc;
+#endif
 using System.Threading;
 
-namespace AnalysisManagerBase.Logging
+namespace PRISM.Logging
 {
     /// <summary>
     /// Logs messages to a database by calling a stored procedure
@@ -24,11 +26,18 @@ namespace AnalysisManagerBase.Logging
 
         private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 0, 0);
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         /// <summary>
         /// Tracks the number of successive dequeue failures
         /// </summary>
         private static int mFailedDequeueEvents;
 
+        /// <summary>
+        /// Module name
+        /// </summary>
+        private static string mModuleName;
+
+#endif
         #endregion
 
         #region "Properties"
@@ -41,18 +50,34 @@ namespace AnalysisManagerBase.Logging
         /// <summary>
         /// Program name to pass to the PostedBy field when contacting the database
         /// </summary>
-        public static string ModuleName { get; set; } = "ODBCDatabaseLogger";
+        /// <remarks>Will be auto-defined in LogQueuedMessages if blank</remarks>
+        public static string ModuleName
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(mModuleName))
+                {
+                    mModuleName = GetDefaultModuleName();
+                }
+                return mModuleName;
+            }
+            set => mModuleName = value;
+        }
 
         /// <summary>
         /// Stored procedure where log messages will be posted
         /// </summary>
         public static string StoredProcedureName { get; private set; }
 
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
         private static OdbcParameter LogTypeParam { get; set; }
 
         private static OdbcParameter MessageParam { get; set; }
 
         private static OdbcParameter PostedByParam { get; set; }
+#else
+        private static bool NotifiedNotSupported{ get; set; }
+#endif
 
         #endregion
 
@@ -60,17 +85,20 @@ namespace AnalysisManagerBase.Logging
         /// Constructor when the connection info is unknown
         /// </summary>
         /// <param name="logLevel"></param>
-        /// <remarks>No database logging will occur until ChangeConnectionInfo is called</remarks>
-        public ODBCDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this("", "", "", "", "", "")
+        /// <remarks>No database logging will occur until ChangeConnectionInfo is called (to define the connection string)</remarks>
+        public ODBCDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this("", "", logLevel)
         {
-            LogLevel = logLevel;
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="moduleName">Program name to pass to the postedByParamName field when contacting the database</param>
+        /// <param name="moduleName">
+        /// Program name to pass to the postedByParamName field when contacting the database
+        /// (will be auto-defined later if blank)
+        /// </param>
         /// <param name="connectionString">ODBC-style connection string</param>
+        /// <param name="logLevel">Log level</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
         /// <param name="logTypeParamName">LogType parameter name (string representation of logLevel</param>
         /// <param name="messageParamName">Message parameter name</param>
@@ -78,18 +106,17 @@ namespace AnalysisManagerBase.Logging
         /// <param name="logTypeParamSize">LogType parameter size</param>
         /// <param name="messageParamSize">Message parameter size</param>
         /// <param name="postedByParamSize">Log source parameter size</param>
-        /// <param name="logLevel">Log level</param>
         public ODBCDatabaseLogger(
             string moduleName,
             string connectionString,
-            string storedProcedure,
-            string logTypeParamName,
-            string messageParamName,
-            string postedByParamName,
+            LogLevels logLevel = LogLevels.INFO,
+            string storedProcedure = "PostLogEntry",
+            string logTypeParamName = "type",
+            string messageParamName = "message",
+            string postedByParamName = "postedBy",
             int logTypeParamSize = 128,
             int messageParamSize = 4000,
-            int postedByParamSize = 128,
-            LogLevels logLevel = LogLevels.INFO)
+            int postedByParamSize = 128)
         {
             ChangeConnectionInfo(
                 moduleName, connectionString, storedProcedure,
@@ -110,7 +137,10 @@ namespace AnalysisManagerBase.Logging
         /// <summary>
         /// Update the database connection info
         /// </summary>
-        /// <param name="moduleName">Program name to be sent to the PostedBy field when contacting the database</param>
+        /// <param name="moduleName">
+        /// Program name to pass to the postedByParamName field when contacting the database 
+        /// (will be auto-defined later if blank)
+        /// </param>
         /// <param name="connectionString">ODBC-style connection string</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
         /// <param name="logTypeParamName">LogType parameter name</param>
@@ -119,7 +149,6 @@ namespace AnalysisManagerBase.Logging
         /// <param name="logTypeParamSize">LogType parameter size</param>
         /// <param name="messageParamSize">Message parameter size</param>
         /// <param name="postedByParamSize">Log source parameter size</param>
-        /// <remarks>Will append today's date to the base name</remarks>
         public override void ChangeConnectionInfo(
             string moduleName,
             string connectionString,
@@ -135,9 +164,12 @@ namespace AnalysisManagerBase.Logging
 
             ConnectionString = connectionString;
             StoredProcedureName = storedProcedure;
+
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
             LogTypeParam = new OdbcParameter("@" + logTypeParamName, OdbcType.VarChar, logTypeParamSize);
             MessageParam = new OdbcParameter("@" + messageParamName, OdbcType.VarChar, messageParamSize);
             PostedByParam = new OdbcParameter("@" + postedByParamName, OdbcType.VarChar, postedByParamSize);
+#endif
         }
 
         /// <summary>
@@ -267,11 +299,30 @@ namespace AnalysisManagerBase.Logging
 
         private static void LogQueuedMessages()
         {
-            var messagesWritten = 0;
+
+#if (NETSTANDARD1_x)
+                if (NotifiedNotSupported)
+                    return;
+
+                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 1.x");
+                NotifiedNotSupported = true;
+
+#endif
+
+#if (NETSTANDARD2_0)
+                if (NotifiedNotSupported)
+                    return;
+
+                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 2.x");
+                NotifiedNotSupported = true;
+
+#endif
 
             try
             {
+#if !(NETSTANDARD1_x || NETSTANDARD2_0)
                 ShowTraceMessage(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
+                var messagesWritten = 0;
 
                 using (var odbcConnection = new OdbcConnection(ConnectionString))
                 {
@@ -283,7 +334,8 @@ namespace AnalysisManagerBase.Logging
 
                     var spCmdText = "{call " + StoredProcedureName + " (?,?,?)}";
 
-                    var spCmd = new OdbcCommand(spCmdText) {
+                    var spCmd = new OdbcCommand(spCmdText)
+                    {
                         CommandType = CommandType.StoredProcedure
                     };
 
@@ -339,7 +391,7 @@ namespace AnalysisManagerBase.Logging
                                 var errorMessage = "Exception calling stored procedure " +
                                                    spCmd.CommandText + ": " + ex.Message +
                                                    "; resultCode = " + returnValue + "; Retry count = " + retryCount + "; " +
-                                                   PRISM.Utilities.GetExceptionStackTrace(ex);
+                                                   clsStackTraceFormatter.GetExceptionStackTrace(ex);
 
                                 if (retryCount == 0)
                                     FileLogger.WriteLog(LogLevels.ERROR, errorMessage);
@@ -361,11 +413,11 @@ namespace AnalysisManagerBase.Logging
                 }
 
                 ShowTraceMessage(string.Format("ODBCDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
-
+#endif
             }
             catch (Exception ex)
             {
-                PRISM.ConsoleMsgUtils.ShowError("Error writing queued log messages to the database using ODBC: " + ex.Message, ex, false, false);
+                ConsoleMsgUtils.ShowError("Error writing queued log messages to the database using ODBC: " + ex.Message, ex, false, false);
             }
 
         }

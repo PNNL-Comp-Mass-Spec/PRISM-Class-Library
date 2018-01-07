@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PRISM.Logging
 {
     /// <summary>
-    /// Base class for the FileLogger
+    /// Base class for FileLogger and DatabaseLogger
     /// </summary>
     public abstract class BaseLogger
     {
@@ -48,16 +44,24 @@ namespace PRISM.Logging
             NOLOGGING = 0
         }
 
-
         /// <summary>
         /// Set to True if we cannot log to the official log file, we try to log to the local log file, and even that file cannot be written
         /// </summary>
         private static bool mLocalLogFileAccessError;
 
+        #region "Properties"
+
         /// <summary>
         /// Most recent error message
         /// </summary>
         public static string MostRecentErrorMessage { get; protected set; } = "";
+
+        /// <summary>
+        /// When true, show additional debug messages at the console
+        /// </summary>
+        public static bool TraceMode { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Compare logLevel to mLogLevel
@@ -168,7 +172,12 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a message (provided LogLeevl is logLevel or higher
+        /// Immediately write out any queued messages (using the current thread)
+        /// </summary>
+        public abstract void FlushPendingMessages();
+
+        /// <summary>
+        /// Log a message (provided logLevel is LogLevel or higher)
         /// </summary>
         /// <param name="logLevel"></param>
         /// <param name="message"></param>
@@ -186,18 +195,32 @@ namespace PRISM.Logging
                     Error(message, ex);
                     break;
                 case LogLevels.FATAL:
-                    Debug(message, ex);
+                    Fatal(message, ex);
                     break;
                 case LogLevels.INFO:
-                    Debug(message, ex);
+                    Info(message, ex);
                     break;
                 case LogLevels.WARN:
-                    Debug(message, ex);
+                    Warn(message, ex);
                     break;
                 default:
                     throw new Exception("Invalid log level specified");
             }
         }
+
+        /// <summary>
+        /// Show a trace message at the console if TraceMode is true
+        /// </summary>
+        /// <param name="message"></param>
+        protected static void ShowTraceMessage(string message)
+        {
+            if (TraceMode)
+            {
+                ConsoleMsgUtils.ShowDebug(string.Format("{0:yyyy-MM-dd hh:mm:ss.fff tt}: {1}", DateTime.Now, message));
+            }
+        }
+
+        #region "Methods to be defined in derived classes"
 
         /// <summary>
         /// Log a debug message (provided LogLevel is LogLevels.DEBUG)
@@ -234,6 +257,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public abstract void Warn(string message, Exception ex = null);
 
+        #endregion
     }
 
 }

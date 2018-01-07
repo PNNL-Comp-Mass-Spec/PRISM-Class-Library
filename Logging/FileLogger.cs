@@ -17,7 +17,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Interval, in milliseconds, between flushing log messages to disk
         /// </summary>
-        private const int LOG_INTERVAL_MILLISECONDS = 1000;
+        private const int LOG_INTERVAL_MILLISECONDS = 500;
 
         /// <summary>
         /// Date format for log file names
@@ -40,9 +40,9 @@ namespace PRISM.Logging
 
         private static bool mQueueLoggerInitialized;
 
-        private static List<string> mMessageQueueEntryFlag = new List<string>();
+        private static readonly List<string> mMessageQueueEntryFlag = new List<string>();
 
-        private static readonly Timer mQueueLogger = new Timer(LogQueuedMessages, null, 0, 0);
+        private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 0, 0);
 
         /// <summary>
         /// Tracks the number of successive dequeue failures
@@ -105,7 +105,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Current log file path
         /// </summary>
-        public string LogFilePath => mLogFilePath;
+        public static string LogFilePath => mLogFilePath;
 
         /// <summary>
         /// Get or set the current log level
@@ -134,11 +134,14 @@ namespace PRISM.Logging
 
             LogLevel = logLevel;
 
-            if (!mQueueLoggerInitialized)
-            {
-                mQueueLoggerInitialized = true;
-                mQueueLogger.Change(100, LOG_INTERVAL_MILLISECONDS);
-            }
+            if (mQueueLoggerInitialized)
+                return;
+
+            ShowTraceMessage("Starting the FileLogger QueueLogger");
+
+            mQueueLoggerInitialized = true;
+            mQueueLogger.Change(500, LOG_INTERVAL_MILLISECONDS);
+
         }
 
         /// <summary>
@@ -230,28 +233,33 @@ namespace PRISM.Logging
             mLogFilePath = relativeFilePath;
         }
 
-        private static void LogQueuedMessages(object state)
+        /// <summary>
+        /// Immediately write out any queued messages (using the current thread)
+        /// </summary>
+        /// <remarks>
+        /// There is no need to call this method if you create an instance of this class.
+        /// On the other hand, if you only call static methods in this class, call this method
+        /// before ending the program to assure that all messages have been logged.
+        /// </remarks>
+        public override void FlushPendingMessages()
         {
-            if (mMessageQueue.IsEmpty)
-                return;
+            StartLogQueuedMessages();
+        }
 
-            if (Monitor.TryEnter(mMessageQueueEntryFlag))
-            {
-                try
-                {
-                    LogQueuedMessages();
-                }
-                finally
-                {
-                    Monitor.Exit(mMessageQueueEntryFlag);
-                }
-            }
-
+        /// <summary>
+        /// Callback invoked by the mQueueLogger timer
+        /// </summary>
+        /// <param name="state"></param>
+        private static void LogMessagesCallback(object state)
+        {
+            ShowTraceMessage("FileLogger.mQueueLogger callback raised");
+            StartLogQueuedMessages();
         }
 
         private static void LogQueuedMessages()
         {
             StreamWriter writer = null;
+            var messagesWritten = 0;
 
             try
             {
@@ -285,14 +293,29 @@ namespace PRISM.Logging
                         PRISM.ConsoleMsgUtils.ShowError("Error defining the new log file name: " + ex2.Message, ex2, false, false);
                     }
 
-                    if (logMessage.LogLevel <= LogLevels.ERROR)
+                    if (logMessage.LogLevel == LogLevels.ERROR || logMessage.LogLevel == LogLevels.FATAL)
                     {
                         MostRecentErrorMessage = logMessage.Message;
                     }
 
                     if (writer == null)
                     {
-                        writer = new StreamWriter(new FileStream(mLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
+                        ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
+
+                        var logFile = new FileInfo(mLogFilePath);
+                        if (logFile.Directory == null)
+                        {
+                            // Create the log file in the current directory
+                            ChangeLogFileName(logFile.Name);
+                            logFile = new FileInfo(mLogFilePath);
+
+                        }
+                        else if (!logFile.Directory.Exists)
+                        {
+                            logFile.Directory.Create();
+                        }
+
+                        writer = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
                     }
                     writer.WriteLine(logMessage.GetFormattedMessage());
 
@@ -300,6 +323,8 @@ namespace PRISM.Logging
                     {
                         writer.WriteLine(PRISM.clsStackTraceFormatter.GetExceptionStackTraceMultiLine(logMessage.MessageException));
                     }
+
+                    messagesWritten++;
 
                 }
 
@@ -318,6 +343,7 @@ namespace PRISM.Logging
             finally
             {
                 writer?.Close();
+                ShowTraceMessage(string.Format("FileLogger writer closed; wrote {0} messages", messagesWritten));
             }
         }
 
@@ -333,6 +359,28 @@ namespace PRISM.Logging
             IsFatalEnabled = mLogLevel >= LogLevels.FATAL;
             IsInfoEnabled = mLogLevel >= LogLevels.INFO;
             IsWarnEnabled = mLogLevel >= LogLevels.WARN;
+        }
+
+        /// <summary>
+        /// Check for queued messages
+        /// If found, try to log them, wrapping then attempt with Monitor.TryEnter and Monitor.Exit
+        /// </summary>
+        private static void StartLogQueuedMessages()
+        {
+            if (mMessageQueue.IsEmpty)
+                return;
+
+            if (Monitor.TryEnter(mMessageQueueEntryFlag))
+            {
+                try
+                {
+                    LogQueuedMessages();
+                }
+                finally
+                {
+                    Monitor.Exit(mMessageQueueEntryFlag);
+                }
+            }
         }
 
         #region "Message logging methods"
@@ -424,5 +472,14 @@ namespace PRISM.Logging
         }
 
         #endregion
+
+        /// <summary>
+        /// Class is disposing; write out any queued messages
+        /// </summary>
+        ~FileLogger()
+        {
+            ShowTraceMessage("Disposing FileLogger");
+            FlushPendingMessages();
+        }
     }
 }
