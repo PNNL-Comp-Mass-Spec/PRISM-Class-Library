@@ -16,6 +16,11 @@ namespace PRISM.Logging
         #region "Constants"
 
         /// <summary>
+        /// Default number of old log files to keep when AppendDateToBaseFileName is false
+        /// </summary>
+        private const int DEFAULT_MAX_ROLLED_LOG_FILES = 5;
+
+        /// <summary>
         /// Interval, in milliseconds, between flushing log messages to disk
         /// </summary>
         private const int LOG_INTERVAL_MILLISECONDS = 500;
@@ -160,11 +165,11 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Maximum number of rolled log files to keep
+        /// Maximum number of old log files to keep
         /// Ignored if AppendDateToBaseFileName is True
         /// </summary>
         /// <remarks>Defaults to 5; minimum value is 1</remarks>
-        public static int MaxRolledLogFiles { get; set; } = 5;
+        public static int MaxRolledLogFiles { get; set; } = DEFAULT_MAX_ROLLED_LOG_FILES;
 
         #endregion
 
@@ -173,8 +178,22 @@ namespace PRISM.Logging
         /// </summary>
         /// <param name="baseFileName">Base log file name</param>
         /// <param name="logLevel">Log level</param>
-        public FileLogger(string baseFileName = "AppLogFile", LogLevels logLevel = LogLevels.INFO)
+        /// <param name="appendDateToBaseName">
+        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
+        /// </param>
+        /// <param name="maxRolledLogFiles">
+        /// Maximum number of old log files to keep (Ignored if appendDateToBaseName is True)
+        /// </param>
+        public FileLogger(
+            string baseFileName = "",
+            LogLevels logLevel = LogLevels.INFO,
+            bool appendDateToBaseName = true,
+            int maxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES)
         {
+            AppendDateToBaseFileName = appendDateToBaseName;
+            MaxRolledLogFiles = maxRolledLogFiles;
+
             ChangeLogFileBaseName(baseFileName);
 
             LogLevel = logLevel;
