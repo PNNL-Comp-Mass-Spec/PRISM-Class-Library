@@ -342,7 +342,7 @@ namespace PRISM.Logging
                     }
                     catch (Exception ex2)
                     {
-                        PRISM.ConsoleMsgUtils.ShowError("Error defining the new log file name: " + ex2.Message, ex2, false, false);
+                        ConsoleMsgUtils.ShowError("Error defining the new log file name: " + ex2.Message, ex2, false, false);
                     }
 
                     if (logMessage.LogLevel == LogLevels.ERROR || logMessage.LogLevel == LogLevels.FATAL)
@@ -352,6 +352,11 @@ namespace PRISM.Logging
 
                     if (writer == null)
                     {
+                        if (string.IsNullOrWhiteSpace(mLogFilePath))
+                        {
+                            mLogFilePath = Path.GetFileNameWithoutExtension(ExecutableName) + "_log.txt";
+                        }
+
                         ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
 
                         var logFile = new FileInfo(mLogFilePath);
@@ -379,7 +384,7 @@ namespace PRISM.Logging
 
                     if (logMessage.MessageException != null)
                     {
-                        writer.WriteLine(PRISM.clsStackTraceFormatter.GetExceptionStackTraceMultiLine(logMessage.MessageException));
+                        writer.WriteLine(clsStackTraceFormatter.GetExceptionStackTraceMultiLine(logMessage.MessageException));
                     }
 
                     messagesWritten++;
@@ -396,7 +401,7 @@ namespace PRISM.Logging
             }
             catch (Exception ex)
             {
-                PRISM.ConsoleMsgUtils.ShowError("Error writing queued log messages to disk: " + ex.Message, ex, false, false);
+                ConsoleMsgUtils.ShowError("Error writing queued log messages to disk: " + ex.Message, ex, false, false);
             }
             finally
             {
