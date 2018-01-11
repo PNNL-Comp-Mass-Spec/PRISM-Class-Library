@@ -214,11 +214,6 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Immediately write out any queued messages (using the current thread)
-        /// </summary>
-        public abstract void FlushPendingMessages();
-
-        /// <summary>
         /// Log a message (provided logLevel is LogLevel or higher)
         /// </summary>
         /// <param name="logLevel"></param>

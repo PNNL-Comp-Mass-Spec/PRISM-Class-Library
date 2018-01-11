@@ -145,17 +145,6 @@ namespace PRISM.Logging
             int postedByParamSize = 128);
 
         /// <summary>
-        /// Immediately write out any queued messages (using the current thread)
-        /// </summary>
-        /// <remarks>
-        /// There is no need to call this method since you must create an instance of a database logging class to use it
-        /// and when that class is disposed, it calls StartLogQueuedMessages()
-        /// </remarks>
-        public override void FlushPendingMessages()
-        {
-        }
-
-        /// <summary>
         /// Construct the string MachineName:UserName.
         /// </summary>
         protected static string GetDefaultModuleName()

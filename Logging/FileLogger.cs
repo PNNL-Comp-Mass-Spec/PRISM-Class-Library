@@ -241,7 +241,7 @@ namespace PRISM.Logging
         /// On the other hand, if you only call static methods in this class, call this method
         /// before ending the program to assure that all messages have been logged.
         /// </remarks>
-        public override void FlushPendingMessages()
+        public static void FlushPendingMessages()
         {
             StartLogQueuedMessages();
         }
