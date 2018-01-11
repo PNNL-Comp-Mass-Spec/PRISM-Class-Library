@@ -29,6 +29,10 @@ namespace PRISM.Logging
 
         private const string LOG_FILE_DATE_REGEX = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
 
+        /// <summary>
+        /// Default log file extension
+        /// </summary>
+        /// <remarks>Appended to the log file name if BaseLogFileName does not have an extension</remarks>
         public const string LOG_FILE_EXTENSION = ".txt";
 
         private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
