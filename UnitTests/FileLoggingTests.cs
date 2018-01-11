@@ -10,6 +10,58 @@ namespace PRISMTest
     class FileLoggingTests
     {
 
+        [TestCase("", "TestLogFile", true, "TestLogFile")]
+        [TestCase(@"C:\Temp", "TestLogFile", true, @"C:\Temp\TestLogFile")]
+        [TestCase(@"C:\Temp", "TestLogFile.log", true, @"C:\Temp\TestLogFile.log")]
+        [TestCase("", "", true, @"PRISM_log")]
+        [TestCase("", "TestLogFile", false, "TestLogFile.txt")]
+        [TestCase(@"C:\Temp", "TestLogFile", false, @"C:\Temp\TestLogFile.txt")]
+        [TestCase("", "TestLogFile.log", true, "TestLogFile.log")]
+        [TestCase("", "", false, @"PRISM_log.txt")]
+        public void TestLogFileName(
+            string logFolder,
+            string logFileNameBase,
+            bool appendDateToBaseFileName,
+            string expectedBaseName)
+        {
+            string logFilePath;
+            if (string.IsNullOrWhiteSpace(logFileNameBase))
+                logFilePath = String.Empty;
+            else if (string.IsNullOrWhiteSpace(logFolder))
+                logFilePath = logFileNameBase;
+            else
+                logFilePath = Path.Combine(logFolder, logFileNameBase);
+
+            var logger = new FileLogger(logFilePath, BaseLogger.LogLevels.INFO, appendDateToBaseFileName);
+
+            logger.Info("Test log message");
+
+            string expectedName;
+
+            if (appendDateToBaseFileName)
+            {
+                if (Path.HasExtension(expectedBaseName))
+                {
+                    var currentExtension = Path.GetExtension(expectedBaseName);
+                    expectedName = Path.ChangeExtension(expectedBaseName, null) + "_" + DateTime.Now.ToString("MM-dd-yyyy") + currentExtension;
+                }
+                else
+                {
+                    expectedName = expectedBaseName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+                }
+            }
+            else
+                expectedName = expectedBaseName;
+
+            if (!FileLogger.LogFilePath.EndsWith(expectedName))
+            {
+                Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
+            }
+
+            Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
+
+        }
+
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 20, 50)]
