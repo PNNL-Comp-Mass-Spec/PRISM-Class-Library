@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -28,7 +29,7 @@ namespace PRISM.Logging
 
         private const string LOG_FILE_DATE_REGEX = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
 
-        private const string LOG_FILE_EXTENSION = ".txt";
+        public const string LOG_FILE_EXTENSION = ".txt";
 
         private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
 
@@ -49,10 +50,15 @@ namespace PRISM.Logging
         private static int mFailedDequeueEvents;
 
         /// <summary>
-        /// Base log file name
+        /// Base log file name (or relative path)
         /// </summary>
         /// <remarks>This is updated by ChangeLogFileBaseName or via the constructor</remarks>
         private static string mBaseFileName = "";
+
+        /// <summary>
+        /// Log file date
+        /// </summary>
+        private static DateTime mLogFileDate = DateTime.MinValue;
 
         /// <summary>
         /// Log file date (as a string)
@@ -62,9 +68,17 @@ namespace PRISM.Logging
         /// <summary>
         /// Relative file path to the current log file
         /// </summary>
+        /// <remarks>update this using method ChangeLogFileName</remarks>
         private static string mLogFilePath = "";
 
         private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+
+        /// <summary>
+        /// When true, we need to rename existing log files because
+        /// Only valid if AppendDateToBaseFileName is true
+        /// </summary>
+        /// <remarks>Log files are only renamed if a log message is actually logged</remarks>
+        private static bool mNeedToRollLogFiles;
 
         #endregion
 
@@ -75,6 +89,27 @@ namespace PRISM.Logging
         #endregion
 
         #region "Properties"
+
+        /// <summary>
+        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
+        /// If a file exists with that name, but was last modified before today, it will be renamed to BaseName.txt.1
+        /// </summary>
+        /// <remarks>
+        /// Other, existing log files will also be renamed, keeping up to MaxRolledLogFiles old log files
+        /// </remarks>
+        public static bool AppendDateToBaseFileName { get; set; } = true;
+
+        /// <summary>
+        /// Base log file name
+        /// </summary>
+        /// <remarks>
+        /// If AppendDateToBaseFileName is true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// If AppendDateToBaseFileName is false, the actual log file name will be the base name plus .txt
+        /// (unless the base name already has an extension, then the user-specified extension will be used)
+        /// See also the comments for property AppendDateToBaseFileName
+        /// </remarks>
+        public static string BaseLogFileName => mBaseFileName;
 
         /// <summary>
         /// True if info level logging is enabled (LogLevel is LogLevels.DEBUG or higher)
@@ -119,6 +154,13 @@ namespace PRISM.Logging
             get => mLogLevel;
             set => SetLogLevel(value);
         }
+
+        /// <summary>
+        /// Maximum number of rolled log files to keep
+        /// Ignored if AppendDateToBaseFileName is True
+        /// </summary>
+        /// <remarks>Defaults to 5; minimum value is 1</remarks>
+        public static int MaxRolledLogFiles { get; set; } = 5;
 
         #endregion
 
@@ -209,18 +251,38 @@ namespace PRISM.Logging
         /// </summary>
         public static void ChangeLogFileName()
         {
-            ChangeLogFileName(mBaseFileName + "_" + mLogFileDate + LOG_FILE_EXTENSION);
+            mLogFileDate = DateTime.Now.Date;
             mLogFileDateText = mLogFileDate.ToString(LOG_FILE_DATECODE);
+
+            string newLogFilePath;
+            if (AppendDateToBaseFileName)
+            {
+                newLogFilePath = mBaseFileName + "_" + mLogFileDateText + LOG_FILE_EXTENSION;
+            }
+            else
+            {
+                if (Path.HasExtension(mBaseFileName))
+                    newLogFilePath = string.Copy(mBaseFileName);
+                else
+                newLogFilePath = mBaseFileName + LOG_FILE_EXTENSION;
+            }
+
+            ChangeLogFileName(newLogFilePath, AppendDateToBaseFileName);
         }
 
         /// <summary>
         /// Changes the base log file name
         /// </summary>
         /// <param name="relativeFilePath">Log file base name and path (relative to program folder)</param>
-        /// <remarks>This method is called by the Mage, Ascore, and Multialign plugins</remarks>
-        public static void ChangeLogFileName(string relativeFilePath)
+        /// <param name="nameIncludesDate">Set to true if the log file includes today's date</param>
+        /// <remarks>
+        /// When nameIncludesDate is false, will check for an existing log file modified before today, and rename it if found (using RollLogFiles)
+        /// This method is called by the Mage, Ascore, and Multialign plugins
+        /// </remarks>
+        public static void ChangeLogFileName(string relativeFilePath, bool nameIncludesDate = false)
         {
             mLogFilePath = relativeFilePath;
+            mNeedToRollLogFiles = !nameIncludesDate;
         }
 
         /// <summary>
@@ -305,6 +367,12 @@ namespace PRISM.Logging
                             logFile.Directory.Create();
                         }
 
+                        if (mNeedToRollLogFiles)
+                        {
+                            mNeedToRollLogFiles = false;
+                            RollLogFiles(mLogFileDate, mLogFilePath);
+                        }
+
                         writer = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
                     }
                     writer.WriteLine(logMessage.GetFormattedMessage());
@@ -334,6 +402,87 @@ namespace PRISM.Logging
             {
                 writer?.Close();
                 ShowTraceMessage(string.Format("FileLogger writer closed; wrote {0} messages", messagesWritten));
+            }
+        }
+
+        /// <summary>
+        /// Rename existing log files if required
+        /// </summary>
+        /// <param name="currentDate">Current date (local time)</param>
+        /// <param name="currentLogFilePath">Current log file name (for today)</param>
+        private static void RollLogFiles(DateTime currentDate, string currentLogFilePath)
+        {
+            try
+            {
+                var currentLogFile = new FileInfo(currentLogFilePath);
+                if (!currentLogFile.Exists)
+                {
+                    // Nothing to do
+                    return;
+                }
+
+                if (currentLogFile.LastWriteTime >= currentDate.Date)
+                {
+                    // The log file is from today (or from the future)
+                    // Nothing to do
+                    return;
+                }
+
+                var pendingRenames = new Dictionary<int, KeyValuePair<FileInfo, string>>();
+
+                var filePathToCheck = currentLogFile.FullName;
+                var nextFileSuffix = 1;
+
+                var oldVersionsToKeep = Math.Max(1, MaxRolledLogFiles);
+
+                while (nextFileSuffix <= oldVersionsToKeep && File.Exists(filePathToCheck))
+                {
+                    // Append .1 or .2 or .3 etc.
+                    var nextLogFilePath = currentLogFile.FullName + "." + nextFileSuffix;
+                    pendingRenames.Add(nextFileSuffix, new KeyValuePair<FileInfo, string>(new FileInfo(filePathToCheck), nextLogFilePath));
+
+                    nextFileSuffix++;
+                    filePathToCheck = string.Copy(nextLogFilePath);
+                }
+
+                foreach (var item in (from key in pendingRenames.Keys orderby key select key).Reverse())
+                {
+                    var logFile = pendingRenames[item].Key;
+
+                    try
+                    {
+                        if (item > oldVersionsToKeep)
+                        {
+                            logFile.Delete();
+                        }
+                        else
+                        {
+                            var newPath = pendingRenames[item].Value;
+                            if (File.Exists(newPath))
+                            {
+                                ConsoleMsgUtils.ShowError(
+                                    "Existing old log file will be overwritten (this likely indicates a code logic error): " + newPath);
+                                File.Delete(newPath);
+                            }
+
+                            logFile.MoveTo(newPath);
+                        }
+                    }
+                    catch (Exception ex2)
+                    {
+                        if (item >= oldVersionsToKeep)
+                            ConsoleMsgUtils.ShowError(
+                                string.Format("Error deleting old log file {0}: {1}", logFile.FullName, ex2.Message), ex2, false, false);
+                        else
+                            ConsoleMsgUtils.ShowError(
+                                string.Format("Error renaming old log file {0}: {1}", logFile.FullName, ex2.Message), ex2, false, false);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowError("Error rolling (renaming) old log files: " + ex.Message, ex, false, false);
             }
         }
 
