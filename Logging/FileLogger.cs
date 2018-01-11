@@ -58,7 +58,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Log file date (as a string)
         /// </summary>
-        private static string mLogFileDate = "";
+        private static string mLogFileDateText = "";
 
         /// <summary>
         /// Relative file path to the current log file
@@ -219,8 +219,8 @@ namespace PRISM.Logging
         /// </summary>
         public static void ChangeLogFileName()
         {
-            mLogFileDate = DateTime.Now.ToString(LOG_FILE_DATECODE);
             ChangeLogFileName(mBaseFileName + "_" + mLogFileDate + LOG_FILE_EXTENSION);
+            mLogFileDateText = mLogFileDate.ToString(LOG_FILE_DATECODE);
         }
 
         /// <summary>
@@ -279,9 +279,9 @@ namespace PRISM.Logging
                     {
                         // Check to determine if a new file should be started
                         var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATECODE);
-                        if (!string.Equals(testFileDate, mLogFileDate))
+                        if (!string.Equals(testFileDate, mLogFileDateText))
                         {
-                            mLogFileDate = testFileDate;
+                            mLogFileDateText = testFileDate;
                             ChangeLogFileName();
 
                             writer?.Close();
