@@ -18,11 +18,10 @@ namespace PRISM.Logging
 
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new ConcurrentQueue<LogMessage>();
 
-        private static bool mQueueLoggerInitialized;
-
         private static readonly List<string> mMessageQueueEntryFlag = new List<string>();
 
-        private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 0, 0);
+        // ReSharper disable once UnusedMember.Local
+        private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
 
         /// <summary>
         /// Tracks the number of successive dequeue failures
@@ -86,7 +85,7 @@ namespace PRISM.Logging
         /// Constructor
         /// </summary>
         /// <param name="moduleName">
-        /// Program name to pass to the postedByParamName field when contacting the database 
+        /// Program name to pass to the postedByParamName field when contacting the database
         /// (will be auto-defined later if blank)
         /// </param>
         /// <param name="connectionString">SQL Server style connection string</param>
@@ -117,20 +116,13 @@ namespace PRISM.Logging
 
             LogLevel = logLevel;
 
-            if (mQueueLoggerInitialized)
-                return;
-
-            ShowTraceMessage("Starting the SQLServerDatabaseLogger QueueLogger");
-
-            mQueueLoggerInitialized = true;
-            mQueueLogger.Change(500, LOG_INTERVAL_MILLISECONDS);
         }
 
         /// <summary>
         /// Update the database connection info
         /// </summary>
         /// <param name="moduleName">
-        /// Program name to pass to the postedByParamName field when contacting the database 
+        /// Program name to pass to the postedByParamName field when contacting the database
         /// (will be auto-defined later if blank)
         /// </param>
         /// <param name="connectionString">SQL Server style connection string</param>
