@@ -121,6 +121,12 @@ namespace PRISM.Logging
         public static string BaseLogFileName => mBaseFileName;
 
         /// <summary>
+        /// Default log file name
+        /// </summary>
+        /// <remarks>Used when mBaseFileName is empty</remarks>
+        private static string DefaultLogFileName => Path.GetFileNameWithoutExtension(ExecutableName) + "_log.txt";
+
+        /// <summary>
         /// True if info level logging is enabled (LogLevel is LogLevels.DEBUG or higher)
         /// </summary>
         public bool IsDebugEnabled { get; private set; }
@@ -277,6 +283,9 @@ namespace PRISM.Logging
             mLogFileDate = DateTime.Now.Date;
             mLogFileDateText = mLogFileDate.ToString(LOG_FILE_DATECODE);
 
+            if (string.IsNullOrWhiteSpace(mBaseFileName))
+                mBaseFileName = DefaultLogFileName;
+
             string newLogFilePath;
             if (AppendDateToBaseFileName)
             {
@@ -287,7 +296,7 @@ namespace PRISM.Logging
                 if (Path.HasExtension(mBaseFileName))
                     newLogFilePath = string.Copy(mBaseFileName);
                 else
-                newLogFilePath = mBaseFileName + LOG_FILE_EXTENSION;
+                    newLogFilePath = mBaseFileName + LOG_FILE_EXTENSION;
             }
 
             ChangeLogFileName(newLogFilePath, AppendDateToBaseFileName);
@@ -377,7 +386,7 @@ namespace PRISM.Logging
                     {
                         if (string.IsNullOrWhiteSpace(mLogFilePath))
                         {
-                            mLogFilePath = Path.GetFileNameWithoutExtension(ExecutableName) + "_log.txt";
+                            mLogFilePath = DefaultLogFileName;
                         }
 
                         ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
