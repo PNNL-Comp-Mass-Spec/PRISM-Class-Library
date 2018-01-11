@@ -64,7 +64,7 @@ namespace PRISM.Logging
         #region "Properties"
 
         /// <summary>
-        /// Gets the product version associated with this application.
+        /// Gets the product version associated with this application
         /// </summary>
         public static string ExecutableVersion
         {
@@ -78,7 +78,7 @@ namespace PRISM.Logging
             }
         }
         /// <summary>
-        /// Gets the name of the executable file that started the application.
+        /// Gets the name of the executable file that started the application
         /// </summary>
         public static string ExecutableName
         {
