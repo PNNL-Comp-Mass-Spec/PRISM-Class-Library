@@ -289,7 +289,13 @@ namespace PRISM.Logging
             string newLogFilePath;
             if (AppendDateToBaseFileName)
             {
-                newLogFilePath = mBaseFileName + "_" + mLogFileDateText + LOG_FILE_EXTENSION;
+                if (Path.HasExtension(mBaseFileName))
+                {
+                    var currentExtension = Path.GetExtension(mBaseFileName);
+                    newLogFilePath = Path.ChangeExtension(mBaseFileName, null) + "_" + mLogFileDateText + currentExtension;
+                }
+                else
+                    newLogFilePath = mBaseFileName + "_" + mLogFileDateText + LOG_FILE_EXTENSION;
             }
             else
             {
