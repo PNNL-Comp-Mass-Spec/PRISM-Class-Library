@@ -263,7 +263,7 @@ namespace PRISM
             {
                 if (m_programVersion == null)
                 {
-                    m_programVersion = System.Reflection.Assembly.GetEntryAssembly().GetName().Version.ToString();
+                    m_programVersion = FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
                 }
                 return m_programVersion;
             }
@@ -278,7 +278,7 @@ namespace PRISM
             {
                 if (m_programName == null)
                 {
-                    m_programName = Path.GetFileName(System.Reflection.Assembly.GetEntryAssembly().Location);
+                    m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().Location);
                 }
                 return m_programName;
             }

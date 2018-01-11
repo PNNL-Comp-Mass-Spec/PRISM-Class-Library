@@ -49,7 +49,49 @@ namespace PRISM.Logging
         /// </summary>
         private static bool mLocalLogFileAccessError;
 
+        /// <summary>
+        /// Program name
+        /// </summary>
+        /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
+        private static string m_programName;
+
+        /// <summary>
+        /// Program version
+        /// </summary>
+        /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
+        private static string m_programVersion;
+
         #region "Properties"
+
+        /// <summary>
+        /// Gets the product version associated with this application.
+        /// </summary>
+        public static string ExecutableVersion
+        {
+            get
+            {
+                if (m_programVersion == null)
+                {
+                    m_programVersion = FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+                }
+                return m_programVersion;
+            }
+        }
+        /// <summary>
+        /// Gets the name of the executable file that started the application.
+        /// </summary>
+        public static string ExecutableName
+        {
+            get
+            {
+                if (m_programName == null)
+                {
+                    m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().Location);
+                }
+                return m_programName;
+            }
+        }
+
 
         /// <summary>
         /// Most recent error message
