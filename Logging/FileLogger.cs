@@ -427,8 +427,6 @@ namespace PRISM.Logging
                             mLogFilePath = DefaultLogFileName;
                         }
 
-                        ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
-
                         var logFile = new FileInfo(mLogFilePath);
                         if (logFile.Directory == null)
                         {
@@ -448,6 +446,7 @@ namespace PRISM.Logging
                             RollLogFiles(mLogFileDate, mLogFilePath);
                         }
 
+                        ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
                         writer = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
                     }
                     writer.WriteLine(logMessage.GetFormattedMessage());
@@ -519,6 +518,13 @@ namespace PRISM.Logging
                     nextFileSuffix++;
                     filePathToCheck = string.Copy(nextLogFilePath);
                 }
+
+                if (pendingRenames.Count == 0)
+                    return;
+
+                var pluralSuffix = pendingRenames.Count == 1 ? "" : "s";
+
+                ShowTraceMessage(string.Format("Renaming {0} old log file{1} in {2}", pendingRenames.Count, pluralSuffix, currentLogFile.DirectoryName));
 
                 foreach (var item in (from key in pendingRenames.Keys orderby key select key).Reverse())
                 {
