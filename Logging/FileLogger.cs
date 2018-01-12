@@ -276,6 +276,22 @@ namespace PRISM.Logging
         }
 
         /// <summary>
+        /// Update the log file's base name
+        /// </summary>
+        /// <param name="baseName">Base log file name (or relative path)</param>
+        /// <param name="appendDateToBaseName">
+        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
+        /// </param>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
+        public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName)
+        {
+            mBaseLogFileName = baseName;
+            AppendDateToBaseFileName = appendDateToBaseName;
+            ChangeLogFileName();
+        }
+
+        /// <summary>
         /// Changes the base log file name
         /// </summary>
         public static void ChangeLogFileName()
