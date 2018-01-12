@@ -62,7 +62,7 @@ namespace PRISM.Logging
         /// Base log file name (or relative path)
         /// </summary>
         /// <remarks>This is updated by ChangeLogFileBaseName or via the constructor</remarks>
-        private static string mBaseFileName = "";
+        private static string mBaseLogFileName = "";
 
         /// <summary>
         /// Log file date
@@ -118,12 +118,12 @@ namespace PRISM.Logging
         /// (unless the base name already has an extension, then the user-specified extension will be used)
         /// See also the comments for property AppendDateToBaseFileName
         /// </remarks>
-        public static string BaseLogFileName => mBaseFileName;
+        public static string BaseLogFileName => mBaseLogFileName;
 
         /// <summary>
         /// Default log file name
         /// </summary>
-        /// <remarks>Used when mBaseFileName is empty</remarks>
+        /// <remarks>Used when BaseLogFileName is empty</remarks>
         private static string DefaultLogFileName => Path.GetFileNameWithoutExtension(ExecutableName) + "_log.txt";
 
         /// <summary>
@@ -182,7 +182,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="baseFileName">Base log file name</param>
+        /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="logLevel">Log level</param>
         /// <param name="appendDateToBaseName">
         /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
@@ -192,7 +192,7 @@ namespace PRISM.Logging
         /// Maximum number of old log files to keep (Ignored if appendDateToBaseName is True)
         /// </param>
         public FileLogger(
-            string baseFileName = "",
+            string baseName = "",
             LogLevels logLevel = LogLevels.INFO,
             bool appendDateToBaseName = true,
             int maxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES)
@@ -200,7 +200,7 @@ namespace PRISM.Logging
             AppendDateToBaseFileName = appendDateToBaseName;
             MaxRolledLogFiles = maxRolledLogFiles;
 
-            ChangeLogFileBaseName(baseFileName);
+            ChangeLogFileBaseName(baseName);
 
             LogLevel = logLevel;
         }
@@ -267,11 +267,11 @@ namespace PRISM.Logging
         /// <summary>
         /// Update the log file's base name
         /// </summary>
-        /// <param name="baseName"></param>
         /// <remarks>Will append today's date to the base name</remarks>
+        /// <param name="baseName">Base log file name (or relative path)</param>
         public static void ChangeLogFileBaseName(string baseName)
         {
-            mBaseFileName = baseName;
+            mBaseLogFileName = baseName;
             ChangeLogFileName();
         }
 
@@ -283,26 +283,26 @@ namespace PRISM.Logging
             mLogFileDate = DateTime.Now.Date;
             mLogFileDateText = mLogFileDate.ToString(LOG_FILE_DATECODE);
 
-            if (string.IsNullOrWhiteSpace(mBaseFileName))
-                mBaseFileName = DefaultLogFileName;
+            if (string.IsNullOrWhiteSpace(mBaseLogFileName))
+                mBaseLogFileName = DefaultLogFileName;
 
             string newLogFilePath;
             if (AppendDateToBaseFileName)
             {
-                if (Path.HasExtension(mBaseFileName))
+                if (Path.HasExtension(mBaseLogFileName))
                 {
-                    var currentExtension = Path.GetExtension(mBaseFileName);
-                    newLogFilePath = Path.ChangeExtension(mBaseFileName, null) + "_" + mLogFileDateText + currentExtension;
+                    var currentExtension = Path.GetExtension(mBaseLogFileName);
+                    newLogFilePath = Path.ChangeExtension(mBaseLogFileName, null) + "_" + mLogFileDateText + currentExtension;
                 }
                 else
-                    newLogFilePath = mBaseFileName + "_" + mLogFileDateText + LOG_FILE_EXTENSION;
+                    newLogFilePath = mBaseLogFileName + "_" + mLogFileDateText + LOG_FILE_EXTENSION;
             }
             else
             {
-                if (Path.HasExtension(mBaseFileName))
-                    newLogFilePath = string.Copy(mBaseFileName);
+                if (Path.HasExtension(mBaseLogFileName))
+                    newLogFilePath = string.Copy(mBaseLogFileName);
                 else
-                    newLogFilePath = mBaseFileName + LOG_FILE_EXTENSION;
+                    newLogFilePath = mBaseLogFileName + LOG_FILE_EXTENSION;
             }
 
             ChangeLogFileName(newLogFilePath, AppendDateToBaseFileName);
