@@ -590,7 +590,7 @@ namespace PRISM
 #pragma warning disable 618
                 mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
 #pragma warning restore 618
-                mLogger.Debug(msg);
+                mLogger?.Debug(msg);
 
                 ProgChanged?.Invoke(obj);
             }
@@ -835,7 +835,7 @@ namespace PRISM
 #pragma warning disable 618
                 mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
 #pragma warning restore 618
-                mLogger.Debug(msg);
+                mLogger?.Debug(msg);
 
                 if (m_CachedConsoleError != null && m_CachedConsoleError.Length > 0)
                 {
@@ -843,7 +843,7 @@ namespace PRISM
 #pragma warning disable 618
                     mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
 #pragma warning restore 618
-                    mLogger.Error(errorMsg);
+                    mLogger?.Error(errorMsg);
 
                 }
 
