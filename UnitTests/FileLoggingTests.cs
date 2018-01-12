@@ -24,6 +24,7 @@ namespace PRISMTest
             bool appendDateToBaseFileName,
             string expectedBaseName)
         {
+
             string logFilePath;
             if (string.IsNullOrWhiteSpace(logFileNameBase))
                 logFilePath = String.Empty;
@@ -76,9 +77,9 @@ namespace PRISMTest
             int logCount,
             int logDelayMilliseconds)
         {
+
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 
-            FileLogger.AppendDateToBaseFileName = true;
             var logger = new FileLogger(logFilePath);
             var randGenerator = new Random();
 
@@ -134,8 +135,8 @@ namespace PRISMTest
         {
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 
-            FileLogger.AppendDateToBaseFileName = true;
-            FileLogger.ChangeLogFileBaseName(logFilePath);
+            const bool appendDateToBaseName = true;
+            FileLogger.ChangeLogFileBaseName(logFilePath, appendDateToBaseName);
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
@@ -156,8 +157,8 @@ namespace PRISMTest
         {
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 
-            FileLogger.AppendDateToBaseFileName = false;
-            FileLogger.ChangeLogFileBaseName(logFilePath);
+            const bool appendDateToBaseName = false;
+            FileLogger.ChangeLogFileBaseName(logFilePath, appendDateToBaseName);
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
@@ -178,8 +179,8 @@ namespace PRISMTest
         {
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 
-            FileLogger.AppendDateToBaseFileName = false;
-            FileLogger.ChangeLogFileBaseName(logFilePath);
+            const bool appendDateToBaseName = false;
+            FileLogger.ChangeLogFileBaseName(logFilePath, appendDateToBaseName);
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
@@ -194,6 +195,7 @@ namespace PRISMTest
             int logDelayMilliseconds,
             string expectedLogFileName)
         {
+
             var randGenerator = new Random();
 
             for (var i = 0; i < logCount; i++)
@@ -209,6 +211,8 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
+
         }
+
     }
 }
