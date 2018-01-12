@@ -284,7 +284,7 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Update the log file's base name
+        /// Update the log file's base name (or relative path)
         /// </summary>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <remarks>
@@ -294,12 +294,16 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName)
         {
+            if (!mMessageQueue.IsEmpty)
+                FlushPendingMessages();
+
             mBaseLogFileName = baseName;
             ChangeLogFileName();
         }
 
         /// <summary>
-        /// Update the log file's base name
+        /// Update the log file's base name (or relative path)
+        /// However, if appendDateToBaseName is false, baseName is the full path to the log file
         /// </summary>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
@@ -309,7 +313,9 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName)
         {
-            mBaseLogFileName = baseName;
+            if (!mMessageQueue.IsEmpty)
+                FlushPendingMessages();
+
             AppendDateToBaseFileName = appendDateToBaseName;
             mBaseLogFileName = baseName;
             ChangeLogFileName();
