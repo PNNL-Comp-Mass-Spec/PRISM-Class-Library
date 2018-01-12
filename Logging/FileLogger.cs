@@ -191,6 +191,7 @@ namespace PRISM.Logging
         /// <param name="maxRolledLogFiles">
         /// Maximum number of old log files to keep (Ignored if appendDateToBaseName is True)
         /// </param>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public FileLogger(
             string baseName = "",
             LogLevels logLevel = LogLevels.INFO,
@@ -267,8 +268,12 @@ namespace PRISM.Logging
         /// <summary>
         /// Update the log file's base name
         /// </summary>
-        /// <remarks>Will append today's date to the base name</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
+        /// <remarks>
+        /// Will append today's date to the base name
+        /// If baseName is null or empty, the log file name will be named DefaultLogFileName
+        /// </remarks>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName)
         {
             mBaseLogFileName = baseName;
