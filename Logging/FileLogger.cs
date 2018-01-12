@@ -107,7 +107,7 @@ namespace PRISM.Logging
         /// <remarks>
         /// Other, existing log files will also be renamed, keeping up to MaxRolledLogFiles old log files
         /// </remarks>
-        public static bool AppendDateToBaseFileName { get; set; } = true;
+        public static bool AppendDateToBaseFileName { get; private set; } = true;
 
         /// <summary>
         /// Base log file name
@@ -180,7 +180,26 @@ namespace PRISM.Logging
         #endregion
 
         /// <summary>
-        /// Constructor
+        /// Constructor that takes base log file name and appendDateToBaseName
+        /// </summary>
+        /// <param name="baseName">Base log file name (or relative path)</param>
+        /// <param name="appendDateToBaseName">
+        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
+        /// </param>
+        /// <param name="maxRolledLogFiles">
+        /// Maximum number of old log files to keep (Ignored if appendDateToBaseName is True)
+        /// </param>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
+        public FileLogger(
+            string baseName,
+            bool appendDateToBaseName,
+            int maxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES) : this(baseName, LogLevels.INFO, appendDateToBaseName, maxRolledLogFiles)
+        {
+        }
+
+        /// <summary>
+        /// Constructor with default values for all parameters
         /// </summary>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="logLevel">Log level</param>
@@ -198,10 +217,9 @@ namespace PRISM.Logging
             bool appendDateToBaseName = true,
             int maxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES)
         {
-            AppendDateToBaseFileName = appendDateToBaseName;
             MaxRolledLogFiles = maxRolledLogFiles;
 
-            ChangeLogFileBaseName(baseName);
+            ChangeLogFileBaseName(baseName, appendDateToBaseName);
 
             LogLevel = logLevel;
         }
@@ -293,13 +311,14 @@ namespace PRISM.Logging
         {
             mBaseLogFileName = baseName;
             AppendDateToBaseFileName = appendDateToBaseName;
+            mBaseLogFileName = baseName;
             ChangeLogFileName();
         }
 
         /// <summary>
         /// Changes the base log file name
         /// </summary>
-        public static void ChangeLogFileName()
+        private static void ChangeLogFileName()
         {
             mLogFileDate = DateTime.Now.Date;
             mLogFileDateText = mLogFileDate.ToString(LOG_FILE_DATECODE);
@@ -326,22 +345,8 @@ namespace PRISM.Logging
                     newLogFilePath = mBaseLogFileName + LOG_FILE_EXTENSION;
             }
 
-            ChangeLogFileName(newLogFilePath, AppendDateToBaseFileName);
-        }
-
-        /// <summary>
-        /// Changes the base log file name
-        /// </summary>
-        /// <param name="relativeFilePath">Log file base name and path (relative to program folder)</param>
-        /// <param name="nameIncludesDate">Set to true if the log file includes today's date</param>
-        /// <remarks>
-        /// When nameIncludesDate is false, will check for an existing log file modified before today, and rename it if found (using RollLogFiles)
-        /// This method is called by the Mage, Ascore, and Multialign plugins
-        /// </remarks>
-        public static void ChangeLogFileName(string relativeFilePath, bool nameIncludesDate = false)
-        {
-            mLogFilePath = relativeFilePath;
-            mNeedToRollLogFiles = !nameIncludesDate;
+            mLogFilePath = newLogFilePath;
+            mNeedToRollLogFiles = !AppendDateToBaseFileName;
         }
 
         /// <summary>
@@ -422,7 +427,7 @@ namespace PRISM.Logging
                         if (logFile.Directory == null)
                         {
                             // Create the log file in the current directory
-                            ChangeLogFileName(logFile.Name);
+                            mLogFilePath = logFile.Name;
                             logFile = new FileInfo(mLogFilePath);
 
                         }
