@@ -45,36 +45,32 @@ namespace PRISM
 
             var stackTraceData = GetExceptionStackTraceData(ex).ToList();
 
-            var sbStackTrace = new StringBuilder();
+            var stackTraceLines = new List<string>();
+
             for (var index = 0; index <= stackTraceData.Count - 1; index++)
             {
                 if (index == stackTraceData.Count - 1 && stackTraceData[index].StartsWith(FINAL_FILE_PREFIX))
                 {
-                    sbStackTrace.Append(stackTraceData[index]);
+                    stackTraceLines.Add(stackTraceData[index]);
                     break;
                 }
 
                 if (index == 0)
                 {
-                    sbStackTrace.Append(STACK_TRACE_TITLE + stackTraceData[index]);
+                    stackTraceLines.Add(STACK_TRACE_TITLE + stackTraceData[index]);
                 }
                 else
                 {
-                    sbStackTrace.Append(STACK_CHAIN_SEPARATOR + stackTraceData[index]);
+                    stackTraceLines.Add(STACK_CHAIN_SEPARATOR + stackTraceData[index]);
                 }
             }
 
-            if (!includeInnerExceptionMessages)
-                return sbStackTrace.ToString();
+            if (!includeInnerExceptionMessages || ex.InnerException == null)
+                return string.Join("", stackTraceLines);
 
-            var innerException = ex.InnerException;
-            while (innerException != null)
-            {
-                sbStackTrace.Append(STACK_CHAIN_SEPARATOR + innerException.Message);
-                innerException = innerException.InnerException;
-            }
+            AppendInnerExceptions(ex, stackTraceLines, STACK_CHAIN_SEPARATOR);
 
-            return sbStackTrace.ToString();
+            return string.Join("", stackTraceLines);
 
         }
 
@@ -97,26 +93,22 @@ namespace PRISM
 
             var stackTraceData = GetExceptionStackTraceData(ex);
 
-            var sbStackTrace = new StringBuilder();
-            sbStackTrace.AppendLine(STACK_TRACE_TITLE);
+            var stackTraceLines = new List<string> {
+                STACK_TRACE_TITLE
+            };
+
 
             foreach (var traceItem in stackTraceData)
             {
-                sbStackTrace.AppendLine("  " + traceItem);
+                stackTraceLines.Add("  " + traceItem);
             }
 
-            if (!includeInnerExceptionMessages)
-                return sbStackTrace.ToString();
+            if (!includeInnerExceptionMessages || ex.InnerException == null)
+                return string.Join("\n", stackTraceLines);
 
-            var innerException = ex.InnerException;
-            while (innerException != null)
-            {
-                sbStackTrace.AppendLine();
-                sbStackTrace.AppendLine(innerException.Message);
-                innerException = innerException.InnerException;
-            }
+            AppendInnerExceptions(ex, stackTraceLines, string.Empty);
 
-            return sbStackTrace.ToString();
+            return string.Join("\n", stackTraceLines);
 
         }
 
@@ -274,6 +266,31 @@ namespace PRISM
 
             return stackTraceData;
 
+        }
+
+        private static void AppendInnerExceptions(Exception ex, ICollection<string> stackTraceLines, string messagePrefix)
+        {
+
+            var innerException = ex.InnerException;
+            while (innerException != null)
+            {
+                var skipMessage = false;
+
+                foreach (var item in stackTraceLines)
+                {
+                    if (item.Contains(innerException.Message))
+                    {
+                        skipMessage = true;
+                        break;
+                    }
+                }
+
+                if (skipMessage)
+                    continue;
+
+                stackTraceLines.Add(messagePrefix + innerException.Message);
+                innerException = innerException.InnerException;
+            }
         }
 
         private static string TrimLinePrefix(string fileDescription, string codeLinePrefix)
