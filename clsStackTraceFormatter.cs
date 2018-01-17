@@ -33,7 +33,7 @@ namespace PRISM
         /// <summary>
         /// Parses the StackTrace text of the given exception to return a compact description of the current stack
         /// </summary>
-        /// <param name="objException"></param>
+        /// <param name="ex">Exception</param>
         /// <returns>
         /// String of the form:
         /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
@@ -45,15 +45,20 @@ namespace PRISM
             var stackTraceData = GetExceptionStackTraceData(objException).ToList();
 
             var sbStackTrace = new StringBuilder();
-            for (var index = 0; index <= stackTraceData.Count - 1; index++) {
-                if (index == stackTraceData.Count - 1 && stackTraceData[index].StartsWith(FINAL_FILE_PREFIX)) {
+            for (var index = 0; index <= stackTraceData.Count - 1; index++)
+            {
+                if (index == stackTraceData.Count - 1 && stackTraceData[index].StartsWith(FINAL_FILE_PREFIX))
+                {
                     sbStackTrace.Append(stackTraceData[index]);
                     break;
                 }
 
-                if (index == 0) {
+                if (index == 0)
+                {
                     sbStackTrace.Append(STACK_TRACE_TITLE + stackTraceData[index]);
-                } else {
+                }
+                else
+                {
                     sbStackTrace.Append(STACK_CHAIN_SEPARATOR + stackTraceData[index]);
                 }
             }
@@ -129,13 +134,14 @@ namespace PRISM
             const string REGEX_LINE_IN_CODE = CODE_LINE_PREFIX + "\\d+";
 
             var lstFunctions = new List<string>();
-            var strFinalFile = string.Empty;
+            var finalFile = string.Empty;
 
             var reFunctionName = new Regex(REGEX_FUNCTION_NAME, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             var reFileName = new Regex(REGEX_FILE_NAME, RegexOptions.Compiled | RegexOptions.IgnoreCase);
             var reLineInCode = new Regex(REGEX_LINE_IN_CODE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-            if (string.IsNullOrWhiteSpace(stackTraceText)) {
+            if (string.IsNullOrWhiteSpace(stackTraceText))
+            {
                 var emptyStackTrace = new List<string> {
                     "Empty stack trace"
                 };
@@ -144,68 +150,87 @@ namespace PRISM
 
             // Process each line in objException.StackTrace
             // Populate strFunctions() with the function name of each line
-            using (var trTextReader = new StringReader(stackTraceText)) {
+            using (var reader = new StringReader(stackTraceText))
+            {
 
-                while (trTextReader.Peek() > -1) {
-                    var strLine = trTextReader.ReadLine();
+                while (reader.Peek() > -1)
+                {
+                    var dataLine = reader.ReadLine();
 
-                    if (string.IsNullOrEmpty(strLine)) continue;
+                    if (string.IsNullOrEmpty(dataLine))
+                        continue;
 
-                    var strCurrentFunction = string.Empty;
+                    var currentFunction = string.Empty;
 
-                    var functionMatch = reFunctionName.Match(strLine);
-                    var lineMatch = reLineInCode.Match(strLine);
+                    var functionMatch = reFunctionName.Match(dataLine);
+                    var lineMatch = reLineInCode.Match(dataLine);
 
                     // Also extract the file name where the Exception occurred
-                    var fileMatch = reFileName.Match(strLine);
+                    var fileMatch = reFileName.Match(dataLine);
                     string currentFunctionFile;
 
-                    if (fileMatch.Success) {
+                    if (fileMatch.Success)
+                    {
                         currentFunctionFile = fileMatch.Groups[1].Value;
-                        if (strFinalFile != null && strFinalFile.Length == 0) {
+                        if (finalFile.Length == 0)
+                        {
                             var lineMatchFinalFile = reLineInCode.Match(currentFunctionFile);
-                            if (lineMatchFinalFile.Success) {
-                                strFinalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index);
-                            } else {
-                                strFinalFile = currentFunctionFile;
+                            if (lineMatchFinalFile.Success)
+                            {
+                                finalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index);
+                            }
+                            else
+                            {
+                                finalFile = currentFunctionFile;
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         currentFunctionFile = string.Empty;
                     }
 
-                    if (functionMatch.Success) {
-                        strCurrentFunction = functionMatch.Groups[1].Value;
-                    } else {
+                    if (functionMatch.Success)
+                    {
+                        currentFunction = functionMatch.Groups[1].Value;
+                    }
+                    else
+                    {
                         // Look for the word " in "
-                        var intIndex = strLine.ToLower().IndexOf(" in ", StringComparison.Ordinal);
-                        if (intIndex == 0) {
+                        var charIndex = dataLine.ToLower().IndexOf(" in ", StringComparison.Ordinal);
+                        if (charIndex == 0)
+                        {
                             // " in" not found; look for the first space after startIndex 4
-                            intIndex = strLine.IndexOf(" ", 4, StringComparison.Ordinal);
+                            charIndex = dataLine.IndexOf(" ", 4, StringComparison.Ordinal);
                         }
 
-                        if (intIndex == 0) {
+                        if (charIndex == 0)
+                        {
                             // Space not found; use the entire string
-                            intIndex = strLine.Length - 1;
+                            charIndex = dataLine.Length - 1;
                         }
 
-                        if (intIndex > 0) {
-                            strCurrentFunction = strLine.Substring(0, intIndex);
+                        if (charIndex > 0)
+                        {
+                            currentFunction = dataLine.Substring(0, charIndex);
                         }
 
                     }
 
-                    var functionDescription = strCurrentFunction;
+                    var functionDescription = currentFunction;
 
-                    if (!string.IsNullOrEmpty(currentFunctionFile)) {
-                        if (string.IsNullOrEmpty(strFinalFile) ||
-                            !TrimLinePrefix(strFinalFile, CODE_LINE_PREFIX).Equals(TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.OrdinalIgnoreCase))
+                    if (!string.IsNullOrEmpty(currentFunctionFile))
+                    {
+                        if (string.IsNullOrEmpty(finalFile) ||
+                            !TrimLinePrefix(finalFile, CODE_LINE_PREFIX).Equals(
+                                TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.OrdinalIgnoreCase))
                         {
                             functionDescription += FINAL_FILE_PREFIX + currentFunctionFile;
                         }
                     }
 
-                    if (lineMatch.Success && !functionDescription.Contains(CODE_LINE_PREFIX)) {
+                    if (lineMatch.Success && !functionDescription.Contains(CODE_LINE_PREFIX))
+                    {
                         functionDescription += lineMatch.Value;
                     }
 
@@ -218,8 +243,9 @@ namespace PRISM
             stackTraceData.AddRange(lstFunctions);
             stackTraceData.Reverse();
 
-            if (!string.IsNullOrWhiteSpace(strFinalFile)) {
-                stackTraceData.Add(FINAL_FILE_PREFIX + strFinalFile);
+            if (!string.IsNullOrWhiteSpace(finalFile))
+            {
+                stackTraceData.Add(FINAL_FILE_PREFIX + finalFile);
             }
 
             return stackTraceData;
@@ -230,7 +256,8 @@ namespace PRISM
         {
 
             var matchIndex = fileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal);
-            if (matchIndex > 0) {
+            if (matchIndex > 0)
+            {
                 return fileDescription.Substring(0, matchIndex);
             }
 
