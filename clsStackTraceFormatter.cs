@@ -34,15 +34,16 @@ namespace PRISM
         /// Parses the StackTrace text of the given exception to return a compact description of the current stack
         /// </summary>
         /// <param name="ex">Exception</param>
+        /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
         /// <returns>
         /// String of the form:
         /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
         /// </returns>
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-        public static string GetExceptionStackTrace(Exception objException)
+        public static string GetExceptionStackTrace(Exception ex, bool includeInnerExceptionMessages = true)
         {
 
-            var stackTraceData = GetExceptionStackTraceData(objException).ToList();
+            var stackTraceData = GetExceptionStackTraceData(ex).ToList();
 
             var sbStackTrace = new StringBuilder();
             for (var index = 0; index <= stackTraceData.Count - 1; index++)
@@ -63,7 +64,18 @@ namespace PRISM
                 }
             }
 
+            if (!includeInnerExceptionMessages)
+                return sbStackTrace.ToString();
+
+            var innerException = ex.InnerException;
+            while (innerException != null)
+            {
+                sbStackTrace.Append(STACK_CHAIN_SEPARATOR + innerException.Message);
+                innerException = innerException.InnerException;
+            }
+
             return sbStackTrace.ToString();
+
         }
 
         /// <summary>
@@ -71,6 +83,7 @@ namespace PRISM
         /// with one line for each function in the call tree
         /// </summary>
         /// <param name="ex">Exception</param>
+        /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
         /// <returns>
         /// Stack trace:
         ///   clsCodeTest.Test
@@ -79,7 +92,7 @@ namespace PRISM
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-        public static string GetExceptionStackTraceMultiLine(Exception ex)
+        public static string GetExceptionStackTraceMultiLine(Exception ex, bool includeInnerExceptionMessages = true)
         {
 
             var stackTraceData = GetExceptionStackTraceData(ex);
@@ -90,6 +103,17 @@ namespace PRISM
             foreach (var traceItem in stackTraceData)
             {
                 sbStackTrace.AppendLine("  " + traceItem);
+            }
+
+            if (!includeInnerExceptionMessages)
+                return sbStackTrace.ToString();
+
+            var innerException = ex.InnerException;
+            while (innerException != null)
+            {
+                sbStackTrace.AppendLine();
+                sbStackTrace.AppendLine(innerException.Message);
+                innerException = innerException.InnerException;
             }
 
             return sbStackTrace.ToString();
