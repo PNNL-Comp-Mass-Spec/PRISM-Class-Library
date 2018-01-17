@@ -12,7 +12,9 @@ namespace PRISMTest
         public enum ExceptionTypes
         {
             General = 0,
-            FileNotFound = 1
+            FileNotFound = 1,
+            MyTestException = 2,
+            MyTestExceptionMultiInner = 3
         }
 
         [Test]
@@ -26,6 +28,8 @@ namespace PRISMTest
         [TestCase(ExceptionTypes.General, 8, true)]
         [TestCase(ExceptionTypes.FileNotFound, 3, false)]
         [TestCase(ExceptionTypes.FileNotFound, 10, true)]
+        [TestCase(ExceptionTypes.MyTestException, 3, true)]
+        [TestCase(ExceptionTypes.MyTestExceptionMultiInner, 3, true)]
         public void VerifyStackTrace(ExceptionTypes targetException, int depth, bool multiLine)
         {
             var parents = new List<string>();
@@ -92,10 +96,32 @@ namespace PRISMTest
 
                 case ExceptionTypes.FileNotFound:
                     throw new FileNotFoundException("FileNotFound exception at depth " + depth, @"C:\NotAFolder\NotAFile.txt");
+
+                case ExceptionTypes.MyTestException:
+
+                    var innerException = new ApplicationException("Test inner exception");
+
+                    throw new MyTestException("Test exception at depth " + depth, innerException);
+
+                case ExceptionTypes.MyTestExceptionMultiInner:
+
+                    var innerException1 = new ApplicationException("Test inner exception 1");
+                    var innerException2 = new MyTestException("Test inner exception 2", innerException1);
+
+                    throw new MyTestException("Test exception at depth " + depth, innerException2);
                 default:
                     return;
             }
         }
 
     }
+
+    class MyTestException : Exception
+    {
+        public MyTestException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
+    }
+
+
 }
