@@ -974,7 +974,14 @@ namespace PRISM
             return contents;
         }
 
-        private static string WrapParagraph(string textToWrap, int wrapWidth = 80)
+        /// <summary>
+        /// Wraps the words in textToWrap to the set width (where possible)
+        /// </summary>
+        /// <param name="textToWrap">Text to wrap</param>
+        /// <param name="wrapWidth">Max length per line</param>
+        /// <returns>Wrapped paragraph</returns>
+        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
+        public static string WrapParagraph(string textToWrap, int wrapWidth = 80)
         {
             var wrappedText = new StringBuilder();
             foreach (var line in WrapParagraphAsList(textToWrap, wrapWidth))
@@ -989,13 +996,13 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Wraps the strings to the set width (where possible)
+        /// Wraps the words in textToWrap to the set width (where possible)
         /// </summary>
-        /// <param name="textToWrap"></param>
-        /// <param name="wrapWidth"></param>
-        /// <returns></returns>
-        /// <remarks>use the 'alert' character ('\a') to create a non-breaking space</remarks>
-        private static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
+        /// <param name="textToWrap">Text to wrap</param>
+        /// <param name="wrapWidth">Max length per line</param>
+        /// <returns>Wrapped paragraph as a list of strings</returns>
+        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
+        public static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
         {
             // Check for newline characters
             var textLinesToWrap = textToWrap.Split('\r', '\n');
