@@ -188,6 +188,74 @@ namespace PRISMTest
 
         }
 
+        [TestCase(LogMessage.TimestampFormatMode.MonthDayYear24hr, "MM/dd/yyyy HH:mm:ss")]
+        [TestCase(LogMessage.TimestampFormatMode.MonthDayYear12hr, "MM/dd/yyyy hh:mm:ss tt")]
+        [TestCase(LogMessage.TimestampFormatMode.YearMonthDay24hr, "yyyy-MM-dd HH:mm:ss")]
+        [TestCase(LogMessage.TimestampFormatMode.YearMonthDay12hr, "yyyy-MM-dd hh:mm:ss tt")]
+        public void TestTimestampFormatting(LogMessage.TimestampFormatMode timestampFormat, string expectedFormatString)
+        {
+
+            var testMessage = new LogMessage(BaseLogger.LogLevels.INFO, "Test message");
+
+            var formattedMessage = testMessage.GetFormattedMessage(timestampFormat);
+
+            EvaluateFormattedMessageTimestamp(formattedMessage, expectedFormatString, true);
+        }
+
+        [TestCase(LogMessage.TimestampFormatMode.MonthDayYear24hr, "MM/dd/yyyy HH:mm:ss", true)]
+        [TestCase(LogMessage.TimestampFormatMode.MonthDayYear24hr, "MM/dd/yyyy HH:mm:ss", false)]
+        [TestCase(LogMessage.TimestampFormatMode.MonthDayYear12hr, "MM/dd/yyyy hh:mm:ss tt", true)]
+        [TestCase(LogMessage.TimestampFormatMode.MonthDayYear12hr, "MM/dd/yyyy hh:mm:ss tt", false)]
+        [TestCase(LogMessage.TimestampFormatMode.YearMonthDay24hr, "yyyy-MM-dd HH:mm:ss", true)]
+        [TestCase(LogMessage.TimestampFormatMode.YearMonthDay24hr, "yyyy-MM-dd HH:mm:ss", false)]
+        [TestCase(LogMessage.TimestampFormatMode.YearMonthDay12hr, "yyyy-MM-dd hh:mm:ss tt", true)]
+        [TestCase(LogMessage.TimestampFormatMode.YearMonthDay12hr, "yyyy-MM-dd hh:mm:ss tt", false)]
+        public void TestTimestampFormattingLocalVsUtc(LogMessage.TimestampFormatMode timestampFormat, string expectedFormatString, bool useLocalTime)
+        {
+
+            var testMessage = new LogMessage(BaseLogger.LogLevels.INFO, "Test message");
+
+            var formattedMessage = testMessage.GetFormattedMessage(useLocalTime, timestampFormat);
+
+            EvaluateFormattedMessageTimestamp(formattedMessage, expectedFormatString, useLocalTime);
+        }
+
+        private void EvaluateFormattedMessageTimestamp(string formattedMessage, string expectedFormatString, bool useLocalTime)
+        {
+
+            Console.WriteLine(formattedMessage);
+
+            if (!formattedMessage.Contains(","))
+            {
+                Assert.Fail("Formatted message is not comma separated");
+            }
+
+            var messageParts = formattedMessage.Split(',');
+            var messageTimestampText = messageParts[0];
+
+            string expectedTimestampText;
+            if (useLocalTime)
+                expectedTimestampText = DateTime.Now.ToString(expectedFormatString);
+            else
+                expectedTimestampText = DateTime.UtcNow.ToString(expectedFormatString);
+
+            if (!DateTime.TryParse(messageTimestampText, out var messageTimestamp))
+            {
+                Assert.Fail("Could not parse date/time from message timestamp: " + messageTimestampText);
+            }
+
+            if (!DateTime.TryParse(expectedTimestampText, out var expectedTimestamp))
+            {
+                Assert.Fail("Could not parse date/time from expected timestamp: " + expectedTimestampText);
+            }
+
+            var timeDiffSeconds = expectedTimestamp.Subtract(messageTimestamp).TotalSeconds;
+
+            Assert.LessOrEqual(Math.Abs(timeDiffSeconds), 2,
+                               "Message timestamp does not agree with system clock: {0} vs. {1}",
+                               messageTimestampText, expectedTimestampText);
+        }
+
         private void TestStaticLogging(
             string message,
             BaseLogger.LogLevels entryType,
