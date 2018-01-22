@@ -98,6 +98,8 @@ namespace PRISM.Logging
         /// </summary>
         public static string MostRecentErrorMessage { get; protected set; } = "";
 
+        public static LogMessage.TimestampFormatMode TimestampFormat = Logging.LogMessage.TimestampFormatMode.YearMonthDay24hr;
+
         /// <summary>
         /// When true, show additional debug messages at the console
         /// </summary>
@@ -196,7 +198,7 @@ namespace PRISM.Logging
 
                 using (var localLogWriter = new StreamWriter(new FileStream(localLogFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
                 {
-                    localLogWriter.WriteLine(logMessage.GetFormattedMessage());
+                    localLogWriter.WriteLine(logMessage.GetFormattedMessage(TimestampFormat));
                 }
             }
             catch (Exception ex)
@@ -208,7 +210,7 @@ namespace PRISM.Logging
                 }
 
                 PRISM.ConsoleMsgUtils.ShowError(
-                    string.Format("Error writing '{0}' to the local log file: {1}", logMessage.GetFormattedMessage(), ex), false, false);
+                    string.Format("Error writing '{0}' to the local log file: {1}", logMessage.GetFormattedMessage(TimestampFormat), ex), false, false);
             }
 
         }

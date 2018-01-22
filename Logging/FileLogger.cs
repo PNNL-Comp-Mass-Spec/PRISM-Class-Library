@@ -449,7 +449,7 @@ namespace PRISM.Logging
                         ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
                         writer = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
                     }
-                    writer.WriteLine(logMessage.GetFormattedMessage());
+                    writer.WriteLine(logMessage.GetFormattedMessage(TimestampFormat));
 
                     if (logMessage.MessageException != null)
                     {
