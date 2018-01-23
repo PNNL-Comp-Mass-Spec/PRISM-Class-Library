@@ -121,7 +121,7 @@ namespace PRISM
 
             var cleanFileInfo = new FileInfo(cleanPath);
             string folderPath;
-            if (cleanFileInfo.Directory.Exists)
+            if (cleanFileInfo.Directory != null && cleanFileInfo.Directory.Exists && cleanFileInfo.DirectoryName != null)
             {
                 folderPath = cleanFileInfo.DirectoryName;
             }

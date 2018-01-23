@@ -17,8 +17,7 @@ namespace PRISM
         /// <remarks></remarks>
         public static bool UpdatesArePending()
         {
-            string pendingWindowsUpdateMessage;
-            return UpdatesArePending(DateTime.Now, out pendingWindowsUpdateMessage);
+            return UpdatesArePending(DateTime.Now, out _);
         }
 
         /// <summary>
@@ -81,8 +80,7 @@ namespace PRISM
         /// <remarks></remarks>
         public static bool ServerUpdatesArePending()
         {
-            string pendingWindowsUpdateMessage;
-            return ServerUpdatesArePending(DateTime.Now, out pendingWindowsUpdateMessage);
+            return ServerUpdatesArePending(DateTime.Now, out _);
         }
 
         /// <summary>
