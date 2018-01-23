@@ -176,14 +176,14 @@ namespace PRISM.Logging
             switch (logMessage.LogLevel)
             {
                 case LogLevels.DEBUG:
-                    PRISM.ConsoleMsgUtils.ShowDebug(logMessage.Message);
+                    ConsoleMsgUtils.ShowDebug(logMessage.Message);
                     break;
                 case LogLevels.WARN:
-                    PRISM.ConsoleMsgUtils.ShowWarning(logMessage.Message);
+                    ConsoleMsgUtils.ShowWarning(logMessage.Message);
                     break;
                 case LogLevels.ERROR:
                 case LogLevels.FATAL:
-                    PRISM.ConsoleMsgUtils.ShowError(logMessage.Message);
+                    ConsoleMsgUtils.ShowError(logMessage.Message);
                     break;
                 default:
                     Console.WriteLine(logMessage.Message);
@@ -208,10 +208,10 @@ namespace PRISM.Logging
                 if (!mLocalLogFileAccessError)
                 {
                     mLocalLogFileAccessError = true;
-                    PRISM.ConsoleMsgUtils.ShowError("Error writing to the local log file: " + localLogFilePath);
+                    ConsoleMsgUtils.ShowError("Error writing to the local log file: " + localLogFilePath);
                 }
 
-                PRISM.ConsoleMsgUtils.ShowError(
+                ConsoleMsgUtils.ShowError(
                     string.Format("Error writing '{0}' to the local log file: {1}", logMessage.GetFormattedMessage(TimestampFormat), ex), false, false);
             }
 
