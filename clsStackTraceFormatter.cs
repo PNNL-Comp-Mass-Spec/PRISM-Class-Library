@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PRISM
@@ -164,8 +163,8 @@ namespace PRISM
                 return emptyStackTrace;
             }
 
-            // Process each line in objException.StackTrace
-            // Populate strFunctions() with the function name of each line
+            // Process each line in the exception stack track
+            // Populate lstFunctions() with the function name of each line
             using (var reader = new StringReader(stackTraceText))
             {
 

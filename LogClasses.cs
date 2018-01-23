@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
 using System.Threading;
 using PRISM.Logging;
@@ -261,6 +260,7 @@ namespace PRISM
         {
             get
             {
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (m_programVersion == null)
                 {
                     m_programVersion = FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
@@ -276,6 +276,7 @@ namespace PRISM
         {
             get
             {
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (m_programName == null)
                 {
                     m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().Location);

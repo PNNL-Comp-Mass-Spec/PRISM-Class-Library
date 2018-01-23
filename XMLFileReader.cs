@@ -714,6 +714,7 @@ namespace PRISM
         /// <param name="keyName">The name of the key.</param>
         /// <param name="newValue">The new value to be created.</param>
         /// <return>The function returns a Boolean.</return>
+        [Obsolete("Unused")]
         private bool CreateItem(string sectionName, string keyName, string newValue)
         {
             try

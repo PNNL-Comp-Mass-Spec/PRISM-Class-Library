@@ -268,7 +268,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Examines strPath to look for spaces
+        /// Examines filePath to look for spaces
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns>filePath as-is if no spaces, otherwise filePath surrounded by double quotes </returns>

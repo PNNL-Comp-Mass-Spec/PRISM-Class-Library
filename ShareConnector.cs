@@ -61,6 +61,7 @@ namespace PRISM
         /// </summary>
         private struct udtNetResource
         {
+#pragma warning disable 169,414
             public ResourceScope dwScope;
             public ResourceType dwType;
             public ResourceDisplaytype dwDisplayType;
@@ -69,6 +70,7 @@ namespace PRISM
             public string lpRemoteName;
             public string lpComment;
             public string lpProvider;
+#pragma warning restore 169,414
         }
 
         private const short NO_ERROR = 0;
@@ -97,12 +99,12 @@ namespace PRISM
         // private const short RESOURCEDISPLAYTYPE_SHARE As Short = &H3S
 
         /// <summary>
-        ///  Constant that may be used by NETRESOURCE->dwUsage
+        /// Constant that may be used by NETRESOURCE->dwUsage
         /// </summary>
         private const short RESOURCEUSAGE_CONNECTABLE = 0x1;
 
         /// <summary>
-        ///  Constant that may be used by NETRESOURCE->dwUsage
+        /// Constant that may be used by NETRESOURCE->dwUsage
         /// </summary>
         private const short RESOURCEUSAGE_CONTAINER = 0x2;
 

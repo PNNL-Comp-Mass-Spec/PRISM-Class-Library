@@ -70,6 +70,7 @@ namespace PRISM.Logging
         {
             get
             {
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (m_programVersion == null)
                 {
                     m_programVersion = FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
@@ -84,6 +85,7 @@ namespace PRISM.Logging
         {
             get
             {
+                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (m_programName == null)
                 {
                     m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().Location);
