@@ -168,7 +168,7 @@ namespace PRISM
             var resultCode = -9999;
 
             string errorMessage;
-            var dtStartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
 
             lstResults = new List<List<string>>();
 
@@ -178,7 +178,7 @@ namespace PRISM
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
-            var blnDeadlockOccurred = false;
+            var deadlockOccurred = false;
 
             // Multiple retry loop for handling SP execution failures
             while (retryCount > 0)
@@ -248,14 +248,14 @@ namespace PRISM
                     }
                     else if (ex.Message.Contains("was deadlocked"))
                     {
-                        blnDeadlockOccurred = true;
+                        deadlockOccurred = true;
                     }
                 }
                 finally
                 {
                     if (DebugMessagesEnabled)
                     {
-                        var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(dtStartTime).TotalSeconds.ToString("##0.000") +
+                        var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(startTime).TotalSeconds.ToString("##0.000") +
                                            " seconds for SP " + spCmd.CommandText;
 
                         OnDebugEvent(debugMessage);
@@ -275,7 +275,7 @@ namespace PRISM
             {
                 // Too many retries, log and return error
                 errorMessage = "Excessive retries";
-                if (blnDeadlockOccurred)
+                if (deadlockOccurred)
                 {
                     errorMessage += " (including deadlock)";
                 }
@@ -283,7 +283,7 @@ namespace PRISM
 
                 OnErrorEvent(errorMessage);
 
-                if (blnDeadlockOccurred)
+                if (deadlockOccurred)
                 {
                     return RET_VAL_DEADLOCK;
                 }
@@ -366,9 +366,9 @@ namespace PRISM
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
-            var dtStartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
             var retryCount = maxRetryCount;
-            var blnDeadlockOccurred = false;
+            var deadlockOccurred = false;
 
             errorMessage = string.Empty;
 
@@ -385,7 +385,7 @@ namespace PRISM
             // Multiple retry loop for handling SP execution failures
             while (retryCount > 0)
             {
-                blnDeadlockOccurred = false;
+                deadlockOccurred = false;
                 try
                 {
                     using (var Cn = new SqlConnection(m_ConnStr))
@@ -396,7 +396,7 @@ namespace PRISM
                         spCmd.Connection = Cn;
                         spCmd.CommandTimeout = TimeoutSeconds;
 
-                        dtStartTime = DateTime.UtcNow;
+                        startTime = DateTime.UtcNow;
                         spCmd.ExecuteNonQuery();
 
                         resultCode = Convert.ToInt32(spCmd.Parameters["@Return"].Value);
@@ -422,14 +422,14 @@ namespace PRISM
                     }
                     else if (ex.Message.Contains("was deadlocked"))
                     {
-                        blnDeadlockOccurred = true;
+                        deadlockOccurred = true;
                     }
                 }
                 finally
                 {
                     if (DebugMessagesEnabled)
                     {
-                        var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(dtStartTime).TotalSeconds.ToString("##0.000") + " seconds for SP " + spCmd.CommandText;
+                        var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(startTime).TotalSeconds.ToString("##0.000") + " seconds for SP " + spCmd.CommandText;
                         OnDebugEvent(debugMessage);
                     }
                 }
@@ -444,7 +444,7 @@ namespace PRISM
             {
                 // Too many retries, log and return error
                 errorMessage = "Excessive retries";
-                if (blnDeadlockOccurred)
+                if (deadlockOccurred)
                 {
                     errorMessage += " (including deadlock)";
                 }
@@ -452,7 +452,7 @@ namespace PRISM
 
                 OnErrorEvent(errorMessage);
 
-                if (blnDeadlockOccurred)
+                if (deadlockOccurred)
                 {
                     return RET_VAL_DEADLOCK;
                 }

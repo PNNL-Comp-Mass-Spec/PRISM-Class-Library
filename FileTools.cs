@@ -265,11 +265,11 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <param name="managerName"></param>
-        /// <param name="intDebugLevel"></param>
-        public clsFileTools(string managerName, int intDebugLevel)
+        /// <param name="debugLevel"></param>
+        public clsFileTools(string managerName, int debugLevel)
         {
             ManagerName = managerName;
-            DebugLevel = intDebugLevel;
+            DebugLevel = debugLevel;
 
             mInvalidDosChars = new Regex(@"[\\/:*?""<>| ]", RegexOptions.Compiled);
 
@@ -503,26 +503,26 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
-        /// <param name="fiSource">Source file object</param>
+        /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="overWrite">True to overWrite existing files</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
-        public bool CopyFileUsingLocks(FileInfo fiSource, string targetFilePath, bool overWrite)
+        public bool CopyFileUsingLocks(FileInfo sourceFile, string targetFilePath, bool overWrite)
         {
-            return CopyFileUsingLocks(fiSource, targetFilePath, ManagerName, overWrite);
+            return CopyFileUsingLocks(sourceFile, targetFilePath, ManagerName, overWrite);
         }
 
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
-        /// <param name="fiSource">Source file object</param>
+        /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="managerName">Manager name (included in the lock file name)</param>
         /// <param name="overWrite">True to overWrite existing files</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
-        public bool CopyFileUsingLocks(FileInfo fiSource, string targetFilePath, string managerName = "", bool overWrite = false)
+        public bool CopyFileUsingLocks(FileInfo sourceFile, string targetFilePath, string managerName = "", bool overWrite = false)
         {
 
             var useLockFile = false;
@@ -532,10 +532,10 @@ namespace PRISM
                 return true;
             }
 
-            var fiTarget = new FileInfo(targetFilePath);
+            var targetFile = new FileInfo(targetFilePath);
 
-            var lockFolderPathSource = GetLockFolder(fiSource);
-            var lockFolderPathTarget = GetLockFolder(fiTarget);
+            var lockFolderPathSource = GetLockFolder(sourceFile);
+            var lockFolderPathTarget = GetLockFolder(targetFile);
 
             if (!string.IsNullOrEmpty(lockFolderPathSource) || !string.IsNullOrEmpty(lockFolderPathTarget))
             {
@@ -546,13 +546,13 @@ namespace PRISM
             {
                 var success = CopyFileUsingLocks(
                     lockFolderPathSource, lockFolderPathTarget,
-                    fiSource, targetFilePath,
+                    sourceFile, targetFilePath,
                     managerName, overWrite);
                 return success;
             }
 
-            var expectedSourceLockFolder = GetLockFolderPath(fiSource);
-            var expectedTargetLockFolder = GetLockFolderPath(fiTarget);
+            var expectedSourceLockFolder = GetLockFolderPath(sourceFile);
+            var expectedTargetLockFolder = GetLockFolderPath(targetFile);
 
             if (string.IsNullOrEmpty(expectedSourceLockFolder) && string.IsNullOrEmpty(expectedTargetLockFolder))
             {
@@ -580,7 +580,7 @@ namespace PRISM
                 }
             }
 
-            CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy: false);
+            CopyFileEx(sourceFile.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy: false);
 
             return true;
         }
@@ -589,13 +589,13 @@ namespace PRISM
         /// <summary>
         /// Given a file path, return the lock file folder if it exsists
         /// </summary>
-        /// <param name="fiFile"></param>
+        /// <param name="dataFile"></param>
         /// <returns>Lock folder path if it exists</returns>
         /// <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
-        public string GetLockFolder(FileInfo fiFile)
+        public string GetLockFolder(FileInfo dataFile)
         {
 
-            var lockFolderPath = GetLockFolderPath(fiFile);
+            var lockFolderPath = GetLockFolderPath(dataFile);
 
             if (!string.IsNullOrEmpty(lockFolderPath) && Directory.Exists(lockFolderPath))
             {
@@ -609,17 +609,18 @@ namespace PRISM
         /// <summary>
         /// Given a file path, return the lock file folder path (does not verify that it exists)
         /// </summary>
-        /// <param name="fiFile"></param>
+        /// <param name="dataFile"></param>
         /// <returns>Lock folder path</returns>
         /// <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
-        private string GetLockFolderPath(FileInfo fiFile)
+        private string GetLockFolderPath(FileInfo dataFile)
         {
 
-            if (Path.IsPathRooted(fiFile.FullName))
+            if (Path.IsPathRooted(dataFile.FullName))
             {
-                if (fiFile.Directory.Root.FullName.StartsWith(@"\\"))
+                var directory = dataFile.Directory;
+                if (directory != null && directory.Root.FullName.StartsWith(@"\\"))
                 {
-                    return Path.Combine(GetServerShareBase(fiFile.Directory.Root.FullName), "DMS_LockFiles");
+                    return Path.Combine(GetServerShareBase(directory.Root.FullName), "DMS_LockFiles");
                 }
             }
 
@@ -632,7 +633,7 @@ namespace PRISM
         /// </summary>
         /// <param name="lockFolderPathSource">Path to the lock folder for the source file; can be an empty string</param>
         /// <param name="lockFolderPathTarget">Path to the lock folder for the target file; can be an empty string</param>
-        /// <param name="fiSource">Source file object</param>
+        /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="managerName">Manager name (included in the lock file name)</param>
         /// <param name="overWrite">True to overWrite existing files</param>
@@ -640,7 +641,7 @@ namespace PRISM
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         public bool CopyFileUsingLocks(
             string lockFolderPathSource, string lockFolderPathTarget,
-            FileInfo fiSource, string targetFilePath, string managerName, bool overWrite)
+            FileInfo sourceFile, string targetFilePath, string managerName, bool overWrite)
         {
             if (!overWrite && File.Exists(targetFilePath))
             {
@@ -654,17 +655,20 @@ namespace PRISM
             // Examine the size of the source file
             // If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
             // copy the file normally
-            var intSourceFileSizeMB = Convert.ToInt32(fiSource.Length / 1024.0 / 1024.0);
-            if (intSourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget))
+            var sourceFileSizeMB = Convert.ToInt32(sourceFile.Length / 1024.0 / 1024.0);
+            if (sourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget))
             {
                 const bool backupDestFileBeforeCopy = false;
                 if (DebugLevel >= 2)
                 {
-                    var debugMsg = string.Format("File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}", fiSource.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, fiSource.Name);
-                    OnDebugEvent(debugMsg, fiSource.FullName);
+                    var debugMsg = string.Format(
+                        "File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}",
+                        sourceFile.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, sourceFile.Name);
+
+                    OnDebugEvent(debugMsg, sourceFile.FullName);
                 }
 
-                CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
+                CopyFileEx(sourceFile.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
                 return true;
             }
 
@@ -677,32 +681,32 @@ namespace PRISM
                 // Create a new lock file on the source and/or target server
                 // This file indicates an intent to copy a file
 
-                DirectoryInfo diLockFolderSource = null;
-                DirectoryInfo diLockFolderTarget = null;
+                DirectoryInfo lockFolderSource = null;
+                DirectoryInfo lockFolderTarget = null;
                 var lockFileTimestamp = GetLockFileTimeStamp();
 
                 if (!string.IsNullOrWhiteSpace(lockFolderPathSource))
                 {
-                    diLockFolderSource = new DirectoryInfo(lockFolderPathSource);
-                    lockFilePathSource = CreateLockFile(diLockFolderSource, lockFileTimestamp, fiSource, targetFilePath, managerName);
+                    lockFolderSource = new DirectoryInfo(lockFolderPathSource);
+                    lockFilePathSource = CreateLockFile(lockFolderSource, lockFileTimestamp, sourceFile, targetFilePath, managerName);
                 }
 
                 if (!string.IsNullOrWhiteSpace(lockFolderPathTarget))
                 {
-                    diLockFolderTarget = new DirectoryInfo(lockFolderPathTarget);
-                    lockFilePathTarget = CreateLockFile(diLockFolderTarget, lockFileTimestamp, fiSource, targetFilePath, managerName);
+                    lockFolderTarget = new DirectoryInfo(lockFolderPathTarget);
+                    lockFilePathTarget = CreateLockFile(lockFolderTarget, lockFileTimestamp, sourceFile, targetFilePath, managerName);
                 }
 
-                WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, diLockFolderTarget, fiSource, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
+                WaitForLockFileQueue(lockFileTimestamp, lockFolderSource, lockFolderTarget, sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
 
                 if (DebugLevel >= 1)
                 {
-                    OnDebugEvent("Copying " + fiSource.Name + " using Locks", fiSource.FullName + " to " + targetFilePath);
+                    OnDebugEvent("Copying " + sourceFile.Name + " using Locks", sourceFile.FullName + " to " + targetFilePath);
                 }
 
                 // Perform the copy
                 const bool backupDestFileBeforeCopy = false;
-                CopyFileEx(fiSource.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
+                CopyFileEx(sourceFile.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
 
                 // Delete the lock file(s)
                 DeleteFileIgnoreErrors(lockFilePathSource);
@@ -726,17 +730,17 @@ namespace PRISM
         /// <summary>
         /// Create a lock file in the specified lock folder
         /// </summary>
-        /// <param name="diLockFolder"></param>
+        /// <param name="lockFolder"></param>
         /// <param name="lockFileTimestamp"></param>
-        /// <param name="fiSource"></param>
+        /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="managerName"></param>
-        /// <returns>Full path to the lock file; empty string if an error or if diLockFolder is null</returns>
+        /// <returns>Full path to the lock file; empty string if an error or if lockFolder is null</returns>
         /// <remarks></remarks>
-        public string CreateLockFile(DirectoryInfo diLockFolder, long lockFileTimestamp, FileInfo fiSource, string targetFilePath, string managerName)
+        public string CreateLockFile(DirectoryInfo lockFolder, long lockFileTimestamp, FileInfo sourceFile, string targetFilePath, string managerName)
         {
 
-            if (diLockFolder == null)
+            if (lockFolder == null)
             {
                 return string.Empty;
             }
@@ -747,35 +751,35 @@ namespace PRISM
             }
 
             // Define the lock file name
-            var lockFileName = GenerateLockFileName(lockFileTimestamp, fiSource, managerName);
-            var lockFilePath = Path.Combine(diLockFolder.FullName, lockFileName);
+            var lockFileName = GenerateLockFileName(lockFileTimestamp, sourceFile, managerName);
+            var lockFilePath = Path.Combine(lockFolder.FullName, lockFileName);
             while (File.Exists(lockFilePath))
             {
                 // File already exists for this manager; append a dash to the path
                 lockFileName = Path.GetFileNameWithoutExtension(lockFileName) + "-" + Path.GetExtension(lockFileName);
-                lockFilePath = Path.Combine(diLockFolder.FullName, lockFileName);
+                lockFilePath = Path.Combine(lockFolder.FullName, lockFileName);
             }
 
             try
             {
                 // Create the lock file
-                using (var swLockFile = new StreamWriter(new FileStream(lockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                using (var writer = new StreamWriter(new FileStream(lockFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
-                    swLockFile.WriteLine("Date: " + DateTime.Now.ToString(DATE_TIME_FORMAT));
-                    swLockFile.WriteLine("Source: " + fiSource.FullName);
-                    swLockFile.WriteLine("Target: " + targetFilePath);
-                    swLockFile.WriteLine("Size_Bytes: " + fiSource.Length);
-                    swLockFile.WriteLine("Manager: " + managerName);
+                    writer.WriteLine("Date: " + DateTime.Now.ToString(DATE_TIME_FORMAT));
+                    writer.WriteLine("Source: " + sourceFile.FullName);
+                    writer.WriteLine("Target: " + targetFilePath);
+                    writer.WriteLine("Size_Bytes: " + sourceFile.Length);
+                    writer.WriteLine("Manager: " + managerName);
                 }
 
-                OnDebugEvent("Created lock file in " + diLockFolder.FullName, lockFilePath);
+                OnDebugEvent("Created lock file in " + lockFolder.FullName, lockFilePath);
 
             }
             catch (Exception ex)
             {
                 // Error creating the lock file
                 // Return an empty string
-                OnWarningEvent("Error creating lock file in " + diLockFolder.FullName + ": " + ex.Message);
+                OnWarningEvent("Error creating lock file in " + lockFolder.FullName + ": " + ex.Message);
                 return string.Empty;
             }
 
@@ -804,11 +808,11 @@ namespace PRISM
         public bool DeleteDirectory(string directoryPath, bool ignoreErrors)
         {
 
-            var diLocalDotDFolder = new DirectoryInfo(directoryPath);
+            var localDotDFolder = new DirectoryInfo(directoryPath);
 
             try
             {
-                diLocalDotDFolder.Delete(true);
+                localDotDFolder.Delete(true);
             }
             catch (Exception)
             {
@@ -847,12 +851,12 @@ namespace PRISM
         public bool DeleteDirectoryFiles(string directoryPath, bool deleteFolderIfEmpty)
         {
 
-            var diFolderToDelete = new DirectoryInfo(directoryPath);
+            var folderToDelete = new DirectoryInfo(directoryPath);
             var errorCount = 0;
 
-            foreach (var fiFile in diFolderToDelete.GetFiles("*", SearchOption.AllDirectories))
+            foreach (var targetFile in folderToDelete.GetFiles("*", SearchOption.AllDirectories))
             {
-                if (!DeleteFileIgnoreErrors(fiFile.FullName))
+                if (!DeleteFileIgnoreErrors(targetFile.FullName))
                 {
                     errorCount += 1;
                 }
@@ -862,11 +866,11 @@ namespace PRISM
             {
                 try
                 {
-                    diFolderToDelete.Delete(true);
+                    folderToDelete.Delete(true);
                 }
                 catch (Exception ex)
                 {
-                    OnWarningEvent("Error removing empty directory", "Unable to delete directory " + diFolderToDelete.FullName + ": " + ex.Message);
+                    OnWarningEvent("Error removing empty directory", "Unable to delete directory " + folderToDelete.FullName + ": " + ex.Message);
                     errorCount += 1;
                 }
             }
@@ -891,13 +895,13 @@ namespace PRISM
             if (string.IsNullOrWhiteSpace(filePath))
                 return true;
 
-            var fiFile = new FileInfo(filePath);
+            var targetFile = new FileInfo(filePath);
 
             try
             {
-                if (fiFile.Exists)
+                if (targetFile.Exists)
                 {
-                    fiFile.Delete();
+                    targetFile.Delete();
                 }
                 return true;
             }
@@ -909,9 +913,9 @@ namespace PRISM
             try
             {
                 // The file might be readonly; check for this then re-try the delete
-                if (fiFile.IsReadOnly)
+                if (targetFile.IsReadOnly)
                 {
-                    fiFile.IsReadOnly = false;
+                    targetFile.IsReadOnly = false;
                 }
                 else
                 {
@@ -922,13 +926,13 @@ namespace PRISM
                     }
                 }
 
-                fiFile.Delete();
+                targetFile.Delete();
 
             }
             catch (Exception ex)
             {
                 // Ignore errors here
-                OnWarningEvent("Error deleting file " + fiFile.Name, "Unable to delete file " + fiFile.FullName + ": " + ex.Message);
+                OnWarningEvent("Error deleting file " + targetFile.Name, "Unable to delete file " + targetFile.FullName + ": " + ex.Message);
 
                 return false;
             }
@@ -940,46 +944,46 @@ namespace PRISM
         /// <summary>
         /// Finds lock files with a timestamp less than
         /// </summary>
-        /// <param name="diLockFolder"></param>
+        /// <param name="lockFolder"></param>
         /// <param name="lockFileTimestamp"></param>
         /// <returns></returns>
         /// <remarks></remarks>
-        private List<int> FindLockFiles(DirectoryInfo diLockFolder, long lockFileTimestamp)
+        private List<int> FindLockFiles(DirectoryInfo lockFolder, long lockFileTimestamp)
         {
-            var lstLockFiles = new List<int>();
+            var lockFiles = new List<int>();
 
-            if (diLockFolder == null)
+            if (lockFolder == null)
             {
-                return lstLockFiles;
+                return lockFiles;
             }
 
-            diLockFolder.Refresh();
+            lockFolder.Refresh();
 
-            foreach (var fiLockFile in diLockFolder.GetFiles("*" + LOCKFILE_EXTENSION))
+            foreach (var lockFile in lockFolder.GetFiles("*" + LOCKFILE_EXTENSION))
             {
-                var reMatch = mParseLockFileName.Match(fiLockFile.Name);
+                var reMatch = mParseLockFileName.Match(lockFile.Name);
 
                 if (!reMatch.Success)
                     continue;
 
-                if (!long.TryParse(reMatch.Groups[1].Value, out var intQueueTimeMSec))
+                if (!long.TryParse(reMatch.Groups[1].Value, out var queueTimeMSec))
                     continue;
 
-                if (!int.TryParse(reMatch.Groups[2].Value, out var intFileSizeMB))
+                if (!int.TryParse(reMatch.Groups[2].Value, out var fileSizeMB))
                     continue;
 
-                if (intQueueTimeMSec >= lockFileTimestamp)
+                if (queueTimeMSec >= lockFileTimestamp)
                     continue;
 
-                // Lock file fiLockFile was created prior to the current one
+                // Lock file lockFile was created prior to the current one
                 // Make sure it's less than 1 hour old
-                if (Math.Abs((lockFileTimestamp - intQueueTimeMSec) / 1000.0 / 60.0) < MAX_LOCKFILE_WAIT_TIME_MINUTES)
+                if (Math.Abs((lockFileTimestamp - queueTimeMSec) / 1000.0 / 60.0) < MAX_LOCKFILE_WAIT_TIME_MINUTES)
                 {
-                    lstLockFiles.Add(intFileSizeMB);
+                    lockFiles.Add(fileSizeMB);
                 }
             }
 
-            return lstLockFiles;
+            return lockFiles;
 
         }
 
@@ -987,11 +991,11 @@ namespace PRISM
         /// Generate the lock file name, which starts with a msec-based timestamp, then has the source file size (in MB), then has information on the machine creating the file
         /// </summary>
         /// <param name="lockFileTimestamp"></param>
-        /// <param name="fiSource"></param>
+        /// <param name="sourceFile"></param>
         /// <param name="managerName"></param>
         /// <returns></returns>
         /// <remarks></remarks>
-        private string GenerateLockFileName(long lockFileTimestamp, FileInfo fiSource, string managerName)
+        private string GenerateLockFileName(long lockFileTimestamp, FileInfo sourceFile, string managerName)
         {
 
             if (string.IsNullOrWhiteSpace(managerName))
@@ -1012,7 +1016,7 @@ namespace PRISM
                     hostName = hostName.Replace(invalidChar, '_');
             }
 
-            var lockFileName = lockFileTimestamp + "_" + (fiSource.Length / 1024.0 / 1024.0).ToString("0000") + "_" + hostName + "_" + managerName + LOCKFILE_EXTENSION;
+            var lockFileName = lockFileTimestamp + "_" + (sourceFile.Length / 1024.0 / 1024.0).ToString("0000") + "_" + hostName + "_" + managerName + LOCKFILE_EXTENSION;
 
             // Replace any invalid characters (including spaces) with an underscore
             return mInvalidDosChars.Replace(lockFileName, "_");
@@ -1039,11 +1043,11 @@ namespace PRISM
             if (!serverSharePath.StartsWith(@"\\"))
                 return string.Empty;
 
-            var intSlashIndex = serverSharePath.IndexOf('\\', 2);
-            if (intSlashIndex <= 0)
+            var slashIndex = serverSharePath.IndexOf('\\', 2);
+            if (slashIndex <= 0)
                 return serverSharePath;
 
-            var serverShareBase = serverSharePath.Substring(0, intSlashIndex);
+            var serverShareBase = serverSharePath.Substring(0, slashIndex);
             if (serverShareBase.ToLower() == @"\\picfs")
             {
                 serverShareBase = @"\\picfs\projects\DMS";
@@ -1217,9 +1221,9 @@ namespace PRISM
                 var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
                 if (fileNamesToSkip != null)
                 {
-                    foreach (var strItem in fileNamesToSkip)
+                    foreach (var fileName in fileNamesToSkip)
                     {
-                        dctFileNamesToSkip.Add(strItem, "");
+                        dctFileNamesToSkip.Add(fileName, "");
                     }
                 }
 
@@ -1294,14 +1298,14 @@ namespace PRISM
         /// <summary>
         /// Copies the file attributes from a source file to a target file, explicitly updating the read-only bit based on readOnly
         /// </summary>
-        /// <param name="fiSourceFile">Source FileInfo</param>
+        /// <param name="sourceFile">Source FileInfo</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="readOnly">True to force the ReadOnly bit on, False to force it off</param>
         /// <remarks></remarks>
-        private void UpdateReadonlyAttribute(FileSystemInfo fiSourceFile, string targetFilePath, bool readOnly)
+        private void UpdateReadonlyAttribute(FileSystemInfo sourceFile, string targetFilePath, bool readOnly)
         {
             // Get the file attributes from the source file
-            var fa = fiSourceFile.Attributes;
+            var fa = sourceFile.Attributes;
             FileAttributes faNew;
 
             // Change the read-only attribute to the desired value
@@ -1475,61 +1479,61 @@ namespace PRISM
             fileCountResumed = 0;
             fileCountNewlyCopied = 0;
 
-            var diSourceFolder = new DirectoryInfo(sourceFolderPath);
-            var diTargetFolder = new DirectoryInfo(targetFolderPath);
+            var sourceFolder = new DirectoryInfo(sourceFolderPath);
+            var targetFolder = new DirectoryInfo(targetFolderPath);
 
             // The source directory must exist, otherwise throw an exception
-            if (!diSourceFolder.Exists)
+            if (!sourceFolder.Exists)
             {
-                throw new DirectoryNotFoundException("Source directory does not exist: " + diSourceFolder.FullName);
+                throw new DirectoryNotFoundException("Source directory does not exist: " + sourceFolder.FullName);
             }
 
-            if (diTargetFolder.Parent == null)
+            if (targetFolder.Parent == null)
             {
-                throw new DirectoryNotFoundException("Unable to determine the parent folder of " + diTargetFolder.FullName);
+                throw new DirectoryNotFoundException("Unable to determine the parent folder of " + targetFolder.FullName);
             }
             // If destination SubDir's parent directory does not exist throw an exception
-            if (!diTargetFolder.Parent.Exists)
+            if (!targetFolder.Parent.Exists)
             {
-                throw new DirectoryNotFoundException("Destination directory does not exist: " + diTargetFolder.Parent.FullName);
+                throw new DirectoryNotFoundException("Destination directory does not exist: " + targetFolder.Parent.FullName);
             }
 
-            if (diSourceFolder.FullName == diTargetFolder.FullName)
+            if (sourceFolder.FullName == targetFolder.FullName)
             {
-                throw new IOException("Source and target directories cannot be the same: " + diTargetFolder.FullName);
+                throw new IOException("Source and target directories cannot be the same: " + targetFolder.FullName);
             }
 
             try
             {
                 // Create the target folder if necessary
-                if (!diTargetFolder.Exists)
+                if (!targetFolder.Exists)
                 {
-                    diTargetFolder.Create();
+                    targetFolder.Create();
                 }
 
-                // Populate objFileNamesToSkipCaseInsensitive
+                // Populate dctFileNamesToSkip
                 var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
                 if (fileNamesToSkip != null)
                 {
                     // Copy the values from fileNamesToSkip to dctFileNamesToSkip so that we can perform case-insensitive searching
-                    foreach (var strItem in fileNamesToSkip)
+                    foreach (var item in fileNamesToSkip)
                     {
-                        dctFileNamesToSkip.Add(strItem, string.Empty);
+                        dctFileNamesToSkip.Add(item, string.Empty);
                     }
                 }
 
                 // Copy all the files of the current directory
 
-                foreach (var fiSourceFile in diSourceFolder.GetFiles())
+                foreach (var sourceFile in sourceFolder.GetFiles())
                 {
                     // Look for both the file name and the full path in dctFileNamesToSkip
                     // If either matches, then do not copy the file
                     bool copyFile;
-                    if (dctFileNamesToSkip.ContainsKey(fiSourceFile.Name))
+                    if (dctFileNamesToSkip.ContainsKey(sourceFile.Name))
                     {
                         copyFile = false;
                     }
-                    else if (dctFileNamesToSkip.ContainsKey(fiSourceFile.FullName))
+                    else if (dctFileNamesToSkip.ContainsKey(sourceFile.FullName))
                     {
                         copyFile = false;
                     }
@@ -1541,9 +1545,9 @@ namespace PRISM
                     if (copyFile)
                     {
                         // Does file already exist?
-                        var fiExistingFile = new FileInfo(Path.Combine(diTargetFolder.FullName, fiSourceFile.Name));
+                        var existingFile = new FileInfo(Path.Combine(targetFolder.FullName, sourceFile.Name));
 
-                        if (fiExistingFile.Exists)
+                        if (existingFile.Exists)
                         {
                             switch (fileOverwriteMode)
                             {
@@ -1556,7 +1560,9 @@ namespace PRISM
                                     break;
 
                                 case FileOverwriteMode.OverwriteIfSourceNewer:
-                                    if (fiSourceFile.LastWriteTimeUtc < fiExistingFile.LastWriteTimeUtc || NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length)
+                                    if (sourceFile.LastWriteTimeUtc < existingFile.LastWriteTimeUtc ||
+                                        NearlyEqualFileTimes(sourceFile.LastWriteTimeUtc, existingFile.LastWriteTimeUtc) &&
+                                        existingFile.Length == sourceFile.Length)
                                     {
                                         copyFile = false;
                                     }
@@ -1564,8 +1570,8 @@ namespace PRISM
 
                                 case FileOverwriteMode.OverWriteIfDateOrLengthDiffer:
                                     // File exists; if size and last modified time are the same then don't copy
-
-                                    if (NearlyEqualFileTimes(fiSourceFile.LastWriteTimeUtc, fiExistingFile.LastWriteTimeUtc) && fiExistingFile.Length == fiSourceFile.Length)
+                                    if (NearlyEqualFileTimes(sourceFile.LastWriteTimeUtc, existingFile.LastWriteTimeUtc) &&
+                                        existingFile.Length == sourceFile.Length)
                                     {
                                         copyFile = false;
                                     }
@@ -1587,8 +1593,8 @@ namespace PRISM
                     }
                     else
                     {
-                        var targetFilePath = Path.Combine(diTargetFolder.FullName, fiSourceFile.Name);
-                        success = CopyFileWithResume(fiSourceFile, targetFilePath, out var copyResumed);
+                        var targetFilePath = Path.Combine(targetFolder.FullName, sourceFile.Name);
+                        success = CopyFileWithResume(sourceFile, targetFilePath, out var copyResumed);
 
                         if (!success)
                             break;
@@ -1604,7 +1610,7 @@ namespace PRISM
 
                         if (setAttribute)
                         {
-                            UpdateReadonlyAttribute(fiSourceFile, targetFilePath, readOnly);
+                            UpdateReadonlyAttribute(sourceFile, targetFilePath, readOnly);
                         }
 
                     }
@@ -1614,11 +1620,13 @@ namespace PRISM
                 if (success && recurse)
                 {
                     // Process each subdirectory
-                    foreach (var fiSourceFolder in diSourceFolder.GetDirectories())
+                    foreach (var subFolder in sourceFolder.GetDirectories())
                     {
-                        var strSubDirtargetFolderPath = Path.Combine(targetFolderPath, fiSourceFolder.Name);
+                        var subDirtargetFolderPath = Path.Combine(targetFolderPath, subFolder.Name);
+
+                        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         success = CopyDirectoryWithResume(
-                            fiSourceFolder.FullName, strSubDirtargetFolderPath,
+                            subFolder.FullName, subDirtargetFolderPath,
                             recurse, fileOverwriteMode, setAttribute, readOnly, fileNamesToSkip,
                             out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
                     }
@@ -1644,50 +1652,51 @@ namespace PRISM
         /// <remarks></remarks>
         public bool CopyFileWithResume(string sourceFilePath, string targetFilePath, out bool copyResumed)
         {
-            var fiSourceFile = new FileInfo(sourceFilePath);
-            return CopyFileWithResume(fiSourceFile, targetFilePath, out copyResumed);
+            var sourceFile = new FileInfo(sourceFilePath);
+            return CopyFileWithResume(sourceFile, targetFilePath, out copyResumed);
 
         }
 
         /// <summary>
-        /// Copy fiSourceFile to diTargetFolder
+        /// Copy sourceFile to targetFolder
         /// Copies the file using chunks, thus allowing for resuming
         /// </summary>
-        /// <param name="fiSourceFile"></param>
+        /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="copyResumed">Output parameter; true if copying was resumed</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks></remarks>
-        public bool CopyFileWithResume(FileInfo fiSourceFile, string targetFilePath, out bool copyResumed)
+        public bool CopyFileWithResume(FileInfo sourceFile, string targetFilePath, out bool copyResumed)
         {
 
             const string FILE_PART_TAG = ".#FilePart#";
             const string FILE_PART_INFO_TAG = ".#FilePartInfo#";
 
-            long lngFileOffsetStart = 0;
+            long fileOffsetStart = 0;
 
-            FileStream swFilePart = null;
+            FileStream filePartWriter = null;
 
             try
             {
                 if (mChunkSizeMB < 1)
                     mChunkSizeMB = 1;
-                var intChunkSizeBytes = mChunkSizeMB * 1024 * 1024;
+
+                var chunkSizeBytes = mChunkSizeMB * 1024 * 1024;
 
                 if (mFlushThresholdMB < mChunkSizeMB)
                 {
                     mFlushThresholdMB = mChunkSizeMB;
                 }
-                var intFlushThresholdBytes = mFlushThresholdMB * 1024 * 1024;
+                var flushThresholdBytes = mFlushThresholdMB * 1024 * 1024;
 
-                var blnResumeCopy = false;
+                var resumeCopy = false;
 
-                if (fiSourceFile.Length <= intChunkSizeBytes)
+                if (sourceFile.Length <= chunkSizeBytes)
                 {
                     // Simply copy the file
 
-                    UpdateCurrentStatus(CopyStatus.NormalCopy, fiSourceFile.FullName);
-                    fiSourceFile.CopyTo(targetFilePath, true);
+                    UpdateCurrentStatus(CopyStatus.NormalCopy, sourceFile.FullName);
+                    sourceFile.CopyTo(targetFilePath, true);
 
                     UpdateCurrentStatusIdle();
                     copyResumed = false;
@@ -1703,31 +1712,31 @@ namespace PRISM
                 }
 
                 // Check for a #FilePart# file
-                var fiFilePart = new FileInfo(targetFilePath + FILE_PART_TAG);
+                var filePart = new FileInfo(targetFilePath + FILE_PART_TAG);
 
-                var fiFilePartInfo = new FileInfo(targetFilePath + FILE_PART_INFO_TAG);
+                var filePartInfo = new FileInfo(targetFilePath + FILE_PART_INFO_TAG);
 
-                var dtSourceFileLastWriteTimeUTC = fiSourceFile.LastWriteTimeUtc;
-                var sourceFileLastWriteTime = dtSourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt");
+                var sourceFileLastWriteTimeUTC = sourceFile.LastWriteTimeUtc;
+                var sourceFileLastWriteTime = sourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt");
 
-                if (fiFilePart.Exists)
+                if (filePart.Exists)
                 {
                     // Possibly resume copying
                     // First inspect the FilePartInfo file
 
-                    if (fiFilePartInfo.Exists)
+                    if (filePartInfo.Exists)
                     {
                         // Open the file and read the file length and file modification time
-                        // If they match fiSourceFile then set blnResumeCopy to true and update lngFileOffsetStart
+                        // If they match sourceFile then set resumeCopy to true and update fileOffsetStart
 
-                        using (var srFilePartInfo = new StreamReader(new FileStream(fiFilePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                        using (var infoFileReader = new StreamReader(new FileStream(filePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                         {
 
                             var lstSourceLines = new List<string>();
 
-                            while (!srFilePartInfo.EndOfStream)
+                            while (!infoFileReader.EndOfStream)
                             {
-                                lstSourceLines.Add(srFilePartInfo.ReadLine());
+                                lstSourceLines.Add(infoFileReader.ReadLine());
                             }
 
                             if (lstSourceLines.Count >= 3)
@@ -1736,21 +1745,20 @@ namespace PRISM
                                 // The second contains the file length, in bytes
                                 // The third contains the file modification time (UTC)
 
-
-                                if (lstSourceLines[0] == fiSourceFile.FullName && lstSourceLines[1] == fiSourceFile.Length.ToString())
+                                if (lstSourceLines[0] == sourceFile.FullName && lstSourceLines[1] == sourceFile.Length.ToString())
                                 {
                                     // Name and size are the same
                                     // See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
 
-                                    if (DateTime.TryParse(lstSourceLines[2], out var dtCachedLastWriteTimeUTC))
+                                    if (DateTime.TryParse(lstSourceLines[2], out var cachedLastWriteTimeUTC))
                                     {
 
-                                        if (NearlyEqualFileTimes(dtSourceFileLastWriteTimeUTC, dtCachedLastWriteTimeUTC))
+                                        if (NearlyEqualFileTimes(sourceFileLastWriteTimeUTC, cachedLastWriteTimeUTC))
                                         {
                                             // Source file is unchanged; safe to resume
 
-                                            lngFileOffsetStart = fiFilePart.Length;
-                                            blnResumeCopy = true;
+                                            fileOffsetStart = filePart.Length;
+                                            resumeCopy = true;
 
                                         }
                                     }
@@ -1764,107 +1772,107 @@ namespace PRISM
 
                 }
 
-                if (blnResumeCopy)
+                if (resumeCopy)
                 {
-                    UpdateCurrentStatus(CopyStatus.BufferedCopyResume, fiSourceFile.FullName);
-                    swFilePart = new FileStream(fiFilePart.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
+                    UpdateCurrentStatus(CopyStatus.BufferedCopyResume, sourceFile.FullName);
+                    filePartWriter = new FileStream(filePart.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
                     copyResumed = true;
                 }
                 else
                 {
-                    UpdateCurrentStatus(CopyStatus.BufferedCopy, fiSourceFile.FullName);
+                    UpdateCurrentStatus(CopyStatus.BufferedCopy, sourceFile.FullName);
 
                     // Delete FilePart file in the target folder if it already exists
-                    if (fiFilePart.Exists)
+                    if (filePart.Exists)
                     {
-                        fiFilePart.Delete();
+                        filePart.Delete();
                         clsProgRunner.SleepMilliseconds(25);
                     }
 
                     // Create the FILE_PART_INFO_TAG file
-                    using (var swFilePartInfo = new StreamWriter(new FileStream(fiFilePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                    using (var infoWriter = new StreamWriter(new FileStream(filePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read)))
                     {
 
                         // The first line contains the source file path
                         // The second contains the file length, in bytes
                         // The third contains the file modification time (UTC)
-                        swFilePartInfo.WriteLine(fiSourceFile.FullName);
-                        swFilePartInfo.WriteLine(fiSourceFile.Length);
-                        swFilePartInfo.WriteLine(sourceFileLastWriteTime);
+                        infoWriter.WriteLine(sourceFile.FullName);
+                        infoWriter.WriteLine(sourceFile.Length);
+                        infoWriter.WriteLine(sourceFileLastWriteTime);
                     }
 
                     // Open the FilePart file
-                    swFilePart = new FileStream(fiFilePart.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
+                    filePartWriter = new FileStream(filePart.FullName, FileMode.Create, FileAccess.Write, FileShare.Read);
                     copyResumed = false;
                 }
 
                 // Now copy the file, appending data to swFilePart
-                // Open the source and seek to lngFileOffsetStart if > 0
-                using (var srSourceFile = new FileStream(fiSourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                // Open the source and seek to fileOffsetStart if > 0
+                using (var reader = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
 
-                    if (lngFileOffsetStart > 0)
+                    if (fileOffsetStart > 0)
                     {
-                        srSourceFile.Seek(lngFileOffsetStart, SeekOrigin.Begin);
+                        reader.Seek(fileOffsetStart, SeekOrigin.Begin);
                     }
 
-                    int intBytesRead;
+                    int bytesRead;
 
-                    var lngBytesWritten = lngFileOffsetStart;
-                    float sngTotalBytes = srSourceFile.Length;
+                    var bytesWritten = fileOffsetStart;
+                    float totalBytes = reader.Length;
 
-                    var buffer = new byte[intChunkSizeBytes + 1];
-                    long intBytesSinceLastFlush = 0;
+                    var buffer = new byte[chunkSizeBytes + 1];
+                    long bytesSinceLastFlush = 0;
 
                     do
                     {
                         // Read data in 1MB chunks and append to swFilePart
-                        intBytesRead = srSourceFile.Read(buffer, 0, intChunkSizeBytes);
-                        swFilePart.Write(buffer, 0, intBytesRead);
-                        lngBytesWritten += intBytesRead;
+                        bytesRead = reader.Read(buffer, 0, chunkSizeBytes);
+                        filePartWriter.Write(buffer, 0, bytesRead);
+                        bytesWritten += bytesRead;
 
                         // Flush out the data periodically
-                        intBytesSinceLastFlush += intBytesRead;
-                        if (intBytesSinceLastFlush >= intFlushThresholdBytes)
+                        bytesSinceLastFlush += bytesRead;
+                        if (bytesSinceLastFlush >= flushThresholdBytes)
                         {
-                            swFilePart.Flush();
-                            intBytesSinceLastFlush = 0;
+                            filePartWriter.Flush();
+                            bytesSinceLastFlush = 0;
 
                             // Value between 0 and 100
-                            var sngProgress = lngBytesWritten / sngTotalBytes * 100;
-                            FileCopyProgress?.Invoke(fiSourceFile.Name, sngProgress);
+                            var progress = bytesWritten / totalBytes * 100;
+                            FileCopyProgress?.Invoke(sourceFile.Name, progress);
                         }
 
-                        if (intBytesRead < intChunkSizeBytes)
+                        if (bytesRead < chunkSizeBytes)
                         {
                             break;
                         }
 
-                    } while (intBytesRead > 0);
+                    } while (bytesRead > 0);
 
-                    FileCopyProgress?.Invoke(fiSourceFile.Name, 100);
+                    FileCopyProgress?.Invoke(sourceFile.Name, 100);
                 }
 
-                swFilePart.Flush();
-                swFilePart.Dispose();
+                filePartWriter.Flush();
+                filePartWriter.Dispose();
 
                 UpdateCurrentStatusIdle();
 
                 // Copy is complete
                 // Update last write time UTC to match source UTC
-                fiFilePart.Refresh();
-                fiFilePart.LastWriteTimeUtc = dtSourceFileLastWriteTimeUTC;
+                filePart.Refresh();
+                filePart.LastWriteTimeUtc = sourceFileLastWriteTimeUTC;
 
-                // Rename fiFilePart to targetFilePath
-                fiFilePart.MoveTo(targetFilePath);
+                // Rename filePart to targetFilePath
+                filePart.MoveTo(targetFilePath);
 
-                // Delete fiFilePartInfo
-                fiFilePartInfo.Delete();
+                // Delete filePartInfo
+                filePartInfo.Delete();
 
             }
             catch (Exception ex)
             {
-                swFilePart?.Flush();
+                filePartWriter?.Flush();
                 clsProgRunner.GarbageCollectNow();
 
                 throw new IOException("Exception copying file with resume: " + ex.Message, ex);
@@ -1878,13 +1886,13 @@ namespace PRISM
         /// Compares two timestamps (typically the LastWriteTime for a file)
         /// If they agree within 2 seconds, returns True, otherwise false
         /// </summary>
-        /// <param name="dtTime1">First file time</param>
-        /// <param name="dtTime2">Second file time</param>
+        /// <param name="time1">First file time</param>
+        /// <param name="time2">Second file time</param>
         /// <returns>True if the times agree within 2 seconds</returns>
         /// <remarks></remarks>
-        private bool NearlyEqualFileTimes(DateTime dtTime1, DateTime dtTime2)
+        private bool NearlyEqualFileTimes(DateTime time1, DateTime time2)
         {
-            if (Math.Abs(dtTime1.Subtract(dtTime2).TotalSeconds) <= 2.05)
+            if (Math.Abs(time1.Subtract(time2).TotalSeconds) <= 2.05)
             {
                 return true;
             }
@@ -1984,10 +1992,10 @@ namespace PRISM
             //
             // Original code obtained from vb2themax.com
             long folderSize = 0;
-            var diFolder = new DirectoryInfo(folderPath);
+            var folder = new DirectoryInfo(folderPath);
 
             // add the size of each file
-            foreach (var childFile in diFolder.GetFiles())
+            foreach (var childFile in folder.GetFiles())
             {
                 folderSize += childFile.Length;
                 fileCount += 1;
@@ -1995,7 +2003,7 @@ namespace PRISM
 
             // add the size of each sub-directory, that is retrieved by recursively
             // calling this same routine
-            foreach (var subDir in diFolder.GetDirectories())
+            foreach (var subDir in folder.GetDirectories())
             {
                 folderSize += GetDirectorySizeEX(subDir.FullName, ref fileCount, ref subFolderCount);
                 subFolderCount += 1;
@@ -2032,37 +2040,37 @@ namespace PRISM
         {
             bool success;
 
-            var diSourceFolder = new DirectoryInfo(sourceFolderPath);
+            var sourceFolder = new DirectoryInfo(sourceFolderPath);
 
             // Recursively call this function for each subdirectory
-            foreach (var fiFolder in diSourceFolder.GetDirectories())
+            foreach (var subFolder in sourceFolder.GetDirectories())
             {
-                success = MoveDirectory(fiFolder.FullName, Path.Combine(targetFolderPath, fiFolder.Name), overwriteFiles, managerName);
+                success = MoveDirectory(subFolder.FullName, Path.Combine(targetFolderPath, subFolder.Name), overwriteFiles, managerName);
                 if (!success)
                 {
-                    throw new Exception("Error moving directory " + fiFolder.FullName + " to " + targetFolderPath + "; MoveDirectory returned False");
+                    throw new Exception("Error moving directory " + subFolder.FullName + " to " + targetFolderPath + "; MoveDirectory returned False");
                 }
             }
 
-            foreach (var fiFile in diSourceFolder.GetFiles())
+            foreach (var sourceFile in sourceFolder.GetFiles())
             {
-                success = CopyFileUsingLocks(fiFile.FullName, Path.Combine(targetFolderPath, fiFile.Name), managerName, overwriteFiles);
+                success = CopyFileUsingLocks(sourceFile.FullName, Path.Combine(targetFolderPath, sourceFile.Name), managerName, overwriteFiles);
                 if (!success)
                 {
-                    throw new Exception("Error copying file " + fiFile.FullName + " to " + targetFolderPath + "; CopyFileUsingLocks returned False");
+                    throw new Exception("Error copying file " + sourceFile.FullName + " to " + targetFolderPath + "; CopyFileUsingLocks returned False");
                 }
 
                 // Delete the source file
-                DeleteFileIgnoreErrors(fiFile.FullName);
+                DeleteFileIgnoreErrors(sourceFile.FullName);
             }
 
-            diSourceFolder.Refresh();
-            if (diSourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Length == 0)
+            sourceFolder.Refresh();
+            if (sourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Length == 0)
             {
                 // This folder is now empty; delete it
                 try
                 {
-                    diSourceFolder.Delete(true);
+                    sourceFolder.Delete(true);
                 }
                 catch (Exception)
                 {
@@ -2104,9 +2112,9 @@ namespace PRISM
         public static bool BackupFileBeforeCopy(string targetFilePath, int versionCountToKeep)
         {
 
-            var fiTargetFile = new FileInfo(targetFilePath);
+            var targetFile = new FileInfo(targetFilePath);
 
-            if (!fiTargetFile.Exists)
+            if (!targetFile.Exists)
             {
                 // Target file does not exist; nothing to backup
                 return true;
@@ -2117,39 +2125,42 @@ namespace PRISM
             if (versionCountToKeep < 1)
                 versionCountToKeep = 1;
 
-            var strBaseName = Path.GetFileNameWithoutExtension(fiTargetFile.Name);
-            var strExtension = Path.GetExtension(fiTargetFile.Name);
-            if (string.IsNullOrEmpty(strExtension))
+            var baseName = Path.GetFileNameWithoutExtension(targetFile.Name);
+            var extension = Path.GetExtension(targetFile.Name);
+            if (string.IsNullOrEmpty(extension))
             {
-                strExtension = ".bak";
+                extension = ".bak";
             }
 
-            var targetFolderPath = fiTargetFile.Directory.FullName;
+            if (targetFile.Directory == null)
+                return true;
+
+            var targetFolderPath = targetFile.Directory.FullName;
 
             // Backup any existing copies of targetFilePath
 
-            for (var intRevision = versionCountToKeep - 1; intRevision >= 0; intRevision += -1)
+            for (var revision = versionCountToKeep - 1; revision >= 0; revision += -1)
             {
-                var strBaseNameCurrent = strBaseName;
-                if (intRevision > 0)
+                var baseNameCurrent = baseName;
+                if (revision > 0)
                 {
-                    strBaseNameCurrent += "_Old" + intRevision.ToString();
+                    baseNameCurrent += "_Old" + revision;
                 }
-                strBaseNameCurrent += strExtension;
+                baseNameCurrent += extension;
 
-                var ioFileToRename = new FileInfo(Path.Combine(targetFolderPath, strBaseNameCurrent));
-                var strNewFilePath = Path.Combine(targetFolderPath, strBaseName + "_Old" + (intRevision + 1).ToString() + strExtension);
+                var fileToRename = new FileInfo(Path.Combine(targetFolderPath, baseNameCurrent));
+                var newFilePath = Path.Combine(targetFolderPath, baseName + "_Old" + (revision + 1) + extension);
 
-                // Confirm that strNewFilePath doesn't exist; delete it if it does
-                if (File.Exists(strNewFilePath))
+                // Confirm that newFilePath doesn't exist; delete it if it does
+                if (File.Exists(newFilePath))
                 {
-                    File.Delete(strNewFilePath);
+                    File.Delete(newFilePath);
                 }
 
-                // Rename the current file to strNewFilePath
-                if (ioFileToRename.Exists)
+                // Rename the current file to newFilePath
+                if (fileToRename.Exists)
                 {
-                    ioFileToRename.MoveTo(strNewFilePath);
+                    fileToRename.MoveTo(newFilePath);
                 }
 
             }
@@ -2243,10 +2254,10 @@ namespace PRISM
                 return string.Empty;
             }
 
-            var intFirstPathSepChar = pathToCompact.IndexOfAny(pathSepChars);
-            if (intFirstPathSepChar >= 0)
+            var firstPathSepChar = pathToCompact.IndexOfAny(pathSepChars);
+            if (firstPathSepChar >= 0)
             {
-                pathSepCharPreferred = pathToCompact[intFirstPathSepChar];
+                pathSepCharPreferred = pathToCompact[firstPathSepChar];
             }
 
             pathToCompact = pathToCompact.Trim();
@@ -2456,24 +2467,24 @@ namespace PRISM
         /// <summary>
         /// Delete the file, retrying up to 3 times
         /// </summary>
-        /// <param name="fiFile">File to delete</param>
+        /// <param name="fileToDelete">File to delete</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public bool DeleteFileWithRetry(FileInfo fiFile, out string errorMessage)
+        public bool DeleteFileWithRetry(FileInfo fileToDelete, out string errorMessage)
         {
-            return DeleteFileWithRetry(fiFile, 3, out errorMessage);
+            return DeleteFileWithRetry(fileToDelete, 3, out errorMessage);
         }
 
         /// <summary>
         /// Delete the file, retrying up to retryCount times
         /// </summary>
-        /// <param name="fiFile">File to delete</param>
+        /// <param name="fileToDelete">File to delete</param>
         /// <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public bool DeleteFileWithRetry(FileInfo fiFile, int retryCount, out string errorMessage)
+        public bool DeleteFileWithRetry(FileInfo fileToDelete, int retryCount, out string errorMessage)
         {
 
             var fileDeleted = false;
@@ -2491,12 +2502,12 @@ namespace PRISM
 
                 try
                 {
-                    fiFile.Delete();
+                    fileToDelete.Delete();
                     fileDeleted = true;
                 }
                 catch (Exception ex)
                 {
-                    if (IsVimSwapFile(fiFile.Name))
+                    if (IsVimSwapFile(fileToDelete.Name))
                     {
                         // Ignore this error
                         errorMessage = string.Empty;
@@ -2504,25 +2515,25 @@ namespace PRISM
                     }
 
                     // Make sure the readonly bit is not set
-                    if (fiFile.IsReadOnly)
+                    if (fileToDelete.IsReadOnly)
                     {
-                        var attributes = fiFile.Attributes;
-                        fiFile.Attributes = attributes & ~FileAttributes.ReadOnly;
+                        var attributes = fileToDelete.Attributes;
+                        fileToDelete.Attributes = attributes & ~FileAttributes.ReadOnly;
 
                         try
                         {
                             // Retry the delete
-                            fiFile.Delete();
+                            fileToDelete.Delete();
                             fileDeleted = true;
                         }
                         catch (Exception ex2)
                         {
-                            errorMessage = "Error deleting file " + fiFile.FullName + ": " + ex2.Message;
+                            errorMessage = "Error deleting file " + fileToDelete.FullName + ": " + ex2.Message;
                         }
                     }
                     else
                     {
-                        errorMessage = "Error deleting file " + fiFile.FullName + ": " + ex.Message;
+                        errorMessage = "Error deleting file " + fileToDelete.FullName + ": " + ex.Message;
                     }
                 }
 
@@ -2546,7 +2557,7 @@ namespace PRISM
             }
             else if (string.IsNullOrWhiteSpace(errorMessage))
             {
-                errorMessage = "Unknown error deleting file " + fiFile.FullName;
+                errorMessage = "Unknown error deleting file " + fileToDelete.FullName;
             }
 
             // ReSharper disable once NotAssignedOutParameter
@@ -2628,19 +2639,13 @@ namespace PRISM
             {
                 if (minimumFreeSpaceMB <= 0)
                     minimumFreeSpaceMB = DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB;
+
                 if (outputFileExpectedSizeMB < 0)
                     outputFileExpectedSizeMB = 0;
 
-                var diFolderInfo = new FileInfo(outputFilePath).Directory;
-
-                while (!diFolderInfo.Exists && diFolderInfo.Parent != null)
-                {
-                    diFolderInfo = diFolderInfo.Parent;
-                }
-
                 if (currentDiskFreeSpaceBytes < 0)
                 {
-                    // The folder exists, but currentDiskFreeSpaceBytes is negative
+                    // Always return true when currentDiskFreeSpaceBytes is negative
                     return true;
                 }
 
@@ -2681,12 +2686,12 @@ namespace PRISM
         /// Wait for the lock file queue to drop below a threshold
         /// </summary>
         /// <param name="lockFileTimestamp"></param>
-        /// <param name="diLockFolderSource"></param>
-        /// <param name="fiSourceFile"></param>
+        /// <param name="lockFolderSource"></param>
+        /// <param name="sourceFile"></param>
         /// <param name="maxWaitTimeMinutes"></param>
-        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo diLockFolderSource, FileInfo fiSourceFile, int maxWaitTimeMinutes)
+        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo lockFolderSource, FileInfo sourceFile, int maxWaitTimeMinutes)
         {
-            WaitForLockFileQueue(lockFileTimestamp, diLockFolderSource, null, fiSourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
+            WaitForLockFileQueue(lockFileTimestamp, lockFolderSource, null, sourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
 
         }
 
@@ -2694,24 +2699,24 @@ namespace PRISM
         /// Wait for the lock file queue to drop below a threshold
         /// </summary>
         /// <param name="lockFileTimestamp"></param>
-        /// <param name="diLockFolderSource"></param>
-        /// <param name="diLockFolderTarget"></param>
-        /// <param name="fiSourceFile"></param>
+        /// <param name="lockFolderSource"></param>
+        /// <param name="lockFolderTarget"></param>
+        /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="maxWaitTimeMinutes"></param>
         public void WaitForLockFileQueue(
-            long lockFileTimestamp, DirectoryInfo diLockFolderSource,
-            DirectoryInfo diLockFolderTarget, FileInfo fiSourceFile, string targetFilePath, int maxWaitTimeMinutes)
+            long lockFileTimestamp, DirectoryInfo lockFolderSource,
+            DirectoryInfo lockFolderTarget, FileInfo sourceFile, string targetFilePath, int maxWaitTimeMinutes)
         {
             // Find the recent LockFiles present in the source and/or target lock folders
             // These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
 
-            var intMBBacklogSource = 0;
-            var intMBBacklogTarget = 0;
+            var mbBacklogSource = 0;
+            var mbBacklogTarget = 0;
 
-            var dtWaitTimeStart = DateTime.UtcNow;
+            var waitTimeStart = DateTime.UtcNow;
 
-            var intSourceFileSizeMB = Convert.ToInt32(fiSourceFile.Length / 1024.0 / 1024.0);
+            var sourceFileSizeMB = Convert.ToInt32(sourceFile.Length / 1024.0 / 1024.0);
 
             // Wait for up to 180 minutes (3 hours) for the server resources to free up
 
@@ -2723,12 +2728,12 @@ namespace PRISM
 
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
-            if (diLockFolderSource != null && diLockFolderSource.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            if (lockFolderSource != null && lockFolderSource.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
             {
                 maxWaitTimeSource = 30;
             }
 
-            if (diLockFolderTarget != null && diLockFolderTarget.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            if (lockFolderTarget != null && lockFolderTarget.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
             {
                 maxWaitTimeTarget = 30;
             }
@@ -2737,8 +2742,8 @@ namespace PRISM
             while (true)
             {
                 // Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
-                var lstLockFileMBSource = FindLockFiles(diLockFolderSource, lockFileTimestamp);
-                var lstLockFileMBTarget = FindLockFiles(diLockFolderTarget, lockFileTimestamp);
+                var lstLockFileMBSource = FindLockFiles(lockFolderSource, lockFileTimestamp);
+                var lstLockFileMBTarget = FindLockFiles(lockFolderTarget, lockFileTimestamp);
 
                 var stopWaiting = false;
 
@@ -2749,13 +2754,13 @@ namespace PRISM
                 }
                 else
                 {
-                    intMBBacklogSource = lstLockFileMBSource.Sum();
-                    intMBBacklogTarget = lstLockFileMBTarget.Sum();
+                    mbBacklogSource = lstLockFileMBSource.Sum();
+                    mbBacklogTarget = lstLockFileMBTarget.Sum();
 
-                    if (intMBBacklogSource + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(dtWaitTimeStart, maxWaitTimeSource))
+                    if (mbBacklogSource + sourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(waitTimeStart, maxWaitTimeSource))
                     {
                         // The source server has enough resources available to allow the copy
-                        if (intMBBacklogTarget + intSourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(dtWaitTimeStart, maxWaitTimeTarget))
+                        if (mbBacklogTarget + sourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(waitTimeStart, maxWaitTimeTarget))
                         {
                             // The target server has enough resources available to allow the copy
                             // Copy the file
@@ -2766,38 +2771,38 @@ namespace PRISM
 
                 if (stopWaiting)
                 {
-                    LockQueueWaitComplete?.Invoke(fiSourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes);
+                    LockQueueWaitComplete?.Invoke(sourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes);
                     break;
                 }
 
                 // Server resources exceed the thresholds
-                // Sleep for 1 to 30 seconds, depending on intMBBacklogSource and intMBBacklogTarget
-                // We compute intSleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
+                // Sleep for 1 to 30 seconds, depending on mbBacklogSource and mbBacklogTarget
+                // We compute sleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
                 // This is faster than reality, but helps minimize waiting too long between checking
 
-                var dblSleepTimeSec = Math.Max(intMBBacklogSource, intMBBacklogTarget) / 200.0;
+                var sleepTimeSec = Math.Max(mbBacklogSource, mbBacklogTarget) / 200.0;
 
-                if (dblSleepTimeSec < 1)
-                    dblSleepTimeSec = 1;
-                if (dblSleepTimeSec > 30)
-                    dblSleepTimeSec = 30;
+                if (sleepTimeSec < 1)
+                    sleepTimeSec = 1;
+                if (sleepTimeSec > 30)
+                    sleepTimeSec = 30;
 
-                WaitingForLockQueue?.Invoke(fiSourceFile.FullName, targetFilePath, intMBBacklogSource, intMBBacklogTarget);
+                WaitingForLockQueue?.Invoke(sourceFile.FullName, targetFilePath, mbBacklogSource, mbBacklogTarget);
 
-                clsProgRunner.SleepMilliseconds(Convert.ToInt32(dblSleepTimeSec) * 1000);
+                clsProgRunner.SleepMilliseconds(Convert.ToInt32(sleepTimeSec) * 1000);
 
-                if (WaitedTooLong(dtWaitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES))
+                if (WaitedTooLong(waitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES))
                 {
-                    LockQueueTimedOut?.Invoke(fiSourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes);
+                    LockQueueTimedOut?.Invoke(sourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes);
                     break;
                 }
             }
 
         }
 
-        private bool WaitedTooLong(DateTime dtWaitTimeStart, int maxLockfileWaitTimeMinutes)
+        private bool WaitedTooLong(DateTime waitTimeStart, int maxLockfileWaitTimeMinutes)
         {
-            if (DateTime.UtcNow.Subtract(dtWaitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes)
+            if (DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes)
             {
                 return false;
             }

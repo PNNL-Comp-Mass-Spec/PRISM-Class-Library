@@ -178,8 +178,8 @@ namespace PRISM
 
             try
             {
-                var strMantissa = GetFormatStringScientific(value, totalDigitsOfPrecision - 1);
-                string strValue;
+                var mantissa = GetFormatStringScientific(value, totalDigitsOfPrecision - 1);
+                string valueText;
 
                 if (Math.Abs(value) < double.Epsilon)
                 {
@@ -190,23 +190,23 @@ namespace PRISM
                     Math.Abs(value) >= effectiveScientificNotationThreshold)
                 {
                     // Use scientific notation
-                    strValue = value.ToString(strMantissa);
+                    valueText = value.ToString(mantissa);
                 }
                 else if (Math.Abs(value) < 1)
                 {
                     var digitsAfterDecimal = (int)Math.Floor(-Math.Log10(Math.Abs(value))) + totalDigitsOfPrecision;
-                    var strFormatString = GetFormatString(digitsAfterDecimal);
+                    var formatString = GetFormatString(digitsAfterDecimal);
 
 
-                    strValue = value.ToString(strFormatString);
-                    if (Math.Abs(double.Parse(strValue)) < double.Epsilon)
+                    valueText = value.ToString(formatString);
+                    if (Math.Abs(double.Parse(valueText)) < double.Epsilon)
                     {
                         // Value was converted to 0; use scientific notation
-                        strValue = value.ToString(strMantissa);
+                        valueText = value.ToString(mantissa);
                     }
                     else
                     {
-                        strValue = strValue.TrimEnd('0').TrimEnd('.');
+                        valueText = valueText.TrimEnd('0').TrimEnd('.');
                     }
                 }
                 else
@@ -215,31 +215,31 @@ namespace PRISM
 
                     if (digitsAfterDecimal > 0)
                     {
-                        var strFormatString = GetFormatString(digitsAfterDecimal);
-                        strValue = value.ToString(strFormatString);
-                        strValue = strValue.TrimEnd('0').TrimEnd('.');
+                        var formatString = GetFormatString(digitsAfterDecimal);
+                        valueText = value.ToString(formatString);
+                        valueText = valueText.TrimEnd('0').TrimEnd('.');
                     }
                     else
                     {
-                        strValue = value.ToString("0");
+                        valueText = value.ToString("0");
                     }
                 }
 
                 if (totalDigitsOfPrecision <= 1)
                 {
-                    return strValue;
+                    return valueText;
                 }
 
                 // Look for numbers in scientific notation with a series of zeroes before the E
-                if (!m_scientificNotationTrim.IsMatch(strValue))
+                if (!m_scientificNotationTrim.IsMatch(valueText))
                 {
-                    return strValue;
+                    return valueText;
                 }
 
                 // Match found, for example 1.5000E-43
                 // Change it to instead be  1.5E-43
 
-                var updatedValue = m_scientificNotationTrim.Replace(strValue, "E");
+                var updatedValue = m_scientificNotationTrim.Replace(valueText, "E");
 
                 // The number may now look like 1.E+43
                 // If it does, then re-insert a zero after the decimal point
@@ -322,8 +322,7 @@ namespace PRISM
             if (effectiveDigitsAfterDecimal <= 0)
                 return value.ToString("0");
 
-            string formatString;
-            if (mFormatStrings.TryGetValue(effectiveDigitsAfterDecimal, out formatString))
+            if (mFormatStrings.TryGetValue(effectiveDigitsAfterDecimal, out var formatString))
             {
                 return value.ToString(formatString, invariantCulture ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo);
             }
@@ -372,8 +371,7 @@ namespace PRISM
 
             var tinyNumber = Math.Log10(Math.Abs(value)) <= -99;
 
-            string formatString;
-            if (mFormatStringsScientific.TryGetValue(digitsAfterDecimal + tinyNumber.ToString(), out formatString))
+            if (mFormatStringsScientific.TryGetValue(digitsAfterDecimal + tinyNumber.ToString(), out var formatString))
             {
                 return value.ToString(formatString, invariantCulture ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo);
             }

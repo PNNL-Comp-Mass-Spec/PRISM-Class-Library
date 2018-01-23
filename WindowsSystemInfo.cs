@@ -681,9 +681,9 @@ namespace PRISM
                         while (readCount < returnLength)
                         {
                             var type = (LOGICAL_PROCESSOR_RELATIONSHIP)Marshal.ReadInt32(item);
-                            var objsize = Marshal.ReadInt32(item, 4);
-                            var objData = new byte[objsize];
-                            Marshal.Copy(item, objData, 0, objsize);
+                            var size = Marshal.ReadInt32(item, 4);
+                            var data = new byte[size];
+                            Marshal.Copy(item, data, 0, size);
 
                             switch (type)
                             {
@@ -702,8 +702,8 @@ namespace PRISM
                                     break;
                             }
 
-                            item += objsize;
-                            readCount += objsize;
+                            item += size;
+                            readCount += size;
                         }
                     }
                 }

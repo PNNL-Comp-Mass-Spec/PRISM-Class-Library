@@ -105,12 +105,12 @@ namespace PRISM
         /// <summary>
         /// Parse an XML settings file
         /// </summary>
-        /// <param name="strFilePath"></param>
+        /// <param name="filePath"></param>
         /// <returns></returns>
         [Obsolete("Use LoadSettings")]
-        public bool ManualParseXmlOrIniFile(string strFilePath)
+        public bool ManualParseXmlOrIniFile(string filePath)
         {
-            m_XMLFilePath = strFilePath;
+            m_XMLFilePath = filePath;
 
             // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles
             //       case sensitivity mapping internally
@@ -121,7 +121,7 @@ namespace PRISM
                 return false;
             }
 
-            if (m_XMLFileAccessor.ManualParseXmlOrIniFile(strFilePath))
+            if (m_XMLFileAccessor.ManualParseXmlOrIniFile(filePath))
             {
                 if (m_XMLFileAccessor.Initialized)
                 {
@@ -162,11 +162,11 @@ namespace PRISM
         /// <return>The function returns a boolean that shows if the section is present.</return>
         public bool SectionPresent(string sectionName)
         {
-            var strSections = m_XMLFileAccessor.AllSections;
+            var sections = m_XMLFileAccessor.AllSections;
 
-            for (var intIndex = 0; intIndex <= strSections.Count - 1; intIndex++)
+            for (var index = 0; index <= sections.Count - 1; index++)
             {
-                if (SetNameCase(strSections[intIndex]) == SetNameCase(sectionName))
+                if (SetNameCase(sections[index]) == SetNameCase(sectionName))
                     return true;
             }
 
@@ -179,7 +179,7 @@ namespace PRISM
             // Looks up the Key Names for the given section, storing them in mCachedSection
             // This is done so that this class will know the correct capitalization for the key names
 
-            List<string> strKeys;
+            List<string> keys;
 
             // Lookup the correct capitalization for sectionName (only truly important if mCaseSensitive = False)
             var sectionNameInFile = GetCachedSectionName(sectionName);
@@ -189,7 +189,7 @@ namespace PRISM
             try
             {
                 // Grab the keys for sectionName
-                strKeys = m_XMLFileAccessor.AllKeysInSection(sectionNameInFile);
+                keys = m_XMLFileAccessor.AllKeysInSection(sectionNameInFile);
             }
             catch
             {
@@ -197,7 +197,7 @@ namespace PRISM
                 return false;
             }
 
-            if (strKeys == null)
+            if (keys == null)
             {
                 return false;
             }
@@ -207,21 +207,21 @@ namespace PRISM
                 mCachedSection.SectionName = sectionNameInFile;
                 mCachedSection.dtKeys.Clear();
 
-                for (var intIndex = 0; intIndex <= strKeys.Count - 1; intIndex++)
+                for (var index = 0; index <= keys.Count - 1; index++)
                 {
-                    string strKeyNameToStore;
+                    string keyNameToStore;
                     if (mCaseSensitive)
                     {
-                        strKeyNameToStore = strKeys[intIndex];
+                        keyNameToStore = keys[index];
                     }
                     else
                     {
-                        strKeyNameToStore = strKeys[intIndex].ToLower();
+                        keyNameToStore = keys[index].ToLower();
                     }
 
-                    if (!mCachedSection.dtKeys.ContainsKey(strKeyNameToStore))
+                    if (!mCachedSection.dtKeys.ContainsKey(keyNameToStore))
                     {
-                        mCachedSection.dtKeys.Add(strKeyNameToStore, strKeys[intIndex]);
+                        mCachedSection.dtKeys.Add(keyNameToStore, keys[index]);
                     }
 
                 }
@@ -236,25 +236,25 @@ namespace PRISM
             // Looks up the Section Names in the XML file
             // This is done so that this class will know the correct capitalization for the section names
 
-            var strSections = m_XMLFileAccessor.AllSections;
+            var sections = m_XMLFileAccessor.AllSections;
 
             dtSectionNames.Clear();
 
-            for (var intIndex = 0; intIndex <= strSections.Count - 1; intIndex++)
+            for (var index = 0; index <= sections.Count - 1; index++)
             {
-                string strSectionNameToStore;
+                string sectionNameToStore;
                 if (mCaseSensitive)
                 {
-                    strSectionNameToStore = strSections[intIndex];
+                    sectionNameToStore = sections[index];
                 }
                 else
                 {
-                    strSectionNameToStore = strSections[intIndex].ToLower();
+                    sectionNameToStore = sections[index].ToLower();
                 }
 
-                if (!dtSectionNames.ContainsKey(strSectionNameToStore))
+                if (!dtSectionNames.ContainsKey(sectionNameToStore))
                 {
-                    dtSectionNames.Add(strSectionNameToStore, strSections[intIndex]);
+                    dtSectionNames.Add(sectionNameToStore, sections[index]);
                 }
 
             }
@@ -266,7 +266,7 @@ namespace PRISM
             // Looks up the correct capitalization for key keyName in section sectionName
             // Returns string.Empty if not found
 
-            bool blnSuccess;
+            bool success;
 
             // Lookup the correct capitalization for sectionName (only truly important if mCaseSensitive = False)
             var sectionNameInFile = GetCachedSectionName(sectionName);
@@ -275,15 +275,15 @@ namespace PRISM
 
             if (mCachedSection.SectionName == sectionNameInFile)
             {
-                blnSuccess = true;
+                success = true;
             }
             else
             {
                 // Update the keys for sectionName
-                blnSuccess = CacheKeyNames(sectionName);
+                success = CacheKeyNames(sectionName);
             }
 
-            if (blnSuccess)
+            if (success)
             {
                 {
                     var keyNameToFind = SetNameCase(keyName);
@@ -335,14 +335,14 @@ namespace PRISM
         /// <return>The function returns the name of the "value" attribute as a string.</return>
         public string GetParam(string sectionName, string keyName, string valueIfMissing, out bool valueNotPresent)
         {
-            var strResult = string.Empty;
-            var blnValueFound = false;
+            var result = string.Empty;
+            var valueFound = false;
 
             if (mCaseSensitive)
             {
-                strResult = m_XMLFileAccessor.GetXMLValue(sectionName, keyName);
-                if (strResult != null)
-                    blnValueFound = true;
+                result = m_XMLFileAccessor.GetXMLValue(sectionName, keyName);
+                if (result != null)
+                    valueFound = true;
             }
             else
             {
@@ -352,21 +352,21 @@ namespace PRISM
                     var keyNameInFile = GetCachedKeyName(sectionName, keyName);
                     if (keyNameInFile.Length > 0)
                     {
-                        strResult = m_XMLFileAccessor.GetXMLValue(sectionNameInFile, keyNameInFile);
-                        if (strResult != null)
-                            blnValueFound = true;
+                        result = m_XMLFileAccessor.GetXMLValue(sectionNameInFile, keyNameInFile);
+                        if (result != null)
+                            valueFound = true;
                     }
                 }
             }
 
-            if (strResult == null || !blnValueFound)
+            if (result == null || !valueFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
             }
 
             valueNotPresent = false;
-            return strResult;
+            return result;
         }
 
         /// <summary>
@@ -379,17 +379,15 @@ namespace PRISM
         /// <return>The function returns boolean True if the "value" attribute is "true".  Otherwise, returns boolean False.</return>
         public bool GetParam(string sectionName, string keyName, bool valueIfMissing, out bool valueNotPresent)
         {
-            bool blnNotFound;
-
-            var strResult = GetParam(sectionName, keyName, valueIfMissing.ToString(), out blnNotFound);
-            if (strResult == null || blnNotFound)
+            var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
+            if (result == null || notFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
             }
 
             valueNotPresent = false;
-            if (strResult.ToLower() == "true")
+            if (result.ToLower() == "true")
             {
                 return true;
             }
@@ -406,8 +404,7 @@ namespace PRISM
         /// <returns>A short</returns>
         public short GetParam(string sectionName, string keyName, short valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -419,8 +416,7 @@ namespace PRISM
         /// <returns>An integer</returns>
         public int GetParam(string sectionName, string keyName, int valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -432,8 +428,7 @@ namespace PRISM
         /// <returns>A long</returns>
         public long GetParam(string sectionName, string keyName, long valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -445,8 +440,7 @@ namespace PRISM
         /// <returns>A float</returns>
         public float GetParam(string sectionName, string keyName, float valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -458,8 +452,7 @@ namespace PRISM
         /// <returns>A double</returns>
         public double GetParam(string sectionName, string keyName, double valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -471,8 +464,7 @@ namespace PRISM
         /// <returns>A string</returns>
         public string GetParam(string sectionName, string keyName, string valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -484,8 +476,7 @@ namespace PRISM
         /// <returns>A boolean</returns>
         public bool GetParam(string sectionName, string keyName, bool valueIfMissing)
         {
-            bool valueNotPresent;
-            return GetParam(sectionName, keyName, valueIfMissing, out valueNotPresent);
+            return GetParam(sectionName, keyName, valueIfMissing, out _);
         }
 
         /// <summary>
@@ -501,10 +492,8 @@ namespace PRISM
         /// </return>
         public short GetParam(string sectionName, string keyName, short valueIfMissing, out bool valueNotPresent)
         {
-            bool blnNotFound;
-
-            var strResult = GetParam(sectionName, keyName, valueIfMissing.ToString(), out blnNotFound);
-            if (strResult == null || blnNotFound)
+            var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
+            if (result == null || notFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
@@ -513,18 +502,17 @@ namespace PRISM
             valueNotPresent = false;
             try
             {
-                short result;
-                if (short.TryParse(strResult, out result))
+                if (short.TryParse(result, out var resultValue))
                 {
-                    return result;
+                    return resultValue;
                 }
 
-                if (strResult.ToLower() == "true")
+                if (result.ToLower() == "true")
                 {
                     return -1;
                 }
 
-                if (strResult.ToLower() == "false")
+                if (result.ToLower() == "false")
                 {
                     return 0;
                 }
@@ -552,10 +540,9 @@ namespace PRISM
         /// </return>
         public int GetParam(string sectionName, string keyName, int valueIfMissing, out bool valueNotPresent)
         {
-            bool blnNotFound;
 
-            var strResult = GetParam(sectionName, keyName, valueIfMissing.ToString(), out blnNotFound);
-            if (strResult == null || blnNotFound)
+            var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
+            if (result == null || notFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
@@ -564,18 +551,17 @@ namespace PRISM
             valueNotPresent = false;
             try
             {
-                int result;
-                if (int.TryParse(strResult, out result))
+                if (int.TryParse(result, out var resultValue))
                 {
-                    return result;
+                    return resultValue;
                 }
 
-                if (strResult.ToLower() == "true")
+                if (result.ToLower() == "true")
                 {
                     return -1;
                 }
 
-                if (strResult.ToLower() == "false")
+                if (result.ToLower() == "false")
                 {
                     return 0;
                 }
@@ -603,10 +589,9 @@ namespace PRISM
         /// </return>
         public long GetParam(string sectionName, string keyName, long valueIfMissing, out bool valueNotPresent)
         {
-            bool blnNotFound;
 
-            var strResult = GetParam(sectionName, keyName, valueIfMissing.ToString(), out blnNotFound);
-            if (strResult == null || blnNotFound)
+            var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
+            if (result == null || notFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
@@ -615,18 +600,17 @@ namespace PRISM
             valueNotPresent = false;
             try
             {
-                long result;
-                if (long.TryParse(strResult, out result))
+                if (long.TryParse(result, out var resultValue))
                 {
-                    return result;
+                    return resultValue;
                 }
 
-                if (strResult.ToLower() == "true")
+                if (result.ToLower() == "true")
                 {
                     return -1;
                 }
 
-                if (strResult.ToLower() == "false")
+                if (result.ToLower() == "false")
                 {
                     return 0;
                 }
@@ -654,10 +638,9 @@ namespace PRISM
         /// </return>
         public float GetParam(string sectionName, string keyName, float valueIfMissing, out bool valueNotPresent)
         {
-            bool blnNotFound;
 
-            var strResult = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out blnNotFound);
-            if (strResult == null || blnNotFound)
+            var result = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out var notFound);
+            if (result == null || notFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
@@ -666,18 +649,17 @@ namespace PRISM
             valueNotPresent = false;
             try
             {
-                float result;
-                if (float.TryParse(strResult, out result))
+                if (float.TryParse(result, out var resultValue))
                 {
-                    return result;
+                    return resultValue;
                 }
 
-                if (strResult.ToLower() == "true")
+                if (result.ToLower() == "true")
                 {
                     return -1;
                 }
 
-                if (strResult.ToLower() == "false")
+                if (result.ToLower() == "false")
                 {
                     return 0;
                 }
@@ -705,10 +687,9 @@ namespace PRISM
         /// </return>
         public double GetParam(string sectionName, string keyName, double valueIfMissing, out bool valueNotPresent)
         {
-            bool blnNotFound;
 
-            var strResult = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out blnNotFound);
-            if (strResult == null || blnNotFound)
+            var result = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out var notFound);
+            if (result == null || notFound)
             {
                 valueNotPresent = true;
                 return valueIfMissing;
@@ -717,18 +698,17 @@ namespace PRISM
             valueNotPresent = false;
             try
             {
-                double result;
-                if (double.TryParse(strResult, out result))
+                if (double.TryParse(result, out var resultValue))
                 {
-                    return result;
+                    return resultValue;
                 }
 
-                if (strResult.ToLower() == "true")
+                if (result.ToLower() == "true")
                 {
                     return -1;
                 }
 
-                if (strResult.ToLower() == "false")
+                if (result.ToLower() == "false")
                 {
                     return 0;
                 }
@@ -878,10 +858,10 @@ namespace PRISM
                 return m_XMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
             }
 
-            var strSectionName = GetCachedSectionName(sectionNameOld);
-            if (strSectionName.Length > 0)
+            var sectionName = GetCachedSectionName(sectionNameOld);
+            if (sectionName.Length > 0)
             {
-                return m_XMLFileAccessor.SetXMLSection(strSectionName, sectionNameNew);
+                return m_XMLFileAccessor.SetXMLSection(sectionName, sectionNameNew);
             }
 
             // If we get here, then either mCaseSensitive = True or the section wasn't found using GetCachedSectionName

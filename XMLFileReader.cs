@@ -742,10 +742,10 @@ namespace PRISM
         /// <summary>
         /// Manually read a XML or .INI settings file line-by-line, extracting out any settings in the expected format
         /// </summary>
-        /// <param name="strFilePath"></param>
+        /// <param name="filePath"></param>
         /// <returns></returns>
         /// <remarks></remarks>
-        public bool ManualParseXmlOrIniFile(string strFilePath)
+        public bool ManualParseXmlOrIniFile(string filePath)
         {
 
             // Create a new, blank XML document
@@ -753,10 +753,10 @@ namespace PRISM
 
             try
             {
-                var fi = new FileInfo(strFilePath);
-                if (fi.Exists)
+                var fileToFind = new FileInfo(filePath);
+                if (fileToFind.Exists)
                 {
-                    // Read strFilePath line-by-line to see if it has any .Ini style settings
+                    // Read filePath line-by-line to see if it has any .Ini style settings
                     // For example:
                     //   [SectionName]
                     //   Setting1=ValueA
@@ -768,7 +768,7 @@ namespace PRISM
                     //     <item key="Setting1" value="ValueA" />
                     //   </section>
 
-                    using (var srInFile = new StreamReader(new FileStream(fi.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                    using (var srInFile = new StreamReader(new FileStream(fileToFind.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                     {
 
                         while (!srInFile.EndOfStream)
@@ -779,7 +779,7 @@ namespace PRISM
                             ParseLineManual(s, m_XmlDoc);
                         }
 
-                        m_XmlFilename = strFilePath;
+                        m_XmlFilename = filePath;
                         m_initialized = true;
 
                     }
@@ -787,7 +787,7 @@ namespace PRISM
                 else
                 {
                     // File doesn't exist; create a new, blank .XML file
-                    m_XmlFilename = strFilePath;
+                    m_XmlFilename = filePath;
                     using (var settingsFile = new FileStream(m_XmlFilename, FileMode.Create, FileAccess.Write))
                     {
                         m_XmlDoc.Save(settingsFile);
@@ -814,100 +814,98 @@ namespace PRISM
         /// Supports the traditional .Ini file format
         /// Also supports the 'key="KeyName" value="Value"' method used in XML settings files
         /// If success, then adds attributes to the doc var</summary>
-        /// <param name="strLine">The name of the string to be parse.</param>
+        /// <param name="dataLine">The name of the string to be parse.</param>
         /// <param name="doc">The name of the System.Xml.XmlDocument.</param>
         /// <returns>True if success, false if not a recognized line format</returns>
-        private void ParseLineManual(string strLine, XmlDocument doc)
+        private void ParseLineManual(string dataLine, XmlDocument doc)
         {
             const string SECTION_NAME_TAG = "<section name=";
             const string KEY_TAG = "key=";
             const string VALUE_TAG = "value=";
 
-            strLine = strLine.TrimStart();
-            if (strLine.Length == 0)
+            dataLine = dataLine.TrimStart();
+            if (dataLine.Length == 0)
             {
                 return;
             }
 
-            switch (strLine.Substring(0, 1))
+            switch (dataLine.Substring(0, 1))
             {
                 case "[":
                     // this is a section
                     // trim the first and last characters
-                    strLine = strLine.TrimStart('[');
-                    strLine = strLine.TrimEnd(']');
+                    dataLine = dataLine.TrimStart('[');
+                    dataLine = dataLine.TrimEnd(']');
                     // create a new section element
-                    CreateSection(strLine);
+                    CreateSection(dataLine);
                     break;
                 case ";":
                     // new comment
                     var commentElement = doc.CreateElement("comment");
-                    commentElement.InnerText = strLine.Substring(1);
+                    commentElement.InnerText = dataLine.Substring(1);
                     GetLastSection().AppendChild(commentElement);
                     break;
                 default:
                     // Look for typical XML settings file elements
 
-                    string strKey;
-                    if (ParseLineManualCheckTag(strLine, SECTION_NAME_TAG, out strKey))
+                    if (ParseLineManualCheckTag(dataLine, SECTION_NAME_TAG, out var keyName))
                     {
                         // This is an XML-style section
 
                         // Create a new section element
-                        CreateSection(strKey);
+                        CreateSection(keyName);
 
                     }
                     else
                     {
-                        string strValue;
-                        if (ParseLineManualCheckTag(strLine, KEY_TAG, out strKey))
+                        string value;
+                        if (ParseLineManualCheckTag(dataLine, KEY_TAG, out keyName))
                         {
                             // This is an XML-style key
-
-                            ParseLineManualCheckTag(strLine, VALUE_TAG, out strValue);
+                            ParseLineManualCheckTag(dataLine, VALUE_TAG, out value);
 
                         }
                         else
                         {
                             // split the string on the "=" sign, if present
-                            if (strLine.IndexOf('=') > 0)
+                            if (dataLine.IndexOf('=') > 0)
                             {
-                                var parts = strLine.Split('=');
-                                strKey = parts[0].Trim();
-                                strValue = parts[1].Trim();
+                                var parts = dataLine.Split('=');
+                                keyName = parts[0].Trim();
+                                value = parts[1].Trim();
                             }
                             else
                             {
-                                strKey = strLine;
-                                strValue = string.Empty;
+                                keyName = dataLine;
+                                value = string.Empty;
                             }
                         }
 
-                        if (string.IsNullOrEmpty(strKey))
+                        if (string.IsNullOrEmpty(keyName))
                         {
-                            strKey = string.Empty;
+                            keyName = string.Empty;
                         }
 
-                        if (string.IsNullOrEmpty(strValue))
+                        if (string.IsNullOrEmpty(value))
                         {
-                            strValue = string.Empty;
+                            value = string.Empty;
                         }
 
-                        bool blnAddSetting;
-                        if (strKey.Length > 0)
+                        bool addSetting;
+                        if (keyName.Length > 0)
                         {
-                            blnAddSetting = true;
+                            addSetting = true;
 
-                            switch (strKey.ToLower().Trim())
+                            switch (keyName.ToLower().Trim())
                             {
 
                                 case "<sections>":
                                 case "</section>":
                                 case "</sections>":
                                     // Do not add a new key
-                                    if (string.IsNullOrEmpty(strValue))
+                                    if (string.IsNullOrEmpty(value))
                                     {
-                                        blnAddSetting = false;
+                                        addSetting = false;
                                     }
 
                                     break;
@@ -916,18 +914,18 @@ namespace PRISM
                         }
                         else
                         {
-                            blnAddSetting = false;
+                            addSetting = false;
                         }
 
-                        if (blnAddSetting)
+                        if (addSetting)
                         {
                             var newSetting = doc.CreateElement("item");
                             var keyAttribute = doc.CreateAttribute("key");
-                            keyAttribute.Value = SetNameCase(strKey);
+                            keyAttribute.Value = SetNameCase(keyName);
                             newSetting.Attributes.SetNamedItem(keyAttribute);
 
                             var valueAttribute = doc.CreateAttribute("value");
-                            valueAttribute.Value = strValue;
+                            valueAttribute.Value = value;
                             newSetting.Attributes.SetNamedItem(valueAttribute);
 
                             GetLastSection().AppendChild(newSetting);
@@ -941,25 +939,25 @@ namespace PRISM
 
         }
 
-        private bool ParseLineManualCheckTag(string strLine, string strTagTofind, out string strTagValue)
+        private bool ParseLineManualCheckTag(string dataLine, string tagTofind, out string tagValue)
         {
-            strTagValue = string.Empty;
+            tagValue = string.Empty;
 
-            var intMatchIndex = strLine.ToLower().IndexOf(strTagTofind, StringComparison.Ordinal);
+            var matchIndex = dataLine.ToLower().IndexOf(tagTofind, StringComparison.Ordinal);
 
-            if (intMatchIndex >= 0)
+            if (matchIndex >= 0)
             {
-                strTagValue = strLine.Substring(intMatchIndex + strTagTofind.Length);
+                tagValue = dataLine.Substring(matchIndex + tagTofind.Length);
 
-                if (strTagValue.StartsWith('"'.ToString()))
+                if (tagValue.StartsWith('"'.ToString()))
                 {
-                    strTagValue = strTagValue.Substring(1);
+                    tagValue = tagValue.Substring(1);
                 }
 
-                var intNextMatchIndex = strTagValue.IndexOf('"');
-                if (intNextMatchIndex >= 0)
+                var nextMatchIndex = tagValue.IndexOf('"');
+                if (nextMatchIndex >= 0)
                 {
-                    strTagValue = strTagValue.Substring(0, intNextMatchIndex);
+                    tagValue = tagValue.Substring(0, nextMatchIndex);
                 }
 
                 return true;

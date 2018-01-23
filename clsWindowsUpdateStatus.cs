@@ -47,20 +47,20 @@ namespace PRISM
 
             // Windows 7 / Windows 8 Pubs install updates around 3 am on the Thursday after the third Tuesday of the month
             // Return true between 12 am and 6:30 am on Thursday in the week with the third Tuesday of the month
-            var dtExclusionStart = thirdTuesdayInMonth.AddDays(2);
-            var dtExclusionEnd = thirdTuesdayInMonth.AddDays(2).AddHours(6).AddMinutes(30);
+            var exclusionStart = thirdTuesdayInMonth.AddDays(2);
+            var exclusionEnd = thirdTuesdayInMonth.AddDays(2).AddHours(6).AddMinutes(30);
 
-            if (currentTime >= dtExclusionStart && currentTime < dtExclusionEnd)
+            if (currentTime >= exclusionStart && currentTime < exclusionEnd)
             {
-                var dtPendingUpdateTime = thirdTuesdayInMonth.AddDays(2).AddHours(3);
+                var pendingUpdateTime = thirdTuesdayInMonth.AddDays(2).AddHours(3);
 
-                if (currentTime < dtPendingUpdateTime)
+                if (currentTime < pendingUpdateTime)
                 {
-                    pendingWindowsUpdateMessage = "Processing boxes are expected to install Windows updates around " + dtPendingUpdateTime.ToString("hh:mm:ss tt");
+                    pendingWindowsUpdateMessage = "Processing boxes are expected to install Windows updates around " + pendingUpdateTime.ToString("hh:mm:ss tt");
                 }
                 else
                 {
-                    pendingWindowsUpdateMessage = "Processing boxes should have installed Windows updates at " + dtPendingUpdateTime.ToString("hh:mm:ss tt");
+                    pendingWindowsUpdateMessage = "Processing boxes should have installed Windows updates at " + pendingUpdateTime.ToString("hh:mm:ss tt");
                 }
 
                 return true;
@@ -102,21 +102,21 @@ namespace PRISM
 
             // Windows servers install updates around either 3 am or 10 am on the first Sunday after the second Tuesday of the month
             // Return true between 2 am and 6:30 am or between 9:30 am and 11 am on the first Sunday after the second Tuesday of the month
-            var dtExclusionStart = secondTuesdayInMonth.AddDays(5).AddHours(2);
-            var dtExclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(6).AddMinutes(30);
+            var exclusionStart = secondTuesdayInMonth.AddDays(5).AddHours(2);
+            var exclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(6).AddMinutes(30);
 
-            var dtExclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9).AddMinutes(30);
-            var dtExclusionEnd2 = secondTuesdayInMonth.AddDays(5).AddHours(11);
+            var exclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9).AddMinutes(30);
+            var exclusionEnd2 = secondTuesdayInMonth.AddDays(5).AddHours(11);
 
-            if (currentTime >= dtExclusionStart && currentTime < dtExclusionEnd ||
-                currentTime >= dtExclusionStart2 && currentTime < dtExclusionEnd2)
+            if (currentTime >= exclusionStart && currentTime < exclusionEnd ||
+                currentTime >= exclusionStart2 && currentTime < exclusionEnd2)
             {
-                var dtPendingUpdateTime1 = secondTuesdayInMonth.AddDays(5).AddHours(3);
-                var dtPendingUpdateTime2 = secondTuesdayInMonth.AddDays(5).AddHours(10);
+                var pendingUpdateTime1 = secondTuesdayInMonth.AddDays(5).AddHours(3);
+                var pendingUpdateTime2 = secondTuesdayInMonth.AddDays(5).AddHours(10);
 
-                var pendingUpdateTimeText = dtPendingUpdateTime1.ToString("hh:mm:ss tt") + " or " + dtPendingUpdateTime2.ToString("hh:mm:ss tt");
+                var pendingUpdateTimeText = pendingUpdateTime1.ToString("hh:mm:ss tt") + " or " + pendingUpdateTime2.ToString("hh:mm:ss tt");
 
-                if (currentTime < dtPendingUpdateTime2)
+                if (currentTime < pendingUpdateTime2)
                 {
                     pendingWindowsUpdateMessage = "Servers are expected to install Windows updates around " + pendingUpdateTimeText;
                 }

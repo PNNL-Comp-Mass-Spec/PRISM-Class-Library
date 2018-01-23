@@ -70,7 +70,7 @@ namespace PRISM
         public bool DebugMode { get; set; }
 
         /// <summary>
-        /// Compares the parameter names in objParameterList with the parameters at the command line
+        /// Compares the parameter names in parameterList with the parameters at the command line
         /// </summary>
         /// <param name="parameterList">Parameter list</param>
         /// <returns>True if any of the parameters are not present in parameterList()</returns>
@@ -188,9 +188,8 @@ namespace PRISM
         /// <returns>True if present, otherwise false</returns>
         public bool IsParameterPresent(string paramName)
         {
-            string paramValue;
             const bool caseSensitive = false;
-            return RetrieveValueForParameter(paramName, out paramValue, caseSensitive);
+            return RetrieveValueForParameter(paramName, out _, caseSensitive);
         }
 
         /// <summary>
