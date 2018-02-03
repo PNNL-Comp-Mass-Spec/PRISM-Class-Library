@@ -48,7 +48,7 @@ namespace PRISM.Logging
 
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new ConcurrentQueue<LogMessage>();
 
-        private static readonly List<string> mMessageQueueEntryFlag = new List<string>();
+        private static Object mMessageQueueLock = new Object();
 
         // ReSharper disable once UnusedMember.Local
         private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
@@ -605,16 +605,9 @@ namespace PRISM.Logging
             if (mMessageQueue.IsEmpty)
                 return;
 
-            if (Monitor.TryEnter(mMessageQueueEntryFlag))
+            lock (mMessageQueueLock)
             {
-                try
-                {
-                    LogQueuedMessages();
-                }
-                finally
-                {
-                    Monitor.Exit(mMessageQueueEntryFlag);
-                }
+                LogQueuedMessages();
             }
         }
 
