@@ -52,7 +52,9 @@ namespace PRISMTest
                 }
             }
             else
+            {
                 expectedName = expectedBaseName;
+            }
 
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
@@ -188,6 +190,24 @@ namespace PRISMTest
 
         }
 
+        [TestCase("TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
+        [TestCase("TestLogFile", "Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
+        [TestCase("TestLogFile", "Test log warning", BaseLogger.LogLevels.WARN, 15, 100)]
+        public void TestFileLoggerRelativePath(
+            string logFileNameBase,
+            string message,
+            BaseLogger.LogLevels entryType,
+            int logCount,
+            int logDelayMilliseconds)
+        {
+            const bool appendDateToBaseName = true;
+            FileLogger.ChangeLogFileBaseName(logFileNameBase, appendDateToBaseName);
+
+            TestStaticLogging(
+                message, entryType, logCount, logDelayMilliseconds,
+                logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
+
+        }
         [TestCase(LogMessage.TimestampFormatMode.MonthDayYear24hr, "MM/dd/yyyy HH:mm:ss")]
         [TestCase(LogMessage.TimestampFormatMode.MonthDayYear12hr, "MM/dd/yyyy hh:mm:ss tt")]
         [TestCase(LogMessage.TimestampFormatMode.YearMonthDay24hr, "yyyy-MM-dd HH:mm:ss")]
