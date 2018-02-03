@@ -288,17 +288,14 @@ namespace PRISM.Logging
         /// </summary>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <remarks>
-        /// Will append today's date to the base name
+        /// If AppendDateToBaseFileName is true, will append today's date to the base name
+        /// If baseName is a relative file path (aka is not rooted), the entry assembly's path will be prepended to baseName
         /// If baseName is null or empty, the log file name will be named DefaultLogFileName
         /// </remarks>
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName)
         {
-            if (!mMessageQueue.IsEmpty)
-                FlushPendingMessages();
-
-            mBaseLogFileName = baseName;
-            ChangeLogFileName();
+            ChangeLogFileBaseName(baseName, AppendDateToBaseFileName);
         }
 
         /// <summary>
@@ -310,14 +307,32 @@ namespace PRISM.Logging
         /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// </param>
+        /// <param name="relativeToEntryAssembly">
+        /// When true, if baseName is a relative file path (aka is not rooted), the entry assembly's path will be prepended to baseName
+        /// When false, if baseName is a relative file path, the log file will be created in a subfolder relative to the working directory
+        /// </param>
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
-        public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName)
+        public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName, bool relativeToEntryAssembly = true)
         {
             if (!mMessageQueue.IsEmpty)
                 FlushPendingMessages();
 
             AppendDateToBaseFileName = appendDateToBaseName;
-            mBaseLogFileName = baseName;
+
+            if (relativeToEntryAssembly && (string.IsNullOrWhiteSpace(baseName) || !Path.IsPathRooted(baseName)))
+            {
+                var appFolderPath = FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
+
+                if (string.IsNullOrWhiteSpace(baseName))
+                    mBaseLogFileName = Path.Combine(appFolderPath, DefaultLogFileName);
+                else
+                    mBaseLogFileName = Path.Combine(appFolderPath, baseName);
+            }
+            else
+            {
+                mBaseLogFileName = baseName;
+            }
+
             ChangeLogFileName();
         }
 
