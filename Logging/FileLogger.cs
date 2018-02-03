@@ -380,7 +380,19 @@ namespace PRISM.Logging
         /// </remarks>
         public static void FlushPendingMessages()
         {
-            StartLogQueuedMessages();
+            // Maximum time, in seconds, to continue to call StartLogQueuedMessages while the message queue is not empty
+            const int MAX_TIME_SECONDS = 5;
+
+            var startTime = DateTime.UtcNow;
+            while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < MAX_TIME_SECONDS)
+            {
+                StartLogQueuedMessages();
+                if (mMessageQueue.IsEmpty)
+                    break;
+
+                clsProgRunner.SleepMilliseconds(100);
+            }
+
         }
 
         /// <summary>
