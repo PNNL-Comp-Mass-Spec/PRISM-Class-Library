@@ -38,9 +38,24 @@ namespace PRISM.Logging
         /// </summary>
         public enum TimestampFormatMode
         {
+            /// <summary>
+            /// Month/day/year Time (24 hour clock)
+            /// </summary>
             MonthDayYear24hr = 0,
+
+            /// <summary>
+            /// Month/day/year Time am/pm
+            /// </summary>
             MonthDayYear12hr = 1,
+
+            /// <summary>
+            /// Year-month-day Time (24 hour clock)
+            /// </summary>
             YearMonthDay24hr = 2,
+
+            /// <summary>
+            /// Year-month-day Time am/pm
+            /// </summary>
             YearMonthDay12hr = 3
         }
 
