@@ -35,7 +35,6 @@ namespace PRISMTest
                 LogLevel = BaseLogger.LogLevels.DEBUG
             };
 
-
             Console.WriteLine("Calling logger.PostEntry using " + database + " as user " + user);
 
             // Call stored procedure PostLogEntry
