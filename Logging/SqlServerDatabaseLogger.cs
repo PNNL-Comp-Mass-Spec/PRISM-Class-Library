@@ -64,11 +64,17 @@ namespace PRISM.Logging
         /// </summary>
         public static string StoredProcedureName { get; private set; }
 
-        private static SqlParameter LogTypeParam { get; set; }
+        private static string LogTypeParamName { get; set; }
 
-        private static SqlParameter MessageParam { get; set; }
+        private static string MessageParamName { get; set; }
 
-        private static SqlParameter PostedByParam { get; set; }
+        private static string PostedByParamName { get; set; }
+
+        private static int LogTypeParamSize { get; set; }
+
+        private static int MessageParamSize { get; set; }
+
+        private static int PostedByParamSize { get; set; }
 
         #endregion
 
@@ -148,9 +154,14 @@ namespace PRISM.Logging
 
             ConnectionString = connectionString;
             StoredProcedureName = storedProcedure;
-            LogTypeParam = new SqlParameter(logTypeParamName, SqlDbType.VarChar, logTypeParamSize);
-            MessageParam = new SqlParameter(messageParamName, SqlDbType.VarChar, messageParamSize);
-            PostedByParam = new SqlParameter(postedByParamName, SqlDbType.VarChar, postedByParamSize);
+
+            LogTypeParamName = logTypeParamName;
+            MessageParamName = messageParamName;
+            PostedByParamName = postedByParamName;
+
+            LogTypeParamSize = logTypeParamSize;
+            MessageParamSize = messageParamSize;
+            PostedByParamSize = postedByParamSize;
         }
 
         /// <summary>
@@ -168,6 +179,9 @@ namespace PRISM.Logging
 
             try
             {
+                if (mMessageQueue.IsEmpty)
+                    return;
+
                 ShowTraceMessage(string.Format("SQLServerDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
 
@@ -182,9 +196,9 @@ namespace PRISM.Logging
 
                     spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
 
-                    var logTypeParam = spCmd.Parameters.Add(LogTypeParam);
-                    var logMessageParam = spCmd.Parameters.Add(MessageParam);
-                    spCmd.Parameters.Add(PostedByParam).Value = ModuleName;
+                    var logTypeParam = spCmd.Parameters.Add(new SqlParameter(LogTypeParamName, SqlDbType.VarChar, LogTypeParamSize));
+                    var logMessageParam = spCmd.Parameters.Add(new SqlParameter(MessageParamName, SqlDbType.VarChar, MessageParamSize));
+                    spCmd.Parameters.Add(new SqlParameter(PostedByParamName, SqlDbType.VarChar, PostedByParamSize)).Value = ModuleName;
 
                     spCmd.Connection = sqlConnection;
                     spCmd.CommandTimeout = TIMEOUT_SECONDS;
@@ -205,7 +219,7 @@ namespace PRISM.Logging
                             MostRecentErrorMessage = logMessage.Message;
                         }
 
-                        if (string.IsNullOrWhiteSpace(ConnectionString) || string.IsNullOrWhiteSpace(StoredProcedureName) || MessageParam == null)
+                        if (string.IsNullOrWhiteSpace(ConnectionString) || string.IsNullOrWhiteSpace(StoredProcedureName) || logMessageParam == null)
                             continue;
 
                         logTypeParam.Value = LogLevelToString(logMessage.LogLevel);

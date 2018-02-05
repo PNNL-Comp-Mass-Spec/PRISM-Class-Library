@@ -69,11 +69,17 @@ namespace PRISM.Logging
         public static string StoredProcedureName { get; private set; }
 
 #if !(NETSTANDARD1_x || NETSTANDARD2_0)
-        private static OdbcParameter LogTypeParam { get; set; }
+        private static string LogTypeParamName { get; set; }
 
-        private static OdbcParameter MessageParam { get; set; }
+        private static string MessageParamName { get; set; }
 
-        private static OdbcParameter PostedByParam { get; set; }
+        private static string PostedByParamName { get; set; }
+
+        private static int LogTypeParamSize { get; set; }
+
+        private static int MessageParamSize { get; set; }
+
+        private static int PostedByParamSize { get; set; }
 #else
         private static bool NotifiedNotSupported{ get; set; }
 #endif
@@ -130,7 +136,7 @@ namespace PRISM.Logging
         /// Update the database connection info
         /// </summary>
         /// <param name="moduleName">
-        /// Program name to pass to the postedByParamName field when contacting the database 
+        /// Program name to pass to the postedByParamName field when contacting the database
         /// (will be auto-defined later if blank)
         /// </param>
         /// <param name="connectionString">ODBC-style connection string</param>
@@ -158,9 +164,13 @@ namespace PRISM.Logging
             StoredProcedureName = storedProcedure;
 
 #if !(NETSTANDARD1_x || NETSTANDARD2_0)
-            LogTypeParam = new OdbcParameter("@" + logTypeParamName, OdbcType.VarChar, logTypeParamSize);
-            MessageParam = new OdbcParameter("@" + messageParamName, OdbcType.VarChar, messageParamSize);
-            PostedByParam = new OdbcParameter("@" + postedByParamName, OdbcType.VarChar, postedByParamSize);
+            LogTypeParamName = logTypeParamName;
+            MessageParamName = messageParamName;
+            PostedByParamName = postedByParamName;
+
+            LogTypeParamSize = logTypeParamSize;
+            MessageParamSize = messageParamSize;
+            PostedByParamSize = postedByParamSize;
 #endif
         }
 
@@ -312,6 +322,9 @@ namespace PRISM.Logging
 
             try
             {
+                if (mMessageQueue.IsEmpty)
+                    return;
+
 #if !(NETSTANDARD1_x || NETSTANDARD2_0)
                 ShowTraceMessage(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
@@ -334,9 +347,9 @@ namespace PRISM.Logging
                     // Not including this parameter because it doesn't get populated when we use ExecuteNonQuery
                     // spCmd.Parameters.Add(new OdbcParameter("@Return", OdbcType.Int)).Direction = ParameterDirection.ReturnValue;
 
-                    var logTypeParam = spCmd.Parameters.Add(LogTypeParam);
-                    var logMessageParam = spCmd.Parameters.Add(MessageParam);
-                    spCmd.Parameters.Add(PostedByParam).Value = ModuleName;
+                    var logTypeParam = spCmd.Parameters.Add(new OdbcParameter("@" + LogTypeParamName, OdbcType.VarChar, LogTypeParamSize));
+                    var logMessageParam = spCmd.Parameters.Add(new OdbcParameter("@" + MessageParamName, OdbcType.VarChar, MessageParamSize));
+                    spCmd.Parameters.Add(new OdbcParameter("@" + PostedByParamName, OdbcType.VarChar, PostedByParamSize)).Value = ModuleName;
 
                     spCmd.Connection = odbcConnection;
                     spCmd.CommandTimeout = TIMEOUT_SECONDS;
@@ -357,7 +370,7 @@ namespace PRISM.Logging
                             MostRecentErrorMessage = logMessage.Message;
                         }
 
-                        if (string.IsNullOrWhiteSpace(ConnectionString) || string.IsNullOrWhiteSpace(StoredProcedureName) || MessageParam == null)
+                        if (string.IsNullOrWhiteSpace(ConnectionString) || string.IsNullOrWhiteSpace(StoredProcedureName) || logMessageParam == null)
                             continue;
 
                         logTypeParam.Value = LogLevelToString(logMessage.LogLevel);
