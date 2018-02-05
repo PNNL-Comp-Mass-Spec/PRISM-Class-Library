@@ -237,7 +237,7 @@ namespace PRISM.Logging
                 }
                 else
                 {
-                    PRISM.ConsoleMsgUtils.ShowError(
+                    ConsoleMsgUtils.ShowError(
                         "SQL Server connection string had 'Server' but did not have 'Database': " + sqlServerConnectionString);
                     return string.Empty;
                 }
@@ -252,7 +252,7 @@ namespace PRISM.Logging
                 }
                 else
                 {
-                    PRISM.ConsoleMsgUtils.ShowError(
+                    ConsoleMsgUtils.ShowError(
                         "SQL Server connection string had 'Data Source' but did not have 'Initial catalog': " + sqlServerConnectionString);
                     return string.Empty;
                 }
@@ -260,7 +260,7 @@ namespace PRISM.Logging
 
             if (odbcConnectionParts.Count <= 1)
             {
-                PRISM.ConsoleMsgUtils.ShowError(
+                ConsoleMsgUtils.ShowError(
                     "SQL Server connection string did not have 'Server' or 'Data Source': " + sqlServerConnectionString);
                 return string.Empty;
             }
@@ -296,7 +296,7 @@ namespace PRISM.Logging
                 if (NotifiedNotSupported)
                     return;
 
-                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 1.x");
+                ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 1.x");
                 NotifiedNotSupported = true;
 
 #endif
@@ -305,7 +305,7 @@ namespace PRISM.Logging
                 if (NotifiedNotSupported)
                     return;
 
-                PRISM.ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 2.x");
+                ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 2.x");
                 NotifiedNotSupported = true;
 
 #endif
