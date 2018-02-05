@@ -20,7 +20,7 @@ namespace PRISM.Logging
 
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new ConcurrentQueue<LogMessage>();
 
-        private static Object mMessageQueueLock = new Object();
+        private static readonly object mMessageQueueLock = new object();
 
         // ReSharper disable once UnusedMember.Local
         private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
