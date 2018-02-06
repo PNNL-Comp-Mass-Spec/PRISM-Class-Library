@@ -376,7 +376,7 @@ namespace PRISM
         /// <param name="destPath">The destination file path.</param>
         public void CopyFile(string sourcePath, string destPath)
         {
-            //Overload with overWrite set to default (FALSE)
+            // Overload with overWrite set to default (false)
             const bool backupDestFileBeforeCopy = false;
             CopyFileEx(sourcePath, destPath, overWrite: false, backupDestFileBeforeCopy: backupDestFileBeforeCopy);
 

@@ -69,7 +69,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Tells calling program file debug status
         /// </summary>
-        /// <returns>TRUE if debug level enabled for file logger; FALSE otherwise</returns>
+        /// <returns>True if debug level enabled for file logger; false otherwise</returns>
         /// <remarks></remarks>
         public static bool FileLogDebugEnabled => mFileLogger.IsDebugEnabled;
 
