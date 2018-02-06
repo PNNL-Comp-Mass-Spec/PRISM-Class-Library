@@ -74,6 +74,11 @@ namespace PRISM.Logging
         public static bool FileLogDebugEnabled => mFileLogger.IsDebugEnabled;
 
         /// <summary>
+        /// When true, never try to log to a database
+        /// </summary>
+        public static bool OfflineMode { get; set; }
+
+        /// <summary>
         /// Most recent error message
         /// </summary>
         public static string MostRecentErrorMessage => BaseLogger.MostRecentErrorMessage;
@@ -352,6 +357,9 @@ namespace PRISM.Logging
         /// <param name="ex">Exception to be logged; null if no exception</param>
         private static void WriteLogWork(LoggerTypes loggerType, BaseLogger.LogLevels logLevel, string message, Exception ex)
         {
+            if (OfflineMode && loggerType == LoggerTypes.LogDb)
+                loggerType = LoggerTypes.LogFile;
+
             BaseLogger myLogger;
 
             // Establish which logger will be used
