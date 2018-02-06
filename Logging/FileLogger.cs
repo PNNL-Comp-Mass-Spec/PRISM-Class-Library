@@ -387,6 +387,7 @@ namespace PRISM.Logging
             while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < MAX_TIME_SECONDS)
             {
                 StartLogQueuedMessages();
+
                 if (mMessageQueue.IsEmpty)
                     break;
 
