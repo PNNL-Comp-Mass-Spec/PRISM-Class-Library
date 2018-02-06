@@ -190,9 +190,9 @@ namespace PRISMTest
 
         }
 
-        [TestCase("TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
-        [TestCase("TestLogFile", "Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
-        [TestCase("TestLogFile", "Test log warning", BaseLogger.LogLevels.WARN, 15, 100)]
+        [TestCase("TestLogFile", "Test log message via FileLogger.WriteLog", BaseLogger.LogLevels.INFO, 4, 500)]
+        [TestCase("TestLogFile", "Test log error via FileLogger.WriteLog", BaseLogger.LogLevels.ERROR, 2, 250)]
+        [TestCase("TestLogFile", "Test log warning via FileLogger.WriteLog", BaseLogger.LogLevels.WARN, 15, 100)]
         public void TestFileLoggerRelativePath(
             string logFileNameBase,
             string message,
@@ -208,6 +208,55 @@ namespace PRISMTest
                 logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
 
         }
+
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.DEBUG)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.ERROR)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.ERROR, BaseLogger.LogLevels.DEBUG)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.ERROR, BaseLogger.LogLevels.ERROR)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.ERROR, BaseLogger.LogLevels.FATAL)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.FATAL, BaseLogger.LogLevels.FATAL)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.FATAL, BaseLogger.LogLevels.INFO)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.FATAL, BaseLogger.LogLevels.DEBUG)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.WARN, BaseLogger.LogLevels.WARN)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.WARN, BaseLogger.LogLevels.INFO)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.WARN, BaseLogger.LogLevels.FATAL)]
+        public void TestLogTools(string logFolder, string logFileNameBase, BaseLogger.LogLevels entryType, BaseLogger.LogLevels logThresholdLevel)
+        {
+            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+
+            LogTools.SetFileLogLevel(logThresholdLevel);
+            LogTools.CreateFileLogger(logFilePath);
+
+            var message = "Test log " + entryType + " via LogTools (log threshold is " + logThresholdLevel + ")";
+
+            switch (entryType)
+            {
+                case BaseLogger.LogLevels.DEBUG:
+                    LogTools.LogDebug(message);
+                    break;
+                case BaseLogger.LogLevels.INFO:
+                    LogTools.LogMessage(message);
+                    break;
+                case BaseLogger.LogLevels.WARN:
+                    LogTools.LogWarning(message);
+                    break;
+                case BaseLogger.LogLevels.ERROR:
+                    LogTools.LogError(message);
+                    break;
+                case BaseLogger.LogLevels.FATAL:
+                    LogTools.LogFatalError(message);
+                    break;
+                default:
+                    LogTools.LogError("Unrecognized log type: " + entryType);
+                    break;
+            }
+
+            clsProgRunner.SleepMilliseconds(100);
+
+            LogTools.FlushPendingMessages();
+        }
+
         [TestCase(LogMessage.TimestampFormatMode.MonthDayYear24hr, "MM/dd/yyyy HH:mm:ss")]
         [TestCase(LogMessage.TimestampFormatMode.MonthDayYear12hr, "MM/dd/yyyy hh:mm:ss tt")]
         [TestCase(LogMessage.TimestampFormatMode.YearMonthDay24hr, "yyyy-MM-dd HH:mm:ss")]
