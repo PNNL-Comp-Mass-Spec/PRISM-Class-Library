@@ -215,6 +215,15 @@ namespace PRISM.Logging
         #endregion
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public FileLogger()
+        {
+            MaxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES;
+            LogLevel = LogLevels.INFO;
+        }
+
+        /// <summary>
         /// Constructor that takes base log file name and appendDateToBaseName
         /// </summary>
         /// <param name="baseName">Base log file name (or relative path)</param>
@@ -228,13 +237,13 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public FileLogger(
             string baseName,
-            bool appendDateToBaseName,
+            bool appendDateToBaseName = true,
             int maxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES) : this(baseName, LogLevels.INFO, appendDateToBaseName, maxRolledLogFiles)
         {
         }
 
         /// <summary>
-        /// Constructor with default values for all parameters
+        /// Constructor that takes base log file name and log level
         /// </summary>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="logLevel">Log level</param>
@@ -247,15 +256,13 @@ namespace PRISM.Logging
         /// </param>
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public FileLogger(
-            string baseName = "",
-            LogLevels logLevel = LogLevels.INFO,
+            string baseName,
+            LogLevels logLevel,
             bool appendDateToBaseName = true,
             int maxRolledLogFiles = DEFAULT_MAX_ROLLED_LOG_FILES)
         {
             MaxRolledLogFiles = maxRolledLogFiles;
-
             ChangeLogFileBaseName(baseName, appendDateToBaseName);
-
             LogLevel = logLevel;
         }
 
