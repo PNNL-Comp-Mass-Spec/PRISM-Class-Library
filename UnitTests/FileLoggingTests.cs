@@ -13,21 +13,22 @@ namespace PRISMTest
         [TestCase("", "TestLogFile", true, "TestLogFile")]
         [TestCase(@"C:\Temp", "TestLogFile", true, @"C:\Temp\TestLogFile")]
         [TestCase(@"C:\Temp", "TestLogFile.log", true, @"C:\Temp\TestLogFile.log")]
-        [TestCase("", "", true, @"PRISM_log")]
+        [TestCase("", "", true, "PRISM_log")]
         [TestCase("", "TestLogFile", false, "TestLogFile.txt")]
         [TestCase(@"C:\Temp", "TestLogFile", false, @"C:\Temp\TestLogFile.txt")]
         [TestCase("", "TestLogFile.log", true, "TestLogFile.log")]
-        [TestCase("", "", false, @"PRISM_log.txt")]
+        [TestCase("", "", false, "PRISM_log.txt")]
         public void TestLogFileName(
             string logFolder,
             string logFileNameBase,
             bool appendDateToBaseFileName,
             string expectedBaseName)
         {
+            FileLogger.ResetLogFileName();
 
             string logFilePath;
             if (string.IsNullOrWhiteSpace(logFileNameBase))
-                logFilePath = String.Empty;
+                logFilePath = string.Empty;
             else if (string.IsNullOrWhiteSpace(logFolder))
                 logFilePath = logFileNameBase;
             else
@@ -79,6 +80,7 @@ namespace PRISMTest
             int logCount,
             int logDelayMilliseconds)
         {
+            FileLogger.ResetLogFileName();
 
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 

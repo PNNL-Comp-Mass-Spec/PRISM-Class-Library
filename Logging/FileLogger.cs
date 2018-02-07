@@ -579,6 +579,19 @@ namespace PRISM.Logging
         }
 
         /// <summary>
+        /// Reset the base log file name to an empty string and reset the cached log file dates
+        /// </summary>
+        /// <remarks>This method is only intended to be used by unit tests</remarks>
+        public static void ResetLogFileName()
+        {
+            mBaseLogFileName = string.Empty;
+            mLogFileDate = DateTime.MinValue;
+            mLogFileDateText = string.Empty;
+            mLogFilePath = string.Empty;
+            mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+        }
+
+        /// <summary>
         /// Rename existing log files if required
         /// </summary>
         /// <param name="currentDate">Current date (local time)</param>
