@@ -315,21 +315,41 @@ namespace PRISM.Logging
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName, bool relativeToEntryAssembly = true)
         {
             if (!mMessageQueue.IsEmpty)
-                FlushPendingMessages();
-
-            AppendDateToBaseFileName = appendDateToBaseName;
-
-            if (relativeToEntryAssembly && (string.IsNullOrWhiteSpace(baseName) || !Path.IsPathRooted(baseName)))
             {
-                var appFolderPath = FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
-
-                if (string.IsNullOrWhiteSpace(baseName))
-                    mBaseLogFileName = Path.Combine(appFolderPath, DefaultLogFileName);
-                else
-                    mBaseLogFileName = Path.Combine(appFolderPath, baseName);
+                ShowTraceMessage("Flushing pending messages prior to updating log file base name");
+                FlushPendingMessages();
             }
             else
             {
+                ShowTraceMessage("Updating log file base name");
+            }
+
+            AppendDateToBaseFileName = appendDateToBaseName;
+
+            if (Path.IsPathRooted(baseName))
+            {
+                ShowTraceMessage("New log file name has a rooted path; will use as-is: " + baseName);
+                mBaseLogFileName = baseName;
+            }
+            else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
+            {
+                var appFolderPath = FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
+                string relativePath;
+                if (string.IsNullOrWhiteSpace(baseName))
+                {
+                    relativePath = Path.Combine(appFolderPath, DefaultLogFileName);
+                    ShowTraceMessage("New log file name is empty; will use the default path, " + relativePath);
+                }
+                else
+                {
+                    relativePath = Path.Combine(appFolderPath, baseName);
+                    ShowTraceMessage("New log file will use a relative path: " + relativePath);
+                }
+                mBaseLogFileName = relativePath;
+            }
+            else
+            {
+                ShowTraceMessage("relativeToEntryAssembly is false; new log file path will be " + baseName);
                 mBaseLogFileName = baseName;
             }
 
@@ -431,6 +451,8 @@ namespace PRISM.Logging
                         var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATECODE);
                         if (!string.Equals(testFileDate, mLogFileDateText))
                         {
+                            ShowTraceMessage(string.Format("Updating log file date from {0} to {1}", mLogFileDateText, testFileDate));
+
                             mLogFileDateText = testFileDate;
                             ChangeLogFileName();
 
