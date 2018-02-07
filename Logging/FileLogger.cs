@@ -357,6 +357,11 @@ namespace PRISM.Logging
         {
             ShowStackTraceOnEnter("ChangeLogFileBaseName");
 
+            if (string.IsNullOrWhiteSpace(baseName) && !string.IsNullOrWhiteSpace(BaseLogFileName))
+            {
+                ShowTraceMessage("Leaving base log file name unchanged since new base name is empty");
+                return;
+            }
 
             if (!mMessageQueue.IsEmpty)
             {
