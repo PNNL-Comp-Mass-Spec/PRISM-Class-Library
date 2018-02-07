@@ -17,7 +17,21 @@ namespace PRISMTest
             MyTestExceptionMultiInner = 3
         }
 
-        [Test]
+        [TestCase(1, false)]
+        [TestCase(2, false)]
+        [TestCase(3, false)]
+        [TestCase(4, false)]
+        [TestCase(5, false)]
+        [TestCase(1, true)]
+        [TestCase(2, true)]
+        [TestCase(5, true)]
+        public void TestGetCurrentStackTrace(int depth, bool multiLine)
+        {
+            var parents = new List<string>();
+
+            RecursiveMethodX(parents, 1, depth, multiLine);
+        }
+
         [TestCase(ExceptionTypes.General, 1, false)]
         [TestCase(ExceptionTypes.General, 2, false)]
         [TestCase(ExceptionTypes.General, 3, false)]
@@ -83,6 +97,55 @@ namespace PRISMTest
             }
 
             RecursiveMethodA(targetException, parents, depth + 1, maxDepth);
+        }
+
+        private void RecursiveMethodX(List<string> parents, int depth, int maxDepth, bool multiLine)
+        {
+            parents.Add("Level " + depth);
+            if (depth == maxDepth)
+            {
+                ShowStackTraceNow(parents, depth, multiLine);
+                return;
+            }
+
+            RecursiveMethodY(parents, depth + 1, maxDepth, multiLine);
+        }
+
+        private void RecursiveMethodY(List<string> parents, int depth, int maxDepth, bool multiLine)
+        {
+            parents.Add("Level " + depth);
+            if (depth == maxDepth)
+            {
+                ShowStackTraceNow(parents, depth, multiLine);
+                return;
+            }
+
+            RecursiveMethodZ( parents, depth + 1, maxDepth, multiLine);
+        }
+
+        private void RecursiveMethodZ(List<string> parents, int depth, int maxDepth, bool multiLine)
+        {
+            parents.Add("Level " + depth);
+            if (depth == maxDepth)
+            {
+                ShowStackTraceNow(parents, depth, multiLine);
+                return;
+            }
+
+            RecursiveMethodX(parents, depth + 1, maxDepth, multiLine);
+        }
+
+        private void ShowStackTraceNow(IReadOnlyCollection<string> parents, int depth, bool multiLine)
+        {
+            Assert.AreEqual(depth, parents.Count, "Parent list length invalid");
+
+            string stackTrace;
+            if (multiLine)
+                stackTrace = clsStackTraceFormatter.GetCurrentStackTraceMultiLine();
+            else
+                stackTrace = clsStackTraceFormatter.GetCurrentStackTrace();
+
+            Console.WriteLine(stackTrace);
         }
 
         private void ThrowExceptionNow(ExceptionTypes targetException, IReadOnlyCollection<string> parents, int depth)
