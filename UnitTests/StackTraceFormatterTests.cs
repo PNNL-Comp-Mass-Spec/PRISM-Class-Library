@@ -40,11 +40,13 @@ namespace PRISMTest
         [TestCase(ExceptionTypes.General, 6, false)]
         [TestCase(ExceptionTypes.General, 7, false)]
         [TestCase(ExceptionTypes.General, 8, true)]
+        [TestCase(ExceptionTypes.General, 8, true, true)]
         [TestCase(ExceptionTypes.FileNotFound, 3, false)]
         [TestCase(ExceptionTypes.FileNotFound, 10, true)]
         [TestCase(ExceptionTypes.MyTestException, 3, true)]
         [TestCase(ExceptionTypes.MyTestExceptionMultiInner, 3, true)]
-        public void VerifyStackTrace(ExceptionTypes targetException, int depth, bool multiLine)
+        [TestCase(ExceptionTypes.MyTestException, 3, true, true)]
+        public void VerifyExceptionStackTrace(ExceptionTypes targetException, int depth, bool multiLine, bool includeMethodParams = false)
         {
             var parents = new List<string>();
 
@@ -57,7 +59,7 @@ namespace PRISMTest
                 string stackTrace;
 
                 if (multiLine)
-                    stackTrace = clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex);
+                    stackTrace = clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex, true, includeMethodParams);
                 else
                     stackTrace = clsStackTraceFormatter.GetExceptionStackTrace(ex);
 
