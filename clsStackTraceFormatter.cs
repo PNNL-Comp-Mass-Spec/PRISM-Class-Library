@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -28,6 +29,36 @@ namespace PRISM
         /// Prefix added before the final file is listed in the stacktrace
         /// </summary>
         public const string FINAL_FILE_PREFIX = " in ";
+
+        /// <summary>
+        /// Get a string listing the methods leading to the calling method
+        /// </summary>
+        /// <returns>
+        /// String of the form:
+        /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+        /// </returns>
+        public static string GetCurrentStackTrace()
+        {
+            var parentMethods = GetStackTraceMethods();
+
+            return STACK_TRACE_TITLE + string.Join(STACK_CHAIN_SEPARATOR, parentMethods);
+        }
+
+        public static string GetCurrentStackTraceMultiLine()
+        {
+            var parentMethods = GetStackTraceMethods();
+
+            var stackTraceLines = new List<string> {
+                STACK_TRACE_TITLE
+            };
+
+            foreach (var methodName in parentMethods)
+            {
+                stackTraceLines.Add("    " + methodName);
+            }
+
+            return string.Join("\n", stackTraceLines);
+        }
 
         /// <summary>
         /// Parses the StackTrace text of the given exception to return a compact description of the current stack
@@ -290,6 +321,20 @@ namespace PRISM
                 stackTraceLines.Add(messagePrefix + innerException.Message);
                 innerException = innerException.InnerException;
             }
+        }
+
+        private static IEnumerable<string> GetStackTraceMethods(int levelsToIgnore = 2)
+        {
+            var stackTrace = new StackTrace();
+
+            var parentMethods = new List<string>();
+            for (var i = levelsToIgnore; i < stackTrace.FrameCount; i++)
+            {
+                var parentFrame = stackTrace.GetFrame(i);
+                parentMethods.Add(parentFrame.GetMethod().Module + "." + parentFrame.GetMethod().Name);
+            }
+
+            return parentMethods;
         }
 
         private static string TrimLinePrefix(string fileDescription, string codeLinePrefix)
