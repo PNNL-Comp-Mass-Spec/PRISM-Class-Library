@@ -10,7 +10,6 @@ namespace PRISMTest
     class TestPathUtils
     {
 
-        [Test]
         [TestCase(@"/proc/12343/stat", @"/proc/12343/stat")]
         [TestCase(@"/proc/subdir\filename", @"/proc/subdir/filename")]
         [TestCase(@"/proc\subdir\filename.txt", @"/proc/subdir/filename.txt")]
@@ -21,7 +20,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
-        [Test]
         [TestCase(@"C:\DMS_WorkDir/12343/stat", @"C:\DMS_WorkDir\12343\stat")]
         [TestCase(@"C:\DMS_WorkDir/subdir\filename", @"C:\DMS_WorkDir\subdir\filename")]
         [TestCase(@"C:\DMS_WorkDir/subdir\filename.txt", @"C:\DMS_WorkDir\subdir\filename.txt")]
@@ -35,7 +33,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
-        [Test]
         [TestCase(@"/proc/12343", "stat", @"/proc/12343/stat")]
         [TestCase(@"/proc/12343/", "stat", @"/proc/12343/stat")]
         [TestCase(@"/proc/12343", "/stat", @"/stat")]
@@ -51,7 +48,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
-        [Test]
         [TestCase(@"C:\DMS_WorkDir", "subdir", @"C:\DMS_WorkDir\subdir")]
         [TestCase(@"C:\DMS_WorkDir\", "subdir", @"C:\DMS_WorkDir\subdir")]
         [TestCase(@"C:\DMS_WorkDir", @"subdir\filename.txt", @"C:\DMS_WorkDir\subdir\filename.txt")]
@@ -63,7 +59,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
-        [Test]
         [TestCase(@"C:\DMS_WorkDir", "subdir", '\\', @"C:\DMS_WorkDir\subdir")]
         [TestCase(@"C:\DMS_WorkDir\", "subdir", '\\', @"C:\DMS_WorkDir\subdir")]
         [TestCase(@"C:\DMS_WorkDir", @"subdir\filename.txt", '\\', @"C:\DMS_WorkDir\subdir\filename.txt")]
@@ -81,7 +76,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
-        [Test]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
         [Category("PNL_Domain")]
         public void TestFindFilesWildcardInternal(string folderPath, string fileMask, string expectedFileNames, bool recurse)
@@ -89,7 +83,6 @@ namespace PRISMTest
             TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, recurse);
         }
 
-        [Test]
         [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
         [TestCase(@"c:\windows\", "*.ini", "system.ini, win.ini")]
         public void TestFindFilesWildcard(string folderPath, string fileMask, string expectedFileNames)
@@ -104,7 +97,6 @@ namespace PRISMTest
         /// <param name="folderPath"></param>
         /// <param name="fileMask"></param>
         /// <param name="expectedFileNames"></param>
-        [Test]
         [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
         [TestCase(@"c:\windows\", "*.dll", "perfos.dll, perfnet.dll")]
         [Category("PNL_Domain")]
@@ -113,7 +105,6 @@ namespace PRISMTest
             TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, true);
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc\cpuinfo", "*info", "cpuinfo, meminfo", 6)]
         public void TestFindFilesWildcardRelativeFolder(string filePath, string fileMask, string expectedFileNames, int expectedFileCount)
         {
@@ -195,7 +186,6 @@ namespace PRISMTest
 
         }
 
-        [Test]
         [TestCase("Results.txt", "*.txt", true)]
         [TestCase("Results.txt", "*.zip", false)]
         [TestCase("Results.txt", "*", true)]
@@ -213,7 +203,6 @@ namespace PRISMTest
                 Console.WriteLine("{0} does not match\n{1}", fileName, fileMask);
         }
 
-        [Test]
         [TestCase(@"C:\Users\Public\Pictures", @"C:\Users\Public", "Pictures")]
         [TestCase(@"C:\Users\Public\Pictures\", @"C:\Users\Public", "Pictures")]
         [TestCase(@"C:\Windows\System32", @"C:\Windows", "System32")]
@@ -260,7 +249,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedDirectoryName, directoryName, "Directory name mismatch");
         }
 
-        [Test]
         [TestCase(@"C:\DMS_WorkDir\SubDir", false)]
         [TestCase(@"C:\DMS_WorkDir\Result Directory", true)]
         [TestCase(@"C:\DMS_WorkDir\Result Directory\", true)]
@@ -279,7 +267,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedQuoteRequired, pathWasQuoted, "Mismatch for " + filePath);
         }
 
-        [Test]
         [TestCase(@"C:\DMS_WorkDir\filename.txt", "UpdatedFile.txt", @"C:\DMS_WorkDir\UpdatedFile.txt")]
         [TestCase(@"C:\DMS_WorkDir\Results Directory\filename.txt", "UpdatedFile.txt", @"C:\DMS_WorkDir\Results Directory\UpdatedFile.txt")]
         public void TestReplaceFilenameInPath(string existingFilePath, string newFileName, string expectedResult)

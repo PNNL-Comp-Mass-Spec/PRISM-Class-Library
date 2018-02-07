@@ -25,7 +25,6 @@ namespace PRISMTest
         /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account; thus the SkipNetworkService category
         /// Category PNL_Domain is included here because these tests do not work on AppVeyor
         /// </remarks>
-        [Test]
         [TestCase("sleep.exe", "20", false, true, 6)]
         [TestCase("ls.exe", @"-alFR c:\", true, true, 3)]
         [Category("SkipNetworkService")]
@@ -35,7 +34,6 @@ namespace PRISMTest
             TestRunProgram(exeName, cmdArgs, createNoWindow, writeConsoleOutput, maxRuntimeSeconds, programAbortExpected: true);
         }
 
-        [Test]
         [TestCase(1000000, 5, 250, 2500)]
         [Category("PNL_Domain")]
         public void TestGarbageCollectionLarge(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
@@ -43,7 +41,6 @@ namespace PRISMTest
             TestGarbageCollectionWork(iterations, gcEvents, dictionaryCount, dictionarySize);
         }
 
-        [Test]
         [TestCase(100000, 5, 250, 2500)]
         public void TestGarbageCollection(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
         {
@@ -164,7 +161,6 @@ namespace PRISMTest
         /// <param name="writeConsoleOutput"></param>
         /// <param name="maxRuntimeSeconds"></param>
         /// <remarks>Category PNL_Domain is included here because these tests do not work on AppVeyor</remarks>
-        [Test]
         [TestCase("sleep.exe", "3", false, false, 10)]
         [TestCase("sleep.exe", "3", true, false, 10)]
         [TestCase("ls.exe", @"-alF c:\", false, false, 10)]

@@ -7,7 +7,6 @@ namespace PRISMTest
     [TestFixture]
     public class PathTests
     {
-        [Test]
         [TestCase(@"C:\temp", 10, @"C:\temp")]
         [TestCase(@"C:\temp", 20, @"C:\temp")]
         [TestCase(@"C:\temp\DataFile.txt", 10, @"C:\t..\Dat..")]

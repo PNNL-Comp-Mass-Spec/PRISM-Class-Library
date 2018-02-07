@@ -14,7 +14,6 @@ namespace PRISMTest
 
         internal const bool SHOW_TRACE_MESSAGES = false;
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
         public void TestGetCentos6Version(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
@@ -29,7 +28,6 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu 17.04 (Zesty Zapus)")]
         public void TestGetOSReleaseVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
         {
@@ -43,7 +41,6 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Solaris\etc", @"release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
         public void TestGetSolarisVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
         {
@@ -57,7 +54,6 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"lsb-release", "Ubuntu 17.04")]
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
         public void TestGetUbuntuVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
@@ -73,7 +69,6 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 16, 2)]
         [TestCase(@"LinuxTestFiles\Cygwin\proc", 4, 1)]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 2, 1)]
@@ -97,7 +92,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedProcessorPackages, linuxSystemInfo.GetProcessorPackageCount());
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "", 3.841)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "cpuloadtest", 3.841)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 7.408)]
@@ -181,7 +175,6 @@ namespace PRISMTest
                 Console.WriteLine("Process IDs: " + string.Join(", ", processIDs));
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 3.841, 24)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 7.408, 46.3)]
@@ -350,7 +343,6 @@ namespace PRISMTest
 
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 24.100)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 46.366)]
         public void TestGetCPUUtilization(string sourceProcFolderPath, int processID, double expectedCpuUsageTotal)
@@ -396,7 +388,6 @@ namespace PRISMTest
 
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 42128)]
         [TestCase(@"LinuxTestFiles\Cygwin\proc", 13050)]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 1276)]
@@ -439,7 +430,6 @@ namespace PRISMTest
 
         }
 
-        [Test]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 64183)]
         [TestCase(@"LinuxTestFiles\Cygwin\proc", 32672)]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 3938)]
