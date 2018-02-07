@@ -120,7 +120,7 @@ namespace PRISM.Logging
             string messageParamName = "message",
             string postedByParamName = "postedBy",
             int logTypeParamSize = 128,
-            int messageParamSize = 4000,
+            int messageParamSize = 4096,
             int postedByParamSize = 128)
         {
             ChangeConnectionInfo(
@@ -155,7 +155,7 @@ namespace PRISM.Logging
             string messageParamName,
             string postedByParamName,
             int logTypeParamSize = 128,
-            int messageParamSize = 4000,
+            int messageParamSize = 4096,
             int postedByParamSize = 128)
         {
             ModuleName = moduleName;
