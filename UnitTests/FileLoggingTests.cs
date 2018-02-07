@@ -298,6 +298,7 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.DEBUG)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.ERROR)]
+        [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.DEBUG, BaseLogger.LogLevels.INFO)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.ERROR, BaseLogger.LogLevels.DEBUG)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.ERROR, BaseLogger.LogLevels.ERROR)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.ERROR, BaseLogger.LogLevels.FATAL)]
@@ -307,12 +308,16 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.WARN, BaseLogger.LogLevels.WARN)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.WARN, BaseLogger.LogLevels.INFO)]
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.WARN, BaseLogger.LogLevels.FATAL)]
+        [TestCase("Logs", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
+        [TestCase("Logs", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.DEBUG)]
+        [TestCase("Logs", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.ERROR)]
         public void TestLogTools(string logFolder, string logFileNameBase, BaseLogger.LogLevels entryType, BaseLogger.LogLevels logThresholdLevel)
         {
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 
             LogTools.SetFileLogLevel(logThresholdLevel);
             LogTools.CreateFileLogger(logFilePath);
+            Console.WriteLine("Log file; " + LogTools.CurrentLogFilePath);
 
             var message = "Test log " + entryType + " via LogTools (log threshold is " + logThresholdLevel + ")";
 
@@ -420,10 +425,16 @@ namespace PRISMTest
         {
 
             var randGenerator = new Random();
+            string formatString;
+
+            if (logCount < 10)
+                formatString = "{0} {1}/{2}";
+            else
+                formatString = "{0} {1,2}/{2}";
 
             for (var i = 0; i < logCount; i++)
             {
-                FileLogger.WriteLog(entryType, message + " " + i);
+                FileLogger.WriteLog(entryType, string.Format(formatString, message, i + 1, logCount));
                 clsProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
@@ -432,6 +443,8 @@ namespace PRISMTest
                 var errMsg = "Log file name was not in the expected format of " + expectedLogFileName + "; see " + FileLogger.LogFilePath;
                 Assert.Fail(errMsg);
             }
+
+            FileLogger.FlushPendingMessages();
 
             Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
 
