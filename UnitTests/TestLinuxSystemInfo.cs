@@ -331,9 +331,7 @@ namespace PRISMTest
         /// <remarks>The state parameter is an object because this method is a callback for a timer</remarks>
         private void ReplaceFiles(object state)
         {
-            var filesToCopy = state as List<clsTestFileCopyInfo>;
-
-            if (filesToCopy == null)
+            if (!(state is List<clsTestFileCopyInfo> filesToCopy))
                 return;
 
             foreach (var fileToCopy in filesToCopy)
