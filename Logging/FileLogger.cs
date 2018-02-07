@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -118,7 +119,15 @@ namespace PRISM.Logging
         /// (unless the base name already has an extension, then the user-specified extension will be used)
         /// See also the comments for property AppendDateToBaseFileName
         /// </remarks>
-        public static string BaseLogFileName => mBaseLogFileName;
+        public static string BaseLogFileName
+        {
+            get => mBaseLogFileName;
+            private set
+            {
+                ShowStackTraceOnEnter("BaseLogFileName");
+                mBaseLogFileName = value;
+            }
+        }
 
         /// <summary>
         /// Default log file name
@@ -150,6 +159,32 @@ namespace PRISM.Logging
         /// True if info level logging is enabled (LogLevel is LogLevels.WARN or higher)
         /// </summary>
         public bool IsWarnEnabled { get; private set; }
+
+        /// <summary>
+        /// Log file date
+        /// </summary>
+        public static DateTime LogFileDate
+        {
+            get => mLogFileDate;
+            private set
+            {
+                ShowStackTraceOnEnter("LogFileDate");
+                mLogFileDate = value;
+            }
+        }
+
+        /// <summary>
+        /// Log file date (as a string)
+        /// </summary>
+        public static string LogFileDateText
+        {
+            get => mLogFileDateText;
+            private set
+            {
+                ShowStackTraceOnEnter("LogfileDateText");
+                mLogFileDateText = value;
+            }
+        }
 
         /// <summary>
         /// Current log file path
@@ -314,6 +349,8 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName, bool relativeToEntryAssembly = true)
         {
+            ShowStackTraceOnEnter("ChangeLogFileBaseName");           
+
             if (!mMessageQueue.IsEmpty)
             {
                 ShowTraceMessage("Flushing pending messages prior to updating log file base name");
@@ -329,7 +366,7 @@ namespace PRISM.Logging
             if (Path.IsPathRooted(baseName))
             {
                 ShowTraceMessage("New log file name has a rooted path; will use as-is: " + baseName);
-                mBaseLogFileName = baseName;
+                BaseLogFileName = baseName;
             }
             else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
             {
@@ -345,12 +382,12 @@ namespace PRISM.Logging
                     relativePath = Path.Combine(appFolderPath, baseName);
                     ShowTraceMessage("New log file will use a relative path: " + relativePath);
                 }
-                mBaseLogFileName = relativePath;
+                BaseLogFileName = relativePath;
             }
             else
             {
                 ShowTraceMessage("relativeToEntryAssembly is false; new log file path will be " + baseName);
-                mBaseLogFileName = baseName;
+                BaseLogFileName = baseName;
             }
 
             ChangeLogFileName();
@@ -361,29 +398,29 @@ namespace PRISM.Logging
         /// </summary>
         private static void ChangeLogFileName()
         {
-            mLogFileDate = DateTime.Now.Date;
-            mLogFileDateText = mLogFileDate.ToString(LOG_FILE_DATECODE);
+            LogFileDate = DateTime.Now.Date;
+            LogFileDateText = LogFileDate.ToString(LOG_FILE_DATECODE);
 
-            if (string.IsNullOrWhiteSpace(mBaseLogFileName))
-                mBaseLogFileName = DefaultLogFileName;
+            if (string.IsNullOrWhiteSpace(BaseLogFileName))
+                BaseLogFileName = DefaultLogFileName;
 
             string newLogFilePath;
             if (AppendDateToBaseFileName)
             {
-                if (Path.HasExtension(mBaseLogFileName))
+                if (Path.HasExtension(BaseLogFileName))
                 {
-                    var currentExtension = Path.GetExtension(mBaseLogFileName);
-                    newLogFilePath = Path.ChangeExtension(mBaseLogFileName, null) + "_" + mLogFileDateText + currentExtension;
+                    var currentExtension = Path.GetExtension(BaseLogFileName);
+                    newLogFilePath = Path.ChangeExtension(BaseLogFileName, null) + "_" + LogFileDateText + currentExtension;
                 }
                 else
-                    newLogFilePath = mBaseLogFileName + "_" + mLogFileDateText + LOG_FILE_EXTENSION;
+                    newLogFilePath = BaseLogFileName + "_" + LogFileDateText + LOG_FILE_EXTENSION;
             }
             else
             {
-                if (Path.HasExtension(mBaseLogFileName))
-                    newLogFilePath = string.Copy(mBaseLogFileName);
+                if (Path.HasExtension(BaseLogFileName))
+                    newLogFilePath = string.Copy(BaseLogFileName);
                 else
-                    newLogFilePath = mBaseLogFileName + LOG_FILE_EXTENSION;
+                    newLogFilePath = BaseLogFileName + LOG_FILE_EXTENSION;
             }
 
             mLogFilePath = newLogFilePath;
@@ -449,11 +486,11 @@ namespace PRISM.Logging
                     {
                         // Check to determine if a new file should be started
                         var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATECODE);
-                        if (!string.Equals(testFileDate, mLogFileDateText))
+                        if (!string.Equals(testFileDate, LogFileDateText))
                         {
-                            ShowTraceMessage(string.Format("Updating log file date from {0} to {1}", mLogFileDateText, testFileDate));
+                            ShowTraceMessage(string.Format("Updating log file date from {0} to {1}", LogFileDateText, testFileDate));
 
-                            mLogFileDateText = testFileDate;
+                            LogFileDateText = testFileDate;
                             ChangeLogFileName();
 
                             writer?.Close();
@@ -493,7 +530,7 @@ namespace PRISM.Logging
                         if (mNeedToRollLogFiles)
                         {
                             mNeedToRollLogFiles = false;
-                            RollLogFiles(mLogFileDate, mLogFilePath);
+                            RollLogFiles(LogFileDate, mLogFilePath);
                         }
 
                         ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
@@ -629,6 +666,18 @@ namespace PRISM.Logging
             IsFatalEnabled = mLogLevel >= LogLevels.FATAL;
             IsInfoEnabled = mLogLevel >= LogLevels.INFO;
             IsWarnEnabled = mLogLevel >= LogLevels.WARN;
+        }
+
+        /// <summary>
+        /// Show a stack trace when entering a method
+        /// </summary>
+        /// <param name="callingMethod"></param>
+        private static void ShowStackTraceOnEnter(string callingMethod)
+        {
+            if (TraceMode)
+            {
+                ShowTraceMessage(callingMethod + " " + clsStackTraceFormatter.GetCurrentStackTraceMultiLine());
+            }
         }
 
         /// <summary>
