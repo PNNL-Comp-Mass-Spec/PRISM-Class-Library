@@ -110,6 +110,7 @@ namespace PRISM
         /// </summary>
         /// <param name="ex">Exception</param>
         /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
+        /// <param name="includeMethodParams">When true, also include the parameters of each method</param>
         /// <returns>
         /// Stack trace:
         ///   clsCodeTest.Test
@@ -118,10 +119,13 @@ namespace PRISM
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-        public static string GetExceptionStackTraceMultiLine(Exception ex, bool includeInnerExceptionMessages = true)
+        public static string GetExceptionStackTraceMultiLine(
+            Exception ex,
+            bool includeInnerExceptionMessages = true,
+            bool includeMethodParams = false)
         {
 
-            var stackTraceData = GetExceptionStackTraceData(ex);
+            var stackTraceData = GetExceptionStackTraceData(ex, includeMethodParams);
 
             var stackTraceLines = new List<string> {
                 STACK_TRACE_TITLE
@@ -146,6 +150,7 @@ namespace PRISM
         /// Parses the StackTrace text of the given exception to return a cleaned up description of the current stack
         /// </summary>
         /// <param name="ex">Exception</param>
+        /// <param name="includeMethodParams">When true, also include the parameters of each method</param>
         /// <returns>
         /// List of function names; for example:
         ///   clsCodeTest.Test
@@ -154,15 +159,16 @@ namespace PRISM
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks></remarks>
-        public static IEnumerable<string> GetExceptionStackTraceData(Exception ex)
+        public static IEnumerable<string> GetExceptionStackTraceData(Exception ex, bool includeMethodParams = false)
         {
-            return GetExceptionStackTraceData(ex.StackTrace);
+            return GetExceptionStackTraceData(ex.StackTrace, includeMethodParams);
         }
 
         /// <summary>
         /// Parses the given StackTrace text to return a cleaned up description of the current stack
         /// </summary>
         /// <param name="stackTraceText">Exception.StackTrace data</param>
+        /// <param name="includeMethodParams">When true, also include the parameters of each method</param>
         /// <returns>
         /// List of function names; for example:
         ///   clsCodeTest.Test
@@ -171,19 +177,17 @@ namespace PRISM
         ///    in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks></remarks>
-        public static IEnumerable<string> GetExceptionStackTraceData(string stackTraceText)
+        public static IEnumerable<string> GetExceptionStackTraceData(string stackTraceText, bool includeMethodParams = false)
         {
-            const string REGEX_FUNCTION_NAME = @"at ([^(]+)\(";
-            const string REGEX_FILE_NAME = @"in .+\\(.+)";
 
             const string CODE_LINE_PREFIX = ":line ";
             const string REGEX_LINE_IN_CODE = CODE_LINE_PREFIX + "\\d+";
 
-            var lstFunctions = new List<string>();
+            var methods = new List<string>();
             var finalFile = string.Empty;
 
-            var reFunctionName = new Regex(REGEX_FUNCTION_NAME, RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var reFileName = new Regex(REGEX_FILE_NAME, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var reMethodInfo = new Regex(@"at (?<MethodName>[^(]+)\((?<MethodArgs>[^)]+)\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var reFileName = new Regex(@"in .+\\(?<FileName>.+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             var reLineInCode = new Regex(REGEX_LINE_IN_CODE, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             if (string.IsNullOrWhiteSpace(stackTraceText))
@@ -195,7 +199,7 @@ namespace PRISM
             }
 
             // Process each line in the exception stack track
-            // Populate lstFunctions() with the function name of each line
+            // Populate methods with the method name of each line, optionally including method arguments
             using (var reader = new StringReader(stackTraceText))
             {
 
@@ -206,9 +210,10 @@ namespace PRISM
                     if (string.IsNullOrEmpty(dataLine))
                         continue;
 
-                    var currentFunction = string.Empty;
+                    string currentMethod;
+                    string currentMethodArgs;
 
-                    var functionMatch = reFunctionName.Match(dataLine);
+                    var methodMatch = reMethodInfo.Match(dataLine);
                     var lineMatch = reLineInCode.Match(dataLine);
 
                     // Also extract the file name where the Exception occurred
@@ -236,9 +241,10 @@ namespace PRISM
                         currentFunctionFile = string.Empty;
                     }
 
-                    if (functionMatch.Success)
+                    if (methodMatch.Success)
                     {
-                        currentFunction = functionMatch.Groups[1].Value;
+                        currentMethod = methodMatch.Groups[1].Value;
+                        currentMethodArgs = methodMatch.Groups[2].Value;
                     }
                     else
                     {
@@ -253,17 +259,40 @@ namespace PRISM
                         if (charIndex == 0)
                         {
                             // Space not found; use the entire string
-                            charIndex = dataLine.Length - 1;
+                            charIndex = dataLine.Length;
                         }
 
                         if (charIndex > 0)
                         {
-                            currentFunction = dataLine.Substring(0, charIndex);
+                            if (includeMethodParams)
+                            {
+                                currentMethod = dataLine.Substring(0, charIndex);
+                            }
+                            else
+                            {
+                                var openParenthIndex = dataLine.IndexOf("(", StringComparison.Ordinal);
+                                if (openParenthIndex > 0)
+                                    currentMethod = dataLine.Substring(0, Math.Min(openParenthIndex, charIndex));
+                                else
+                                    currentMethod = dataLine.Substring(0, charIndex);
+                            }
+
+                            currentMethodArgs = string.Empty;
+                        }
+                        else
+                        {
+                            currentMethod = string.Empty;
+                            currentMethodArgs = string.Empty;
                         }
 
                     }
 
-                    var functionDescription = currentFunction;
+                    string methodDescription;
+
+                    if (includeMethodParams && !string.IsNullOrWhiteSpace(currentMethodArgs))
+                        methodDescription = currentMethod + "(" + currentMethodArgs + ")";
+                    else
+                        methodDescription = currentMethod;
 
                     if (!string.IsNullOrEmpty(currentFunctionFile))
                     {
@@ -271,22 +300,22 @@ namespace PRISM
                             !TrimLinePrefix(finalFile, CODE_LINE_PREFIX).Equals(
                                 TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.OrdinalIgnoreCase))
                         {
-                            functionDescription += FINAL_FILE_PREFIX + currentFunctionFile;
+                            methodDescription += FINAL_FILE_PREFIX + currentFunctionFile;
                         }
                     }
 
-                    if (lineMatch.Success && !functionDescription.Contains(CODE_LINE_PREFIX))
+                    if (lineMatch.Success && !methodDescription.Contains(CODE_LINE_PREFIX))
                     {
-                        functionDescription += lineMatch.Value;
+                        methodDescription += lineMatch.Value;
                     }
 
-                    lstFunctions.Add(functionDescription);
+                    methods.Add(methodDescription);
                 }
 
             }
 
             var stackTraceData = new List<string>();
-            stackTraceData.AddRange(lstFunctions);
+            stackTraceData.AddRange(methods);
             stackTraceData.Reverse();
 
             if (!string.IsNullOrWhiteSpace(finalFile))
