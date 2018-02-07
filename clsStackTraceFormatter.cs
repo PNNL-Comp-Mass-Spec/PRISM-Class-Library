@@ -39,14 +39,14 @@ namespace PRISM
         /// </returns>
         public static string GetCurrentStackTrace()
         {
-            var parentMethods = GetStackTraceMethods();
+            var parentMethods = GetStackTraceMethods(includeParamTypes: false);
 
             return STACK_TRACE_TITLE + string.Join(STACK_CHAIN_SEPARATOR, parentMethods);
         }
 
         public static string GetCurrentStackTraceMultiLine()
         {
-            var parentMethods = GetStackTraceMethods();
+            var parentMethods = GetStackTraceMethods(includeParamTypes: true);
 
             var stackTraceLines = new List<string> {
                 STACK_TRACE_TITLE
@@ -323,15 +323,18 @@ namespace PRISM
             }
         }
 
-        private static IEnumerable<string> GetStackTraceMethods(int levelsToIgnore = 2)
+        private static IEnumerable<string> GetStackTraceMethods(bool includeParamTypes, int levelsToIgnore = 2)
         {
             var stackTrace = new StackTrace();
 
             var parentMethods = new List<string>();
             for (var i = levelsToIgnore; i < stackTrace.FrameCount; i++)
             {
-                var parentFrame = stackTrace.GetFrame(i);
-                parentMethods.Add(parentFrame.GetMethod().Module + "." + parentFrame.GetMethod().Name);
+                var parentMethod = stackTrace.GetFrame(i).GetMethod();
+                if (includeParamTypes)
+                    parentMethods.Add(parentMethod.Module + ": " + parentMethod);
+                else
+                    parentMethods.Add(parentMethod.Module + "." + parentMethod.Name);
             }
 
             return parentMethods;
