@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -181,7 +180,7 @@ namespace PRISM.Logging
             get => mLogFileDateText;
             private set
             {
-                ShowStackTraceOnEnter("LogfileDateText");
+                ShowStackTraceOnEnter("LogFileDateText");
                 mLogFileDateText = value;
             }
         }
@@ -356,7 +355,8 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName, bool relativeToEntryAssembly = true)
         {
-            ShowStackTraceOnEnter("ChangeLogFileBaseName");           
+            ShowStackTraceOnEnter("ChangeLogFileBaseName");
+
 
             if (!mMessageQueue.IsEmpty)
             {
@@ -372,24 +372,24 @@ namespace PRISM.Logging
 
             if (Path.IsPathRooted(baseName))
             {
-                ShowTraceMessage("New log file name has a rooted path; will use as-is: " + baseName);
+                ShowTraceMessage("New log file base name is a rooted path; will use as-is: " + baseName);
                 BaseLogFileName = baseName;
             }
             else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
             {
                 var appFolderPath = FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
-                string relativePath;
+                string logFilePath;
                 if (string.IsNullOrWhiteSpace(baseName))
                 {
-                    relativePath = Path.Combine(appFolderPath, DefaultLogFileName);
-                    ShowTraceMessage("New log file name is empty; will use the default path, " + relativePath);
+                    logFilePath = Path.Combine(appFolderPath, DefaultLogFileName);
+                    ShowTraceMessage("New log file base name is empty; will use the default path, " + logFilePath);
                 }
                 else
                 {
-                    relativePath = Path.Combine(appFolderPath, baseName);
-                    ShowTraceMessage("New log file will use a relative path: " + relativePath);
+                    logFilePath = Path.Combine(appFolderPath, baseName);
+                    ShowTraceMessage("New log file will use a relative path: " + logFilePath);
                 }
-                BaseLogFileName = relativePath;
+                BaseLogFileName = logFilePath;
             }
             else
             {
