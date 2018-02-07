@@ -130,11 +130,11 @@ namespace PRISM.Logging
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
         public static void CreateDbLogger(string connStr, string moduleName, bool traceMode = false)
         {
-            mDbLogger.EchoMessagesToFileLogger = true;
-            mDbLogger.LogLevel = BaseLogger.LogLevels.INFO;
-
             if (traceMode && !BaseLogger.TraceMode)
                 BaseLogger.TraceMode = true;
+
+            mDbLogger.EchoMessagesToFileLogger = true;
+            mDbLogger.LogLevel = BaseLogger.LogLevels.INFO;
 
             mDbLogger.ChangeConnectionInfo(moduleName, connStr, "PostLogEntry", "type", "message", "postedBy");
 
