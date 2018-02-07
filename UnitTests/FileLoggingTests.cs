@@ -63,7 +63,72 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
+        }
 
+        [TestCase("", "PRISM_log")]
+        [TestCase(@"Logs\EmptyFileLoggerConstructor", @"Logs\EmptyFileLoggerConstructor")]
+        public void TestEmptyFileLoggerConstructor(string logFileNameBase, string expectedBaseName)
+        {
+            FileLogger.ResetLogFileName();
+
+            var logger = new FileLogger
+            {
+                LogLevel = BaseLogger.LogLevels.INFO
+            };
+
+            if (!string.IsNullOrWhiteSpace(logFileNameBase))
+            {
+                FileLogger.ChangeLogFileBaseName(logFileNameBase);
+            }
+
+            logger.Info("Info message");
+
+            // This debug message won't appear in the log file because the LogLevel is INFO
+            logger.Debug("Debug message");
+
+            if (string.IsNullOrWhiteSpace(logFileNameBase))
+            {
+                clsProgRunner.SleepMilliseconds(500);
+                FileLogger.FlushPendingMessages();
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Log file path: " + FileLogger.LogFilePath);
+
+            var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+            if (!FileLogger.LogFilePath.EndsWith(expectedName))
+            {
+                Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
+            }
+        }
+
+        [TestCase("", "PRISM_log")]
+        [TestCase(@"Logs\DefinedFileLoggerConstructor", @"Logs\DefinedFileLoggerConstructor")]
+        public void TestFileLoggerConstructor(string logFileNameBase, string expectedBaseName)
+        {
+            FileLogger.ResetLogFileName();
+
+            var logger = new FileLogger(logFileNameBase, BaseLogger.LogLevels.INFO);
+
+            logger.Info("Info message");
+
+            // This debug message won't appear in the log file because the LogLevel is INFO
+            logger.Debug("Debug message");
+
+            if (string.IsNullOrWhiteSpace(logFileNameBase))
+            {
+                clsProgRunner.SleepMilliseconds(500);
+                FileLogger.FlushPendingMessages();
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Log file path: " + FileLogger.LogFilePath);
+
+            var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+            if (!FileLogger.LogFilePath.EndsWith(expectedName))
+            {
+                Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
+            }
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -123,6 +188,25 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
+
+        }
+
+        [TestCase("Test log message", BaseLogger.LogLevels.INFO, 4, 125)]
+        [TestCase("Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
+        [TestCase("Test log warning", BaseLogger.LogLevels.WARN, 15, 100)]
+        public void TestFileLoggerStaticDefaultName(
+            string message,
+            BaseLogger.LogLevels entryType,
+            int logCount,
+            int logDelayMilliseconds)
+        {
+            var logFileNameBase = "PRISM_log";
+
+            FileLogger.ResetLogFileName();
+
+            TestStaticLogging(
+                message, entryType, logCount, logDelayMilliseconds,
+                logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
 
         }
 
