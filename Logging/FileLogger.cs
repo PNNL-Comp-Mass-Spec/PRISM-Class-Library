@@ -58,28 +58,6 @@ namespace PRISM.Logging
         /// </summary>
         private static int mFailedDequeueEvents;
 
-        /// <summary>
-        /// Base log file name (or relative path)
-        /// </summary>
-        /// <remarks>This is updated by ChangeLogFileBaseName or via the constructor</remarks>
-        private static string mBaseLogFileName = "";
-
-        /// <summary>
-        /// Log file date
-        /// </summary>
-        private static DateTime mLogFileDate = DateTime.MinValue;
-
-        /// <summary>
-        /// Log file date (as a string)
-        /// </summary>
-        private static string mLogFileDateText = "";
-
-        /// <summary>
-        /// Relative file path to the current log file
-        /// </summary>
-        /// <remarks>update this using method ChangeLogFileName</remarks>
-        private static string mLogFilePath = "";
-
         private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
 
         /// <summary>
@@ -114,6 +92,7 @@ namespace PRISM.Logging
 
         /// <summary>
         /// Base log file name
+        /// This is updated by ChangeLogFileBaseName or via the constructor
         /// </summary>
         /// <remarks>
         /// If AppendDateToBaseFileName is true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
@@ -121,15 +100,7 @@ namespace PRISM.Logging
         /// (unless the base name already has an extension, then the user-specified extension will be used)
         /// See also the comments for property AppendDateToBaseFileName
         /// </remarks>
-        public static string BaseLogFileName
-        {
-            get => mBaseLogFileName;
-            private set
-            {
-                ShowStackTraceOnEnter("BaseLogFileName");
-                mBaseLogFileName = value;
-            }
-        }
+        public static string BaseLogFileName { get; private set; } = "";
 
         /// <summary>
         /// Default log file name
@@ -165,33 +136,18 @@ namespace PRISM.Logging
         /// <summary>
         /// Log file date
         /// </summary>
-        public static DateTime LogFileDate
-        {
-            get => mLogFileDate;
-            private set
-            {
-                ShowStackTraceOnEnter("LogFileDate");
-                mLogFileDate = value;
-            }
-        }
+        public static DateTime LogFileDate { get; private set; } = DateTime.MinValue;
 
         /// <summary>
         /// Log file date (as a string)
         /// </summary>
-        public static string LogFileDateText
-        {
-            get => mLogFileDateText;
-            private set
-            {
-                ShowStackTraceOnEnter("LogFileDateText");
-                mLogFileDateText = value;
-            }
-        }
+        public static string LogFileDateText { get; private set; } = "";
 
         /// <summary>
         /// Current log file path
         /// </summary>
-        public static string LogFilePath => mLogFilePath;
+        /// <remarks>Update using ChangeLogFileBaseName</remarks>
+        public static string LogFilePath { get; private set; } = "";
 
         /// <summary>
         /// Get or set the current log level
@@ -438,7 +394,7 @@ namespace PRISM.Logging
                     newLogFilePath = BaseLogFileName + LOG_FILE_EXTENSION;
             }
 
-            mLogFilePath = newLogFilePath;
+            LogFilePath = newLogFilePath;
             mNeedToRollLogFiles = !AppendDateToBaseFileName;
         }
 
@@ -524,17 +480,17 @@ namespace PRISM.Logging
 
                     if (writer == null)
                     {
-                        if (string.IsNullOrWhiteSpace(mLogFilePath))
+                        if (string.IsNullOrWhiteSpace(LogFilePath))
                         {
-                            mLogFilePath = DefaultLogFileName;
+                            LogFilePath = DefaultLogFileName;
                         }
 
-                        var logFile = new FileInfo(mLogFilePath);
+                        var logFile = new FileInfo(LogFilePath);
                         if (logFile.Directory == null)
                         {
                             // Create the log file in the current directory
-                            mLogFilePath = logFile.Name;
-                            logFile = new FileInfo(mLogFilePath);
+                            LogFilePath = logFile.Name;
+                            logFile = new FileInfo(LogFilePath);
 
                         }
                         else if (!logFile.Directory.Exists)
@@ -545,10 +501,10 @@ namespace PRISM.Logging
                         if (mNeedToRollLogFiles)
                         {
                             mNeedToRollLogFiles = false;
-                            RollLogFiles(LogFileDate, mLogFilePath);
+                            RollLogFiles(LogFileDate, LogFilePath);
                         }
 
-                        ShowTraceMessage(string.Format("Opening log file: {0}", mLogFilePath));
+                        ShowTraceMessage(string.Format("Opening log file: {0}", LogFilePath));
                         writer = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
                     }
                     writer.WriteLine(logMessage.GetFormattedMessage(TimestampFormat));
@@ -566,7 +522,7 @@ namespace PRISM.Logging
                 {
                     mLastCheckOldLogs = DateTime.UtcNow;
 
-                    ArchiveOldLogs(mLogFilePath);
+                    ArchiveOldLogs(LogFilePath);
                 }
 
             }
@@ -587,10 +543,10 @@ namespace PRISM.Logging
         /// <remarks>This method is only intended to be used by unit tests</remarks>
         public static void ResetLogFileName()
         {
-            mBaseLogFileName = string.Empty;
-            mLogFileDate = DateTime.MinValue;
-            mLogFileDateText = string.Empty;
-            mLogFilePath = string.Empty;
+            BaseLogFileName = string.Empty;
+            LogFileDate = DateTime.MinValue;
+            LogFileDateText = string.Empty;
+            LogFilePath = string.Empty;
             mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
         }
 
