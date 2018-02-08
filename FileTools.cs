@@ -2389,7 +2389,7 @@ namespace PRISM
                 // Shorten the first to as little as possible
                 // If not short enough, replace the first with ... and call this function again
                 shortLength = maxLength - leadingChars.Length - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 3 - multiPathCorrection;
-                if (shortLength < 1 & pathParts[2].Length > 0)
+                if (shortLength < 1 && pathParts[2].Length > 0)
                 {
                     // Not short enough, but other subdirectories are present
                     // Thus, can call this function recursively

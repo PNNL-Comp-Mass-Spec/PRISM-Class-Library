@@ -858,7 +858,7 @@ namespace PRISM
                 // Decide whether or not to repeat starting
                 // the external process again, or quit
                 //
-                if (Repeat & !m_doCleanup)
+                if (Repeat && !m_doCleanup)
                 {
                     // Repeat starting the process
                     // after waiting for minimum hold off time interval
@@ -960,7 +960,7 @@ namespace PRISM
             }
 
             // Program not running, just abort thread
-            if (State == States.Waiting & kill)
+            if (State == States.Waiting && kill)
             {
                 try
                 {

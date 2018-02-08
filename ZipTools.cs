@@ -55,7 +55,7 @@ namespace PRISM
 
 
             // Verify input file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipProgramPath) | string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
             {
                 var msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618

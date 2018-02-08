@@ -508,7 +508,7 @@ namespace PRISM.FileProcessor
             {
                 OnDebugEvent("Examining " + inputFolderPath);
 
-                if (recursionLevel == 1 & folderNameMatchPattern == "*")
+                if (recursionLevel == 1 && folderNameMatchPattern == "*")
                 {
                     // Need to process the current folder
                     success = ProcessFolder(inputFolder.FullName, outputFolderPathToUse, parameterFilePath, true);
