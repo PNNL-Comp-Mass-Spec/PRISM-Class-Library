@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Threading;
 using PRISM.Logging;
 
@@ -202,8 +201,6 @@ namespace PRISM
 
         private const string LOG_FILE_EXTENSION = ".txt";
 
-        private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
-
         private const string DATE_TIME_FORMAT = "yyyy-MM-dd hh:mm:ss tt";
 
         /// <summary>
@@ -320,50 +317,26 @@ namespace PRISM
         /// </summary>
         private void ArchiveOldLogs()
         {
-            var targetPath = "??";
 
             try
             {
                 var currentLogFile = new FileInfo(CurrentLogFilePath);
 
-                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
-
                 var logDirectory = currentLogFile.Directory;
                 if (logDirectory == null)
                     return;
 
-                var logFiles = logDirectory.GetFiles(matchSpec);
+                var archiveWarnings = FileLogger.ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX);
 
-                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
-
-                foreach (var logFile in logFiles)
+                foreach (var warning in archiveWarnings)
                 {
-                    var match = matcher.Match(logFile.Name);
-
-                    if (!match.Success)
-                        continue;
-
-                    var logFileYear = int.Parse(match.Groups["Year"].Value);
-                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
-                    var logFileDay = int.Parse(match.Groups["Day"].Value);
-
-                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
-
-                    if (DateTime.Now.Subtract(logDate).TotalDays <= OLD_LOG_FILE_AGE_THRESHOLD_DAYS)
-                        continue;
-
-                    var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
-                    if (!targetDirectory.Exists)
-                        targetDirectory.Create();
-
-                    targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
-
-                    logFile.MoveTo(targetPath);
+                    ConsoleMsgUtils.ShowWarning(warning);
                 }
+
             }
             catch (Exception ex)
             {
-                PostError("Error moving old log file to " + targetPath, ex, true);
+                PostError("Error archiving old log files", ex, true);
             }
         }
 

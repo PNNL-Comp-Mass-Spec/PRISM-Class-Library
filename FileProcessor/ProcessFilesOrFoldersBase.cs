@@ -27,8 +27,6 @@ namespace PRISM.FileProcessor
 
         private const int MAX_LOGDATA_CACHE_SIZE = 100000;
 
-        private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
-
         /// <summary>
         /// Message type enums
         /// </summary>
@@ -292,7 +290,7 @@ namespace PRISM.FileProcessor
             {
                 var baseLogFile = new FileInfo(mLogFileBasePath);
                 var logDirectory = baseLogFile.Directory;
-                if (logDirectory == null || !logDirectory.Exists)
+                if (logDirectory == null)
                 {
                     ShowWarning("Error archiving old log files; cannot determine the parent directory of " + mLogFileBasePath);
                     return;
@@ -300,44 +298,12 @@ namespace PRISM.FileProcessor
 
                 mLastCheckOldLogs = DateTime.UtcNow;
 
-                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
+                var archiveWarnings = Logging.FileLogger.ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX);
 
-                var logFiles = logDirectory.GetFiles(matchSpec);
-
-                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
-
-                foreach (var logFile in logFiles)
+                foreach (var warning in archiveWarnings)
                 {
-                    var match = matcher.Match(logFile.Name);
-
-                    if (!match.Success)
-                        continue;
-
-                    var logFileYear = int.Parse(match.Groups["Year"].Value);
-                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
-                    var logFileDay = int.Parse(match.Groups["Day"].Value);
-
-                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
-
-                    if (DateTime.Now.Subtract(logDate).TotalDays <= OLD_LOG_FILE_AGE_THRESHOLD_DAYS)
-                        continue;
-
-                    var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
-                    if (!targetDirectory.Exists)
-                        targetDirectory.Create();
-
-                    var targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
-
-                    try
-                    {
-                        logFile.MoveTo(targetPath);
-                    }
-                    catch (Exception ex2)
-                    {
-                        ShowWarning("Error moving old log file to " + targetPath + ": " + ex2.Message, false);
-                    }
+                    ShowWarning(warning, false);
                 }
-
             }
             catch (Exception ex)
             {

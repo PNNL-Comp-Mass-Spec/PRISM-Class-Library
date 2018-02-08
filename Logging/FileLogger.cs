@@ -234,9 +234,6 @@ namespace PRISM.Logging
             try
             {
                 var currentLogFile = new FileInfo(logFilePath);
-
-                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
-
                 var logDirectory = currentLogFile.Directory;
                 if (logDirectory == null)
                 {
@@ -246,9 +243,45 @@ namespace PRISM.Logging
 
                 mLastCheckOldLogs = DateTime.UtcNow;
 
+                var archiveWarnings = ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX);
+
+                foreach (var warning in archiveWarnings)
+                {
+                    ConsoleMsgUtils.ShowWarning(warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowError("Error archiving old log files", ex);
+            }
+        }
+
+        /// <summary>
+        /// Look for log files over 32 days old that can be moved into a subdirectory
+        /// </summary>
+        /// <param name="logDirectory"></param>
+        /// <param name="logFileMatchSpec">Wildcards to use to finding date-based log files, for example ??-??-????</param>
+        /// <param name="logFileExtension">Log file extension, for example .txt</param>
+        /// <param name="logFileDateRegEx">RegEx pattern for extracting the log file date from the log file name </param>
+        /// <returns>List of warning messages</returns>
+        public static List<string> ArchiveOldLogs(
+            DirectoryInfo logDirectory,
+            string logFileMatchSpec,
+            string logFileExtension,
+            string logFileDateRegEx)
+        {
+            var archiveWarnings = new List<string>();
+
+            try
+            {
+                if (!logDirectory.Exists)
+                    return archiveWarnings;
+
+                var matchSpec = "*_" + logFileMatchSpec + logFileExtension;
+
                 var logFiles = logDirectory.GetFiles(matchSpec);
 
-                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
+                var matcher = new Regex(logFileDateRegEx, RegexOptions.Compiled);
 
                 foreach (var logFile in logFiles)
                 {
@@ -274,19 +307,23 @@ namespace PRISM.Logging
 
                     try
                     {
-                        logFile.MoveTo(targetPath);
+                        if (File.Exists(targetPath))
+                            ConsoleMsgUtils.ShowDebug("Cannot archive old log file; target exists: " + targetPath);
+                        else
+                            logFile.MoveTo(targetPath);
                     }
                     catch (Exception ex2)
                     {
-                        ConsoleMsgUtils.ShowWarning("Error moving old log file to " + targetPath + ": " + ex2.Message);
+                        archiveWarnings.Add("Error moving old log file to " + targetPath + ": " + ex2.Message);
                     }
-
                 }
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowError("Error archiving old log files", ex);
+                archiveWarnings.Add("Error archiving old log files: " + ex.Message);
             }
+
+            return archiveWarnings;
         }
 
         /// <summary>
