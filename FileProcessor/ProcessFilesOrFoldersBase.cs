@@ -15,6 +15,20 @@ namespace PRISM.FileProcessor
     {
         #region "Constants and Enums"
 
+        private const string LOG_FILE_EXTENSION = ".txt";
+
+        private const string LOG_FILE_SUFFIX = "_log";
+
+        private const string LOG_FILE_TIMESTAMP_FORMAT = "yyyy-MM-dd";
+
+        private const string LOG_FILE_MATCH_SPEC = "????-??-??";
+
+        private const string LOG_FILE_DATE_REGEX = @"(?<Year>\d{4,4})-(?<Month>\d+)-(?<Day>\d+)";
+
+        private const int MAX_LOGDATA_CACHE_SIZE = 100000;
+
+        private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
+
         /// <summary>
         /// Message type enums
         /// </summary>
@@ -87,15 +101,22 @@ namespace PRISM.FileProcessor
         protected string mFileDate;
 
         /// <summary>
-        /// True if the log file should include the current date
+        /// Base path for the log file
         /// </summary>
-        protected bool mLogFileUsesDateStamp = true;
+        /// <remarks>Only used if the log file path is auto-defined</remarks>
+        private string mLogFileBasePath = string.Empty;
 
         /// <summary>
-        /// Log file path
+        /// Log file path (relative or absolute path)
         /// </summary>
         /// <remarks>Leave blank to auto-define</remarks>
-        protected string mLogFilePath;
+        protected string mLogFilePath = string.Empty;
+
+        /// <summary>
+        /// True if the auto-defined log file should have the current date appended to the name
+        /// </summary>
+        /// <remarks>Only used if LogFilePath is initially blank</remarks>
+        protected bool mLogFileUsesDateStamp = true;
 
         /// <summary>
         /// Log file writer
@@ -107,6 +128,8 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <remarks>This variable is updated when CleanupFilePaths() is called</remarks>
         protected string mOutputFolderPath;
+
+        private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
 
         private string mLastMessage = "";
         private DateTime mLastReportTime = DateTime.UtcNow;
@@ -156,6 +179,12 @@ namespace PRISM.FileProcessor
         /// True if processing should be aborted
         /// </summary>
         public bool AbortProcessing { get; set; }
+
+        /// <summary>
+        /// When true, auto-move old log files to a subfolder based on the log file date
+        /// </summary>
+        /// <remarks>Only valid if the log file name was auto-defined (meaning LogFilePath was intitially blank)</remarks>
+        public bool ArchiveOldLogFiles { get; set; } = true;
 
         /// <summary>
         /// Version of the executing assembly
@@ -252,6 +281,72 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
+        /// Look for log files over 32 days old that can be moved into a subdirectory
+        /// </summary>
+        /// <remarks>Only valid if the log file name was auto-defined</remarks>
+        private void ArchiveOldLogs()
+        {
+            if (string.IsNullOrWhiteSpace(mLogFileBasePath))
+                return;
+
+            try
+            {
+                var baseLogFile = new FileInfo(mLogFileBasePath);
+                var logDirectory = baseLogFile.Directory;
+                if (logDirectory == null || !logDirectory.Exists)
+                {
+                    ShowWarning("Error archiving old log files; cannot determine the parent directory of " + mLogFileBasePath);
+                    return;
+                }
+
+                mLastCheckOldLogs = DateTime.UtcNow;
+
+                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
+
+                var logFiles = logDirectory.GetFiles(matchSpec);
+
+                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
+
+                foreach (var logFile in logFiles)
+                {
+                    var match = matcher.Match(logFile.Name);
+
+                    if (!match.Success)
+                        continue;
+
+                    var logFileYear = int.Parse(match.Groups["Year"].Value);
+                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
+                    var logFileDay = int.Parse(match.Groups["Day"].Value);
+
+                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
+
+                    if (DateTime.Now.Subtract(logDate).TotalDays <= OLD_LOG_FILE_AGE_THRESHOLD_DAYS)
+                        continue;
+
+                    var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
+                    if (!targetDirectory.Exists)
+                        targetDirectory.Create();
+
+                    var targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
+
+                    try
+                    {
+                        logFile.MoveTo(targetPath);
+                    }
+                    catch (Exception ex2)
+                    {
+                        ShowWarning("Error moving old log file to " + targetPath + ": " + ex2.Message, false);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Error archiving old log files: " + ex.Message, false);
+            }
+        }
+
+        /// <summary>
         /// Cleanup paths
         /// </summary>
         /// <param name="inputFileOrFolderPath"></param>
@@ -270,6 +365,83 @@ namespace PRISM.FileProcessor
 
                 GarbageCollectNow();
                 Thread.Sleep(100);
+            }
+        }
+
+        /// <summary>
+        /// Sets the log file path (<see cref="mLogFilePath"/>),
+        /// according to data in <see cref="mLogFilePath"/>,
+        /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogFolderPath"/>
+        /// </summary>
+        protected void ConfigureLogFilePath()
+        {
+
+            try
+            {
+                if (LogFolderPath == null)
+                    LogFolderPath = string.Empty;
+
+                if (string.IsNullOrWhiteSpace(LogFolderPath))
+                {
+                    // Log folder is undefined; use mOutputFolderPath if it is defined
+                    if (!string.IsNullOrWhiteSpace(mOutputFolderPath))
+                    {
+                        LogFolderPath = string.Copy(mOutputFolderPath);
+                    }
+                }
+
+                if (LogFolderPath.Length > 0)
+                {
+                    // Create the log folder if it doesn't exist
+                    if (!Directory.Exists(LogFolderPath))
+                    {
+                        Directory.CreateDirectory(LogFolderPath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                LogFolderPath = string.Empty;
+            }
+
+            if (string.IsNullOrWhiteSpace(mLogFilePath))
+            {
+                // Auto-name the log file
+                var baseName = Path.GetFileNameWithoutExtension(GetAppPath());
+
+                if (string.IsNullOrWhiteSpace(baseName))
+                {
+                    baseName = GetEntryOrExecutingAssembly().GetName().Name;
+                }
+
+                if (LogFolderPath.Length > 0)
+                {
+                    baseName = Path.Combine(LogFolderPath, baseName);
+                }
+
+                mLogFileBasePath = baseName + LOG_FILE_SUFFIX;
+
+                if (mLogFileUsesDateStamp)
+                {
+                    // Append the current date to the name
+                    mLogFilePath = GetDateBasedLogFilePath(DateTime.Now);
+                }
+                else
+                {
+                    mLogFilePath = mLogFileBasePath + LOG_FILE_EXTENSION;
+                }
+            }
+            else
+            {
+                if (!Path.IsPathRooted(mLogFilePath) && LogFolderPath.Length > 0 && !mLogFilePath.StartsWith(LogFolderPath))
+                {
+                    mLogFilePath = Path.Combine(LogFolderPath, mLogFilePath);
+                }
+            }
+
+            if (ArchiveOldLogFiles)
+            {
+                ArchiveOldLogs();
             }
         }
 
@@ -447,6 +619,21 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
+        /// Append the timestamp for the given date to mLogFileBasePath
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        private string GetDateBasedLogFilePath(DateTime date)
+        {
+            if (string.IsNullOrWhiteSpace(mLogFileBasePath))
+            {
+                mLogFileBasePath = GetEntryOrExecutingAssembly().GetName().Name + LOG_FILE_SUFFIX;
+            }
+
+            return mLogFileBasePath + "_" + date.ToString(LOG_FILE_TIMESTAMP_FORMAT) + LOG_FILE_EXTENSION;
+        }
+
+        /// <summary>
         /// Get the current error message
         /// </summary>
         /// <returns></returns>
@@ -504,63 +691,6 @@ namespace PRISM.FileProcessor
             }
         }
 
-        /// <summary>
-        /// Sets the log file path (<see cref="mLogFilePath"/>),
-        /// according to data in <see cref="mLogFilePath"/>,
-        /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogFolderPath"/>
-        /// </summary>
-        protected void ConfigureLogFilePath()
-        {
-            if (string.IsNullOrWhiteSpace(mLogFilePath))
-            {
-                // Auto-name the log file
-                mLogFilePath = Path.GetFileNameWithoutExtension(GetAppPath());
-                mLogFilePath += "_log";
-
-                if (mLogFileUsesDateStamp)
-                {
-                    mLogFilePath += "_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt";
-                }
-                else
-                {
-                    mLogFilePath += ".txt";
-                }
-            }
-
-            try
-            {
-                if (LogFolderPath == null)
-                    LogFolderPath = string.Empty;
-
-                if (string.IsNullOrWhiteSpace(LogFolderPath))
-                {
-                    // Log folder is undefined; use mOutputFolderPath if it is defined
-                    if (!string.IsNullOrWhiteSpace(mOutputFolderPath))
-                    {
-                        LogFolderPath = string.Copy(mOutputFolderPath);
-                    }
-                }
-
-                if (LogFolderPath.Length > 0)
-                {
-                    // Create the log folder if it doesn't exist
-                    if (!Directory.Exists(LogFolderPath))
-                    {
-                        Directory.CreateDirectory(LogFolderPath);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                LogFolderPath = string.Empty;
-            }
-
-            if (!Path.IsPathRooted(mLogFilePath) && LogFolderPath.Length > 0 && !mLogFilePath.StartsWith(LogFolderPath))
-            {
-                mLogFilePath = Path.Combine(LogFolderPath, mLogFilePath);
-            }
-        }
-
         private void InitializeLogFile(int duplicateHoldoffHours)
         {
             try
@@ -614,6 +744,13 @@ namespace PRISM.FileProcessor
             if (mLogFile != null)
             {
                 WriteToLogFile(message, eMessageType, duplicateHoldoffHours);
+
+                if (DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours > 24)
+                {
+                    mLastCheckOldLogs = DateTime.UtcNow;
+
+                    ArchiveOldLogs();
+                }
             }
 
             RaiseMessageEvent(message, eMessageType);
@@ -650,6 +787,17 @@ namespace PRISM.FileProcessor
                         break;
                 }
             }
+        }
+
+        /// <summary>
+        /// Reset the base log file name to an empty string and reset the cached log file dates
+        /// </summary>
+        protected void ResetLogFileName()
+        {
+            mLogFileBasePath = string.Empty;
+            mLogFilePath = string.Empty;
+            mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+            mLogDataCache.Clear();
         }
 
         /// <summary>
