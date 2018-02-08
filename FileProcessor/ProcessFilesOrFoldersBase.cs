@@ -907,7 +907,7 @@ namespace PRISM.FileProcessor
 
             try
             {
-                // Remove entries from mLogDataCache so that the list count is 80% of MAX_LOGDATA_CACHE_SIZE
+                // Remove entries from mLogDataCache so that the list count is 90% of MAX_LOGDATA_CACHE_SIZE
 
                 // First construct a list of dates that we can sort to determine the datetime threshold for removal
                 var lstDates = (from entry in mLogDataCache select entry.Value).ToList();
@@ -915,7 +915,7 @@ namespace PRISM.FileProcessor
                 // Sort by date
                 lstDates.Sort();
 
-                var thresholdIndex = Convert.ToInt32(Math.Floor(mLogDataCache.Count - MAX_LOGDATA_CACHE_SIZE * 0.8));
+                var thresholdIndex = Convert.ToInt32(Math.Floor(mLogDataCache.Count - MAX_LOGDATA_CACHE_SIZE * 0.9));
                 if (thresholdIndex < 0)
                     thresholdIndex = 0;
 
