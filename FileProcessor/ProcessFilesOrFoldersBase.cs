@@ -63,6 +63,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Log levels, specifying the severity of messages to be logged
         /// </summary>
+        /// <remarks>
+        /// Logging methods in this class support duplicateHoldoffHours
+        /// In contrast, Logging.FileLogger does not support skipping duplicate log messages
+        /// </remarks>
         public enum LogLevel
         {
             /// <summary>
@@ -127,7 +131,7 @@ namespace PRISM.FileProcessor
         /// Output folder path
         /// </summary>
         /// <remarks>This variable is updated when CleanupFilePaths() is called</remarks>
-        protected string mOutputFolderPath;
+        protected string mOutputFolderPath = string.Empty;
 
         private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
 
@@ -162,7 +166,8 @@ namespace PRISM.FileProcessor
         protected float mProgressPercentComplete;
 
         /// <summary>
-        /// Keys in this dictionary are the log type and message (separated by an underscore), values are the most recent time the string was logged
+        /// Keys in this dictionary are the log type and message (separated by an underscore)
+        /// Values are the most recent time the message was logged
         /// </summary>
         /// <remarks></remarks>
         private readonly Dictionary<string, DateTime> mLogDataCache;
@@ -195,7 +200,7 @@ namespace PRISM.FileProcessor
         public string FileDate => mFileDate;
 
         /// <summary>
-        /// Log file path
+        /// Log file path (relative or absolute path)
         /// </summary>
         /// <remarks>Leave blank to auto-define</remarks>
         public string LogFilePath
@@ -210,7 +215,7 @@ namespace PRISM.FileProcessor
         /// <remarks>
         /// If blank, mOutputFolderPath will be used; if mOutputFolderPath is also blank, the log is created in the same folder as the executing assembly
         /// </remarks>
-        public string LogFolderPath { get; set; }
+        public string LogFolderPath { get; set; } = string.Empty;
 
         /// <summary>
         /// True to log messages to a file
@@ -220,7 +225,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Description of the current task
         /// </summary>
-        public virtual string ProgressStepDescription { get; private set; }
+        public virtual string ProgressStepDescription { get; private set; } = string.Empty;
 
         /// <summary>
         /// Percent complete, value between 0 and 100, but can contain decimal percentage values
@@ -261,12 +266,8 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessFilesOrFoldersBase()
         {
-            ProgressStepDescription = string.Empty;
-
-            mOutputFolderPath = string.Empty;
-            LogFolderPath = string.Empty;
-            mLogFilePath = string.Empty;
-
+            // Keys in this dictionary are the log type and message (separated by an underscore)
+            // Values are the most recent time the message was logged
             mLogDataCache = new Dictionary<string, DateTime>();
         }
 
