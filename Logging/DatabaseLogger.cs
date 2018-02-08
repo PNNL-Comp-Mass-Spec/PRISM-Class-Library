@@ -25,7 +25,10 @@ namespace PRISM.Logging
 
         #region "Member variables"
 
-        private LogLevels mLogLevel;
+        /// <summary>
+        /// Messages will be sent to the database if they are this value or lower
+        /// </summary>
+        private LogLevels mLogThresholdLevel;
 
         #endregion
 
@@ -67,7 +70,7 @@ namespace PRISM.Logging
         public bool IsWarnEnabled { get; private set; }
 
         /// <summary>
-        /// Get or set the current log level
+        /// Get or set the current log threshold level
         /// </summary>
         /// <remarks>
         /// If the LogLevel is DEBUG, all messages are logged
@@ -76,13 +79,13 @@ namespace PRISM.Logging
         /// </remarks>
         public LogLevels LogLevel
         {
-            get => mLogLevel;
+            get => mLogThresholdLevel;
             set => SetLogLevel(value);
         }
 
 
         /// <summary>
-        /// The module name identifies the logging process.
+        /// The module name identifies the logging process
         /// </summary>
         public static string MachineName
         {
@@ -174,17 +177,17 @@ namespace PRISM.Logging
         public abstract void RemoveConnectionInfo();
 
         /// <summary>
-        /// Update the Log Level (called by property LogLevel)
+        /// Update the log threshold level (called by property LogLevel)
         /// </summary>
         /// <param name="logLevel"></param>
         private void SetLogLevel(LogLevels logLevel)
         {
-            mLogLevel = logLevel;
-            IsDebugEnabled = mLogLevel >= LogLevels.DEBUG;
-            IsErrorEnabled = mLogLevel >= LogLevels.ERROR;
-            IsFatalEnabled = mLogLevel >= LogLevels.FATAL;
-            IsInfoEnabled = mLogLevel >= LogLevels.INFO;
-            IsWarnEnabled = mLogLevel >= LogLevels.WARN;
+            mLogThresholdLevel = logLevel;
+            IsDebugEnabled = mLogThresholdLevel >= LogLevels.DEBUG;
+            IsErrorEnabled = mLogThresholdLevel >= LogLevels.ERROR;
+            IsFatalEnabled = mLogThresholdLevel >= LogLevels.FATAL;
+            IsInfoEnabled = mLogThresholdLevel >= LogLevels.INFO;
+            IsWarnEnabled = mLogThresholdLevel >= LogLevels.WARN;
         }
 
         #region "Message logging methods"
@@ -196,7 +199,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Debug(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.DEBUG, mLogLevel))
+            if (!AllowLog(LogLevels.DEBUG, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.DEBUG, message, ex);
@@ -209,7 +212,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Error(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.ERROR, mLogLevel))
+            if (!AllowLog(LogLevels.ERROR, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.ERROR, message, ex);
@@ -222,7 +225,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Fatal(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.FATAL, mLogLevel))
+            if (!AllowLog(LogLevels.FATAL, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.FATAL, message, ex);
@@ -235,7 +238,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Info(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.INFO, mLogLevel))
+            if (!AllowLog(LogLevels.INFO, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.INFO, message, ex);
@@ -248,7 +251,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Warn(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.WARN, mLogLevel))
+            if (!AllowLog(LogLevels.WARN, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.WARN, message, ex);

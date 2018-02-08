@@ -93,7 +93,10 @@ namespace PRISM.Logging
 
         #region "Member variables"
 
-        private LogLevels mLogLevel;
+        /// <summary>
+        /// Messages will be written to the log file if they are this value or lower
+        /// </summary>
+        private LogLevels mLogThresholdLevel;
 
         #endregion
 
@@ -200,7 +203,7 @@ namespace PRISM.Logging
         /// </remarks>
         public LogLevels LogLevel
         {
-            get => mLogLevel;
+            get => mLogThresholdLevel;
             set => SetLogLevel(value);
         }
 
@@ -685,12 +688,12 @@ namespace PRISM.Logging
         /// <param name="logLevel"></param>
         private void SetLogLevel(LogLevels logLevel)
         {
-            mLogLevel = logLevel;
-            IsDebugEnabled = mLogLevel >= LogLevels.DEBUG;
-            IsErrorEnabled = mLogLevel >= LogLevels.ERROR;
-            IsFatalEnabled = mLogLevel >= LogLevels.FATAL;
-            IsInfoEnabled = mLogLevel >= LogLevels.INFO;
-            IsWarnEnabled = mLogLevel >= LogLevels.WARN;
+            mLogThresholdLevel = logLevel;
+            IsDebugEnabled = mLogThresholdLevel >= LogLevels.DEBUG;
+            IsErrorEnabled = mLogThresholdLevel >= LogLevels.ERROR;
+            IsFatalEnabled = mLogThresholdLevel >= LogLevels.FATAL;
+            IsInfoEnabled = mLogThresholdLevel >= LogLevels.INFO;
+            IsWarnEnabled = mLogThresholdLevel >= LogLevels.WARN;
         }
 
         /// <summary>
@@ -729,7 +732,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Debug(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.DEBUG, mLogLevel))
+            if (!AllowLog(LogLevels.DEBUG, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.DEBUG, message, ex);
@@ -742,7 +745,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Error(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.ERROR, mLogLevel))
+            if (!AllowLog(LogLevels.ERROR, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.ERROR, message, ex);
@@ -755,7 +758,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Fatal(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.FATAL, mLogLevel))
+            if (!AllowLog(LogLevels.FATAL, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.FATAL, message, ex);
@@ -768,7 +771,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Info(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.INFO, mLogLevel))
+            if (!AllowLog(LogLevels.INFO, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.INFO, message, ex);
@@ -781,7 +784,7 @@ namespace PRISM.Logging
         /// <param name="ex">Optional exception; can be null</param>
         public override void Warn(string message, Exception ex = null)
         {
-            if (!AllowLog(LogLevels.WARN, mLogLevel))
+            if (!AllowLog(LogLevels.WARN, mLogThresholdLevel))
                 return;
 
             WriteLog(LogLevels.WARN, message, ex);
