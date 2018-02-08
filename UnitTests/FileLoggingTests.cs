@@ -424,8 +424,8 @@ namespace PRISMTest
         {
 
             var randGenerator = new Random();
-            string formatString;
 
+            string formatString;
             if (logCount < 10)
                 formatString = "{0} {1}/{2}";
             else

@@ -28,9 +28,15 @@ namespace PRISMTest
             var logger = new clsFileLogger(logFilePath);
             var randGenerator = new Random();
 
+            string formatString;
+            if (logCount < 10)
+                formatString = "{0} {1}/{2}";
+            else
+                formatString = "{0} {1,2}/{2}";
+
             for (var i = 0; i < logCount; i++)
             {
-                logger.PostEntry(message + " " + i, entryType, true);
+                logger.PostEntry(string.Format(formatString, message, i + 1, logCount), entryType, true);
                 clsProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
@@ -58,9 +64,15 @@ namespace PRISMTest
 
             var queueLogger = new clsQueLogger(logger);
 
+            string formatString;
+            if (logCount < 10)
+                formatString = "{0} {1}/{2}";
+            else
+                formatString = "{0} {1,2}/{2}";
+
             for (var i = 0; i < logCount; i++)
             {
-                queueLogger.PostEntry(message + " " + i, entryType, true);
+                queueLogger.PostEntry(string.Format(formatString, message, i + 1, logCount), entryType, true);
                 clsProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
@@ -69,7 +81,7 @@ namespace PRISMTest
                 var messages = new List<clsLogEntry>();
                 for (var i = 0; i < logCount; i++)
                 {
-                    messages.Add(new clsLogEntry("Bulk " + message + " " + i, entryType));
+                    messages.Add(new clsLogEntry(string.Format(formatString, "Bulk " + message, i + 1, logCount), entryType));
                 }
                 queueLogger.PostEntries(messages);
             }
