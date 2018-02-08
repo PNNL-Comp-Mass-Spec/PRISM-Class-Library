@@ -218,33 +218,33 @@ namespace PRISM
 
                     // Also extract the file name where the Exception occurred
                     var fileMatch = reFileName.Match(dataLine);
-                    string currentFunctionFile;
+                    string currentMethodFile;
 
                     if (fileMatch.Success)
                     {
-                        currentFunctionFile = fileMatch.Groups[1].Value;
+                        currentMethodFile = fileMatch.Groups["FileName"].Value;
                         if (finalFile.Length == 0)
                         {
-                            var lineMatchFinalFile = reLineInCode.Match(currentFunctionFile);
+                            var lineMatchFinalFile = reLineInCode.Match(currentMethodFile);
                             if (lineMatchFinalFile.Success)
                             {
-                                finalFile = currentFunctionFile.Substring(0, lineMatchFinalFile.Index);
+                                finalFile = currentMethodFile.Substring(0, lineMatchFinalFile.Index);
                             }
                             else
                             {
-                                finalFile = currentFunctionFile;
+                                finalFile = currentMethodFile;
                             }
                         }
                     }
                     else
                     {
-                        currentFunctionFile = string.Empty;
+                        currentMethodFile = string.Empty;
                     }
 
                     if (methodMatch.Success)
                     {
-                        currentMethod = methodMatch.Groups[1].Value;
-                        currentMethodArgs = methodMatch.Groups[2].Value;
+                        currentMethod = methodMatch.Groups["MethodName"].Value;
+                        currentMethodArgs = methodMatch.Groups["MethodArgs"].Value;
                     }
                     else
                     {
@@ -294,13 +294,13 @@ namespace PRISM
                     else
                         methodDescription = currentMethod;
 
-                    if (!string.IsNullOrEmpty(currentFunctionFile))
+                    if (!string.IsNullOrEmpty(currentMethodFile))
                     {
                         if (string.IsNullOrEmpty(finalFile) ||
                             !TrimLinePrefix(finalFile, CODE_LINE_PREFIX).Equals(
-                                TrimLinePrefix(currentFunctionFile, CODE_LINE_PREFIX), StringComparison.OrdinalIgnoreCase))
+                                TrimLinePrefix(currentMethodFile, CODE_LINE_PREFIX), StringComparison.OrdinalIgnoreCase))
                         {
-                            methodDescription += FINAL_FILE_PREFIX + currentFunctionFile;
+                            methodDescription += FINAL_FILE_PREFIX + currentMethodFile;
                         }
                     }
 

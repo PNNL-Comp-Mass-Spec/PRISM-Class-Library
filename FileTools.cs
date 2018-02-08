@@ -273,7 +273,7 @@ namespace PRISM
 
             mInvalidDosChars = new Regex(@"[\\/:*?""<>| ]", RegexOptions.Compiled);
 
-            mParseLockFileName = new Regex(@"^(\d+)_(\d+)_", RegexOptions.Compiled);
+            mParseLockFileName = new Regex(@"^(?<QueueTime>\d+)_(?<FileSizeMB>\d+)_", RegexOptions.Compiled);
         }
         #endregion
 
@@ -966,10 +966,10 @@ namespace PRISM
                 if (!reMatch.Success)
                     continue;
 
-                if (!long.TryParse(reMatch.Groups[1].Value, out var queueTimeMSec))
+                if (!long.TryParse(reMatch.Groups["QueueTime"].Value, out var queueTimeMSec))
                     continue;
 
-                if (!int.TryParse(reMatch.Groups[2].Value, out var fileSizeMB))
+                if (!int.TryParse(reMatch.Groups["FileSizeMB"].Value, out var fileSizeMB))
                     continue;
 
                 if (queueTimeMSec >= lockFileTimestamp)
