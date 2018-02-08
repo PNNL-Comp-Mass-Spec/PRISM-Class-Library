@@ -221,12 +221,11 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a message (provided logLevel is LogLevel or higher)
+        /// Log a message (provided logLevel is LogLevel or lower)
         /// </summary>
         /// <param name="logLevel"></param>
         /// <param name="message"></param>
         /// <param name="ex"></param>
-
         public void LogMessage(LogLevels logLevel, string message, Exception ex = null)
         {
             // Send the log message

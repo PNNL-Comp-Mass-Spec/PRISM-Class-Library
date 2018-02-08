@@ -150,7 +150,7 @@ namespace PRISM.Logging
         public static string LogFilePath { get; private set; } = "";
 
         /// <summary>
-        /// Get or set the current log level
+        /// Get or set the current log threshold level
         /// </summary>
         /// <remarks>
         /// If the LogLevel is DEBUG, all messages are logged
@@ -639,7 +639,7 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Update the Log Level (called by property LogLevel)
+        /// Update the log threshold level (called by property LogLevel)
         /// </summary>
         /// <param name="logLevel"></param>
         private void SetLogLevel(LogLevels logLevel)

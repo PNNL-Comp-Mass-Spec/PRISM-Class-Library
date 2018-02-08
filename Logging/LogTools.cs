@@ -355,6 +355,7 @@ namespace PRISM.Logging
         /// <param name="logLevel">Level of log reporting</param>
         /// <param name="message">Message to be logged</param>
         /// <param name="ex">Exception to be logged; null if no exception</param>
+        /// <remarks>Log message will not be written if logLevel is LogLevel or higher)</remarks>
         private static void WriteLogWork(LoggerTypes loggerType, BaseLogger.LogLevels logLevel, string message, Exception ex)
         {
             if (OfflineMode && loggerType == LoggerTypes.LogDb)
