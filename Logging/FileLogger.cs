@@ -58,7 +58,7 @@ namespace PRISM.Logging
         /// </summary>
         private static int mFailedDequeueEvents;
 
-        private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+        private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
         /// <summary>
         /// When true, we need to rename existing log files because
@@ -561,10 +561,9 @@ namespace PRISM.Logging
 
                 }
 
-                if (DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours > 24)
+                if (DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours >= 24)
                 {
                     mLastCheckOldLogs = DateTime.UtcNow;
-
                     ArchiveOldLogs(LogFilePath);
                 }
 
@@ -590,7 +589,7 @@ namespace PRISM.Logging
             LogFileDate = DateTime.MinValue;
             LogFileDateText = string.Empty;
             LogFilePath = string.Empty;
-            mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+            mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
         }
 
         /// <summary>

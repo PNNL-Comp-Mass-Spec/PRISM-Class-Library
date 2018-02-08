@@ -131,7 +131,7 @@ namespace PRISM.FileProcessor
         /// <remarks>This variable is updated when CleanupFilePaths() is called</remarks>
         protected string mOutputFolderPath = string.Empty;
 
-        private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+        private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
         private string mLastMessage = "";
         private DateTime mLastReportTime = DateTime.UtcNow;
@@ -404,10 +404,6 @@ namespace PRISM.FileProcessor
                 }
             }
 
-            if (ArchiveOldLogFiles)
-            {
-                ArchiveOldLogs();
-            }
         }
 
         /// <summary>
@@ -709,12 +705,12 @@ namespace PRISM.FileProcessor
             {
                 WriteToLogFile(message, eMessageType, duplicateHoldoffHours);
 
-                if (DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours > 24)
+                if (ArchiveOldLogFiles && DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours >= 24)
                 {
                     mLastCheckOldLogs = DateTime.UtcNow;
-
                     ArchiveOldLogs();
                 }
+
             }
 
             RaiseMessageEvent(message, eMessageType);
@@ -760,7 +756,7 @@ namespace PRISM.FileProcessor
         {
             mLogFileBasePath = string.Empty;
             mLogFilePath = string.Empty;
-            mLastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+            mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
             mLogDataCache.Clear();
         }
 

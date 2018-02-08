@@ -215,7 +215,7 @@ namespace PRISM
         /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
         private string m_programVersion;
 
-        private DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+        private DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class.
