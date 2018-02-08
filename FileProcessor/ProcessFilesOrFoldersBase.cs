@@ -167,8 +167,6 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         private readonly Dictionary<string, DateTime> mLogDataCache;
 
-        private const int MAX_LOGDATA_CACHE_SIZE = 100000;
-
         private eMessageTypeConstants progressMessageType = eMessageTypeConstants.Normal;
 
         #endregion
@@ -691,7 +689,7 @@ namespace PRISM.FileProcessor
             }
         }
 
-        private void InitializeLogFile(int duplicateHoldoffHours)
+        private void InitializeLogFile()
         {
             try
             {
@@ -699,9 +697,9 @@ namespace PRISM.FileProcessor
 
                 var openingExistingFile = File.Exists(mLogFilePath);
 
-                if (openingExistingFile & mLogDataCache.Count == 0)
+                if (mLogDataCache.Count == 0)
                 {
-                    UpdateLogDataCache(mLogFilePath, DateTime.UtcNow.AddHours(-duplicateHoldoffHours));
+                    UpdateLogDataCache();
                 }
 
                 mLogFile = new StreamWriter(new FileStream(mLogFilePath, FileMode.Append, FileAccess.Write, FileShare.Read))
@@ -719,7 +717,6 @@ namespace PRISM.FileProcessor
                 // Error creating the log file; set mLogMessagesToFile to false so we don't repeatedly try to create it
                 LogMessagesToFile = false;
                 HandleException("Error opening log file", ex);
-                // Note: do not exit this function if an exception occurs
             }
         }
 
@@ -728,7 +725,7 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="eMessageType"></param>
-        /// <param name="duplicateHoldoffHours"></param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
         /// <remarks>
         /// Note that CleanupPaths() will update mOutputFolderPath, which is used here if mLogFolderPath is blank
         /// Thus, be sure to call CleanupPaths (or update mLogFolderPath) before the first call to LogMessage
@@ -738,7 +735,7 @@ namespace PRISM.FileProcessor
 
             if (mLogFile == null && LogMessagesToFile)
             {
-                InitializeLogFile(duplicateHoldoffHours);
+                InitializeLogFile();
             }
 
             if (mLogFile != null)
@@ -938,14 +935,40 @@ namespace PRISM.FileProcessor
             }
         }
 
-        private void UpdateLogDataCache(string logFilePath, DateTime dateThresholdToStore)
+        private void UpdateLogDataCache()
         {
-            var reParseLine = new Regex(@"^([^\t]+)\t([^\t]+)\t(.+)", RegexOptions.Compiled);
+            const int CACHE_LENGTH_HOURS = 48;
 
             try
             {
-                mLogDataCache.Clear();
+                if (mLogFileUsesDateStamp && !string.IsNullOrWhiteSpace(mLogFileBasePath))
+                {
+                    // Read the log file from the previous day
+                    var previousLogFile = GetDateBasedLogFilePath(DateTime.Now.AddDays(-1));
+                    if (!string.IsNullOrWhiteSpace(previousLogFile) && File.Exists(previousLogFile))
+                    {
+                        UpdateLogDataCache(previousLogFile, DateTime.UtcNow.AddHours(-CACHE_LENGTH_HOURS));
+                    }
+                }
 
+                if (File.Exists(mLogFilePath))
+                {
+                    UpdateLogDataCache(mLogFilePath, DateTime.UtcNow.AddHours(-CACHE_LENGTH_HOURS));
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowWarning("Error caching log messages: " + ex.Message, false);
+            }
+
+        }
+
+        private void UpdateLogDataCache(string logFilePath, DateTime dateThresholdToStoreUTC)
+        {
+            var reParseLine = new Regex(@"^(?<Date>[^\t]+)\t(?<Type>[^\t]+)\t(?<Message>.+)", RegexOptions.Compiled);
+
+            try
+            {
                 using (var srLogFile = new StreamReader(new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     while (!srLogFile.EndOfStream)
@@ -959,14 +982,14 @@ namespace PRISM.FileProcessor
                         if (!reMatch.Success)
                             continue;
 
-                        if (!DateTime.TryParse(reMatch.Groups[1].Value, out var logTime))
+                        if (!DateTime.TryParse(reMatch.Groups["Date"].Value, out var logTime))
                             continue;
 
                         var universalTime = logTime.ToUniversalTime();
-                        if (universalTime < dateThresholdToStore)
+                        if (universalTime < dateThresholdToStoreUTC)
                             continue;
 
-                        var key = reMatch.Groups[2].Value + "_" + reMatch.Groups[3].Value;
+                        var key = reMatch.Groups["Type"].Value + "_" + reMatch.Groups["Message"].Value;
 
                         try
                         {
@@ -996,7 +1019,7 @@ namespace PRISM.FileProcessor
                 if (DateTime.UtcNow.Subtract(mLastErrorShown).TotalSeconds > 10)
                 {
                     mLastErrorShown = DateTime.UtcNow;
-                    Console.WriteLine("Error caching the log file: " + ex.Message);
+                    ConsoleMsgUtils.ShowWarning("Error caching the log file: " + ex.Message);
                 }
             }
         }
