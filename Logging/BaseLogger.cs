@@ -101,7 +101,7 @@ namespace PRISM.Logging
         public static string MostRecentErrorMessage { get; protected set; } = "";
 
         /// <summary>
-        /// Timestamp format, defaults to Year-month-day Time (24 hour clock)
+        /// Timestamp format, defaults to year-month-day time (24 hour clock)
         /// </summary>
         public static LogMessage.TimestampFormatMode TimestampFormat = Logging.LogMessage.TimestampFormatMode.YearMonthDay24hr;
 
@@ -113,7 +113,7 @@ namespace PRISM.Logging
         #endregion
 
         /// <summary>
-        /// Compare logLevel to mLogLevel
+        /// Compare message log level to the log threshold level
         /// </summary>
         /// <param name="messageLogLevel"></param>
         /// <param name="logThresholdLevel"></param>
@@ -221,7 +221,7 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a message (provided logLevel is LogLevel or lower)
+        /// Log a message (provided logLevel is the log threshold value or lower)
         /// </summary>
         /// <param name="logLevel"></param>
         /// <param name="message"></param>
@@ -266,35 +266,35 @@ namespace PRISM.Logging
         #region "Methods to be defined in derived classes"
 
         /// <summary>
-        /// Log a debug message (provided LogLevel is LogLevels.DEBUG)
+        /// Log a debug message (provided the log threshold is LogLevels.DEBUG)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
         public abstract void Debug(string message, Exception ex = null);
 
         /// <summary>
-        /// Log an error message (provided LogLevel is LogLevels.ERROR or higher)
+        /// Log an error message (provided the log threshold is LogLevels.ERROR or higher)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
         public abstract void Error(string message, Exception ex = null);
 
         /// <summary>
-        /// Log a fatal error message (provided LogLevel is LogLevels.FATAL or higher)
+        /// Log a fatal error message (provided the log threshold is LogLevels.FATAL or higher)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
         public abstract void Fatal(string message, Exception ex = null);
 
         /// <summary>
-        /// Log an informational message (provided LogLevel is LogLevels.INFO or higher)
+        /// Log an informational message (provided the log threshold is LogLevels.INFO or higher)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
         public abstract void Info(string message, Exception ex = null);
 
         /// <summary>
-        /// Log a warning message (provided LogLevel is LogLevels.WARN or higher)
+        /// Log a warning message (provided the log threshold is LogLevels.WARN or higher)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>

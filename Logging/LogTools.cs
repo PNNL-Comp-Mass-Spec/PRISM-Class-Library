@@ -326,9 +326,9 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Sets the file logging level via an integer value (Overloaded)
+        /// Sets the file logging log threshold via an integer
         /// </summary>
-        /// <param name="logLevel">Integer corresponding to level (1-5, 5 being most verbose)</param>
+        /// <param name="logLevel">Integer corresponding to log threshold level (1-5, 5 being most verbose)</param>
         public static void SetFileLogLevel(int logLevel)
         {
             var logLevelEnumType = typeof(BaseLogger.LogLevels);
@@ -347,9 +347,9 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Sets file logging level based on enumeration (Overloaded)
+        /// Sets the file logging log threshold via an enum
         /// </summary>
-        /// <param name="logLevel">LogLevels value defining level (Debug is most verbose)</param>
+        /// <param name="logLevel">LogLevels value defining log threshold level (Debug is most verbose)</param>
         public static void SetFileLogLevel(BaseLogger.LogLevels logLevel)
         {
             mFileLogger.LogLevel = logLevel;

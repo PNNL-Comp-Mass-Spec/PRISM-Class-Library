@@ -177,9 +177,9 @@ namespace PRISM.Logging
         public abstract void RemoveConnectionInfo();
 
         /// <summary>
-        /// Update the log threshold level (called by property LogLevel)
+        /// Update the log threshold level
         /// </summary>
-        /// <param name="logLevel"></param>
+        /// <param name="logLevel">Log threshold level</param>
         private void SetLogLevel(LogLevels logLevel)
         {
             mLogThresholdLevel = logLevel;
@@ -193,7 +193,8 @@ namespace PRISM.Logging
         #region "Message logging methods"
 
         /// <summary>
-        /// Log a debug message (provided LogLevel is LogLevels.DEBUG)
+        /// Log a debug message
+        /// (provided the log threshold is LogLevels.DEBUG; see this.LogLevel)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
@@ -206,7 +207,8 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log an error message (provided LogLevel is LogLevels.ERROR or higher)
+        /// Log an error message
+        /// (provided the log threshold is LogLevels.ERROR or higher; see this.LogLevel)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
@@ -219,7 +221,8 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a fatal error message (provided LogLevel is LogLevels.FATAL or higher)
+        /// Log a fatal error message
+        /// (provided the log threshold is LogLevels.FATAL or higher; see this.LogLevel)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
@@ -232,7 +235,8 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log an informational message (provided LogLevel is LogLevels.INFO or higher)
+        /// Log an informational message
+        /// (provided the log threshold is LogLevels.INFO or higher; see this.LogLevel)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
@@ -245,7 +249,8 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a warning message (provided LogLevel is LogLevels.WARN or higher)
+        /// Log a warning message
+        /// (provided the log threshold is LogLevels.WARN or higher; see this.LogLevel)
         /// </summary>
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
@@ -258,7 +263,7 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a message (regardless of base.LogLevel)
+        /// Log a message (regardless of the log threshold level)
         /// </summary>
         /// <param name="logLevel"></param>
         /// <param name="message"></param>
@@ -270,7 +275,7 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Log a message (regardless of base.LogLevel)
+        /// Log a message (regardless of the log threshold level)
         /// </summary>
         /// <param name="logMessage"></param>
         public abstract void WriteLog(LogMessage logMessage);
