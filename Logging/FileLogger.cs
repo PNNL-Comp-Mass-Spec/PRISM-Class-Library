@@ -230,7 +230,6 @@ namespace PRISM.Logging
         /// <param name="logFilePath"></param>
         private static void ArchiveOldLogs(string logFilePath)
         {
-            var targetPath = "??";
 
             try
             {
@@ -241,7 +240,6 @@ namespace PRISM.Logging
                 var logDirectory = currentLogFile.Directory;
                 if (logDirectory == null)
                 {
-
                     WriteLog(LogLevels.WARN, "Error archiving old log files; cannot determine the parent directory of " + currentLogFile);
                     return;
                 }
@@ -272,14 +270,22 @@ namespace PRISM.Logging
                     if (!targetDirectory.Exists)
                         targetDirectory.Create();
 
-                    targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
+                    var targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
 
-                    logFile.MoveTo(targetPath);
+                    try
+                    {
+                        logFile.MoveTo(targetPath);
+                    }
+                    catch (Exception ex2)
+                    {
+                        ConsoleMsgUtils.ShowWarning("Error moving old log file to " + targetPath + ": " + ex2.Message);
+                    }
+
                 }
             }
             catch (Exception ex)
             {
-                WriteLog(LogLevels.ERROR, "Error moving old log file to " + targetPath, ex);
+                ConsoleMsgUtils.ShowError("Error archiving old log files", ex);
             }
         }
 
