@@ -315,8 +315,7 @@ namespace PRISMTest
         {
             var logFilePath = Path.Combine(logFolder, logFileNameBase);
 
-            LogTools.SetFileLogLevel(logThresholdLevel);
-            LogTools.CreateFileLogger(logFilePath);
+            LogTools.CreateFileLogger(logFilePath, logThresholdLevel);
             Console.WriteLine("Log file; " + LogTools.CurrentLogFilePath);
 
             var message = "Test log " + entryType + " via LogTools (log threshold is " + logThresholdLevel + ")";

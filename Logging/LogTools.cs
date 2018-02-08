@@ -112,12 +112,27 @@ namespace PRISM.Logging
         /// </summary>
         /// <param name="logFileNameBase">Base name for log file</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
-        public static void CreateFileLogger(string logFileNameBase, bool traceMode = false)
+        public static void CreateFileLogger(string logFileNameBase, bool traceMode)
+        {
+            CreateFileLogger(logFileNameBase, BaseLogger.LogLevels.INFO, traceMode);
+        }
+
+        /// <summary>
+        /// Configures the file logger
+        /// </summary>
+        /// <param name="logFileNameBase">Base name for log file</param>
+        /// <param name="logLevel">Log threshold level</param>
+        /// <param name="traceMode">When true, show additional debug messages at the console</param>
+        public static void CreateFileLogger(
+            string logFileNameBase,
+            BaseLogger.LogLevels logLevel = BaseLogger.LogLevels.INFO,
+            bool traceMode = false)
         {
             if (traceMode && !BaseLogger.TraceMode)
                 BaseLogger.TraceMode = true;
 
             BaseLogger.TimestampFormat = Logging.LogMessage.TimestampFormatMode.YearMonthDay24hr;
+            mFileLogger.LogLevel = logLevel;
 
             FileLogger.ChangeLogFileBaseName(logFileNameBase, appendDateToBaseName: true);
         }
@@ -128,16 +143,31 @@ namespace PRISM.Logging
         /// <param name="connStr">System.Data.SqlClient style connection string</param>
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
-        public static void CreateDbLogger(string connStr, string moduleName, bool traceMode = false)
+        public static void CreateDbLogger(string connStr, string moduleName, bool traceMode)
+        {
+            CreateDbLogger(connStr, moduleName, BaseLogger.LogLevels.INFO, traceMode);
+        }
+
+        /// <summary>
+        /// Configures the database logger
+        /// </summary>
+        /// <param name="connStr">System.Data.SqlClient style connection string</param>
+        /// <param name="moduleName">Module name used by logger</param>
+        /// <param name="logLevel">Log threshold level</param>
+        /// <param name="traceMode">When true, show additional debug messages at the console</param>
+        public static void CreateDbLogger(
+            string connStr,
+            string moduleName,
+            BaseLogger.LogLevels logLevel = BaseLogger.LogLevels.INFO,
+            bool traceMode = false)
         {
             if (traceMode && !BaseLogger.TraceMode)
                 BaseLogger.TraceMode = true;
 
             mDbLogger.EchoMessagesToFileLogger = true;
-            mDbLogger.LogLevel = BaseLogger.LogLevels.INFO;
+            mDbLogger.LogLevel = logLevel;
 
             mDbLogger.ChangeConnectionInfo(moduleName, connStr, "PostLogEntry", "type", "message", "postedBy");
-
         }
 
         /// <summary>
