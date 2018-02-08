@@ -1,5 +1,20 @@
 Prism Class Library Log
 
+Version 2.4.60; February 8, 2018
+	- Update ProcessFilesOrFoldersBase to archive old log files into a year-based archive folder
+
+Version 2.4.62; February 5, 2018
+	- Add the LogTools class
+
+Version 2.4.50; January 6, 2018
+	- Add logging classes (FileLogger, ODBCDatabaseLogger, and SQLServerDatabaseLogger)
+
+Version 2.4.49; December 4, 2017
+	- clsProgRunner now inherits clsEventNotifier
+
+Version 2.4.41; November 8, 2017
+	- Add FileProcessor classes
+
 Version 2.4.39; October 18, 2017
 	- clsEventNotifier events now display messages at the console if there are no listeners
 		- Disable with WriteToConsoleIfNoListener or the SkipConsoleWrite properties
