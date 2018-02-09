@@ -227,8 +227,16 @@ namespace PRISM.Logging
         /// <summary>
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
+        public static void ArchiveOldLogFilesNow()
+        {
+            ArchiveOldLogFilesNow(LogFilePath);
+        }
+
+        /// <summary>
+        /// Look for log files over 32 days old that can be moved into a subdirectory
+        /// </summary>
         /// <param name="logFilePath"></param>
-        private static void ArchiveOldLogs(string logFilePath)
+        private static void ArchiveOldLogFilesNow(string logFilePath)
         {
 
             try
@@ -564,7 +572,7 @@ namespace PRISM.Logging
                 if (DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours >= 24)
                 {
                     mLastCheckOldLogs = DateTime.UtcNow;
-                    ArchiveOldLogs(LogFilePath);
+                    ArchiveOldLogFilesNow();
                 }
 
             }

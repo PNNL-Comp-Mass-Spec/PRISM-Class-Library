@@ -281,8 +281,9 @@ namespace PRISM.FileProcessor
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
         /// <remarks>Only valid if the log file name was auto-defined</remarks>
-        private void ArchiveOldLogs()
+        public void ArchiveOldLogFilesNow()
         {
+
             if (string.IsNullOrWhiteSpace(mLogFileBasePath))
                 return;
 
@@ -708,7 +709,7 @@ namespace PRISM.FileProcessor
                 if (ArchiveOldLogFiles && DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours >= 24)
                 {
                     mLastCheckOldLogs = DateTime.UtcNow;
-                    ArchiveOldLogs();
+                    ArchiveOldLogFilesNow();
                 }
 
             }
