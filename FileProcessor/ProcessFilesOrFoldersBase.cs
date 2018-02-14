@@ -211,7 +211,8 @@ namespace PRISM.FileProcessor
         /// Log folder path (ignored if LogFilePath is rooted)
         /// </summary>
         /// <remarks>
-        /// If blank, mOutputFolderPath will be used; if mOutputFolderPath is also blank, the log is created in the same folder as the executing assembly
+        /// If blank, mOutputFolderPath will be used
+        /// If mOutputFolderPath is also blank, the log file is created in the same folder as the executing assembly
         /// </remarks>
         public string LogFolderPath { get; set; } = string.Empty;
 
@@ -340,8 +341,11 @@ namespace PRISM.FileProcessor
         /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogFolderPath"/>
         /// </summary>
         /// <param name="logFileBaseName">Base name for the log file (ignored if mLogFilePath is defined)</param>
-        /// <remarks>If mLogFilePath is empty and logFileBaseName is empty, will use the name of the entry or executing assembly</remarks>
-        protected void ConfigureLogFilePath(string logFileBaseName = "")
+        /// <remarks>
+        /// If mLogFilePath is empty and logFileBaseName is empty, will use the name of the entry or executing assembly
+        /// This method is private; Use protected method UpdateAutoDefinedLogFilePath to update the auto-defined log file path
+        /// </remarks>
+        private void ConfigureLogFilePath(string logFileBaseName = "")
         {
 
             try
@@ -904,6 +908,34 @@ namespace PRISM.FileProcessor
             {
                 // Ignore errors here
             }
+        }
+
+        /// <summary>
+        /// Auto-define the log file path using the given log folder path and base log file name
+        /// </summary>
+        /// <param name="logFolderPath">
+        /// Log folder path; if blank, mOutputFolderPath will be used
+        /// If mOutputFolderPath is also blank, the log file is created in the same folder as the executing assembly
+        /// </param>
+        /// <param name="logFileBaseName">
+        /// Base name for the log file
+        /// If blank, will use the name of the entry or executing assembly (without any extension)
+        /// </param>
+        /// <param name="archiveOldLogFiles">When true, archive old log files immediately</param>
+        protected void UpdateAutoDefinedLogFilePath(string logFolderPath, string logFileBaseName, bool archiveOldLogFiles = true)
+        {
+            CloseLogFileNow();
+            ResetLogFileName();
+            LogFolderPath = logFolderPath;
+
+            ConfigureLogFilePath(logFileBaseName);
+            ConsoleMsgUtils.ShowDebug("Logging to " + LogFilePath);
+
+            if (!archiveOldLogFiles)
+                return;
+
+            Console.WriteLine();
+            ArchiveOldLogFilesNow();
         }
 
         private void UpdateLogDataCache()
