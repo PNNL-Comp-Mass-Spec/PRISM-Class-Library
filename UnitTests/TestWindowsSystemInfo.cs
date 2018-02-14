@@ -42,7 +42,7 @@ namespace PRISMTest
             Console.WriteLine("PInv Free memory: {0:F2} MB", pinvMem);
 
 #if !(NETCOREAPP2_0)
-            Assert.AreEqual(wmiMem, pinvMem, 2);
+            Assert.AreEqual(wmiMem, pinvMem, 20);
 #endif
         }
 
