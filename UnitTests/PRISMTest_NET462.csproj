@@ -54,6 +54,7 @@
     <Compile Include="DotNETVersionTest.cs" />
     <Compile Include="FileCopyTests.cs" />
     <Compile Include="FileLoggingTests.cs" />
+    <Compile Include="FileProcessorTests.cs" />
     <Compile Include="FileRefs.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="MiscellaneousTests.cs" />
