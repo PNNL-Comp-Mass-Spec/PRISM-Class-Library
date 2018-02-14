@@ -63,12 +63,7 @@ namespace PRISMTest
 
             if (LogMessagesToFile && (!string.IsNullOrWhiteSpace(LogFolderPath) || !string.IsNullOrWhiteSpace(LogFileBaseName)))
             {
-                CloseLogFileNow();
-                LogFilePath = string.Empty;
-                ConfigureLogFilePath(LogFileBaseName);
-                PRISM.ConsoleMsgUtils.ShowDebug("Logging to " + LogFilePath);
-                Console.WriteLine();
-                ArchiveOldLogFilesNow();
+                UpdateAutoDefinedLogFilePath(LogFolderPath, LogFileBaseName);
             }
 
             var fileInfo = new FileInfo(inputFilePath);
