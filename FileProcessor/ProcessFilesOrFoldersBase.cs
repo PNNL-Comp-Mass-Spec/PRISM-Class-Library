@@ -339,7 +339,9 @@ namespace PRISM.FileProcessor
         /// according to data in <see cref="mLogFilePath"/>,
         /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogFolderPath"/>
         /// </summary>
-        protected void ConfigureLogFilePath()
+        /// <param name="logFileBaseName">Base name for the log file (ignored if mLogFilePath is defined)</param>
+        /// <remarks>If mLogFilePath is empty and logFileBaseName is empty, will use the name of the entry or executing assembly</remarks>
+        protected void ConfigureLogFilePath(string logFileBaseName = "")
         {
 
             try
@@ -372,20 +374,25 @@ namespace PRISM.FileProcessor
 
             if (string.IsNullOrWhiteSpace(mLogFilePath))
             {
-                // Auto-name the log file
-                var baseName = Path.GetFileNameWithoutExtension(GetAppPath());
-
-                if (string.IsNullOrWhiteSpace(baseName))
+                if (string.IsNullOrWhiteSpace(logFileBaseName))
                 {
-                    baseName = GetEntryOrExecutingAssembly().GetName().Name;
+                    // Auto-name the log file
+                    logFileBaseName = Path.GetFileNameWithoutExtension(GetAppPath());
+
+                    if (string.IsNullOrWhiteSpace(logFileBaseName))
+                    {
+                        logFileBaseName = GetEntryOrExecutingAssembly().GetName().Name;
+                    }
                 }
 
                 if (LogFolderPath.Length > 0)
                 {
-                    baseName = Path.Combine(LogFolderPath, baseName);
+                    mLogFileBasePath = Path.Combine(LogFolderPath, logFileBaseName) + LOG_FILE_SUFFIX;
                 }
-
-                mLogFileBasePath = baseName + LOG_FILE_SUFFIX;
+                else
+                {
+                    mLogFileBasePath = logFileBaseName + LOG_FILE_SUFFIX;
+                }
 
                 if (mLogFileUsesDateStamp)
                 {
