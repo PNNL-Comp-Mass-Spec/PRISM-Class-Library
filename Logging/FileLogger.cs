@@ -268,10 +268,20 @@ namespace PRISM.Logging
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
         /// <param name="logDirectory"></param>
-        /// <param name="logFileMatchSpec">Wildcards to use to finding date-based log files, for example ??-??-????</param>
+        /// <param name="logFileMatchSpec">
+        /// Wildcards to use to find date-based log files, for example ??-??-????
+        /// </param>
         /// <param name="logFileExtension">Log file extension, for example .txt</param>
-        /// <param name="logFileDateRegEx">RegEx pattern for extracting the log file date from the log file name </param>
+        /// <param name="logFileDateRegEx">
+        /// RegEx pattern for extracting the log file date from the log file name
+        /// Must have named groups Year and Month
+        /// Can optionally have named group Day
+        /// </param>
         /// <returns>List of warning messages</returns>
+        /// <remarks>
+        /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named:
+        /// *_??-??-????.txt
+        /// </remarks>
         public static List<string> ArchiveOldLogs(
             DirectoryInfo logDirectory,
             string logFileMatchSpec,
@@ -289,20 +299,43 @@ namespace PRISM.Logging
 
                 var logFiles = logDirectory.GetFiles(matchSpec);
 
-                var matcher = new Regex(logFileDateRegEx, RegexOptions.Compiled);
+                var dateMatcher = new Regex(logFileDateRegEx, RegexOptions.Compiled);
 
                 foreach (var logFile in logFiles)
                 {
-                    var match = matcher.Match(logFile.Name);
+                    var match = dateMatcher.Match(logFile.Name);
 
                     if (!match.Success)
                         continue;
 
-                    var logFileYear = int.Parse(match.Groups["Year"].Value);
-                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
-                    var logFileDay = int.Parse(match.Groups["Day"].Value);
+                    var yearGroup = match.Groups["Year"];
+                    var monthGroup = match.Groups["Month"];
+                    var dayGroup = match.Groups["Day"];
 
-                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
+                    DateTime logDate;
+                    int logFileYear;
+                    if (yearGroup.Success && monthGroup.Success)
+                    {
+
+                        logFileYear = int.Parse(match.Groups["Year"].Value);
+                        var logFileMonth = int.Parse(match.Groups["Month"].Value);
+
+                        if (dayGroup.Success)
+                        {
+                            var logFileDay = int.Parse(dayGroup.Value);
+                            logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
+                        }
+                        else
+                        {
+                            var daysInMonth = DateTime.DaysInMonth(logFileYear, logFileMonth);
+                            logDate = new DateTime(logFileYear, logFileMonth, daysInMonth);
+                        }
+                    }
+                    else
+                    {
+                        logDate = logFile.LastWriteTime;
+                        logFileYear = logDate.Year;
+                    }
 
                     if (DateTime.Now.Subtract(logDate).TotalDays <= OLD_LOG_FILE_AGE_THRESHOLD_DAYS)
                         continue;
