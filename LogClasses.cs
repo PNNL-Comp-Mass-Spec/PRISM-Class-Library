@@ -33,7 +33,7 @@ namespace PRISM
         /// </summary>
         logDebug = 3,
         /// <summary>
-        /// The mesaage does not apply (to what?).
+        /// The message does not apply
         /// </summary>
         logNA = 4,
         /// <summary>
@@ -153,7 +153,7 @@ namespace PRISM
         /// <param name="ex"></param>
         /// <returns>
         /// String of the form:
-        /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+        /// Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         public static string GetExceptionStackTrace(Exception ex)

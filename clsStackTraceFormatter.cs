@@ -35,7 +35,7 @@ namespace PRISM
         /// </summary>
         /// <returns>
         /// String of the form:
-        /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+        /// Stack trace: TestApp.exe.InnerMethod-:-TestApp.exe.TestMethod-:-TestApp.exe.Main
         /// </returns>
         public static string GetCurrentStackTrace()
         {
@@ -44,6 +44,16 @@ namespace PRISM
             return STACK_TRACE_TITLE + string.Join(STACK_CHAIN_SEPARATOR, parentMethods);
         }
 
+        /// <summary>
+        /// Get a multiline string listing the methods leading to the calling method
+        /// </summary>
+        /// <returns>
+        /// String of the form:
+        /// Stack trace:
+        ///     TestApp.exe: Bool InnerMethod(string, int ByRef)
+        ///     TestApp.exe: Void TestMethod()
+        ///     TestApp.exe: Int32 Main()
+        /// </returns>
         public static string GetCurrentStackTraceMultiLine()
         {
             var parentMethods = GetStackTraceMethods(includeParamTypes: true);
@@ -67,7 +77,7 @@ namespace PRISM
         /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
         /// <returns>
         /// String of the form:
-        /// "Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86"
+        /// Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86
         /// </returns>
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         public static string GetExceptionStackTrace(Exception ex, bool includeInnerExceptionMessages = true)
