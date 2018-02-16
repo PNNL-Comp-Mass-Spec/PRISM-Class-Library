@@ -268,19 +268,17 @@ namespace PRISM.Logging
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
         /// <param name="logDirectory"></param>
-        /// <param name="logFileMatchSpec">
-        /// Wildcards to use to find date-based log files, for example ??-??-????
-        /// </param>
+        /// <param name="logFileMatchSpec">Wildcards to use to find date-based log files, for example ??-??-????</param>
         /// <param name="logFileExtension">Log file extension, for example .txt</param>
         /// <param name="logFileDateRegEx">
         /// RegEx pattern for extracting the log file date from the log file name
-        /// Must have named groups Year and Month
-        /// Can optionally have named group Day
+        /// The pattern must have named groups Year and Month
+        /// The pattern can optionally have named group Day
+        /// For an example, see constant LOG_FILE_DATE_REGEX
         /// </param>
         /// <returns>List of warning messages</returns>
         /// <remarks>
-        /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named:
-        /// *_??-??-????.txt
+        /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named *_??-??-????.txt
         /// </remarks>
         public static List<string> ArchiveOldLogs(
             DirectoryInfo logDirectory,
@@ -288,6 +286,14 @@ namespace PRISM.Logging
             string logFileExtension,
             string logFileDateRegEx)
         {
+
+            // Be careful when updating this method's arguments and how they're used,
+            // since this method is called by the following classes
+            //   PRISM.Logging.FileLogger
+            //   PRISM.FileProcessor.ProcessFilesOrFoldersBase
+            //   PRISM.clsFileLogger
+            //   AnalysisManagerBase.clsMemoryUsageLogger
+
             var archiveWarnings = new List<string>();
 
             try
