@@ -46,9 +46,17 @@ namespace PRISMWin
             // the framework to ensure your app works the same.
             // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
 
-            if (releaseKey > 394806)
+            if (releaseKey > 461310)
             {
-                return "Later than 4.6.2 (build " + releaseKey + ")";
+                return "Later than 4.7.1 (build " + releaseKey + ")";
+            }
+            if (releaseKey >= 461308)
+            {
+                return "4.7.1";
+            }
+            if (releaseKey >= 460798)
+            {
+                return "4.7";
             }
             if (releaseKey >= 394802)
             {
