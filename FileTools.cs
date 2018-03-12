@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -2812,5 +2813,200 @@ namespace PRISM
 
         #endregion
 
+        #region "GZip Compression"
+
+        /// <summary>
+        /// Decompress a gzip file
+        /// </summary>
+        /// <param name="fileToDecompress">file to decompress</param>
+        /// <param name="decompressedFilePath">path where the decompressed file should be created</param>
+        /// <param name="decompressedFileName">name of decompressed file</param>
+        public static void GZipDecompress(FileInfo fileToDecompress, string decompressedFilePath = null, string decompressedFileName = null)
+        {
+            var currentFileName = fileToDecompress.FullName;
+            var newFileName = Path.ChangeExtension(currentFileName, null);
+
+            // if decompressedFilePath or decompressedFileName are provided, override the default path/filename appropriately
+            if (!string.IsNullOrWhiteSpace(decompressedFilePath) || !string.IsNullOrWhiteSpace(decompressedFileName))
+            {
+                var name = fileToDecompress.Name;
+                var path = fileToDecompress.DirectoryName;
+                if (!string.IsNullOrWhiteSpace(decompressedFileName))
+                {
+                    name = decompressedFileName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(decompressedFilePath))
+                {
+                    path = decompressedFilePath;
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    path = ".";
+                }
+
+                newFileName = Path.Combine(path, name);
+            }
+
+            using (var decompressedFileStream = File.Create(newFileName))
+            using (var originalFileStream = fileToDecompress.OpenRead())
+            using (var decompressionStream = new GZipStream(originalFileStream, CompressionMode.Decompress))
+            {
+                decompressionStream.CopyTo(decompressedFileStream);
+            }
+        }
+
+        /// <summary>
+        /// Compress a file using the built-in GZipStream (stores minimal GZip metadata)
+        /// </summary>
+        /// <param name="fileToCompress">file to compress</param>
+        /// <param name="compressedFilePath">path where compressed file should be created</param>
+        /// <param name="compressedFileName">name of compressed file</param>
+        public static void GZipCompress(FileInfo fileToCompress, string compressedFilePath = null, string compressedFileName = null)
+        {
+            var currentFileName = fileToCompress.FullName;
+            var newFileName = currentFileName + ".gz";
+
+            // if compressedFilePath or compressedFileName are provided, override the default path/filename appropriately
+            if (!string.IsNullOrWhiteSpace(compressedFilePath) || !string.IsNullOrWhiteSpace(compressedFileName))
+            {
+                var name = fileToCompress.Name;
+                var path = fileToCompress.DirectoryName;
+                if (!string.IsNullOrWhiteSpace(compressedFileName))
+                {
+                    name = compressedFileName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(compressedFilePath))
+                {
+                    path = compressedFilePath;
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    path = ".";
+                }
+
+                newFileName = Path.Combine(path, name);
+            }
+
+            using (var decompressedFileStream = fileToCompress.OpenRead())
+            using (var compressedFileStream = File.Create(newFileName))
+            using (var compressionStream = new GZipStream(compressedFileStream, CompressionMode.Compress))
+            {
+                decompressedFileStream.CopyTo(compressionStream);
+            }
+        }
+
+        /// <summary>
+        /// Decompress a file, keeping the correct stored timestamp on the decompressed file and the stored file name
+        /// </summary>
+        /// <param name="fileToDecompress">file to decompress</param>
+        /// <param name="decompressedFilePath">path where the decompressed file should be created</param>
+        /// <param name="doNotUseStoredFileName">if true, the output file name will use the gzip filename (excluding .gz) even when the filename is available in the gzip metadata</param>
+        /// <returns>path to the decompressed file</returns>
+        public static string GZipDecompressWithMetadata(FileInfo fileToDecompress, string decompressedFilePath = null, bool doNotUseStoredFileName = false)
+        {
+            var filename = Path.ChangeExtension(fileToDecompress.Name, null);
+            var path = fileToDecompress.DirectoryName;
+
+            // if decompressedFilePath is provided, override the default path appropriately
+            if (!string.IsNullOrWhiteSpace(decompressedFilePath))
+            {
+                path = decompressedFilePath;
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = ".";
+            }
+
+            var lastModified = fileToDecompress.LastWriteTime;
+            string outputFilePath;
+
+            using (var originalFileStream = fileToDecompress.OpenRead())
+            // wrap the filestream to read the metadata before decompressing
+            using (var gzipMetadataStream = new GZipMetadataStream(originalFileStream))
+            {
+                if (!gzipMetadataStream.InternalLastModified.Equals(DateTime.MinValue))
+                {
+                    lastModified = gzipMetadataStream.InternalLastModified;
+                }
+
+                if (!doNotUseStoredFileName && !string.IsNullOrWhiteSpace(gzipMetadataStream.InternalFilename))
+                {
+                    filename = gzipMetadataStream.InternalFilename;
+                }
+
+                outputFilePath = Path.Combine(path, filename);
+
+                using (var decompressedFileStream = File.Create(outputFilePath))
+                using (var decompressionStream = new GZipStream(gzipMetadataStream, CompressionMode.Decompress))
+                {
+                    decompressionStream.CopyTo(decompressedFileStream);
+                }
+            }
+
+            // Update metadata
+            File.SetLastWriteTime(Path.Combine(path, filename), lastModified);
+
+            return outputFilePath;
+        }
+
+        ///  <summary>
+        /// Compress a file, using a special implementation to add supported metadata to the file (like last modified time and file name)
+        ///  </summary>
+        ///  <param name="fileToCompress">file to compress</param>
+        ///  <param name="compressedFilePath">path where the gzipped file should be created</param>
+        ///  <param name="compressedFileName">name for the gzipped file</param>
+        ///  <param name="doNotStoreFileName">if true, the filename is not stored in the gzip metadata (so contained file name depends on gzip file name)</param>
+        ///  <param name="comment">optional comment to add to gzip metadata (generally not used by decompression programs)</param>
+        /// <param name="addHeaderCrc">if true, a CRC16 hash of the header information is written to the gzip metadata</param>
+        public static void GZipCompressWithMetadata(FileInfo fileToCompress, string compressedFilePath = null, string compressedFileName = null, bool doNotStoreFileName = false, string comment = null, bool addHeaderCrc = false)
+        {
+            var currentFileName = fileToCompress.FullName;
+            var newFileName = currentFileName + ".gz";
+
+            // if compressedFilePath or compressedFileName are provided, override the default path/filename appropriately
+            if (!string.IsNullOrWhiteSpace(compressedFilePath) || !string.IsNullOrWhiteSpace(compressedFileName))
+            {
+                var name = fileToCompress.Name;
+                var path = fileToCompress.DirectoryName;
+                if (!string.IsNullOrWhiteSpace(compressedFileName))
+                {
+                    name = compressedFileName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(compressedFilePath))
+                {
+                    path = compressedFilePath;
+                }
+
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    path = ".";
+                }
+
+                newFileName = Path.Combine(path, name);
+            }
+
+            string storedFileName = null;
+            if (!doNotStoreFileName)
+            {
+                storedFileName = fileToCompress.Name;
+            }
+
+            using (var decompressedFileStream = fileToCompress.OpenRead())
+            using (var compressedFileStream = File.Create(newFileName))
+            // wrap the filestream to add the metadata at the right time during the file write
+            using (var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc))
+            using (var compressionStream = new GZipStream(metadataAdder, CompressionMode.Compress))
+            {
+                decompressedFileStream.CopyTo(compressionStream);
+            }
+        }
+
+        #endregion
     }
 }
