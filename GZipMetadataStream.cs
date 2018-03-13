@@ -117,7 +117,7 @@ namespace PRISM
         /// </summary>
         public bool HeaderRead { get; private set; }
 
-        private readonly bool isWriter = false;
+        private readonly bool isWriter;
 
         /// <inheritdoc />
         public override void Flush()
@@ -168,7 +168,7 @@ namespace PRISM
             var flags = (GzipFlags)BaseStream.ReadByte();
 
             uint timestamp = 0;
-            for (int x = 0; x < 4; x++)
+            for (var x = 0; x < 4; x++)
             {
                 timestamp += (uint)BaseStream.ReadByte() << (8 * x);
             }
@@ -322,7 +322,7 @@ namespace PRISM
                 {
                     int length = buffer[i];
                     modifiedBuffer.Add(buffer[i++]);
-                    length += (int)buffer[i] << 8;
+                    length += buffer[i] << 8;
                     modifiedBuffer.Add(buffer[i++]);
 
                     for (var j = 0; j < length && i < offset + count; j++)
@@ -355,7 +355,7 @@ namespace PRISM
 
                     // Least two significant bytes of the CRC32 for all bytes of the gzip header, up to (but not including) the CRC16
                     var crc = Crc32Gzip.Crc(modifiedBuffer.ToArray());
-                    modifiedBuffer.Add((byte)((crc & 0x000000FF)));
+                    modifiedBuffer.Add((byte)(crc & 0x000000FF));
                     modifiedBuffer.Add((byte)((crc & 0x0000FF00) >> 8));
                     HeaderCrc = (ushort) crc;
                 }
@@ -405,7 +405,7 @@ namespace PRISM
             /// <summary>
             /// Flag: has the table been computed? Initially false.
             /// </summary>
-            private static bool crcTableComputed = false;
+            private static bool crcTableComputed;
 
             /// <summary>
             /// Make the table for a fast CRC.
@@ -449,11 +449,10 @@ namespace PRISM
             /// }
             /// if (crc != originalCrc) error();
             /// </example>
-            public static uint UpdateCrc(uint crc, byte[] buf, int len)
             // ReSharper disable once MemberCanBePrivate.Local
             public static uint UpdateCrc(uint crc, IReadOnlyList<byte> buf, int len)
             {
-                uint c = crc ^ 0xffffffff;
+                var c = crc ^ 0xffffffff;
 
                 if (!crcTableComputed)
                     MakeCrcTable();
@@ -471,7 +470,6 @@ namespace PRISM
             /// <param name="buf"></param>
             /// <param name="len"></param>
             /// <returns></returns>
-            public static uint Crc(byte[] buf, int len)
             // ReSharper disable once MemberCanBePrivate.Local
             public static uint Crc(IReadOnlyList<byte> buf, int len)
             {
@@ -484,10 +482,10 @@ namespace PRISM
             /// <param name="crc"></param>
             /// <param name="buf"></param>
             /// <returns></returns>
-            public static uint UpdateCrc(uint crc, byte[] buf)
             // ReSharper disable once UnusedMember.Local
+            public static uint UpdateCrc(uint crc, IReadOnlyList<byte> buf)
             {
-                return UpdateCrc(crc, buf, buf.Length);
+                return UpdateCrc(crc, buf, buf.Count);
             }
 
             /// <summary>
@@ -495,9 +493,9 @@ namespace PRISM
             /// </summary>
             /// <param name="buf"></param>
             /// <returns></returns>
-            public static uint Crc(byte[] buf)
+            public static uint Crc(IReadOnlyList<byte> buf)
             {
-                return Crc(buf, buf.Length);
+                return Crc(buf, buf.Count);
             }
         }
     }
