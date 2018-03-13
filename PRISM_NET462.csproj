@@ -60,6 +60,7 @@
     <Compile Include="FileProcessor\ProcessFoldersBase.cs" />
     <Compile Include="FileTools.cs" />
     <Compile Include="GenericParserOptions.cs" />
+    <Compile Include="GZipMetadataStream.cs" />
     <Compile Include="ISystemInfo.cs" />
     <Compile Include="LogClasses.cs" />
     <Compile Include="Logging\BaseLogger.cs" />
