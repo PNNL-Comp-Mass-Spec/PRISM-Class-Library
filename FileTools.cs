@@ -1995,14 +1995,14 @@ namespace PRISM
             long folderSize = 0;
             var folder = new DirectoryInfo(folderPath);
 
-            // add the size of each file
+            // Add the size of each file
             foreach (var childFile in folder.GetFiles())
             {
                 folderSize += childFile.Length;
                 fileCount += 1;
             }
 
-            // add the size of each sub-directory, that is retrieved by recursively
+            // Add the size of each sub-directory, that is retrieved by recursively
             // calling this same routine
             foreach (var subDir in folder.GetDirectories())
             {
@@ -2826,7 +2826,7 @@ namespace PRISM
             var currentFileName = fileToDecompress.FullName;
             var newFileName = Path.ChangeExtension(currentFileName, null);
 
-            // if decompressedDirectoryPath or decompressedFileName are provided, override the default path/filename appropriately
+            // If decompressedDirectoryPath or decompressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(decompressedDirectoryPath) || !string.IsNullOrWhiteSpace(decompressedFileName))
             {
                 var name = fileToDecompress.Name;
@@ -2868,7 +2868,7 @@ namespace PRISM
             var currentFileName = fileToCompress.FullName;
             var newFileName = currentFileName + ".gz";
 
-            // if compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
+            // If compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(compressedDirectoryPath) || !string.IsNullOrWhiteSpace(compressedFileName))
             {
                 var name = fileToCompress.Name;
@@ -2911,7 +2911,7 @@ namespace PRISM
             var filename = Path.ChangeExtension(fileToDecompress.Name, null);
             var dir = fileToDecompress.DirectoryName;
 
-            // if decompressedDirectoryPath is provided, override the default path appropriately
+            // If decompressedDirectoryPath is provided, override the default path appropriately
             if (!string.IsNullOrWhiteSpace(decompressedDirectoryPath))
             {
                 dir = decompressedDirectoryPath;
@@ -2925,8 +2925,8 @@ namespace PRISM
             var lastModified = fileToDecompress.LastWriteTime;
             string outputFilePath;
 
+            // GZipMetadataStream wraps the filestream to read the metadata before decompressing
             using (var originalFileStream = fileToDecompress.OpenRead())
-            // wrap the filestream to read the metadata before decompressing
             using (var gzipMetadataStream = new GZipMetadataStream(originalFileStream))
             {
                 if (!gzipMetadataStream.InternalLastModified.Equals(DateTime.MinValue))
@@ -2968,7 +2968,7 @@ namespace PRISM
             var currentFileName = fileToCompress.FullName;
             var newFileName = currentFileName + ".gz";
 
-            // if compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
+            // If compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(compressedDirectoryPath) || !string.IsNullOrWhiteSpace(compressedFileName))
             {
                 var name = fileToCompress.Name;
@@ -2997,9 +2997,9 @@ namespace PRISM
                 storedFileName = fileToCompress.Name;
             }
 
+            // GZipMetadataStream wraps the filestream to add the metadata at the right time during the file write
             using (var decompressedFileStream = fileToCompress.OpenRead())
             using (var compressedFileStream = File.Create(newFileName))
-            // wrap the filestream to add the metadata at the right time during the file write
             using (var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc))
             using (var compressionStream = new GZipStream(metadataAdder, CompressionMode.Compress))
             {

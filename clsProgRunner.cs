@@ -597,7 +597,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Pause program execution for the specific number of milliseconds
+        /// Pause program execution for the specific number of milliseconds (maximum 10 seconds)
         /// </summary>
         /// <param name="sleepTimeMsec">Value between 10 and 10000 (i.e. between 10 msec and 10 seconds)</param>
         public static void SleepMilliseconds(int sleepTimeMsec)
@@ -620,7 +620,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Pause program execution for the specific number of milliseconds
+        /// Pause program execution for the specific number of milliseconds (maximum 10 seconds)
         /// </summary>
         /// <param name="sleepTimeMsec">Value between 10 and 10000 (i.e. between 10 msec and 10 seconds)</param>
         public static async Task SleepMillisecondsAsync(int sleepTimeMsec)
@@ -642,8 +642,7 @@ namespace PRISM
 
             bool standardOutputRedirected;
 
-            // set up parameters for external process
-            //
+            // Set up parameters for external process
             m_Process.StartInfo.FileName = Program;
             m_Process.StartInfo.WorkingDirectory = WorkDir;
             m_Process.StartInfo.Arguments = Arguments;
@@ -809,7 +808,6 @@ namespace PRISM
 
                 // Need to free up resources used to keep
                 // track of the external process
-                //
                 PID = 0;
 
                 try
@@ -857,12 +855,10 @@ namespace PRISM
 
                 // Decide whether or not to repeat starting
                 // the external process again, or quit
-                //
                 if (Repeat && !m_doCleanup)
                 {
                     // Repeat starting the process
                     // after waiting for minimum hold off time interval
-                    //
                     State = States.Waiting;
 
                     RaiseConditionalProgChangedEvent(this);
@@ -898,7 +894,6 @@ namespace PRISM
 
             // Arrange to start the program as an external process
             // and monitor it in a separate internal thread
-            //
             try
             {
                 ThreadPool.QueueUserWorkItem(StartProcess, m_CancellationToken.Token);

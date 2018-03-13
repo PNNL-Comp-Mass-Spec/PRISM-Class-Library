@@ -13,6 +13,7 @@ namespace PRISM
         [Flags]
         private enum GzipFlags : byte
         {
+            // ReSharper disable UnusedMember.Local
             FTEXT = 0x1,
             FHCRC = 0x2,
             FEXTRA = 0x4,
@@ -21,6 +22,7 @@ namespace PRISM
             Reserved1 = 0x20,
             Reserved2 = 0x40,
             Reserved3 = 0x80,
+            // ReSharper restore UnusedMember.Local
         }
 
         /// <summary>
@@ -48,6 +50,7 @@ namespace PRISM
         /// <param name="inputFile">file being compressed, used for last write time and filename</param>
         /// <param name="internalComment">Comment to store to file metadata</param>
         /// <param name="addHeaderCrc">if true, write a CRC16 for the header to the metadata</param>
+        // ReSharper disable once SuggestBaseTypeForParameter
         public GZipMetadataStream(Stream baseStream, FileInfo inputFile, string internalComment = null, bool addHeaderCrc = false)
         {
             BaseStream = baseStream;
@@ -86,8 +89,12 @@ namespace PRISM
         public string InternalComment { get; private set; }
 
         /// <summary>
-        /// Date modified stored in the gzip metadata. 'DateTime.MinValue' or 'DateTime(1970, 1, 1, 0, 0, 0)' mean 'not set'; 'DateTime.MinValue' is always returned for 'not set' when reading.
+        /// Date modified stored in the gzip metadata.
         /// </summary>
+        /// <remarks>
+        /// 'DateTime.MinValue' or 'DateTime(1970, 1, 1, 0, 0, 0)' mean 'not set'
+        /// 'DateTime.MinValue' is always returned for 'not set' when reading.
+        /// </remarks>
         public DateTime InternalLastModified { get; private set; }
 
         /// <summary>
@@ -145,12 +152,20 @@ namespace PRISM
                 return false;
             }
 
+            // ReSharper disable UnusedVariable
             var id1 = BaseStream.ReadByte(); // should be 31/0x1f (GZIP constant)
             var id2 = BaseStream.ReadByte(); // should be 139/0x8b (GZIP constant)
             var compressionMethod = BaseStream.ReadByte(); // should be 8 (deflate)
-            var
-                flags = (GzipFlags)BaseStream
-                    .ReadByte(); // bit flags; &0x1 = FTEXT (probably ASCII), &0x2 = CRC16 for gzip header present, &0x4 = FEXTRA (extra fields), &0x8 = FNAME (name), &0x10 = FCOMMENT (comment), &0x20, &0x40, &0x80 = reserved
+            // ReSharper restore UnusedVariable
+
+            // Bit flags:
+            //  &0x1 = FTEXT (probably ASCII)
+            //  &0x2 = CRC16 for gzip header present
+            //  &0x4 = FEXTRA (extra fields)
+            //  &0x8 = FNAME (name)
+            //  &0x10 = FCOMMENT (comment)
+            //  &0x20, &0x40, &0x80 = reserved
+            var flags = (GzipFlags)BaseStream.ReadByte();
 
             uint timestamp = 0;
             for (int x = 0; x < 4; x++)
@@ -158,7 +173,7 @@ namespace PRISM
                 timestamp += (uint)BaseStream.ReadByte() << (8 * x);
             }
 
-            // if timestamp == 0, no timestamp is available; use the compressed file timestamp
+            // If timestamp == 0, no timestamp is available; use the compressed file timestamp
             if (timestamp > 0)
             {
                 InternalLastModified = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(timestamp); // Gzip times are stored in universal time
@@ -168,8 +183,10 @@ namespace PRISM
                 InternalLastModified = DateTime.MinValue;
             }
 
+            // ReSharper disable UnusedVariable
             var extraFlags = BaseStream.ReadByte();
             var osId = BaseStream.ReadByte();
+            // ReSharper restore UnusedVariable
 
             if (flags.HasFlag(GzipFlags.FEXTRA))
             {
@@ -240,7 +257,9 @@ namespace PRISM
         /// <inheritdoc />
         public override void Write(byte[] buffer, int offset, int count)
         {
-            // Implementation caveat: The .NET GZipStream/DeflateStream implementation, as of .NET 4.7.1, writes the entire header at once. Right now we depend on that functionality.
+            // Implementation caveat:
+            // The .NET GZipStream/DeflateStream implementation, as of .NET 4.7.1, writes the entire header at once.
+            // This method depends on that functionality.
 
             if (Position == 0 && count >= 10)
             {
@@ -334,7 +353,7 @@ namespace PRISM
                         i += 2;
                     }
 
-                    // least two significant bytes of the CRC32 for all bytes of the gzip header, up to (but not including) the CRC16
+                    // Least two significant bytes of the CRC32 for all bytes of the gzip header, up to (but not including) the CRC16
                     var crc = Crc32Gzip.Crc(modifiedBuffer.ToArray());
                     modifiedBuffer.Add((byte)((crc & 0x000000FF)));
                     modifiedBuffer.Add((byte)((crc & 0x0000FF00) >> 8));
@@ -373,10 +392,11 @@ namespace PRISM
             set => BaseStream.Position = value;
         }
 
+        /// <summary>
+        /// Implementation of CRC32 in https://tools.ietf.org/html/rfc1952
+        /// </summary>
         private static class Crc32Gzip
         {
-            // https://tools.ietf.org/html/rfc1952
-
             /// <summary>
             /// Table of CRCs of all 8-bit messages.
             /// </summary>
@@ -430,6 +450,8 @@ namespace PRISM
             /// if (crc != originalCrc) error();
             /// </example>
             public static uint UpdateCrc(uint crc, byte[] buf, int len)
+            // ReSharper disable once MemberCanBePrivate.Local
+            public static uint UpdateCrc(uint crc, IReadOnlyList<byte> buf, int len)
             {
                 uint c = crc ^ 0xffffffff;
 
@@ -450,6 +472,8 @@ namespace PRISM
             /// <param name="len"></param>
             /// <returns></returns>
             public static uint Crc(byte[] buf, int len)
+            // ReSharper disable once MemberCanBePrivate.Local
+            public static uint Crc(IReadOnlyList<byte> buf, int len)
             {
                 return UpdateCrc(0, buf, len);
             }
@@ -461,6 +485,7 @@ namespace PRISM
             /// <param name="buf"></param>
             /// <returns></returns>
             public static uint UpdateCrc(uint crc, byte[] buf)
+            // ReSharper disable once UnusedMember.Local
             {
                 return UpdateCrc(crc, buf, buf.Length);
             }
