@@ -2871,17 +2871,13 @@ namespace PRISM
             // If compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(compressedDirectoryPath) || !string.IsNullOrWhiteSpace(compressedFileName))
             {
-                var name = fileToCompress.Name;
                 var dir = fileToCompress.DirectoryName;
-                if (!string.IsNullOrWhiteSpace(compressedFileName))
-                {
-                    name = compressedFileName;
-                }
 
                 if (!string.IsNullOrWhiteSpace(compressedDirectoryPath))
                 {
                     dir = compressedDirectoryPath;
                 }
+                var name = string.IsNullOrWhiteSpace(compressedFileName) ? fileToCompress.Name + ".gz" : compressedFileName;
 
                 if (string.IsNullOrWhiteSpace(dir))
                 {
@@ -2971,17 +2967,12 @@ namespace PRISM
             // If compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(compressedDirectoryPath) || !string.IsNullOrWhiteSpace(compressedFileName))
             {
-                var name = fileToCompress.Name;
                 var dir = fileToCompress.DirectoryName;
-                if (!string.IsNullOrWhiteSpace(compressedFileName))
-                {
-                    name = compressedFileName;
-                }
-
                 if (!string.IsNullOrWhiteSpace(compressedDirectoryPath))
                 {
                     dir = compressedDirectoryPath;
                 }
+                var name = string.IsNullOrWhiteSpace(compressedFileName) ? fileToCompress.Name : compressedFileName;
 
                 if (string.IsNullOrWhiteSpace(dir))
                 {
