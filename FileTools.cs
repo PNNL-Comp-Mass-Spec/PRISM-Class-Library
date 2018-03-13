@@ -2818,9 +2818,9 @@ namespace PRISM
         /// <summary>
         /// Decompress a gzip file
         /// </summary>
-        /// <param name="fileToDecompress">file to decompress</param>
-        /// <param name="decompressedDirectoryPath">path to directory where the decompressed file should be created</param>
-        /// <param name="decompressedFileName">name of decompressed file</param>
+        /// <param name="fileToDecompress">File to decompress</param>
+        /// <param name="decompressedDirectoryPath">Path to directory where the decompressed file should be created</param>
+        /// <param name="decompressedFileName">Name of decompressed file</param>
         public static void GZipDecompress(FileInfo fileToDecompress, string decompressedDirectoryPath = null, string decompressedFileName = null)
         {
             var currentFileName = fileToDecompress.FullName;
@@ -2829,18 +2829,9 @@ namespace PRISM
             // If decompressedDirectoryPath or decompressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(decompressedDirectoryPath) || !string.IsNullOrWhiteSpace(decompressedFileName))
             {
-                var name = fileToDecompress.Name;
-                var dir = fileToDecompress.DirectoryName;
-                if (!string.IsNullOrWhiteSpace(decompressedFileName))
-                {
-                    name = decompressedFileName;
-                }
+                var name = string.IsNullOrWhiteSpace(decompressedFileName) ? fileToDecompress.Name : decompressedFileName;
 
-                if (!string.IsNullOrWhiteSpace(decompressedDirectoryPath))
-                {
-                    dir = decompressedDirectoryPath;
-                }
-
+                var dir = string.IsNullOrWhiteSpace(decompressedDirectoryPath) ? fileToDecompress.DirectoryName : decompressedDirectoryPath;
                 if (string.IsNullOrWhiteSpace(dir))
                 {
                     dir = ".";
@@ -2860,31 +2851,30 @@ namespace PRISM
         /// <summary>
         /// Compress a file using the built-in GZipStream (stores minimal GZip metadata)
         /// </summary>
-        /// <param name="fileToCompress">file to compress</param>
-        /// <param name="compressedDirectoryPath">path to directory where compressed file should be created</param>
-        /// <param name="compressedFileName">name of compressed file</param>
+        /// <param name="fileToCompress">File to compress</param>
+        /// <param name="compressedDirectoryPath">Path to directory where compressed file should be created</param>
+        /// <param name="compressedFileName">Name of compressed file</param>
         public static void GZipCompress(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null)
         {
             var currentFileName = fileToCompress.FullName;
-            var newFileName = currentFileName + ".gz";
+            string newFileName;
 
             // If compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(compressedDirectoryPath) || !string.IsNullOrWhiteSpace(compressedFileName))
             {
-                var dir = fileToCompress.DirectoryName;
-
-                if (!string.IsNullOrWhiteSpace(compressedDirectoryPath))
-                {
-                    dir = compressedDirectoryPath;
-                }
                 var name = string.IsNullOrWhiteSpace(compressedFileName) ? fileToCompress.Name + ".gz" : compressedFileName;
 
+                var dir = string.IsNullOrWhiteSpace(compressedDirectoryPath) ? fileToCompress.DirectoryName : compressedDirectoryPath;
                 if (string.IsNullOrWhiteSpace(dir))
                 {
                     dir = ".";
                 }
 
                 newFileName = Path.Combine(dir, name);
+            }
+            else
+            {
+                newFileName = currentFileName + ".gz";
             }
 
             using (var decompressedFileStream = fileToCompress.OpenRead())
@@ -2905,14 +2895,9 @@ namespace PRISM
         public static string GZipDecompressWithMetadata(FileInfo fileToDecompress, string decompressedDirectoryPath = null, bool doNotUseStoredFileName = false)
         {
             var filename = Path.ChangeExtension(fileToDecompress.Name, null);
-            var dir = fileToDecompress.DirectoryName;
 
             // If decompressedDirectoryPath is provided, override the default path appropriately
-            if (!string.IsNullOrWhiteSpace(decompressedDirectoryPath))
-            {
-                dir = decompressedDirectoryPath;
-            }
-
+            var dir = string.IsNullOrWhiteSpace(decompressedDirectoryPath) ? fileToDecompress.DirectoryName : decompressedDirectoryPath;
             if (string.IsNullOrWhiteSpace(dir))
             {
                 dir = ".";
@@ -2962,24 +2947,24 @@ namespace PRISM
         public static void GZipCompressWithMetadata(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null, bool doNotStoreFileName = false, string comment = null, bool addHeaderCrc = false)
         {
             var currentFileName = fileToCompress.FullName;
-            var newFileName = currentFileName + ".gz";
+            string newFileName;
 
             // If compressedDirectoryPath or compressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(compressedDirectoryPath) || !string.IsNullOrWhiteSpace(compressedFileName))
             {
-                var dir = fileToCompress.DirectoryName;
-                if (!string.IsNullOrWhiteSpace(compressedDirectoryPath))
-                {
-                    dir = compressedDirectoryPath;
-                }
                 var name = string.IsNullOrWhiteSpace(compressedFileName) ? fileToCompress.Name : compressedFileName;
 
+                var dir = string.IsNullOrWhiteSpace(compressedDirectoryPath) ? fileToCompress.DirectoryName : compressedDirectoryPath;
                 if (string.IsNullOrWhiteSpace(dir))
                 {
                     dir = ".";
                 }
 
                 newFileName = Path.Combine(dir, name);
+            }
+            else
+            {
+                newFileName = currentFileName + ".gz";
             }
 
             string storedFileName = null;
