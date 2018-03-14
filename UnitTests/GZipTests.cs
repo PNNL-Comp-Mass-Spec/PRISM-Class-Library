@@ -10,7 +10,7 @@ namespace PRISMTest
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
-        public void TestGZipCompressExplicitDirectoryAndName(string filePath, bool includeMetadata, int expectedSizeBytes)
+        public void TestGZipCompressExplicitDirectoryAndName(string filePath, bool includeMetadata, long expectedSizeBytes)
         {
             var fileToCompress = FileRefs.GetTestFile(filePath);
 
@@ -50,7 +50,7 @@ namespace PRISMTest
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
-        public void TestGZipCompressExplicitDirectory(string filePath, bool includeMetadata, int expectedSizeBytes)
+        public void TestGZipCompressExplicitDirectory(string filePath, bool includeMetadata, long expectedSizeBytes)
         {
             var fileToCompress = FileRefs.GetTestFile(filePath);
 
@@ -86,7 +86,7 @@ namespace PRISMTest
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
-        public void TestGZipCompressDefaultName(string filePath, bool includeMetadata, int expectedSizeBytes)
+        public void TestGZipCompressDefaultName(string filePath, bool includeMetadata, long expectedSizeBytes)
         {
             var fileToCompressRemote = FileRefs.GetTestFile(filePath);
 
@@ -157,7 +157,7 @@ namespace PRISMTest
 
         private void ValidateGZipFile(
             FileInfo fileToCompress, FileInfo compressedFile,
-            string tempDirectoryPath, int expectedSizeBytes,
+            string tempDirectoryPath, long expectedSizeBytes,
             bool includedMetadata, bool usedExplicitNames)
         {
 
@@ -220,9 +220,12 @@ namespace PRISMTest
                 Console.WriteLine("File to compress, modified {0}, matches round robin file without metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileNoMeta.LastWriteTime);
             }
 
-            // Compare actual .gz size to expected size
-            Assert.AreEqual(expectedSizeBytes, compressedFile.Length, "Compressed .gz file size does not match expected size");
-            Console.WriteLine("File to compress has the expected size, {0:#,###} bytes", expectedSizeBytes);
+            if (expectedSizeBytes > 0)
+            {
+                // Compare actual .gz size to expected size
+                Assert.AreEqual(expectedSizeBytes, compressedFile.Length, "Compressed .gz file size does not match expected size");
+                Console.WriteLine("File to compress has the expected size, {0:#,###} bytes", expectedSizeBytes);
+            }
 
             if (includedMetadata)
             {
