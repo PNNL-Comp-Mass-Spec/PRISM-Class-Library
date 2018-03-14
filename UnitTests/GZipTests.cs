@@ -10,6 +10,7 @@ namespace PRISMTest
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
+        [Category("PNL_Domain")]
         public void TestGZipCompressExplicitDirectoryAndName(string filePath, bool includeMetadata, long expectedSizeBytes)
         {
             var fileToCompress = FileRefs.GetTestFile(filePath);
@@ -50,6 +51,7 @@ namespace PRISMTest
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
+        [Category("PNL_Domain")]
         public void TestGZipCompressExplicitDirectory(string filePath, bool includeMetadata, long expectedSizeBytes)
         {
             var fileToCompress = FileRefs.GetTestFile(filePath);
@@ -86,6 +88,7 @@ namespace PRISMTest
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
+        [Category("PNL_Domain")]
         public void TestGZipCompressDefaultName(string filePath, bool includeMetadata, long expectedSizeBytes)
         {
             var fileToCompressRemote = FileRefs.GetTestFile(filePath);
