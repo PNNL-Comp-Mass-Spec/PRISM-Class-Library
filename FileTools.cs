@@ -2869,6 +2869,9 @@ namespace PRISM
             {
                 decompressedFileStream.CopyTo(compressionStream);
             }
+
+            // Update the modification time of the .gz file to match the time of fileToCompress
+            File.SetLastWriteTimeUtc(compressedFilePath, fileToCompress.LastWriteTimeUtc);
         }
 
         /// <summary>
@@ -2955,7 +2958,9 @@ namespace PRISM
                 decompressedFileStream.CopyTo(compressionStream);
             }
 
+            // Since metadata in the .gz file includes the last write time of the compressed file, do not change the last write time of the .gz file
         }
+
         /// <summary>
         /// Construct the path to the .gz file to create, possibly overriding the target directory and/or target file anme
         /// </summary>
