@@ -212,13 +212,13 @@ namespace PRISMTest
             Console.WriteLine("File to compress ({0}) and round robin file without metadata ({1}) are both {2:#,###} bytes", fileToCompress.Name, roundRobinFileNoMeta.Name, fileToCompress.Length);
 
             // Compare file modification times
-            var timeDiffMsecWithMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileWithMeta.LastWriteTimeUtc).TotalMilliseconds);
+            var timeDiffMsecWithMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileWithMeta.LastWriteTimeUtc).TotalSeconds);
             Assert.AreEqual(timeDiffMsecWithMeta, 0, 5, "Round robin file size does not match the original file (.gz file with metadata)");
             Console.WriteLine("File to compress, modified {0}, matches round robin file with metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileWithMeta.LastWriteTime);
 
             if (!includedMetadata)
             {
-                var timeDiffMsecNoMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileNoMeta.LastWriteTimeUtc).TotalMilliseconds);
+                var timeDiffMsecNoMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileNoMeta.LastWriteTimeUtc).TotalSeconds);
                 Assert.AreEqual(timeDiffMsecNoMeta, 0, 5, "Round robin file size does not match the original file (.gz file without metadata");
                 Console.WriteLine("File to compress, modified {0}, matches round robin file without metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileNoMeta.LastWriteTime);
             }
