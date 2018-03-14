@@ -2923,8 +2923,8 @@ namespace PRISM
                 }
             }
 
-            // Update metadata
-            File.SetLastWriteTime(Path.Combine(dir, filename), lastModified);
+            // Update the modification time of the decompressed file to match the time from the metadata
+            File.SetLastWriteTime(decompressedFilePath, lastModified);
 
             return decompressedFilePath;
         }
