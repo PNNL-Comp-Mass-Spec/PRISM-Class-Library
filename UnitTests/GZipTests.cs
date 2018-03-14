@@ -8,11 +8,10 @@ namespace PRISMTest
     class GZipTests
     {
 
-        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 3434)]
-        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 3434)]
-        public void TestGZipCompressExplicitName(string filePath, bool includeMetadata, int expectedSizeBytes)
+        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
+        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
+        public void TestGZipCompressExplicitDirectoryAndName(string filePath, bool includeMetadata, int expectedSizeBytes)
         {
-            // Get the full path to the LinuxTestFiles folder, 3 levels up from the cpuinfo test file
             var fileToCompress = FileRefs.GetTestFile(filePath);
 
             var tempDirectoryPath = Path.GetTempPath();
@@ -22,11 +21,13 @@ namespace PRISMTest
             if (includeMetadata)
             {
                 compressedFileName = fileToCompress.Name + "_withMetadata.gz";
+                Console.WriteLine("Compressing {0} using GZipCompressWithMetadata to create {1} in {2}", fileToCompress, compressedFileName, tempDirectoryPath);
                 PRISM.clsFileTools.GZipCompressWithMetadata(fileToCompress, tempDirectoryPath, compressedFileName);
             }
             else
             {
                 compressedFileName = fileToCompress.Name + ".gz";
+                Console.WriteLine("Compressing {0} using GZipCompress to create {1} in {2}", fileToCompress, compressedFileName, tempDirectoryPath);
                 PRISM.clsFileTools.GZipCompress(fileToCompress, tempDirectoryPath, compressedFileName);
             }
 
@@ -39,19 +40,18 @@ namespace PRISMTest
                 Assert.Fail("Compressed file not found: " + compressedFile.FullName);
             }
 
-            Console.WriteLine("Compressed {0} in {1} seconds to create {2}", fileToCompress, procTimeSeconds, compressedFile.FullName);
-            Console.WriteLine(".gz file size: {0} bytes", compressedFile.Length);
+            Console.WriteLine("Compressed {0} in {1:F1} seconds to create {2}", fileToCompress, procTimeSeconds, compressedFile.FullName);
+            Console.WriteLine(".gz file size: {0:#,###} bytes", compressedFile.Length);
 
             // Validate the newly created .gz file, then delete it and delete the validated round-robin file
-            ValidateGZipFile(fileToCompress, compressedFile, tempDirectoryPath);
+            ValidateGZipFile(fileToCompress, compressedFile, tempDirectoryPath, expectedSizeBytes, includeMetadata, true);
 
         }
 
-        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 3434)]
-        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 3434)]
-        public void TestGZipCompressDefaultName(string filePath, bool includeMetadata, int expectedSizeBytes)
+        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
+        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
+        public void TestGZipCompressExplicitDirectory(string filePath, bool includeMetadata, int expectedSizeBytes)
         {
-            // Get the full path to the LinuxTestFiles folder, 3 levels up from the cpuinfo test file
             var fileToCompress = FileRefs.GetTestFile(filePath);
 
             var tempDirectoryPath = Path.GetTempPath();
@@ -59,10 +59,12 @@ namespace PRISMTest
 
             if (includeMetadata)
             {
+                Console.WriteLine("Compressing {0} using GZipCompressWithMetadata to create a .gz file in {1}", fileToCompress, tempDirectoryPath);
                 PRISM.clsFileTools.GZipCompressWithMetadata(fileToCompress, tempDirectoryPath);
             }
             else
             {
+                Console.WriteLine("Compressing {0} using GZipCompress to create a .gz file in {1}", fileToCompress, tempDirectoryPath);
                 PRISM.clsFileTools.GZipCompress(fileToCompress, tempDirectoryPath);
             }
 
@@ -75,14 +77,88 @@ namespace PRISMTest
                 Assert.Fail("Compressed file not found: " + compressedFile.FullName);
             }
 
-            Console.WriteLine("Compressed {0} in {1} seconds to create {2}", fileToCompress, procTimeSeconds, compressedFile.FullName);
-            Console.WriteLine(".gz file size: {0} bytes", compressedFile.Length);
+            Console.WriteLine("Compressed {0} in {1:F1} seconds to create {2}", fileToCompress, procTimeSeconds, compressedFile.FullName);
+            Console.WriteLine(".gz file size: {0:#,###} bytes", compressedFile.Length);
 
             // Validate the newly created .gz file, then delete it and delete the validated round-robin file
-            ValidateGZipFile(fileToCompress, compressedFile, tempDirectoryPath);
+            ValidateGZipFile(fileToCompress, compressedFile, tempDirectoryPath, expectedSizeBytes, includeMetadata, true);
         }
 
-        private void ValidateGZipFile(FileInfo fileToCompress, FileInfo compressedFile, string tempDirectoryPath)
+        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
+        [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
+        public void TestGZipCompressDefaultName(string filePath, bool includeMetadata, int expectedSizeBytes)
+        {
+            var fileToCompressRemote = FileRefs.GetTestFile(filePath);
+
+            var tempDirectoryPath = Path.GetTempPath();
+            var fileToCompressLocal = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompressRemote.Name));
+
+            fileToCompressRemote.CopyTo(fileToCompressLocal.FullName, true);
+
+            var startTime = DateTime.UtcNow;
+
+            if (includeMetadata)
+            {
+                Console.WriteLine("Compressing {0} using GZipCompressWithMetadata", fileToCompressLocal);
+                PRISM.clsFileTools.GZipCompressWithMetadata(fileToCompressLocal);
+            }
+            else
+            {
+                Console.WriteLine("Compressing {0} using GZipCompress", fileToCompressLocal);
+                PRISM.clsFileTools.GZipCompress(fileToCompressLocal);
+            }
+
+            var procTimeSeconds = DateTime.UtcNow.Subtract(startTime).TotalSeconds;
+
+            var compressedFile = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompressLocal.Name + ".gz"));
+
+            if (!compressedFile.Exists)
+            {
+                Assert.Fail("Compressed file not found: " + compressedFile.FullName);
+            }
+
+            Console.WriteLine("Compressed {0} in {1:F1} seconds to create {2}", fileToCompressLocal, procTimeSeconds, compressedFile.FullName);
+            Console.WriteLine(".gz file size: {0:#,###} bytes", compressedFile.Length);
+
+            PRISM.clsProgRunner.SleepMilliseconds(250);
+
+            // Rename the file that we just compressed
+            // This is required to avoid collisions when we call ValidateGZipFile
+
+            var movedFileToCompress = new FileInfo(fileToCompressLocal.FullName + ".original");
+            if (File.Exists(movedFileToCompress.FullName))
+                File.Delete(movedFileToCompress.FullName);
+
+            File.Move(fileToCompressLocal.FullName, movedFileToCompress.FullName);
+
+            // Refresh movedFileToCompress but do not refresh fileToCompressLocal (since we only want movedFileToCompress to end in .original)
+            movedFileToCompress.Refresh();
+
+            // Validate the newly created .gz file, then delete it and delete the validated round-robin file
+            ValidateGZipFile(fileToCompressLocal, compressedFile, tempDirectoryPath, expectedSizeBytes, includeMetadata, false);
+
+            movedFileToCompress.Delete();
+        }
+
+        private void MoveFile(FileInfo fileToMove, string newFilePath)
+        {
+            var targetFile = new FileInfo(newFilePath);
+            if (string.Equals(fileToMove.FullName, targetFile.FullName, StringComparison.OrdinalIgnoreCase))
+            {
+                // Names match; nothing to do
+                return;
+            }
+
+            if (targetFile.Exists)
+                targetFile.Delete();
+
+            fileToMove.MoveTo(newFilePath);
+        }
+
+        private void ValidateGZipFile(
+            FileInfo fileToCompress, FileInfo compressedFile,
+            string tempDirectoryPath, int expectedSizeBytes,
+            bool includedMetadata, bool usedExplicitNames)
         {
 
             PRISM.clsProgRunner.SleepMilliseconds(250);
@@ -90,14 +166,30 @@ namespace PRISMTest
             // Decompress the newly created .gz file
             // Use both .GZipDecompressWithMetadata and .GZipDecompress
 
-            var roundRobinFilenameWithMeta = fileToCompress.Name;
-            var roundRobinFilenameNoMeta = Path.GetFileNameWithoutExtension(fileToCompress.Name) + "_RoundRobinNoMeta" + Path.GetExtension(fileToCompress.Name);
+            FileInfo roundRobinFileWithMeta;
+            FileInfo roundRobinFileNoMeta;
 
-            PRISM.clsFileTools.GZipDecompressWithMetadata(compressedFile, tempDirectoryPath);
-            PRISM.clsFileTools.GZipDecompress(compressedFile, tempDirectoryPath, roundRobinFilenameNoMeta);
+            if (usedExplicitNames)
+            {
+                PRISM.clsFileTools.GZipDecompressWithMetadata(compressedFile, tempDirectoryPath);
+                roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
+                MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".withmetadata");
 
-            var roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, roundRobinFilenameWithMeta));
-            var roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, roundRobinFilenameNoMeta));
+                var roundRobinFilenameNoMeta = Path.GetFileNameWithoutExtension(fileToCompress.Name) + "_RoundRobinNoMeta" + Path.GetExtension(fileToCompress.Name);
+                PRISM.clsFileTools.GZipDecompress(compressedFile, tempDirectoryPath, roundRobinFilenameNoMeta);
+                roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, roundRobinFilenameNoMeta));
+                MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".nometadata");
+            }
+            else
+            {
+                PRISM.clsFileTools.GZipDecompressWithMetadata(compressedFile);
+                roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
+                MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".withmetadata");
+
+                PRISM.clsFileTools.GZipDecompress(compressedFile, tempDirectoryPath);
+                roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
+                MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".nometadata");
+            }
 
             if (!roundRobinFileWithMeta.Exists)
             {
@@ -109,9 +201,43 @@ namespace PRISMTest
                 Assert.Fail("Round robin file not found: " + roundRobinFileNoMeta.FullName);
             }
 
+            // Compare file sizes
             Assert.AreEqual(fileToCompress.Length, roundRobinFileWithMeta.Length, "Round robin file size does not match the original file (.gz file with metadata)");
+            Console.WriteLine("File to compress ({0}) and round robin file with metadata ({1}) are both {2:#,###} bytes", fileToCompress.Name, roundRobinFileWithMeta.Name, fileToCompress.Length);
 
             Assert.AreEqual(fileToCompress.Length, roundRobinFileNoMeta.Length, "Round robin file size does not match the original file (.gz file without metadata");
+            Console.WriteLine("File to compress ({0}) and round robin file without metadata ({1}) are both {2:#,###} bytes", fileToCompress.Name, roundRobinFileNoMeta.Name, fileToCompress.Length);
+
+            // Compare file modification times
+            var timeDiffMsecWithMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileWithMeta.LastWriteTimeUtc).TotalMilliseconds);
+            Assert.AreEqual(timeDiffMsecWithMeta, 0, 5, "Round robin file size does not match the original file (.gz file with metadata)");
+            Console.WriteLine("File to compress, modified {0}, matches round robin file with metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileWithMeta.LastWriteTime);
+
+            if (!includedMetadata)
+            {
+                var timeDiffMsecNoMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileNoMeta.LastWriteTimeUtc).TotalMilliseconds);
+                Assert.AreEqual(timeDiffMsecNoMeta, 0, 5, "Round robin file size does not match the original file (.gz file without metadata");
+                Console.WriteLine("File to compress, modified {0}, matches round robin file without metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileNoMeta.LastWriteTime);
+            }
+
+            // Compare actual .gz size to expected size
+            Assert.AreEqual(expectedSizeBytes, compressedFile.Length, "Compressed .gz file size does not match expected size");
+            Console.WriteLine("File to compress has the expected size, {0:#,###} bytes", expectedSizeBytes);
+
+            if (includedMetadata)
+            {
+                // Assure that the .gz file's date matches the current time
+                var timeDiffMsecGz = Math.Abs(DateTime.UtcNow.Subtract(compressedFile.LastWriteTimeUtc).TotalSeconds);
+                Assert.AreEqual(timeDiffMsecGz, 0, 60, "Compressed .gz file time does not match the current time; they should be close");
+                Console.WriteLine("The modification time of the .gz file matches the current date/time; this is expected when including metadata: {0}", compressedFile.LastWriteTime);
+            }
+            else
+            {
+                // Assure that the .gz file's date matches the file to compress
+                var timeDiffMsecGz = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(compressedFile.LastWriteTimeUtc).TotalSeconds);
+                Assert.AreEqual(timeDiffMsecGz, 0, 2.05, "Compressed .gz file time does not match the original file to compress; they should be close");
+                Console.WriteLine("The modification time of the .gz file matches the compressed file's date/time; this is expected when not including metadata: {0}", compressedFile.LastWriteTime);
+            }
 
             // Delete the files in the temp directory
             compressedFile.Delete();
