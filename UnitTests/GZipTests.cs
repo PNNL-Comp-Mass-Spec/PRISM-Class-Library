@@ -8,6 +8,25 @@ namespace PRISMTest
     class GZipTests
     {
 
+        [TestCase(@"C:\Windows\win.ini", false)]
+        [TestCase(@"C:\Windows\win.ini", true)]
+        public void TestGZipCompressLocalFile(string filePath, bool includeMetadata)
+        {
+            var fileToCompress = new FileInfo(filePath);
+            if (!fileToCompress.Exists)
+            {
+                Assert.Ignore("File not found: " + fileToCompress.FullName);
+            }
+
+            TestGZipCompressExplicitDirectoryAndName(fileToCompress.FullName, includeMetadata, 0);
+            Console.WriteLine();
+
+            TestGZipCompressExplicitDirectory(fileToCompress.FullName, includeMetadata, 0);
+            Console.WriteLine();
+
+            TestGZipCompressDefaultName(fileToCompress.FullName, includeMetadata, 0);
+        }
+
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", true, 23358880)]
         [Category("PNL_Domain")]
