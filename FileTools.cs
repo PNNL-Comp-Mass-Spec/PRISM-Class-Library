@@ -2851,6 +2851,14 @@ namespace PRISM
             {
                 decompressionStream.CopyTo(decompressedFileStream);
             }
+
+            var decompressedFile = new FileInfo(decompressedFilePath);
+
+            if (decompressedFile.LastWriteTimeUtc > fileToDecompress.LastWriteTimeUtc)
+            {
+                // Update the modification time of the decompressed file to match the time of the .gz file
+                decompressedFile.LastWriteTimeUtc = fileToDecompress.LastWriteTimeUtc;
+            }
         }
 
         /// <summary>
