@@ -2838,7 +2838,7 @@ namespace PRISM
                     dir = ".";
                 }
 
-                newFileName = Path.Combine(dir, name);
+                decompressedFilePath = Path.Combine(dir, Path.GetFileName(fileNameOrPath));
             }
             else
             {
@@ -2914,7 +2914,7 @@ namespace PRISM
                     fileNameOrPath = currentFilePathWithoutGz;
                 }
 
-                outputFilePath = Path.Combine(dir, filename);
+                decompressedFilePath = Path.Combine(dir, Path.GetFileName(fileNameOrPath));
 
                 using (var decompressedFileStream = File.Create(decompressedFilePath))
                 using (var decompressionStream = new GZipStream(gzipMetadataStream, CompressionMode.Decompress))
