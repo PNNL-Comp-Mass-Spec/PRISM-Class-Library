@@ -2885,10 +2885,10 @@ namespace PRISM
         /// <summary>
         /// Decompress a file, keeping the correct stored timestamp on the decompressed file and the stored file name
         /// </summary>
-        /// <param name="fileToDecompress">file to decompress</param>
-        /// <param name="decompressedDirectoryPath">path to directory where the decompressed file should be created</param>
-        /// <param name="doNotUseStoredFileName">if true, the output file name will use the gzip filename (excluding .gz) even when the filename is available in the gzip metadata</param>
-        /// <returns>path to the decompressed file</returns>
+        /// <param name="fileToDecompress">GZip file to decompress</param>
+        /// <param name="decompressedDirectoryPath">Path to directory where the decompressed file should be created</param>
+        /// <param name="doNotUseStoredFileName">If true, the output file name will use the gzip filename (excluding .gz) even when the filename is available in the gzip metadata</param>
+        /// <returns>Path to the decompressed file</returns>
         public static string GZipDecompressWithMetadata(FileInfo fileToDecompress, string decompressedDirectoryPath = null, bool doNotUseStoredFileName = false)
         {
             var currentFilePathWithoutGz = Path.ChangeExtension(fileToDecompress.Name, null);
