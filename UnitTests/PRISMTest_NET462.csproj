@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="clsTestFileCopyInfo.cs" />
     <Compile Include="CommandLineParserTests.cs" />
+    <Compile Include="ConsoleMsgUtilsTest.cs" />
     <Compile Include="DatabaseLoggingTests.cs" />
     <Compile Include="DotNETVersionTest.cs" />
     <Compile Include="FileCopyTests.cs" />
