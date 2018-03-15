@@ -3,6 +3,8 @@ using System.Linq;
 using NUnit.Framework;
 using PRISM;
 
+// ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 namespace PRISMTest
 {
     [TestFixture]
@@ -474,6 +476,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x => x.ToLower().Contains("maxdbl") && x.Contains("cannot cast") && x.Contains("to type")), "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
         }
 
+        // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+        // ReSharper disable MemberCanBePrivate.Local
         private class ArgsEnum
         {
             [Option("u", HelpText = "I Am Unknown")]
@@ -501,7 +505,7 @@ namespace PRISMTest
             }
         }
 
-        private enum TestEnum : int
+        private enum TestEnum
         {
             Unknown = 0,
             True = 1,
@@ -512,7 +516,7 @@ namespace PRISMTest
         }
 
         [Flags]
-        private enum TestEnumFlags : int
+        private enum TestEnumFlags
         {
             [System.ComponentModel.Description("It's Okay")]
             Good = 0x0,
