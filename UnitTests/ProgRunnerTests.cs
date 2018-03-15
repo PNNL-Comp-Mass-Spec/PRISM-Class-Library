@@ -264,7 +264,7 @@ namespace PRISMTest
                 var secondsSinceMidnight = (int)(DateTime.Now.Subtract(DateTime.Today).TotalSeconds);
                 if (consoleOutputFile.DirectoryName == null)
                 {
-                    Assert.Fail("Unable to determine the parent folder of " + consoleOutputFilePath);
+                    Assert.Fail("Unable to determine the parent directory of " + consoleOutputFilePath);
                 }
                 var newFilePath = Path.Combine(consoleOutputFile.DirectoryName,
                                                Path.GetFileNameWithoutExtension(consoleOutputFilePath) + "_" + secondsSinceMidnight + ".txt");

@@ -6,7 +6,7 @@ namespace PRISM.FileProcessor
 {
 
     /// <summary>
-    /// This class can be used as a base class for classes that process a folder or folders
+    /// This class can be used as a base class for classes that process a directory or directories
     /// Note that this class contains simple error codes that can be set from any derived classes.
     /// The derived classes can also set their own local error codes
     /// </summary>
@@ -19,7 +19,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessFoldersBase()
         {
-            mFileDate = "February 8, 2017";
+            mFileDate = "March 15, 2018";
             ErrorCode = eProcessFoldersErrorCodes.NoError;
         }
 
@@ -36,12 +36,12 @@ namespace PRISM.FileProcessor
             NoError = 0,
 
             /// <summary>
-            /// Invalid input folder path
+            /// Invalid input directory path
             /// </summary>
             InvalidInputFolderPath = 1,
 
             /// <summary>
-            /// Invalid output folder path
+            /// Invalid output directory path
             /// </summary>
             InvalidOutputFolderPath = 2,
 
@@ -106,7 +106,7 @@ namespace PRISM.FileProcessor
         #endregion
 
         /// <summary>
-        /// Cleanup file/folder paths
+        /// Cleanup file/directory paths
         /// </summary>
         /// <param name="inputFileOrFolderPath"></param>
         /// <param name="outputFolderPath"></param>
@@ -116,7 +116,7 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Make sure inputFolderPath points to a valid directory and validate the output folder (defining it if null or empty)
+        /// Make sure inputFolderPath points to a valid directory and validate the output directory (defining it if null or empty)
         /// </summary>
         /// <param name="inputFolderPath"></param>
         /// <param name="outputFolderPath"></param>
@@ -146,7 +146,7 @@ namespace PRISM.FileProcessor
 
                 if (!outputFolder.Exists)
                 {
-                    // outputFolderPath points to a non-existent folder; attempt to create it
+                    // outputFolderPath points to a non-existent directory; attempt to create it
                     outputFolder.Create();
                 }
 
@@ -177,10 +177,10 @@ namespace PRISM.FileProcessor
                     errorMessage = string.Empty;
                     break;
                 case eProcessFoldersErrorCodes.InvalidInputFolderPath:
-                    errorMessage = "Invalid input folder path";
+                    errorMessage = "Invalid input directory path";
                     break;
                 case eProcessFoldersErrorCodes.InvalidOutputFolderPath:
-                    errorMessage = "Invalid output folder path";
+                    errorMessage = "Invalid output directory path";
                     break;
                 case eProcessFoldersErrorCodes.ParameterFileNotFound:
                     errorMessage = "Parameter file not found";
@@ -242,8 +242,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process one or more folders (aka directories)
         /// </summary>
-        /// <param name="inputFolderPath">Match spec for finding folders, can contain * and ?</param>
-        /// <param name="outputFolderAlternatePath">Alternate output folder path</param>
+        /// <param name="inputFolderPath">Match spec for finding directories, can contain * and ?</param>
+        /// <param name="outputFolderAlternatePath">Alternate output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="resetErrorCode">If True, reset ErrorCode</param>
         /// <returns> True if success, false if an error</returns>
@@ -282,20 +282,20 @@ namespace PRISM.FileProcessor
                     return success;
                 }
 
-                var inputFolder = GetInputFolderAndMatchSpec(inputFolderPath, out var folderNameMatchPattern);
+                var inputFolder = GetInputFolderAndMatchSpec(inputFolderPath, out var directoryNameMatchPattern);
 
                 var matchCount = 0;
-                var foldersToProcess = inputFolder.GetDirectories(folderNameMatchPattern).ToList();
+                var directoriesToProcess = inputFolder.GetDirectories(directoryNameMatchPattern).ToList();
                 var lastProgress = DateTime.UtcNow;
 
-                foreach (var folder in foldersToProcess)
+                foreach (var directory in directoriesToProcess)
                 {
                     matchCount += 1;
 
-                    var percentComplete = matchCount / (float)foldersToProcess.Count * 100;
-                    OnProgressUpdate("Process " + folder.FullName, percentComplete);
+                    var percentComplete = matchCount / (float)directoriesToProcess.Count * 100;
+                    OnProgressUpdate("Process " + directory.FullName, percentComplete);
 
-                    success = ProcessFolder(folder.FullName, outputFolderAlternatePath, parameterFilePath, true);
+                    success = ProcessFolder(directory.FullName, outputFolderAlternatePath, parameterFilePath, true);
 
                     if (!success || AbortProcessing)
                         break;
@@ -316,7 +316,7 @@ namespace PRISM.FileProcessor
                 if (ErrorCode != eProcessFoldersErrorCodes.NoError)
                     return success;
 
-                ShowErrorMessage("No match was found for the input folder path: " + inputFolderPath);
+                ShowErrorMessage("No match was found for the input directory path: " + inputFolderPath);
 
                 return success;
 
@@ -332,7 +332,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process a single directory
         /// </summary>
-        /// <param name="inputFolderPath">Input folder path</param>
+        /// <param name="inputFolderPath">Input directory path</param>
         /// <returns>True if success, otherwise false</returns>
         public bool ProcessFolder(string inputFolderPath)
         {
@@ -342,8 +342,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process a single directory
         /// </summary>
-        /// <param name="inputFolderPath">Input folder path</param>
-        /// <param name="outputFolderAlternatePath">Alternate output folder path</param>
+        /// <param name="inputFolderPath">Input directory path</param>
+        /// <param name="outputFolderAlternatePath">Alternate output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <returns>True if success, otherwise false</returns>
         public bool ProcessFolder(string inputFolderPath, string outputFolderAlternatePath, string parameterFilePath)
@@ -354,8 +354,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process a single directory
         /// </summary>
-        /// <param name="inputFolderPath">Input folder path</param>
-        /// <param name="outputFolderAlternatePath">Alternate output folder path</param>
+        /// <param name="inputFolderPath">Input directory path</param>
+        /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="resetErrorCode">If true, reset the error code</param>
         /// <returns>True if success, otherwise false</returns>
@@ -376,12 +376,12 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
-        /// <param name="inputFolderPath">Input folder path (supports wildcards)</param>
-        /// <param name="outputFolderAlternatePath"></param>
-        /// <param name="parameterFilePath"></param>
+        /// <param name="inputFolderPath">Input directory path (supports wildcards)</param>
+        /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
+        /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="recurseFoldersMaxLevels">If 0 or negative, recurse infinitely</param>
         /// <returns></returns>
-        /// <remarks>Calls ProcessFolders for all matching folders in inputFolderPath</remarks>
+        /// <remarks>Calls ProcessFolders for all matching directories in inputFolderPath</remarks>
         public bool ProcessAndRecurseFolders(
             string inputFolderPath,
             string outputFolderAlternatePath = "",
@@ -402,11 +402,11 @@ namespace PRISM.FileProcessor
                 }
 
                 DirectoryInfo inputFolder;
-                string folderNameMatchPattern;
+                string directoryNameMatchPattern;
 
                 if (inputFolderPath.Contains("*") || inputFolderPath.Contains("?"))
                 {
-                    inputFolder = GetInputFolderAndMatchSpec(inputFolderPath, out folderNameMatchPattern);
+                    inputFolder = GetInputFolderAndMatchSpec(inputFolderPath, out directoryNameMatchPattern);
                 }
                 else
                 {
@@ -420,10 +420,10 @@ namespace PRISM.FileProcessor
                         // Use the current working directory
                         inputFolder = new DirectoryInfo(".");
                     }
-                    folderNameMatchPattern = "*";
+                    directoryNameMatchPattern = "*";
                 }
 
-                // Validate the output folder path
+                // Validate the output directory path
                 if (!string.IsNullOrWhiteSpace(outputFolderAlternatePath))
                 {
                     try
@@ -446,7 +446,7 @@ namespace PRISM.FileProcessor
                 var folderProcessFailCount = 0;
 
                 // Call RecurseFoldersWork
-                success = RecurseFoldersWork(inputFolder.FullName, folderNameMatchPattern, parameterFilePath,
+                success = RecurseFoldersWork(inputFolder.FullName, directoryNameMatchPattern, parameterFilePath,
                                              outputFolderAlternatePath, ref folderProcessCount,
                                              ref folderProcessFailCount, 1, recurseFoldersMaxLevels);
             }
@@ -478,7 +478,7 @@ namespace PRISM.FileProcessor
             }
             catch (Exception ex)
             {
-                // Input folder path error
+                // Input directory path error
                 HandleException("Error in RecurseFoldersWork", ex);
                 ErrorCode = eProcessFoldersErrorCodes.InvalidInputFolderPath;
                 return false;
@@ -510,7 +510,7 @@ namespace PRISM.FileProcessor
 
                 if (recursionLevel == 1 && folderNameMatchPattern == "*")
                 {
-                    // Need to process the current folder
+                    // Need to process the current directory
                     success = ProcessFolder(inputFolder.FullName, outputFolderPathToUse, parameterFilePath, true);
                     if (!success)
                     {
@@ -522,30 +522,30 @@ namespace PRISM.FileProcessor
                     }
                 }
 
-                // Process any matching folder in this folder
+                // Process any matching subdirectory in this directory
 
                 var matchCount = 0;
                 var lastProgress = DateTime.UtcNow;
 
-                var foldersToProcess = inputFolder.GetDirectories(folderNameMatchPattern).ToList();
+                var directoriesToProcess = inputFolder.GetDirectories(folderNameMatchPattern).ToList();
 
                 success = true;
-                foreach (var folder in foldersToProcess)
+                foreach (var directory in directoriesToProcess)
                 {
                     matchCount++;
 
                     // This is the % complete in this directory only; not overall
-                    var percentComplete = matchCount / (float)foldersToProcess.Count * 100;
-                    OnProgressUpdate("Process " + folder.FullName, percentComplete);
+                    var percentComplete = matchCount / (float)directoriesToProcess.Count * 100;
+                    OnProgressUpdate("Process " + directory.FullName, percentComplete);
 
                     if (outputFolderPathToUse.Length > 0)
                     {
-                        success = ProcessFolder(folder.FullName, Path.Combine(outputFolderPathToUse, folder.Name),
-                                                   parameterFilePath, true);
+                        var alternateOutputDirectoryPath = Path.Combine(outputFolderPathToUse, directory.Name);
+                        success = ProcessFolder(directory.FullName, alternateOutputDirectoryPath, parameterFilePath, true);
                     }
                     else
                     {
-                        success = ProcessFolder(folder.FullName, string.Empty, parameterFilePath, true);
+                        success = ProcessFolder(directory.FullName, string.Empty, parameterFilePath, true);
                     }
 
                     if (!success)
@@ -583,10 +583,10 @@ namespace PRISM.FileProcessor
             //  otherwise, compare recursionLevel to recurseFoldersMaxLevels
             if (recurseFoldersMaxLevels <= 0 || recursionLevel <= recurseFoldersMaxLevels)
             {
-                // Call this function for each of the subfolders of ioInputFolderInfo
-                foreach (var subFolder in inputFolder.GetDirectories())
+                // Call this function for each of the subdirectories of inputFolder
+                foreach (var subdirectory in inputFolder.GetDirectories())
                 {
-                    success = RecurseFoldersWork(subFolder.FullName, folderNameMatchPattern, parameterFilePath,
+                    success = RecurseFoldersWork(subdirectory.FullName, folderNameMatchPattern, parameterFilePath,
                                                  outputFolderAlternatePath, ref folderProcessCount,
                                                  ref folderProcessFailCount, recursionLevel + 1, recurseFoldersMaxLevels);
                     if (!success)

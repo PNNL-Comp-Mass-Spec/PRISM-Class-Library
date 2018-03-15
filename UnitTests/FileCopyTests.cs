@@ -45,7 +45,7 @@ namespace PRISMTest
                 }
                 catch (Exception ex)
                 {
-                    Assert.Fail("Error creating test folder and/or test files at " + sourceFolder + ": " + ex.Message);
+                    Assert.Fail("Error creating test directory and/or test files at " + sourceFolder + ": " + ex.Message);
                 }
 
             }

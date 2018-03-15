@@ -23,7 +23,7 @@ namespace PRISMTest
         public static bool AssertFailIfNotFound { get; set; }
 
         /// <summary>
-        /// Share folder path
+        /// Windows share path
         /// </summary>
         public static string SharePath { get; set; } = DEFAULT_SHARE_PATH;
 
@@ -59,7 +59,7 @@ namespace PRISMTest
             if (!string.IsNullOrWhiteSpace(mLastMatchedParentPath))
             {
                 // Check the last parent path where we successfully found a data file
-                // The new data file might be in the same folder
+                // The new data file might be in the same directory
                 foreach (var relativePath in relativePathsToCheck)
                 {
                     var alternateFile = new FileInfo(Path.Combine(mLastMatchedParentPath, relativePath));

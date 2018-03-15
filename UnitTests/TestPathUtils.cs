@@ -78,37 +78,37 @@ namespace PRISMTest
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
         [Category("PNL_Domain")]
-        public void TestFindFilesWildcardInternal(string folderPath, string fileMask, string expectedFileNames, bool recurse)
+        public void TestFindFilesWildcardInternal(string directoryPath, string fileMask, string expectedFileNames, bool recurse)
         {
-            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, recurse);
+            TestFindFilesWildcardWork(directoryPath, fileMask, expectedFileNames, recurse);
         }
 
         [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
         [TestCase(@"c:\windows\", "*.ini", "system.ini, win.ini")]
-        public void TestFindFilesWildcard(string folderPath, string fileMask, string expectedFileNames)
+        public void TestFindFilesWildcard(string directoryPath, string fileMask, string expectedFileNames)
         {
-            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, false);
+            TestFindFilesWildcardWork(directoryPath, fileMask, expectedFileNames, false);
         }
 
         /// <summary>
         /// Find files recursively below C:\Windows
         /// Only run this inside PNNL because it is slow on AppVeyor
         /// </summary>
-        /// <param name="folderPath"></param>
+        /// <param name="directoryPath"></param>
         /// <param name="fileMask"></param>
         /// <param name="expectedFileNames"></param>
         [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
         [TestCase(@"c:\windows\", "*.dll", "perfos.dll, perfnet.dll")]
         [Category("PNL_Domain")]
-        public void TestFindFilesRecurse(string folderPath, string fileMask, string expectedFileNames)
+        public void TestFindFilesRecurse(string directoryPath, string fileMask, string expectedFileNames)
         {
-            TestFindFilesWildcardWork(folderPath, fileMask, expectedFileNames, true);
+            TestFindFilesWildcardWork(directoryPath, fileMask, expectedFileNames, true);
         }
 
         [TestCase(@"LinuxTestFiles\Ubuntu\proc\cpuinfo", "*info", "cpuinfo, meminfo", 6)]
         public void TestFindFilesWildcardRelativeFolder(string filePath, string fileMask, string expectedFileNames, int expectedFileCount)
         {
-            // Get the full path to the LinuxTestFiles folder, 3 levels up from the cpuinfo test file
+            // Get the full path to the LinuxTestFiles directory, 3 levels up from the cpuinfo test file
             var cpuInfoFile = FileRefs.GetTestFile(filePath);
 
             var currentDirectory = cpuInfoFile.Directory;
@@ -124,22 +124,22 @@ namespace PRISMTest
             TestFindFilesWildcardWork(currentDirectory.FullName, fileMask, expectedFileNames, true, expectedFileCount);
         }
 
-        private void TestFindFilesWildcardWork(string folderPath, string fileMask, string expectedFileNames, bool recurse, int expectedFileCount = 0)
+        private void TestFindFilesWildcardWork(string directoryPath, string fileMask, string expectedFileNames, bool recurse, int expectedFileCount = 0)
         {
-            var folder = new DirectoryInfo(folderPath);
+            var directory = new DirectoryInfo(directoryPath);
 
-            // Combine the folder path and the file mask
-            var pathSpec = Path.Combine(folder.FullName, fileMask);
+            // Combine the directory path and the file mask
+            var pathSpec = Path.Combine(directory.FullName, fileMask);
 
             var files1 = clsPathUtils.FindFilesWildcard(pathSpec, recurse);
 
             // Separately, send the DirectoryInfo object plus the file mask
-            var files2 = clsPathUtils.FindFilesWildcard(folder, fileMask, recurse);
+            var files2 = clsPathUtils.FindFilesWildcard(directory, fileMask, recurse);
 
             int allowedVariance;
 
             // The results should be the same, though the number of .ini files in the Windows directory can vary so we allow some variance
-            if (folderPath.ToLower().Contains(@"\windows") || files1.Count > 1000)
+            if (directoryPath.ToLower().Contains(@"\windows") || files1.Count > 1000)
                 allowedVariance = (int)Math.Floor(files1.Count * 0.05);
             else
                 allowedVariance = 0;
@@ -178,7 +178,7 @@ namespace PRISMTest
             foreach (var expectedFile in expectedFileList)
             {
                 if (!foundFileNames.Contains(expectedFile.Trim()))
-                    Assert.Fail("Did not an expected file in {0}: {1}", folderPath, expectedFile);
+                    Assert.Fail("Did not an expected file in {0}: {1}", directoryPath, expectedFile);
             }
 
             if (expectedFileCount > 0)

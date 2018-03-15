@@ -313,7 +313,7 @@ namespace PRISM
         public string MostRecentErrorMessage { get; private set; } = "";
 
         /// <summary>
-        /// Move log files more than 32 days old into a year-based folder
+        /// Move log files more than 32 days old into a year-based directory
         /// </summary>
         private void ArchiveOldLogs()
         {

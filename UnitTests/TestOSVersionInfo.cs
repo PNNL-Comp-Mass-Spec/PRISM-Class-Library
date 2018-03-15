@@ -65,7 +65,7 @@ namespace PRISMTest
 
             if (!etcFolder.Exists)
             {
-                Assert.Ignore("/etc folder not found at " + etcFolder.FullName);
+                Assert.Ignore("/etc directory not found at " + etcFolder.FullName);
             }
 
             var osVersionInfo = new clsOSVersionInfo();

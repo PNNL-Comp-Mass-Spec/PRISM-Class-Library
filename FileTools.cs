@@ -168,7 +168,7 @@ namespace PRISM
             /// </summary>
             OverwriteIfSourceNewer = 2,
             /// <summary>
-            /// OverWrite if any difference in size or date; note that newer files in target folder will get overwritten since their date doesn't match
+            /// OverWrite if any difference in size or date; note that newer files in target directory will get overwritten since their date doesn't match
             /// </summary>
             OverWriteIfDateOrLengthDiffer = 3
         }
@@ -789,7 +789,7 @@ namespace PRISM
         }
 
         /// <summary>
-        ///  Deletes the specified directory and all subdirectories
+        /// Deletes the specified directory and all subdirectories
         /// </summary>
         /// <param name="directoryPath"></param>
         /// <returns>True if success, false if an error</returns>
@@ -832,7 +832,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Deletes the specified directory and all subdirectories; does not delete the target folder
+        /// Deletes the specified directory and all subdirectories; does not delete the target directory
         /// </summary>
         /// <param name="directoryPath"></param>
         /// <returns>True if success, false if an error</returns>
@@ -846,7 +846,7 @@ namespace PRISM
         /// Deletes the specified directory and all subdirectories
         /// </summary>
         /// <param name="directoryPath"></param>
-        /// <param name="deleteFolderIfEmpty">Set to True to delete the folder, if it is empty</param>
+        /// <param name="deleteFolderIfEmpty">Set to True to delete the directory, if it is empty</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
         public bool DeleteDirectoryFiles(string directoryPath, bool deleteFolderIfEmpty)
@@ -1283,7 +1283,7 @@ namespace PRISM
                 {
                     if (subFolder.FullName.Equals(destDir.FullName))
                     {
-                        // Skip this subdirectory since it is our destination folder
+                        // Skip this subdirectory since it is our destination directory
                         continue;
                     }
                     CopyDirectoryEx(subFolder.FullName, Path.Combine(destDir.FullName, subFolder.Name), overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
@@ -1491,7 +1491,7 @@ namespace PRISM
 
             if (targetFolder.Parent == null)
             {
-                throw new DirectoryNotFoundException("Unable to determine the parent folder of " + targetFolder.FullName);
+                throw new DirectoryNotFoundException("Unable to determine the parent directory of " + targetFolder.FullName);
             }
             // If destination SubDir's parent directory does not exist throw an exception
             if (!targetFolder.Parent.Exists)
@@ -1506,7 +1506,7 @@ namespace PRISM
 
             try
             {
-                // Create the target folder if necessary
+                // Create the target directory if necessary
                 if (!targetFolder.Exists)
                 {
                     targetFolder.Create();
@@ -1783,7 +1783,7 @@ namespace PRISM
                 {
                     UpdateCurrentStatus(CopyStatus.BufferedCopy, sourceFile.FullName);
 
-                    // Delete FilePart file in the target folder if it already exists
+                    // Delete FilePart file in the target directory if it already exists
                     if (filePart.Exists)
                     {
                         filePart.Delete();
@@ -1993,10 +1993,10 @@ namespace PRISM
             //
             // Original code obtained from vb2themax.com
             long folderSize = 0;
-            var folder = new DirectoryInfo(folderPath);
+            var directory = new DirectoryInfo(folderPath);
 
             // Add the size of each file
-            foreach (var childFile in folder.GetFiles())
+            foreach (var childFile in directory.GetFiles())
             {
                 folderSize += childFile.Length;
                 fileCount += 1;
@@ -2004,7 +2004,7 @@ namespace PRISM
 
             // Add the size of each sub-directory, that is retrieved by recursively
             // calling this same routine
-            foreach (var subDir in folder.GetDirectories())
+            foreach (var subDir in directory.GetDirectories())
             {
                 folderSize += GetDirectorySizeEX(subDir.FullName, ref fileCount, ref subFolderCount);
                 subFolderCount += 1;
@@ -2068,7 +2068,7 @@ namespace PRISM
             sourceFolder.Refresh();
             if (sourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Length == 0)
             {
-                // This folder is now empty; delete it
+                // This directory is now empty; delete it
                 try
                 {
                     sourceFolder.Delete(true);
@@ -2090,7 +2090,7 @@ namespace PRISM
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
         /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        /// Use this function to backup old versions of a file before copying a new version to a target folder
+        /// Use this function to backup old versions of a file before copying a new version to a target directory
         /// Keeps up to 9 old versions of a file
         /// </summary>
         /// <param name="targetFilePath">Full path to the file to backup</param>
@@ -2104,7 +2104,7 @@ namespace PRISM
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
         /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        /// Use this function to backup old versions of a file before copying a new version to a target folder
+        /// Use this function to backup old versions of a file before copying a new version to a target directory
         /// </summary>
         /// <param name="targetFilePath">Full path to the file to backup</param>
         /// <param name="versionCountToKeep">Maximum backup copies of the file to keep</param>
@@ -2722,7 +2722,7 @@ namespace PRISM
             // Wait for up to 180 minutes (3 hours) for the server resources to free up
 
             // However, if retrieving files from adms.emsl.pnl.gov only wait for a maximum of 30 minutes
-            // because sometimes that folder's permissions get messed up and we can create files there, but cannot delete them
+            // because sometimes that directory's permissions get messed up and we can create files there, but cannot delete them
 
             var maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES;
             var maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES;

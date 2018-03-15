@@ -76,7 +76,7 @@ namespace PRISMTest
         {
             var procFolder = ValidateLocalProcFolder();
 
-            // Update the cpuinfo file in the local proc folder
+            // Update the cpuinfo file in the local proc directory
             CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
             var linuxSystemInfo = new clsLinuxSystemInfo();
@@ -103,20 +103,20 @@ namespace PRISMTest
 
             var procFolder = ValidateLocalProcFolder();
 
-            // Update the cpuinfo file in the local proc folder
+            // Update the cpuinfo file in the local proc directory
             CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
-            // Update the cpu stat file in the local proc folder using sourceProcFolderPath
+            // Update the cpu stat file in the local proc directory using sourceProcFolderPath
             var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
             var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
 
-            // Update the process stat file in the local proc folder using sourceProcFolderPath
+            // Update the process stat file in the local proc directory using sourceProcFolderPath
             var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
             var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
             var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
 
-            // Update the process cmdline file in the local proc folder using sourceProcFolderPath
+            // Update the process cmdline file in the local proc directory using sourceProcFolderPath
             var sourceCmdLineFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\cmdline"));
             var targetCmdLineFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\cmdline"));
 
@@ -184,15 +184,15 @@ namespace PRISMTest
 
             var procFolder = ValidateLocalProcFolder();
 
-            // Update the cpuinfo file in the local proc folder
+            // Update the cpuinfo file in the local proc directory
             CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
-            // Update the cpu stat file in the local proc folder using sourceProcFolderPath
+            // Update the cpu stat file in the local proc directory using sourceProcFolderPath
             var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
             var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
 
-            // Update the process stat file in the local proc folder using sourceProcFolderPath
+            // Update the process stat file in the local proc directory using sourceProcFolderPath
             var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
             var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
             var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
@@ -237,7 +237,7 @@ namespace PRISMTest
         private void CopyCPUInfoFile(FileSystemInfo procFolder, string sourceProcFolderPath)
         {
 
-            // Update the cpuinfo file in the local proc folder using sourceProcFolderPath
+            // Update the cpuinfo file in the local proc directory using sourceProcFolderPath
             var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.CPUINFO_FILE));
             var targetCpuInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.CPUINFO_FILE));
 
@@ -349,10 +349,10 @@ namespace PRISMTest
 
             var procFolder = ValidateLocalProcFolder();
 
-            // Update the cpuinfo file in the local proc folder
+            // Update the cpuinfo file in the local proc directory
             CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
-            // Update the cpu stat file in the local proc folder using sourceProcFolderPath
+            // Update the cpu stat file in the local proc directory using sourceProcFolderPath
             var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
             var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
@@ -393,7 +393,7 @@ namespace PRISMTest
         {
             var procFolder = ValidateLocalProcFolder();
 
-            // Update the meminfo file in the local proc folder using sourceProcFolderPath
+            // Update the meminfo file in the local proc directory using sourceProcFolderPath
             var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.MEMINFO_FILE));
             var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.MEMINFO_FILE));
 
@@ -435,7 +435,7 @@ namespace PRISMTest
         {
             var procFolder = ValidateLocalProcFolder();
 
-            // Update the meminfo file in the local proc folder using sourceProcFolderPath
+            // Update the meminfo file in the local proc directory using sourceProcFolderPath
             var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.MEMINFO_FILE));
             var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.MEMINFO_FILE));
 
@@ -490,7 +490,7 @@ namespace PRISMTest
             if (procFolder.Exists)
                 return procFolder;
 
-            // Proc folder not found; try to make it
+            // Proc directory not found; try to make it
             try
             {
                 procFolder.Create();
