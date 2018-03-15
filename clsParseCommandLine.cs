@@ -265,7 +265,7 @@ namespace PRISM
                     Console.WriteLine(@" Exception: " + ex.Message);
                     Console.WriteLine(@"------------------------------------------------------------------------------");
 
-                    PauseAtConsole(5000, 1000);
+                    PauseAtConsole();
 
                     NeedToShowHelp = true;
                     return false;

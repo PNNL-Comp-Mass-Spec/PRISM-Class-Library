@@ -19,7 +19,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessFoldersBase()
         {
-            mFileDate = "November 8, 2017";
+            mFileDate = "February 8, 2017";
             ErrorCode = eProcessFoldersErrorCodes.NoError;
         }
 

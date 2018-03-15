@@ -436,7 +436,7 @@ namespace PRISM
         private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
         {
             object castValue = null;
-            if (!"null".Equals(valueToParse, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals("null", valueToParse, StringComparison.OrdinalIgnoreCase))
             {
                 castValue = ConvertToType(valueToParse, propertyType);
             }
