@@ -708,39 +708,6 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Creates a section name.
-        /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value to be created.</param>
-        /// <return>The function returns a Boolean.</return>
-        [Obsolete("Unused")]
-        private bool CreateItem(string sectionName, string keyName, string newValue)
-        {
-            try
-            {
-                var section = GetSection(sectionName);
-                if (section != null)
-                {
-                    var item = m_XmlDoc.CreateElement("item");
-                    item.SetAttribute("key", keyName);
-                    item.SetAttribute("newValue", newValue);
-                    section.AppendChild(item);
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                if (NotifyOnException)
-                {
-                    throw new Exception("Failed to create item: " + e.Message);
-                }
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Manually read a XML or .INI settings file line-by-line, extracting out any settings in the expected format
         /// </summary>
         /// <param name="filePath"></param>
