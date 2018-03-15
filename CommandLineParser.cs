@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace PRISM
 {
@@ -42,8 +40,6 @@ namespace PRISM
         private static readonly char[] mDefaultParamChars = { '-', '/' };
         private static readonly char[] mDefaultSeparatorChars = { ' ', ':', '=' };
         private static readonly string[] mDefaultHelpArgs = { "?", "help" };
-
-        private static readonly Regex mLeadingWhitespaceMatcher = new Regex("^ +");
 
         /// <summary>
         /// Results from the parsing
@@ -983,16 +979,7 @@ namespace PRISM
         /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
         public static string WrapParagraph(string textToWrap, int wrapWidth = 80)
         {
-            var wrappedText = new StringBuilder();
-            foreach (var line in WrapParagraphAsList(textToWrap, wrapWidth))
-            {
-                if (wrappedText.Length > 0)
-                    wrappedText.AppendLine();
-
-                wrappedText.Append(line);
-            }
-
-            return wrappedText.ToString();
+            return ConsoleMsgUtils.WrapParagraph(textToWrap, wrapWidth);
         }
 
         /// <summary>
@@ -1004,50 +991,7 @@ namespace PRISM
         /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
         public static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
         {
-            // Check for newline characters
-            var textLinesToWrap = textToWrap.Split('\r', '\n');
-
-            // List of wrapped text lines
-            var wrappedText = new List<string>();
-
-            foreach (var lineToWrap in textLinesToWrap)
-            {
-                var reMatch = mLeadingWhitespaceMatcher.Match(lineToWrap);
-
-                var leadingWhitespace = reMatch.Success ? reMatch.Value : string.Empty;
-
-                var split = lineToWrap.Split(' ');
-
-                var line = leadingWhitespace;
-
-                foreach (var key in split)
-                {
-                    if (!string.IsNullOrWhiteSpace(line))
-                    {
-                        if (key.Length + line.Length > wrapWidth)
-                        {
-                            wrappedText.Add(line);
-                            line = leadingWhitespace;
-                        }
-                        else
-                        {
-                            line += " ";
-                        }
-                    }
-                    line += key.Replace('\a', ' ');
-                }
-
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    wrappedText.Add(string.Empty);
-                }
-                else
-                {
-                    wrappedText.Add(line);
-                }
-            }
-
-            return wrappedText;
+            return ConsoleMsgUtils.WrapParagraphAsList(textToWrap, wrapWidth);
         }
 
         /// <summary>
