@@ -2815,6 +2815,60 @@ namespace PRISM
 
         #region "GZip Compression"
 
+
+        /// <summary>
+        /// Compress a file using the built-in GZipStream (stores minimal GZip metadata)
+        /// </summary>
+        /// <param name="fileToCompress">File to compress</param>
+        /// <param name="compressedDirectoryPath">Path to directory where compressed file should be created</param>
+        /// <param name="compressedFileName">Name of compressed file</param>
+        public static void GZipCompress(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null)
+        {
+            var compressedFilePath = ConstructCompressedGZipFilePath(fileToCompress, compressedDirectoryPath, compressedFileName);
+
+            using (var decompressedFileStream = fileToCompress.OpenRead())
+            using (var compressedFileStream = File.Create(compressedFilePath))
+            using (var compressionStream = new GZipStream(compressedFileStream, CompressionMode.Compress))
+            {
+                decompressedFileStream.CopyTo(compressionStream);
+            }
+
+            // Update the modification time of the .gz file to match the time of fileToCompress
+            File.SetLastWriteTimeUtc(compressedFilePath, fileToCompress.LastWriteTimeUtc);
+        }
+
+        /// <summary>
+        /// Compress a file, using a special implementation to add supported metadata to the file (like last modified time and file name)
+        /// </summary>
+        /// <param name="fileToCompress">file to compress</param>
+        /// <param name="compressedDirectoryPath">path to directory where the gzipped file should be created</param>
+        /// <param name="compressedFileName">name for the gzipped file</param>
+        /// <param name="doNotStoreFileName">if true, the filename is not stored in the gzip metadata (so contained file name depends on gzip file name)</param>
+        /// <param name="comment">optional comment to add to gzip metadata (generally not used by decompression programs)</param>
+        /// <param name="addHeaderCrc">if true, a CRC16 hash of the header information is written to the gzip metadata</param>
+        public static void GZipCompressWithMetadata(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null, bool doNotStoreFileName = false, string comment = null, bool addHeaderCrc = false)
+        {
+
+            var compressedFilePath = ConstructCompressedGZipFilePath(fileToCompress, compressedDirectoryPath, compressedFileName);
+
+            string storedFileName = null;
+            if (!doNotStoreFileName)
+            {
+                storedFileName = fileToCompress.Name;
+            }
+
+            // GZipMetadataStream wraps the filestream to add the metadata at the right time during the file write
+            using (var decompressedFileStream = fileToCompress.OpenRead())
+            using (var compressedFileStream = File.Create(compressedFilePath))
+            using (var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc))
+            using (var compressionStream = new GZipStream(metadataAdder, CompressionMode.Compress))
+            {
+                decompressedFileStream.CopyTo(compressionStream);
+            }
+
+            // Since metadata in the .gz file includes the last write time of the compressed file, do not change the last write time of the .gz file
+        }
+
         /// <summary>
         /// Decompress a gzip file
         /// </summary>
@@ -2859,27 +2913,6 @@ namespace PRISM
                 // Update the modification time of the decompressed file to match the time of the .gz file
                 decompressedFile.LastWriteTimeUtc = fileToDecompress.LastWriteTimeUtc;
             }
-        }
-
-        /// <summary>
-        /// Compress a file using the built-in GZipStream (stores minimal GZip metadata)
-        /// </summary>
-        /// <param name="fileToCompress">File to compress</param>
-        /// <param name="compressedDirectoryPath">Path to directory where compressed file should be created</param>
-        /// <param name="compressedFileName">Name of compressed file</param>
-        public static void GZipCompress(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null)
-        {
-            var compressedFilePath = ConstructCompressedGZipFilePath(fileToCompress, compressedDirectoryPath, compressedFileName);
-
-            using (var decompressedFileStream = fileToCompress.OpenRead())
-            using (var compressedFileStream = File.Create(compressedFilePath))
-            using (var compressionStream = new GZipStream(compressedFileStream, CompressionMode.Compress))
-            {
-                decompressedFileStream.CopyTo(compressionStream);
-            }
-
-            // Update the modification time of the .gz file to match the time of fileToCompress
-            File.SetLastWriteTimeUtc(compressedFilePath, fileToCompress.LastWriteTimeUtc);
         }
 
         /// <summary>
@@ -2935,38 +2968,6 @@ namespace PRISM
             File.SetLastWriteTime(decompressedFilePath, lastModified);
 
             return decompressedFilePath;
-        }
-
-        ///  <summary>
-        /// Compress a file, using a special implementation to add supported metadata to the file (like last modified time and file name)
-        ///  </summary>
-        ///  <param name="fileToCompress">file to compress</param>
-        ///  <param name="compressedDirectoryPath">path to directory where the gzipped file should be created</param>
-        ///  <param name="compressedFileName">name for the gzipped file</param>
-        ///  <param name="doNotStoreFileName">if true, the filename is not stored in the gzip metadata (so contained file name depends on gzip file name)</param>
-        ///  <param name="comment">optional comment to add to gzip metadata (generally not used by decompression programs)</param>
-        /// <param name="addHeaderCrc">if true, a CRC16 hash of the header information is written to the gzip metadata</param>
-        public static void GZipCompressWithMetadata(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null, bool doNotStoreFileName = false, string comment = null, bool addHeaderCrc = false)
-        {
-
-            var compressedFilePath = ConstructCompressedGZipFilePath(fileToCompress, compressedDirectoryPath, compressedFileName);
-
-            string storedFileName = null;
-            if (!doNotStoreFileName)
-            {
-                storedFileName = fileToCompress.Name;
-            }
-
-            // GZipMetadataStream wraps the filestream to add the metadata at the right time during the file write
-            using (var decompressedFileStream = fileToCompress.OpenRead())
-            using (var compressedFileStream = File.Create(compressedFilePath))
-            using (var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc))
-            using (var compressionStream = new GZipStream(metadataAdder, CompressionMode.Compress))
-            {
-                decompressedFileStream.CopyTo(compressionStream);
-            }
-
-            // Since metadata in the .gz file includes the last write time of the compressed file, do not change the last write time of the .gz file
         }
 
         /// <summary>
