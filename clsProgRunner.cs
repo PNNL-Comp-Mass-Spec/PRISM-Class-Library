@@ -1002,6 +1002,5 @@ namespace PRISM
         }
 
         #endregion
-
     }
 }

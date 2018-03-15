@@ -113,7 +113,7 @@ namespace PRISM
     {
         #region Memory P/Invoke
 
-        //http://www.pinvoke.net/default.aspx/kernel32/GlobalMemoryStatusEx.html
+        // https://www.pinvoke.net/default.aspx/kernel32/GlobalMemoryStatusEx.html
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, EntryPoint = "GlobalMemoryStatusEx", SetLastError = true)]

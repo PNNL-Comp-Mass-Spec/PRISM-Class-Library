@@ -180,7 +180,7 @@ namespace PRISM
         /// <param name="fileName"></param>
         /// <param name="fileMask"></param>
         /// <returns>True if a match, otherwise false</returns>
-        /// <remarks>From "http://stackoverflow.com/questions/725341/how-to-determine-if-a-file-matches-a-file-mask/19655824#19655824"</remarks>
+        /// <remarks>From "https://stackoverflow.com/questions/725341/how-to-determine-if-a-file-matches-a-file-mask/19655824#19655824"</remarks>
         public static bool FitsMask(string fileName, string fileMask)
         {
             var convertedMask = "^" + Regex.Escape(fileMask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";

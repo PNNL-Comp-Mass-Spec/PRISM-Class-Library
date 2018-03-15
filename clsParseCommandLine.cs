@@ -2,25 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-// This class can be used to parse the text following the program name when a
-//  program is started from the command line
-//
-// -------------------------------------------------------------------------------
-// Written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA)
-// Program started November 8, 2003
-
-// E-mail: matthew.monroe@pnnl.gov or matt@alchemistmatt.com
-// Website: http://panomics.pnnl.gov/ or http://www.sysbio.org/resources/staff/
-// -------------------------------------------------------------------------------
-//
-// Last modified February 13, 2017
-
-// NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking. Instead use the CommandLineParser class.
+// NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
+// Instead use the CommandLineParser class.
 #if !(NETSTANDARD1_x)
 namespace PRISM
 {
     /// <summary>
-    /// Parse command line switches
+    /// This class can be used to parse the text following the program name when a
+    /// program is started from the command line
     /// </summary>
     public class clsParseCommandLine
     {
