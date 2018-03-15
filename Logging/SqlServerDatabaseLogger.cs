@@ -7,7 +7,7 @@ using System.Threading;
 namespace PRISM.Logging
 {
     /// <summary>
-    /// Logs messages to a database by calling a stored procedure
+    /// Logs messages to a SQL Server database by calling a stored procedure
     /// Connect using System.Data.SqlClient
     /// </summary>
     /// <remarks>Can only log to a single database at a time</remarks>
