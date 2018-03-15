@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PRISM
 {
@@ -140,7 +141,7 @@ namespace PRISM
         /// <param name="indentChars">Characters to use to indent the message</param>
         public static void ShowDebug(string message, string indentChars = "  ")
         {
-            if (System.IO.Path.DirectorySeparatorChar == '/' && !mAutoCheckedDebugFontColor)
+            if (Path.DirectorySeparatorChar == '/' && !mAutoCheckedDebugFontColor)
             {
                 // Running on Linux
                 // Dark gray appears as black when using Putty; use blue instead
@@ -177,6 +178,53 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Sleep for the specified number of seconds
+        /// </summary>
+        /// <param name="waitTimeSeconds"></param>
+        /// <remarks>Sleeps for 10 second chunks until waitTimeSeconds has elapsed</remarks>
+        public static void SleepSeconds(double waitTimeSeconds)
+        {
+            var endTime = DateTime.UtcNow.AddSeconds(waitTimeSeconds);
+            while (endTime.Subtract(DateTime.UtcNow).TotalMilliseconds > 10)
+            {
+                var remainingSeconds = endTime.Subtract(DateTime.UtcNow).TotalSeconds;
+                if (remainingSeconds > 10)
+                {
+                    clsProgRunner.SleepMilliseconds(10000);
+                }
+                else
+                {
+                    var sleepTimeMsec = (int)Math.Ceiling(remainingSeconds * 1000);
+                    clsProgRunner.SleepMilliseconds(sleepTimeMsec);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Wraps the words in textToWrap to the set width (where possible)
+        /// </summary>
+        /// <param name="textToWrap">Text to wrap</param>
+        /// <param name="wrapWidth">Max length per line</param>
+        /// <returns>Wrapped paragraph</returns>
+        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
+        public static string WrapParagraph(string textToWrap, int wrapWidth = 80)
+        {
+            return CommandLineParser<GenericParserOptions>.WrapParagraph(textToWrap, wrapWidth);
+        }
+
+        /// <summary>
+        /// Wraps the words in textToWrap to the set width (where possible)
+        /// </summary>
+        /// <param name="textToWrap">Text to wrap</param>
+        /// <param name="wrapWidth">Max length per line</param>
+        /// <returns>Wrapped paragraph as a list of strings</returns>
+        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
+        public static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
+        {
+            return CommandLineParser<GenericParserOptions>.WrapParagraphAsList(textToWrap, wrapWidth);
+        }
+
+        /// <summary>
         /// Write a message to the error stream
         /// </summary>
         /// <param name="errorMessage"></param>
@@ -184,7 +232,7 @@ namespace PRISM
         {
             try
             {
-                using (var swErrorStream = new System.IO.StreamWriter(Console.OpenStandardError()))
+                using (var swErrorStream = new StreamWriter(Console.OpenStandardError()))
                 {
                     swErrorStream.WriteLine(errorMessage);
                 }
@@ -194,6 +242,5 @@ namespace PRISM
                 // Ignore errors here
             }
         }
-
     }
 }
