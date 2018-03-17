@@ -48,6 +48,8 @@ namespace PRISM
 
         private DateTime mLastDebugInfoTimeMemory;
 
+        private DateTime mLastDebugInfoTimeProcesses;
+
         private readonly Regex mMemorySizeMatcher;
 
         private readonly Regex mMemorySizeMatcherNoUnits;
@@ -92,6 +94,8 @@ namespace PRISM
             mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow.AddMinutes(-1);
 
             mLastDebugInfoTimeMemory = DateTime.UtcNow.AddMinutes(-1);
+
+            mLastDebugInfoTimeProcesses = DateTime.UtcNow.AddMinutes(-1);
 
             mMemorySizeMatcher = new Regex(@"(?<Size>\d+) +(?<Units>(KB|MB|GB|TB|))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -1085,6 +1089,81 @@ namespace PRISM
 
                 return -1;
             }
+        }
+
+        /// <summary>
+        /// Look for currently active processes
+        /// </summary>
+        /// <param name="lookupCommandLineInfo">Ignored on Linux, but required due to this class implementing ISystemInfo</param>
+        /// <returns>Dictionary where keys are process ID and values are ProcessInfo</returns>
+        /// <remarks></remarks>
+        public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
+        {
+
+            var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeProcesses).TotalSeconds > 15;
+            if (showDebugInfo)
+                mLastDebugInfoTimeProcesses = DateTime.UtcNow;
+
+            var processList = new Dictionary<int, ProcessInfo>();
+
+            try
+            {
+                // Examine the processes tracked by Process IDs in the /proc directory
+                var procDirectory = new DirectoryInfo(ROOT_PROC_DIRECTORY);
+                if (!procDirectory.Exists)
+                {
+                    if (showDebugInfo)
+                        OnDebugEvent("Proc directory not found at " + ROOT_PROC_DIRECTORY);
+
+                    return processList;
+                }
+
+                foreach (var processIdDirectory in procDirectory.GetDirectories())
+                {
+                    if (!int.TryParse(processIdDirectory.Name, out var processId))
+                    {
+                        // Skip directories that are not an integer
+                        continue;
+                    }
+
+                    // Open the cmdline file (if it exists) to determine the process name and commandline arguments
+                    var cmdLineFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
+                        ROOT_PROC_DIRECTORY, processIdDirectory.Name), "cmdline");
+
+                    var cmdLineFile = new FileInfo(cmdLineFilePath);
+                    if (!cmdLineFile.Exists)
+                        continue;
+
+                    var success = GetCmdLineFileInfo(cmdLineFile, out var exePath, out var arguments);
+                    if (!success)
+                        continue;
+
+                    string processName;
+                    if (exePath.StartsWith("sshd:"))
+                    {
+                        processName = string.Copy(exePath);
+                    }
+                    else
+                    {
+                        processName = Path.GetFileName(exePath);
+                    }
+
+                    var process = new ProcessInfo(processId, processName, exePath, arguments);
+
+                    processList.Add(processId, process);
+                }
+
+                return processList;
+
+            }
+            catch (Exception ex)
+            {
+                if (showDebugInfo)
+                    ConditionalLogError("Error in GetProcesses: " + ex.Message);
+
+                return processList;
+            }
+
         }
 
         /// <summary>
