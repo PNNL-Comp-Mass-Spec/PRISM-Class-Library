@@ -681,35 +681,22 @@ namespace PRISM
 
             try
             {
-                // Get a list of process IDs in the /proc folder
-                var procFolder = new DirectoryInfo(ROOT_PROC_DIRECTORY);
-                if (!procFolder.Exists)
+                // Examine the processes tracked by Process IDs in the /proc directory
+                var processes = GetProcesses();
+                if (processes.Count == 0)
                 {
-                    if (showDebugInfo)
-                        OnDebugEvent("Proc folder not found at " + ROOT_PROC_DIRECTORY);
-
+                    // No processes found; an error has likely already been logged
                     return -1;
                 }
 
                 var matchProgramNameOnly = !processName.Contains("/");
 
-                foreach (var processIdFolder in procFolder.GetDirectories())
+                foreach (var process in processes.Values)
                 {
-                    // Open the cmdline file (if it exists) to determine the process name and commandline arguments
-                    var cmdLineFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
-                        ROOT_PROC_DIRECTORY, processIdFolder.Name), "cmdline");
-
-                    var cmdLineFile = new FileInfo(cmdLineFilePath);
-                    if (!cmdLineFile.Exists)
-                        continue;
-
-                    var success = GetCmdLineFileInfo(cmdLineFile, out var processIdProgram, out var processIdArgs);
-                    if (!success)
-                        continue;
 
                     if (matchProgramNameOnly)
                     {
-                        var processIdProgName = Path.GetFileName(processIdProgram);
+                        var processIdProgName = Path.GetFileName(process.ExePath);
                         if (string.IsNullOrWhiteSpace(processIdProgName))
                             continue;
 
@@ -718,21 +705,18 @@ namespace PRISM
                     }
                     else
                     {
-                        if (!processIdProgram.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                        if (!process.ExePath.Equals(processName, StringComparison.OrdinalIgnoreCase))
                             continue;
                     }
 
                     if (!string.IsNullOrWhiteSpace(argumentText))
                     {
-                        var validMatch = processIdArgs.Any(argument => argument.IndexOf(argumentText, StringComparison.OrdinalIgnoreCase) >= 0);
+                        var validMatch = process.ArgumentList.Any(argument => argument.IndexOf(argumentText, StringComparison.OrdinalIgnoreCase) >= 0);
                         if (!validMatch)
                             continue;
                     }
 
-                    if (!int.TryParse(processIdFolder.Name, out var processId))
-                        continue;
-
-                    processIDs.Add(processId);
+                    processIDs.Add(process.ProcessID);
                 }
 
                 if (processIDs.Count == 0)
