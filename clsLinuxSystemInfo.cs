@@ -245,9 +245,9 @@ namespace PRISM
         /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
-        /// For multithreaded applications, the task folder below the ProcessID folder will have
-        /// separate ProcessID folders for each thread.  Those folders could be parsed to determine
-        /// the processing time for each thread.  However, the stat file in the base ProcessID folder
+        /// For multithreaded applications, the task directory below the ProcessID directory will have
+        /// separate ProcessID directories for each thread.  Those directories could be parsed to determine
+        /// the processing time for each thread.  However, the stat file in the base ProcessID directory
         /// has the combined processing time for all threads, so parsing of individual thread stat times
         /// is not necessary to determine overall processing time.
         /// </remarks>
@@ -424,10 +424,10 @@ namespace PRISM
             return memorySizeMB;
         }
 
-        private bool GetCmdLineFileInfo(FileSystemInfo cmdLineFile, out string program, out List<string> arguments)
+        private bool GetCmdLineFileInfo(FileSystemInfo cmdLineFile, out string exePath, out List<string> argumentList)
         {
-            program = string.Empty;
-            arguments = new List<string>();
+            exePath = string.Empty;
+            argumentList = new List<string>();
 
             try
             {
@@ -455,9 +455,9 @@ namespace PRISM
                     for (var i = 0; i < fields.Length; i++)
                     {
                         if (i == 0)
-                            program = fields[i];
-                        else
-                            arguments.Add(fields[i]);
+                            exePath = fields[i];
+                        else if (!string.IsNullOrWhiteSpace(fields[i]))
+                            argumentList.Add(fields[i]);
                     }
 
                     return true;
