@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace PRISM
 {
+    /// <summary>
+    /// Track basic process info metadata
+    /// </summary>
     public class ProcessInfo
     {
         #region "Properties"
@@ -146,11 +149,19 @@ namespace PRISM
             ProcessName = processName;
         }
 
+        /// <summary>
+        /// Returns process name and process ID
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return string.Format("{0}, ID {1}", ProcessName, ProcessID);
         }
 
+        /// <summary>
+        /// Returns process name, process ID, exe path, exe name, arguments, and the full command line
+        /// </summary>
+        /// <returns></returns>
         public string ToStringVerbose()
         {
             var description = new StringBuilder();
