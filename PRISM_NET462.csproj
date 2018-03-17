@@ -70,6 +70,7 @@
     <Compile Include="Logging\LogMessage.cs" />
     <Compile Include="Logging\ODBCDatabaseLogger.cs" />
     <Compile Include="Logging\SqlServerDatabaseLogger.cs" />
+    <Compile Include="ProcessInfo.cs" />
     <Compile Include="ShareConnector.cs" />
     <Compile Include="StringUtilities.cs" />
     <Compile Include="SystemInfo.cs" />
