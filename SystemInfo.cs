@@ -1,4 +1,6 @@
-﻿namespace PRISM
+﻿using System.Collections.Generic;
+
+namespace PRISM
 {
     /// <summary>
     /// Class for streamlined access to system processor and memory information
@@ -75,6 +77,17 @@
         public static float GetFreeMemoryMB()
         {
             return SysInfo.GetFreeMemoryMB();
+        }
+
+        /// <summary>
+        /// Look for currently active processes
+        /// </summary>
+        /// <param name="lookupCommandLineInfo">When true, the process info dictionary will include the exe path and command line arguments</param>
+        /// <returns>Dictionary where keys are process ID and values are ProcessInfo</returns>
+        /// <remarks>Command line lookup can be slow on Windows because it uses WMI</remarks>
+        public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
+        {
+            return SysInfo.GetProcesses(lookupCommandLineInfo);
         }
 
         /// <summary>
