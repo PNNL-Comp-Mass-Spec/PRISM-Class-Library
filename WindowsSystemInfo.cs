@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Management;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -782,9 +781,15 @@ namespace PRISM
         private string GetCommandLine(Process process, out string exePath, out List<string> argumentList)
         {
             argumentList = new List<string>();
+
+#if (NETSTANDARD2_0)
+    exePath = string.Empty;
+    return string.Empty;
+#else
+
             string cmdLine = null;
 
-            using (var searcher = new ManagementObjectSearcher(
+            using (var searcher = new System.Management.ManagementObjectSearcher(
                 string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id)))
             {
                 var matchEnum = searcher.Get().GetEnumerator();
@@ -890,6 +895,7 @@ namespace PRISM
             }
 
             return cmdLine;
+#endif
         }
 
         /// <summary>
