@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Management;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace PRISM
 {
@@ -95,6 +98,17 @@ namespace PRISM
             return pData.GetFreeMemoryMB();
         }
 
+        /// <summary>
+        /// Look for currently active processes
+        /// </summary>
+        /// <param name="lookupCommandLineInfo">When true, the process info dictionary will include the exe path and command line arguments</param>
+        /// <returns>Dictionary where keys are process ID and values are ProcessInfo</returns>
+        /// <remarks>Command line lookup can be slow because it uses WMI; set lookupCommandLineInfo to false to speed things up</remarks>
+        public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
+        {
+            return pData.GetProcesses(lookupCommandLineInfo);
+        }
+
         /// <inheritdoc />
         /// <summary>
         /// Determine the total system memory, in MB
@@ -111,6 +125,12 @@ namespace PRISM
     /// </summary>
     internal class WindowsSystemInfoInternal : clsEventNotifier, ISystemInfo
     {
+
+        /// <summary>
+        /// Matches strings surrounded by double quotes
+        /// </summary>
+        private readonly Regex mQuotedStringMatcher;
+
         #region Memory P/Invoke
 
         // https://www.pinvoke.net/default.aspx/kernel32/GlobalMemoryStatusEx.html
@@ -121,7 +141,7 @@ namespace PRISM
 
         private static bool GetGlobalMemoryStatusEx(out MEMORYSTATUSEX memStatus)
         {
-            memStatus = new MEMORYSTATUSEX {dwLength = (uint) Marshal.SizeOf(typeof(MEMORYSTATUSEX))};
+            memStatus = new MEMORYSTATUSEX { dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX)) };
             var ret = GlobalMemoryStatusEx(ref memStatus);
             totalMemoryMBCached = memStatus.ullTotalPhys / 1024f / 1024f;
             return ret;
@@ -247,7 +267,7 @@ namespace PRISM
             /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
             /// </summary>
             // ReSharper disable once UnusedMember.Local
-            public UInt64 Mask => (UInt64) MaskPtr.ToInt64();
+            public UInt64 Mask => (UInt64)MaskPtr.ToInt64();
 
             /// <summary>
             /// A platform-dependent method to get the Mask
@@ -459,7 +479,7 @@ namespace PRISM
             /// </summary>
             [MarshalAs(UnmanagedType.SysUInt)]
             public IntPtr ActiveProcessorMaskPtr;
-}
+        }
 
         [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
@@ -498,7 +518,7 @@ namespace PRISM
                     var ptr = GroupInfoPtr;
                     for (var i = 0; i < ActiveGroupCount; i++)
                     {
-                        data[i] = (PROCESSOR_GROUP_INFO) Marshal.PtrToStructure(ptr, typeof(PROCESSOR_GROUP_INFO));
+                        data[i] = (PROCESSOR_GROUP_INFO)Marshal.PtrToStructure(ptr, typeof(PROCESSOR_GROUP_INFO));
                         ptr += size;
                     }
                     return data;
@@ -745,6 +765,134 @@ namespace PRISM
         #endregion
 
         /// <summary>
+        /// Constructor
+        /// </summary>
+        public WindowsSystemInfoInternal()
+        {
+            mQuotedStringMatcher = new Regex("\"[^\"]+\"", RegexOptions.Compiled);
+        }
+
+        /// <summary>
+        /// Determine the command line of a process by ProcessID
+        /// </summary>
+        /// <param name="process"></param>
+        /// <param name="exePath"></param>
+        /// <param name="argumentList"></param>
+        /// <returns>Full command line: exePath (surrounded in double quotes if a space), then a space, then the arguments</returns>
+        private string GetCommandLine(Process process, out string exePath, out List<string> argumentList)
+        {
+            argumentList = new List<string>();
+            string cmdLine = null;
+
+            using (var searcher = new ManagementObjectSearcher(
+                string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id)))
+            {
+                var matchEnum = searcher.Get().GetEnumerator();
+
+                // Move to the 1st item.
+                if (matchEnum.MoveNext())
+                {
+                    cmdLine = matchEnum.Current["CommandLine"]?.ToString();
+                }
+            }
+
+            if (cmdLine == null)
+            {
+                // Not having found a command line implies 1 of 2 exceptions, which the WMI query masked:
+                // 1) An "Access denied" exception due to lack of privileges.
+                // 2) A "Cannot process request because the process (<pid>) has exited." exception, meaning the process has terminated
+
+                // Force the exception to be raised by trying to access process.MainModule.
+                var dummy = process.MainModule;
+
+                exePath = string.Empty;
+            }
+            else
+            {
+                string arguments;
+
+                if (cmdLine.StartsWith("\""))
+                {
+                    var match = mQuotedStringMatcher.Match(cmdLine);
+                    if (match.Success)
+                    {
+                        // Remove leading/trailing double quotes when defining exePath
+                        exePath = match.Value.Trim('"');
+                        arguments = cmdLine.Substring(match.Index + match.Length).Trim();
+                    }
+                    else
+                    {
+                        exePath = cmdLine;
+                        arguments = string.Empty;
+                    }
+                }
+                else
+                {
+                    // Command line does not start with double quotes
+                    // If on Windows, look for the first /
+
+                    int splitIndex;
+                    if (System.IO.Path.DirectorySeparatorChar == '\\')
+                    {
+                        var slashIndex = cmdLine.IndexOf('/');
+                        if (slashIndex > 0)
+                        {
+                            splitIndex = slashIndex - 1;
+                        }
+                        else
+                        {
+                            // Look for the first space
+                            splitIndex = cmdLine.IndexOf(' ');
+                        }
+                    }
+                    else
+                    {
+                        // Look for the first space
+                        splitIndex = cmdLine.IndexOf(' ');
+                    }
+
+                    if (splitIndex > 0)
+                    {
+                        exePath = cmdLine.Substring(0, splitIndex);
+                        if (splitIndex < cmdLine.Length - 1)
+                        {
+                            arguments = cmdLine.Substring(splitIndex + 1).Trim();
+                        }
+                        else
+                        {
+                            arguments = string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        exePath = cmdLine;
+                        arguments = "";
+                    }
+                }
+
+                var cleanedArguments = string.Copy(arguments);
+
+                var argumentMatch = mQuotedStringMatcher.Match(arguments);
+                while (argumentMatch.Success)
+                {
+                    argumentList.Add(argumentMatch.Value.Trim('"'));
+                    cleanedArguments = cleanedArguments.Replace(argumentMatch.Value, string.Empty);
+
+                    argumentMatch = argumentMatch.NextMatch();
+                }
+
+                if (!string.IsNullOrWhiteSpace(cleanedArguments))
+                {
+                    // cleanedArguments contains some unquoted arguments; add them
+                    var remainingArgs = cleanedArguments.Split(' ');
+                    argumentList.AddRange(remainingArgs);
+                }
+            }
+
+            return cmdLine;
+        }
+
+        /// <summary>
         /// Report the number of cores on this system
         /// </summary>
         /// <returns>The number of cores on this computer</returns>
@@ -813,6 +961,77 @@ namespace PRISM
 
             // Convert from bytes to MB
             return memData.ullAvailPhys / 1024f / 1024f;
+        }
+
+        /// <summary>
+        /// Look for currently active processes
+        /// </summary>
+        /// <param name="lookupCommandLineInfo">When true, the process info dictionary will include the exe path and command line arguments</param>
+        /// <returns>Dictionary where keys are process ID and values are ProcessInfo</returns>
+        /// <remarks>Command line lookup can be slow because it uses WMI; set lookupCommandLineInfo to false to speed things up</remarks>
+        public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
+        {
+
+            var processList = new Dictionary<int, ProcessInfo>();
+
+            var lastProgress = DateTime.UtcNow;
+            var notifiedLongRunning = false;
+
+            foreach (var item in Process.GetProcesses())
+            {
+                ProcessInfo process;
+                if (lookupCommandLineInfo)
+                {
+                    try
+                    {
+                        var cmdLine = GetCommandLine(item, out var exePath, out var argumentList);
+
+                        process = new ProcessInfo(item.Id, item.ProcessName, exePath, argumentList, cmdLine);
+                    }
+                    catch (System.ComponentModel.Win32Exception ex) when (ex.HResult == -2147467259)
+                    {
+                        // OnDebugEvent(string.Format("Ignore Access Denied for process ID {0}", item.Id));
+                        process = new ProcessInfo(item.Id, item.ProcessName);
+                    }
+                    catch (InvalidOperationException ex) when (ex.HResult == -2146233079)
+                    {
+                        // OnDebugEvent(string.Format("Ignore Cannot process the request for process ID {0} because it has ended", item.Id));
+                        continue;
+                    }
+                    catch (Exception)
+                    {
+                        // Ignore all other exceptions
+                        // OnDebugEvent(string.Format("Ignore exception for process ID {0}: {1}", item.Id, ex.Message));
+                        process = new ProcessInfo(item.Id, item.ProcessName);
+                    }
+                }
+                else
+                {
+                    process = new ProcessInfo(item.Id, item.ProcessName);
+                }
+
+                processList.Add(item.Id, process);
+
+                if (DateTime.UtcNow.Subtract(lastProgress).TotalSeconds < 1)
+                    continue;
+
+                lastProgress = DateTime.UtcNow;
+                if (!notifiedLongRunning)
+                {
+                    Console.Write("Enumerating system processes ");
+                    notifiedLongRunning = true;
+                }
+                else
+                {
+                    Console.Write(".");
+                }
+            }
+
+            if (notifiedLongRunning)
+                Console.WriteLine();
+
+            return processList;
+
         }
 
         /// <summary>
