@@ -258,7 +258,7 @@ namespace PRISM
             }
         }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
         /// <summary>
         /// The function gets a disconnected dataset as specified by the SQL statement.
         /// </summary>

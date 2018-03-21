@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
 using System.Data.Odbc;
 #endif
 using System.Threading;
@@ -25,7 +25,7 @@ namespace PRISM.Logging
         // ReSharper disable once UnusedMember.Local
         private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
         /// <summary>
         /// Tracks the number of successive dequeue failures
         /// </summary>
@@ -68,7 +68,7 @@ namespace PRISM.Logging
         /// </summary>
         public static string StoredProcedureName { get; private set; }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
         private static string LogTypeParamName { get; set; }
 
         private static string MessageParamName { get; set; }
@@ -163,7 +163,7 @@ namespace PRISM.Logging
             ConnectionString = connectionString;
             StoredProcedureName = storedProcedure;
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
             LogTypeParamName = logTypeParamName;
             MessageParamName = messageParamName;
             PostedByParamName = postedByParamName;
@@ -302,15 +302,6 @@ namespace PRISM.Logging
         private static void LogQueuedMessages()
         {
 
-#if (NETSTANDARD1_x)
-                if (NotifiedNotSupported)
-                    return;
-
-                ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 1.x");
-                NotifiedNotSupported = true;
-
-#endif
-
 #if (NETSTANDARD2_0)
                 if (NotifiedNotSupported)
                     return;
@@ -325,7 +316,7 @@ namespace PRISM.Logging
                 if (mMessageQueue.IsEmpty)
                     return;
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
                 ShowTraceMessage(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
 

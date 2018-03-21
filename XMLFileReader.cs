@@ -367,7 +367,7 @@ namespace PRISM
             return setting?.Attributes?.GetNamedItem("value").Value;
         }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
         /// <summary>
         /// Legacy function name; calls GetXmlSectionComments
         /// </summary>
@@ -418,7 +418,7 @@ namespace PRISM
             return sectionComments;
         }
 
-#if !(NETSTANDARD1_x || NETSTANDARD2_0)
+#if !(NETSTANDARD2_0)
         /// <summary>
         /// Legacy function name; calls SetXMLComments
         /// </summary>

@@ -105,21 +105,7 @@ namespace PRISM.Logging
         /// <summary>
         /// The user name running this program
         /// </summary>
-#if !(NETSTANDARD1_x)
         public static string UserName => WindowsIdentity.GetCurrent().Name;
-#else
-        public static string UserName
-        {
-            get
-            {
-                if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-                {
-                    return WindowsIdentity.GetCurrent()?.Name;
-                }
-                return "Unknown";
-            }
-        }
-#endif
 
         #endregion
 

@@ -40,9 +40,7 @@ namespace PRISM
 
         private bool m_CreateNoWindow;
 
-#if !(NETSTANDARD1_x)
         private ProcessWindowStyle m_WindowStyle;
-#endif
 
         /// <summary>
         /// Create a zip file.
@@ -144,9 +142,7 @@ namespace PRISM
                 Repeat = false,
                 RepeatHoldOffTime = 0,
                 CreateNoWindow = m_CreateNoWindow,
-#if !(NETSTANDARD1_x)
                 WindowStyle = m_WindowStyle,
-#endif
             };
 
             // Start the unzip program
@@ -167,7 +163,6 @@ namespace PRISM
             set => m_CreateNoWindow = value;
         }
 
-#if !(NETSTANDARD1_x)
         /// <summary>
         /// Window style to use when CreateNoWindow is False.
         /// </summary>
@@ -176,7 +171,6 @@ namespace PRISM
             get => m_WindowStyle;
             set => m_WindowStyle = value;
         }
-#endif
 
         /// <summary>
         /// The working directory for the zipping process.
@@ -255,9 +249,7 @@ namespace PRISM
                 Repeat = false,
                 RepeatHoldOffTime = 0,
                 CreateNoWindow = m_CreateNoWindow,
-#if !(NETSTANDARD1_x)
                 WindowStyle = m_WindowStyle,
-#endif
             };
 
             // Start the zip program

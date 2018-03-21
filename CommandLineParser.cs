@@ -1165,21 +1165,15 @@ namespace PRISM
 
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
 
-#if !(NETSTANDARD1_x)
             var properties = typeof(T).GetProperties();
-#else
-            var properties = typeof(T).GetTypeInfo().GetProperties();
-#endif
 
             foreach (var property in properties)
             {
-#if !(NETSTANDARD1_x)
                 // Check for the attribute
                 if (!Attribute.IsDefined(property, typeof(OptionAttribute)))
                 {
                     continue;
                 }
-#endif
 
                 var attrib = property.GetCustomAttributes(typeof(OptionAttribute), true);
                 var attribList = attrib.ToArray();
