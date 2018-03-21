@@ -150,7 +150,7 @@ namespace PRISM
         /// Contains information about the current state of both physical and virtual memory, including extended memory
         /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct MEMORYSTATUSEX
+        private struct MEMORYSTATUSEX
         {
             /// <summary>
             /// Size of the structure, in bytes. You must set this member before calling GlobalMemoryStatusEx.
@@ -771,6 +771,34 @@ namespace PRISM
             mQuotedStringMatcher = new Regex("\"[^\"]+\"", RegexOptions.Compiled);
         }
 
+        private Dictionary<uint, string> CachedWmiCmdLineData = null;
+
+        private void CacheWmiCmdLineData()
+        {
+#if !(NETSTANDARD2_0)
+            CachedWmiCmdLineData = new Dictionary<uint, string>();
+
+            using (var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))
+            {
+                var matchEnum = searcher.Get().GetEnumerator();
+
+                // Move to the 1st item.
+                if (matchEnum.MoveNext())
+                {
+                    var processId = (uint)matchEnum.Current["ProcessId"];
+                    var cmdLine = matchEnum.Current["CommandLine"]?.ToString();
+                    CachedWmiCmdLineData.Add(processId, cmdLine);
+                }
+            }
+#endif
+        }
+
+        private void DumpCachedWmiCmdLineData()
+        {
+            CachedWmiCmdLineData?.Clear();
+            CachedWmiCmdLineData = null;
+        }
+
         /// <summary>
         /// Determine the command line of a process by ProcessID
         /// </summary>
@@ -783,22 +811,29 @@ namespace PRISM
             argumentList = new List<string>();
 
 #if (NETSTANDARD2_0)
-    exePath = string.Empty;
-    return string.Empty;
+            exePath = string.Empty;
+            return string.Empty;
 #else
 
             string cmdLine = null;
 
-            using (var searcher = new System.Management.ManagementObjectSearcher(
-                string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id)))
+            if (CachedWmiCmdLineData == null)
             {
-                var matchEnum = searcher.Get().GetEnumerator();
-
-                // Move to the 1st item.
-                if (matchEnum.MoveNext())
+                using (var searcher = new System.Management.ManagementObjectSearcher(
+                    string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id)))
                 {
-                    cmdLine = matchEnum.Current["CommandLine"]?.ToString();
+                    var matchEnum = searcher.Get().GetEnumerator();
+
+                    // Move to the 1st item.
+                    if (matchEnum.MoveNext())
+                    {
+                        cmdLine = matchEnum.Current["CommandLine"]?.ToString();
+                    }
                 }
+            }
+            else
+            {
+                CachedWmiCmdLineData.TryGetValue((uint)process.Id, out cmdLine);
             }
 
             if (cmdLine == null)
@@ -983,6 +1018,8 @@ namespace PRISM
             var lastProgress = DateTime.UtcNow;
             var notifiedLongRunning = false;
 
+            CacheWmiCmdLineData();
+
             foreach (var item in Process.GetProcesses())
             {
                 ProcessInfo process;
@@ -991,6 +1028,11 @@ namespace PRISM
                     try
                     {
                         var cmdLine = GetCommandLine(item, out var exePath, out var argumentList);
+
+                        var oldExePath = exePath;
+                        // MainModule.FileName provides a nicer path format.
+                        exePath = item.MainModule.FileName; // This can throw an exception, but that's expected when examining processes that are elevated or belong to other users.
+                        cmdLine = cmdLine.Replace(oldExePath, exePath);
 
                         process = new ProcessInfo(item.Id, item.ProcessName, exePath, argumentList, cmdLine);
                     }
@@ -1032,6 +1074,8 @@ namespace PRISM
                     Console.Write(".");
                 }
             }
+
+            DumpCachedWmiCmdLineData();
 
             if (notifiedLongRunning)
                 Console.WriteLine();
