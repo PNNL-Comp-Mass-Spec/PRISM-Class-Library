@@ -1025,7 +1025,10 @@ namespace PRISM
             var lastProgress = DateTime.UtcNow;
             var notifiedLongRunning = false;
 
-            CacheWmiCmdLineData();
+            if (lookupCommandLineInfo)
+            {
+                CacheWmiCmdLineData();
+            }
 
             foreach (var item in Process.GetProcesses())
             {
@@ -1082,10 +1085,13 @@ namespace PRISM
                 }
             }
 
-            DumpCachedWmiCmdLineData();
 
             if (notifiedLongRunning)
                 Console.WriteLine();
+            if (lookupCommandLineInfo)
+            {
+                DumpCachedWmiCmdLineData();
+            }
 
             return processList;
 
