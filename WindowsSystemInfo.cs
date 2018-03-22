@@ -157,6 +157,9 @@ namespace PRISM
             /// </summary>
             public uint dwLength;
 
+            // ReSharper disable MemberCanBePrivate.Local
+            // ReSharper disable FieldCanBeMadeReadOnly.Local
+
             /// <summary>
             /// Number between 0 and 100 that specifies the approximate percentage of physical memory that is in use (0 indicates no memory use and 100 indicates full memory use).
             /// </summary>
@@ -196,6 +199,9 @@ namespace PRISM
             /// Size of unreserved and uncommitted memory in the extended portion of the virtual address space of the calling process, in bytes.
             /// </summary>
             public ulong ullAvailExtendedVirtual;
+
+            // ReSharper restore FieldCanBeMadeReadOnly.Local
+            // ReSharper restore MemberCanBePrivate.Local
 
             ///// <summary>
             ///// Initializes a new instance of the <see cref="T:MEMORYSTATUSEX"/> class.
@@ -995,6 +1001,7 @@ namespace PRISM
         /// Determine the free system memory, in MB
         /// </summary>
         /// <returns>Free memory, or -1 if an error</returns>
+        /// <remarks>This uses kernel32.dll and is very fast</remarks>
         public float GetFreeMemoryMB()
         {
             // ReSharper disable once UnusedVariable

@@ -10,6 +10,7 @@ namespace PRISMWin
 {
     /// <summary>
     /// Monitor running processes to determine CPU usage
+    /// Uses Windows Performance Counters
     /// </summary>
     public class clsProcessStats
     {

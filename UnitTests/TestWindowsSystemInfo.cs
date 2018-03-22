@@ -18,7 +18,7 @@ namespace PRISMTest
             var wmiMem = windowsSystemInfo.GetTotalMemoryMB();
             Console.WriteLine("WMI Total memory:  {0:F2} MB", wmiMem);
 #endif
-
+            // Use P/Invoke to access kernel32.dll
             var wpsi = new WindowsSystemInfo();
             var pinvMem = wpsi.GetTotalMemoryMB();
             Console.WriteLine("PInv Total memory: {0:F2} MB", pinvMem);
@@ -37,6 +37,7 @@ namespace PRISMTest
             Console.WriteLine("WMI Free memory:  {0:F2} MB", wmiMem);
 #endif
 
+            // Use P/Invoke to access kernel32.dll
             var wpsi = new WindowsSystemInfo();
             var pinvMem = wpsi.GetFreeMemoryMB();
             Console.WriteLine("PInv Free memory: {0:F2} MB", pinvMem);
@@ -54,7 +55,7 @@ namespace PRISMTest
             var wmiCore = windowsSystemInfo.GetCoreCount(out var wmiPhysicalProcs);
             Console.WriteLine("WMI:  {0} processor(s) and {1} cores", wmiPhysicalProcs, wmiCore);
 #endif
-
+            // Use P/Invoke to access kernel32.dll
             var wpsi = new WindowsSystemInfo();
             var pinvCore = wpsi.GetCoreCount();
             var pirvProcCount = wpsi.GetProcessorPackageCount();

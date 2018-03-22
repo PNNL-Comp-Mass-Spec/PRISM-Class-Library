@@ -3,12 +3,15 @@
 namespace PRISMWin
 {
     /// <summary>
-    /// A utility class that uses WMI to get some CPU and memory information. The PRISM.WindowsSystemInfo provides more information, and is more accurate.
+    /// A utility class that uses WMI to get some CPU and memory information
+    /// Class PRISM.WindowsSystemInfo provides more information, is more accurate, and is faster
     /// </summary>
     public class WMISystemInfo
     {
         private static int cachedCoreCount;
+
         private static int cachedPhysicalProcessorCount;
+
         private static float cachedTotalMemoryMB;
 
         /// <summary>
@@ -26,10 +29,11 @@ namespace PRISMWin
         /// <summary>
         /// Report the number of cores on this system
         /// </summary>
-        /// <param name="numPhysicalProcessors">Number of physical processors</param>
+        /// <param name="numPhysicalProcessors">Output: Number of physical processors</param>
         /// <returns>The number of cores on this computer</returns>
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// Uses WMI and can thus take a few seconds on the first call; subsequent calls will return cached counts
         /// </remarks>
         public int GetCoreCount(out int numPhysicalProcessors)
         {
@@ -77,9 +81,10 @@ namespace PRISMWin
         }
 
         /// <summary>
-        /// Determine the free system memory, in MB, on Linux
+        /// Determine the free system memory, in MB
         /// </summary>
         /// <returns>Free memory, or -1 if an error</returns>
+        /// <remarks>Uses WMI and can thus take a few seconds</remarks>
         public float GetFreeMemoryMB()
         {
             double memoryFreeKB = 0;
@@ -103,6 +108,9 @@ namespace PRISMWin
         /// Determine the total system memory, in MB
         /// </summary>
         /// <returns>Total memory, or -1 if an error</returns>
+        /// <remarks>
+        /// Uses WMI and can thus take a few seconds on the first call; subsequent calls will return a cached total
+        /// </remarks>
         public float GetTotalMemoryMB()
         {
             if (cachedTotalMemoryMB > 0)

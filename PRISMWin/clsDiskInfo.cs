@@ -12,11 +12,12 @@ namespace PRISMWin
         private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, ref UInt64 lpFreeBytesAvailable, ref UInt64 lpTotalNumberOfBytes, ref UInt64 lpTotalNumberOfFreeBytes);
 
         /// <summary>
-        /// Report the space on the drive used by file filePath
+        /// Report the space on the drive used by the specified file
+        /// Works for files on local drives and on remote shares
         /// </summary>
         /// <param name="filePath">File path to examine (the file does not need to exist)</param>
-        /// <param name="freeSpaceBytes"></param>
-        /// <param name="errorMessage"></param>
+        /// <param name="freeSpaceBytes">Output: Free space (in bytes)</param>
+        /// <param name="errorMessage">Output: Error message</param>
         /// <param name="reportFreeSpaceAvailableToUser">
         /// When true, report the free space available to the current user
         /// Otherwise, report total free space (ignoring user-based quotas)
@@ -78,12 +79,12 @@ namespace PRISMWin
         }
 
         /// <summary>
-        /// Determine the free space on the disk or share with the given directory
+        /// Determine the free space on the disk or remote share with the given directory
         /// </summary>
         /// <param name="directoryPath"></param>
-        /// <param name="freeBytesAvailableToUser"></param>
-        /// <param name="totalDriveCapacityBytes"></param>
-        /// <param name="totalNumberOfFreeBytes"></param>
+        /// <param name="freeBytesAvailableToUser">Output: Free bytes available to the user</param>
+        /// <param name="totalDriveCapacityBytes">Output: Total drive capacity (bytes)</param>
+        /// <param name="totalNumberOfFreeBytes">Output: Total free bytes</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses GetDiskFreeSpaceEx in Kernel32.dll
@@ -100,7 +101,7 @@ namespace PRISMWin
             ulong totalDriveCapacity = 0;
             ulong totalFree = 0;
 
-            // Make sure directoryPath ends in a back slash
+            // Make sure directoryPath ends in a backslash
             if (!directoryPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 directoryPath += Path.DirectorySeparatorChar;
 
