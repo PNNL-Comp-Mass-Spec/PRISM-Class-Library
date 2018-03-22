@@ -70,14 +70,15 @@
     <Compile Include="TestLinuxSystemInfo.cs" />
     <Compile Include="TestOSVersionInfo.cs" />
     <Compile Include="TestPathUtils.cs" />
+    <Compile Include="TestSystemInfo.cs" />
     <Compile Include="TestValueToString.cs" />
     <Compile Include="TestWindowsSystemInfo.cs" />
     <Compile Include="XMLSettingsFileTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PRISMWin\PRISMWin.csproj">
-      <Project>{5d3e9902-6e9a-4a88-8f1b-3353d4d5876b}</Project>
-      <Name>PRISMWin</Name>
+    <ProjectReference Include="..\PRISMWin\PRISMWin_NET462.csproj">
+      <Project>{0cadd6f6-5dc3-4779-babe-a70d25b724f6}</Project>
+      <Name>PRISMWin_NET462</Name>
     </ProjectReference>
     <ProjectReference Include="..\PRISM_NET462.csproj">
       <Project>{c37995a7-258d-4b76-9703-aff6c4c32c8c}</Project>
