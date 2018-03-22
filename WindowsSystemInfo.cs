@@ -786,10 +786,10 @@ namespace PRISM
 
             using (var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))
             {
+                // Store the results in a dictionary
                 var matchEnum = searcher.Get().GetEnumerator();
 
-                // Move to the 1st item.
-                if (matchEnum.MoveNext())
+                while (matchEnum.MoveNext())
                 {
                     var processId = (uint)matchEnum.Current["ProcessId"];
                     var cmdLine = matchEnum.Current["CommandLine"]?.ToString();
