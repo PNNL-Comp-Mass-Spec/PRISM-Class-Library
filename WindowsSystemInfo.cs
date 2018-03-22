@@ -777,7 +777,7 @@ namespace PRISM
             mQuotedStringMatcher = new Regex("\"[^\"]+\"", RegexOptions.Compiled);
         }
 
-        private Dictionary<uint, string> CachedWmiCmdLineData = null;
+        private Dictionary<uint, string> CachedWmiCmdLineData;
 
         private void CacheWmiCmdLineData()
         {
@@ -1022,9 +1022,6 @@ namespace PRISM
 
             var processList = new Dictionary<int, ProcessInfo>();
 
-            var lastProgress = DateTime.UtcNow;
-            var notifiedLongRunning = false;
-
             if (lookupCommandLineInfo)
             {
                 CacheWmiCmdLineData();
@@ -1032,62 +1029,47 @@ namespace PRISM
 
             foreach (var item in Process.GetProcesses())
             {
-                ProcessInfo process;
-                if (lookupCommandLineInfo)
+                if (!lookupCommandLineInfo)
                 {
-                    try
-                    {
-                        var cmdLine = GetCommandLine(item, out var exePath, out var argumentList);
-
-                        var oldExePath = exePath;
-                        // MainModule.FileName provides a nicer path format.
-                        exePath = item.MainModule.FileName; // This can throw an exception, but that's expected when examining processes that are elevated or belong to other users.
-                        cmdLine = cmdLine.Replace(oldExePath, exePath);
-
-                        process = new ProcessInfo(item.Id, item.ProcessName, exePath, argumentList, cmdLine);
-                    }
-                    catch (System.ComponentModel.Win32Exception ex) when (ex.HResult == -2147467259)
-                    {
-                        // OnDebugEvent(string.Format("Ignore Access Denied for process ID {0}", item.Id));
-                        process = new ProcessInfo(item.Id, item.ProcessName);
-                    }
-                    catch (InvalidOperationException ex) when (ex.HResult == -2146233079)
-                    {
-                        // OnDebugEvent(string.Format("Ignore Cannot process the request for process ID {0} because it has ended", item.Id));
-                        continue;
-                    }
-                    catch (Exception)
-                    {
-                        // Ignore all other exceptions
-                        // OnDebugEvent(string.Format("Ignore exception for process ID {0}: {1}", item.Id, ex.Message));
-                        process = new ProcessInfo(item.Id, item.ProcessName);
-                    }
+                    processList.Add(item.Id, new ProcessInfo(item.Id, item.ProcessName));
+                    continue;
                 }
-                else
+
+                ProcessInfo process;
+
+                try
                 {
+                    var cmdLine = GetCommandLine(item, out var exePath, out var argumentList);
+
+                    var oldExePath = exePath;
+
+                    // MainModule.FileName provides a nicer path format; try to access it
+                    // This can throw an exception, but that's expected when examining processes that are elevated or belong to other users.
+                    exePath = item.MainModule.FileName;
+                    cmdLine = cmdLine.Replace(oldExePath, exePath);
+
+                    process = new ProcessInfo(item.Id, item.ProcessName, exePath, argumentList, cmdLine);
+                }
+                catch (System.ComponentModel.Win32Exception ex) when (ex.HResult == -2147467259)
+                {
+                    // Access is denied; simply store process ID and name
+                    process = new ProcessInfo(item.Id, item.ProcessName);
+                }
+                catch (InvalidOperationException ex) when (ex.HResult == -2146233079)
+                {
+                    // The process has ended; skip it
+                    continue;
+                }
+                catch (Exception)
+                {
+                    // Ignore all other exceptions, but still store the process
                     process = new ProcessInfo(item.Id, item.ProcessName);
                 }
 
                 processList.Add(item.Id, process);
 
-                if (DateTime.UtcNow.Subtract(lastProgress).TotalSeconds < 1)
-                    continue;
-
-                lastProgress = DateTime.UtcNow;
-                if (!notifiedLongRunning)
-                {
-                    Console.Write("Enumerating system processes ");
-                    notifiedLongRunning = true;
-                }
-                else
-                {
-                    Console.Write(".");
-                }
             }
 
-
-            if (notifiedLongRunning)
-                Console.WriteLine();
             if (lookupCommandLineInfo)
             {
                 DumpCachedWmiCmdLineData();
