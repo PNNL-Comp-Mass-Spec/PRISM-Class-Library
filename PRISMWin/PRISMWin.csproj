@@ -24,6 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Management" />
   </ItemGroup>
 
