@@ -241,8 +241,9 @@ namespace PRISM
         public string CurrentSourceFile { get; set; } = string.Empty;
 
         /// <summary>
-        /// Debug level
+        /// Debug level controls the level of sending messages by raising StatusEvent events
         /// </summary>
+        /// <remarks>1 results in fewer messages; 2 for additional messages, 3 for all messages</remarks>
         public int DebugLevel { get; set; }
 
         /// <summary>
@@ -265,8 +266,8 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="managerName"></param>
-        /// <param name="debugLevel"></param>
+        /// <param name="managerName">Manager name</param>
+        /// <param name="debugLevel">1 results in fewer messages; 2 for additional messages, 3 for all messages</param>
         public clsFileTools(string managerName, int debugLevel)
         {
             ManagerName = managerName;
@@ -574,7 +575,7 @@ namespace PRISM
                     expectedTargetLockDirectory = "Target file is local";
                 }
 
-                if (DebugLevel >= 1)
+                if (DebugLevel >= 2)
                 {
                     OnStatusEvent("Lock file directory not found on the source or target",
                                   expectedSourceLockDirectory + " and " + expectedTargetLockDirectory);
