@@ -1222,96 +1222,94 @@ namespace PRISM
             var sourceDir = new DirectoryInfo(sourcePath);
             var destDir = new DirectoryInfo(destPath);
 
-            // the source directory must exist, otherwise throw an exception
-            if (sourceDir.Exists)
-            {
-                // If destination SubDir's parent SubDir does not exist throw an exception
-                if (destDir.Parent != null && !destDir.Parent.Exists)
-                {
-                    throw new DirectoryNotFoundException("Destination directory does not exist: " + destDir.Parent.FullName);
-                }
-
-                if (!destDir.Exists)
-                {
-                    destDir.Create();
-                }
-
-                // Populate dctFileNamesToSkip
-                var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
-                if (fileNamesToSkip != null)
-                {
-                    foreach (var fileName in fileNamesToSkip)
-                    {
-                        dctFileNamesToSkip.Add(fileName, "");
-                    }
-                }
-
-                // Copy all the files of the current directory
-                foreach (var childFile in sourceDir.GetFiles())
-                {
-                    // Look for both the file name and the full path in dctFileNamesToSkip
-                    // If either matches, then to not copy the file
-                    bool copyFile;
-                    if (dctFileNamesToSkip.ContainsKey(childFile.Name))
-                    {
-                        copyFile = false;
-                    }
-                    else if (dctFileNamesToSkip.ContainsKey(childFile.FullName))
-                    {
-                        copyFile = false;
-                    }
-                    else
-                    {
-                        copyFile = true;
-                    }
-
-
-                    if (!copyFile)
-                        continue;
-
-                    var targetFilePath = Path.Combine(destDir.FullName, childFile.Name);
-
-                    if (overWrite)
-                    {
-                        UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
-                        CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: true);
-                    }
-                    else
-                    {
-                        // If overWrite = false, copy the file only if it does not exist
-                        // this is done to avoid an IOException if a file already exists
-                        // this way the other files can be copied anyway...
-                        if (!File.Exists(targetFilePath))
-                        {
-                            UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
-                            CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: false);
-                        }
-                    }
-
-                    if (setAttribute)
-                    {
-                        UpdateReadonlyAttribute(childFile, targetFilePath, readOnly);
-                    }
-
-                    UpdateCurrentStatusIdle();
-                }
-
-                // Copy all the sub-directories by recursively calling this same routine
-                foreach (var subFolder in sourceDir.GetDirectories())
-                {
-                    if (subFolder.FullName.Equals(destDir.FullName))
-                    {
-                        // Skip this subdirectory since it is our destination directory
-                        continue;
-                    }
-                    CopyDirectoryEx(subFolder.FullName, Path.Combine(destDir.FullName, subFolder.Name), overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
-                }
-            }
-            else
+            // The source directory must exist, otherwise throw an exception
+            if (!sourceDir.Exists)
             {
                 throw new DirectoryNotFoundException("Source directory does not exist: " + sourceDir.FullName);
             }
 
+            // If destination SubDir's parent SubDir does not exist throw an exception
+            if (destDir.Parent != null && !destDir.Parent.Exists)
+            {
+                throw new DirectoryNotFoundException("Destination directory does not exist: " + destDir.Parent.FullName);
+            }
+
+            if (!destDir.Exists)
+            {
+                destDir.Create();
+            }
+
+            // Populate dctFileNamesToSkip
+            var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            if (fileNamesToSkip != null)
+            {
+                foreach (var fileName in fileNamesToSkip)
+                {
+                    dctFileNamesToSkip.Add(fileName, "");
+                }
+            }
+
+            // Copy all the files of the current directory
+            foreach (var childFile in sourceDir.GetFiles())
+            {
+                // Look for both the file name and the full path in dctFileNamesToSkip
+                // If either matches, then to not copy the file
+                bool copyFile;
+                if (dctFileNamesToSkip.ContainsKey(childFile.Name))
+                {
+                    copyFile = false;
+                }
+                else if (dctFileNamesToSkip.ContainsKey(childFile.FullName))
+                {
+                    copyFile = false;
+                }
+                else
+                {
+                    copyFile = true;
+                }
+
+                if (!copyFile)
+                    continue;
+
+                var targetFilePath = Path.Combine(destDir.FullName, childFile.Name);
+
+                if (overWrite)
+                {
+                    UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
+                    CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: true);
+                }
+                else
+                {
+                    // If overWrite = false, copy the file only if it does not exist
+                    // this is done to avoid an IOException if a file already exists
+                    // this way the other files can be copied anyway...
+                    if (!File.Exists(targetFilePath))
+                    {
+                        UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
+                        CopyFileUsingLocks(childFile, targetFilePath, managerName, overWrite: false);
+                    }
+                }
+
+                if (setAttribute)
+                {
+                    UpdateReadonlyAttribute(childFile, targetFilePath, readOnly);
+                }
+
+                UpdateCurrentStatusIdle();
+            }
+
+            // Copy all the sub-directories by recursively calling this same routine
+            foreach (var subDirectory in sourceDir.GetDirectories())
+            {
+                if (subDirectory.FullName.Equals(destDir.FullName))
+                {
+                    // Skip this subdirectory since it is our destination directory
+                    continue;
+                }
+
+                CopyDirectoryEx(subDirectory.FullName, Path.Combine(destDir.FullName, subDirectory.Name),
+                                overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
+            }
         }
 
         /// <summary>
