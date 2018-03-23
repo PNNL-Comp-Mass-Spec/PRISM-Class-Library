@@ -593,7 +593,19 @@ namespace PRISM
         /// <param name="dataFile"></param>
         /// <returns>Lock directory path if it exists</returns>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
+        [Obsolete("Use GetLockDirectory")]
         public string GetLockFolder(FileInfo dataFile)
+        {
+            return GetLockDirectory(dataFile);
+        }
+
+        /// <summary>
+        /// Given a file path, return the lock file directory if it exists
+        /// </summary>
+        /// <param name="dataFile"></param>
+        /// <returns>Lock directory path if it exists</returns>
+        /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
+        public string GetLockDirectory(FileInfo dataFile)
         {
 
             var lockDirectoryPath = GetLockDirectoryPath(dataFile);
