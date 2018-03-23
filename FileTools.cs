@@ -1968,29 +1968,25 @@ namespace PRISM
         /// <returns>The directory size.</returns>
         public long GetDirectorySize(string directoryPath)
         {
-
-            // Overload for returning directory size only
-
-            long DumfileCount = 0;
-            long DumDirCount = 0;
-
-            return GetDirectorySizeEX(folderPath, ref DumfileCount, ref DumDirCount);
-
+            return GetDirectorySize(directoryPath, out _, out _);
         }
 
         /// <summary>
         /// Get the directory size, file count, and directory count for the entire directory tree.
         /// </summary>
-        /// <param name="folderPath">The path to the directory.</param>
+        /// <param name="directoryPath">The path to the directory.</param>
         /// <param name="fileCount">The number of files in the entire directory tree.</param>
-        /// <param name="subFolderCount">The number of directories in the entire directory tree.</param>
+        /// <param name="subDirectoryCount">The number of directories in the entire directory tree.</param>
         /// <returns>The directory size.</returns>
-        public long GetDirectorySize(string folderPath, ref long fileCount, ref long subFolderCount)
+        public long GetDirectorySize(string directoryPath, out long fileCount, out long subDirectoryCount)
         {
+            long runningFileCount = 0;
+            long runningSubDirCount = 0;
+            var directorySize = GetDirectorySizeEx(directoryPath, ref runningFileCount, ref runningSubDirCount);
 
-            //Overload for returning directory size, file count and directory count for entire directory tree
-            return GetDirectorySizeEX(folderPath, ref fileCount, ref subFolderCount);
-
+            fileCount = runningFileCount;
+            subDirectoryCount = runningSubDirCount;
+            return directorySize;
         }
 
         /// <summary>
