@@ -255,14 +255,15 @@ namespace PRISM
                 {
                     // In .NET 1.x, programs would fail if called from a network share
                     // This appears to be fixed in .NET 2.0 and above
-                    // If an exception does occur here, we'll show the error message at the console, then sleep for 2 seconds
+                    // If an exception does occur here, we'll show the error message at the console, then sleep for 5 seconds
 
-                    Console.WriteLine(@"------------------------------------------------------------------------------");
-                    Console.WriteLine(@"This program cannot be run from a network share.  Please map a drive to the");
-                    Console.WriteLine(@" network share you are currently accessing or copy the program files and");
-                    Console.WriteLine(@" required DLL's to your local computer.");
-                    Console.WriteLine(@" Exception: " + ex.Message);
-                    Console.WriteLine(@"------------------------------------------------------------------------------");
+                    ConsoleMsgUtils.ShowWarning("------------------------------------------------------------------------------");
+                    ConsoleMsgUtils.ShowWarning(ConsoleMsgUtils.WrapParagraph(
+                                                    "This program cannot be run from a network share.  Please map a drive to the " +
+                                                    "network share you are currently accessing or copy the program files and " +
+                                                    "required DLL's to your local computer."));
+                    ConsoleMsgUtils.ShowWarning("Exception: " + ex.Message);
+                    ConsoleMsgUtils.ShowWarning("------------------------------------------------------------------------------");
 
                     PauseAtConsole();
 
@@ -273,7 +274,7 @@ namespace PRISM
                 if (DebugMode)
                 {
                     Console.WriteLine();
-                    Console.WriteLine(@"Debugging command line parsing");
+                    Console.WriteLine("Debugging command line parsing");
                     Console.WriteLine();
                 }
 
@@ -365,7 +366,7 @@ namespace PRISM
 
                         if (DebugMode)
                         {
-                            Console.WriteLine(@"SwitchParam: " + paramName + @"=" + paramValue);
+                            Console.WriteLine("SwitchParam: " + paramName + "=" + paramValue);
                         }
 
                         // Note: This will add paramName if it doesn't exist (which is normally the case)
@@ -380,7 +381,7 @@ namespace PRISM
 
                         if (DebugMode)
                         {
-                            Console.WriteLine(@"NonSwitchParam " + mNonSwitchParameters.Count + @": " + paramName);
+                            Console.WriteLine("NonSwitchParam " + mNonSwitchParameters.Count + ": " + paramName);
                         }
 
                         mNonSwitchParameters.Add(paramName);
@@ -396,8 +397,8 @@ namespace PRISM
             if (DebugMode)
             {
                 Console.WriteLine();
-                Console.WriteLine(@"Switch Count = " + mSwitches.Count);
-                Console.WriteLine(@"NonSwitch Count = " + mNonSwitchParameters.Count);
+                Console.WriteLine("Switch Count = " + mSwitches.Count);
+                Console.WriteLine("NonSwitch Count = " + mNonSwitchParameters.Count);
                 Console.WriteLine();
             }
 
@@ -419,7 +420,7 @@ namespace PRISM
             int totalIterations;
 
             Console.WriteLine();
-            Console.Write(@"Continuing in " + (millisecondsToPause / 1000.0).ToString("0") + @" seconds ");
+            Console.Write("Continuing in " + (millisecondsToPause / 1000.0).ToString("0") + " seconds ");
 
             try
             {
@@ -620,7 +621,7 @@ namespace PRISM
                                 {
                                     if (DebugMode)
                                     {
-                                        Console.WriteLine(@"Param " + paramList.Count + @": " + paramName);
+                                        Console.WriteLine("Param " + paramList.Count + ": " + paramName);
                                     }
                                     paramList.Add(paramName);
                                 }
