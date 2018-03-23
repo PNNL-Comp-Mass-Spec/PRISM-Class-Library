@@ -781,7 +781,7 @@ namespace PRISM
         /// <summary>Manually parses a line to extract the settings information
         /// Supports the traditional .Ini file format
         /// Also supports the 'key="KeyName" value="Value"' method used in XML settings files
-        /// If success, then adds attributes to the doc var</summary>
+        /// If success, adds attributes to the doc var</summary>
         /// <param name="dataLine">The name of the string to be parse.</param>
         /// <param name="doc">The name of the System.Xml.XmlDocument.</param>
         /// <returns>True if success, false if not a recognized line format</returns>

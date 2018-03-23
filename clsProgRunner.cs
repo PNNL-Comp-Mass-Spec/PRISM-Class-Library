@@ -205,7 +205,7 @@ namespace PRISM
         /// Can retrieve using the CachedConsoleOutput readonly property
         /// Will also fire event ConsoleOutputEvent as new text is written to the console
         /// </summary>
-        /// <remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
+        /// <remarks>If this is true, no window will be shown, even if CreateNoWindow=False</remarks>
         public bool CacheStandardOutput { get; set; }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace PRISM
 
         /// <summary>
         /// File path to which the console output will be written if WriteConsoleOutputToFile is true
-        /// If blank, then file path will be auto-defined in the WorkDir  when program execution starts
+        /// If blank, the file path will be auto-defined to use the WorkDir when program execution starts
         /// </summary>
         public string ConsoleOutputFilePath { get; set; }
 
@@ -226,7 +226,7 @@ namespace PRISM
         public bool CreateNoWindow { get; set; }
 
         /// <summary>
-        /// When true, then echoes, in real time, text written to the Console by the external program
+        /// When true, echoes, in real time, text written to the Console by the external program
         /// Ignored if CreateNoWindow = False
         /// </summary>
         public bool EchoOutputToConsole { get; set; }
@@ -344,7 +344,7 @@ namespace PRISM
         /// Will also fire event ConsoleOutputEvent as new text is written to the console
         /// Define the path to the file using property ConsoleOutputFilePath; if not defined, the file will be created in the WorkDir
         /// </summary>
-        /// <remarks>If this is true, then no window will be shown, even if CreateNoWindow=False</remarks>
+        /// <remarks>If this is true, no window will be shown, even if CreateNoWindow=False</remarks>
         public bool WriteConsoleOutputToFile { get; set; }
 
         #endregion

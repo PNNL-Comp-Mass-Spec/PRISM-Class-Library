@@ -1253,7 +1253,7 @@ namespace PRISM
             foreach (var childFile in sourceDir.GetFiles())
             {
                 // Look for both the file name and the full path in dctFileNamesToSkip
-                // If either matches, then to not copy the file
+                // If either matches, do not copy the file
                 bool copyFile;
                 if (dctFileNamesToSkip.ContainsKey(childFile.Name))
                 {
@@ -1544,7 +1544,7 @@ namespace PRISM
                 foreach (var sourceFile in sourceDirectory.GetFiles())
                 {
                     // Look for both the file name and the full path in dctFileNamesToSkip
-                    // If either matches, then do not copy the file
+                    // If either matches, do not copy the file
                     bool copyFile;
                     if (dctFileNamesToSkip.ContainsKey(sourceFile.Name))
                     {
@@ -2336,7 +2336,7 @@ namespace PRISM
 
             if (pathPartCount == 1)
             {
-                // No \ or / found, we're forced to shorten the filename (though if a UNC, then can shorten part of the UNC)
+                // No \ or / found, we're forced to shorten the filename (though if a UNC, can shorten part of the UNC)
 
                 if (leadingChars.StartsWith(@"\\"))
                 {
@@ -2439,7 +2439,7 @@ namespace PRISM
                     shortenedPath = leadingChars + pathParts[0] + pathParts[1] + pathParts[2] + pathParts[3];
 
                     // See if still too long
-                    // If it is, then will need to shorten the filename too
+                    // If it is, will need to shorten the filename too
                     var overLength = shortenedPath.Length - maxLength;
                     if (overLength > 0)
                     {

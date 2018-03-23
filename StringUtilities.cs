@@ -243,7 +243,7 @@ namespace PRISM
                 var updatedValue = m_scientificNotationTrim.Replace(valueText, "E");
 
                 // The number may now look like 1.E+43
-                // If it does, then re-insert a zero after the decimal point
+                // If it does, re-insert a zero after the decimal point
                 return updatedValue.Replace(".E", ".0E");
 
             }

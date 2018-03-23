@@ -147,7 +147,7 @@ namespace PRISM
         {
             if (!CanSeek)
             {
-                // Can't seek, then don't read metadata, because it will cause the GZipStream to fail.
+                // Can't seek, so don't read metadata, because it will cause the GZipStream to fail.
                 HeaderRead = false;
                 return false;
             }

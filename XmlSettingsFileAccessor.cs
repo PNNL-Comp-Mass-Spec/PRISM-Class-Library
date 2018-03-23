@@ -47,9 +47,9 @@ namespace PRISM
 
         private bool mCaseSensitive;
 
-        // When mCaseSensitive = False, then dtSectionNames stores mapping between lowercase section name and actual section name stored in file
-        //   If section is present more than once in file, then only grabs the last occurence of the section
-        // When mCaseSensitive = True, then the mappings in dtSectionNames are effectively not used
+        // When mCaseSensitive = False, dtSectionNames stores mapping between lowercase section name and actual section name stored in file
+        // If section is present more than once in file, only grabs the last occurence of the section
+        // When mCaseSensitive = True, the mappings in dtSectionNames are effectively not used
         private readonly Dictionary<string, string> dtSectionNames;
 
         private udtRecentSectionType mCachedSection;
@@ -770,7 +770,7 @@ namespace PRISM
             // Section is present, but the Key isn't; add the key
             return m_XMLFileAccessor.SetXMLValue(sectionNameInFile, keyName, newValue);
 
-            // If we get here, then either mCaseSensitive = True or the section and key weren't found
+            // If we get here, either mCaseSensitive = True or the section and key weren't found
         }
 
         /// <summary>
@@ -864,7 +864,7 @@ namespace PRISM
                 return m_XMLFileAccessor.SetXMLSection(sectionName, sectionNameNew);
             }
 
-            // If we get here, then either mCaseSensitive = True or the section wasn't found using GetCachedSectionName
+            // If we get here, either mCaseSensitive = True or the section wasn't found using GetCachedSectionName
             return m_XMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
 
         }

@@ -593,7 +593,7 @@ namespace PRISM
                     while (indexStart < commandLine.Length)
                     {
                         // Step through the characters to find the next space
-                        // However, if we find a double quote, then stop checking for spaces
+                        // However, if we find a double quote, stop checking for spaces
 
                         if (commandLine[indexEnd] == '"')
                         {

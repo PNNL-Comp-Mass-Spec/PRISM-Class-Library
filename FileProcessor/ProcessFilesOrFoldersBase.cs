@@ -239,7 +239,7 @@ namespace PRISM.FileProcessor
         public bool ShowMessages { get; set; } = true;
 
         /// <summary>
-        /// When true, if an error occurs a message will be logged, then the event will be re-thrown
+        /// When true, if an error occurs a message will be logged, the event will be re-thrown
         /// </summary>
         public bool ReThrowEvents { get; set; } = false;
 
