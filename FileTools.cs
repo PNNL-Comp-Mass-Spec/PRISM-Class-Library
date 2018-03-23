@@ -459,7 +459,7 @@ namespace PRISM
 
             if (DebugLevel >= 3)
             {
-                OnDebugEvent("Copying file with CopyFileEx", sourcePath + " to " + destPath);
+                OnStatusEvent("Copying file with CopyFileEx", sourcePath + " to " + destPath);
             }
 
             UpdateCurrentStatus(CopyStatus.NormalCopy, sourcePath);
@@ -576,8 +576,8 @@ namespace PRISM
 
                 if (DebugLevel >= 1)
                 {
-                    OnDebugEvent("Lock file folder not found on the source or target",
-                                 expectedSourceLockFolder + " and " + expectedTargetLockFolder);
+                    OnStatusEvent("Lock file directory not found on the source or target",
+                                  expectedSourceLockDirectory + " and " + expectedTargetLockDirectory);
                 }
             }
 
@@ -648,7 +648,7 @@ namespace PRISM
             {
                 if (DebugLevel >= 2)
                 {
-                    OnDebugEvent("Skipping file since target exists", targetFilePath);
+                    OnStatusEvent("Skipping file since target exists", targetFilePath);
                 }
                 return true;
             }
@@ -666,7 +666,7 @@ namespace PRISM
                         "File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}",
                         sourceFile.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, sourceFile.Name);
 
-                    OnDebugEvent(debugMsg, sourceFile.FullName);
+                    OnStatusEvent(debugMsg, sourceFile.FullName);
                 }
 
                 CopyFileEx(sourceFile.FullName, targetFilePath, overWrite, backupDestFileBeforeCopy);
@@ -702,7 +702,7 @@ namespace PRISM
 
                 if (DebugLevel >= 1)
                 {
-                    OnDebugEvent("Copying " + sourceFile.Name + " using Locks", sourceFile.FullName + " to " + targetFilePath);
+                    OnStatusEvent("Copying " + sourceFile.Name + " using Locks", sourceFile.FullName + " to " + targetFilePath);
                 }
 
                 // Perform the copy
@@ -773,7 +773,7 @@ namespace PRISM
                     writer.WriteLine("Manager: " + managerName);
                 }
 
-                OnDebugEvent("Created lock file in " + lockFolder.FullName, lockFilePath);
+                OnStatusEvent("Created lock file in " + lockDirectory.FullName, lockFilePath);
 
             }
             catch (Exception ex)
@@ -1901,7 +1901,7 @@ namespace PRISM
             return false;
         }
 
-        private void OnDebugEvent(string message, string detailedMessage)
+        private void OnStatusEvent(string message, string detailedMessage)
         {
             OnStatusEvent(message);
             OnDebugEvent("  " + detailedMessage);
