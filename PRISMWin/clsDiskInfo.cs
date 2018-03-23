@@ -35,23 +35,23 @@ namespace PRISMWin
             try
             {
 
-                var diFolderInfo = new FileInfo(filePath).Directory;
-                if (diFolderInfo == null)
+                var directoryInfo = new FileInfo(filePath).Directory;
+                if (directoryInfo == null)
                 {
                     errorMessage = "Unable to determine the parent directory of " + filePath;
                     freeSpaceBytes = 0;
                     return false;
                 }
 
-                // Step up the folder structure until a valid folder is found
-                while (!diFolderInfo.Exists && diFolderInfo.Parent != null)
+                // Step up the directory tree until a valid directory is found
+                while (!directoryInfo.Exists && directoryInfo.Parent != null)
                 {
-                    diFolderInfo = diFolderInfo.Parent;
+                    directoryInfo = directoryInfo.Parent;
                 }
 
 
                 if (GetDiskFreeSpace(
-                    diFolderInfo.FullName,
+                    directoryInfo.FullName,
                     out var freeBytesAvailableToUser,
                     out _,
                     out var totalNumberOfFreeBytes))
@@ -65,7 +65,7 @@ namespace PRISMWin
                 }
 
                 errorMessage = string.Format("Error validating target drive free space " +
-                                             "(GetDiskFreeSpaceEx returned false): {0}", diFolderInfo.FullName);
+                                             "(GetDiskFreeSpaceEx returned false): {0}", directoryInfo.FullName);
 
                 return false;
 

@@ -60,8 +60,8 @@ namespace PRISM
         /// </summary>
         /// <returns>String describing the OS version</returns>
         /// <remarks>
-        /// If run on Windows, will look for files in the \etc folder on the current drive
-        /// If that folder does not exist, will return "Unknown Windows OS"
+        /// If run on Windows, will look for files in the \etc directory on the current drive
+        /// If that directory does not exist, will return "Unknown Windows OS"
         /// </remarks>
         public string GetLinuxVersion()
         {
@@ -126,16 +126,16 @@ namespace PRISM
             }
 
             // Expected Linux version files were not found
-            // Find the first "release" file in the etc folder
+            // Find the first "release" file in the etc directory
 
-            var etcFolder = new DirectoryInfo("/etc");
+            var etcDirectory = new DirectoryInfo("/etc");
 
-            if (!etcFolder.Exists)
+            if (!etcDirectory.Exists)
             {
                 return GetGenericOSVersion();
             }
 
-            foreach (var releaseFile in etcFolder.GetFiles("*release"))
+            foreach (var releaseFile in etcDirectory.GetFiles("*release"))
             {
                 var dataDisplayed = new SortedSet<string>();
 

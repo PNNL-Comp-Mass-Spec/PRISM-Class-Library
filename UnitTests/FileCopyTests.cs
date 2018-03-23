@@ -18,20 +18,22 @@ namespace PRISMTest
         }
 
         [TestCase(@"C:\Temp\PRISM", @"C:\Temp\PRISMCopy")]
-        public void CopyDirectoryLocal(string sourceFolderPath, string targetFolderPath)
+        public void CopyDirectoryLocal(string sourceDirectoryPath, string targetDirectoryPath)
         {
-            var sourceFolder = new DirectoryInfo(sourceFolderPath);
-            if (!sourceFolder.Exists)
+            var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
+            if (!sourceDirectory.Exists)
             {
                 try
                 {
-                    sourceFolder.Create();
+                    // Create the missing source directory
+
+                    sourceDirectory.Create();
 
                     var rand = new Random();
 
                     for (var i = 1; i <= 4; i++)
                     {
-                        var testFilePath = Path.Combine(sourceFolder.FullName, "TestFile" + i + ".txt");
+                        var testFilePath = Path.Combine(sourceDirectory.FullName, "TestFile" + i + ".txt");
 
                         using (var testFile = new StreamWriter(new FileStream(testFilePath, FileMode.Create, FileAccess.Write)))
                         {
@@ -45,38 +47,38 @@ namespace PRISMTest
                 }
                 catch (Exception ex)
                 {
-                    Assert.Fail("Error creating test directory and/or test files at " + sourceFolder + ": " + ex.Message);
+                    Assert.Fail("Error creating test directory and/or test files at " + sourceDirectory + ": " + ex.Message);
                 }
 
             }
 
-            CopyDirectory(sourceFolderPath, targetFolderPath);
+            CopyDirectory(sourceDirectoryPath, targetDirectoryPath);
         }
 
-        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", @"\\proto-2\UnitTest_Files\PRISM\FolderCopyTest")]
+        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", @"\\proto-2\UnitTest_Files\PRISM\DirectoryCopyTest")]
         [Category("PNL_Domain")]
-        public void CopyDirectoryRemote(string sourceFolderPath, string targetFolderPath)
+        public void CopyDirectoryRemote(string sourceDirectoryPath, string targetDirectoryPath)
         {
-            CopyDirectory(sourceFolderPath, targetFolderPath);
+            CopyDirectory(sourceDirectoryPath, targetDirectoryPath);
         }
 
-        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", @"\\proto-2\UnitTest_Files\PRISM\FolderCopyTest")]
+        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", @"\\proto-2\UnitTest_Files\PRISM\DirectoryCopyTest")]
         [Category("PNL_Domain")]
-        public void CopyDirectory(string sourceFolderPath, string targetFolderPath)
+        public void CopyDirectory(string sourceDirectoryPath, string targetDirectoryPath)
         {
-            var sourceFolder = new DirectoryInfo(sourceFolderPath);
-            if (!sourceFolder.Exists)
+            var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
+            if (!sourceDirectory.Exists)
             {
-                Assert.Fail("Source directory not found: " + sourceFolderPath);
+                Assert.Fail("Source directory not found: " + sourceDirectoryPath);
             }
 
             var filesToSkip = new List<string> { "H_sapiens_Uniprot_trembl_2015-10-14.fasta" };
 
-            var targetFolder = new DirectoryInfo(targetFolderPath);
-            if (targetFolder.Exists)
-                targetFolder.Delete(true);
+            var targetDirectory = new DirectoryInfo(targetDirectoryPath);
+            if (targetDirectory.Exists)
+                targetDirectory.Delete(true);
 
-            mFileTools.CopyDirectory(sourceFolderPath, targetFolderPath, true, filesToSkip);
+            mFileTools.CopyDirectory(sourceDirectoryPath, targetDirectoryPath, true, filesToSkip);
         }
 
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]

@@ -237,15 +237,15 @@ namespace PRISM
                     //  paramList[1] = C:\Program Files\FileToProcess"
 
                     // One very odd feature of Environment.GetCommandLineArgs() is that if the command line looks like this:
-                    //    MyProgram.exe "D:\My Folder\Subfolder\" /O:D:\OutputFolder
+                    //    MyProgram.exe "D:\WorkDir\SubDir\" /O:D:\OutputDir
                     // Then paramList will have:
-                    //    paramList[1] = D:\My Folder\Subfolder" /O:D:\OutputFolder
+                    //    paramList[1] = D:\WorkDir\SubDir" /O:D:\OutputDir
                     //
                     // To avoid this problem instead specify the command line as:
-                    //    MyProgram.exe "D:\My Folder\Subfolder" /O:D:\OutputFolder
+                    //    MyProgram.exe "D:\WorkDir\SubDir" /O:D:\OutputDir
                     // which gives:
-                    //    paramList[1] = D:\My Folder\Subfolder
-                    //    paramList[2] = /O:D:\OutputFolder
+                    //    paramList[1] = D:\WorkDir\SubDir
+                    //    paramList[2] = /O:D:\OutputDir
                     //
                     // Due to the idiosyncrasies of .GetCommandLineArgs, we will instead use SplitCommandLineParams to do the splitting
                     // paramList = Environment.GetCommandLineArgs()

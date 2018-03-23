@@ -284,87 +284,87 @@ namespace PRISM
         /// <summary>
         /// Modifies input directory path string depending on optional settings.
         /// </summary>
-        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="directoryPath">The input directory path.</param>
         /// <param name="addTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
         /// <param name="termChar">The specified directory separation character.</param>
         /// <returns>The modified directory path.</returns>
-        public static string CheckTerminator(string folderPath, bool addTerm, char termChar)
+        public static string CheckTerminator(string directoryPath, bool addTerm, char termChar)
         {
 
-            //Overload for all parameters specified
-            return CheckTerminatorEX(folderPath, addTerm, termChar);
+            // Overload for all parameters specified
+            return CheckTerminatorEX(directoryPath, addTerm, termChar);
 
         }
 
         /// <summary>
         /// Adds or removes the DOS path separation character from the end of the directory path.
         /// </summary>
-        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="directoryPath">The input directory path.</param>
         /// <param name="addTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
         /// <returns>The modified directory path.</returns>
-        public static string CheckTerminator(string folderPath, bool addTerm)
+        public static string CheckTerminator(string directoryPath, bool addTerm)
         {
 
-            return CheckTerminatorEX(folderPath, addTerm, Path.DirectorySeparatorChar);
+            return CheckTerminatorEX(directoryPath, addTerm, Path.DirectorySeparatorChar);
 
         }
 
         /// <summary>
         /// Assures the directory path ends with the specified path separation character.
         /// </summary>
-        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="directoryPath">The input directory path.</param>
         /// <param name="termChar">The specified directory separation character.</param>
         /// <returns>The modified directory path.</returns>
-        public static string CheckTerminator(string folderPath, string termChar)
+        public static string CheckTerminator(string directoryPath, string termChar)
         {
-            return CheckTerminatorEX(folderPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
+            return CheckTerminatorEX(directoryPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
 
         }
 
         /// <summary>
         /// Assures the directory path ends with the DOS path separation character.
         /// </summary>
-        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="directoryPath">The input directory path.</param>
         /// <returns>The modified directory path.</returns>
-        public static string CheckTerminator(string folderPath)
+        public static string CheckTerminator(string directoryPath)
         {
 
             // Overload for using all defaults (add DOS terminator char)
-            return CheckTerminatorEX(folderPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
+            return CheckTerminatorEX(directoryPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
 
         }
 
         /// <summary>
         /// Modifies input directory path string depending on addTerm
         /// </summary>
-        /// <param name="folderPath">The input directory path.</param>
+        /// <param name="directoryPath">The input directory path.</param>
         /// <param name="addTerm">Specifies whether the directory path should end with the specified directory separation character</param>
         /// <param name="termChar">The specified directory separation character.</param>
         /// <returns>The modified directory path.</returns>
         /// <remarks>addTerm=True forces the path to end with specified termChar while addTerm=False will remove termChar from the end if present</remarks>
-        private static string CheckTerminatorEX(string folderPath, bool addTerm, char termChar)
+        private static string CheckTerminatorEX(string directoryPath, bool addTerm, char termChar)
         {
 
-            if (string.IsNullOrWhiteSpace(folderPath))
+            if (string.IsNullOrWhiteSpace(directoryPath))
             {
-                return folderPath;
+                return directoryPath;
             }
 
             if (addTerm)
             {
-                if (folderPath.EndsWith(termChar.ToString()))
+                if (directoryPath.EndsWith(termChar.ToString()))
                 {
-                    return folderPath;
+                    return directoryPath;
                 }
-                return folderPath + termChar;
+                return directoryPath + termChar;
             }
 
-            if (folderPath.EndsWith(termChar.ToString()))
+            if (directoryPath.EndsWith(termChar.ToString()))
             {
-                return folderPath.TrimEnd(termChar);
+                return directoryPath.TrimEnd(termChar);
             }
 
-            return folderPath;
+            return directoryPath;
         }
         #endregion
 
@@ -440,16 +440,16 @@ namespace PRISM
         private void CopyFileEx(string sourcePath, string destPath, bool overWrite,
             bool backupDestFileBeforeCopy, int versionCountToKeep = DEFAULT_VERSION_COUNT_TO_KEEP)
         {
-            var folderPath = Path.GetDirectoryName(destPath);
+            var directoryPath = Path.GetDirectoryName(destPath);
 
-            if (folderPath == null)
+            if (directoryPath == null)
             {
                 throw new DirectoryNotFoundException("Unable to determine the parent directory for " + destPath);
             }
 
-            if (!Directory.Exists(folderPath))
+            if (!Directory.Exists(directoryPath))
             {
-                Directory.CreateDirectory(folderPath);
+                Directory.CreateDirectory(directoryPath);
             }
 
             if (backupDestFileBeforeCopy)
@@ -535,10 +535,10 @@ namespace PRISM
 
             var targetFile = new FileInfo(targetFilePath);
 
-            var lockFolderPathSource = GetLockFolder(sourceFile);
-            var lockFolderPathTarget = GetLockFolder(targetFile);
+            var lockDirectoryPathSource = GetLockDirectory(sourceFile);
+            var lockDirectoryPathTarget = GetLockDirectory(targetFile);
 
-            if (!string.IsNullOrEmpty(lockFolderPathSource) || !string.IsNullOrEmpty(lockFolderPathTarget))
+            if (!string.IsNullOrEmpty(lockDirectoryPathSource) || !string.IsNullOrEmpty(lockDirectoryPathTarget))
             {
                 useLockFile = true;
             }
@@ -546,32 +546,32 @@ namespace PRISM
             if (useLockFile)
             {
                 var success = CopyFileUsingLocks(
-                    lockFolderPathSource, lockFolderPathTarget,
+                    lockDirectoryPathSource, lockDirectoryPathTarget,
                     sourceFile, targetFilePath,
                     managerName, overWrite);
                 return success;
             }
 
-            var expectedSourceLockFolder = GetLockFolderPath(sourceFile);
-            var expectedTargetLockFolder = GetLockFolderPath(targetFile);
+            var expectedSourceLockDirectory = GetLockDirectoryPath(sourceFile);
+            var expectedTargetLockDirectory = GetLockDirectoryPath(targetFile);
 
-            if (string.IsNullOrEmpty(expectedSourceLockFolder) && string.IsNullOrEmpty(expectedTargetLockFolder))
+            if (string.IsNullOrEmpty(expectedSourceLockDirectory) && string.IsNullOrEmpty(expectedTargetLockDirectory))
             {
-                // File is being copied locally; we don't use lock folders
+                // File is being copied locally; we don't use lock directories
                 // Do not raise this as a DebugEvent
             }
             else
             {
-                if (string.IsNullOrEmpty(expectedSourceLockFolder))
+                if (string.IsNullOrEmpty(expectedSourceLockDirectory))
                 {
-                    // Source file is local; lock folder would not be used
-                    expectedSourceLockFolder = "Source file is local";
+                    // Source file is local; lock directory would not be used
+                    expectedSourceLockDirectory = "Source file is local";
                 }
 
-                if (string.IsNullOrEmpty(expectedTargetLockFolder))
+                if (string.IsNullOrEmpty(expectedTargetLockDirectory))
                 {
-                    // Target file is local; lock folder would not be used
-                    expectedTargetLockFolder = "Target file is local";
+                    // Target file is local; lock directory would not be used
+                    expectedTargetLockDirectory = "Target file is local";
                 }
 
                 if (DebugLevel >= 1)
@@ -586,21 +586,20 @@ namespace PRISM
             return true;
         }
 
-
         /// <summary>
-        /// Given a file path, return the lock file folder if it exsists
+        /// Given a file path, return the lock file directory if it exists
         /// </summary>
         /// <param name="dataFile"></param>
-        /// <returns>Lock folder path if it exists</returns>
-        /// <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
+        /// <returns>Lock directory path if it exists</returns>
+        /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
         public string GetLockFolder(FileInfo dataFile)
         {
 
-            var lockFolderPath = GetLockFolderPath(dataFile);
+            var lockDirectoryPath = GetLockDirectoryPath(dataFile);
 
-            if (!string.IsNullOrEmpty(lockFolderPath) && Directory.Exists(lockFolderPath))
+            if (!string.IsNullOrEmpty(lockDirectoryPath) && Directory.Exists(lockDirectoryPath))
             {
-                return lockFolderPath;
+                return lockDirectoryPath;
             }
 
             return string.Empty;
@@ -608,12 +607,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Given a file path, return the lock file folder path (does not verify that it exists)
+        /// Given a file path, return the lock file directory path (does not verify that it exists)
         /// </summary>
         /// <param name="dataFile"></param>
-        /// <returns>Lock folder path</returns>
-        /// <remarks>Lock folders are only returned for remote shares (shares that start with \\)</remarks>
-        private string GetLockFolderPath(FileInfo dataFile)
+        /// <returns>Lock directory path</returns>
+        /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
+        private string GetLockDirectoryPath(FileInfo dataFile)
         {
 
             if (Path.IsPathRooted(dataFile.FullName))
@@ -632,8 +631,8 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
-        /// <param name="lockFolderPathSource">Path to the lock folder for the source file; can be an empty string</param>
-        /// <param name="lockFolderPathTarget">Path to the lock folder for the target file; can be an empty string</param>
+        /// <param name="lockDirectoryPathSource">Path to the lock directory for the source file; can be an empty string</param>
+        /// <param name="lockDirectoryPathTarget">Path to the lock directory for the target file; can be an empty string</param>
         /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="managerName">Manager name (included in the lock file name)</param>
@@ -641,7 +640,7 @@ namespace PRISM
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         public bool CopyFileUsingLocks(
-            string lockFolderPathSource, string lockFolderPathTarget,
+            string lockDirectoryPathSource, string lockDirectoryPathTarget,
             FileInfo sourceFile, string targetFilePath, string managerName, bool overWrite)
         {
             if (!overWrite && File.Exists(targetFilePath))
@@ -657,7 +656,8 @@ namespace PRISM
             // If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
             // copy the file normally
             var sourceFileSizeMB = Convert.ToInt32(sourceFile.Length / 1024.0 / 1024.0);
-            if (sourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB || string.IsNullOrWhiteSpace(lockFolderPathSource) && string.IsNullOrWhiteSpace(lockFolderPathTarget))
+            if (sourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB ||
+                string.IsNullOrWhiteSpace(lockDirectoryPathSource) && string.IsNullOrWhiteSpace(lockDirectoryPathTarget))
             {
                 const bool backupDestFileBeforeCopy = false;
                 if (DebugLevel >= 2)
@@ -682,23 +682,23 @@ namespace PRISM
                 // Create a new lock file on the source and/or target server
                 // This file indicates an intent to copy a file
 
-                DirectoryInfo lockFolderSource = null;
-                DirectoryInfo lockFolderTarget = null;
+                DirectoryInfo lockDirectorySource = null;
+                DirectoryInfo lockDirectoryTarget = null;
                 var lockFileTimestamp = GetLockFileTimeStamp();
 
-                if (!string.IsNullOrWhiteSpace(lockFolderPathSource))
+                if (!string.IsNullOrWhiteSpace(lockDirectoryPathSource))
                 {
-                    lockFolderSource = new DirectoryInfo(lockFolderPathSource);
-                    lockFilePathSource = CreateLockFile(lockFolderSource, lockFileTimestamp, sourceFile, targetFilePath, managerName);
+                    lockDirectorySource = new DirectoryInfo(lockDirectoryPathSource);
+                    lockFilePathSource = CreateLockFile(lockDirectorySource, lockFileTimestamp, sourceFile, targetFilePath, managerName);
                 }
 
-                if (!string.IsNullOrWhiteSpace(lockFolderPathTarget))
+                if (!string.IsNullOrWhiteSpace(lockDirectoryPathTarget))
                 {
-                    lockFolderTarget = new DirectoryInfo(lockFolderPathTarget);
-                    lockFilePathTarget = CreateLockFile(lockFolderTarget, lockFileTimestamp, sourceFile, targetFilePath, managerName);
+                    lockDirectoryTarget = new DirectoryInfo(lockDirectoryPathTarget);
+                    lockFilePathTarget = CreateLockFile(lockDirectoryTarget, lockFileTimestamp, sourceFile, targetFilePath, managerName);
                 }
 
-                WaitForLockFileQueue(lockFileTimestamp, lockFolderSource, lockFolderTarget, sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
+                WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, lockDirectoryTarget, sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
 
                 if (DebugLevel >= 1)
                 {
@@ -729,19 +729,19 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Create a lock file in the specified lock folder
+        /// Create a lock file in the specified lock directory
         /// </summary>
-        /// <param name="lockFolder"></param>
+        /// <param name="lockDirectory"></param>
         /// <param name="lockFileTimestamp"></param>
         /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="managerName"></param>
-        /// <returns>Full path to the lock file; empty string if an error or if lockFolder is null</returns>
+        /// <returns>Full path to the lock file; empty string if an error or if lockDirectory is null</returns>
         /// <remarks></remarks>
-        public string CreateLockFile(DirectoryInfo lockFolder, long lockFileTimestamp, FileInfo sourceFile, string targetFilePath, string managerName)
+        public string CreateLockFile(DirectoryInfo lockDirectory, long lockFileTimestamp, FileInfo sourceFile, string targetFilePath, string managerName)
         {
 
-            if (lockFolder == null)
+            if (lockDirectory == null)
             {
                 return string.Empty;
             }
@@ -753,12 +753,12 @@ namespace PRISM
 
             // Define the lock file name
             var lockFileName = GenerateLockFileName(lockFileTimestamp, sourceFile, managerName);
-            var lockFilePath = Path.Combine(lockFolder.FullName, lockFileName);
+            var lockFilePath = Path.Combine(lockDirectory.FullName, lockFileName);
             while (File.Exists(lockFilePath))
             {
                 // File already exists for this manager; append a dash to the path
                 lockFileName = Path.GetFileNameWithoutExtension(lockFileName) + "-" + Path.GetExtension(lockFileName);
-                lockFilePath = Path.Combine(lockFolder.FullName, lockFileName);
+                lockFilePath = Path.Combine(lockDirectory.FullName, lockFileName);
             }
 
             try
@@ -780,7 +780,7 @@ namespace PRISM
             {
                 // Error creating the lock file
                 // Return an empty string
-                OnWarningEvent("Error creating lock file in " + lockFolder.FullName + ": " + ex.Message);
+                OnWarningEvent("Error creating lock file in " + lockDirectory.FullName + ": " + ex.Message);
                 return string.Empty;
             }
 
@@ -809,11 +809,12 @@ namespace PRISM
         public bool DeleteDirectory(string directoryPath, bool ignoreErrors)
         {
 
-            var localDotDFolder = new DirectoryInfo(directoryPath);
+            var targetDirectory = new DirectoryInfo(directoryPath);
 
             try
             {
-                localDotDFolder.Delete(true);
+                if (targetDirectory.Exists)
+                    targetDirectory.Delete(true);
             }
             catch (Exception)
             {
@@ -824,7 +825,7 @@ namespace PRISM
                 // Collect garbage, then delete the files one-by-one
                 clsProgRunner.GarbageCollectNow();
 
-                return DeleteDirectoryFiles(directoryPath, deleteFolderIfEmpty: true);
+                return DeleteDirectoryFiles(directoryPath, deleteDirectoryIfEmpty: true);
             }
 
             return true;
@@ -839,23 +840,26 @@ namespace PRISM
         /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
         public bool DeleteDirectoryFiles(string directoryPath)
         {
-            return DeleteDirectoryFiles(directoryPath, deleteFolderIfEmpty: false);
+            return DeleteDirectoryFiles(directoryPath, deleteDirectoryIfEmpty: false);
         }
 
         /// <summary>
         /// Deletes the specified directory and all subdirectories
         /// </summary>
         /// <param name="directoryPath"></param>
-        /// <param name="deleteFolderIfEmpty">Set to True to delete the directory, if it is empty</param>
+        /// <param name="deleteDirectoryIfEmpty">Set to True to delete the directory, if it is empty</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        public bool DeleteDirectoryFiles(string directoryPath, bool deleteFolderIfEmpty)
+        public bool DeleteDirectoryFiles(string directoryPath, bool deleteDirectoryIfEmpty)
         {
 
-            var folderToDelete = new DirectoryInfo(directoryPath);
+            var targetDirectory = new DirectoryInfo(directoryPath);
+            if (!targetDirectory.Exists)
+                return true;
+
             var errorCount = 0;
 
-            foreach (var targetFile in folderToDelete.GetFiles("*", SearchOption.AllDirectories))
+            foreach (var targetFile in targetDirectory.GetFiles("*", SearchOption.AllDirectories))
             {
                 if (!DeleteFileIgnoreErrors(targetFile.FullName))
                 {
@@ -863,15 +867,15 @@ namespace PRISM
                 }
             }
 
-            if (errorCount == 0 && deleteFolderIfEmpty)
+            if (errorCount == 0 && deleteDirectoryIfEmpty)
             {
                 try
                 {
-                    folderToDelete.Delete(true);
+                    targetDirectory.Delete(true);
                 }
                 catch (Exception ex)
                 {
-                    OnWarningEvent("Error removing empty directory", "Unable to delete directory " + folderToDelete.FullName + ": " + ex.Message);
+                    OnWarningEvent("Error removing empty directory", "Unable to delete directory " + targetDirectory.FullName + ": " + ex.Message);
                     errorCount += 1;
                 }
             }
@@ -889,7 +893,9 @@ namespace PRISM
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
-        /// <remarks>If the initial attempt fails, then checks the readonly bit and tries again.  If not readonly, then performs a garbage collection (every 500 msec)</remarks>
+        /// <remarks>
+        /// If the initial attempt fails, checks the readonly bit and tries again.
+        /// If not readonly, performs a garbage collection (minimum 500 msec between GC calls).</remarks>
         private bool DeleteFileIgnoreErrors(string filePath)
         {
 
@@ -945,22 +951,22 @@ namespace PRISM
         /// <summary>
         /// Finds lock files with a timestamp less than
         /// </summary>
-        /// <param name="lockFolder"></param>
+        /// <param name="lockDirectory"></param>
         /// <param name="lockFileTimestamp"></param>
         /// <returns></returns>
         /// <remarks></remarks>
-        private List<int> FindLockFiles(DirectoryInfo lockFolder, long lockFileTimestamp)
+        private List<int> FindLockFiles(DirectoryInfo lockDirectory, long lockFileTimestamp)
         {
             var lockFiles = new List<int>();
 
-            if (lockFolder == null)
+            if (lockDirectory == null)
             {
                 return lockFiles;
             }
 
-            lockFolder.Refresh();
+            lockDirectory.Refresh();
 
-            foreach (var lockFile in lockFolder.GetFiles("*" + LOCKFILE_EXTENSION))
+            foreach (var lockFile in lockDirectory.GetFiles("*" + LOCKFILE_EXTENSION))
             {
                 var reMatch = mParseLockFileName.Match(lockFile.Name);
 
@@ -989,7 +995,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Generate the lock file name, which starts with a msec-based timestamp, then has the source file size (in MB), then has information on the machine creating the file
+        /// Generate the lock file name, which starts with a msec-based timestamp,
+        /// then has the source file size (in MB),
+        /// then has information on the machine creating the file
         /// </summary>
         /// <param name="lockFileTimestamp"></param>
         /// <param name="sourceFile"></param>
@@ -1017,7 +1025,10 @@ namespace PRISM
                     hostName = hostName.Replace(invalidChar, '_');
             }
 
-            var lockFileName = lockFileTimestamp + "_" + (sourceFile.Length / 1024.0 / 1024.0).ToString("0000") + "_" + hostName + "_" + managerName + LOCKFILE_EXTENSION;
+            var lockFileName = lockFileTimestamp + "_" +
+                               (sourceFile.Length / 1024.0 / 1024.0).ToString("0000") + "_" +
+                               hostName + "_" +
+                               managerName + LOCKFILE_EXTENSION;
 
             // Replace any invalid characters (including spaces) with an underscore
             return mInvalidDosChars.Replace(lockFileName, "_");
@@ -1172,9 +1183,7 @@ namespace PRISM
         /// <param name="destPath">The destination directory path.</param>
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        /// <param name="fileNamesToSkip">
-        /// List of file names to skip when copying the directory (and subdirectories);
-        /// can optionally contain full path names to skip</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         /// <param name="managerName"></param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip, string managerName)
         {
@@ -1186,17 +1195,13 @@ namespace PRISM
         /// <summary>
         /// Copies a source directory to the destination directory. Allows overwriting.
         /// </summary>
-        /// <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")
-        /// Original code obtained from vb2themax.com
-        /// </remarks>
+        /// <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourcePath">The source directory path.</param>
         /// <param name="destPath">The destination directory path.</param>
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false.</param>
         /// <param name="setAttribute">true if the read-only attribute of the destination file is to be modified, false otherwise.</param>
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file.</param>
-        /// <param name="fileNamesToSkip">
-        /// List of file names to skip when copying the directory (and subdirectories);
-        /// can optionally contain full path names to skip</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         /// <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
         private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
             IReadOnlyCollection<string> fileNamesToSkip, string managerName)
@@ -1336,18 +1341,18 @@ namespace PRISM
         /// Overwrites existing files if they differ in modification time or size.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
-        /// <param name="sourceFolderPath">The source directory path.</param>
-        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        public bool CopyDirectoryWithResume(string sourceFolderPath, string targetFolderPath)
+        public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath)
         {
 
             const bool recurse = false;
             const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
             var fileNamesToSkip = new List<string>();
 
-            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, fileNamesToSkip);
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, fileNamesToSkip);
         }
 
         /// <summary>
@@ -1355,18 +1360,18 @@ namespace PRISM
         /// Overwrites existing files if they differ in modification time or size.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
-        /// <param name="sourceFolderPath">The source directory path.</param>
-        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        public bool CopyDirectoryWithResume(string sourceFolderPath, string targetFolderPath, bool recurse)
+        public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath, bool recurse)
         {
 
             const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
             var fileNamesToSkip = new List<string>();
 
-            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, fileNamesToSkip);
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, fileNamesToSkip);
         }
 
         /// <summary>
@@ -1374,21 +1379,21 @@ namespace PRISM
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
-        /// <param name="sourceFolderPath">The source directory path.</param>
-        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(
-            string sourceFolderPath, string targetFolderPath,
+            string sourceDirectoryPath, string targetDirectoryPath,
             bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip)
         {
             const bool setAttribute = false;
             const bool readOnly = false;
 
-            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out _, out _, out _);
 
         }
@@ -1398,8 +1403,8 @@ namespace PRISM
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
-        /// <param name="sourceFolderPath">The source directory path.</param>
-        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
         /// <param name="fileCountSkipped">Number of files skipped (output)</param>
@@ -1408,7 +1413,7 @@ namespace PRISM
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(
-            string sourceFolderPath, string targetFolderPath,
+            string sourceDirectoryPath, string targetDirectoryPath,
             bool recurse, FileOverwriteMode fileOverwriteMode,
             out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
         {
@@ -1417,7 +1422,7 @@ namespace PRISM
             const bool readOnly = false;
             var fileNamesToSkip = new List<string>();
 
-            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
 
         }
@@ -1427,8 +1432,8 @@ namespace PRISM
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
-        /// <param name="sourceFolderPath">The source directory path.</param>
-        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
@@ -1438,7 +1443,7 @@ namespace PRISM
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(
-            string sourceFolderPath, string targetFolderPath,
+            string sourceDirectoryPath, string targetDirectoryPath,
             bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip,
             out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
         {
@@ -1446,7 +1451,7 @@ namespace PRISM
             const bool setAttribute = false;
             const bool readOnly = false;
 
-            return CopyDirectoryWithResume(sourceFolderPath, targetFolderPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
 
         }
@@ -1456,8 +1461,8 @@ namespace PRISM
         /// overWrite behavior is governed by fileOverwriteMode
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
-        /// <param name="sourceFolderPath">The source directory path.</param>
-        /// <param name="targetFolderPath">The destination directory path.</param>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
         /// <param name="setAttribute">True if the read-only attribute of the destination file is to be modified, false otherwise.</param>
@@ -1469,7 +1474,7 @@ namespace PRISM
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(
-            string sourceFolderPath, string targetFolderPath,
+            string sourceDirectoryPath, string targetDirectoryPath,
             bool recurse, FileOverwriteMode fileOverwriteMode,
             bool setAttribute, bool readOnly, List<string> fileNamesToSkip,
             out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
@@ -1480,36 +1485,36 @@ namespace PRISM
             fileCountResumed = 0;
             fileCountNewlyCopied = 0;
 
-            var sourceFolder = new DirectoryInfo(sourceFolderPath);
-            var targetFolder = new DirectoryInfo(targetFolderPath);
+            var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
+            var targetDirectory = new DirectoryInfo(targetDirectoryPath);
 
             // The source directory must exist, otherwise throw an exception
-            if (!sourceFolder.Exists)
+            if (!sourceDirectory.Exists)
             {
-                throw new DirectoryNotFoundException("Source directory does not exist: " + sourceFolder.FullName);
+                throw new DirectoryNotFoundException("Source directory does not exist: " + sourceDirectory.FullName);
             }
 
-            if (targetFolder.Parent == null)
+            if (targetDirectory.Parent == null)
             {
-                throw new DirectoryNotFoundException("Unable to determine the parent directory of " + targetFolder.FullName);
+                throw new DirectoryNotFoundException("Unable to determine the parent directory of " + targetDirectory.FullName);
             }
             // If destination SubDir's parent directory does not exist throw an exception
-            if (!targetFolder.Parent.Exists)
+            if (!targetDirectory.Parent.Exists)
             {
-                throw new DirectoryNotFoundException("Destination directory does not exist: " + targetFolder.Parent.FullName);
+                throw new DirectoryNotFoundException("Destination directory does not exist: " + targetDirectory.Parent.FullName);
             }
 
-            if (sourceFolder.FullName == targetFolder.FullName)
+            if (sourceDirectory.FullName == targetDirectory.FullName)
             {
-                throw new IOException("Source and target directories cannot be the same: " + targetFolder.FullName);
+                throw new IOException("Source and target directories cannot be the same: " + targetDirectory.FullName);
             }
 
             try
             {
                 // Create the target directory if necessary
-                if (!targetFolder.Exists)
+                if (!targetDirectory.Exists)
                 {
-                    targetFolder.Create();
+                    targetDirectory.Create();
                 }
 
                 // Populate dctFileNamesToSkip
@@ -1525,7 +1530,7 @@ namespace PRISM
 
                 // Copy all the files of the current directory
 
-                foreach (var sourceFile in sourceFolder.GetFiles())
+                foreach (var sourceFile in sourceDirectory.GetFiles())
                 {
                     // Look for both the file name and the full path in dctFileNamesToSkip
                     // If either matches, then do not copy the file
@@ -1546,7 +1551,7 @@ namespace PRISM
                     if (copyFile)
                     {
                         // Does file already exist?
-                        var existingFile = new FileInfo(Path.Combine(targetFolder.FullName, sourceFile.Name));
+                        var existingFile = new FileInfo(Path.Combine(targetDirectory.FullName, sourceFile.Name));
 
                         if (existingFile.Exists)
                         {
@@ -1594,7 +1599,7 @@ namespace PRISM
                     }
                     else
                     {
-                        var targetFilePath = Path.Combine(targetFolder.FullName, sourceFile.Name);
+                        var targetFilePath = Path.Combine(targetDirectory.FullName, sourceFile.Name);
                         success = CopyFileWithResume(sourceFile, targetFilePath, out var copyResumed);
 
                         if (!success)
@@ -1621,13 +1626,13 @@ namespace PRISM
                 if (success && recurse)
                 {
                     // Process each subdirectory
-                    foreach (var subFolder in sourceFolder.GetDirectories())
+                    foreach (var subDirectory in sourceDirectory.GetDirectories())
                     {
-                        var subDirtargetFolderPath = Path.Combine(targetFolderPath, subFolder.Name);
+                        var subDirTargetDirPath = Path.Combine(targetDirectoryPath, subDirectory.Name);
 
                         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                         success = CopyDirectoryWithResume(
-                            subFolder.FullName, subDirtargetFolderPath,
+                            subDirectory.FullName, subDirTargetDirPath,
                             recurse, fileOverwriteMode, setAttribute, readOnly, fileNamesToSkip,
                             out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
                     }
@@ -1659,7 +1664,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Copy sourceFile to targetFolder
+        /// Copy sourceFile to targetDirectory
         /// Copies the file using chunks, thus allowing for resuming
         /// </summary>
         /// <param name="sourceFile"></param>
@@ -1948,9 +1953,9 @@ namespace PRISM
         /// <summary>
         /// Get the directory size.
         /// </summary>
-        /// <param name="folderPath">The path to the directory.</param>
+        /// <param name="directoryPath">The path to the directory.</param>
         /// <returns>The directory size.</returns>
-        public long GetDirectorySize(string folderPath)
+        public long GetDirectorySize(string directoryPath)
         {
 
             // Overload for returning directory size only
@@ -1980,25 +1985,20 @@ namespace PRISM
         /// <summary>
         /// Get the directory size, file count, and directory count for the entire directory tree.
         /// </summary>
-        /// <param name="folderPath">The path to the directory.</param>
+        /// <param name="directoryPath">The path to the directory.</param>
         /// <param name="fileCount">The number of files in the entire directory tree.</param>
-        /// <param name="subFolderCount">The number of directories in the entire directory tree.</param>
+        /// <param name="subDirectoryCount">The number of directories in the entire directory tree.</param>
         /// <returns>The directory size.</returns>
-        private long GetDirectorySizeEX(string folderPath, ref long fileCount, ref long subFolderCount)
+        private long GetDirectorySizeEx(string directoryPath, ref long fileCount, ref long subDirectoryCount)
         {
 
-            // Returns the size of the specified directory, number of files in the directory tree, and number of subdirectories
-            // - Note: requires Imports System.IO
-            // - Usage: Dim DirSize As Long = GetDirectorySize("D:\Projects")
-            //
-            // Original code obtained from vb2themax.com
-            long folderSize = 0;
-            var directory = new DirectoryInfo(folderPath);
+            long directorySize = 0;
+            var directory = new DirectoryInfo(directoryPath);
 
             // Add the size of each file
             foreach (var childFile in directory.GetFiles())
             {
-                folderSize += childFile.Length;
+                directorySize += childFile.Length;
                 fileCount += 1;
             }
 
@@ -2006,11 +2006,11 @@ namespace PRISM
             // calling this same routine
             foreach (var subDir in directory.GetDirectories())
             {
-                folderSize += GetDirectorySizeEX(subDir.FullName, ref fileCount, ref subFolderCount);
-                subFolderCount += 1;
+                directorySize += GetDirectorySizeEx(subDir.FullName, ref fileCount, ref subDirectoryCount);
+                subDirectoryCount += 1;
             }
 
-            return folderSize;
+            return directorySize;
 
         }
         #endregion
@@ -2020,58 +2020,58 @@ namespace PRISM
         /// <summary>
         /// Move a directory
         /// </summary>
-        /// <param name="sourceFolderPath"></param>
-        /// <param name="targetFolderPath"></param>
+        /// <param name="sourceDirectoryPath"></param>
+        /// <param name="targetDirectoryPath"></param>
         /// <param name="overwriteFiles"></param>
         /// <returns></returns>
-        public bool MoveDirectory(string sourceFolderPath, string targetFolderPath, bool overwriteFiles)
+        public bool MoveDirectory(string sourceDirectoryPath, string targetDirectoryPath, bool overwriteFiles)
         {
-            return MoveDirectory(sourceFolderPath, targetFolderPath, overwriteFiles, ManagerName);
+            return MoveDirectory(sourceDirectoryPath, targetDirectoryPath, overwriteFiles, ManagerName);
         }
 
         /// <summary>
         /// Move a directory
         /// </summary>
-        /// <param name="sourceFolderPath"></param>
-        /// <param name="targetFolderPath"></param>
+        /// <param name="sourceDirectoryPath"></param>
+        /// <param name="targetDirectoryPath"></param>
         /// <param name="overwriteFiles"></param>
         /// <param name="managerName"></param>
         /// <returns></returns>
-        public bool MoveDirectory(string sourceFolderPath, string targetFolderPath, bool overwriteFiles, string managerName)
+        public bool MoveDirectory(string sourceDirectoryPath, string targetDirectoryPath, bool overwriteFiles, string managerName)
         {
             bool success;
 
-            var sourceFolder = new DirectoryInfo(sourceFolderPath);
+            var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
 
             // Recursively call this function for each subdirectory
-            foreach (var subFolder in sourceFolder.GetDirectories())
+            foreach (var subDirectory in sourceDirectory.GetDirectories())
             {
-                success = MoveDirectory(subFolder.FullName, Path.Combine(targetFolderPath, subFolder.Name), overwriteFiles, managerName);
+                success = MoveDirectory(subDirectory.FullName, Path.Combine(targetDirectoryPath, subDirectory.Name), overwriteFiles, managerName);
                 if (!success)
                 {
-                    throw new Exception("Error moving directory " + subFolder.FullName + " to " + targetFolderPath + "; MoveDirectory returned False");
+                    throw new Exception("Error moving directory " + subDirectory.FullName + " to " + targetDirectoryPath + "; MoveDirectory returned False");
                 }
             }
 
-            foreach (var sourceFile in sourceFolder.GetFiles())
+            foreach (var sourceFile in sourceDirectory.GetFiles())
             {
-                success = CopyFileUsingLocks(sourceFile.FullName, Path.Combine(targetFolderPath, sourceFile.Name), managerName, overwriteFiles);
+                success = CopyFileUsingLocks(sourceFile.FullName, Path.Combine(targetDirectoryPath, sourceFile.Name), managerName, overwriteFiles);
                 if (!success)
                 {
-                    throw new Exception("Error copying file " + sourceFile.FullName + " to " + targetFolderPath + "; CopyFileUsingLocks returned False");
+                    throw new Exception("Error copying file " + sourceFile.FullName + " to " + targetDirectoryPath + "; CopyFileUsingLocks returned False");
                 }
 
                 // Delete the source file
                 DeleteFileIgnoreErrors(sourceFile.FullName);
             }
 
-            sourceFolder.Refresh();
-            if (sourceFolder.GetFileSystemInfos("*", SearchOption.AllDirectories).Length == 0)
+            sourceDirectory.Refresh();
+            if (sourceDirectory.GetFileSystemInfos("*", SearchOption.AllDirectories).Length == 0)
             {
                 // This directory is now empty; delete it
                 try
                 {
-                    sourceFolder.Delete(true);
+                    sourceDirectory.Delete(true);
                 }
                 catch (Exception)
                 {
@@ -2136,7 +2136,7 @@ namespace PRISM
             if (targetFile.Directory == null)
                 return true;
 
-            var targetFolderPath = targetFile.Directory.FullName;
+            var targetDirectoryPath = targetFile.Directory.FullName;
 
             // Backup any existing copies of targetFilePath
 
@@ -2149,8 +2149,8 @@ namespace PRISM
                 }
                 baseNameCurrent += extension;
 
-                var fileToRename = new FileInfo(Path.Combine(targetFolderPath, baseNameCurrent));
-                var newFilePath = Path.Combine(targetFolderPath, baseName + "_Old" + (revision + 1) + extension);
+                var fileToRename = new FileInfo(Path.Combine(targetDirectoryPath, baseNameCurrent));
+                var newFilePath = Path.Combine(targetDirectoryPath, baseName + "_Old" + (revision + 1) + extension);
 
                 // Confirm that newFilePath doesn't exist; delete it if it does
                 if (File.Exists(newFilePath))
@@ -2687,12 +2687,12 @@ namespace PRISM
         /// Wait for the lock file queue to drop below a threshold
         /// </summary>
         /// <param name="lockFileTimestamp"></param>
-        /// <param name="lockFolderSource"></param>
+        /// <param name="lockDirectorySource"></param>
         /// <param name="sourceFile"></param>
         /// <param name="maxWaitTimeMinutes"></param>
-        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo lockFolderSource, FileInfo sourceFile, int maxWaitTimeMinutes)
+        public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo lockDirectorySource, FileInfo sourceFile, int maxWaitTimeMinutes)
         {
-            WaitForLockFileQueue(lockFileTimestamp, lockFolderSource, null, sourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
+            WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, null, sourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
 
         }
 
@@ -2700,16 +2700,16 @@ namespace PRISM
         /// Wait for the lock file queue to drop below a threshold
         /// </summary>
         /// <param name="lockFileTimestamp"></param>
-        /// <param name="lockFolderSource"></param>
-        /// <param name="lockFolderTarget"></param>
+        /// <param name="lockDirectorySource"></param>
+        /// <param name="lockDirectoryTarget"></param>
         /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="maxWaitTimeMinutes"></param>
         public void WaitForLockFileQueue(
-            long lockFileTimestamp, DirectoryInfo lockFolderSource,
-            DirectoryInfo lockFolderTarget, FileInfo sourceFile, string targetFilePath, int maxWaitTimeMinutes)
+            long lockFileTimestamp, DirectoryInfo lockDirectorySource,
+            DirectoryInfo lockDirectoryTarget, FileInfo sourceFile, string targetFilePath, int maxWaitTimeMinutes)
         {
-            // Find the recent LockFiles present in the source and/or target lock folders
+            // Find the recent LockFiles present in the source and/or target lock directories
             // These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
 
             var mbBacklogSource = 0;
@@ -2729,12 +2729,12 @@ namespace PRISM
 
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
-            if (lockFolderSource != null && lockFolderSource.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            if (lockDirectorySource != null && lockDirectorySource.FullName.ToLower().StartsWith(@"\\adms.emsl.pnl.gov\"))
             {
                 maxWaitTimeSource = 30;
             }
 
-            if (lockFolderTarget != null && lockFolderTarget.FullName.ToLower().StartsWith("\\\\adms.emsl.pnl.gov\\"))
+            if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.ToLower().StartsWith(@"\\adms.emsl.pnl.gov\"))
             {
                 maxWaitTimeTarget = 30;
             }
@@ -2743,8 +2743,8 @@ namespace PRISM
             while (true)
             {
                 // Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
-                var lstLockFileMBSource = FindLockFiles(lockFolderSource, lockFileTimestamp);
-                var lstLockFileMBTarget = FindLockFiles(lockFolderTarget, lockFileTimestamp);
+                var lstLockFileMBSource = FindLockFiles(lockDirectorySource, lockFileTimestamp);
+                var lstLockFileMBTarget = FindLockFiles(lockDirectoryTarget, lockFileTimestamp);
 
                 var stopWaiting = false;
 
