@@ -2271,14 +2271,14 @@ namespace PRISM
             pathPartCount = 1;
             var leadingChars = string.Empty;
 
-            if (pathToCompact.StartsWith("\\\\"))
+            if (pathToCompact.StartsWith(@"\\"))
             {
-                leadingChars = "\\\\";
+                leadingChars = @"\\";
                 charIndex = pathToCompact.IndexOfAny(pathSepChars, 2);
 
                 if (charIndex > 0)
                 {
-                    leadingChars = "\\\\" + pathToCompact.Substring(2, charIndex - 1);
+                    leadingChars = @"\\" + pathToCompact.Substring(2, charIndex - 1);
                     pathParts[0] = pathToCompact.Substring(charIndex + 1);
                 }
                 else
@@ -2286,17 +2286,20 @@ namespace PRISM
                     pathParts[0] = pathToCompact.Substring(2);
                 }
             }
-            else if (pathToCompact.StartsWith("\\") || pathToCompact.StartsWith("/"))
+            else if (pathToCompact.StartsWith(@"\") || pathToCompact.StartsWith("/"))
             {
                 leadingChars = pathToCompact.Substring(0, 1);
                 pathParts[0] = pathToCompact.Substring(1);
             }
-            else if (pathToCompact.StartsWith(".\\") || pathToCompact.StartsWith("./"))
+            else if (pathToCompact.StartsWith(@".\") || pathToCompact.StartsWith("./"))
             {
                 leadingChars = pathToCompact.Substring(0, 2);
                 pathParts[0] = pathToCompact.Substring(2);
             }
-            else if (pathToCompact.StartsWith("..\\") || pathToCompact.Substring(1, 2) == ":\\" || pathToCompact.StartsWith("../") || pathToCompact.Substring(1, 2) == ":/")
+            else if (pathToCompact.StartsWith(@"..\") ||
+                     pathToCompact.Substring(1, 2) == @":\" ||
+                     pathToCompact.StartsWith("../") ||
+                     pathToCompact.Substring(1, 2) == ":/")
             {
                 leadingChars = pathToCompact.Substring(0, 3);
                 pathParts[0] = pathToCompact.Substring(3);
@@ -2329,7 +2332,7 @@ namespace PRISM
             {
                 // No \ or / found, we're forced to shorten the filename (though if a UNC, then can shorten part of the UNC)
 
-                if (leadingChars.StartsWith("\\\\"))
+                if (leadingChars.StartsWith(@"\\"))
                 {
                     leadingCharsLength = leadingChars.Length;
                     if (leadingCharsLength > 5)
@@ -2340,7 +2343,7 @@ namespace PRISM
                         {
                             if (shortLength < 3)
                                 shortLength = 3;
-                            leadingChars = leadingChars.Substring(0, shortLength) + "..\\";
+                            leadingChars = leadingChars.Substring(0, shortLength) + @"..\";
                         }
 
                     }
@@ -2374,7 +2377,7 @@ namespace PRISM
 
                 // First check if pathParts[1] = "...\" or ".../"
                 short multiPathCorrection;
-                if (pathParts[0] == "...\\" || pathParts[0] == ".../")
+                if (pathParts[0] == @"...\" || pathParts[0] == ".../")
                 {
                     multiPathCorrection = 4;
                     pathParts[0] = pathParts[1];
@@ -2400,7 +2403,7 @@ namespace PRISM
                 }
                 else
                 {
-                    if (leadingChars.StartsWith("\\\\"))
+                    if (leadingChars.StartsWith(@"\\"))
                     {
                         leadingCharsLength = leadingChars.Length;
                         if (leadingCharsLength > 5)
@@ -2411,7 +2414,7 @@ namespace PRISM
                             {
                                 if (shortLength < 3)
                                     shortLength = 3;
-                                leadingChars = leadingChars.Substring(0, shortLength) + "..\\";
+                                leadingChars = leadingChars.Substring(0, shortLength) + @"..\";
                             }
 
                             // Recompute shortLength
