@@ -204,9 +204,16 @@ namespace PRISMTest
 
         [TestCase(@"\\proto-2\UnitTest_Files")]
         [TestCase(@"\\proto-2\UnitTest_Files\")]
-        [TestCase(@"\\protoapps\UserData\Matt\")]
         [Category("PNL_Domain")]
         public void GetDriveFreeSpaceForDirectoryRemote(string directoryPath)
+        {
+            GetDriveFreeSpaceForDirectory(directoryPath);
+        }
+
+        [TestCase(@"\\protoapps\UserData\Matt\")]
+        [Category("PNL_Domain")]
+        [Category("PNL_Protoapps")]
+        public void GetDriveFreeSpaceForDirectoryRemote2(string directoryPath)
         {
             GetDriveFreeSpaceForDirectory(directoryPath);
         }
