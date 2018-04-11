@@ -404,7 +404,6 @@ namespace PRISM.Logging
 
                         }
 
-
                     }
                 }
 
