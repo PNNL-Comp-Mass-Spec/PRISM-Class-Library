@@ -145,6 +145,7 @@ namespace PRISMTest
         [TestCase(@"\\gigasax\DMS_Organism_Files\Homo_sapiens\Fasta\H_sapiens_Uniprot_SPROT_2015-04-22.fasta",
             @"\\proto-2\UnitTest_Files\PRISM\FileCopyTestWithLocks\H_sapiens_Uniprot_SPROT_2015-04-22.fasta")]
         [Category("PNL_Domain")]
+        [Category("PNL_Gigasax")]
         public void CopyFileUsingLocksRemote(string sourceFilePath, string targetFilePath)
         {
             CopyFileUsingLocks(sourceFilePath, targetFilePath);
@@ -239,10 +240,17 @@ namespace PRISMTest
         }
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestFile.txt", false)]
+        [Category("PNL_Domain")]
+        public void GetDriveFreeSpaceForFileRemote(string targetFilePath, bool reportFreeSpaceAvailableToUser)
+        {
+            GetDriveFreeSpaceForFile(targetFilePath, reportFreeSpaceAvailableToUser);
+        }
+
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", false)]
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", true)]
         [Category("PNL_Domain")]
-        public void GetDriveFreeSpaceForFileRemote(string targetFilePath, bool reportFreeSpaceAvailableToUser)
+        [Category("PNL_Protoapps")]
+        public void GetDriveFreeSpaceForFileRemote2(string targetFilePath, bool reportFreeSpaceAvailableToUser)
         {
             GetDriveFreeSpaceForFile(targetFilePath, reportFreeSpaceAvailableToUser);
         }
@@ -277,10 +285,17 @@ namespace PRISMTest
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestHugeFile.raw", 100000)]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestHugeFile.raw", 1000000)]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\TestHugeFile.raw", 10000000)]
+        [Category("PNL_Domain")]
+        public void ValidateFreeDiskSpaceRemote(string targetFilePath, long minimumFreeSpaceMB)
+        {
+            ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB);
+        }
+
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", 0)]
         [TestCase(@"\\protoapps\UserData\Matt\TestFile.txt", 500)]
         [Category("PNL_Domain")]
-        public void ValidateFreeDiskSpaceRemote(string targetFilePath, long minimumFreeSpaceMB)
+        [Category("PNL_Protoapps")]
+        public void ValidateFreeDiskSpaceRemote2(string targetFilePath, long minimumFreeSpaceMB)
         {
             ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB);
         }
