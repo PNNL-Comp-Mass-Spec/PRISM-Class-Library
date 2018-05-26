@@ -239,7 +239,7 @@ namespace PRISM
                 var bytes = new byte[headerCrcPosition];
                 BaseStream.Read(bytes, 0, headerCrcPosition);
 
-                var crc = Crc32Gzip.Crc(bytes);
+                var crc = Crc32.Crc(bytes);
                 var crc16 = (ushort)crc;
                 headerCorrupted = HeaderCrc != crc16;
             }
@@ -354,7 +354,7 @@ namespace PRISM
                     }
 
                     // Least two significant bytes of the CRC32 for all bytes of the gzip header, up to (but not including) the CRC16
-                    var crc = Crc32Gzip.Crc(modifiedBuffer.ToArray());
+                    var crc = Crc32.Crc(modifiedBuffer.ToArray());
                     modifiedBuffer.Add((byte)(crc & 0x000000FF));
                     modifiedBuffer.Add((byte)((crc & 0x0000FF00) >> 8));
                     HeaderCrc = (ushort) crc;
@@ -392,111 +392,5 @@ namespace PRISM
             set => BaseStream.Position = value;
         }
 
-        /// <summary>
-        /// Implementation of CRC32 in https://tools.ietf.org/html/rfc1952
-        /// </summary>
-        private static class Crc32Gzip
-        {
-            /// <summary>
-            /// Table of CRCs of all 8-bit messages.
-            /// </summary>
-            private static readonly uint[] crcTable = new uint[256];
-
-            /// <summary>
-            /// Flag: has the table been computed? Initially false.
-            /// </summary>
-            private static bool crcTableComputed;
-
-            /// <summary>
-            /// Make the table for a fast CRC.
-            /// </summary>
-            private static void MakeCrcTable()
-            {
-                for (var n = 0; n < 256; n++)
-                {
-                    var c = (uint)n;
-                    for (var k = 0; k < 8; k++)
-                    {
-                        if ((c & 1) != 0)
-                        {
-                            c = 0xedb88320 ^ (c >> 1);
-                        }
-                        else
-                        {
-                            c = c >> 1;
-                        }
-                    }
-
-                    crcTable[n] = c;
-                }
-
-                crcTableComputed = true;
-            }
-
-            /// <summary>
-            /// Update a running crc with the bytes buf[0..len-1] and return the updated crc. The crc should be initialized to zero. Pre- and post-conditioning (one's complement) is performed within this function so it shouldn't be done by the caller.
-            /// </summary>
-            /// <param name="crc"></param>
-            /// <param name="buf"></param>
-            /// <param name="len"></param>
-            /// <returns></returns>
-            /// <example>
-            /// uint crc = 0;
-            ///
-            /// while (readBuffer(buffer, length) != 0)
-            /// {
-            ///     crc = UpdateCrc(crc, buffer, length);
-            /// }
-            /// if (crc != originalCrc) error();
-            /// </example>
-            // ReSharper disable once MemberCanBePrivate.Local
-            public static uint UpdateCrc(uint crc, IReadOnlyList<byte> buf, int len)
-            {
-                var c = crc ^ 0xffffffff;
-
-                if (!crcTableComputed)
-                    MakeCrcTable();
-
-                for (var n = 0; n < len; n++)
-                {
-                    c = crcTable[(c ^ buf[n]) & 0xff] ^ (c >> 8);
-                }
-                return c ^ 0xffffffff;
-            }
-
-            /// <summary>
-            /// Return the CRC of the bytes buf[0..len-1].
-            /// </summary>
-            /// <param name="buf"></param>
-            /// <param name="len"></param>
-            /// <returns></returns>
-            // ReSharper disable once MemberCanBePrivate.Local
-            public static uint Crc(IReadOnlyList<byte> buf, int len)
-            {
-                return UpdateCrc(0, buf, len);
-            }
-
-            /// <summary>
-            /// Update a running crc with the byte array and return the updated crc. The crc should be initialized to zero. Pre- and post-conditioning (one's complement) is performed within this function so it shouldn't be done by the caller.
-            /// </summary>
-            /// <param name="crc"></param>
-            /// <param name="buf"></param>
-            /// <returns></returns>
-            // ReSharper disable once UnusedMember.Local
-            public static uint UpdateCrc(uint crc, IReadOnlyList<byte> buf)
-            {
-                return UpdateCrc(crc, buf, buf.Count);
-            }
-
-            /// <summary>
-            /// Return the CRC of the byte array
-            /// </summary>
-            /// <param name="buf"></param>
-            /// <returns></returns>
-            public static uint Crc(IReadOnlyList<byte> buf)
-            {
-                return Crc(buf, buf.Count);
-            }
-        }
     }
 }

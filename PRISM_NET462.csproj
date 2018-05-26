@@ -55,6 +55,7 @@
     <Compile Include="clsWindowsUpdateStatus.cs" />
     <Compile Include="CommandLineParser.cs" />
     <Compile Include="ConsoleMsgUtils.cs" />
+    <Compile Include="CRC32.cs" />
     <Compile Include="DirectoryScanner.cs" />
     <Compile Include="FileProcessor\ProcessFilesBase.cs" />
     <Compile Include="FileProcessor\ProcessFilesOrFoldersBase.cs" />
