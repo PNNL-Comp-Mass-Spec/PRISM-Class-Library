@@ -1,0 +1,386 @@
+﻿using System;
+using System.IO;
+
+namespace PRISM
+{
+    public class FileSyncUtils : clsEventNotifier
+    {
+        /// <summary>
+        /// Extension for .LastUsed files that track when a data file was last used
+        /// </summary>
+        public const string LASTUSED_FILE_EXTENSION = ".LastUsed";
+
+        private readonly clsFileTools mFileTools;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="managerName"></param>
+        public FileSyncUtils(string managerName)
+        {
+            mFileTools = new clsFileTools(managerName, 1);
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="fileTools"></param>
+        public FileSyncUtils(clsFileTools fileTools)
+        {
+            mFileTools = fileTools;
+        }
+
+        /// <summary>
+        /// Copy a file from a remote path and store it locally, including creating a .hashcheck file and a .lastused file
+        /// If the file exists and the sha1sum hash matches, do not re-copy the file
+        /// </summary>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetDirectoryPath">Target directory path</param>
+        /// <param name="errorMessage">Output: error message</param>
+        /// <param name="hashType">Hash type for newly created .hashcheck files</param>
+        /// <returns></returns>
+        public bool CopyFileToLocal(
+            string sourceFilePath,
+            string targetDirectoryPath,
+            out string errorMessage,
+            HashUtilities.HashTypeConstants hashType = HashUtilities.HashTypeConstants.SHA1)
+        {
+            try
+            {
+                // Look for the source file
+                var sourceFile = new FileInfo(sourceFilePath);
+
+                if (!sourceFile.Exists)
+                {
+                    errorMessage = "File not found: " + sourceFile;
+                    return false;
+                }
+
+                var sourceHashcheckFile = new FileInfo(sourceFile.FullName + HashUtilities.HASHCHECK_FILE_SUFFIX);
+                var sourceHashInfo = new HashUtilities.HashInfoType();
+                sourceHashInfo.Clear();
+
+                if (sourceHashcheckFile.Exists)
+                {
+                    // Read the .hashcheck file
+                    sourceHashInfo = HashUtilities.ReadHashcheckFile(sourceHashcheckFile.FullName);
+                }
+                else
+                {
+                    // .hashcheck file not found; create it for the source file (in the source directory)
+                    // Raise a warning if unable to create it, but continue
+
+                    try
+                    {
+                        HashUtilities.CreateHashcheckFile(sourceFile.FullName, out var hashValueSource, hashType);
+                        sourceHashInfo.HashValue = hashValueSource;
+                        sourceHashInfo.HashType = hashType;
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This is not a critical error;
+                        OnWarningEvent(string.Format("Unable to create the .hashcheck file for source file {0}: {1}",
+                                                     sourceFile.FullName, ex2.Message));
+                    }
+                }
+
+                // Validate the target directory
+                var targetDirectory = new DirectoryInfo(targetDirectoryPath);
+                if (!targetDirectory.Exists)
+                {
+                    targetDirectory.Create();
+                }
+
+                // Look for the target file in the target directory
+                var targetFile = new FileInfo(Path.Combine(targetDirectory.FullName, sourceFile.Name));
+
+                if (!targetFile.Exists)
+                {
+                    // Copy the source file locally
+                    mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
+
+                    // Call ValidateSharedResource to create the local .hashcheck file, sending localFilePath and the hash info of the source file
+
+                    var validNewFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo);
+                    return validNewFile;
+
+                }
+
+                // The target file exists
+                // Call ValidateSharedResource to validate the local .hashcheck file, sending localFilePath and the hash info of the source file
+                var validFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo);
+                if (validFile)
+                    return true;
+
+                // Existing local file and/or local file hash does not match the source file hash
+                // Wait for a random time between 5 and 15 seconds, plus 1 seconds per 50 MB, to give other processes a chance to copy the file
+                var rand = new Random();
+                var fileSizeMB = sourceFile.Length / 1024.0 / 1024;
+                var waitTimeSeconds = rand.Next(5, 15) + fileSizeMB / 50;
+
+                ConsoleMsgUtils.SleepSeconds(waitTimeSeconds);
+
+                // If a new .hashcheck file was created/modified, call ValidateSharedResource again
+                // If valid, return true
+
+                // Otherwise, delete the local file and the local hashcheck file
+                // Copy the source file locally, then call ValidateSharedResource, sending localFilePath and the hash info of the source file
+                // Return the return value from ValidateSharedResource
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = "Error retrieving/validating " + sourceFilePath + ": " + ex.Message;
+                OnWarningEvent(errorMessage);
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Validate that the hash value of a local file matches the expected hash value
+        /// </summary>
+        /// <param name="localFilePath">Local file path</param>
+        /// <param name="errorMessage">Output: error message</param>
+        /// <param name="expectedHashInfo">Expected hash info</param>
+        /// <returns></returns>
+        private bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, HashUtilities.HashInfoType expectedHashInfo)
+        {
+            var hashFilePath = string.Empty;
+            return ValidateFileVsHashcheck(localFilePath, hashFilePath, out errorMessage, expectedHashInfo);
+        }
+
+        /// <summary>
+        /// Validate that the hash value of a local file matches the expected hash value
+        /// </summary>
+        /// <param name="localFilePath">Local file path</param>
+        /// <param name="errorMessage">Output: error message</param>
+        /// <param name="expectedHash">Expected hash value</param>
+        /// <param name="expectedHashType">Hash type (CRC32, MD5, or Sha1)</param>
+        /// <returns>True if the file is valid, otherwise false</returns>
+        public bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, string expectedHash, HashUtilities.HashTypeConstants expectedHashType)
+        {
+            var expectedHashInfo = new HashUtilities.HashInfoType
+            {
+                HashValue = expectedHash,
+                HashType = expectedHashType
+            };
+
+            var hashFilePath = string.Empty;
+            return ValidateFileVsHashcheck(localFilePath, hashFilePath, out errorMessage, expectedHashInfo);
+        }
+
+        /// <summary>
+        /// Validate that the hash value of a local file matches the expected hash info, creating the .hashcheck file if missing
+        /// </summary>
+        /// <param name="localFilePath">Local file path</param>
+        /// <param name="hashFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
+        /// <param name="errorMessage">Output: error message</param>
+        /// <param name="expectedHashInfo">Expected hash info (e.g. based on a remote file)</param>
+        /// <param name="checkDate">If True, compares UTC modification time; times must agree within 2 seconds</param>
+        /// <param name="computeHash">If true, compute the file hash every recheckIntervalDays (or every time if recheckIntervalDays is 0)</param>
+        /// <param name="checkSize">If true, compare the actual file size to that in the hashcheck file</param>
+        /// <param name="recheckIntervalDays">
+        /// If the .hashcheck file is more than this number of days old, re-compute the hash value of the local file and compare to the hashcheck file
+        /// Set to 0 to check the hash on every call to this method
+        /// </param>
+        /// <returns>True if the file is valid, otherwise false</returns>
+        /// <remarks>
+        /// Will create the .hashcheck file if missing
+        /// Will also update the .lastused file for the local file
+        /// </remarks>
+        public static bool ValidateFileVsHashcheck(
+            string localFilePath, string hashFilePath,
+            out string errorMessage,
+            HashUtilities.HashInfoType expectedHashInfo,
+            bool checkDate = true, bool computeHash = true, bool checkSize = true,
+            int recheckIntervalDays = 0)
+        {
+
+            try
+            {
+                var localFile = new FileInfo(localFilePath);
+                if (!localFile.Exists)
+                {
+                    errorMessage = "File not found: " + localFilePath;
+                    return false;
+                }
+
+                FileInfo localHashcheckFile;
+                if (string.IsNullOrWhiteSpace(hashFilePath))
+                    localHashcheckFile = new FileInfo(localFile.FullName + HashUtilities.HASHCHECK_FILE_SUFFIX);
+                else
+                    localHashcheckFile = new FileInfo(hashFilePath);
+
+                if (!localHashcheckFile.Exists)
+                {
+                    // Local .hashcheck file not found; create it
+                    if (expectedHashInfo.HashType == HashUtilities.HashTypeConstants.Undefined)
+                        expectedHashInfo.HashType = HashUtilities.HashTypeConstants.SHA1;
+
+                    HashUtilities.CreateHashcheckFile(localFile.FullName, out var hashValue, expectedHashInfo.HashType);
+
+                    // Compare the hash to expectedHashInfo.HashValue (if .HashValue is not "")
+                    if (!string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) && !hashValue.Equals(expectedHashInfo.HashValue))
+                    {
+                        errorMessage = string.Format("Mismatch between the expected hash value and the actual hash value for {0}: {1} vs. {2}",
+                                                    localFile.Name, expectedHashInfo.HashValue, hashValue);
+                        return false;
+                    }
+
+                    errorMessage = string.Empty;
+                    return true;
+                }
+
+                // Local .hashcheck file exists
+                var localHashInfo = HashUtilities.ReadHashcheckFile(localHashcheckFile.FullName);
+
+                if (expectedHashInfo.HashType != HashUtilities.HashTypeConstants.Undefined &&
+                    !localHashInfo.HashValue.Equals(expectedHashInfo.HashValue))
+                {
+                    errorMessage = string.Format("Hash mismatch for {0}: expected {1} but actually {2}",
+                                                 localFile.Name, expectedHashInfo.HashValue, localHashInfo.HashValue);
+                    return false;
+                }
+
+                if (checkSize && localFile.Length != localHashInfo.FileSize)
+                {
+                    errorMessage = string.Format("File size mismatch for {0}: expected {1:#,##0} but actually {2:#,##0}",
+                                                 localFile.Name, localHashInfo.FileSize, localFile.Length);
+                    return false;
+                }
+
+                // Only compare dates if we are not comparing hash values
+                if (!computeHash && checkDate)
+                {
+                    if (Math.Abs(localFile.LastWriteTimeUtc.Subtract(localHashInfo.FileDateUtc).TotalSeconds) > 2)
+                    {
+                        errorMessage = string.Format("File date mismatch for {0}: expected {1} UTC but actually {2} UTC",
+                                                     localFile.Name,
+                                                     localHashInfo.FileDateUtc.ToString(HashUtilities.DATE_TIME_FORMAT),
+                                                     localFile.LastWriteTimeUtc.ToString(HashUtilities.DATE_TIME_FORMAT));
+                        return false;
+                    }
+                }
+
+                if (computeHash)
+                {
+                    var lastCheckDays = DateTime.UtcNow.Subtract(localHashcheckFile.LastWriteTimeUtc).TotalDays;
+
+                    if (recheckIntervalDays <= 0 || lastCheckDays > recheckIntervalDays)
+                    {
+                        // Compute the hash of the file
+                        if (localHashInfo.HashType == HashUtilities.HashTypeConstants.Undefined)
+                        {
+                            errorMessage = "Hashtype is undefined; cannot compute the file hash to compare to the .hashcheck file";
+                            return false;
+                        }
+
+                        var actualHash = HashUtilities.ComputeFileHash(localFilePath, localHashInfo.HashType);
+
+                        if (!actualHash.Equals(localHashInfo.HashValue))
+                        {
+                            errorMessage = "Hash mismatch: expecting " + localHashInfo.HashValue + " but computed " + actualHash;
+                            return false;
+                        }
+                    }
+
+                }
+
+                // Create/update the .lastused file
+                UpdateLastUsedFile(localFile);
+
+                errorMessage = string.Empty;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = "Error validating " + localFilePath + " against the expected hash: " + ex.Message;
+                ConsoleMsgUtils.ShowWarning(errorMessage);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Looks for a .hashcheck file for the specified data file; returns false if not found
+        /// If found, compares the stored values to the actual values (size, modification_date_utc, and hash)
+        /// </summary>
+        /// <param name="localFilePath">Data file to check</param>
+        /// <param name="hashFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
+        /// <param name="errorMessage">Output: error message</param>
+        /// <param name="checkDate">If True, compares UTC modification time; times must agree within 2 seconds</param>
+        /// <param name="computeHash">If true, compute the file hash every time</param>
+        /// <param name="checkSize">If true, compare the actual file size to that in the hashcheck file</param>
+        /// <param name="assumedHashType">Hash type to assume if the .hashcheck file does not have a hashtype entry</param>
+        /// <returns>True if the hashcheck file exists and the actual file matches the expected values; false if a mismatch, if .hashcheck is missing, or if a problem</returns>
+        /// <remarks>The .hashcheck file has the same name as the data file, but with ".hashcheck" appended</remarks>
+        public static bool ValidateFileVsHashcheck(
+            string localFilePath, string hashFilePath, out string errorMessage,
+            bool checkDate, bool computeHash, bool checkSize,
+            HashUtilities.HashTypeConstants assumedHashType = HashUtilities.HashTypeConstants.MD5)
+        {
+
+            errorMessage = string.Empty;
+
+            try
+            {
+                var localFile = new FileInfo(localFilePath);
+                if (!localFile.Exists)
+                {
+                    errorMessage = "File not found: " + localFile.FullName;
+                    return false;
+                }
+
+                var localHashcheckFile = new FileInfo(hashFilePath);
+                if (!localHashcheckFile.Exists)
+                {
+                    errorMessage = "Data file at " + localFile.FullName + " does not have a corresponding .hashcheck file named " + localHashcheckFile.Name;
+                    return false;
+                }
+
+                var expectedHashInfo = new HashUtilities.HashInfoType
+                {
+                    HashType = assumedHashType
+                };
+
+                var validFile = ValidateFileVsHashcheck(localFilePath, hashFilePath, out errorMessage, expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
+                return validFile;
+
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowWarning("Error in ValidateLocalFile: " + ex.Message);
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// Update the .lastused file for the given data file
+        /// </summary>
+        /// <param name="dataFile"></param>
+        public static void UpdateLastUsedFile(FileInfo dataFile)
+        {
+
+            var lastUsedFilePath = dataFile.FullName + LASTUSED_FILE_EXTENSION;
+
+            try
+            {
+                using (var writer = new StreamWriter(new FileStream(lastUsedFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                {
+                    writer.WriteLine(DateTime.UtcNow.ToString(HashUtilities.DATE_TIME_FORMAT));
+                }
+            }
+            catch (IOException)
+            {
+                // The file is likely open by another program; ignore this
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowWarning(string.Format("Unable to create a new .LastUsed file at {0}: {1}", lastUsedFilePath, ex.Message));
+            }
+
+        }
+    }
+}
