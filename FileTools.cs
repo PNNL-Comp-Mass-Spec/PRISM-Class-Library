@@ -12,12 +12,6 @@ namespace PRISM
     /// <summary>
     /// Tools to manipulate paths and directories.
     /// </summary>
-    /// <remarks>
-    /// There is a set of functions to properly terminate directory paths.
-    /// There is a set of functions to copy an entire directory tree.
-    /// There is a set of functions to copy an entire directory tree and resume copying interrupted files.
-    /// There is a set of functions to get the size of an entire directory tree, including the number of files and directories.
-    ///</remarks>
     public class clsFileTools : clsEventNotifier
     {
 
@@ -99,7 +93,7 @@ namespace PRISM
 
         #endregion
 
-        #region "Module constants and variables"
+        #region "Constants and class members"
 
         private const int MAX_LOCKFILE_WAIT_TIME_MINUTES = 180;
 
@@ -279,9 +273,8 @@ namespace PRISM
         }
         #endregion
 
-        #region "CheckTerminator function"
+        #region "CheckTerminator Methods"
 
-        //Functions
         /// <summary>
         /// Modifies input directory path string depending on optional settings.
         /// </summary>
@@ -369,7 +362,7 @@ namespace PRISM
         }
         #endregion
 
-        #region "CopyFile function"
+        #region "CopyFile Method"
 
         /// <summary>
         /// Copies a source file to the destination file. Does not allow overwriting.
@@ -426,7 +419,7 @@ namespace PRISM
         /// Copies a source file to the destination file. Allows overwriting.
         /// </summary>
         /// <remarks>
-        /// This function is unique in that it allows you to specify a destination path where
+        /// This method is unique in that it allows you to specify a destination path where
         /// some of the directories do not already exist.  It will create them if they don't.
         /// The last parameter specifies whether a file already present in the
         /// destination directory will be overwritten
@@ -470,14 +463,14 @@ namespace PRISM
 
         #endregion
 
-        #region "Lock File Copying functions"
+        #region "Lock File Copying Methods"
 
         /// <summary>
-        /// Copy the source file to the target path; do not overWrite existing files
+        /// Copy the source file to the target path; do not overwrite existing files
         /// </summary>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetFilePath">Target file path</param>
-        /// <param name="overWrite">True to overWrite existing files</param>
+        /// <param name="overWrite">True to overwrite existing files</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>If the file exists, will not copy the file but will still return true</remarks>
         public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, bool overWrite)
@@ -1081,7 +1074,7 @@ namespace PRISM
         }
         #endregion
 
-        #region "CopyDirectory function"
+        #region "CopyDirectory Method"
 
         /// <summary>
         /// Copies a source directory to the destination directory. Does not allow overwriting.
@@ -1345,7 +1338,7 @@ namespace PRISM
 
         #endregion
 
-        #region "CopyDirectoryWithResume function"
+        #region "CopyDirectoryWithResume Method"
 
         /// <summary>
         /// Copies a source directory to the destination directory.
@@ -1960,7 +1953,7 @@ namespace PRISM
 
         #endregion
 
-        #region "GetDirectorySize function"
+        #region "GetDirectorySize Method"
         /// <summary>
         /// Get the directory size.
         /// </summary>
@@ -2022,7 +2015,7 @@ namespace PRISM
         }
         #endregion
 
-        #region "MoveDirectory Function"
+        #region "MoveDirectory Method"
 
         /// <summary>
         /// Move a directory
@@ -2050,7 +2043,7 @@ namespace PRISM
 
             var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
 
-            // Recursively call this function for each subdirectory
+            // Recursively call this method for each subdirectory
             foreach (var subDirectory in sourceDirectory.GetDirectories())
             {
                 success = MoveDirectory(subDirectory.FullName, Path.Combine(targetDirectoryPath, subDirectory.Name), overwriteFiles, managerName);
@@ -2092,12 +2085,13 @@ namespace PRISM
 
         #endregion
 
-        #region "Utility Functions"
+
+        #region "Utility Methods"
 
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
         /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        /// Use this function to backup old versions of a file before copying a new version to a target directory
+        /// Use this method to backup old versions of a file before copying a new version to a target directory
         /// Keeps up to 9 old versions of a file
         /// </summary>
         /// <param name="targetFilePath">Full path to the file to backup</param>
@@ -2111,7 +2105,7 @@ namespace PRISM
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
         /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        /// Use this function to backup old versions of a file before copying a new version to a target directory
+        /// Use this method to backup old versions of a file before copying a new version to a target directory
         /// </summary>
         /// <param name="targetFilePath">Full path to the file to backup</param>
         /// <param name="versionCountToKeep">Maximum backup copies of the file to keep</param>
@@ -2398,12 +2392,12 @@ namespace PRISM
                 }
 
                 // Shorten the first to as little as possible
-                // If not short enough, replace the first with ... and call this function again
+                // If not short enough, replace the first with ... and call this method again
                 shortLength = maxLength - leadingChars.Length - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 3 - multiPathCorrection;
                 if (shortLength < 1 && pathParts[2].Length > 0)
                 {
                     // Not short enough, but other subdirectories are present
-                    // Thus, can call this function recursively
+                    // Thus, can call this method recursively
                     shortenedPath = leadingChars + "..." + pathSepCharPreferred + pathParts[1] + pathParts[2] + pathParts[3];
                     shortenedPath = CompactPathString(shortenedPath, maxLength);
                 }
@@ -2634,7 +2628,7 @@ namespace PRISM
         /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
-        /// <remarks>If currentDiskFreeSpaceBytes is negative, this function always returns true (provided the target directory exists)</remarks>
+        /// <remarks>If currentDiskFreeSpaceBytes is negative, this method always returns true (provided the target directory exists)</remarks>
         public static bool ValidateFreeDiskSpace(
             string outputFilePath,
             double outputFileExpectedSizeMB,
