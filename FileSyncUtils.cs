@@ -101,6 +101,8 @@ namespace PRISM
 
                 if (!targetFile.Exists)
                 {
+                    DeleteHashCheckFileForDataFile(targetFile);
+
                     // Copy the source file locally
                     mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
 
@@ -142,7 +144,28 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Validate that the hash value of a local file matches the expected hash value
+        /// Delete the .hashcheck file for the given data file
+        /// Does nothing if the data file does not have a .hashcheck file
+        /// </summary>
+        /// <param name="dataFile"></param>
+        private void DeleteHashCheckFileForDataFile(FileInfo dataFile)
+        {
+            try
+            {
+                var dataFileDirectory = dataFile.Directory;
+                if (dataFileDirectory == null)
+                    return;
+
+                var localHashCheckFile = new FileInfo(Path.Combine(dataFileDirectory.FullName, dataFile.Name + HashUtilities.HASHCHECK_FILE_SUFFIX));
+                if (localHashCheckFile.Exists)
+                    localHashCheckFile.Delete();
+            }
+            catch (Exception)
+            {
+                // Ignore errors here
+            }
+
+        }
         /// </summary>
         /// <param name="localFilePath">Local file path</param>
         /// <param name="errorMessage">Output: error message</param>
