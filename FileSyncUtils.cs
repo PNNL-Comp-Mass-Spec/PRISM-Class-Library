@@ -271,15 +271,15 @@ namespace PRISM
                 HashType = expectedHashType
             };
 
-            var hashFilePath = string.Empty;
-            return ValidateFileVsHashcheck(localFilePath, hashFilePath, out errorMessage, expectedHashInfo);
+            var hashCheckFilePath = string.Empty;
+            return ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage, expectedHashInfo);
         }
 
         /// <summary>
         /// Validate that the hash value of a local file matches the expected hash info, creating the .hashcheck file if missing
         /// </summary>
         /// <param name="localFilePath">Local file path</param>
-        /// <param name="hashFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
+        /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
         /// <param name="errorMessage">Output: error message</param>
         /// <param name="expectedHashInfo">Expected hash info (e.g. based on a remote file)</param>
         /// <param name="checkDate">If True, compares UTC modification time; times must agree within 2 seconds</param>
@@ -295,7 +295,7 @@ namespace PRISM
         /// Will also update the .lastused file for the local file
         /// </remarks>
         public static bool ValidateFileVsHashcheck(
-            string localFilePath, string hashFilePath,
+            string localFilePath, string hashCheckFilePath,
             out string errorMessage,
             HashUtilities.HashInfoType expectedHashInfo,
             bool checkDate = true, bool computeHash = true, bool checkSize = true,
@@ -312,10 +312,10 @@ namespace PRISM
                 }
 
                 FileInfo localHashcheckFile;
-                if (string.IsNullOrWhiteSpace(hashFilePath))
+                if (string.IsNullOrWhiteSpace(hashCheckFilePath))
                     localHashcheckFile = new FileInfo(localFile.FullName + HashUtilities.HASHCHECK_FILE_SUFFIX);
                 else
-                    localHashcheckFile = new FileInfo(hashFilePath);
+                    localHashcheckFile = new FileInfo(hashCheckFilePath);
 
                 if (!localHashcheckFile.Exists)
                 {
@@ -323,13 +323,14 @@ namespace PRISM
                     if (expectedHashInfo.HashType == HashUtilities.HashTypeConstants.Undefined)
                         expectedHashInfo.HashType = HashUtilities.HashTypeConstants.SHA1;
 
-                    HashUtilities.CreateHashcheckFile(localFile.FullName, out var hashValue, expectedHashInfo.HashType);
+                    HashUtilities.CreateHashcheckFile(localFile.FullName, expectedHashInfo.HashType, out var localFileHash, out var warningMessage);
+
 
                     // Compare the hash to expectedHashInfo.HashValue (if .HashValue is not "")
-                    if (!string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) && !hashValue.Equals(expectedHashInfo.HashValue))
+                    if (!string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) && !localFileHash.Equals(expectedHashInfo.HashValue))
                     {
                         errorMessage = string.Format("Mismatch between the expected hash value and the actual hash value for {0}: {1} vs. {2}",
-                                                    localFile.Name, expectedHashInfo.HashValue, hashValue);
+                                                    localFile.Name, expectedHashInfo.HashValue, localFileHash);
                         return false;
                     }
 
@@ -411,7 +412,7 @@ namespace PRISM
         /// If found, compares the stored values to the actual values (size, modification_date_utc, and hash)
         /// </summary>
         /// <param name="localFilePath">Data file to check</param>
-        /// <param name="hashFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
+        /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
         /// <param name="errorMessage">Output: error message</param>
         /// <param name="checkDate">If True, compares UTC modification time; times must agree within 2 seconds</param>
         /// <param name="computeHash">If true, compute the file hash every time</param>
@@ -420,8 +421,8 @@ namespace PRISM
         /// <returns>True if the hashcheck file exists and the actual file matches the expected values; false if a mismatch, if .hashcheck is missing, or if a problem</returns>
         /// <remarks>The .hashcheck file has the same name as the data file, but with ".hashcheck" appended</remarks>
         public static bool ValidateFileVsHashcheck(
-            string localFilePath, string hashFilePath, out string errorMessage,
             bool checkDate, bool computeHash, bool checkSize,
+            string localFilePath, string hashCheckFilePath, out string errorMessage,
             HashUtilities.HashTypeConstants assumedHashType = HashUtilities.HashTypeConstants.MD5)
         {
 
@@ -436,7 +437,7 @@ namespace PRISM
                     return false;
                 }
 
-                var localHashcheckFile = new FileInfo(hashFilePath);
+                var localHashcheckFile = new FileInfo(hashCheckFilePath);
                 if (!localHashcheckFile.Exists)
                 {
                     errorMessage = "Data file at " + localFile.FullName + " does not have a corresponding .hashcheck file named " + localHashcheckFile.Name;

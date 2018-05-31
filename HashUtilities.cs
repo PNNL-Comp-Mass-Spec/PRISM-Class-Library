@@ -80,10 +80,10 @@ namespace PRISM
             string hashValue;
 
             // Open file (as read-only)
-            using (Stream objReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 // Hash contents of this stream
-                hashValue = ComputeCRC32Hash(objReader);
+                hashValue = ComputeCRC32Hash(reader);
             }
 
             return hashValue;
@@ -101,10 +101,10 @@ namespace PRISM
             string hashValue;
 
             // Open file (as read-only)
-            using (Stream objReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 // Hash contents of this stream
-                hashValue = ComputeMD5Hash(objReader);
+                hashValue = ComputeMD5Hash(reader);
             }
 
             return hashValue;
@@ -163,10 +163,10 @@ namespace PRISM
             string hashValue;
 
             // open file (as read-only)
-            using (Stream objReader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 // Hash contents of this stream
-                hashValue = ComputeSha1Hash(objReader);
+                hashValue = ComputeSha1Hash(reader);
             }
 
             return hashValue;
@@ -290,7 +290,7 @@ namespace PRISM
             if (!fiDataFile.Exists)
                 return string.Empty;
 
-            var hashFilePath = fiDataFile.FullName + HASHCHECK_FILE_SUFFIX;
+            var hashCheckFilePath = fiDataFile.FullName + HASHCHECK_FILE_SUFFIX;
             if (string.IsNullOrWhiteSpace(hashValue))
                 hashValue = string.Empty;
 
@@ -313,7 +313,6 @@ namespace PRISM
                     throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type");
             }
 
-            using (var swOutFile = new StreamWriter(new FileStream(hashFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
             {
                 swOutFile.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
                 swOutFile.WriteLine("size=" + fiDataFile.Length);
@@ -323,6 +322,7 @@ namespace PRISM
             }
 
             return hashFilePath;
+                using (var swOutFile = new StreamWriter(new FileStream(hashCheckFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
 
         }
 
