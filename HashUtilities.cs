@@ -40,15 +40,15 @@ namespace PRISM
         {
             public long FileSize;
             public DateTime FileDateUtc;
-            public string HashValue;
             public HashTypeConstants HashType;
+            public string HashValue;
 
             public void Clear()
             {
                 FileSize = 0;
                 FileDateUtc = DateTime.MinValue;
-                HashValue = string.Empty;
                 HashType = HashTypeConstants.Undefined;
+                HashValue = string.Empty;
             }
         }
 
@@ -250,45 +250,67 @@ namespace PRISM
         /// Creates a .hashcheck file for the specified file
         /// The file will be created in the same directory as the data file, and will contain size, modification_date_utc, and hash
         /// </summary>
-        /// <param name="dataFilePath"></param>
-        /// <param name="hashValue">Output: the computed file hash</param>
+        /// <param name="dataFilePath">File path to hash</param>
         /// <param name="hashType">Hash type</param>
+        /// <param name="hashValue">Output: the computed file hash</param>
+        /// <param name="warningMessage">Output: warning message</param>
         /// <returns>The full path to the .hashcheck file; empty string if a problem</returns>
         /// <remarks></remarks>
         public static string CreateHashcheckFile(
             string dataFilePath,
+            HashTypeConstants hashType,
             out string hashValue,
-            HashTypeConstants hashType)
+            out string warningMessage)
         {
 
             if (!File.Exists(dataFilePath))
             {
                 hashValue = string.Empty;
+                warningMessage = "Cannot compute .hashcheck file; source file not found: " + dataFilePath;
                 return string.Empty;
             }
 
             hashValue = ComputeFileHash(dataFilePath, hashType);
 
-            return CreateHashcheckFileWithHash(dataFilePath, hashValue, hashType);
+            try
+            {
+                var hashcheckFilePath = CreateHashcheckFileWithHash(dataFilePath, hashType, hashValue, out warningMessage);
+                return hashcheckFilePath;
+            }
+            catch (Exception ex)
+            {
+                // Treat this as a non-critical error
+                warningMessage = string.Format("Unable to create the .hashcheck file for source file {0}: {1}",
+                                               dataFilePath, ex.Message);
+                return string.Empty;
+            }
 
         }
 
         /// <summary>
         /// Creates a .hashcheck file for the specified file
-        /// The file will be created in the same directory as the data file, and will contain size, modification_date_utc, and hash
+        /// The file will be created in the same directory as the data file, and will contain size, modification_date_utc, hash, and hashtype
         /// </summary>
-        /// <param name="dataFilePath"></param>
-        /// <param name="hashValue"></param>
-        /// <param name="hashType"></param>
+        /// <param name="dataFilePath">File path to hash</param>
+        /// <param name="hashType">Hash type</param>
+        /// <param name="hashValue">Output: the computed file hash</param>
+        /// <param name="warningMessage">Output: warning message</param>
         /// <returns>The full path to the .hashcheck file; empty string if a problem</returns>
         /// <remarks></remarks>
-        public static string CreateHashcheckFileWithHash(string dataFilePath, string hashValue, HashTypeConstants hashType)
+        public static string CreateHashcheckFileWithHash(
+            string dataFilePath,
+            HashTypeConstants hashType,
+            string hashValue,
+            out string warningMessage)
         {
 
             var fiDataFile = new FileInfo(dataFilePath);
 
             if (!fiDataFile.Exists)
+            {
+                warningMessage = "Cannot create .hashcheck file; source file not found: " + fiDataFile.FullName;
                 return string.Empty;
+            }
 
             var hashCheckFilePath = fiDataFile.FullName + HASHCHECK_FILE_SUFFIX;
             if (string.IsNullOrWhiteSpace(hashValue))
@@ -313,16 +335,27 @@ namespace PRISM
                     throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type");
             }
 
+            try
             {
-                swOutFile.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
-                swOutFile.WriteLine("size=" + fiDataFile.Length);
-                swOutFile.WriteLine("modification_date_utc=" + fiDataFile.LastWriteTimeUtc.ToString(DATE_TIME_FORMAT));
-                swOutFile.WriteLine("hash=" + hashValue);
-                swOutFile.WriteLine("hashtype=" + hashTypeDescription);
-            }
 
-            return hashFilePath;
                 using (var swOutFile = new StreamWriter(new FileStream(hashCheckFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                {
+                    swOutFile.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
+                    swOutFile.WriteLine("size=" + fiDataFile.Length);
+                    swOutFile.WriteLine("modification_date_utc=" + fiDataFile.LastWriteTimeUtc.ToString(DATE_TIME_FORMAT));
+                    swOutFile.WriteLine("hash=" + hashValue);
+                    swOutFile.WriteLine("hashtype=" + hashTypeDescription);
+                }
+
+                warningMessage = string.Empty;
+                return hashCheckFilePath;
+            }
+            catch (Exception ex)
+            {
+                // Treat this as a non-critical error
+                warningMessage = string.Format("Unable to create .hashcheck file {0}: {1}", hashCheckFilePath, ex.Message);
+                return string.Empty;
+            }
 
         }
 
@@ -386,8 +419,8 @@ namespace PRISM
                             }
                             break;
                     }
-                } // while
-            } // using
+                }
+            }
 
             if (hashInfo.HashType != HashTypeConstants.Undefined)
                 return hashInfo;

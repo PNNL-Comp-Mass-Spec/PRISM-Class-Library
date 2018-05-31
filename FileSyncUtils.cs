@@ -308,6 +308,7 @@ namespace PRISM
                 if (!localFile.Exists)
                 {
                     errorMessage = "File not found: " + localFilePath;
+                    ConsoleMsgUtils.ShowWarning(errorMessage);
                     return false;
                 }
 
@@ -325,12 +326,26 @@ namespace PRISM
 
                     HashUtilities.CreateHashcheckFile(localFile.FullName, expectedHashInfo.HashType, out var localFileHash, out var warningMessage);
 
+                    if (string.IsNullOrWhiteSpace(localFileHash))
+                    {
+                        if (string.IsNullOrWhiteSpace(warningMessage))
+                            errorMessage = "Unable to compute the hash value for local file " + localFile.FullName;
+                        else
+                            errorMessage = warningMessage;
+
+                        ConsoleMsgUtils.ShowWarning(errorMessage);
+                        return false;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(warningMessage))
+                        ConsoleMsgUtils.ShowWarning(warningMessage);
 
                     // Compare the hash to expectedHashInfo.HashValue (if .HashValue is not "")
                     if (!string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) && !localFileHash.Equals(expectedHashInfo.HashValue))
                     {
                         errorMessage = string.Format("Mismatch between the expected hash value and the actual hash value for {0}: {1} vs. {2}",
                                                     localFile.Name, expectedHashInfo.HashValue, localFileHash);
+                        ConsoleMsgUtils.ShowWarning(errorMessage);
                         return false;
                     }
 
@@ -346,13 +361,15 @@ namespace PRISM
                 {
                     errorMessage = string.Format("Hash mismatch for {0}: expected {1} but actually {2}",
                                                  localFile.Name, expectedHashInfo.HashValue, localHashInfo.HashValue);
+                    ConsoleMsgUtils.ShowWarning(errorMessage);
                     return false;
                 }
 
                 if (checkSize && localFile.Length != localHashInfo.FileSize)
                 {
-                    errorMessage = string.Format("File size mismatch for {0}: expected {1:#,##0} but actually {2:#,##0}",
+                    errorMessage = string.Format("File size mismatch for {0}: expected {1:#,##0} bytes but actually {2:#,##0} bytes",
                                                  localFile.Name, localHashInfo.FileSize, localFile.Length);
+                    ConsoleMsgUtils.ShowWarning(errorMessage);
                     return false;
                 }
 
@@ -365,6 +382,7 @@ namespace PRISM
                                                      localFile.Name,
                                                      localHashInfo.FileDateUtc.ToString(HashUtilities.DATE_TIME_FORMAT),
                                                      localFile.LastWriteTimeUtc.ToString(HashUtilities.DATE_TIME_FORMAT));
+                        ConsoleMsgUtils.ShowWarning(errorMessage);
                         return false;
                     }
                 }
@@ -379,6 +397,7 @@ namespace PRISM
                         if (localHashInfo.HashType == HashUtilities.HashTypeConstants.Undefined)
                         {
                             errorMessage = "Hashtype is undefined; cannot compute the file hash to compare to the .hashcheck file";
+                            ConsoleMsgUtils.ShowWarning(errorMessage);
                             return false;
                         }
 
@@ -387,6 +406,7 @@ namespace PRISM
                         if (!actualHash.Equals(localHashInfo.HashValue))
                         {
                             errorMessage = "Hash mismatch: expecting " + localHashInfo.HashValue + " but computed " + actualHash;
+                            ConsoleMsgUtils.ShowWarning(errorMessage);
                             return false;
                         }
                     }
