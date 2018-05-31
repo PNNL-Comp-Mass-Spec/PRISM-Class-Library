@@ -77,13 +77,29 @@ namespace PRISM
 
                     try
                     {
-                        HashUtilities.CreateHashcheckFile(sourceFile.FullName, out var hashValueSource, hashType);
-                        sourceHashInfo.HashValue = hashValueSource;
-                        sourceHashInfo.HashType = hashType;
+                        HashUtilities.CreateHashcheckFile(sourceFile.FullName, hashType, out var hashValueSource, out var warningMessage);
+
+                        if (string.IsNullOrWhiteSpace(hashValueSource))
+                        {
+                            if (string.IsNullOrWhiteSpace(warningMessage))
+                                OnWarningEvent("Unable to create the hash value for remote file " + sourceFile.FullName);
+                            else
+                                OnWarningEvent(warningMessage);
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrWhiteSpace(warningMessage))
+                                OnWarningEvent(warningMessage);
+
+                            sourceHashInfo.HashValue = hashValueSource;
+                            sourceHashInfo.HashType = hashType;
+                            sourceHashInfo.FileSize = sourceFile.Length;
+                            sourceHashInfo.FileDateUtc = sourceFile.LastWriteTimeUtc;
+                        }
                     }
                     catch (Exception ex2)
                     {
-                        // This is not a critical error;
+                        // Treat this as a non-critical error
                         OnWarningEvent(string.Format("Unable to create the .hashcheck file for source file {0}: {1}",
                                                      sourceFile.FullName, ex2.Message));
                     }
