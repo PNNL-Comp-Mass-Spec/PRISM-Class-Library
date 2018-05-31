@@ -37,12 +37,17 @@ namespace PRISM
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetDirectoryPath">Target directory path</param>
         /// <param name="errorMessage">Output: error message</param>
+        /// <param name="recheckIntervalDays">
+        /// If the .hashcheck file is more than this number of days old, re-compute the hash value of the local file and compare to the hashcheck file
+        /// Set to 0 to check the hash on every call to this method
+        /// </param>
         /// <param name="hashType">Hash type for newly created .hashcheck files</param>
         /// <returns></returns>
         public bool CopyFileToLocal(
             string sourceFilePath,
             string targetDirectoryPath,
             out string errorMessage,
+            int recheckIntervalDays = 0,
             HashUtilities.HashTypeConstants hashType = HashUtilities.HashTypeConstants.SHA1)
         {
             try
@@ -99,16 +104,14 @@ namespace PRISM
                     // Copy the source file locally
                     mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
 
-                    // Call ValidateSharedResource to create the local .hashcheck file, sending localFilePath and the hash info of the source file
-
-                    var validNewFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo);
+                    // Create the local .hashcheck file, sending localFilePath and the hash info of the source file
+                    var validNewFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays);
                     return validNewFile;
-
                 }
 
                 // The target file exists
-                // Call ValidateSharedResource to validate the local .hashcheck file, sending localFilePath and the hash info of the source file
-                var validFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo);
+                // Create or validate the local .hashcheck file, sending localFilePath and the hash info of the source file
+                var validFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays);
                 if (validFile)
                     return true;
 
@@ -144,11 +147,18 @@ namespace PRISM
         /// <param name="localFilePath">Local file path</param>
         /// <param name="errorMessage">Output: error message</param>
         /// <param name="expectedHashInfo">Expected hash info</param>
+        /// <param name="recheckIntervalDays">
+        /// If the .hashcheck file is more than this number of days old, re-compute the hash value of the local file and compare to the hashcheck file
+        /// Set to 0 to check the hash on every call to this method
+        /// </param>
         /// <returns></returns>
-        private bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, HashUtilities.HashInfoType expectedHashInfo)
+        private bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, HashUtilities.HashInfoType expectedHashInfo, int recheckIntervalDays = 0)
         {
-            var hashFilePath = string.Empty;
-            return ValidateFileVsHashcheck(localFilePath, hashFilePath, out errorMessage, expectedHashInfo);
+            var hashCheckFilePath = string.Empty;
+            const bool checkDate = true;
+            const bool computeHash = true;
+            const bool checkSize = true;
+            return ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage, expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays);
         }
 
         /// <summary>
@@ -344,7 +354,7 @@ namespace PRISM
                     HashType = assumedHashType
                 };
 
-                var validFile = ValidateFileVsHashcheck(localFilePath, hashFilePath, out errorMessage, expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
+                var validFile = ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage, expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
                 return validFile;
 
             }
