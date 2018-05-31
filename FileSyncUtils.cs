@@ -166,6 +166,33 @@ namespace PRISM
             }
 
         }
+
+        /// <summary>
+        /// Update the .lastused file for the given data file
+        /// </summary>
+        /// <param name="dataFile"></param>
+        public static void UpdateLastUsedFile(FileInfo dataFile)
+        {
+
+            var lastUsedFilePath = dataFile.FullName + LASTUSED_FILE_EXTENSION;
+
+            try
+            {
+                using (var writer = new StreamWriter(new FileStream(lastUsedFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                {
+                    writer.WriteLine(DateTime.UtcNow.ToString(HashUtilities.DATE_TIME_FORMAT));
+                }
+            }
+            catch (IOException)
+            {
+                // The file is likely open by another program; ignore this
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowWarning(string.Format("Unable to create a new .LastUsed file at {0}: {1}", lastUsedFilePath, ex.Message));
+            }
+
+        }
         /// </summary>
         /// <param name="localFilePath">Local file path</param>
         /// <param name="errorMessage">Output: error message</param>
@@ -389,31 +416,5 @@ namespace PRISM
 
         }
 
-        /// <summary>
-        /// Update the .lastused file for the given data file
-        /// </summary>
-        /// <param name="dataFile"></param>
-        public static void UpdateLastUsedFile(FileInfo dataFile)
-        {
-
-            var lastUsedFilePath = dataFile.FullName + LASTUSED_FILE_EXTENSION;
-
-            try
-            {
-                using (var writer = new StreamWriter(new FileStream(lastUsedFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
-                {
-                    writer.WriteLine(DateTime.UtcNow.ToString(HashUtilities.DATE_TIME_FORMAT));
-                }
-            }
-            catch (IOException)
-            {
-                // The file is likely open by another program; ignore this
-            }
-            catch (Exception ex)
-            {
-                ConsoleMsgUtils.ShowWarning(string.Format("Unable to create a new .LastUsed file at {0}: {1}", lastUsedFilePath, ex.Message));
-            }
-
-        }
     }
 }
