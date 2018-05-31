@@ -62,8 +62,15 @@ namespace PRISM
                 }
 
                 var sourceHashcheckFile = new FileInfo(sourceFile.FullName + HashUtilities.HASHCHECK_FILE_SUFFIX);
+
                 var sourceHashInfo = new HashUtilities.HashInfoType();
                 sourceHashInfo.Clear();
+
+                var targetDirectory = new DirectoryInfo(targetDirectoryPath);
+
+                // Look for the local .hashcheckfile
+                // If there is a hash validation error, we might delay re-copying the file, depending on whether this local .hashcheck file exists or was changed recently
+                var localHashCheckFile = new FileInfo(Path.Combine(targetDirectory.FullName, sourceFile.Name + HashUtilities.HASHCHECK_FILE_SUFFIX));
 
                 if (sourceHashcheckFile.Exists)
                 {
@@ -106,7 +113,6 @@ namespace PRISM
                 }
 
                 // Validate the target directory
-                var targetDirectory = new DirectoryInfo(targetDirectoryPath);
                 if (!targetDirectory.Exists)
                 {
                     targetDirectory.Create();
@@ -134,21 +140,43 @@ namespace PRISM
                     return true;
 
                 // Existing local file and/or local file hash does not match the source file hash
-                // Wait for a random time between 5 and 15 seconds, plus 1 seconds per 50 MB, to give other processes a chance to copy the file
-                var rand = new Random();
-                var fileSizeMB = sourceFile.Length / 1024.0 / 1024;
-                var waitTimeSeconds = rand.Next(5, 15) + fileSizeMB / 50;
 
-                ConsoleMsgUtils.SleepSeconds(waitTimeSeconds);
+                if (localHashCheckFile.Exists && DateTime.UtcNow.Subtract(localHashCheckFile.LastWriteTimeUtc).TotalMinutes > 10)
+                {
+                    // The local hash check file already existed and is over 10 minutes old
+                    // Do not use a delay; immediately re-copy the file locally
+                }
+                else
+                {
 
-                // If a new .hashcheck file was created/modified, call ValidateSharedResource again
-                // If valid, return true
+                    // Wait for a random time between 5 and 15 seconds, plus an addditional 1 second per 50 MB, to give other processes a chance to copy the file
+                    var rand = new Random();
+                    var fileSizeMB = sourceFile.Length / 1024.0 / 1024;
+                    var waitTimeSeconds = rand.Next(5, 15) + fileSizeMB / 50;
 
-                // Otherwise, delete the local file and the local hashcheck file
-                // Copy the source file locally, then call ValidateSharedResource, sending localFilePath and the hash info of the source file
-                // Return the return value from ValidateSharedResource
+                    ConsoleMsgUtils.SleepSeconds(waitTimeSeconds);
 
-                return true;
+                    // Repeat the validation of the .hashcheck file
+                    // If valid, return true
+                    // Otherwise, delete the local file and the local hashcheck file and re-try the copy to the local directory
+                    var validFileB = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, 0);
+                    if (validFileB)
+                        return true;
+
+                }
+
+                OnWarningEvent(string.Format("Hash for local file does not match the remote file; recopying {0} to {1}",
+                                             sourceFile.FullName, targetDirectory.FullName));
+
+                DeleteHashCheckFileForDataFile(targetFile);
+
+                // Repeat copying the remote file locally
+                mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
+
+                // Create the local .hashcheck file, sending localFilePath and the hash info of the source file
+                var validFileC = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, 0);
+                return validFileC;
+
             }
             catch (Exception ex)
             {
