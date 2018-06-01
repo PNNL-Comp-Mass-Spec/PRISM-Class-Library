@@ -353,6 +353,9 @@ namespace PRISM
                         return false;
                     }
 
+                    // Create/update the .lastused file
+                    UpdateLastUsedFile(localFile);
+
                     errorMessage = string.Empty;
                     return true;
                 }
