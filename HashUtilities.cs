@@ -30,19 +30,56 @@ namespace PRISM
         /// </summary>
         public enum HashTypeConstants
         {
+            /// <summary>
+            /// Undefined
+            /// </summary>
             Undefined = 0,
+
+            /// <summary>
+            /// CRC32
+            /// </summary>
             CRC32 = 1,
+
+            /// <summary>
+            /// MD5
+            /// </summary>
             MD5 = 2,
+
+            /// <summary>
+            /// SHA1
+            /// </summary>
             SHA1 = 3
         }
 
+        /// <summary>
+        /// Hash info, tracking file size, date, hash, and hash type
+        /// </summary>
         public struct HashInfoType
         {
+            /// <summary>
+            /// File size, in bytes
+            /// </summary>
             public long FileSize;
+
+            /// <summary>
+            /// File modification date (UTC)
+            /// </summary>
             public DateTime FileDateUtc;
+
+            /// <summary>
+            /// Hash type (typically MD5 or SHA1)
+            /// </summary>
             public HashTypeConstants HashType;
+
+            /// <summary>
+            /// Have value
+            /// </summary>
             public string HashValue;
 
+            /// <summary>
+            /// Reset values to defaults
+            /// </summary>
+            /// <remarks>HashType will be Undefined</remarks>
             public void Clear()
             {
                 FileSize = 0;
