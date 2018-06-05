@@ -298,6 +298,39 @@ namespace PRISM
         /// <param name="localFilePath">Local file path</param>
         /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
         /// <param name="errorMessage">Output: error message</param>
+        /// <param name="expectedHashType">Hash type that is presumed to be in the hashcheck file</param>
+        /// <param name="recheckIntervalDays">
+        /// If the .hashcheck file is more than this number of days old, re-compute the hash value of the local file and compare to the hashcheck file
+        /// Set to 0 to check the hash on every call to this method
+        /// </param>
+        /// <returns>True if the file is valid, otherwise false</returns>
+        /// <remarks>
+        /// Will create the .hashcheck file if missing
+        /// Will also update the .lastused file for the local file
+        /// </remarks>
+        public static bool ValidateFileVsHashcheck(
+            string localFilePath, string hashCheckFilePath,
+            out string errorMessage,
+            HashUtilities.HashTypeConstants expectedHashType,
+            int recheckIntervalDays)
+        {
+            const bool checkDate = true;
+            const bool computeHash = true;
+            const bool checkSize = true;
+
+            var expectedHashInfo = new HashUtilities.HashInfoType
+            {
+                HashType = expectedHashType
+            };
+            return ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage, expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays);
+        }
+
+        /// <summary>
+        /// Validate that the hash value of a local file matches the expected hash info, creating the .hashcheck file if missing
+        /// </summary>
+        /// <param name="localFilePath">Local file path</param>
+        /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
+        /// <param name="errorMessage">Output: error message</param>
         /// <param name="expectedHashInfo">Expected hash info (e.g. based on a remote file)</param>
         /// <param name="checkDate">If True, compares UTC modification time; times must agree within 2 seconds</param>
         /// <param name="computeHash">If true, compute the file hash every recheckIntervalDays (or every time if recheckIntervalDays is 0)</param>
@@ -451,7 +484,6 @@ namespace PRISM
         /// <summary>
         /// Looks for a .hashcheck file for the specified data file; returns false if not found
         /// If found, compares the stored values to the actual values (size, modification_date_utc, and hash)
-        /// Next compares the stored values to the actual values
         /// </summary>
         /// <param name="localFilePath">Data file to check</param>
         /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
