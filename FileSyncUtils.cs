@@ -377,6 +377,7 @@ namespace PRISM
                 var localHashInfo = HashUtilities.ReadHashcheckFile(localHashcheckFile.FullName);
 
                 if (expectedHashInfo.HashType != HashUtilities.HashTypeConstants.Undefined &&
+                    !string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) &&
                     !localHashInfo.HashValue.Equals(expectedHashInfo.HashValue))
                 {
                     errorMessage = string.Format("Hash mismatch for {0}: expected {1} but actually {2}",
