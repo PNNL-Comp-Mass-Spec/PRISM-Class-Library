@@ -350,18 +350,44 @@ namespace PRISM.Logging
                     if (!targetDirectory.Exists)
                         targetDirectory.Create();
 
-                    var targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
+                    var targetFile = new FileInfo(Path.Combine(targetDirectory.FullName, logFile.Name));
 
                     try
                     {
-                        if (File.Exists(targetPath))
-                            ConsoleMsgUtils.ShowDebug("Cannot archive old log file; target exists: " + targetPath);
-                        else
-                            logFile.MoveTo(targetPath);
+                        if (targetFile.Exists)
+                        {
+                            // A file with the same name exists in the target directory
+                            // If the source and target files are the same size and have the same SHA1 hash, delete the source file
+                            // Otherwise, rename the file in the target directory, then move the source file
+
+                            if (logFile.Length == targetFile.Length)
+                            {
+                                var logFileHash = HashUtilities.ComputeFileHashSha1(logFile.FullName);
+                                var targetFileHash = HashUtilities.ComputeFileHashSha1(targetFile.FullName);
+                                if (logFileHash.Equals(targetFileHash))
+                                {
+                                    ConsoleMsgUtils.ShowDebug("Identical old log file already exists in the target directory; deleting " + logFile.FullName);
+                                    logFile.Delete();
+                                    continue;
+                                }
+                            }
+
+                            ConsoleMsgUtils.ShowDebug("Backing up identically named old log file: " + targetFile.FullName);
+                            clsFileTools.BackupFileBeforeCopy(targetFile.FullName);
+
+                            targetFile.Refresh();
+                            if (targetFile.Exists)
+                            {
+                                ConsoleMsgUtils.ShowDebug("Backup/rename failed; cannot archive old log file " + logFile.FullName);
+                                continue;
+                            }
+                        }
+
+                        logFile.MoveTo(targetFile.FullName);
                     }
                     catch (Exception ex2)
                     {
-                        archiveWarnings.Add("Error moving old log file to " + targetPath + ": " + ex2.Message);
+                        archiveWarnings.Add("Error moving old log file to " + targetFile.FullName + ": " + ex2.Message);
                     }
                 }
             }
