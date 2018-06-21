@@ -1318,7 +1318,8 @@ namespace PRISM
         /// <summary>
         /// Get the string from the DescriptionAttribute of an enum value
         /// </summary>
-        /// <remarks>From https://stackoverflow.com/questions/1799370/getting-attributes-of-enums-value</remarks>
+        /// <remarks>From https://stackoverflow.com/questions/1799370/getting-attributes-of-enums-value
+        /// </remarks>
         public static DescriptionAttribute GetDescriptionAttribute(this Enum enumValue, Type enumType)
         {
             return enumType.GetMember(enumValue.ToString()).First().GetCustomAttribute<DescriptionAttribute>();

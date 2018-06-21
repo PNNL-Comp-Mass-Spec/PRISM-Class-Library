@@ -33,7 +33,7 @@ namespace PRISM
 
         /// <summary>
         /// Copy a file from a remote path and store it locally, including creating a .hashcheck file and a .lastused file
-        /// If the file exists and the sha1sum hash matches, do not re-copy the file
+        /// If the file exists and the SHA1 hash matches, do not re-copy the file
         /// </summary>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetDirectoryPath">Target directory path</param>
@@ -278,7 +278,7 @@ namespace PRISM
         /// <param name="localFilePath">Local file path</param>
         /// <param name="errorMessage">Output: error message</param>
         /// <param name="expectedHash">Expected hash value</param>
-        /// <param name="expectedHashType">Hash type (CRC32, MD5, or Sha1)</param>
+        /// <param name="expectedHashType">Hash type (CRC32, MD5, or SHA1)</param>
         /// <returns>True if the file is valid, otherwise false</returns>
         public bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, string expectedHash, HashUtilities.HashTypeConstants expectedHashType)
         {

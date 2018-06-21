@@ -191,7 +191,7 @@ namespace PRISM
                     if (i > 8)
                     {
                         // Do not include the "guest" columns
-                        // This is mentioned at https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
+                        // This is mentioned at https://stackoverflow.com/questions/23367857/1179467/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux/
                         break;
                     }
 
@@ -759,7 +759,7 @@ namespace PRISM
         public float GetCoreUsageByProcessID(List<int> processIDs, out float cpuUsageTotal, float samplingTimeSeconds = 1)
         {
             // Use approach described at
-            // https://stackoverflow.com/questions/1420426/how-to-calculate-the-cpu-usage-of-a-process-by-pid-in-linux-from-c
+            // https://stackoverflow.com/questions/1420426/1179467/how-to-calculate-the-cpu-usage-of-a-process-by-pid-in-linux-from-c
             // See also https://github.com/scaidermern/top-processes/blob/master/top_proc.c
 
 

@@ -261,7 +261,7 @@ namespace PRISM
             RelationAll = 0xfff
         }
 
-        //https://stackoverflow.com/questions/6972437/pinvoke-for-getlogicalprocessorinformation-function
+        // https://stackoverflow.com/questions/6972437/pinvoke-for-getlogicalprocessorinformation-function
         [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
