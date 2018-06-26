@@ -746,14 +746,19 @@ namespace PRISM.FileProcessor
                     case eMessageTypeConstants.Normal:
                         OnStatusEvent(message);
                         break;
+
                     case eMessageTypeConstants.Warning:
                         OnWarningEvent(message);
-
                         break;
+
                     case eMessageTypeConstants.ErrorMsg:
                         OnErrorEvent(message);
-
                         break;
+
+                    case eMessageTypeConstants.Debug:
+                        OnDebugEvent(message);
+                        break;
+
                     default:
                         OnStatusEvent(message);
                         break;
@@ -789,6 +794,16 @@ namespace PRISM.FileProcessor
         {
             UpdateProgress(progressStepDescription, 0);
             ProgressReset?.Invoke();
+        }
+
+        /// <summary>
+        /// Show a debug message
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="allowLogToFile"></param>
+        protected void ShowDebug(string message, bool allowLogToFile)
+        {
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours: 0, eMessageType: eMessageTypeConstants.Debug);
         }
 
         /// <summary>
