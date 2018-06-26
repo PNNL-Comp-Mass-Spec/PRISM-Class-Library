@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace PRISM
 {
@@ -243,18 +244,20 @@ namespace PRISM
         /// </remarks>
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args)
         {
+            var errMsg = new StringBuilder();
             foreach (SqlError err in args.Errors)
             {
-                var s = "";
-                s += "Message: " + err.Message;
-                s += ", Source: " + err.Source;
-                s += ", Class: " + err.Class;
-                s += ", State: " + err.State;
-                s += ", Number: " + err.Number;
-                s += ", LineNumber: " + err.LineNumber;
-                s += ", Procedure:" + err.Procedure;
-                s += ", Server: " + err.Server;
-                OnErrorEvent(s);
+                errMsg.Clear();
+                errMsg.Append("Message: " + err.Message);
+                errMsg.Append(", Source: " + err.Source);
+                errMsg.Append(", Class: " + err.Class);
+                errMsg.Append(", State: " + err.State);
+                errMsg.Append(", Number: " + err.Number);
+                errMsg.Append(", LineNumber: " + err.LineNumber);
+                errMsg.Append(", Procedure:" + err.Procedure);
+                errMsg.Append(", Server: " + err.Server);
+
+                OnErrorEvent(errMsg.ToString());
             }
         }
 
