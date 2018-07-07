@@ -115,6 +115,12 @@ namespace PRISM.FileProcessor
         protected string mLogFilePath = string.Empty;
 
         /// <summary>
+        /// Time when the a new log file should be created (12 am tomorrow)
+        /// </summary>
+        /// <remarks>Ony used if mLogFileUsesDateStamp is true</remarks>
+        protected DateTime mLogFileRolloverTime = DateTime.Now;
+
+        /// <summary>
         /// True if the auto-defined log file should have the current date appended to the name
         /// </summary>
         /// <remarks>Only used if LogFilePath is initially blank</remarks>
@@ -351,7 +357,9 @@ namespace PRISM.FileProcessor
             try
             {
                 if (LogFolderPath == null)
+                {
                     LogFolderPath = string.Empty;
+                }
 
                 if (string.IsNullOrWhiteSpace(LogFolderPath))
                 {
@@ -401,7 +409,9 @@ namespace PRISM.FileProcessor
                 if (mLogFileUsesDateStamp)
                 {
                     // Append the current date to the name
-                    mLogFilePath = GetDateBasedLogFilePath(DateTime.Now);
+                    var currentLocalTime = DateTime.Now;
+                    mLogFilePath = GetDateBasedLogFilePath(currentLocalTime);
+                    mLogFileRolloverTime = new DateTime(currentLocalTime.Year, currentLocalTime.Month, currentLocalTime.Day).AddDays(1);
                 }
                 else
                 {
@@ -711,6 +721,12 @@ namespace PRISM.FileProcessor
             if (mLogFile == null && LogMessagesToFile)
             {
                 InitializeLogFile();
+            }
+            else if (mLogFile != null && mLogFileUsesDateStamp && DateTime.Now >= mLogFileRolloverTime)
+            {
+                CloseLogFileNow();
+                InitializeLogFile();
+                ConsoleMsgUtils.ShowDebug("Logging to " + LogFilePath);
             }
 
             if (mLogFile != null)
