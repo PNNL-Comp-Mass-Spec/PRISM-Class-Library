@@ -725,6 +725,7 @@ namespace PRISM.FileProcessor
             else if (mLogFile != null && mLogFileUsesDateStamp && DateTime.Now >= mLogFileRolloverTime)
             {
                 CloseLogFileNow();
+                mLogFilePath = string.Empty;
                 InitializeLogFile();
                 ConsoleMsgUtils.ShowDebug("Logging to " + LogFilePath);
             }
