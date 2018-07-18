@@ -227,7 +227,17 @@ namespace PRISM
                         }
 
                         if (spCmd.Parameters.Contains("@Return"))
+                        {
                             resultCode = Convert.ToInt32(spCmd.Parameters["@Return"].Value);
+                        }
+                        else
+                        {
+                            OnDebugEvent(string.Format(
+                                             "Cannot read the return code for stored procedure {0} " +
+                                             "since cpCmd does not contain a parameter named @Return",
+                                             spCmd.CommandText));
+                            resultCode = 0;
+                        }
 
                     }
                     success = true;
@@ -388,18 +398,29 @@ namespace PRISM
                 deadlockOccurred = false;
                 try
                 {
-                    using (var Cn = new SqlConnection(m_ConnStr))
+                    using (var dbConnection = new SqlConnection(m_ConnStr))
                     {
 
-                        Cn.Open();
+                        dbConnection.Open();
 
-                        spCmd.Connection = Cn;
+                        spCmd.Connection = dbConnection;
                         spCmd.CommandTimeout = TimeoutSeconds;
 
                         startTime = DateTime.UtcNow;
                         spCmd.ExecuteNonQuery();
 
-                        resultCode = Convert.ToInt32(spCmd.Parameters["@Return"].Value);
+                        if (spCmd.Parameters.Contains("@Return"))
+                        {
+                            resultCode = Convert.ToInt32(spCmd.Parameters["@Return"].Value);
+                        }
+                        else
+                        {
+                            OnDebugEvent(string.Format(
+                                             "Cannot read the return code for stored procedure {0} " +
+                                             "since spCmd does not contain a parameter named @Return",
+                                             spCmd.CommandText));
+                            resultCode = 0;
+                        }
 
                     }
 
