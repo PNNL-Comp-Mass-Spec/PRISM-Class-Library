@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net45<!--;net462;netcoreapp2.0--></TargetFrameworks>
@@ -19,7 +19,7 @@
   <ItemGroup Condition="'$(TargetFramework)'=='net45' OR '$(TargetFramework)'=='net462'">
     <ProjectReference Include="..\PRISMWin\PRISMWin.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Compile Remove="Properties\**" />
   </ItemGroup>

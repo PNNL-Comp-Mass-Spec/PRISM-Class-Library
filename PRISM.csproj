@@ -6,7 +6,7 @@
     <AssemblyName>PRISM</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>PRISM-Library</PackageId>
-    <Version>2.4.91</Version>
+    <Version>2.4.92</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Description>Library of functions used by software applications that automate tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
@@ -80,7 +80,6 @@
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0" />
-    <PackageReference Include="System.Threading.Tasks.DataFlow" Version="4.8.0" />
     <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
@@ -89,7 +88,6 @@
 
   <ItemGroup Condition="'$(TargetFramework)'=='net45' OR '$(TargetFramework)'=='net462'">
     <Reference Include="System.Management" />
-    <PackageReference Include="System.Threading.Tasks.DataFlow" Version="4.7.0" />
   </ItemGroup>
 
 </Project>
