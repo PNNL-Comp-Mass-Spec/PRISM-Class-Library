@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,40 +43,6 @@ namespace PRISM
             mSearchDirs = dirs;
             mFileList = new List<string>();
         }
-
-#if !(NETSTANDARD2_0)
-        /// <summary>
-        /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
-        /// </summary>
-        /// <param name="results">An array of file paths found; unchanged if no matches</param>
-        /// <param name="searchPatterns">An array of regular expressions to use in the search.</param>
-        /// <returns>Always returns true</returns>
-        [Obsolete("Use PerformScan that returns a List of strings")]
-        public bool PerformScan(ref ArrayList results, params string[] searchPatterns)
-        {
-            var files = PerformScan(searchPatterns);
-
-            if (files.Count > 0)
-            {
-                if (results == null)
-                {
-                    results = new ArrayList();
-                }
-                else
-                {
-                    results.Clear();
-                }
-
-                foreach (var item in files)
-                {
-                    results.Add(item);
-                }
-            }
-
-            return true;
-
-        }
-#endif
 
         /// <summary>
         /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.

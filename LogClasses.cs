@@ -43,6 +43,7 @@ namespace PRISM
     }
 
     #region "Logger Interface"
+
     /// <summary>
     /// Defines the logging interface.
     /// </summary>
@@ -91,94 +92,8 @@ namespace PRISM
         /// </param>
         void PostError(string message, Exception e, bool localOnly);
     }
+
     #endregion
-
-    #region "Logger Aware Interface"
-    /// <summary>
-    /// Defines the logging aware interface.
-    /// </summary>
-    /// <remarks>
-    /// This interface is used by any class that wants to optionally support
-    /// logging to a logger that implements the ILogger interface.  The key
-    /// here is the phrase optionally.  The class allows, but does not
-    /// require the class user to supply an ILogger.  If the Logger is not
-    /// specified, the class throws Exceptions and raises Events in the usual
-    /// way.  If an ILogger is specified, the user has the option of just logging,
-    /// or logging and throwing/raising Exceptions/Events in the usual way as well.
-    /// </remarks>
-    [Obsolete("Use Logging.FileLogger, Logging.SQLServerDatabaseLogger, or Logging.ODBCDatabaseLogger")]
-    public interface ILoggerAware
-    {
-        /// <summary>
-        /// Register an ILogger with a class to have it log any exception that might occur.
-        /// </summary>
-        /// <param name="logger">A logger object to be used when logging is desired.</param>
-        void RegisterExceptionLogger(ILogger logger);
-
-        /// <summary>
-        /// Register an ILogger with a class to have it log any event that might occur.
-        /// </summary>
-        /// <param name="logger">A logger object to be used when logging is desired.</param>
-        void RegisterEventLogger(ILogger logger);
-
-        /// <summary>
-        /// Set true and the class will raise events.  Set false and it will not.
-        /// </summary>
-        /// <remarks>A function like the one shown below can be placed in ILoggerAware class that will only raise the event in the
-        /// event of one needing to be raised.
-        /// </remarks>
-        bool NotifyOnEvent { get; set; }
-
-        /// <summary>
-        /// Set true and the class will throw exceptions.  Set false and it will not
-        /// </summary>
-        /// <remarks>A function like this can be place in ILoggerAware class that will only throw an exception in the
-        /// event of one needing to be thrown.
-        /// </remarks>
-        bool NotifyOnException { get; set; }
-
-    }
-    #endregion
-
-    /// <summary>
-    /// Utility functions
-    /// </summary>
-    [Obsolete("Use clsStackTraceFormatter")]
-    public class Utilities
-    {
-
-        /// <summary>
-        /// Parses the StackTrace text of the given exception to return a compact description of the current stack
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <returns>
-        /// String of the form:
-        /// Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86
-        /// </returns>
-        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-        public static string GetExceptionStackTrace(Exception ex)
-        {
-            return clsStackTraceFormatter.GetExceptionStackTrace(ex);
-        }
-
-        /// <summary>
-        /// Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
-        /// with one line for each function in the call tree
-        /// </summary>
-        /// <param name="ex">Exception</param>
-        /// <returns>
-        /// Stack trace:
-        ///   clsCodeTest.Test
-        ///   clsCodeTest.TestException
-        ///   clsCodeTest.InnerTestException
-        ///    in clsCodeTest.vb:line 86
-        /// </returns>
-        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
-        public static string GetExceptionStackTraceMultiLine(Exception ex)
-        {
-            return clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex);
-        }
-    }
 
     #region "File Logger Class"
     /// <summary>

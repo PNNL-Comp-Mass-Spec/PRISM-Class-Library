@@ -69,25 +69,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Legacy property; calls XmlFilename
         /// </summary>
-        [Obsolete("Use property XmlFilename")]
-        public string IniFilename => XmlFilename;
-
-        /// <summary>
-        /// This routine returns the name of the ini file.
-        /// </summary>
-        /// <return>The function returns the name of ini file.</return>
-        private string XmlFilename
-        {
-            get
-            {
-                if (!Initialized)
-                    throw new XMLFileReaderNotInitializedException();
-
-                return m_XmlFilename;
-            }
-        }
 
         /// <summary>
         /// This routine returns a boolean showing if the file was initialized or not.
@@ -174,20 +156,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Legacy function name; calls SetXMLSection
         /// </summary>
-        [Obsolete("Use method SetXMLSection")]
-        public bool SetIniSection(string oldSection, string newSection)
-        {
-            return SetXMLSection(oldSection, newSection);
-        }
-
-        /// <summary>
-        /// The function sets the ini section name.
-        /// </summary>
-        /// <param name="oldSection">The name of the old ini section name.</param>
-        /// <param name="newSection">The new name for the ini section.</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
         public bool SetXMLSection(string oldSection, string newSection)
         {
             if (!Initialized)
@@ -207,14 +176,6 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Legacy function name; calls SetXMLValue
-        /// </summary>
-        [Obsolete("Use method SetXMLValue")]
-        public bool SetIniValue(string sectionName, string keyName, string newValue)
-        {
-            return SetXMLValue(sectionName, keyName, newValue);
-        }
-
         /// <summary>
         /// The function sets a new value for the "value" attribute.
         /// </summary>
@@ -314,13 +275,6 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Legacy function name; calls SetXmlKey
-        /// </summary>
-        [Obsolete("Use method SetXmlKey")]
-        public bool SetIniKey(string sectionName, string keyName, string newValue)
-        {
-            return SetXmlKey(sectionName, keyName, newValue);
-        }
 
         /// <summary>
         /// The function sets a new value for the "key" attribute.
@@ -344,14 +298,6 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Legacy function name; calls GetXMLValue
-        /// </summary>
-        [Obsolete("Use method GetXMLValue")]
-        public string GetIniValue(string sectionName, string keyName)
-        {
-            return GetXMLValue(sectionName, keyName);
-        }
-
         /// <summary>
         /// The function gets the name of the "value" attribute.
         /// </summary>
@@ -366,23 +312,6 @@ namespace PRISM
             XmlNode setting = GetItem(sectionName, keyName);
             return setting?.Attributes?.GetNamedItem("value").Value;
         }
-
-#if !(NETSTANDARD2_0)
-        /// <summary>
-        /// Legacy function name; calls GetXmlSectionComments
-        /// </summary>
-        [Obsolete("Use method GetXmlSectionComments")]
-        public StringCollection GetIniComments(string sectionName)
-        {
-            var sectionComments = GetXmlSectionComments(sectionName);
-
-            var commentCollection = new StringCollection();
-            foreach (var item in sectionComments)
-                commentCollection.Add(item);
-
-            return commentCollection;
-        }
-#endif
 
         /// <summary>
         /// The function gets the comments for a section name.
@@ -417,21 +346,6 @@ namespace PRISM
 
             return sectionComments;
         }
-
-#if !(NETSTANDARD2_0)
-        /// <summary>
-        /// Legacy function name; calls SetXMLComments
-        /// </summary>
-        [Obsolete("Use method SetXMLComments")]
-        public bool SetIniComments(string sectionName, StringCollection comments)
-        {
-            var commentList = new List<string>();
-            foreach (var item in comments)
-                commentList.Add(item);
-
-            return SetXMLComments(sectionName, commentList);
-        }
-#endif
 
         /// <summary>
         /// The function sets a the comments for a section name.
