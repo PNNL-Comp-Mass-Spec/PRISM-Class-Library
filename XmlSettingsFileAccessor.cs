@@ -34,7 +34,7 @@ namespace PRISM
             }
         }
 
-        private struct udtRecentSectionType
+        private struct CachedSectionInfo
         {
             // Stores the section name whose keys are cached; the section name is capitalized identically to that actually present in the Xml file
             public string SectionName;
@@ -54,7 +54,7 @@ namespace PRISM
         // When mCaseSensitive = True, the mappings in dtSectionNames are effectively not used
         private readonly Dictionary<string, string> dtSectionNames;
 
-        private udtRecentSectionType mCachedSection;
+        private CachedSectionInfo mCachedSection;
 
         /// <summary>
         /// Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive

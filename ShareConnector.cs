@@ -56,7 +56,7 @@ namespace PRISM
         /// <summary>
         /// This structure is used to group a bunch of member variables.
         /// </summary>
-        private struct udtNetResource
+        private struct NetResourceInfo
         {
 #pragma warning disable 169,414
             public ResourceScope dwScope;
@@ -106,12 +106,12 @@ namespace PRISM
         private const short RESOURCE_USAGE_CONTAINER = 0x2;
 
         [DllImport("mpr.dll", EntryPoint = "WNetAddConnection2A", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        private static extern int WNetAddConnection2(ref udtNetResource lpNetResource, string lpPassword, string lpUserName, int dwFlags);
+        private static extern int WNetAddConnection2(ref NetResourceInfo lpNetResource, string lpPassword, string lpUserName, int dwFlags);
 
         [DllImport("mpr.dll", EntryPoint = "WNetCancelConnection2A", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         private static extern int WNetCancelConnection2(string lpName, int dwFlags, int fForce);
 
-        private udtNetResource mNetResource;
+        private NetResourceInfo mNetResource;
         private string mUsername;
         private string mPassword;
 
