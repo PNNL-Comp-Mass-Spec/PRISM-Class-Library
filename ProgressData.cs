@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PRISM
 {
     /// <summary>
-    /// Add functionality to progress reporting using <see cref="IProgress{T}"/>, including facilitating child process progress as a subset of overall progress.
+    /// Add functionality to progress reporting using <see cref="IProgress{T}"/>,
+    /// including facilitating child process progress as a subset of overall progress.
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgressData
     {
         /// <summary>
@@ -23,11 +26,13 @@ namespace PRISM
         public IProgress<ProgressData> ProgressObj { get; set; }
 
         /// <summary>
-        /// When true, anything that will cause progress to go backwards will cause an exception; otherwise, such changes are silently handled to prevent backwards progress. Should not be true in general release code.
+        /// When true, anything that will cause progress to go backwards will cause an exception;
+        /// otherwise, such changes are silently handled to prevent backwards progress.
+        /// Should not be true in general release code.
         /// </summary>
         public bool ThrowExceptionOnBackwardsProgress
         {
-            get { return _throwExceptionOnBackwardsProgress; }
+            get => _throwExceptionOnBackwardsProgress;
             set
             {
                 if (_throwExceptionOnBackwardsProgress != value)
@@ -39,11 +44,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// When set to true, logic is used that will prevent progress from jumping backwards (errors are silently ignored; see <see cref="ThrowExceptionOnBackwardsProgress"/> to trigger exceptions instead)
+        /// When set to true, logic is used that will prevent progress from jumping backwards
+        /// (errors are silently ignored; see <see cref="ThrowExceptionOnBackwardsProgress"/> to trigger exceptions instead)
         /// </summary>
         public bool PreventBackwardsProgress
         {
-            get { return _preventBackwardsProgress; }
+            get => _preventBackwardsProgress;
             set
             {
                 if (_preventBackwardsProgress != value)
@@ -95,7 +101,7 @@ namespace PRISM
         /// </summary>
         public bool IsPartialRange
         {
-            get { return _isPartialRange; }
+            get => _isPartialRange;
             set
             {
                 if (_isPartialRange == value)
@@ -106,11 +112,11 @@ namespace PRISM
                 if (!value)
                 {
                     _percent = Percent;
-                    _isPartialRange = value;
+                    _isPartialRange = false;
                 }
                 else
                 {
-                    _isPartialRange = value;
+                    _isPartialRange = true;
                     // if setting to true, change the min percentage to prevent sudden, odd jumps
                     if (ThrowExceptionOnBackwardsProgress && _percent > _maxPercentage)
                     {
@@ -128,14 +134,8 @@ namespace PRISM
         /// <remarks>Will set IsPartialRange to true</remarks>
         public double MinPercentage
         {
-            get
-            {
-                return _minPercentage;
-            }
-            set
-            {
-                CheckSetMinMaxRange(value, _maxPercentage);
-            }
+            get => _minPercentage;
+            set => CheckSetMinMaxRange(value, _maxPercentage);
         }
 
         /// <summary>
@@ -144,14 +144,8 @@ namespace PRISM
         /// <remarks>Will set IsPartialRange to true</remarks>
         public double MaxPercentage
         {
-            get
-            {
-                return _maxPercentage;
-            }
-            set
-            {
-                CheckSetMinMaxRange(_minPercentage, value);
-            }
+            get => _maxPercentage;
+            set => CheckSetMinMaxRange(_minPercentage, value);
         }
 
         /// <summary>
@@ -166,12 +160,12 @@ namespace PRISM
         public static DateTime LastUpdated { get; private set; }
         private static readonly string UpdateLock = string.Empty; // Only because we need a reference type for a lock
 
-        private double _percent = 0;
-        private double _lastPercentChange = 0;
-        private bool _throwExceptionOnBackwardsProgress = false;
-        private bool _preventBackwardsProgress = false;
-        private bool _useForwardOnlyLogic = false;
-        private bool _isPartialRange = false;
+        private double _percent;
+        private double _lastPercentChange;
+        private bool _throwExceptionOnBackwardsProgress;
+        private bool _preventBackwardsProgress;
+        private bool _useForwardOnlyLogic;
+        private bool _isPartialRange;
 
         private void CheckForwardOnlyLogic()
         {
@@ -187,7 +181,7 @@ namespace PRISM
         /// </summary>
         private bool HasUsedPartialRange
         {
-            get { return _hasUsedPartialRangeWithAReallyLongAndNastyNameSoThatNoOneEverWantsToUseUtBesidesWhereItIsSupposedToBeUsed; }
+            get => _hasUsedPartialRangeWithAReallyLongAndNastyNameSoThatNoOneEverWantsToUseUtBesidesWhereItIsSupposedToBeUsed;
             set
             {
                 if (!_hasUsedPartialRangeWithAReallyLongAndNastyNameSoThatNoOneEverWantsToUseUtBesidesWhereItIsSupposedToBeUsed && value)
@@ -200,9 +194,9 @@ namespace PRISM
         /// <summary>
         /// Backing variable for HasUsedPartialRange. ONLY USE INSIDE OF HasUsedPartialRange GETTER/SETTER.
         /// </summary>
-        private bool _hasUsedPartialRangeWithAReallyLongAndNastyNameSoThatNoOneEverWantsToUseUtBesidesWhereItIsSupposedToBeUsed = false;
+        private bool _hasUsedPartialRangeWithAReallyLongAndNastyNameSoThatNoOneEverWantsToUseUtBesidesWhereItIsSupposedToBeUsed;
 
-        private double _minPercentage = 0;
+        private double _minPercentage;
         private double _maxPercentage = 100;
 
         /// <summary>
