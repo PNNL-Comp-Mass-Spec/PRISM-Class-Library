@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

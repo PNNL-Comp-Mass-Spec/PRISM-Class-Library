@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

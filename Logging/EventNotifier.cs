@@ -2,6 +2,7 @@
 
 [assembly: CLSCompliant(true)]
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

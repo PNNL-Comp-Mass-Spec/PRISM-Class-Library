@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading;
 using PRISM.Logging;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
 #pragma warning disable IDE1006 // Naming Styles

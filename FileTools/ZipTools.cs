@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using PRISM.Logging;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

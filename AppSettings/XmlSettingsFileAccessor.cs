@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

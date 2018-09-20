@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

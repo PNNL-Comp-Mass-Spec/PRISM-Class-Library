@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

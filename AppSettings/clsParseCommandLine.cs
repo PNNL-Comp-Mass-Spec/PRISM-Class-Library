@@ -5,6 +5,8 @@ using System.Linq;
 
 // NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
 // Instead use the CommandLineParser class.
+
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>

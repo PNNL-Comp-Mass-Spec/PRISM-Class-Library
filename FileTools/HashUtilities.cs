@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>
