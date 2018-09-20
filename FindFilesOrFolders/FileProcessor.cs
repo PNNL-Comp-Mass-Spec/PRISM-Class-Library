@@ -13,7 +13,7 @@ namespace FindFilesOrFolders
         public override bool ProcessFile(string inputFilePath, string outputFolderPath, string parameterFilePath, bool resetErrorCode)
         {
 
-            OnStatusEvent("Process file " + PRISM.clsFileTools.CompactPathString(inputFilePath, 60));
+            OnStatusEvent("Process file " + PRISM.FileTools.CompactPathString(inputFilePath, 60));
 
             if (!string.IsNullOrWhiteSpace(outputFolderPath))
                 OnStatusEvent("  Would write results to " + outputFolderPath);

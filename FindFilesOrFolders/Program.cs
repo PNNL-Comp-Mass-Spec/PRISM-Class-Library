@@ -7,7 +7,7 @@ namespace FindFilesOrFolders
     internal static class Program
     {
 
-        public const string PROGRAM_DATE = "November 15, 2017";
+        public const string PROGRAM_DATE = "September 20, 2018";
 
         private static string mInputFileOrFolderPath;
         private static string mOutputFileOrFolderPath;
@@ -147,7 +147,7 @@ namespace FindFilesOrFolders
 
         }
 
-        static void RegisterEvents(clsEventNotifier processor)
+        static void RegisterEvents(EventNotifier processor)
         {
             processor.DebugEvent += Processor_DebugEvent;
             processor.ErrorEvent += Processor_ErrorEvent;
@@ -290,13 +290,13 @@ namespace FindFilesOrFolders
                 Console.WriteLine();
                 Console.WriteLine("Use /O to specify the output file or folder path");
                 Console.WriteLine();
-                Console.WriteLine("Use /AltOutput to create the results in an alternate output folder (will retain the folder hierachy if /S is provided)");
+                Console.WriteLine("Use /AltOutput to create the results in an alternate output folder (will retain the folder hierarchy if /S is provided)");
                 Console.WriteLine();
                 Console.WriteLine("Use /S to recurse into subdirectories.  Optionally append a number for the max depth");
                 Console.WriteLine();
                 Console.WriteLine("Use /NoWild to not check for wildcards in the input path (ignored if /S is used)");
                 Console.WriteLine();
-                Console.WriteLine("Use /Ext define the list of known extenstions to match; only valid for /Files and only valid if /S is used");
+                Console.WriteLine("Use /Ext define the list of known extensions to match; only valid for /Files and only valid if /S is used");
                 Console.WriteLine("For example, /Ext:.txt,.png");
 
                 Console.WriteLine();
