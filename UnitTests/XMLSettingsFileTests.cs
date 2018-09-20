@@ -16,10 +16,9 @@ namespace PRISMTest
             var reader = new XmlSettingsFileAccessor();
             reader.LoadSettings(settingsFilePath, false);
 
-            bool expectedBool;
             bool valueNotPresent;
 
-            if (bool.TryParse(expectedValue, out expectedBool))
+            if (bool.TryParse(expectedValue, out var expectedBool))
             {
                 var actualBool = reader.GetParam(sectionName, settingName, false, out valueNotPresent);
 
