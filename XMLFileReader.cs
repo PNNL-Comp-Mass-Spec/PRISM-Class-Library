@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 
@@ -10,6 +10,7 @@ namespace PRISM
     /// <summary>
     /// Tools for manipulating XML settings files
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class XMLFileReader
     {
         private enum XMLItemTypeEnum
@@ -19,21 +20,21 @@ namespace PRISM
             GetKeysAndValues = 2
         }
 
-        private string m_XmlFilename;
-
         private readonly XmlDocument m_XmlDoc;
 
+        /// <summary>
+        /// Cached list of section names
+        /// </summary>
         private List<string> m_SectionNames = new List<string>();
-        private string m_SaveFilename;
 
-        private bool m_initialized;
+        private string m_SaveFilename;
 
         private readonly bool NotifyOnException;
 
         /// <summary>
         /// Initializes a new instance of the XMLFileReader (non case-sensitive)
         /// </summary>
-        /// <param name="xmlFilename">The name of the XML file.</param>
+        /// <param name="xmlFilename">XML file name</param>
         /// <param name="isCaseSensitive"></param>
         /// <param name="notifyOnException">When true, raise event InformationMessage if an exception occurs</param>
         public XMLFileReader(string xmlFilename, bool isCaseSensitive, bool notifyOnException = true)
@@ -43,7 +44,7 @@ namespace PRISM
             CaseSensitive = isCaseSensitive;
             m_XmlDoc = new XmlDocument();
 
-            if (string.IsNullOrEmpty(xmlFilename))
+            if (string.IsNullOrWhiteSpace(xmlFilename))
             {
                 return;
             }
@@ -56,8 +57,8 @@ namespace PRISM
                     m_XmlDoc.Load(settingsFile);
                 }
                 UpdateSections();
-                m_XmlFilename = xmlFilename;
-                m_initialized = true;
+                XmlFilePath = xmlFilename;
+                Initialized = true;
 
             }
             catch
@@ -69,25 +70,25 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Path of the XML settings file
         /// </summary>
+        public string XmlFilePath { get; private set; }
 
         /// <summary>
-        /// This routine returns a boolean showing if the file was initialized or not.
+        /// This is set to True once the XML settings file has been successfully read
         /// </summary>
-        /// <return>The function returns a Boolean.</return>
-        public bool Initialized => m_initialized;
+        public bool Initialized { get; private set; }
 
         /// <summary>
-        /// This routine returns a boolean showing if the name is case sensitive or not.
+        /// This is True if setting names are case sensitive
         /// </summary>
-        /// <return>The function returns a Boolean.</return>
         private bool CaseSensitive { get; }
 
         /// <summary>
-        /// This routine sets a name.
+        /// Adjust the case of a setting name
         /// </summary>
-        /// <param name="aName">The name to be set.</param>
-        /// <return>The function returns a string.</return>
+        /// <param name="aName">Setting name</param>
+        /// <return>Returns the name as-is if CaseSensitive is true; otherwise, changes the name to lowercase</return>
         private string SetNameCase(string aName)
         {
             if (CaseSensitive)
@@ -99,7 +100,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Returns the root element of the XML document
+        /// Get the root element of the XML document
         /// </summary>
         private XmlElement GetRoot()
         {
@@ -107,9 +108,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the last section.
+        /// Get the last section in m_SectionNames
         /// </summary>
-        /// <return>The function returns the last section as System.Xml.XmlElement.</return>
+        /// <return>The last section as System.Xml.XmlElement.</return>
         private XmlElement GetLastSection()
         {
             if (m_SectionNames.Count == 0)
@@ -121,13 +122,13 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets a section as System.Xml.XmlElement.
+        /// Get a section by name
         /// </summary>
-        /// <param name="sectionName">The name of a section.</param>
-        /// <return>The function returns a section as System.Xml.XmlElement.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <return>The section as an XmlElement if found, otherwise null</return>
         private XmlElement GetSection(string sectionName)
         {
-            if (!string.IsNullOrEmpty(sectionName))
+            if (!string.IsNullOrWhiteSpace(sectionName))
             {
                 sectionName = SetNameCase(sectionName);
                 return (XmlElement)m_XmlDoc.SelectSingleNode("//section[@name='" + sectionName + "']");
@@ -136,14 +137,14 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets an item.
+        /// Get the XML element for the given key in the given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <return>The function returns a XML element.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Setting name</param>
+        /// <return>XML element, or null if no match</return>
         private XmlElement GetItem(string sectionName, string keyName)
         {
-            if (!string.IsNullOrEmpty(keyName))
+            if (!string.IsNullOrWhiteSpace(keyName))
             {
                 keyName = SetNameCase(keyName);
                 var section = GetSection(sectionName);
@@ -156,33 +157,36 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Copies a section
         /// </summary>
+        /// <param name="oldSection">The name of the section to copy</param>
+        /// <param name="newSection">The new section name</param>
+        /// <return>True if success, false if the old section was not found or if newSection is an empty string</return>
         public bool SetXMLSection(string oldSection, string newSection)
         {
             if (!Initialized)
                 throw new XMLFileReaderNotInitializedException();
 
-            if (!string.IsNullOrEmpty(newSection))
+            if (string.IsNullOrWhiteSpace(newSection))
+                return false;
+
+            var section = GetSection(oldSection);
+            if (section != null)
             {
-                var section = GetSection(oldSection);
-                if (section != null)
-                {
-                    section.SetAttribute("name", SetNameCase(newSection));
-                    UpdateSections();
-                    return true;
-                }
+                section.SetAttribute("name", SetNameCase(newSection));
+                UpdateSections();
+                return true;
             }
             return false;
         }
 
         /// <summary>
-        /// <summary>
-        /// The function sets a new value for the "value" attribute.
+        /// Store the value of a setting in the given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
+        /// <param name="newValue">Value for the key</param>
+        /// <return>True if success, false </return>
         public bool SetXMLValue(string sectionName, string keyName, string newValue)
         {
             if (!Initialized)
@@ -191,12 +195,13 @@ namespace PRISM
             var section = GetSection(sectionName);
             if (section == null)
             {
+                // Section not found; add it
                 if (CreateSection(sectionName))
                 {
                     section = GetSection(sectionName);
 
                     // exit if keyName is Nothing or blank
-                    if (string.IsNullOrEmpty(keyName))
+                    if (string.IsNullOrWhiteSpace(keyName))
                     {
                         return true;
                     }
@@ -228,7 +233,7 @@ namespace PRISM
             }
 
             // try to create the item
-            if (!string.IsNullOrEmpty(keyName) && newValue != null)
+            if (!string.IsNullOrWhiteSpace(keyName) && newValue != null)
             {
                 // construct a new item (blank values are OK)
                 item = m_XmlDoc.CreateElement("item");
@@ -241,10 +246,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function deletes a section in the file.
+        /// Delete a section by name
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <return>The function returns a boolean that shows if the delete was completed.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <return>True if success, false if the section was not found</return>
         private bool DeleteSection(string sectionName)
         {
             var section = GetSection(sectionName);
@@ -258,11 +263,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function deletes a item in a specific section.
+        /// Delete an item from a section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <return>The function returns a boolean that shows if the delete was completed.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
+        /// <return>True if success, false if the section and/or key was not found</return>
         private bool DeleteItem(string sectionName, string keyName)
         {
             var item = GetItem(sectionName, keyName);
@@ -275,14 +280,13 @@ namespace PRISM
         }
 
         /// <summary>
-
-        /// <summary>
-        /// The function sets a new value for the "key" attribute.
+        /// Stores the value for a given key in the given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
         /// <param name="newValue">The new value for the "key".</param>
         /// <return>The function returns a boolean that shows if the change was done.</return>
+        [Obsolete("Unused: this class is used to read XML files, not update them")]
         private bool SetXmlKey(string sectionName, string keyName, string newValue)
         {
             if (!Initialized)
@@ -298,12 +302,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// <summary>
-        /// The function gets the name of the "value" attribute.
+        /// Get the value for the given key in the given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        ///<return>The function returns the name of the "value" attribute.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
+        ///<return>The string in the "value" attribute of the key</return>
         public string GetXMLValue(string sectionName, string keyName)
         {
             if (!Initialized)
@@ -314,11 +317,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the comments for a section name.
+        /// Get the comments for a section name
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        ///<return>The function returns a string collection with comments</return>
-        private List<string> GetXmlSectionComments(string sectionName)
+        /// <param name="sectionName">Section name</param>
+        ///<return>String collection with comments</return>
+        public IEnumerable<string> GetXmlSectionComments(string sectionName)
         {
             if (!Initialized)
                 throw new XMLFileReaderNotInitializedException();
@@ -348,12 +351,13 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function sets a the comments for a section name.
+        /// Set the comments for a section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
+        /// <param name="sectionName">Section name</param>
         /// <param name="comments">A string collection.</param>
-        ///<return>The function returns a Boolean that shows if the change was done.</return>
-        private bool SetXMLComments(string sectionName, List<string> comments)
+        /// <return>The function returns a Boolean that shows if the change was done.</return>
+        [Obsolete("Unused: this class is used to read XML files, not update them")]
+        private bool SetXMLComments(string sectionName, IEnumerable<string> comments)
         {
             if (!Initialized)
                 throw new XMLFileReaderNotInitializedException();
@@ -400,7 +404,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The subroutine updades the sections.
+        /// Update the cached section names
         /// </summary>
         private void UpdateSections()
         {
@@ -417,9 +421,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The subroutine gets the sections.
+        /// The method gets the sections.
         /// </summary>
-        /// <return>The subroutine returns a strin collection of sections.</return>
+        /// <return>A string collection of sections.</return>
         public List<string> AllSections
         {
             get
@@ -433,11 +437,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets a collection of items for a section name.
+        /// The method gets a collection of items for a section name.
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
+        /// <param name="sectionName">Section name</param>
         /// <param name="itemType">Item type.</param>
-        /// <return>The function returns a string colection of items in a section.</return>
+        /// <return>The function returns a string collection of items in a section.</return>
         private List<string> GetItemsInSection(string sectionName, XMLItemTypeEnum itemType)
         {
             var items = new List<string>();
@@ -476,8 +480,8 @@ namespace PRISM
         /// <summary>
         /// Gets a collection of keys in a section.
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <return>The function returns a string colection of all the keys in a section.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <return>The function returns a string collection of all the keys in a section.</return>
         public List<string> AllKeysInSection(string sectionName)
         {
             if (!Initialized)
@@ -489,8 +493,8 @@ namespace PRISM
         /// <summary>
         /// Gets a collection of values in a section.
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <return>The function returns a string colection of all the values in a section.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <return>A string collection of all the values in a section.</return>
         public List<string> AllValuesInSection(string sectionName)
         {
             if (!Initialized)
@@ -502,8 +506,8 @@ namespace PRISM
         /// <summary>
         /// Gets a collection of items in a section.
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <return>The function returns a string colection of all the items in a section.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <return>A string collection of all the items in a section.</return>
         public List<string> AllItemsInSection(string sectionName)
         {
             if (!Initialized)
@@ -515,16 +519,16 @@ namespace PRISM
         /// <summary>
         /// Gets a custom attribute name.
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="attributeName">The name of the attribute.</param>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
+        /// <param name="attributeName">Attribute name</param>
         /// <return>The function returns a string.</return>
         public string GetCustomIniAttribute(string sectionName, string keyName, string attributeName)
         {
             if (!Initialized)
                 throw new XMLFileReaderNotInitializedException();
 
-            if (!string.IsNullOrEmpty(attributeName))
+            if (!string.IsNullOrWhiteSpace(attributeName))
             {
                 var setting = GetItem(sectionName, keyName);
                 if (setting != null)
@@ -537,19 +541,20 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Sets a custom attribute name.
+        /// Defines a custom attribute name
+        /// If attributeValue is null, removes the attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="attributeName">The name of the attribute.</param>
-        /// <param name="attributeValue">The value of the attribute.</param>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
+        /// <param name="attributeName">Attribute name</param>
+        /// <param name="attributeValue">Value for the attribute</param>
         /// <return>The function returns a Boolean.</return>
         public bool SetCustomIniAttribute(string sectionName, string keyName, string attributeName, string attributeValue)
         {
             if (!Initialized)
                 throw new XMLFileReaderNotInitializedException();
 
-            if (string.IsNullOrEmpty(attributeName))
+            if (string.IsNullOrWhiteSpace(attributeName))
             {
                 return false;
             }
@@ -584,39 +589,39 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Creates a section name.
+        /// Creates a section
         /// </summary>
-        /// <param name="sectionName">The name of the section to be created.</param>
-        /// <return>The function returns a Boolean.</return>
+        /// <param name="sectionName">Section name</param>
+        /// <return>True if successful, false if sectionName is empty or an error occurs</return>
         private bool CreateSection(string sectionName)
         {
-            if (!string.IsNullOrEmpty(sectionName))
+            if (string.IsNullOrWhiteSpace(sectionName))
+                return false;
+
+            sectionName = SetNameCase(sectionName);
+            try
             {
-                sectionName = SetNameCase(sectionName);
-                try
+                var newSection = m_XmlDoc.CreateElement("section");
+
+                var nameAttribute = m_XmlDoc.CreateAttribute("name");
+                nameAttribute.Value = SetNameCase(sectionName);
+                newSection.Attributes.SetNamedItem(nameAttribute);
+
+                if (m_XmlDoc.DocumentElement != null)
                 {
-                    var newSection = m_XmlDoc.CreateElement("section");
-
-                    var nameAttribute = m_XmlDoc.CreateAttribute("name");
-                    nameAttribute.Value = SetNameCase(sectionName);
-                    newSection.Attributes.SetNamedItem(nameAttribute);
-
-                    if (m_XmlDoc.DocumentElement != null)
-                    {
-                        m_XmlDoc.DocumentElement.AppendChild(newSection);
-                        m_SectionNames.Add(nameAttribute.Value);
-                        return true;
-                    }
-
+                    m_XmlDoc.DocumentElement.AppendChild(newSection);
+                    m_SectionNames.Add(nameAttribute.Value);
+                    return true;
                 }
-                catch (Exception e)
+
+            }
+            catch (Exception e)
+            {
+                if (NotifyOnException)
                 {
-                    if (NotifyOnException)
-                    {
-                        throw new Exception("Failed to create item: " + e.Message);
-                    }
-                    return false;
+                    throw new Exception("Failed to create item: " + e.Message);
                 }
+                return false;
             }
             return false;
         }
@@ -661,20 +666,20 @@ namespace PRISM
                             ParseLineManual(s, m_XmlDoc);
                         }
 
-                        m_XmlFilename = filePath;
-                        m_initialized = true;
+                        XmlFilePath = filePath;
+                        Initialized = true;
 
                     }
                 }
                 else
                 {
                     // File doesn't exist; create a new, blank .XML file
-                    m_XmlFilename = filePath;
-                    using (var settingsFile = new FileStream(m_XmlFilename, FileMode.Create, FileAccess.Write))
+                    XmlFilePath = filePath;
+                    using (var settingsFile = new FileStream(XmlFilePath, FileMode.Create, FileAccess.Write))
                     {
                         m_XmlDoc.Save(settingsFile);
                     }
-                    m_initialized = true;
+                    Initialized = true;
                 }
 
                 return true;
@@ -692,12 +697,13 @@ namespace PRISM
 
         }
 
-        /// <summary>Manually parses a line to extract the settings information
+        /// <summary>
+        /// Manually parses a line to extract the settings information
         /// Supports the traditional .Ini file format
         /// Also supports the 'key="KeyName" value="Value"' method used in XML settings files
-        /// If success, adds attributes to the doc var</summary>
-        /// <param name="dataLine">The name of the string to be parse.</param>
-        /// <param name="doc">The name of the System.Xml.XmlDocument.</param>
+        /// If successful, adds attributes to the doc variable</summary>
+        /// <param name="dataLine">Data line</param>
+        /// <param name="doc">XmlDocument to track</param>
         /// <returns>True if success, false if not a recognized line format</returns>
         private void ParseLineManual(string dataLine, XmlDocument doc)
         {
@@ -763,7 +769,7 @@ namespace PRISM
                             }
                         }
 
-                        if (string.IsNullOrEmpty(keyName))
+                        if (string.IsNullOrWhiteSpace(keyName))
                         {
                             keyName = string.Empty;
                         }
@@ -821,15 +827,15 @@ namespace PRISM
 
         }
 
-        private bool ParseLineManualCheckTag(string dataLine, string tagTofind, out string tagValue)
+        private bool ParseLineManualCheckTag(string dataLine, string tagToFind, out string tagValue)
         {
             tagValue = string.Empty;
 
-            var matchIndex = dataLine.ToLower().IndexOf(tagTofind, StringComparison.Ordinal);
+            var matchIndex = dataLine.ToLower().IndexOf(tagToFind, StringComparison.Ordinal);
 
             if (matchIndex >= 0)
             {
-                tagValue = dataLine.Substring(matchIndex + tagTofind.Length);
+                tagValue = dataLine.Substring(matchIndex + tagToFind.Length);
 
                 if (tagValue.StartsWith('"'.ToString()))
                 {
@@ -849,7 +855,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// It Sets or Gets the output file name.
+        /// Output file name used by the Save method
         /// </summary>
         public string OutputFilename
         {
@@ -880,7 +886,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// It saves the data to the Xml output file.
+        /// Save the settings to the XML file specified by OutputFilename
         /// </summary>
         public void Save()
         {
@@ -889,8 +895,8 @@ namespace PRISM
 
             if (OutputFilename != null && m_XmlDoc != null)
             {
-                var fi = new FileInfo(OutputFilename);
-                if (fi.Directory != null && !fi.Directory.Exists)
+                var outputFile = new FileInfo(OutputFilename);
+                if (outputFile.Directory != null && !outputFile.Directory.Exists)
                 {
                     if (NotifyOnException)
                     {
@@ -899,9 +905,9 @@ namespace PRISM
                     return;
                 }
 
-                if (fi.Exists)
+                if (outputFile.Exists)
                 {
-                    fi.Delete();
+                    outputFile.Delete();
                 }
 
                 using (var settingsFile = new FileStream(OutputFilename, FileMode.Create, FileAccess.Write))
@@ -920,7 +926,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets the System.Xml.XmlDocument.
+        /// Gets the System.Xml.XmlDocument
         /// </summary>
         public XmlDocument XmlDoc
         {
@@ -936,7 +942,7 @@ namespace PRISM
         /// <summary>
         /// Converts an XML document to a string.
         /// </summary>
-        /// <return>It returns the XML document formatted as a string.</return>
+        /// <return>The XML document formatted as a string.</return>
         public string XML
         {
             get
