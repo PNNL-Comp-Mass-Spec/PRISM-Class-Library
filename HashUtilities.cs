@@ -154,6 +154,7 @@ namespace PRISM
         /// <param name="text"></param>
         /// <returns></returns>
         /// <remarks></remarks>
+        // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashMD5(string text)
         {
 
@@ -216,6 +217,7 @@ namespace PRISM
         /// <param name="text"></param>
         /// <returns></returns>
         /// <remarks></remarks>
+        // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashSha1(string text)
         {
 

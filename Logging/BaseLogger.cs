@@ -41,6 +41,7 @@ namespace PRISM.Logging
             /// <summary>
             /// Disables all logging
             /// </summary>
+            // ReSharper disable once UnusedMember.Global
             NOLOGGING = 0
         }
 
@@ -66,6 +67,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Gets the product version associated with this application
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public static string ExecutableVersion
         {
             get
@@ -126,20 +128,20 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a local message regarding a message queue dequeue error
         /// </summary>
-        /// <param name="failedDeqeueueEvents"></param>
+        /// <param name="failedDequeueEvents"></param>
         /// <param name="messageQueueCount"></param>
-        protected static void LogDequeueError(int failedDeqeueueEvents, int messageQueueCount)
+        protected static void LogDequeueError(int failedDequeueEvents, int messageQueueCount)
         {
             bool warnUser;
 
-            if (failedDeqeueueEvents < 5)
+            if (failedDequeueEvents < 5)
             {
                 warnUser = true;
             }
             else
             {
-                var modDivisor = (int)(Math.Ceiling(Math.Log10(failedDeqeueueEvents)) * 10);
-                warnUser = failedDeqeueueEvents % modDivisor == 0;
+                var modDivisor = (int)(Math.Ceiling(Math.Log10(failedDequeueEvents)) * 10);
+                warnUser = failedDequeueEvents % modDivisor == 0;
             }
 
             if (!warnUser)

@@ -11,16 +11,13 @@ namespace PRISM
     /// The default behaviour when connecting to SMB/CIFS file shares is for
     /// the system to supply the user name and password used to logon to the local machine.
     /// This class allows you to connect to SMB/CIFS file shares when the use of
-    /// SSPI isn't availabe and/or when you don't wish to use the default behaviour.
+    /// SSPI isn't available and/or when you don't wish to use the default behaviour.
     /// It's quite comparable to the "Connect using a different user name." option in the Map Network Drive
     /// utility in Windows.  Much of this code came from Microsoft Knowledge Base Article - 173011.  It was
     /// then modified to fit our needs.
     /// </remarks>
     public class ShareConnector
     {
-
-        private string mErrorMessage = "";
-
 #pragma warning disable 1591
         public enum ResourceScope
         {
@@ -39,7 +36,7 @@ namespace PRISM
             Reserved = 8
         }
 
-        public enum ResourceDisplaytype
+        public enum ResourceDisplayType
         {
             Generic = 0x0,
             Domain = 0x1,
@@ -49,10 +46,10 @@ namespace PRISM
             Group = 0x5,
             Network = 0x6,
             Root = 0x7,
-            Shareadmin = 0x8,
+            ShareAdmin = 0x8,
             Directory = 0x9,
             Tree = 0xa,
-            Ndscontainer = 0xb
+            NdsContainer = 0xb
         }
 #pragma warning restore 1591
 
@@ -64,7 +61,7 @@ namespace PRISM
 #pragma warning disable 169,414
             public ResourceScope dwScope;
             public ResourceType dwType;
-            public ResourceDisplaytype dwDisplayType;
+            public ResourceDisplayType dwDisplayType;
             public int dwUsage;
             public string lpLocalName;
             public string lpRemoteName;
@@ -80,33 +77,33 @@ namespace PRISM
         // /// <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
         // private const short RESOURCE_CONNECTED As Short = &H1S
         // /// <summary> Constant that may be used by NETRESOURCE->dwScope </summary>
-        // private const short RESOURCE_GLOBALNET As Short = &H2S
+        // private const short RESOURCE_GLOBAL_NET As Short = &H2S
 
         // /// <summary> Constant that may be used by NETRESOURCE->dwType </summary>
-        // private const short RESOURCETYPE_DISK As Short = &H1S
+        // private const short RESOURCE_TYPE_DISK As Short = &H1S
         // /// <summary> Constant that may be used by NETRESOURCE->dwType </summary>
-        // private const short RESOURCETYPE_PRINT As Short = &H2S
+        // private const short RESOURCE_TYPE_PRINT As Short = &H2S
         // /// <summary> Constant that may be used by NETRESOURCE->dwType </summary>
-        // private const short RESOURCETYPE_ANY As Short = &H0S
+        // private const short RESOURCE_TYPE_ANY As Short = &H0S
 
         // /// <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-        // private const short RESOURCEDISPLAYTYPE_DOMAIN As Short = &H1S
+        // private const short RESOURCE_DISPLAY_TYPE_DOMAIN As Short = &H1S
         // /// <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-        // private const short RESOURCEDISPLAYTYPE_GENERIC As Short = &H0S
+        // private const short RESOURCE_DISPLAY_TYPE_GENERIC As Short = &H0S
         // /// <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-        // private const short RESOURCEDISPLAYTYPE_SERVER As Short = &H2S
+        // private const short RESOURCE_DISPLAY_TYPE_SERVER As Short = &H2S
         // /// <summary> Constant that may be used by NETRESOURCE->dwDisplayType </summary>
-        // private const short RESOURCEDISPLAYTYPE_SHARE As Short = &H3S
+        // private const short RESOURCE_DISPLAY_TYPE_SHARE As Short = &H3S
 
         /// <summary>
         /// Constant that may be used by NETRESOURCE->dwUsage
         /// </summary>
-        private const short RESOURCEUSAGE_CONNECTABLE = 0x1;
+        private const short RESOURCE_USAGE_CONNECTABLE = 0x1;
 
         /// <summary>
         /// Constant that may be used by NETRESOURCE->dwUsage
         /// </summary>
-        private const short RESOURCEUSAGE_CONTAINER = 0x2;
+        private const short RESOURCE_USAGE_CONTAINER = 0x2;
 
         [DllImport("mpr.dll", EntryPoint = "WNetAddConnection2A", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         private static extern int WNetAddConnection2(ref udtNetResource lpNetResource, string lpPassword, string lpUserName, int dwFlags);
@@ -121,7 +118,7 @@ namespace PRISM
         private string mShareName = string.Empty;
 
         /// <summary>
-        /// This version of the constructor requires you to specify the sharename by setting the <see cref="Share">Share</see> property.
+        /// This version of the constructor requires you to specify the share name by setting the <see cref="Share">Share</see> property.
         /// </summary>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
@@ -132,7 +129,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// This version of the constructor allows you to specify the sharename as an argument.
+        /// This version of the constructor allows you to specify the share name as an argument.
         /// </summary>
         /// <param name="shareName">The name of the file share to which you will connect.</param>
         /// <param name="userName">Username</param>
@@ -156,8 +153,8 @@ namespace PRISM
             mNetResource.lpRemoteName = mShareName;
             mNetResource.dwType = ResourceType.Disk;
             mNetResource.dwScope = ResourceScope.GlobalNetwork;
-            mNetResource.dwDisplayType = ResourceDisplaytype.Share;
-            mNetResource.dwUsage = RESOURCEUSAGE_CONNECTABLE;
+            mNetResource.dwDisplayType = ResourceDisplayType.Share;
+            mNetResource.dwUsage = RESOURCE_USAGE_CONNECTABLE;
         }
 
         /// <summary>
@@ -189,14 +186,14 @@ namespace PRISM
 
         /// <summary>
         /// Connects to specified share using account/password specified through the constructor.
-        /// Requires you to have specifyed the sharename by setting the <see cref="Share">Share</see> property.
+        /// Requires you to have specified the share name by setting the <see cref="Share">Share</see> property.
         /// </summary>
         public bool Connect()
         {
 
             if (string.IsNullOrEmpty(mNetResource.lpRemoteName))
             {
-                mErrorMessage = "Share name not specified";
+                ErrorMessage = "Share name not specified";
                 return false;
             }
             return RealConnect();
@@ -234,7 +231,7 @@ namespace PRISM
                 return true;
             }
 
-            mErrorMessage = errorNum.ToString();
+            ErrorMessage = errorNum.ToString();
             Debug.WriteLine("Got error: " + errorNum);
             return false;
         }
@@ -251,7 +248,7 @@ namespace PRISM
                 return true;
             }
 
-            mErrorMessage = errorNum.ToString();
+            ErrorMessage = errorNum.ToString();
             Debug.WriteLine("Got error: " + errorNum);
             return false;
         }
@@ -259,6 +256,6 @@ namespace PRISM
         /// <summary>
         /// Gets the error message returned by the Connect and Disconnect functions.
         /// </summary>
-        public string ErrorMessage => mErrorMessage;
+        public string ErrorMessage { get; private set; } = "";
     }
 }

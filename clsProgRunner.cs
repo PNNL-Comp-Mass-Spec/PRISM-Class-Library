@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -12,6 +13,7 @@ namespace PRISM
     /// <summary>
     /// This class runs a single program as an external process and monitors it with an internal thread
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class clsProgRunner : clsEventNotifier
     {
 
@@ -28,7 +30,7 @@ namespace PRISM
         public const int MINIMUM_MONITOR_INTERVAL_MSEC = 250;
 
         /// <summary>
-        /// clsProgRunner states
+        /// ProgRunner states
         /// </summary>
         public enum States
         {
@@ -252,7 +254,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Name of this progrunner
+        /// Name of this program runner
         /// </summary>
         public string Name { get; set; }
 
@@ -272,28 +274,28 @@ namespace PRISM
         public int PID { get; private set; }
 
         /// <summary>
-        /// External program that prog runner will run
+        /// External program that the program runner will execute
         /// This is the full path to the program file
         /// </summary>
         public string Program { get; set; }
 
         /// <summary>
-        /// Whether prog runner will restart external program after it exits
+        /// Whether the program runner will restart the external program after it exits
         /// </summary>
         public bool Repeat { get; set; }
 
         /// <summary>
-        /// Time (in seconds) that prog runner waits to restart the external program after it exits
+        /// Time (in seconds) that the program runner waits to restart the external program after it exits
         /// </summary>
         public double RepeatHoldOffTime { get; set; }
 
         /// <summary>
-        /// Current state of prog runner (as number)
+        /// Current state of the program runner (as number)
         /// </summary>
         public States State { get; private set; } = States.NotMonitoring;
 
         /// <summary>
-        /// Current state of prog runner (as descriptive name)
+        /// Current state of the program runner (as descriptive name)
         /// </summary>
         public string StateName
         {

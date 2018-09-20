@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace PRISM
@@ -10,6 +11,7 @@ namespace PRISM
     /// <summary>
     /// Tools to retrieve data from a database
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class clsDBTools : clsEventNotifier
     {
 
@@ -237,7 +239,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The subroutine is an event handler for InfoMessage event.
+        /// This method is an event handler for InfoMessage event.
         /// </summary>
         /// <remarks>
         /// The errors and warnings sent from the SQL server are caught here

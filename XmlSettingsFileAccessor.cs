@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace PRISM
 {
     /// <summary>
     /// This class can be used to read or write settings in an Xml settings file
-    ///   Based on a class from the DMS Analysis Manager software written by Dave Clark and Gary Kiebel (PNNL, Richland, WA)
-    ///   Additional features added by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in October 2003
+    /// Based on a class from the DMS Analysis Manager software written by Dave Clark and Gary Kiebel (PNNL, Richland, WA)
+    /// Additional features added by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in October 2003
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class XmlSettingsFileAccessor
     {
 

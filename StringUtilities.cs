@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -8,6 +9,7 @@ namespace PRISM
     /// <summary>
     /// Utilities for advanced output formatting of doubles
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class StringUtilities
     {
         private const string SCIENTIFIC_NOTATION_CLEANUP_REGEX = "0+E";

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 
@@ -11,6 +12,7 @@ namespace PRISM.Logging
     /// Call method CreateFileLogger to define the log file name
     /// Call method CreateDbLogger to define the database connection info
     /// </remarks>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LogTools
     {
 

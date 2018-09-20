@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -10,6 +11,7 @@ namespace PRISM.FileProcessor
     /// new output files in an output directory.  Note that this class contains simple error codes that
     /// can be set from any derived classes.  The derived classes can also set their own local error codes
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessFilesBase : ProcessFilesOrFoldersBase
     {
         /// <summary>

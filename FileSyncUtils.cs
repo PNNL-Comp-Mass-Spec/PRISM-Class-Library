@@ -69,7 +69,7 @@ namespace PRISM
 
                 var targetDirectory = new DirectoryInfo(targetDirectoryPath);
 
-                // Look for the local .hashcheckfile
+                // Look for the local .hashcheck file
                 // If there is a hash validation error, we might delay re-copying the file, depending on whether this local .hashcheck file exists or was changed recently
                 var localHashCheckFile = new FileInfo(Path.Combine(targetDirectory.FullName, sourceFile.Name + HashUtilities.HASHCHECK_FILE_SUFFIX));
 
@@ -157,7 +157,7 @@ namespace PRISM
                 else
                 {
 
-                    // Wait for a random time between 5 and 15 seconds, plus an addditional 1 second per 50 MB, to give other processes a chance to copy the file
+                    // Wait for a random time between 5 and 15 seconds, plus an additional 1 second per 50 MB, to give other processes a chance to copy the file
                     var rand = new Random();
                     var fileSizeMB = sourceFile.Length / 1024.0 / 1024;
                     var waitTimeSeconds = rand.Next(5, 15) + fileSizeMB / 50;
@@ -523,7 +523,8 @@ namespace PRISM
                     HashType = assumedHashType
                 };
 
-                var validFile = ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage, expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
+                var validFile = ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage,
+                                                        expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
                 return validFile;
 
             }

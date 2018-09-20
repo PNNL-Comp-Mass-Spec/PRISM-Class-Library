@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,6 +12,7 @@ namespace PRISM.FileProcessor
     /// <summary>
     /// Base class for both ProcessFilesBase and ProcessFoldersBase
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessFilesOrFoldersBase : clsEventNotifier
     {
         #region "Constants and Enums"
@@ -25,7 +27,7 @@ namespace PRISM.FileProcessor
 
         private const string LOG_FILE_DATE_REGEX = @"(?<Year>\d{4,4})-(?<Month>\d+)-(?<Day>\d+)";
 
-        private const int MAX_LOGDATA_CACHE_SIZE = 100000;
+        private const int MAX_LOG_DATA_CACHE_SIZE = 100000;
 
         /// <summary>
         /// Message type enums
@@ -140,7 +142,9 @@ namespace PRISM.FileProcessor
         private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
         private string mLastMessage = "";
+
         private DateTime mLastReportTime = DateTime.UtcNow;
+
         private DateTime mLastErrorShown = DateTime.MinValue;
 
         /// <summary>
@@ -190,7 +194,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// When true, auto-move old log files to a subfolder based on the log file date
         /// </summary>
-        /// <remarks>Only valid if the log file name was auto-defined (meaning LogFilePath was intitially blank)</remarks>
+        /// <remarks>Only valid if the log file name was auto-defined (meaning LogFilePath was initially blank)</remarks>
         public bool ArchiveOldLogFiles { get; set; } = true;
 
         /// <summary>
@@ -236,7 +240,6 @@ namespace PRISM.FileProcessor
         /// Percent complete, value between 0 and 100, but can contain decimal percentage values
         /// </summary>
         public float ProgressPercentComplete => Convert.ToSingle(Math.Round(mProgressPercentComplete, 2));
-
 
         /// <summary>
         /// Deprecated property (previously, when true, events would be raised but when false, exceptions would be thrown)
@@ -655,7 +658,8 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Handle exceptions, rethrowing it if ReThrowEvents is true
+        /// Log an error message with the exception message
+        /// Rethrow the exception if ReThrowEvents is true
         /// </summary>
         /// <param name="baseMessage"></param>
         /// <param name="ex"></param>
@@ -674,6 +678,9 @@ namespace PRISM.FileProcessor
             }
         }
 
+        /// <summary>
+        /// Initialize the log file
+        /// </summary>
         private void InitializeLogFile()
         {
             try
@@ -908,12 +915,12 @@ namespace PRISM.FileProcessor
 
         private void TrimLogDataCache()
         {
-            if (mLogDataCache.Count < MAX_LOGDATA_CACHE_SIZE)
+            if (mLogDataCache.Count < MAX_LOG_DATA_CACHE_SIZE)
                 return;
 
             try
             {
-                // Remove entries from mLogDataCache so that the list count is 90% of MAX_LOGDATA_CACHE_SIZE
+                // Remove entries from mLogDataCache so that the list count is 90% of MAX_LOG_DATA_CACHE_SIZE
 
                 // First construct a list of dates that we can sort to determine the datetime threshold for removal
                 var lstDates = (from entry in mLogDataCache select entry.Value).ToList();
@@ -921,7 +928,7 @@ namespace PRISM.FileProcessor
                 // Sort by date
                 lstDates.Sort();
 
-                var thresholdIndex = Convert.ToInt32(Math.Floor(mLogDataCache.Count - MAX_LOGDATA_CACHE_SIZE * 0.9));
+                var thresholdIndex = Convert.ToInt32(Math.Floor(mLogDataCache.Count - MAX_LOG_DATA_CACHE_SIZE * 0.9));
                 if (thresholdIndex < 0)
                     thresholdIndex = 0;
 
@@ -1044,7 +1051,7 @@ namespace PRISM.FileProcessor
                     }
                 }
 
-                if (mLogDataCache.Count > MAX_LOGDATA_CACHE_SIZE)
+                if (mLogDataCache.Count > MAX_LOG_DATA_CACHE_SIZE)
                 {
                     TrimLogDataCache();
                 }
@@ -1213,7 +1220,7 @@ namespace PRISM.FileProcessor
                 {
                     mLogDataCache.Add(logKey, DateTime.UtcNow);
 
-                    if (mLogDataCache.Count > MAX_LOGDATA_CACHE_SIZE)
+                    if (mLogDataCache.Count > MAX_LOG_DATA_CACHE_SIZE)
                     {
                         TrimLogDataCache();
                     }

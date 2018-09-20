@@ -83,7 +83,7 @@ namespace PRISM
         public bool SkipConsoleWriteIfNoErrorListener { get; set; }
 
         /// <summary>
-        /// If WriteToConsoleIfNoListener is true, optionally set this to true to not write progress updatess to the console if no listener
+        /// If WriteToConsoleIfNoListener is true, optionally set this to true to not write progress updates to the console if no listener
         /// </summary>
         public bool SkipConsoleWriteIfNoProgressListener { get; set; }
 
@@ -135,7 +135,7 @@ namespace PRISM
         /// <summary>
         /// Report a debug message
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Debug message</param>
         protected void OnDebugEvent(string message)
         {
             if (DebugEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoDebugListener)
@@ -148,7 +148,7 @@ namespace PRISM
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Error message</param>
         protected void OnErrorEvent(string message)
         {
             if (ErrorEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoErrorListener)
@@ -161,7 +161,7 @@ namespace PRISM
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Error message</param>
         /// <param name="ex">Exception (allowed to be nothing)</param>
         protected void OnErrorEvent(string message, Exception ex)
         {

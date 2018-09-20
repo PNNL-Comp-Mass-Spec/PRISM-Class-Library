@@ -177,7 +177,7 @@ namespace PRISM
             /// </summary>
             Idle = 0,
             /// <summary>
-            /// File is geing copied via .NET and cannot be resumed
+            /// File is being copied via .NET and cannot be resumed
             /// </summary>
             NormalCopy = 1,
             /// <summary>
@@ -1221,7 +1221,7 @@ namespace PRISM
                 throw new DirectoryNotFoundException("Source directory does not exist: " + sourceDir.FullName);
             }
 
-            // If destination SubDir's parent SubDir does not exist throw an exception
+            // Verify the parent directory of the destination directory
             if (destDir.Parent != null && !destDir.Parent.Exists)
             {
                 throw new DirectoryNotFoundException("Destination directory does not exist: " + destDir.Parent.FullName);
@@ -1502,7 +1502,7 @@ namespace PRISM
             {
                 throw new DirectoryNotFoundException("Unable to determine the parent directory of " + targetDirectory.FullName);
             }
-            // If destination SubDir's parent directory does not exist throw an exception
+            // Verify the parent directory of the destination directory
             if (!targetDirectory.Parent.Exists)
             {
                 throw new DirectoryNotFoundException("Destination directory does not exist: " + targetDirectory.Parent.FullName);
@@ -2861,7 +2861,7 @@ namespace PRISM
                 storedFileName = fileToCompress.Name;
             }
 
-            // GZipMetadataStream wraps the filestream to add the metadata at the right time during the file write
+            // GZipMetadataStream wraps the file stream to add the metadata at the right time during the file write
             using (var decompressedFileStream = fileToCompress.OpenRead())
             using (var compressedFileStream = File.Create(compressedFilePath))
             using (var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc))
@@ -2940,7 +2940,7 @@ namespace PRISM
             var lastModified = fileToDecompress.LastWriteTime;
             string decompressedFilePath;
 
-            // GZipMetadataStream wraps the filestream to read the metadata before decompressing
+            // GZipMetadataStream wraps the file stream to read the metadata before decompressing
             using (var originalFileStream = fileToDecompress.OpenRead())
             using (var gzipMetadataStream = new GZipMetadataStream(originalFileStream))
             {
@@ -2975,7 +2975,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Construct the path to the .gz file to create, possibly overriding the target directory and/or target file anme
+        /// Construct the path to the .gz file to create, possibly overriding the target directory and/or target filename
         /// </summary>
         /// <param name="fileToCompress"></param>
         /// <param name="compressedDirectoryPath"></param>

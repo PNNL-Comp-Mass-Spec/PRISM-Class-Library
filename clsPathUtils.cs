@@ -37,6 +37,7 @@ namespace PRISM
         /// <param name="path1"></param>
         /// <param name="path2"></param>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global
         public static string CombinePathsLocalSepChar(string path1, string path2)
         {
             return CombinePaths(path1, path2, Path.DirectorySeparatorChar);
@@ -98,11 +99,12 @@ namespace PRISM
         /// Examples:
         /// C:\...\B..\Finance..
         /// C:\...\W..\Business\Finances.doc
-        /// C:\My Docum..\Word\Business\Finances.doc
+        /// C:\My Doc..\Word\Business\Finances.doc
         /// </summary>
         /// <param name="pathToCompact"></param>
         /// <param name="maxLength">Maximum length of the shortened path</param>
         /// <returns>Shortened path</returns>
+        // ReSharper disable once UnusedMember.Global
         public static string CompactPathString(string pathToCompact, int maxLength = 40)
         {
             return clsFileTools.CompactPathString(pathToCompact, maxLength);
@@ -153,7 +155,7 @@ namespace PRISM
 
             try
             {
-                var matchedfiles = folder.GetFiles(fileMask).ToList();
+                var matchedFiles = folder.GetFiles(fileMask).ToList();
 
                 if (recurse)
                 {
@@ -161,11 +163,11 @@ namespace PRISM
                     {
                         var additionalFiles = FindFilesWildcard(subFolder, fileMask, true);
 
-                        matchedfiles.AddRange(additionalFiles);
+                        matchedFiles.AddRange(additionalFiles);
                     }
                 }
 
-                return matchedfiles;
+                return matchedFiles;
             }
             catch (UnauthorizedAccessException)
             {
@@ -175,7 +177,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Check a filename against a filemask (like * or *.txt or MSGF*)
+        /// Check a filename against a file mask (like * or *.txt or MSGF*)
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="fileMask"></param>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PRISM
 {
@@ -7,6 +8,7 @@ namespace PRISM
     /// Windows desktop computers have Windows updates applied around 3 am on the first Thursday after the third Tuesday of the month
     /// Windows servers have Windows updates applied around 3 am or 10 am on the first Sunday after the second Tuesday of the month
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class clsWindowsUpdateStatus
     {
 
@@ -144,13 +146,13 @@ namespace PRISM
                 candidateDate = candidateDate.AddDays(1);
             }
 
-            var addon = occurrence * 7 - 7;
-            if (addon == 0)
+            var addOn = occurrence * 7 - 7;
+            if (addOn == 0)
             {
                 return candidateDate;
             }
 
-            var targetTuesday = candidateDate.AddDays(addon);
+            var targetTuesday = candidateDate.AddDays(addOn);
             return targetTuesday;
         }
 

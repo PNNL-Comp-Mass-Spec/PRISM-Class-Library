@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PRISM
 {
@@ -8,6 +9,7 @@ namespace PRISM
     /// <summary>
     /// Tools to execute a stored procedure
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class clsExecuteDatabaseSP : clsEventNotifier
     {
 
@@ -29,7 +31,7 @@ namespace PRISM
         public const int RET_VAL_DEADLOCK = -4;
 
         /// <summary>
-        /// Default number of times to retry calling the stored prcoedure
+        /// Default number of times to retry calling the stored procedure
         /// </summary>
         public const int DEFAULT_SP_RETRY_COUNT = 3;
 
@@ -115,10 +117,10 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        public clsExecuteDatabaseSP(string connectionString, int timoutSeconds)
+        public clsExecuteDatabaseSP(string connectionString, int timeoutSeconds)
         {
             m_ConnStr = connectionString;
-            mTimeoutSeconds = timoutSeconds;
+            mTimeoutSeconds = timeoutSeconds;
 
         }
 
@@ -316,9 +318,7 @@ namespace PRISM
         /// <remarks></remarks>
         public int ExecuteSP(SqlCommand spCmd)
         {
-
             return ExecuteSP(spCmd, DEFAULT_SP_RETRY_COUNT);
-
         }
 
         /// <summary>

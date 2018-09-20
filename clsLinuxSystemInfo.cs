@@ -245,7 +245,7 @@ namespace PRISM
         /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
-        /// For multithreaded applications, the task directory below the ProcessID directory will have
+        /// For multi-threaded applications, the task directory below the ProcessID directory will have
         /// separate ProcessID directories for each thread.  Those directories could be parsed to determine
         /// the processing time for each thread.  However, the stat file in the base ProcessID directory
         /// has the combined processing time for all threads, so parsing of individual thread stat times
@@ -271,6 +271,7 @@ namespace PRISM
                         stime = 0;
                         return false;
                     }
+                    // ReSharper disable CommentTypo
 
                     // Example data lines:
                     // 166488 (mono) S 88338 166488 87940 34818 166488 4202496 3181 0 0 0 14990 9 0 0 20 0 21 0 576435325 1486651392 6596 18446744073709551615 4194304 7975508 140724251272320 140724251268432 237064205964 0 0 4096 1260 18446744073709551615 0 0 17 0 0 0 0 0 0
@@ -305,6 +306,8 @@ namespace PRISM
                     //  vsize          Virtual memory size in bytes
                     //  rss            Resident Set Size: number of pages the process has in real memory
 
+                    // ReSharper restore CommentTypo
+
                     var match = mStatLineMatcher.Match(dataLine);
 
                     if (!match.Success)
@@ -332,7 +335,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Match the dataline with the Regex matcher
+        /// Match the data line with the Regex matcher
         /// If success, extract the ID group, returning the integer via parameter id
         /// </summary>
         /// <param name="reIdMatcher"></param>
@@ -562,7 +565,7 @@ namespace PRISM
                     }
                 }
 
-                var hyperthreadedCoreCount = processorList.Count;
+                var hyperThreadedCoreCount = processorList.Count;
 
                 var uniquePhysicalCoreIDs = new SortedSet<string>();
 
@@ -579,24 +582,24 @@ namespace PRISM
 
                 var coreCountIgnoreHyperthreading = uniquePhysicalCoreIDs.Count;
 
-                if (coreCountIgnoreHyperthreading > 0 && hyperthreadedCoreCount % coreCountIgnoreHyperthreading == 0)
+                if (coreCountIgnoreHyperthreading > 0 && hyperThreadedCoreCount % coreCountIgnoreHyperthreading == 0)
                 {
-                    // hyperthreadedCoreCount is a multiple of coreCountIgnoreHyperthreading (typically 2x difference)
+                    // hyperThreadedCoreCount is a multiple of coreCountIgnoreHyperthreading (typically 2x difference)
                     mCoreCountCached = coreCountIgnoreHyperthreading;
                     return coreCountIgnoreHyperthreading;
                 }
 
-                if (hyperthreadedCoreCount >= coreCountIgnoreHyperthreading * 2)
+                if (hyperThreadedCoreCount >= coreCountIgnoreHyperthreading * 2)
                 {
-                    // hyperthreadedCoreCount is at least double coreCountIgnoreHyperthreading
+                    // hyperThreadedCoreCount is at least double coreCountIgnoreHyperthreading
                     mCoreCountCached = coreCountIgnoreHyperthreading;
                     return coreCountIgnoreHyperthreading;
                 }
 
-                if (hyperthreadedCoreCount > 0)
+                if (hyperThreadedCoreCount > 0)
                 {
-                    mCoreCountCached = hyperthreadedCoreCount;
-                    return hyperthreadedCoreCount;
+                    mCoreCountCached = hyperThreadedCoreCount;
+                    return hyperThreadedCoreCount;
                 }
 
                 if (showDebugInfo)
@@ -789,7 +792,7 @@ namespace PRISM
                     return 0;
                 }
 
-                // Keys in this dictionary are paths to stat files, values are utime and stime values parsed from the stat flie
+                // Keys in this dictionary are paths to stat files, values are utime and stime values parsed from the stat file
                 var statFileTimes = new Dictionary<FileInfo, Tuple<long, long>>();
                 var errorMessage = string.Empty;
 
@@ -991,6 +994,7 @@ namespace PRISM
                 // CentOS 7 and Ubuntu report statistic MemAvailable:
                 //   an estimate of how much memory is available for starting new applications, without swapping
                 // If present, we use this value, otherwise we report the sum of the matched stats in memoryStatsToSum
+                // ReSharper disable once IdentifierTypo
                 const string MEMAVAILABLE_KEY = "MemAvailable";
 
                 // Keys in this dictionary are memory stats to find
@@ -1123,6 +1127,8 @@ namespace PRISM
                         continue;
 
                     string processName;
+
+                    // ReSharper disable once StringLiteralTypo
                     if (exePath.StartsWith("sshd:"))
                     {
                         processName = string.Copy(exePath);
@@ -1224,6 +1230,7 @@ namespace PRISM
         /// Determine the version of Linux that we're running
         /// </summary>
         /// <returns>String describing the OS version</returns>
+        // ReSharper disable once UnusedMember.Global
         public string GetLinuxVersion()
         {
             var osVersionInfo = new clsOSVersionInfo();

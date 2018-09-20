@@ -14,6 +14,7 @@ namespace PRISM
         private enum GzipFlags : byte
         {
             // ReSharper disable UnusedMember.Local
+            // ReSharper disable IdentifierTypo
             FTEXT = 0x1,
             FHCRC = 0x2,
             FEXTRA = 0x4,
@@ -22,6 +23,7 @@ namespace PRISM
             Reserved1 = 0x20,
             Reserved2 = 0x40,
             Reserved3 = 0x80,
+            // ReSharper restore IdentifierTypo
             // ReSharper restore UnusedMember.Local
         }
 
@@ -158,6 +160,8 @@ namespace PRISM
             var compressionMethod = BaseStream.ReadByte(); // should be 8 (deflate)
             // ReSharper restore UnusedVariable
 
+            // ReSharper disable CommentTypo
+
             // Bit flags:
             //  &0x1 = FTEXT (probably ASCII)
             //  &0x2 = CRC16 for gzip header present
@@ -166,6 +170,8 @@ namespace PRISM
             //  &0x10 = FCOMMENT (comment)
             //  &0x20, &0x40, &0x80 = reserved
             var flags = (GzipFlags)BaseStream.ReadByte();
+
+            // ReSharper restore CommentTypo
 
             uint timestamp = 0;
             for (var x = 0; x < 4; x++)
@@ -195,10 +201,14 @@ namespace PRISM
                 BaseStream.Seek(length, SeekOrigin.Current);
             }
 
+            // ReSharper disable CommentTypo
+
             /*
              * FNAME and FCOMMENT both must be written (and read) as ISO-8859-1 (LATIN-1) characters
              * FNAME is filename only (no path), and if written on case-insensitive file system, lower-case only,
              */
+
+            // ReSharper restore CommentTypo
 
             var iso8859Encoding = Encoding.GetEncoding("ISO-8859-1");
             if (flags.HasFlag(GzipFlags.FNAME))
@@ -215,14 +225,14 @@ namespace PRISM
 
             if (flags.HasFlag(GzipFlags.FCOMMENT))
             {
-                var commentbytes = new List<byte>();
+                var commentBytes = new List<byte>();
                 int c;
                 while ((c = BaseStream.ReadByte()) > 0)
                 {
-                    commentbytes.Add((byte)c);
+                    commentBytes.Add((byte)c);
                 }
 
-                InternalComment = iso8859Encoding.GetString(commentbytes.ToArray());
+                InternalComment = iso8859Encoding.GetString(commentBytes.ToArray());
             }
 
             var headerCorrupted = false;
@@ -245,6 +255,8 @@ namespace PRISM
             }
 
             // Then compressed data
+
+            // ReSharper disable once CommentTypo
             // Then 4 CRC32 bytes, then 4 ISIZE bytes
 
             // Reset stream position before decompressing file

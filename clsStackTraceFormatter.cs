@@ -280,9 +280,9 @@ namespace PRISM
                             }
                             else
                             {
-                                var openParenthIndex = dataLine.IndexOf("(", StringComparison.Ordinal);
-                                if (openParenthIndex > 0)
-                                    currentMethod = dataLine.Substring(0, Math.Min(openParenthIndex, charIndex));
+                                var parenthesisIndex = dataLine.IndexOf("(", StringComparison.Ordinal);
+                                if (parenthesisIndex > 0)
+                                    currentMethod = dataLine.Substring(0, Math.Min(parenthesisIndex, charIndex));
                                 else
                                     currentMethod = dataLine.Substring(0, charIndex);
                             }

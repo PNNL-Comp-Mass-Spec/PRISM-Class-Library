@@ -35,7 +35,7 @@ namespace PRISM
         /// </summary>
         /// <returns>The number of cores on this computer</returns>
         /// <remarks>
-        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if hyperthreading is enabled
         /// </remarks>
         public int GetCoreCount()
         {
@@ -48,7 +48,7 @@ namespace PRISM
         /// </summary>
         /// <returns>The number of logical cores on this computer</returns>
         /// <remarks>
-        /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if Hyperthreading is enabled
+        /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if hyperthreading is enabled
         /// </remarks>
         public int GetLogicalCoreCount()
         {
@@ -60,7 +60,7 @@ namespace PRISM
         /// </summary>
         /// <returns>The number of cores on this computer</returns>
         /// <remarks>
-        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if hyperthreading is enabled
         /// </remarks>
         public int GetPhysicalCoreCount()
         {
@@ -245,7 +245,10 @@ namespace PRISM
             RelationCache = 2,
 
             /// <summary>
-            /// The specified logical processors share a physical package (a single package socketed or soldered onto a motherboard may contain multiple processor cores or threads, each of which is treated as a separate processor by the operating system).
+            /// The specified logical processors share a physical package
+            /// (a single package socketed or soldered onto a motherboard may
+            /// contain multiple processor cores or threads, each of which is
+            /// treated as a separate processor by the operating system).
             /// </summary>
             RelationProcessorPackage = 3,
 
@@ -378,7 +381,6 @@ namespace PRISM
             public GROUP_AFFINITY GroupMask;
         }
 
-        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private enum PROCESSOR_CACHE_TYPE
         {
             /// <summary>
@@ -944,7 +946,7 @@ namespace PRISM
         /// </summary>
         /// <returns>The number of cores on this computer</returns>
         /// <remarks>
-        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if hyperthreading is enabled
         /// </remarks>
         public int GetCoreCount()
         {
@@ -956,7 +958,7 @@ namespace PRISM
         /// </summary>
         /// <returns>The number of logical cores on this computer</returns>
         /// <remarks>
-        /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if Hyperthreading is enabled
+        /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if hyperthreading is enabled
         /// </remarks>
         public int GetLogicalCoreCount()
         {
@@ -969,7 +971,7 @@ namespace PRISM
         /// </summary>
         /// <returns>The number of cores on this computer</returns>
         /// <remarks>
-        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
+        /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if hyperthreading is enabled
         /// </remarks>
         public int GetPhysicalCoreCount()
         {
