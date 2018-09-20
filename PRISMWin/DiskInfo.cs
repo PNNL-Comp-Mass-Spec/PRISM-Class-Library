@@ -4,9 +4,11 @@ using System.Runtime.InteropServices;
 
 namespace PRISMWin
 {
-    public class clsDiskInfo
+    /// <summary>
+    /// Use this class to obtain the free disk space on a disk or remote share
+    /// </summary>
+    public class DiskInfo
     {
-        #region "GetDiskFreeSpace"
 
         [DllImport("Kernel32.dll", EntryPoint = "GetDiskFreeSpaceEx", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, ref UInt64 lpFreeBytesAvailable, ref UInt64 lpTotalNumberOfBytes, ref UInt64 lpTotalNumberOfFreeBytes);
@@ -131,8 +133,6 @@ namespace PRISMWin
             return long.MaxValue;
 
         }
-
-        #endregion
 
     }
 }

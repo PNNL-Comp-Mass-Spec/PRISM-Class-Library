@@ -41,9 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="clsDiskInfo.cs" />
-    <Compile Include="clsDotNETVersionChecker.cs" />
-    <Compile Include="clsProcessStats.cs" />
+    <Compile Include="DiskInfo.cs" />
+    <Compile Include="DotNETVersionChecker.cs" />
+    <Compile Include="LegacyClassWrappers.cs" />
+    <Compile Include="ProcessStats.cs" />
     <Compile Include="WMISystemInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

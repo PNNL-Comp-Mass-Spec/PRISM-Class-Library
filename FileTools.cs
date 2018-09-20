@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -12,7 +13,8 @@ namespace PRISM
     /// <summary>
     /// Tools to manipulate paths and directories.
     /// </summary>
-    public class clsFileTools : clsEventNotifier
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class FileTools : EventNotifier
     {
 
         #region "Events"
@@ -253,7 +255,7 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        public clsFileTools() : this("Unknown-Manager", 1)
+        public FileTools() : this("Unknown-Manager", 1)
         {
         }
 
@@ -262,7 +264,7 @@ namespace PRISM
         /// </summary>
         /// <param name="managerName">Manager name</param>
         /// <param name="debugLevel">1 results in fewer messages; 2 for additional messages, 3 for all messages</param>
-        public clsFileTools(string managerName, int debugLevel)
+        public FileTools(string managerName, int debugLevel)
         {
             ManagerName = managerName;
             DebugLevel = debugLevel;
@@ -829,7 +831,7 @@ namespace PRISM
                     throw;
 
                 // Collect garbage, then delete the files one-by-one
-                clsProgRunner.GarbageCollectNow();
+                ProgRunner.GarbageCollectNow();
 
                 return DeleteDirectoryFiles(directoryPath, deleteDirectoryIfEmpty: true);
             }
@@ -935,7 +937,7 @@ namespace PRISM
                     if (DateTime.UtcNow.Subtract(mLastGC).TotalMilliseconds >= 500)
                     {
                         mLastGC = DateTime.UtcNow;
-                        clsProgRunner.GarbageCollectNow();
+                        ProgRunner.GarbageCollectNow();
                     }
                 }
 
@@ -1718,7 +1720,7 @@ namespace PRISM
                 if (File.Exists(targetFilePath))
                 {
                     File.Delete(targetFilePath);
-                    clsProgRunner.SleepMilliseconds(25);
+                    ProgRunner.SleepMilliseconds(25);
                 }
 
                 // Check for a #FilePart# file
@@ -1796,7 +1798,7 @@ namespace PRISM
                     if (filePart.Exists)
                     {
                         filePart.Delete();
-                        clsProgRunner.SleepMilliseconds(25);
+                        ProgRunner.SleepMilliseconds(25);
                     }
 
                     // Create the FILE_PART_INFO_TAG file
@@ -1883,7 +1885,7 @@ namespace PRISM
             catch (Exception ex)
             {
                 filePartWriter?.Flush();
-                clsProgRunner.GarbageCollectNow();
+                ProgRunner.GarbageCollectNow();
 
                 throw new IOException("Exception copying file with resume: " + ex.Message, ex);
             }
@@ -2204,7 +2206,7 @@ namespace PRISM
         /// Examples:
         /// C:\...\B..\Finance..
         /// C:\...\W..\Business\Finances.doc
-        /// C:\My Docum..\Word\Business\Finances.doc
+        /// C:\My Doc..\Word\Business\Finances.doc
         /// </summary>
         /// <param name="pathToCompact"></param>
         /// <param name="maxLength">Maximum length of the shortened path</param>
@@ -2217,14 +2219,14 @@ namespace PRISM
             // For "C:\My Documents\Readme.txt"
             //   Minimum string returned=  C:\M..\Rea..
             //   Length for 20 characters= C:\My D..\Readme.txt
-            //   Length for 25 characters= C:\My Docume..\Readme.txt
+            //   Length for 25 characters= C:\My Doc..\Readme.txt
 
             // For "C:\My Documents\Word\Business\Finances.doc"
             //   Minimum string returned=  C:\...\B..\Fin..
             //   Length for 20 characters= C:\...\B..\Finance..
             //   Length for 25 characters= C:\...\Bus..\Finances.doc
             //   Length for 32 characters= C:\...\W..\Business\Finances.doc
-            //   Length for 40 characters= C:\My Docum..\Word\Business\Finances.doc
+            //   Length for 40 characters= C:\My Doc..\Word\Business\Finances.doc
 
             var pathSepChars = new char[2];
             pathSepChars[0] = '\\';
@@ -2545,7 +2547,7 @@ namespace PRISM
                 if (!fileDeleted)
                 {
                     // Sleep for 0.5 second (or longer) then try again
-                    clsProgRunner.SleepMilliseconds(sleepTimeMsec);
+                    ProgRunner.SleepMilliseconds(sleepTimeMsec);
 
                     // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
                     if (sleepTimeMsec < 5)
@@ -2601,7 +2603,7 @@ namespace PRISM
         /// Takes into account outputFileExpectedSizeMB</param>
         /// <param name="currentDiskFreeSpaceBytes">
         /// Amount of free space on the given disk
-        /// Determine on Windows using clsDiskInfo.GetDiskFreeSpace in PRISMWin.dll
+        /// Determine on Windows using DiskInfo.GetDiskFreeSpace in PRISMWin.dll
         /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
@@ -2624,7 +2626,7 @@ namespace PRISM
         /// Takes into account outputFileExpectedSizeMB</param>
         /// <param name="currentDiskFreeSpaceBytes">
         /// Amount of free space on the given disk
-        /// Determine on Windows using clsDiskInfo.GetDiskFreeSpace in PRISMWin.dll
+        /// Determine on Windows using DiskInfo.GetDiskFreeSpace in PRISMWin.dll
         /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
@@ -2794,7 +2796,7 @@ namespace PRISM
 
                 WaitingForLockQueue?.Invoke(sourceFile.FullName, targetFilePath, mbBacklogSource, mbBacklogTarget);
 
-                clsProgRunner.SleepMilliseconds(Convert.ToInt32(sleepTimeSec) * 1000);
+                ProgRunner.SleepMilliseconds(Convert.ToInt32(sleepTimeSec) * 1000);
 
                 if (WaitedTooLong(waitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES))
                 {

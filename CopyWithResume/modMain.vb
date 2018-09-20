@@ -22,9 +22,9 @@ Module modMain
     Private mTargetFolderPath As String = String.Empty
 
     Private mRecurse As Boolean = False
-    Private mOverwriteMode As clsFileTools.FileOverwriteMode
+    Private mOverwriteMode As FileTools.FileOverwriteMode
 
-    Private WithEvents mFileTools As clsFileTools
+    Private WithEvents mFileTools As FileTools
 
     Public Function Main() As Integer
 
@@ -38,7 +38,7 @@ Module modMain
         mTargetFolderPath = String.Empty
 
         mRecurse = False
-        mOverwriteMode = clsFileTools.FileOverwriteMode.OverWriteIfDateOrLengthDiffer
+        mOverwriteMode = FileTools.FileOverwriteMode.OverWriteIfDateOrLengthDiffer
 
         Try
             blnProceed = False
@@ -69,7 +69,7 @@ Module modMain
                 Dim FileCountResumed = 0
                 Dim FileCountNewlyCopied = 0
 
-                mFileTools = New clsFileTools()
+                mFileTools = New FileTools()
 
                 Console.WriteLine("Copying " & mSourceFolderPath & " to " & mTargetFolderPath)
                 Console.WriteLine("Overwrite mode: " & mOverwriteMode.ToString())
@@ -113,7 +113,7 @@ Module modMain
         Try
             ' Make sure no invalid parameters are present
             If objParseCommandLine.InvalidParametersPresent(lstValidParameters) Then
-                ShowErrorMessage("Invalid commmand line parameters",
+                ShowErrorMessage("Invalid command line parameters",
                   (From item In objParseCommandLine.InvalidParameters(lstValidParameters) Select "/" + item).ToList())
                 Return False
             Else
@@ -126,12 +126,12 @@ Module modMain
                     If .RetrieveValueForParameter("S", strValue) Then mRecurse = True
 
                     If .RetrieveValueForParameter("O", strValue) Then
-                        mOverwriteMode = clsFileTools.FileOverwriteMode.OverwriteIfSourceNewer
+                        mOverwriteMode = FileTools.FileOverwriteMode.OverwriteIfSourceNewer
                         strOverwriteValue = String.Copy(strValue)
                     End If
 
                     If .RetrieveValueForParameter("Overwrite", strValue) Then
-                        mOverwriteMode = clsFileTools.FileOverwriteMode.OverwriteIfSourceNewer
+                        mOverwriteMode = FileTools.FileOverwriteMode.OverwriteIfSourceNewer
                         strOverwriteValue = String.Copy(strValue)
                     End If
 
@@ -139,20 +139,20 @@ Module modMain
 
                         If strOverwriteValue.ToUpper().StartsWith("NO") Then
                             ' None
-                            mOverwriteMode = clsFileTools.FileOverwriteMode.DoNotOverwrite
+                            mOverwriteMode = FileTools.FileOverwriteMode.DoNotOverwrite
 
                         ElseIf strOverwriteValue.ToUpper().StartsWith("NE") Then
                             ' Source date newer (or same date but length differs)
-                            mOverwriteMode = clsFileTools.FileOverwriteMode.OverwriteIfSourceNewer
+                            mOverwriteMode = FileTools.FileOverwriteMode.OverwriteIfSourceNewer
 
                         ElseIf strOverwriteValue.ToUpper().StartsWith("M") Then
                             ' Mismatched size or date
                             ' Note that newer files in target folder will get overwritten since their date doesn't match
-                            mOverwriteMode = clsFileTools.FileOverwriteMode.OverWriteIfDateOrLengthDiffer
+                            mOverwriteMode = FileTools.FileOverwriteMode.OverWriteIfDateOrLengthDiffer
 
                         ElseIf strOverwriteValue.ToUpper().StartsWith("A") Then
                             ' All
-                            mOverwriteMode = clsFileTools.FileOverwriteMode.AlwaysOverwrite
+                            mOverwriteMode = FileTools.FileOverwriteMode.AlwaysOverwrite
 
                         Else
                             ' Unknown overwrite mode

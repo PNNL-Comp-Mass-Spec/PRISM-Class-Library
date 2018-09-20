@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 namespace PRISM
 {
     /// <summary>
-    /// This class includes methods to be used when displaying messages at the console while monitoring a class that inherits clsEventNotifier
+    /// This class includes methods to be used when displaying messages at the console while monitoring a class that inherits EventNotifier
     /// </summary>
     public static class ConsoleMsgUtils
     {
@@ -104,7 +104,7 @@ namespace PRISM
             {
                 Console.ForegroundColor = StackTraceFontColor;
                 Console.WriteLine();
-                Console.WriteLine(clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex));
+                Console.WriteLine(StackTraceFormatter.GetExceptionStackTraceMultiLine(ex));
             }
 
             Console.ResetColor();
@@ -231,12 +231,12 @@ namespace PRISM
                 var remainingSeconds = endTime.Subtract(DateTime.UtcNow).TotalSeconds;
                 if (remainingSeconds > 10)
                 {
-                    clsProgRunner.SleepMilliseconds(10000);
+                    ProgRunner.SleepMilliseconds(10000);
                 }
                 else
                 {
                     var sleepTimeMsec = (int)Math.Ceiling(remainingSeconds * 1000);
-                    clsProgRunner.SleepMilliseconds(sleepTimeMsec);
+                    ProgRunner.SleepMilliseconds(sleepTimeMsec);
                 }
             }
         }

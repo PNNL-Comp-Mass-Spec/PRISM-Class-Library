@@ -1,7 +1,7 @@
 ﻿
 namespace PRISM
 {
-    class clsProcessorCoreInfo
+    class ProcessorCoreInfo
     {
         /// <summary>
         /// Processor ID for this core
@@ -22,7 +22,7 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <param name="processorID"></param>
-        public clsProcessorCoreInfo(int processorID)
+        public ProcessorCoreInfo(int processorID)
         {
             ProcessorID = processorID;
         }

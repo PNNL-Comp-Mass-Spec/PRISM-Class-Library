@@ -122,7 +122,7 @@ namespace PRISMTest
                 Console.WriteLine("Garbage collect at {0:yyyy-MM-dd hh:mm:ss tt} ({1:F1} seconds elapsed)",
                     DateTime.Now, DateTime.UtcNow.Subtract(lastGC).TotalSeconds);
 
-                clsProgRunner.GarbageCollectNow();
+                ProgRunner.GarbageCollectNow();
 
                 lastGC = DateTime.UtcNow;
             }
@@ -180,7 +180,7 @@ namespace PRISMTest
                 Assert.Fail("Exe not found: " + utilityExe.FullName);
             }
 
-            var processStats = new PRISMWin.clsProcessStats();
+            var processStats = new PRISMWin.ProcessStats();
 
             var workDir = @"C:\Temp";
             var tempFolder = new DirectoryInfo(workDir);
@@ -192,7 +192,7 @@ namespace PRISMTest
 
             Assert.GreaterOrEqual(coreCount, 2, "Core count less than 2");
 
-            var progRunner = new clsProgRunner
+            var progRunner = new ProgRunner
             {
                 Arguments = cmdArgs,
                 CreateNoWindow = createNoWindow,
@@ -214,12 +214,12 @@ namespace PRISMTest
             var dtStartTime = DateTime.UtcNow;
             var abortProcess = false;
 
-            while (progRunner.State != clsProgRunner.States.NotMonitoring)
+            while (progRunner.State != ProgRunner.States.NotMonitoring)
             {
                 if (cachedProcessID == 0)
                     cachedProcessID = progRunner.PID;
 
-                clsProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
+                ProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
 
                 try
                 {
@@ -234,7 +234,7 @@ namespace PRISMTest
                     Console.WriteLine("Unable to get the core usage: {0}", ex.Message);
                 }
 
-                clsProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
+                ProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
 
                 if (maxRuntimeSeconds > 0)
                 {
@@ -253,7 +253,7 @@ namespace PRISMTest
 
             if (writeConsoleOutput)
             {
-                clsProgRunner.SleepMilliseconds(250);
+                ProgRunner.SleepMilliseconds(250);
 
                 var consoleOutputFilePath = progRunner.ConsoleOutputFilePath;
                 Assert.IsNotEmpty(consoleOutputFilePath, "Console output file path is empty");

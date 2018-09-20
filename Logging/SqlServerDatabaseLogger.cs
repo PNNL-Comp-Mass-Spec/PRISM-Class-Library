@@ -244,7 +244,7 @@ namespace PRISM.Logging
                                 var errorMessage = "Exception calling stored procedure " +
                                                    spCmd.CommandText + ": " + ex.Message +
                                                    "; resultCode = " + returnValue + "; Retry count = " + retryCount + "; " +
-                                                   clsStackTraceFormatter.GetExceptionStackTrace(ex);
+                                                   StackTraceFormatter.GetExceptionStackTrace(ex);
 
                                 if (retryCount == 0)
                                     FileLogger.WriteLog(LogLevels.ERROR, errorMessage);

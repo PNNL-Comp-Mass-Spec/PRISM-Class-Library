@@ -48,7 +48,6 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="clsTestFileCopyInfo.cs" />
     <Compile Include="CommandLineParserTests.cs" />
     <Compile Include="ConsoleMsgUtilsTest.cs" />
     <Compile Include="DatabaseLoggingTests.cs" />
@@ -67,6 +66,7 @@
     <Compile Include="StoredProcedureTests.cs" />
     <Compile Include="TestDBTools.cs" />
     <Compile Include="TestEvents.cs" />
+    <Compile Include="TestFileCopyInfo.cs" />
     <Compile Include="TestLinuxSystemInfo.cs" />
     <Compile Include="TestOSVersionInfo.cs" />
     <Compile Include="TestPathUtils.cs" />

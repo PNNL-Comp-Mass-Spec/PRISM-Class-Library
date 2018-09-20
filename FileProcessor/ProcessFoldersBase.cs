@@ -1,3 +1,4 @@
+
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -567,7 +568,7 @@ namespace PRISM.FileProcessor
                         continue;
 
                     lastProgress = DateTime.UtcNow;
-                    OnStatusEvent(string.Format("{0:F1}% complete in {1}", percentComplete, clsFileTools.CompactPathString(inputFolderPath)));
+                    OnStatusEvent(string.Format("{0:F1}% complete in {1}", percentComplete, FileTools.CompactPathString(inputFolderPath)));
                 }
 
             }

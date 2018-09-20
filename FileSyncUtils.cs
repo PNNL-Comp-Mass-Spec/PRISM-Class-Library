@@ -3,14 +3,17 @@ using System.IO;
 
 namespace PRISM
 {
-    public class FileSyncUtils : clsEventNotifier
+    /// <summary>
+    /// Methods for copying files to/from a remote server, including creating a .hashcheck file and a .lastused file
+    /// </summary>
+    public class FileSyncUtils : EventNotifier
     {
         /// <summary>
         /// Extension for .LastUsed files that track when a data file was last used
         /// </summary>
         public const string LASTUSED_FILE_EXTENSION = ".LastUsed";
 
-        private readonly clsFileTools mFileTools;
+        private readonly FileTools mFileTools;
 
         /// <summary>
         /// Constructor that takes a manager name
@@ -19,14 +22,14 @@ namespace PRISM
         /// <remarks>Will instantiate a new instance of clsFileTools</remarks>
         public FileSyncUtils(string managerName)
         {
-            mFileTools = new clsFileTools(managerName, 1);
+            mFileTools = new FileTools(managerName, 1);
         }
 
         /// <summary>
         /// Constructor that takes a clsFileTools instance
         /// </summary>
         /// <param name="fileTools"></param>
-        public FileSyncUtils(clsFileTools fileTools)
+        public FileSyncUtils(FileTools fileTools)
         {
             mFileTools = fileTools;
         }

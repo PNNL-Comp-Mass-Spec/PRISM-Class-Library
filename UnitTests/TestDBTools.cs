@@ -36,7 +36,7 @@ namespace PRISMTest
         private void TestQueryTable(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
         {
             var connectionString = GetConnectionString(server, database, user, password);
-            var dbTools = new clsDBTools(connectionString);
+            var dbTools = new DBTools(connectionString);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
@@ -101,7 +101,7 @@ namespace PRISMTest
             string query, int expectedRowCount, string expectedValueList)
         {
             var connectionString = GetConnectionString(server, database, user, password);
-            var dbTools = new clsDBTools(connectionString);
+            var dbTools = new DBTools(connectionString);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 

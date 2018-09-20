@@ -42,13 +42,13 @@ namespace PRISMTest
             {
                 compressedFileName = fileToCompress.Name + "_withMetadata.gz";
                 Console.WriteLine("Compressing {0} using GZipCompressWithMetadata to create {1} in {2}", fileToCompress, compressedFileName, tempDirectoryPath);
-                PRISM.clsFileTools.GZipCompressWithMetadata(fileToCompress, tempDirectoryPath, compressedFileName);
+                PRISM.FileTools.GZipCompressWithMetadata(fileToCompress, tempDirectoryPath, compressedFileName);
             }
             else
             {
                 compressedFileName = fileToCompress.Name + ".gz";
                 Console.WriteLine("Compressing {0} using GZipCompress to create {1} in {2}", fileToCompress, compressedFileName, tempDirectoryPath);
-                PRISM.clsFileTools.GZipCompress(fileToCompress, tempDirectoryPath, compressedFileName);
+                PRISM.FileTools.GZipCompress(fileToCompress, tempDirectoryPath, compressedFileName);
             }
 
             var procTimeSeconds = DateTime.UtcNow.Subtract(startTime).TotalSeconds;
@@ -81,12 +81,12 @@ namespace PRISMTest
             if (includeMetadata)
             {
                 Console.WriteLine("Compressing {0} using GZipCompressWithMetadata to create a .gz file in {1}", fileToCompress, tempDirectoryPath);
-                PRISM.clsFileTools.GZipCompressWithMetadata(fileToCompress, tempDirectoryPath);
+                PRISM.FileTools.GZipCompressWithMetadata(fileToCompress, tempDirectoryPath);
             }
             else
             {
                 Console.WriteLine("Compressing {0} using GZipCompress to create a .gz file in {1}", fileToCompress, tempDirectoryPath);
-                PRISM.clsFileTools.GZipCompress(fileToCompress, tempDirectoryPath);
+                PRISM.FileTools.GZipCompress(fileToCompress, tempDirectoryPath);
             }
 
             var procTimeSeconds = DateTime.UtcNow.Subtract(startTime).TotalSeconds;
@@ -122,12 +122,12 @@ namespace PRISMTest
             if (includeMetadata)
             {
                 Console.WriteLine("Compressing {0} using GZipCompressWithMetadata", fileToCompressLocal);
-                PRISM.clsFileTools.GZipCompressWithMetadata(fileToCompressLocal);
+                PRISM.FileTools.GZipCompressWithMetadata(fileToCompressLocal);
             }
             else
             {
                 Console.WriteLine("Compressing {0} using GZipCompress", fileToCompressLocal);
-                PRISM.clsFileTools.GZipCompress(fileToCompressLocal);
+                PRISM.FileTools.GZipCompress(fileToCompressLocal);
             }
 
             var procTimeSeconds = DateTime.UtcNow.Subtract(startTime).TotalSeconds;
@@ -142,7 +142,7 @@ namespace PRISMTest
             Console.WriteLine("Compressed {0} in {1:F1} seconds to create {2}", fileToCompressLocal, procTimeSeconds, compressedFile.FullName);
             Console.WriteLine(".gz file size: {0:#,###} bytes", compressedFile.Length);
 
-            PRISM.clsProgRunner.SleepMilliseconds(250);
+            PRISM.ProgRunner.SleepMilliseconds(250);
 
             // Rename the file that we just compressed
             // This is required to avoid collisions when we call ValidateGZipFile
@@ -183,7 +183,7 @@ namespace PRISMTest
             bool includedMetadata, bool usedExplicitNames)
         {
 
-            PRISM.clsProgRunner.SleepMilliseconds(250);
+            PRISM.ProgRunner.SleepMilliseconds(250);
 
             // Decompress the newly created .gz file
             // Use both .GZipDecompressWithMetadata and .GZipDecompress
@@ -193,22 +193,22 @@ namespace PRISMTest
 
             if (usedExplicitNames)
             {
-                PRISM.clsFileTools.GZipDecompressWithMetadata(compressedFile, tempDirectoryPath);
+                PRISM.FileTools.GZipDecompressWithMetadata(compressedFile, tempDirectoryPath);
                 roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
                 MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".withmetadata");
 
                 var roundRobinFilenameNoMeta = Path.GetFileNameWithoutExtension(fileToCompress.Name) + "_RoundRobinNoMeta" + Path.GetExtension(fileToCompress.Name);
-                PRISM.clsFileTools.GZipDecompress(compressedFile, tempDirectoryPath, roundRobinFilenameNoMeta);
+                PRISM.FileTools.GZipDecompress(compressedFile, tempDirectoryPath, roundRobinFilenameNoMeta);
                 roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, roundRobinFilenameNoMeta));
                 MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".nometadata");
             }
             else
             {
-                PRISM.clsFileTools.GZipDecompressWithMetadata(compressedFile);
+                PRISM.FileTools.GZipDecompressWithMetadata(compressedFile);
                 roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
                 MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".withmetadata");
 
-                PRISM.clsFileTools.GZipDecompress(compressedFile, tempDirectoryPath);
+                PRISM.FileTools.GZipDecompress(compressedFile, tempDirectoryPath);
                 roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
                 MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".nometadata");
             }

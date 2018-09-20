@@ -88,9 +88,9 @@ namespace PRISMTest
 
             if (string.IsNullOrWhiteSpace(logFileNameBase))
             {
-                clsProgRunner.SleepMilliseconds(500);
+                ProgRunner.SleepMilliseconds(500);
                 FileLogger.FlushPendingMessages();
-                clsProgRunner.SleepMilliseconds(500);
+                ProgRunner.SleepMilliseconds(500);
             }
 
             Console.WriteLine();
@@ -121,7 +121,7 @@ namespace PRISMTest
 
             if (string.IsNullOrWhiteSpace(logFileNameBase))
             {
-                clsProgRunner.SleepMilliseconds(500);
+                ProgRunner.SleepMilliseconds(500);
                 FileLogger.FlushPendingMessages();
             }
 
@@ -182,7 +182,7 @@ namespace PRISMTest
                         break;
                 }
 
-                clsProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
+                ProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
             var expectedName = logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
@@ -346,7 +346,7 @@ namespace PRISMTest
                     break;
             }
 
-            clsProgRunner.SleepMilliseconds(100);
+            ProgRunner.SleepMilliseconds(100);
 
             LogTools.FlushPendingMessages();
         }
@@ -438,7 +438,7 @@ namespace PRISMTest
             for (var i = 0; i < logCount; i++)
             {
                 FileLogger.WriteLog(entryType, string.Format(formatString, message, i + 1, logCount));
-                clsProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
+                ProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
             if (!FileLogger.LogFilePath.EndsWith(expectedLogFileName))

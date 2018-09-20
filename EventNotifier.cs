@@ -1,12 +1,13 @@
 ﻿using System;
 
 [assembly: CLSCompliant(true)]
+
 namespace PRISM
 {
     /// <summary>
     /// This class implements various status events, including status, debug, error, and warning
     /// </summary>
-    public abstract class clsEventNotifier
+    public abstract class EventNotifier
     {
 
         #region "Events and Delegates"
@@ -170,6 +171,7 @@ namespace PRISM
             {
                 ConsoleMsgUtils.ShowDebug(message, emptyLinesBeforeMessage: EmptyLinesBeforeDebugMessages);
             }
+
             DebugEvent?.Invoke(message);
         }
 
@@ -183,6 +185,7 @@ namespace PRISM
             {
                 ConsoleMsgUtils.ShowError(message, false, false, EmptyLinesBeforeErrorMessages);
             }
+
             ErrorEvent?.Invoke(message, null);
         }
 
@@ -197,6 +200,7 @@ namespace PRISM
             {
                 ConsoleMsgUtils.ShowError(message, ex, false, false, EmptyLinesBeforeErrorMessages);
             }
+
             ErrorEvent?.Invoke(message, ex);
         }
 
@@ -211,6 +215,7 @@ namespace PRISM
             {
                 Console.WriteLine("{0:F2}%: {1}", percentComplete, progressMessage);
             }
+
             ProgressUpdate?.Invoke(progressMessage, percentComplete);
         }
 
@@ -225,6 +230,7 @@ namespace PRISM
                 ConsoleMsgUtils.ConsoleWriteEmptyLines(EmptyLinesBeforeStatusMessages);
                 Console.WriteLine(message);
             }
+
             StatusEvent?.Invoke(message);
         }
 
@@ -238,6 +244,7 @@ namespace PRISM
             {
                 ConsoleMsgUtils.ShowWarning(message, EmptyLinesBeforeWarningMessages);
             }
+
             WarningEvent?.Invoke(message);
         }
 
@@ -247,7 +254,7 @@ namespace PRISM
         /// Use this method to chain events between classes
         /// </summary>
         /// <param name="sourceClass"></param>
-        protected void RegisterEvents(clsEventNotifier sourceClass)
+        protected void RegisterEvents(EventNotifier sourceClass)
         {
             sourceClass.DebugEvent += OnDebugEvent;
             sourceClass.StatusEvent += OnStatusEvent;

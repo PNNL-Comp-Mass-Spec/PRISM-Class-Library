@@ -9,7 +9,7 @@ namespace PRISM
     /// <summary>
     /// Cross-platform path utilities
     /// </summary>
-    public static class clsPathUtils
+    public static class PathUtils
     {
         /// <summary>
         /// Convert a path to be linux-compatible (backslash to forward slash
@@ -107,7 +107,7 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public static string CompactPathString(string pathToCompact, int maxLength = 40)
         {
-            return clsFileTools.CompactPathString(pathToCompact, maxLength);
+            return FileTools.CompactPathString(pathToCompact, maxLength);
         }
 
         /// <summary>

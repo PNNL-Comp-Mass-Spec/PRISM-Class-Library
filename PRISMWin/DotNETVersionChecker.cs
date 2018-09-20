@@ -9,7 +9,7 @@ namespace PRISMWin
     /// <summary>
     /// This classes examines the registry to determine the newest version of .NET installed
     /// </summary>
-    public class clsDotNETVersionChecker
+    public class DotNETVersionChecker
     {
         #region "Constants"
 

@@ -11,7 +11,7 @@ namespace PRISM
     /// <summary>
     /// Methods to determine memory usage, CPU usage, and Linux system version
     /// </summary>
-    public class clsLinuxSystemInfo : clsEventNotifier, ISystemInfo
+    public class LinuxSystemInfo : EventNotifier, ISystemInfo
     {
 
         #region "Constants and Enums"
@@ -81,7 +81,7 @@ namespace PRISM
         /// To view debug events raised by this class, either subscribe to event DebugEvent
         /// or set SkipConsoleWriteIfNoDebugListener to false
         /// </remarks>
-        public clsLinuxSystemInfo(bool limitLoggingByTimeOfDay = false)
+        public LinuxSystemInfo(bool limitLoggingByTimeOfDay = false)
         {
             mCoreCountCached = 0;
 
@@ -138,7 +138,7 @@ namespace PRISM
 
             idleTime = 0;
 
-            var cpuStatFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, "stat");
+            var cpuStatFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, "stat");
             var cpuStatFile = new FileInfo(cpuStatFilePath);
 
             if (!cpuStatFile.Exists)
@@ -495,7 +495,7 @@ namespace PRISM
 
             try
             {
-                var cpuInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, CPUINFO_FILE);
+                var cpuInfoFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, CPUINFO_FILE);
 
                 var cpuInfoFile = new FileInfo(cpuInfoFilePath);
                 if (!cpuInfoFile.Exists)
@@ -511,7 +511,7 @@ namespace PRISM
                     OnDebugEvent("Opening " + cpuInfoFile.FullName);
                 }
 
-                var processorList = new Dictionary<int, clsProcessorCoreInfo>();
+                var processorList = new Dictionary<int, ProcessorCoreInfo>();
                 var currentProcessorID = -1;
 
                 var reIdMatcher = new Regex(@": *(?<ID>\d+)", RegexOptions.Compiled);
@@ -534,7 +534,7 @@ namespace PRISM
                                     continue;
                                 }
 
-                                processorList.Add(processorID, new clsProcessorCoreInfo(processorID));
+                                processorList.Add(processorID, new ProcessorCoreInfo(processorID));
                                 currentProcessorID = processorID;
                             }
                             continue;
@@ -798,7 +798,7 @@ namespace PRISM
 
                 foreach (var processID in processIDs)
                 {
-                    var statFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
+                    var statFilePath = PathUtils.CombineLinuxPaths(PathUtils.CombineLinuxPaths(
                         ROOT_PROC_DIRECTORY, processID.ToString()), "stat");
 
                     var statFile = new FileInfo(statFilePath);
@@ -975,7 +975,7 @@ namespace PRISM
 
             try
             {
-                var memInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
+                var memInfoFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
 
                 var memInfoFile = new FileInfo(memInfoFilePath);
                 if (!memInfoFile.Exists)
@@ -1115,7 +1115,7 @@ namespace PRISM
                     }
 
                     // Open the cmdline file (if it exists) to determine the process name and commandline arguments
-                    var cmdLineFilePath = clsPathUtils.CombineLinuxPaths(clsPathUtils.CombineLinuxPaths(
+                    var cmdLineFilePath = PathUtils.CombineLinuxPaths(PathUtils.CombineLinuxPaths(
                         ROOT_PROC_DIRECTORY, processIdDirectory.Name), "cmdline");
 
                     var cmdLineFile = new FileInfo(cmdLineFilePath);
@@ -1173,7 +1173,7 @@ namespace PRISM
 
             try
             {
-                var memInfoFilePath = clsPathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
+                var memInfoFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
 
                 var memInfoFile = new FileInfo(memInfoFilePath);
                 if (!memInfoFile.Exists)
@@ -1233,7 +1233,7 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public string GetLinuxVersion()
         {
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
             return osVersionInfo.GetLinuxVersion();
         }
 

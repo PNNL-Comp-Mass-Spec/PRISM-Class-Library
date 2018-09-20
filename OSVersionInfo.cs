@@ -10,13 +10,13 @@ namespace PRISM
     /// Based on https://code.msdn.microsoft.com/windowsapps/How-to-determine-the-263b1850
     /// </summary>
     /// <remarks>For Windows and Linux, reports details about the OS version</remarks>
-    public class clsOSVersionInfo : clsEventNotifier
+    public class OSVersionInfo : EventNotifier
     {
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public clsOSVersionInfo()
+        public OSVersionInfo()
         {
             SkipConsoleWriteIfNoDebugListener = true;
         }

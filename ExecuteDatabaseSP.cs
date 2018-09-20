@@ -10,7 +10,7 @@ namespace PRISM
     /// Tools to execute a stored procedure
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class clsExecuteDatabaseSP : clsEventNotifier
+    public class ExecuteDatabaseSP : EventNotifier
     {
 
         #region "Constants"
@@ -107,7 +107,7 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        public clsExecuteDatabaseSP(string connectionString)
+        public ExecuteDatabaseSP(string connectionString)
         {
             m_ConnStr = connectionString;
 
@@ -117,7 +117,7 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        public clsExecuteDatabaseSP(string connectionString, int timeoutSeconds)
+        public ExecuteDatabaseSP(string connectionString, int timeoutSeconds)
         {
             m_ConnStr = connectionString;
             mTimeoutSeconds = timeoutSeconds;
@@ -249,7 +249,7 @@ namespace PRISM
                     retryCount -= 1;
                     errorMessage = "Exception filling data adapter for " + spCmd.CommandText + ": " + ex.Message;
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                    errorMessage += "; " + clsStackTraceFormatter.GetExceptionStackTrace(ex);
+                    errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
 
                     OnErrorEvent(errorMessage);
                     Console.WriteLine(errorMessage);
@@ -279,7 +279,7 @@ namespace PRISM
 
                 if (retryCount > 0)
                 {
-                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
@@ -433,7 +433,7 @@ namespace PRISM
                     retryCount -= 1;
                     errorMessage = "Exception calling stored procedure " + spCmd.CommandText + ": " + ex.Message;
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                    errorMessage += "; " + clsStackTraceFormatter.GetExceptionStackTrace(ex);
+                    errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
 
                     OnErrorEvent(errorMessage);
 
@@ -457,7 +457,7 @@ namespace PRISM
 
                 if (retryCount > 0)
                 {
-                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 

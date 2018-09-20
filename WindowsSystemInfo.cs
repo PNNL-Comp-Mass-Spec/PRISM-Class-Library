@@ -10,14 +10,14 @@ namespace PRISM
     /// <summary>
     /// System information for Windows, pulled via P/Invoke
     /// </summary>
-    public class WindowsSystemInfo : clsEventNotifier, ISystemInfo
+    public class WindowsSystemInfo : EventNotifier, ISystemInfo
     {
         /// <summary>
         /// Constructor
         /// </summary>
         public WindowsSystemInfo()
         {
-            var c = new clsOSVersionInfo();
+            var c = new OSVersionInfo();
             if (!c.GetOSVersion().ToLower().Contains("windows"))
             {
                 throw new Exception("This class only functions on Windows platforms");
@@ -122,7 +122,7 @@ namespace PRISM
     /// <summary>
     /// Internal implementation of WindowsSystemInfo. Internal to avoid big errors when trying to instantiate.
     /// </summary>
-    internal class WindowsSystemInfoInternal : clsEventNotifier, ISystemInfo
+    internal class WindowsSystemInfoInternal : EventNotifier, ISystemInfo
     {
 
         /// <summary>

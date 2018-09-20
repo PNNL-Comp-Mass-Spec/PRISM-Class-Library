@@ -14,7 +14,7 @@ namespace PRISMTest
         {
             var runningLinux = Path.DirectorySeparatorChar == '/';
 
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
 
             var version = osVersionInfo.GetOSVersion();
 
@@ -68,7 +68,7 @@ namespace PRISMTest
                 Assert.Ignore("/etc directory not found at " + etcFolder.FullName);
             }
 
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
 
             var version = osVersionInfo.GetLinuxVersion();
 

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace PRISMTest
 {
-    class clsTestFileCopyInfo
+    class TestFileCopyInfo
     {
         /// <summary>
         /// Source file
@@ -20,7 +20,7 @@ namespace PRISMTest
         /// </summary>
         private bool Copied { get; set; }
 
-        public clsTestFileCopyInfo(FileInfo sourceFile, FileInfo targetFile)
+        public TestFileCopyInfo(FileInfo sourceFile, FileInfo targetFile)
         {
             SourceFile = sourceFile;
             TargetFile = targetFile;

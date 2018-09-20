@@ -14,7 +14,7 @@ namespace PRISM
     /// This class runs a single program as an external process and monitors it with an internal thread
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class clsProgRunner : clsEventNotifier
+    public class ProgRunner : EventNotifier
     {
 
         #region "Constants and Enums"
@@ -135,7 +135,7 @@ namespace PRISM
         /// Progress changed event delegate
         /// </summary>
         /// <param name="obj"></param>
-        public delegate void ProgChangedEventHandler(clsProgRunner obj);
+        public delegate void ProgChangedEventHandler(ProgRunner obj);
 
         /// <summary>
         /// This event is raised when new text is written to the console
@@ -356,7 +356,7 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        public clsProgRunner()
+        public ProgRunner()
         {
             WorkDir = string.Empty;
             CreateNoWindow = false;
@@ -582,7 +582,7 @@ namespace PRISM
             mExceptionLogger = logger;
         }
 
-        private void RaiseConditionalProgChangedEvent(clsProgRunner obj)
+        private void RaiseConditionalProgChangedEvent(ProgRunner obj)
         {
             if (NotifyOnEvent)
             {
@@ -674,14 +674,14 @@ namespace PRISM
 
             if (!File.Exists(m_Process.StartInfo.FileName))
             {
-                ThrowConditionalException(new Exception("Process filename " + m_Process.StartInfo.FileName + " not found."), "clsProgRunner m_ProgName was not set correctly.");
+                ThrowConditionalException(new Exception("Process filename " + m_Process.StartInfo.FileName + " not found."), "ProgRunner m_ProgName was not set correctly.");
                 State = States.NotMonitoring;
                 return;
             }
 
             if (!Directory.Exists(m_Process.StartInfo.WorkingDirectory))
             {
-                ThrowConditionalException(new Exception("Process working directory " + m_Process.StartInfo.WorkingDirectory + " not found."), "clsProgRunner m_WorkDir was not set correctly.");
+                ThrowConditionalException(new Exception("Process working directory " + m_Process.StartInfo.WorkingDirectory + " not found."), "ProgRunner m_WorkDir was not set correctly.");
                 State = States.NotMonitoring;
                 return;
             }

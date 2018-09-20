@@ -12,7 +12,7 @@ namespace PRISMWin
     /// Monitor running processes to determine CPU usage
     /// Uses Windows Performance Counters
     /// </summary>
-    public class clsProcessStats
+    public class ProcessStats
     {
         #region "Events and Event Handlers"
 
@@ -37,7 +37,7 @@ namespace PRISMWin
         private int mCachedCoreCount;
 
         /// <summary>
-        /// Used to determine overal CPU utilization
+        /// Used to determine overall CPU utilization
         /// </summary>
         private PerformanceCounter mCPUUsagePerformanceCounter;
 
@@ -63,7 +63,7 @@ namespace PRISMWin
         /// Constructor
         /// </summary>
         /// <param name="limitLoggingByTimeOfDay">When true, only log errors between 12 am and 12:30 am</param>
-        public clsProcessStats(bool limitLoggingByTimeOfDay = false)
+        public ProcessStats(bool limitLoggingByTimeOfDay = false)
         {
             mLimitLoggingByTimeOfDay = limitLoggingByTimeOfDay;
 
@@ -75,6 +75,7 @@ namespace PRISMWin
         /// Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
         /// </summary>
         /// <remarks></remarks>
+        // ReSharper disable once UnusedMember.Global
         public void ClearCachedPerformanceCounters()
         {
             mCachedPerfCounters.Clear();
@@ -322,6 +323,7 @@ namespace PRISMWin
         /// Core count is typically an integer, but can be a fractional number if not using a core 100%
         /// If multiple processes are running with the given name, returns the total core usage for all of them
         /// </remarks>
+        // ReSharper disable once UnusedMember.Global
         public float GetCoreUsageByProcessName(string processName)
         {
             return GetCoreUsageByProcessName(processName, out _);
@@ -372,6 +374,7 @@ namespace PRISMWin
         /// This is CPU usage for all running applications, not just this application
         /// For CPU usage of a single application use GetCoreUsageByProcessID()
         /// </remarks>
+        // ReSharper disable once UnusedMember.Global
         public float GetCPUUtilization()
         {
             float cpuUtilization = 0;

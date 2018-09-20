@@ -22,7 +22,7 @@ namespace PRISMTest
         {
 
             var currentDate = DateTime.Parse(dateToTest);
-            var pendingUpdates = clsWindowsUpdateStatus.UpdatesArePending(currentDate, out _);
+            var pendingUpdates = WindowsUpdateStatus.UpdatesArePending(currentDate, out _);
 
             Assert.AreEqual(expectedValue, pendingUpdates, "Unexpected value for {0}: {1}", dateToTest, pendingUpdates);
         }
@@ -44,7 +44,7 @@ namespace PRISMTest
         {
 
             var currentDate = DateTime.Parse(dateToTest);
-            var pendingUpdates = clsWindowsUpdateStatus.ServerUpdatesArePending(currentDate, out _);
+            var pendingUpdates = WindowsUpdateStatus.ServerUpdatesArePending(currentDate, out _);
 
             Assert.AreEqual(expectedValue, pendingUpdates, "Unexpected value for {0}: {1}", dateToTest, pendingUpdates);
         }

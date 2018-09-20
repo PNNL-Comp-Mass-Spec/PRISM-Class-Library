@@ -373,7 +373,7 @@ namespace PRISM.Logging
                             }
 
                             ConsoleMsgUtils.ShowDebug("Backing up identically named old log file: " + targetFile.FullName);
-                            clsFileTools.BackupFileBeforeCopy(targetFile.FullName);
+                            FileTools.BackupFileBeforeCopy(targetFile.FullName);
 
                             targetFile.Refresh();
                             if (targetFile.Exists)
@@ -535,7 +535,7 @@ namespace PRISM.Logging
                 if (mMessageQueue.IsEmpty)
                     break;
 
-                clsProgRunner.SleepMilliseconds(10);
+                ProgRunner.SleepMilliseconds(10);
             }
 
         }
@@ -627,7 +627,7 @@ namespace PRISM.Logging
 
                     if (logMessage.MessageException != null)
                     {
-                        writer.WriteLine(clsStackTraceFormatter.GetExceptionStackTraceMultiLine(logMessage.MessageException));
+                        writer.WriteLine(StackTraceFormatter.GetExceptionStackTraceMultiLine(logMessage.MessageException));
                     }
 
                     messagesWritten++;
@@ -775,7 +775,7 @@ namespace PRISM.Logging
         {
             if (TraceMode)
             {
-                ShowTraceMessage(callingMethod + " " + clsStackTraceFormatter.GetCurrentStackTraceMultiLine());
+                ShowTraceMessage(callingMethod + " " + StackTraceFormatter.GetCurrentStackTraceMultiLine());
             }
         }
 

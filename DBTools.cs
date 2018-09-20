@@ -12,7 +12,7 @@ namespace PRISM
     /// Tools to retrieve data from a database
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class clsDBTools : clsEventNotifier
+    public class DBTools : EventNotifier
     {
 
         #region "Constants"
@@ -64,7 +64,7 @@ namespace PRISM
         /// Constructor
         /// </summary>
         /// <param name="connectionString">Database connection string</param>
-        public clsDBTools(string connectionString)
+        public DBTools(string connectionString)
         {
             ConnectStr = connectionString;
         }
@@ -304,7 +304,7 @@ namespace PRISM
                     OnErrorEvent(errorMessage);
 
                     // Delay for 5 seconds before trying again
-                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
 
                 }
             }
@@ -418,7 +418,7 @@ namespace PRISM
                     }
 
                     // Delay for 5 seconds before trying again
-                    clsProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
 
                 }
             }

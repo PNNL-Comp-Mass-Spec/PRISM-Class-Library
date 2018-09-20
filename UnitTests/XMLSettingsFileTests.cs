@@ -48,7 +48,7 @@ namespace PRISMTest
             reader.LoadSettings(settingsFilePath, false);
 
             if (value == "Now")
-                value = DateTime.Now.ToString(clsFileTools.DATE_TIME_FORMAT);
+                value = DateTime.Now.ToString(FileTools.DATE_TIME_FORMAT);
 
             reader.SetParam(sectionName, settingName, value);
 

@@ -9,12 +9,12 @@ namespace PRISMTest
     [TestFixture]
     class FileCopyTests
     {
-        private clsFileTools mFileTools;
+        private FileTools mFileTools;
 
         [OneTimeSetUp]
         public void Setup()
         {
-            mFileTools = new clsFileTools("PrismUnitTests", 1);
+            mFileTools = new FileTools("PrismUnitTests", 1);
         }
 
         [TestCase(@"C:\Temp\PRISM", @"C:\Temp\PRISMCopy")]
@@ -221,7 +221,7 @@ namespace PRISMTest
         private void GetDriveFreeSpaceForDirectory(string directoryPath)
         {
 
-            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(
+            var success = PRISMWin.DiskInfo.GetDiskFreeSpace(
                 directoryPath,
                 out var freeBytesAvailableToUser,
                 out var totalDriveCapacityBytes,
@@ -234,9 +234,9 @@ namespace PRISMTest
 
             Console.WriteLine("Free space stats for" + directoryPath);
 
-            Console.WriteLine("{0,-25} {1}", "Free Space", clsFileTools.BytesToHumanReadable(totalNumberOfFreeBytes));
-            Console.WriteLine("{0,-25} {1}", "Space available to User", clsFileTools.BytesToHumanReadable(freeBytesAvailableToUser));
-            Console.WriteLine("{0,-25} {1}", "Drive Capacity", clsFileTools.BytesToHumanReadable(totalDriveCapacityBytes));
+            Console.WriteLine("{0,-25} {1}", "Free Space", FileTools.BytesToHumanReadable(totalNumberOfFreeBytes));
+            Console.WriteLine("{0,-25} {1}", "Space available to User", FileTools.BytesToHumanReadable(freeBytesAvailableToUser));
+            Console.WriteLine("{0,-25} {1}", "Drive Capacity", FileTools.BytesToHumanReadable(totalDriveCapacityBytes));
 
         }
 
@@ -265,7 +265,7 @@ namespace PRISMTest
         public void GetDriveFreeSpaceForFile(string targetFilePath, bool reportFreeSpaceAvailableToUser)
         {
 
-            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(targetFilePath, out var freeSpaceBytes, out var errorMessage, reportFreeSpaceAvailableToUser);
+            var success = PRISMWin.DiskInfo.GetDiskFreeSpace(targetFilePath, out var freeSpaceBytes, out var errorMessage, reportFreeSpaceAvailableToUser);
 
             if (!success)
             {
@@ -275,7 +275,7 @@ namespace PRISMTest
             var directoryPath = new FileInfo(targetFilePath).DirectoryName;
 
             Console.WriteLine("Free space at {0} is {1} (ReportFreeSpaceAvailableToUse = {2}))",
-                directoryPath, clsFileTools.BytesToHumanReadable(freeSpaceBytes), reportFreeSpaceAvailableToUser);
+                directoryPath, FileTools.BytesToHumanReadable(freeSpaceBytes), reportFreeSpaceAvailableToUser);
 
         }
 
@@ -310,22 +310,20 @@ namespace PRISMTest
         public void ValidateFreeDiskSpace(string targetFilePath, long minimumFreeSpaceMB)
         {
 
-            var success = PRISMWin.clsDiskInfo.GetDiskFreeSpace(targetFilePath, out var currentDiskFreeSpaceBytes, out var errorMessage);
+            var success = PRISMWin.DiskInfo.GetDiskFreeSpace(targetFilePath, out var currentDiskFreeSpaceBytes, out var errorMessage);
 
             if (!success)
             {
                 Assert.Fail("GetDiskFreeSpace reported false for " + targetFilePath + ": " + errorMessage);
             }
 
-            var safeToCopy = clsFileTools.ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage);
+            var safeToCopy = FileTools.ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage);
 
             var sufficientOrNot = safeToCopy ? "sufficient" : "insufficient";
 
             Console.WriteLine("Target drive has {0} free space to copy {1} file {2}; {3} free",
-                sufficientOrNot,
-                clsFileTools.BytesToHumanReadable(minimumFreeSpaceMB * 1024 * 1024),
-                targetFilePath,
-                clsFileTools.BytesToHumanReadable(currentDiskFreeSpaceBytes));
+                sufficientOrNot, FileTools.BytesToHumanReadable(minimumFreeSpaceMB * 1024 * 1024),
+                targetFilePath, FileTools.BytesToHumanReadable(currentDiskFreeSpaceBytes));
 
 
         }

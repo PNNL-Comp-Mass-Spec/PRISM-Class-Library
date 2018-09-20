@@ -18,7 +18,7 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
         public void TestGetCentos6Version(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
         {
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
 
             var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
 
@@ -31,7 +31,7 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu 17.04 (Zesty Zapus)")]
         public void TestGetOSReleaseVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
         {
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
 
             var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
 
@@ -44,7 +44,7 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Solaris\etc", @"release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
         public void TestGetSolarisVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
         {
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
 
             var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
 
@@ -58,7 +58,7 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
         public void TestGetUbuntuVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
         {
-            var osVersionInfo = new clsOSVersionInfo();
+            var osVersionInfo = new OSVersionInfo();
 
             var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
 
@@ -79,7 +79,7 @@ namespace PRISMTest
             // Update the cpuinfo file in the local proc directory
             CopyCPUInfoFile(procFolder, sourceProcFolderPath);
 
-            var linuxSystemInfo = new clsLinuxSystemInfo();
+            var linuxSystemInfo = new LinuxSystemInfo();
 
             var coreCount = linuxSystemInfo.GetCoreCount();
 
@@ -141,12 +141,12 @@ namespace PRISMTest
                 Assert.Fail("Could not copy the cmdline file to " + targetCmdLineFile.FullName + ": " + ex.Message);
             }
 
-            var linuxSystemInfo = new clsLinuxSystemInfo();
+            var linuxSystemInfo = new LinuxSystemInfo();
 
-            var filesToCopy = new List<clsTestFileCopyInfo>
+            var filesToCopy = new List<TestFileCopyInfo>
             {
-                new clsTestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
-                new clsTestFileCopyInfo(sourceStatFile2, targetStatFile)
+                new TestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
+                new TestFileCopyInfo(sourceStatFile2, targetStatFile)
             };
 
             // Start a timer to replace the stat file in 2 seconds
@@ -197,17 +197,17 @@ namespace PRISMTest
             var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
             var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
 
-            var linuxSystemInfo = new clsLinuxSystemInfo {
+            var linuxSystemInfo = new LinuxSystemInfo {
                 TraceEnabled = true
             };
 
             linuxSystemInfo.DebugEvent += LinuxSystemInfo_DebugEvent;
             linuxSystemInfo.ErrorEvent += LinuxSystemInfo_ErrorEvent;
 
-            var filesToCopy = new List<clsTestFileCopyInfo>
+            var filesToCopy = new List<TestFileCopyInfo>
             {
-                new clsTestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
-                new clsTestFileCopyInfo(sourceStatFile2, targetStatFile)
+                new TestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
+                new TestFileCopyInfo(sourceStatFile2, targetStatFile)
             };
 
             // Start a timer to replace the stat file in 2 seconds
@@ -238,8 +238,8 @@ namespace PRISMTest
         {
 
             // Update the cpuinfo file in the local proc directory using sourceProcFolderPath
-            var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.CPUINFO_FILE));
-            var targetCpuInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.CPUINFO_FILE));
+            var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, LinuxSystemInfo.CPUINFO_FILE));
+            var targetCpuInfoFile = new FileInfo(Path.Combine(procFolder.FullName, LinuxSystemInfo.CPUINFO_FILE));
 
             if (targetCpuInfoFile.Exists)
             {
@@ -327,11 +327,11 @@ namespace PRISMTest
         /// <summary>
         /// Copy files from a source location to a target location
         /// </summary>
-        /// <param name="state">List of clsTestFileCopyInfo</param>
+        /// <param name="state">List of TestFileCopyInfo</param>
         /// <remarks>The state parameter is an object because this method is a callback for a timer</remarks>
         private void ReplaceFiles(object state)
         {
-            if (!(state is List<clsTestFileCopyInfo> filesToCopy))
+            if (!(state is List<TestFileCopyInfo> filesToCopy))
                 return;
 
             foreach (var fileToCopy in filesToCopy)
@@ -357,11 +357,11 @@ namespace PRISMTest
             var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
             var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
 
-            var linuxSystemInfo = new clsLinuxSystemInfo();
+            var linuxSystemInfo = new LinuxSystemInfo();
 
-            var filesToCopy = new List<clsTestFileCopyInfo>
+            var filesToCopy = new List<TestFileCopyInfo>
             {
-                new clsTestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
+                new TestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
             };
 
             // Start a timer to replace the stat file in 2 seconds
@@ -394,8 +394,8 @@ namespace PRISMTest
             var procFolder = ValidateLocalProcFolder();
 
             // Update the meminfo file in the local proc directory using sourceProcFolderPath
-            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.MEMINFO_FILE));
-            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.MEMINFO_FILE));
+            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, LinuxSystemInfo.MEMINFO_FILE));
+            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, LinuxSystemInfo.MEMINFO_FILE));
 
             if (targetMemInfoFile.Exists)
             {
@@ -418,7 +418,7 @@ namespace PRISMTest
                 Assert.Fail("Could not copy the meminfo file to " + targetMemInfoFile.FullName + ": " + ex.Message);
             }
 
-            var linuxSystemInfo = new clsLinuxSystemInfo();
+            var linuxSystemInfo = new LinuxSystemInfo();
 
             var freeMemoryMB = linuxSystemInfo.GetFreeMemoryMB();
 
@@ -436,8 +436,8 @@ namespace PRISMTest
             var procFolder = ValidateLocalProcFolder();
 
             // Update the meminfo file in the local proc directory using sourceProcFolderPath
-            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, clsLinuxSystemInfo.MEMINFO_FILE));
-            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, clsLinuxSystemInfo.MEMINFO_FILE));
+            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, LinuxSystemInfo.MEMINFO_FILE));
+            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, LinuxSystemInfo.MEMINFO_FILE));
 
             if (targetMemInfoFile.Exists)
             {
@@ -460,7 +460,7 @@ namespace PRISMTest
                 Assert.Fail("Could not copy the meminfo file to " + targetMemInfoFile.FullName + ": " + ex.Message);
             }
 
-            var linuxSystemInfo = new clsLinuxSystemInfo();
+            var linuxSystemInfo = new LinuxSystemInfo();
 
             var totalMemoryMB = linuxSystemInfo.GetTotalMemoryMB();
 
@@ -486,7 +486,7 @@ namespace PRISMTest
 
         private DirectoryInfo ValidateLocalProcFolder()
         {
-            var procFolder = new DirectoryInfo(clsLinuxSystemInfo.ROOT_PROC_DIRECTORY);
+            var procFolder = new DirectoryInfo(LinuxSystemInfo.ROOT_PROC_DIRECTORY);
             if (procFolder.Exists)
                 return procFolder;
 
@@ -513,7 +513,7 @@ namespace PRISMTest
         private void LinuxSystemInfo_ErrorEvent(string message, Exception ex)
         {
             Console.WriteLine("Error: " + message);
-            Console.WriteLine(clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex));
+            Console.WriteLine(StackTraceFormatter.GetExceptionStackTraceMultiLine(ex));
         }
 
         #endregion

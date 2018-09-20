@@ -13,7 +13,7 @@ namespace PRISMTest
         [Test]
         public void TestGetLatestDotNETVersion()
         {
-            var versionChecker = new clsDotNETVersionChecker();
+            var versionChecker = new DotNETVersionChecker();
 
             var latestVersion = versionChecker.GetLatestDotNETVersion();
 
@@ -23,7 +23,7 @@ namespace PRISMTest
         [Test]
         public void TestGetInstalledDotNETVersions()
         {
-            var versionChecker = new clsDotNETVersionChecker();
+            var versionChecker = new DotNETVersionChecker();
 
             var installedVersions = versionChecker.GetInstalledDotNETVersions();
 

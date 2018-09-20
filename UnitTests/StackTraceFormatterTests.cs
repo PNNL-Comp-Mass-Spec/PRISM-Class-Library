@@ -59,9 +59,9 @@ namespace PRISMTest
                 string stackTrace;
 
                 if (multiLine)
-                    stackTrace = clsStackTraceFormatter.GetExceptionStackTraceMultiLine(ex, true, includeMethodParams);
+                    stackTrace = StackTraceFormatter.GetExceptionStackTraceMultiLine(ex, true, includeMethodParams);
                 else
-                    stackTrace = clsStackTraceFormatter.GetExceptionStackTrace(ex);
+                    stackTrace = StackTraceFormatter.GetExceptionStackTrace(ex);
 
                 Console.WriteLine(stackTrace);
             }
@@ -143,9 +143,9 @@ namespace PRISMTest
 
             string stackTrace;
             if (multiLine)
-                stackTrace = clsStackTraceFormatter.GetCurrentStackTraceMultiLine();
+                stackTrace = StackTraceFormatter.GetCurrentStackTraceMultiLine();
             else
-                stackTrace = clsStackTraceFormatter.GetCurrentStackTrace();
+                stackTrace = StackTraceFormatter.GetCurrentStackTrace();
 
             Console.WriteLine(stackTrace);
         }

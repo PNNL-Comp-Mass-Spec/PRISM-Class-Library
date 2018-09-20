@@ -7,6 +7,7 @@ namespace PRISMTest
     [TestFixture]
     public class PathTests
     {
+        // ReSharper disable StringLiteralTypo
         [TestCase(@"C:\temp", 10, @"C:\temp")]
         [TestCase(@"C:\temp", 20, @"C:\temp")]
         [TestCase(@"C:\temp\DataFile.txt", 10, @"C:\t..\Dat..")]
@@ -25,9 +26,10 @@ namespace PRISMTest
         [TestCase(@"\\proto-6\dms_programs\AnalysisToolManager1\Logs\AnalysisMgr_01-15-2017.txt", 80, @"\\proto-6\dms_programs\AnalysisToolManager1\Logs\AnalysisMgr_01-15-2017.txt")]
         [TestCase(@"\\proto-6\dms_programs\AnalysisToolManager1\Logs\AnalysisMgr_01-15-2017.txt", 100, @"\\proto-6\dms_programs\AnalysisToolManager1\Logs\AnalysisMgr_01-15-2017.txt")]
         [TestCase(@"\\proto-6\dms_programs\AnalysisToolManager1\Logs\AnalysisMgr_01-15-2017.txt", 120, @"\\proto-6\dms_programs\AnalysisToolManager1\Logs\AnalysisMgr_01-15-2017.txt")]
+        // ReSharper restore StringLiteralTypo
         public void CompactPath(string pathToCompact, int maxLength, string expectedResult)
         {
-            var shortPath = clsFileTools.CompactPathString(pathToCompact, maxLength);
+            var shortPath = FileTools.CompactPathString(pathToCompact, maxLength);
 
             Console.WriteLine(shortPath);
 

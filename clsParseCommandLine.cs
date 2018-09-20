@@ -441,7 +441,7 @@ namespace PRISM
             {
                 Console.Write('.');
 
-                clsProgRunner.SleepMilliseconds(millisecondsBetweenDots);
+                ProgRunner.SleepMilliseconds(millisecondsBetweenDots);
 
                 iteration += 1;
             } while (iteration < totalIterations);

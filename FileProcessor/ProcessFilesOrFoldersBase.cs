@@ -13,7 +13,7 @@ namespace PRISM.FileProcessor
     /// Base class for both ProcessFilesBase and ProcessFoldersBase
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public abstract class ProcessFilesOrFoldersBase : clsEventNotifier
+    public abstract class ProcessFilesOrFoldersBase : EventNotifier
     {
         #region "Constants and Enums"
 
@@ -528,7 +528,7 @@ namespace PRISM.FileProcessor
         /// </summary>
         protected static void GarbageCollectWaitForGC()
         {
-            clsProgRunner.GarbageCollectNow();
+            ProgRunner.GarbageCollectNow();
         }
 
         /// <summary>

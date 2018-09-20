@@ -15,7 +15,7 @@ namespace PRISMTest
         [TestCase(@"/proc\subdir\filename.txt", @"/proc/subdir/filename.txt")]
         public void TestAssureLinuxPath(string pathSpec, string expectedResult)
         {
-            var result = clsPathUtils.AssureLinuxPath(pathSpec);
+            var result = PathUtils.AssureLinuxPath(pathSpec);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -28,7 +28,7 @@ namespace PRISMTest
         [TestCase(@"C:\DMS_WorkDir\subdir/filename.txt", @"C:\DMS_WorkDir\subdir\filename.txt")]
         public void TestAssureWindowsPath(string pathSpec, string expectedResult)
         {
-            var result = clsPathUtils.AssureWindowsPath(pathSpec);
+            var result = PathUtils.AssureWindowsPath(pathSpec);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -43,7 +43,7 @@ namespace PRISMTest
         [TestCase(@"/share/item/", "/dataset/results/", @"/dataset/results/")]
         public void TestCombineLinuxPaths(string path1, string path2, string expectedResult)
         {
-            var result = clsPathUtils.CombineLinuxPaths(path1, path2);
+            var result = PathUtils.CombineLinuxPaths(path1, path2);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -54,7 +54,7 @@ namespace PRISMTest
         [TestCase(@"C:\DMS_WorkDir\", @"subdir\filename.txt", @"C:\DMS_WorkDir\subdir\filename.txt")]
         public void TestCombineWindowsPaths(string path1, string path2, string expectedResult)
         {
-            var result = clsPathUtils.CombineWindowsPaths(path1, path2);
+            var result = PathUtils.CombineWindowsPaths(path1, path2);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -71,7 +71,7 @@ namespace PRISMTest
         [TestCase("/share/item/", "dataset/results", '/', "/share/item/dataset/results")]
         public void TestCombinePaths(string path1, string path2, char directorySepChar, string expectedResult)
         {
-            var result = clsPathUtils.CombinePaths(path1, path2, directorySepChar);
+            var result = PathUtils.CombinePaths(path1, path2, directorySepChar);
 
             Assert.AreEqual(expectedResult, result);
         }
@@ -131,10 +131,10 @@ namespace PRISMTest
             // Combine the directory path and the file mask
             var pathSpec = Path.Combine(directory.FullName, fileMask);
 
-            var files1 = clsPathUtils.FindFilesWildcard(pathSpec, recurse);
+            var files1 = PathUtils.FindFilesWildcard(pathSpec, recurse);
 
             // Separately, send the DirectoryInfo object plus the file mask
-            var files2 = clsPathUtils.FindFilesWildcard(directory, fileMask, recurse);
+            var files2 = PathUtils.FindFilesWildcard(directory, fileMask, recurse);
 
             int allowedVariance;
 
@@ -193,7 +193,7 @@ namespace PRISMTest
         [TestCase("MSGFDB_PartTryp_MetOx_20ppmParTol.txt", "XT*", false)]
         public void TestFitsMask(string fileName, string fileMask, bool expectedResult)
         {
-            var result = clsPathUtils.FitsMask(fileName, fileMask);
+            var result = PathUtils.FitsMask(fileName, fileMask);
 
             Assert.AreEqual(expectedResult, result);
 
@@ -234,7 +234,7 @@ namespace PRISMTest
         [TestCase(@"log", @"", "log")]
         public void TestGetParentDirectoryPath(string directoryPath, string expectedParentPath, string expectedDirectoryName)
         {
-            var parentPath = clsPathUtils.GetParentDirectoryPath(directoryPath, out var directoryName);
+            var parentPath = PathUtils.GetParentDirectoryPath(directoryPath, out var directoryName);
 
             if (string.IsNullOrWhiteSpace(parentPath))
             {
@@ -260,7 +260,7 @@ namespace PRISMTest
         [TestCase(@"/proc/Result Directory/filename.txt", true)]
         public void TestPossiblyQuotePath(string filePath, bool expectedQuoteRequired)
         {
-            var quotedPath = clsPathUtils.PossiblyQuotePath(filePath);
+            var quotedPath = PathUtils.PossiblyQuotePath(filePath);
 
             var pathWasQuoted = !string.Equals(filePath, quotedPath);
 
@@ -271,7 +271,7 @@ namespace PRISMTest
         [TestCase(@"C:\DMS_WorkDir\Results Directory\filename.txt", "UpdatedFile.txt", @"C:\DMS_WorkDir\Results Directory\UpdatedFile.txt")]
         public void TestReplaceFilenameInPath(string existingFilePath, string newFileName, string expectedResult)
         {
-            var newPath = clsPathUtils.ReplaceFilenameInPath(existingFilePath, newFileName);
+            var newPath = PathUtils.ReplaceFilenameInPath(existingFilePath, newFileName);
             Assert.AreEqual(expectedResult, newPath);
         }
 

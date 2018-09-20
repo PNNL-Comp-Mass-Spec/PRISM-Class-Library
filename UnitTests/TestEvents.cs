@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Threading;
 using NUnit.Framework;
 using PRISM;
 
@@ -89,7 +87,7 @@ namespace PRISMTest
         /// <summary>
         /// Class for testing events
         /// </summary>
-        private class ClassA : clsEventNotifier
+        private class ClassA : EventNotifier
         {
             private string ClassID { get; }
 

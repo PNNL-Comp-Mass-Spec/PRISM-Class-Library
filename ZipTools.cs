@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using PRISM.Logging;
 
@@ -11,6 +12,7 @@ namespace PRISM
     /// <remarks>There are a routines to create an archive, extract files from an existing archive,
     /// and to verify an existing archive.
     /// </remarks>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ZipTools
     {
         /// <summary>
@@ -65,7 +67,7 @@ namespace PRISM
             }
 
             // Setup the zip program
-            var zipper = new clsProgRunner
+            var zipper = new ProgRunner
             {
                 Arguments = "-Add " + cmdOptions + " \"" + outputFile + "\" \"" + inputSpec + "\"",
                 Program = m_ZipProgramPath,
@@ -132,7 +134,7 @@ namespace PRISM
             }
 
             // Setup the unzip program
-            var zipper = new clsProgRunner
+            var zipper = new ProgRunner
             {
                 Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outFolderPath + "\"",
                 MonitoringInterval = m_WaitInterval,
@@ -239,8 +241,9 @@ namespace PRISM
             }
 
             // Setup the zip program
-            var zipper = new clsProgRunner
+            var zipper = new ProgRunner
             {
+                // ReSharper disable once StringLiteralTypo
                 Arguments = "-test -nofix" + " " + zipFilePath,
                 Program = m_ZipProgramPath,
                 WorkDir = m_WorkDir,
@@ -261,9 +264,9 @@ namespace PRISM
             return success;
         }
 
-        private bool WaitForZipProgram(clsProgRunner zipper)
+        private bool WaitForZipProgram(ProgRunner zipper)
         {
-            while (zipper.State != clsProgRunner.States.NotMonitoring)
+            while (zipper.State != ProgRunner.States.NotMonitoring)
             {
                 var msg = "Waiting for zipper program; sleeping for " + m_WaitInterval + " milliseconds";
 #pragma warning disable 618
@@ -271,7 +274,7 @@ namespace PRISM
 #pragma warning restore 618
                 m_Logger?.Debug(msg);
 
-                clsProgRunner.SleepMilliseconds(m_WaitInterval);
+                ProgRunner.SleepMilliseconds(m_WaitInterval);
             }
 
             // Check for valid return value after completion
