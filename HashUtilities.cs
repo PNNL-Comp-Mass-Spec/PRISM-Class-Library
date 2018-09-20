@@ -5,6 +5,9 @@ using System.Text;
 
 namespace PRISM
 {
+    /// <summary>
+    /// Methods for computing checksum hashes for files
+    /// </summary>
     public class HashUtilities
     {
         /// <summary>

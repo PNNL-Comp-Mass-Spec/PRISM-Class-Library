@@ -2,6 +2,10 @@
 
 namespace PRISMWin
 {
+
+#pragma warning disable CS1591  // Missing XML comments
+#pragma warning disable IDE1006 // Naming Styles
+
     [Obsolete("Use the DiskInfo class")]
     public class clsDiskInfo : DiskInfo
     {
@@ -19,5 +23,8 @@ namespace PRISMWin
         {
         }
     }
+
+#pragma warning restore IDE1006 // Naming Styles
+#pragma warning restore CS1591  // Missing XML comments
 
 }

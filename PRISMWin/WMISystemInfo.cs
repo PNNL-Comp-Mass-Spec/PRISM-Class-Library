@@ -21,6 +21,7 @@ namespace PRISMWin
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
         /// </remarks>
+        // ReSharper disable once UnusedMember.Global
         public int GetCoreCount()
         {
             return GetCoreCount(out _);
@@ -44,7 +45,7 @@ namespace PRISMWin
             }
 
             // Try to get the number of physical cores in the system - requires System.Management.dll and a WMI query, but the performance penalty for
-            // using the number of logical processors in a hyperthreaded system is significant, and worse than the penalty for using fewer than all physical cores.
+            // using the number of logical processors in a hyper-threaded system is significant, and worse than the penalty for using fewer than all physical cores.
             var numPhysicalCores = 0;
             numPhysicalProcessors = 0;
 
@@ -75,6 +76,7 @@ namespace PRISMWin
         /// <remarks>
         /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if Hyperthreading is enabled
         /// </remarks>
+        // ReSharper disable once UnusedMember.Global
         public int GetLogicalCoreCount()
         {
             return Environment.ProcessorCount;
@@ -89,12 +91,11 @@ namespace PRISMWin
         {
             double memoryFreeKB = 0;
 
-            //var osVersion = Environment.OSVersion.Version;
-            //if (osVersion < new Version(6, 0)) // Older than Vista
-            //{
-            //    // For pre-Vista: "SELECT * FROM Win32_LogicalMemoryConfiguration", and a different property.
-            //    // Have no good systems to test on (Sequest head nodes??)
-            //}
+            // var osVersion = Environment.OSVersion.Version;
+            // if (osVersion < new Version(6, 0)) // Older than Vista
+            // {
+            //    // For pre-Vista: "SELECT * FROM Win32_LogicalMemoryConfiguration", and a different property (unknown name)
+            // }
 
             foreach (var item in new System.Management.ManagementObjectSearcher("SELECT * FROM CIM_OperatingSystem").Get())
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 // NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
@@ -10,7 +11,8 @@ namespace PRISM
     /// This class can be used to parse the text following the program name when a
     /// program is started from the command line
     /// </summary>
-    [Obsolete("Superseded by CommandLineParser")]
+    /// <remarks>Superseded by CommandLineParser (but not marked obsolete since used in numerous applications)</remarks>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class clsParseCommandLine
     {
 
@@ -262,7 +264,7 @@ namespace PRISM
                     ConsoleMsgUtils.ShowWarning(ConsoleMsgUtils.WrapParagraph(
                                                     "This program cannot be run from a network share.  Please map a drive to the " +
                                                     "network share you are currently accessing or copy the program files and " +
-                                                    "required DLL's to your local computer."));
+                                                    "required DLLs to your local computer."));
                     ConsoleMsgUtils.ShowWarning("Exception: " + ex.Message);
                     ConsoleMsgUtils.ShowWarning("------------------------------------------------------------------------------");
 
