@@ -715,14 +715,22 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Log a message then raise a Status, Warning, or Error event
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="eMessageType"></param>
+        /// <param name="message">Message</param>
+        /// <param name="eMessageType">Message type</param>
         /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </param>
         /// <remarks>
         /// Note that CleanupPaths() will update mOutputFolderPath, which is used here if mLogFolderPath is blank
         /// Thus, be sure to call CleanupPaths (or update mLogFolderPath) before the first call to LogMessage
         /// </remarks>
-        protected void LogMessage(string message, eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal, int duplicateHoldoffHours = 0)
+        protected void LogMessage(
+            string message,
+            eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal,
+            int duplicateHoldoffHours = 0,
+            int emptyLinesBeforeMessage = 0)
         {
 
             if (mLogFile == null && LogMessagesToFile)
@@ -749,12 +757,13 @@ namespace PRISM.FileProcessor
 
             }
 
-            RaiseMessageEvent(message, eMessageType);
+            RaiseMessageEvent(message, eMessageType, emptyLinesBeforeMessage);
         }
 
-        private void RaiseMessageEvent(string message, eMessageTypeConstants eMessageType)
+        private void RaiseMessageEvent(string message, eMessageTypeConstants eMessageType, int emptyLinesBeforeMessage)
         {
-            if (string.IsNullOrWhiteSpace(message)) return;
+            if (string.IsNullOrWhiteSpace(message))
+                return;
 
             if (string.Equals(message, mLastMessage) && DateTime.UtcNow.Subtract(mLastReportTime).TotalSeconds < 0.5)
             {
@@ -768,24 +777,27 @@ namespace PRISM.FileProcessor
                 switch (eMessageType)
                 {
                     case eMessageTypeConstants.Normal:
+                        EmptyLinesBeforeStatusMessages = emptyLinesBeforeMessage;
                         OnStatusEvent(message);
                         break;
 
                     case eMessageTypeConstants.Warning:
+                        EmptyLinesBeforeWarningMessages = emptyLinesBeforeMessage;
                         OnWarningEvent(message);
                         break;
 
                     case eMessageTypeConstants.ErrorMsg:
+                        EmptyLinesBeforeErrorMessages = emptyLinesBeforeMessage;
                         OnErrorEvent(message);
                         break;
 
                     case eMessageTypeConstants.Debug:
+                        EmptyLinesBeforeDebugMessages = emptyLinesBeforeMessage;
                         OnDebugEvent(message);
                         break;
 
                     default:
-                        OnStatusEvent(message);
-                        break;
+                        throw new Exception("Unrecognized message type: " + eMessageType);
                 }
             }
         }
@@ -825,9 +837,14 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="allowLogToFile"></param>
-        protected void ShowDebug(string message, bool allowLogToFile)
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the debug event has no listeners
+        /// </param>
+        protected void ShowDebug(string message, bool allowLogToFile, int emptyLinesBeforeMessage = 1)
         {
-            ShowMessage(message, allowLogToFile, duplicateHoldoffHours: 0, eMessageType: eMessageTypeConstants.Debug);
+            const int duplicateHoldoffHours = 0;
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Debug, emptyLinesBeforeMessage);
         }
 
         /// <summary>
@@ -835,27 +852,40 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="duplicateHoldoffHours"></param>
-        protected void ShowErrorMessage(string message, int duplicateHoldoffHours)
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the error event has no listeners
+        /// </param>
+        protected void ShowErrorMessage(string message, int duplicateHoldoffHours, int emptyLinesBeforeMessage = 1)
         {
-            ShowErrorMessage(message, allowLogToFile: true, duplicateHoldoffHours: duplicateHoldoffHours);
+            const bool allowLogToFile = true;
+            ShowErrorMessage(message, allowLogToFile, duplicateHoldoffHours, emptyLinesBeforeMessage);
         }
 
         /// <summary>
         /// Show an error message
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="allowLogToFile"></param>
-        /// <param name="duplicateHoldoffHours"></param>
-        protected void ShowErrorMessage(string message, bool allowLogToFile = true, int duplicateHoldoffHours = 0)
+        /// <param name="message">Message</param>
+        /// <param name="allowLogToFile">When true, allow the message to be logged</param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </param>
+        protected void ShowErrorMessage(
+            string message,
+            bool allowLogToFile = true,
+            int duplicateHoldoffHours = 0,
+            int emptyLinesBeforeMessage = 1)
         {
             if (allowLogToFile)
             {
                 // Note that LogMessage will call RaiseMessageEvent
-                LogMessage(message, eMessageTypeConstants.ErrorMsg, duplicateHoldoffHours);
+                LogMessage(message, eMessageTypeConstants.ErrorMsg, duplicateHoldoffHours, emptyLinesBeforeMessage);
             }
             else
             {
-                RaiseMessageEvent(message, eMessageTypeConstants.ErrorMsg);
+                RaiseMessageEvent(message, eMessageTypeConstants.ErrorMsg, emptyLinesBeforeMessage);
             }
         }
 
@@ -864,32 +894,39 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="duplicateHoldoffHours"></param>
-        protected void ShowMessage(string message, int duplicateHoldoffHours)
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the message event has no listeners
+        /// </param>
+        protected void ShowMessage(string message, int duplicateHoldoffHours, int emptyLinesBeforeMessage = 0)
         {
-            ShowMessage(message, allowLogToFile: true, duplicateHoldoffHours: duplicateHoldoffHours);
+            const bool allowLogToFile = true;
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Normal, emptyLinesBeforeMessage);
         }
 
         /// <summary>
         /// Show a status message
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="allowLogToFile"></param>
+        /// <param name="message">Message to show</param>
+        /// <param name="allowLogToFile">When true, write to the log file (if the message severity is >= LoggingLevel)</param>
         /// <param name="duplicateHoldoffHours"></param>
         /// <param name="eMessageType"></param>
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         protected void ShowMessage(
             string message,
             bool allowLogToFile = true,
             int duplicateHoldoffHours = 0,
-            eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal)
+            eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal,
+            int emptyLinesBeforeMessage = 0)
         {
             if (allowLogToFile)
             {
                 // Note that LogMessage will call RaiseMessageEvent
-                LogMessage(message, eMessageType, duplicateHoldoffHours);
+                LogMessage(message, eMessageType, duplicateHoldoffHours, emptyLinesBeforeMessage);
             }
             else
             {
-                RaiseMessageEvent(message, eMessageType);
+                RaiseMessageEvent(message, eMessageType, emptyLinesBeforeMessage);
             }
         }
 
@@ -898,9 +935,14 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="duplicateHoldoffHours"></param>
-        protected void ShowWarning(string message, int duplicateHoldoffHours = 0)
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the warning event has no listeners
+        /// </param>
+        protected void ShowWarning(string message, int duplicateHoldoffHours = 0, int emptyLinesBeforeMessage = 1)
         {
-            ShowMessage(message, allowLogToFile: true, duplicateHoldoffHours: duplicateHoldoffHours, eMessageType: eMessageTypeConstants.Warning);
+            const bool allowLogToFile = true;
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Warning, emptyLinesBeforeMessage);
         }
 
         /// <summary>
@@ -908,9 +950,14 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message"></param>
         /// <param name="allowLogToFile"></param>
-        protected void ShowWarning(string message, bool allowLogToFile)
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the warning event has no listeners
+        /// </param>
+        protected void ShowWarning(string message, bool allowLogToFile, int emptyLinesBeforeMessage = 1)
         {
-            ShowMessage(message, allowLogToFile, duplicateHoldoffHours: 0, eMessageType: eMessageTypeConstants.Warning);
+            const int duplicateHoldoffHours = 0;
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Warning, emptyLinesBeforeMessage);
         }
 
         private void TrimLogDataCache()

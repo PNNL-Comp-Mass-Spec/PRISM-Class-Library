@@ -38,16 +38,29 @@ namespace PRISM
         public static ConsoleColor WarningFontColor { get; set; } = ConsoleColor.Yellow;
 
         /// <summary>
+        /// Call Console.WriteLine() the specified number of times
+        /// </summary>
+        /// <param name="emptyLineCount"></param>
+        public static void ConsoleWriteEmptyLines(int emptyLineCount)
+        {
+            for (var i = 1; i <= emptyLineCount; i++)
+            {
+                Console.WriteLine();
+            }
+        }
+
+        /// <summary>
         /// Display an error message at the console with color ErrorFontColor (defaults to Red)
         /// If an exception is included, the stack trace is shown using StackTraceFontColor
         /// </summary>
         /// <param name="message">Error message</param>
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
         /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
-        public static string ShowError(string message, bool includeSeparator = true, bool writeToErrorStream = true)
+        public static string ShowError(string message, bool includeSeparator = true, bool writeToErrorStream = true, int emptyLinesBeforeMessage = 1)
         {
-            return ShowError(message, null, includeSeparator, writeToErrorStream);
+            return ShowError(message, null, includeSeparator, writeToErrorStream, emptyLinesBeforeMessage);
         }
 
         /// <summary>
@@ -59,10 +72,16 @@ namespace PRISM
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
         /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
         /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
-        public static string ShowError(string message, Exception ex, bool includeSeparator = true, bool writeToErrorStream = true)
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
+        public static string ShowError(
+            string message,
+            Exception ex,
+            bool includeSeparator = true,
+            bool writeToErrorStream = true,
+            int emptyLinesBeforeMessage = 1)
         {
+            ConsoleWriteEmptyLines(emptyLinesBeforeMessage);
 
-            Console.WriteLine();
             if (includeSeparator)
             {
                 Console.WriteLine(SEPARATOR);
@@ -94,7 +113,11 @@ namespace PRISM
             {
                 Console.WriteLine(SEPARATOR);
             }
-            Console.WriteLine();
+
+            if (emptyLinesBeforeMessage > 0)
+            {
+                Console.WriteLine();
+            }
 
             if (writeToErrorStream)
             {
@@ -112,11 +135,18 @@ namespace PRISM
         /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
         /// <param name="indentChars">Characters to add before each error message; defaults to 3 spaces</param>
         /// <returns>The first error message</returns>
-        public static string ShowErrors(string title, IEnumerable<string> errorMessages, bool writeToErrorStream = true, string indentChars = "   ")
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
+        // ReSharper disable once UnusedMember.Global
+        public static string ShowErrors(
+            string title,
+            IEnumerable<string> errorMessages,
+            bool writeToErrorStream = true,
+            string indentChars = "  ",
+            int emptyLinesBeforeMessage = 1)
         {
             string firstError = null;
 
-            Console.WriteLine();
+            ConsoleWriteEmptyLines(emptyLinesBeforeMessage);
             Console.WriteLine(SEPARATOR);
 
             if (!string.IsNullOrWhiteSpace(title))
@@ -132,8 +162,12 @@ namespace PRISM
 
                 ShowError(indentChars + item, false, writeToErrorStream);
             }
+
             Console.WriteLine(SEPARATOR);
-            Console.WriteLine();
+            if (emptyLinesBeforeMessage > 0)
+            {
+                Console.WriteLine();
+            }
 
             return firstError;
         }
@@ -143,7 +177,8 @@ namespace PRISM
         /// </summary>
         /// <param name="message"></param>
         /// <param name="indentChars">Characters to use to indent the message</param>
-        public static void ShowDebug(string message, string indentChars = "  ")
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
+        public static void ShowDebug(string message, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
         {
             if (Path.DirectorySeparatorChar == '/' && !mAutoCheckedDebugFontColor)
             {
@@ -156,7 +191,8 @@ namespace PRISM
                 mAutoCheckedDebugFontColor = true;
             }
 
-            Console.WriteLine();
+            ConsoleWriteEmptyLines(emptyLinesBeforeMessage);
+
             Console.ForegroundColor = DebugFontColor;
             if (string.IsNullOrEmpty(indentChars))
             {
@@ -173,9 +209,10 @@ namespace PRISM
         /// Display a warning message at the console with color WarningFontColor (defaults to Yellow)
         /// </summary>
         /// <param name="message"></param>
-        public static void ShowWarning(string message)
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
+        public static void ShowWarning(string message, int emptyLinesBeforeMessage = 1)
         {
-            Console.WriteLine();
+            ConsoleWriteEmptyLines(emptyLinesBeforeMessage);
             Console.ForegroundColor = WarningFontColor;
             Console.WriteLine(message);
             Console.ResetColor();
@@ -288,9 +325,9 @@ namespace PRISM
         {
             try
             {
-                using (var swErrorStream = new StreamWriter(Console.OpenStandardError()))
+                using (var errorStreamWriter = new StreamWriter(Console.OpenStandardError()))
                 {
-                    swErrorStream.WriteLine(errorMessage);
+                    errorStreamWriter.WriteLine(errorMessage);
                 }
             }
             catch

@@ -73,6 +73,30 @@ namespace PRISM
         #region "Properties"
 
         /// <summary>
+        /// Number of empty lines to write to the console before displaying a debug message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </summary>
+        public int EmptyLinesBeforeDebugMessages { get; set; } = 1;
+
+        /// <summary>
+        /// Number of empty lines to write to the console before displaying an error message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </summary>
+        public int EmptyLinesBeforeErrorMessages { get; set; } = 1;
+
+        /// <summary>
+        /// Number of empty lines to write to the console before displaying a status message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </summary>
+        public int EmptyLinesBeforeStatusMessages { get; set; } = 0;
+
+        /// <summary>
+        /// Number of empty lines to write to the console before displaying a warning message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </summary>
+        public int EmptyLinesBeforeWarningMessages { get; set; } = 1;
+
+        /// <summary>
         /// If WriteToConsoleIfNoListener is true, optionally set this to true to not write debug messages to the console if no listener
         /// </summary>
         public bool SkipConsoleWriteIfNoDebugListener { get; set; }
@@ -103,6 +127,8 @@ namespace PRISM
         /// <remarks>Defaults to true. Silence individual event types using the SkipConsoleWrite properties</remarks>
         public bool WriteToConsoleIfNoListener { get; set; } = true;
 
+        // ReSharper disable UnusedMember.Global
+
         /// <summary>
         /// True if the Debug event has any listeners
         /// </summary>
@@ -128,6 +154,8 @@ namespace PRISM
         /// </summary>
         protected bool HasEventListenerWarningEvent => WarningEvent != null;
 
+        // ReSharper restore UnusedMember.Global
+
         #endregion
 
         #region "Event Handlers"
@@ -140,7 +168,7 @@ namespace PRISM
         {
             if (DebugEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoDebugListener)
             {
-                ConsoleMsgUtils.ShowDebug(message);
+                ConsoleMsgUtils.ShowDebug(message, emptyLinesBeforeMessage: EmptyLinesBeforeDebugMessages);
             }
             DebugEvent?.Invoke(message);
         }
@@ -153,7 +181,7 @@ namespace PRISM
         {
             if (ErrorEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoErrorListener)
             {
-                ConsoleMsgUtils.ShowError(message, false, false);
+                ConsoleMsgUtils.ShowError(message, false, false, EmptyLinesBeforeErrorMessages);
             }
             ErrorEvent?.Invoke(message, null);
         }
@@ -167,7 +195,7 @@ namespace PRISM
         {
             if (ErrorEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoErrorListener)
             {
-                ConsoleMsgUtils.ShowError(message, ex, false, false);
+                ConsoleMsgUtils.ShowError(message, ex, false, false, EmptyLinesBeforeErrorMessages);
             }
             ErrorEvent?.Invoke(message, ex);
         }
@@ -194,6 +222,7 @@ namespace PRISM
         {
             if (StatusEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoStatusListener)
             {
+                ConsoleMsgUtils.ConsoleWriteEmptyLines(EmptyLinesBeforeStatusMessages);
                 Console.WriteLine(message);
             }
             StatusEvent?.Invoke(message);
@@ -207,7 +236,7 @@ namespace PRISM
         {
             if (WarningEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoWarningListener)
             {
-                ConsoleMsgUtils.ShowWarning(message);
+                ConsoleMsgUtils.ShowWarning(message, EmptyLinesBeforeWarningMessages);
             }
             WarningEvent?.Invoke(message);
         }
