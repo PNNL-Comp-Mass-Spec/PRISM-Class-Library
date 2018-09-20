@@ -28,7 +28,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Date format for log file names
         /// </summary>
-        public const string LOG_FILE_DATECODE = "MM-dd-yyyy";
+        public const string LOG_FILE_DATE_CODE = "MM-dd-yyyy";
 
         private const string LOG_FILE_MATCH_SPEC = "??-??-????";
 
@@ -486,7 +486,7 @@ namespace PRISM.Logging
         private static void ChangeLogFileName()
         {
             LogFileDate = DateTime.Now.Date;
-            LogFileDateText = LogFileDate.ToString(LOG_FILE_DATECODE);
+            LogFileDateText = LogFileDate.ToString(LOG_FILE_DATE_CODE);
 
             if (string.IsNullOrWhiteSpace(BaseLogFileName))
                 BaseLogFileName = DefaultLogFileName;
@@ -572,7 +572,7 @@ namespace PRISM.Logging
                     try
                     {
                         // Check to determine if a new file should be started
-                        var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATECODE);
+                        var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATE_CODE);
                         if (!string.Equals(testFileDate, LogFileDateText))
                         {
                             ShowTraceMessage(string.Format("Updating log file date from {0} to {1}", LogFileDateText, testFileDate));

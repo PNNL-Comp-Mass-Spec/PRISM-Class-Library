@@ -100,7 +100,7 @@ namespace PRISM
         /// <summary>
         /// Minimum source file size (in MB) for the lock queue to be used
         /// </summary>
-        public const int LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB = 20;
+        public const int LOCKFILE_MINIMUM_SOURCE_FILE_SIZE_MB = 20;
 
         private const int LOCKFILE_TRANSFER_THRESHOLD_MB = 1000;
 
@@ -659,10 +659,10 @@ namespace PRISM
             }
 
             // Examine the size of the source file
-            // If less than LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB then
+            // If less than LOCKFILE_MINIMUM_SOURCE_FILE_SIZE_MB then
             // copy the file normally
             var sourceFileSizeMB = Convert.ToInt32(sourceFile.Length / 1024.0 / 1024.0);
-            if (sourceFileSizeMB < LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB ||
+            if (sourceFileSizeMB < LOCKFILE_MINIMUM_SOURCE_FILE_SIZE_MB ||
                 string.IsNullOrWhiteSpace(lockDirectoryPathSource) && string.IsNullOrWhiteSpace(lockDirectoryPathTarget))
             {
                 const bool backupDestFileBeforeCopy = false;
@@ -670,7 +670,7 @@ namespace PRISM
                 {
                     var debugMsg = string.Format(
                         "File to copy is {0:F2} MB, which is less than {1} MB; will use CopyFileEx for {2}",
-                        sourceFile.Length / 1024.0 / 1024.0, LOCKFILE_MININUM_SOURCE_FILE_SIZE_MB, sourceFile.Name);
+                        sourceFile.Length / 1024.0 / 1024.0, LOCKFILE_MINIMUM_SOURCE_FILE_SIZE_MB, sourceFile.Name);
 
                     OnStatusEvent(debugMsg, sourceFile.FullName);
                 }

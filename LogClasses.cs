@@ -193,7 +193,7 @@ namespace PRISM
         /// <summary>
         /// Default filename timestamp format string
         /// </summary>
-        public const string FILENAME_DATESTAMP = "MM-dd-yyyy";
+        public const string FILENAME_DATE_STAMP = "MM-dd-yyyy";
 
         private const string LOG_FILE_MATCH_SPEC = "??-??-????";
 
@@ -486,7 +486,7 @@ namespace PRISM
                 CurrentLogFilePath = string.Empty;
             else
                 // Define log file name by appending the current date to m_logFileBaseName
-                CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATESTAMP) + LOG_FILE_EXTENSION;
+                CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATE_STAMP) + LOG_FILE_EXTENSION;
         }
 
     }

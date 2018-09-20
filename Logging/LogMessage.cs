@@ -16,22 +16,22 @@ namespace PRISM.Logging
         /// <summary>
         /// Month/day/year Time (24 hour clock)
         /// </summary>
-        public const string DTFORMAT_MONTH_DAY_YEAR_24H = "MM/dd/yyyy HH:mm:ss";
+        public const string DATE_TIME_FORMAT_MONTH_DAY_YEAR_24H = "MM/dd/yyyy HH:mm:ss";
 
         /// <summary>
         /// Month/day/year Time am/pm
         /// </summary>
-        public const string DTFORMAT_MONTH_DAY_YEAR_12H = "MM/dd/yyyy hh:mm:ss tt";
+        public const string DATE_TIME_FORMAT_MONTH_DAY_YEAR_12H = "MM/dd/yyyy hh:mm:ss tt";
 
         /// <summary>
         /// Year-month-day Time (24 hour clock)
         /// </summary>
-        public const string DTFORMAT_YEAR_MONTH_DAY_24H = "yyyy-MM-dd HH:mm:ss";
+        public const string DATE_TIME_FORMAT_YEAR_MONTH_DAY_24H = "yyyy-MM-dd HH:mm:ss";
 
         /// <summary>
         /// Year-month-day Time am/pm
         /// </summary>
-        public const string DTFORMAT_YEAR_MONTH_DAY_12H = "yyyy-MM-dd hh:mm:ss tt";
+        public const string DATE_TIME_FORMAT_YEAR_MONTH_DAY_12H = "yyyy-MM-dd hh:mm:ss tt";
 
         /// <summary>
         /// Timestamp format mode
@@ -134,13 +134,13 @@ namespace PRISM.Logging
             switch (timestampFormat)
             {
                 case TimestampFormatMode.MonthDayYear24hr:
-                    return DTFORMAT_MONTH_DAY_YEAR_24H;
+                    return DATE_TIME_FORMAT_MONTH_DAY_YEAR_24H;
                 case TimestampFormatMode.MonthDayYear12hr:
-                    return DTFORMAT_MONTH_DAY_YEAR_12H;
+                    return DATE_TIME_FORMAT_MONTH_DAY_YEAR_12H;
                 case TimestampFormatMode.YearMonthDay24hr:
-                    return DTFORMAT_YEAR_MONTH_DAY_24H;
+                    return DATE_TIME_FORMAT_YEAR_MONTH_DAY_24H;
                 case TimestampFormatMode.YearMonthDay12hr:
-                    return DTFORMAT_YEAR_MONTH_DAY_12H;
+                    return DATE_TIME_FORMAT_YEAR_MONTH_DAY_12H;
                 default:
                     return GetTimestampFormatString(DEFAULT_TIMESTAMP_FORMAT);
             }

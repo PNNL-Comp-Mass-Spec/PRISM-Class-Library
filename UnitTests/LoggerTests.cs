@@ -89,7 +89,7 @@ namespace PRISMTest
             // Sleep to give the Queue logger time to log the log entries
             clsProgRunner.SleepMilliseconds(4000);
 
-            var expectedName = logFileNameBase + "_" + DateTime.Now.ToString(clsFileLogger.FILENAME_DATESTAMP);
+            var expectedName = logFileNameBase + "_" + DateTime.Now.ToString(clsFileLogger.FILENAME_DATE_STAMP);
             if (!logger.CurrentLogFilePath.Contains(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + logger.CurrentLogFilePath);
