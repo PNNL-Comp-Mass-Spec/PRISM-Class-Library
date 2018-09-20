@@ -9,6 +9,7 @@ using PRISM.Logging;
 
 namespace PRISM
 {
+#pragma warning disable IDE1006 // Naming Styles
 
     /// <summary>
     /// The type of log message.
@@ -857,6 +858,8 @@ namespace PRISM
             m_queue.Enqueue(le);
         }
     }
+
+#pragma warning restore IDE1006 // Naming Styles
 
     #endregion
 
