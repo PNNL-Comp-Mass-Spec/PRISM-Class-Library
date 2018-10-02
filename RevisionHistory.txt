@@ -1,5 +1,19 @@
 Prism Class Library Log
 
+Version 2.4.94; October 1, 2018
+	- Fix infinite loop bug in AppendInnerExceptions (used by GetExceptionStackTrace)
+
+Version 2.4.93; September 20, 2018
+	- Add ability to adjust the number of empty lines shown before a debug, error, warning, or status message at the console
+	- Rename classes, structs, and constants
+	- Remove old methods
+
+Version 2.4.92; July 23, 2018
+	- Remove the dependency on NuGet package Tpl.DataFlow
+
+Version 2.4.91; July 18, 2018
+	- Clear the log file path variable when updating the log file name at midnight
+
 Version 2.4.90; July 7, 2018
 	- Update the auto-generated log file name when the date changes
 
