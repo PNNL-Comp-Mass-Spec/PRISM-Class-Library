@@ -355,10 +355,11 @@ namespace PRISM
                     }
                 }
 
-                if (skipMessage)
-                    continue;
+                if (!skipMessage)
+                {
+                    stackTraceLines.Add(messagePrefix + innerException.Message);
+                }
 
-                stackTraceLines.Add(messagePrefix + innerException.Message);
                 innerException = innerException.InnerException;
             }
         }
