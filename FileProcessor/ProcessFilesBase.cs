@@ -20,7 +20,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessFilesBase()
         {
-            mFileDate = "March 15, 2018";
+            mFileDate = "October 10, 2018";
             ErrorCode = eProcessFilesErrorCodes.NoError;
         }
 
@@ -111,6 +111,16 @@ namespace PRISM.FileProcessor
         /// Error code reflecting processing outcome
         /// </summary>
         public eProcessFilesErrorCodes ErrorCode { get; set; }
+
+        /// <summary>
+        /// Number of files processed successfully when using ProcessFilesAndRecurseFolders or ProcessFilesWildcard
+        /// </summary>
+        public int FilesProcessed { get; private set; }
+
+        /// <summary>
+        /// Number of files that could not be processed when using ProcessFilesAndRecurseFolders or ProcessFilesWildcard
+        /// </summary>
+        public int FileProcessErrors { get; private set; }
 
         #endregion
 
@@ -309,6 +319,9 @@ namespace PRISM.FileProcessor
         {
 
             AbortProcessing = false;
+            FilesProcessed = 0;
+            FileProcessErrors = 0;
+
             var success = true;
 
             try
@@ -356,9 +369,15 @@ namespace PRISM.FileProcessor
                         break;
                     }
 
-                    if (!success && !IgnoreErrorsWhenUsingWildcardMatching)
+                    if (success)
                     {
-                        break;
+                        FilesProcessed++;
+                    }
+                    else
+                    {
+                        FileProcessErrors++;
+                        if (!IgnoreErrorsWhenUsingWildcardMatching)
+                            break;
                     }
 
                     if (!(DateTime.UtcNow.Subtract(lastProgress).TotalSeconds >= 1))
@@ -521,6 +540,11 @@ namespace PRISM.FileProcessor
             int recurseFoldersMaxLevels,
             IList<string> extensionsToParse)
         {
+            // Initialize some parameters
+            AbortProcessing = false;
+
+            FilesProcessed = 0;
+            FileProcessErrors = 0;
 
             // Examine inputFilePathOrFolder to see if it contains a filename; if not, assume it points to a directory
             // First, see if it contains a * or ?
@@ -590,18 +614,12 @@ namespace PRISM.FileProcessor
                     }
                 }
 
-                // Initialize some parameters
-                AbortProcessing = false;
-                var fileProcessCount = 0;
-                var fileProcessFailCount = 0;
-
                 // Call RecurseFoldersWork
                 const int recursionLevel = 1;
                 var success = RecurseFoldersWork(inputDirectory.FullName, fileNameMatchPattern, outputFolderName,
-                                             parameterFilePath, outputFolderAlternatePath,
-                                             recreateFolderHierarchyInAlternatePath, extensionsToParse,
-                                             ref fileProcessCount, ref fileProcessFailCount,
-                                             recursionLevel, recurseFoldersMaxLevels);
+                                                 parameterFilePath, outputFolderAlternatePath,
+                                                 recreateFolderHierarchyInAlternatePath, extensionsToParse,
+                                                 recursionLevel, recurseFoldersMaxLevels);
 
                 return success;
             }
@@ -621,8 +639,6 @@ namespace PRISM.FileProcessor
             string outputFolderAlternatePath,
             bool recreateFolderHierarchyInAlternatePath,
             IList<string> extensionsToParse,
-            ref int fileProcessCount,
-            ref int fileProcessFailCount,
             int recursionLevel,
         int recurseFoldersMaxLevels)
         {
@@ -763,13 +779,13 @@ namespace PRISM.FileProcessor
 
                     var success = ProcessFile(inputFile.FullName, outputFolderPathToUse, parameterFilePath, true);
 
-                    if (!success)
+                    if (success)
                     {
-                        fileProcessFailCount++;
+                        FilesProcessed++;
                     }
                     else
                     {
-                        fileProcessCount++;
+                        FileProcessErrors++;
                     }
 
                     if (AbortProcessing)
@@ -803,7 +819,6 @@ namespace PRISM.FileProcessor
                 var success = RecurseFoldersWork(subFolder.FullName, fileNameMatch, outputFolderName,
                                                  parameterFilePath, outputFolderAlternatePath,
                                                  recreateFolderHierarchyInAlternatePath, extensionsToParse,
-                                                 ref fileProcessCount, ref fileProcessFailCount,
                                                  recursionLevel + 1, recurseFoldersMaxLevels);
 
                 if (!success)
