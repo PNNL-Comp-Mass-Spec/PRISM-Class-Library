@@ -42,6 +42,62 @@ namespace PRISMTest
 
         }
 
+        [TestCase(@"C:\Program Files", "msvcp*.dll", 5)]
+        [TestCase(@"C:\Users", "msvcp*.dll", 5)]
+        public void TestRecurseDirectories(
+            string startingDirectory,
+            string fileMatchSpec,
+            int maxLevelsToRecurse)
+        {
+            var fileFinder = new SimpleFileFinder {
+                LogMessagesToFile = false,
+                SkipConsoleWriteIfNoStatusListener = true,
+                SkipConsoleWriteIfNoDebugListener = true,
+                SkipConsoleWriteIfNoProgressListener = true
+            };
+
+            var startingDirectoryAndFileSpec = Path.Combine(startingDirectory, fileMatchSpec);
+
+            fileFinder.ProcessFilesAndRecurseFolders(startingDirectoryAndFileSpec, "", "", false, "", maxLevelsToRecurse);
+
+            Console.WriteLine();
+            Console.WriteLine("Processed {0} files", fileFinder.FilesProcessed);
+
+            if (fileFinder.FileProcessErrors > 0)
+            {
+                Console.WriteLine("Error processing {0} files", fileFinder.FileProcessErrors);
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// Simple class that derives from ProcessFilesBase
+    /// It looks for files in the given directory and subdirectories
+    /// Matching file names are shown at the console
+    /// </summary>
+    class SimpleFileFinder : ProcessFilesBase
+    {
+
+        public override string GetErrorMessage()
+        {
+            return string.Empty;
+        }
+
+        public override bool ProcessFile(string inputFilePath, string outputFolderPath, string parameterFilePath, bool resetErrorCode)
+        {
+            CleanupFilePaths(ref inputFilePath, ref outputFolderPath);
+
+            var fileInfo = new FileInfo(inputFilePath);
+
+            if (fileInfo.Exists)
+            {
+                Console.WriteLine(fileInfo.FullName);
+                return true;
+            }
+
+            return false;
+        }
     }
 
     /// <summary>
