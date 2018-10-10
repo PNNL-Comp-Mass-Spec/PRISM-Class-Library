@@ -52,6 +52,8 @@
     <Compile Include="FileProcessor\ProcessFilesBase.cs" />
     <Compile Include="FileProcessor\ProcessFilesOrDirectoriesBase.cs" />
     <Compile Include="FileProcessor\ProcessDirectoriesBase.cs" />
+    <Compile Include="FileProcessor\ProcessFilesOrFoldersBase.cs" />
+    <Compile Include="FileProcessor\ProcessFoldersBase.cs" />
     <Compile Include="FileTools\CRC32.cs" />
     <Compile Include="FileTools\DirectoryScanner.cs" />
     <Compile Include="FileTools\FileSyncUtils.cs" />
