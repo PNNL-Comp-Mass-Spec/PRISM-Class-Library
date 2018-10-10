@@ -21,7 +21,7 @@ namespace PRISM.FileProcessor
         protected ProcessFilesBase()
         {
             mFileDate = "October 10, 2018";
-            ErrorCode = eProcessFilesErrorCodes.NoError;
+            ErrorCode = ProcessFilesErrorCodes.NoError;
         }
 
         #region "Constants and Enums"
@@ -29,6 +29,53 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Error code enums
         /// </summary>
+        public enum ProcessFilesErrorCodes
+        {
+            /// <summary>
+            /// No error
+            /// </summary>
+            NoError = 0,
+
+            /// <summary>
+            /// Invalid input file path
+            /// </summary>
+            InvalidInputFilePath = 1,
+
+            /// <summary>
+            /// Invalid output directory path
+            /// </summary>
+            InvalidOutputDirectoryPath = 2,
+
+            /// <summary>
+            /// Parameter file not found
+            /// </summary>
+            ParameterFileNotFound = 4,
+
+            /// <summary>
+            /// Invalid parameter file
+            /// </summary>
+            InvalidParameterFile = 8,
+
+            /// <summary>
+            /// File path error
+            /// </summary>
+            FilePathError = 16,
+
+            /// <summary>
+            /// Localized error
+            /// </summary>
+            LocalizedError = 32,
+
+            /// <summary>
+            /// Unspecified error
+            /// </summary>
+            UnspecifiedError = -1
+        }
+
+        /// <summary>
+        /// Error code enums
+        /// </summary>
+        [Obsolete("Use ProcessFilesErrorCodes")]
         public enum eProcessFilesErrorCodes
         {
             /// <summary>
@@ -74,7 +121,6 @@ namespace PRISM.FileProcessor
             /// </summary>
             UnspecifiedError = -1
         }
-
         // Copy the following to any derived classes
         //enum eDerivedClassErrorCodes
         //{
@@ -105,7 +151,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Error code reflecting processing outcome
         /// </summary>
-        public eProcessFilesErrorCodes ErrorCode { get; set; }
+        public ProcessFilesErrorCodes ErrorCode { get; set; }
 
         /// <summary>
         /// Number of files processed successfully when using ProcessFilesAndRecurseDirectories or ProcessFilesWildcard
@@ -195,7 +241,7 @@ namespace PRISM.FileProcessor
                 {
                     ShowErrorMessage("Input file not found: " + inputFilePath);
 
-                    ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
+                    ErrorCode = ProcessFilesErrorCodes.InvalidInputFilePath;
                     return false;
                 }
 
@@ -220,28 +266,28 @@ namespace PRISM.FileProcessor
 
             switch (ErrorCode)
             {
-                case eProcessFilesErrorCodes.NoError:
+                case ProcessFilesErrorCodes.NoError:
                     errorMessage = string.Empty;
                     break;
-                case eProcessFilesErrorCodes.InvalidInputFilePath:
+                case ProcessFilesErrorCodes.InvalidInputFilePath:
                     errorMessage = "Invalid input file path";
                     break;
-                case eProcessFilesErrorCodes.InvalidOutputFolderPath:
+                case ProcessFilesErrorCodes.InvalidOutputDirectoryPath:
                     errorMessage = "Invalid output directory path";
                     break;
-                case eProcessFilesErrorCodes.ParameterFileNotFound:
+                case ProcessFilesErrorCodes.ParameterFileNotFound:
                     errorMessage = "Parameter file not found";
                     break;
-                case eProcessFilesErrorCodes.InvalidParameterFile:
+                case ProcessFilesErrorCodes.InvalidParameterFile:
                     errorMessage = "Invalid parameter file";
                     break;
-                case eProcessFilesErrorCodes.FilePathError:
+                case ProcessFilesErrorCodes.FilePathError:
                     errorMessage = "General file path error";
                     break;
-                case eProcessFilesErrorCodes.LocalizedError:
+                case ProcessFilesErrorCodes.LocalizedError:
                     errorMessage = "Localized error";
                     break;
-                case eProcessFilesErrorCodes.UnspecifiedError:
+                case ProcessFilesErrorCodes.UnspecifiedError:
                     errorMessage = "Unspecified error";
                     break;
                 default:
@@ -295,7 +341,7 @@ namespace PRISM.FileProcessor
         {
             ShowErrorMessage("Input file cannot be empty");
 
-            ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
+            ErrorCode = ProcessFilesErrorCodes.InvalidInputFilePath;
         }
 
         /// <summary>
@@ -323,7 +369,7 @@ namespace PRISM.FileProcessor
             {
                 // Possibly reset the error code
                 if (resetErrorCode)
-                    ErrorCode = eProcessFilesErrorCodes.NoError;
+                    ErrorCode = ProcessFilesErrorCodes.NoError;
 
                 if (string.IsNullOrWhiteSpace(inputFilePath))
                 {
@@ -388,7 +434,7 @@ namespace PRISM.FileProcessor
                     return success;
                 }
 
-                if (ErrorCode != eProcessFilesErrorCodes.NoError)
+                if (ErrorCode != ProcessFilesErrorCodes.NoError)
                     return success;
 
                 ShowErrorMessage("No match was found for the input file path: " + inputFilePath);
@@ -603,8 +649,8 @@ namespace PRISM.FileProcessor
                     }
                     catch (Exception ex)
                     {
-                        ErrorCode = eProcessFilesErrorCodes.InvalidOutputFolderPath;
                         HandleException("Error validating the alternate output directory path in ProcessFilesAndRecurseDirectories", ex);
+                        ErrorCode = ProcessFilesErrorCodes.InvalidOutputDirectoryPath;
                         return false;
                     }
                 }
@@ -652,8 +698,8 @@ namespace PRISM.FileProcessor
             catch (Exception ex)
             {
                 // Input directory path error
-                ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
                 HandleException("Error in RecurseDirectoriesWork examining inputDirectoryPath", ex);
+                ErrorCode = ProcessFilesErrorCodes.InvalidInputFilePath;
                 return false;
             }
 
@@ -676,8 +722,8 @@ namespace PRISM.FileProcessor
             catch (Exception ex)
             {
                 // Output file path error
-                ErrorCode = eProcessFilesErrorCodes.InvalidOutputFolderPath;
                 HandleException("Error in RecurseDirectoriesWork validating the alternate output directory path", ex);
+                ErrorCode = ProcessFilesErrorCodes.InvalidOutputDirectoryPath;
                 return false;
             }
 
@@ -707,8 +753,8 @@ namespace PRISM.FileProcessor
             }
             catch (Exception ex)
             {
-                ErrorCode = eProcessFilesErrorCodes.UnspecifiedError;
                 HandleException("Error in RecurseDirectoriesWork validating the extensions to parse", ex);
+                ErrorCode = ProcessFilesErrorCodes.UnspecifiedError;
                 return false;
             }
 
@@ -752,8 +798,8 @@ namespace PRISM.FileProcessor
                 //    return true;
                 //}
 
-                ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
                 HandleException("Error in RecurseDirectoriesWork while finding files to process", ex);
+                ErrorCode = ProcessFilesErrorCodes.InvalidInputFilePath;
                 return false;
             }
 
@@ -795,8 +841,8 @@ namespace PRISM.FileProcessor
             }
             catch (Exception ex)
             {
-                ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
                 HandleException("Error in RecurseDirectoriesWork while processing files", ex);
+                ErrorCode = ProcessFilesErrorCodes.InvalidInputFilePath;
                 return false;
             }
 
@@ -827,7 +873,7 @@ namespace PRISM.FileProcessor
         /// Update the base class error code
         /// </summary>
         /// <param name="eNewErrorCode"></param>
-        protected void SetBaseClassErrorCode(eProcessFilesErrorCodes eNewErrorCode)
+        protected void SetBaseClassErrorCode(ProcessFilesErrorCodes eNewErrorCode)
         {
             ErrorCode = eNewErrorCode;
         }
@@ -852,14 +898,14 @@ namespace PRISM.FileProcessor
         //
         //         if (eNewErrorCode == eDerivedClassErrorCodes.NoError)
         //         {
-        //             if (base.ErrorCode == ProcessFilesBase.eProcessFilesErrorCodes.LocalizedError)
+        //             if (base.ErrorCode == ProcessFilesBase.ProcessFilesErrorCodes.LocalizedError)
         //             {
-        //                 base.SetBaseClassErrorCode(ProcessFilesBase.eProcessFilesErrorCodes.NoError);
+        //                 base.SetBaseClassErrorCode(ProcessFilesBase.ProcessFilesErrorCodes.NoError);
         //             }
         //         }
         //         else
         //         {
-        //             base.SetBaseClassErrorCode(ProcessFilesBase.eProcessFilesErrorCodes.LocalizedError);
+        //             base.SetBaseClassErrorCode(ProcessFilesBase.ProcessFilesErrorCodes.LocalizedError);
         //         }
         //     }
         // }
