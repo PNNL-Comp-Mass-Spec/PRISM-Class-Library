@@ -332,6 +332,8 @@ namespace PRISM.FileProcessor
                     else
                     {
                         DirectoryProcessErrors++;
+                        if (!IgnoreErrorsWhenUsingWildcardMatching)
+                            break;
                     }
 
                     if (!(DateTime.UtcNow.Subtract(lastProgress).TotalSeconds >= 1))

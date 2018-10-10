@@ -103,14 +103,6 @@ namespace PRISM.FileProcessor
         #region "Interface Functions"
 
         /// <summary>
-        /// This option applies when processing files matched with a wildcard
-        /// </summary>
-        /// <value></value>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        public bool IgnoreErrorsWhenUsingWildcardMatching { get; set; }
-
-        /// <summary>
         /// Error code reflecting processing outcome
         /// </summary>
         public eProcessFilesErrorCodes ErrorCode { get; set; }

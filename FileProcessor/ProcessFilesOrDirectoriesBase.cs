@@ -208,6 +208,11 @@ namespace PRISM.FileProcessor
         public string FileDate => mFileDate;
 
         /// <summary>
+        /// This option applies when processing files or directories matched with a wildcard
+        /// </summary>
+        public bool IgnoreErrorsWhenUsingWildcardMatching { get; set; }
+
+        /// <summary>
         /// Log file path (relative or absolute path)
         /// </summary>
         /// <remarks>Leave blank to auto-define</remarks>
