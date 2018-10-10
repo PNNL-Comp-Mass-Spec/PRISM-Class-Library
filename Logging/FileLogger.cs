@@ -290,7 +290,7 @@ namespace PRISM.Logging
             // Be careful when updating this method's arguments and how they're used,
             // since this method is called by the following classes
             //   PRISM.Logging.FileLogger
-            //   PRISM.FileProcessor.ProcessFilesOrFoldersBase
+            //   PRISM.FileProcessor.ProcessFilesOrDirectoriesBase
             //   PRISM.clsFileLogger
             //   AnalysisManagerBase.clsMemoryUsageLogger
 
@@ -457,7 +457,7 @@ namespace PRISM.Logging
             }
             else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
             {
-                var appFolderPath = FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
+                var appFolderPath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppDirectoryPath();
                 string logFilePath;
                 if (string.IsNullOrWhiteSpace(baseName))
                 {

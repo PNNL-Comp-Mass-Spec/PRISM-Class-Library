@@ -10,10 +10,10 @@ using System.Threading;
 namespace PRISM.FileProcessor
 {
     /// <summary>
-    /// Base class for both ProcessFilesBase and ProcessFoldersBase
+    /// Base class for both ProcessFilesBase and ProcessDirectoriesBase
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public abstract class ProcessFilesOrFoldersBase : EventNotifier
+    public abstract class ProcessFilesOrDirectoriesBase : EventNotifier
     {
         #region "Constants and Enums"
 
@@ -134,10 +134,10 @@ namespace PRISM.FileProcessor
         protected StreamWriter mLogFile;
 
         /// <summary>
-        /// Output folder path
+        /// Output directory path
         /// </summary>
         /// <remarks>This variable is updated when CleanupFilePaths() is called</remarks>
-        protected string mOutputFolderPath = string.Empty;
+        protected string mOutputDirectoryPath = string.Empty;
 
         private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
@@ -192,7 +192,7 @@ namespace PRISM.FileProcessor
         public bool AbortProcessing { get; set; }
 
         /// <summary>
-        /// When true, auto-move old log files to a subfolder based on the log file date
+        /// When true, auto-move old log files to a subdirectory based on the log file date
         /// </summary>
         /// <remarks>Only valid if the log file name was auto-defined (meaning LogFilePath was initially blank)</remarks>
         public bool ArchiveOldLogFiles { get; set; } = true;
@@ -218,13 +218,13 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Log folder path (ignored if LogFilePath is rooted)
+        /// Log directory path (ignored if LogFilePath is rooted)
         /// </summary>
         /// <remarks>
-        /// If blank, mOutputFolderPath will be used
-        /// If mOutputFolderPath is also blank, the log file is created in the same folder as the executing assembly
+        /// If blank, mOutputDirectoryPath will be used
+        /// If mOutputDirectoryPath is also blank, the log file is created in the same directory as the executing assembly
         /// </remarks>
-        public string LogFolderPath { get; set; } = string.Empty;
+        public string LogDirectoryPath { get; set; } = string.Empty;
 
         /// <summary>
         /// True to log messages to a file
@@ -272,7 +272,7 @@ namespace PRISM.FileProcessor
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        protected ProcessFilesOrFoldersBase()
+        protected ProcessFilesOrDirectoriesBase()
         {
             // Keys in this dictionary are the log type and message (separated by an underscore)
             // Values are the most recent time the message was logged
@@ -325,9 +325,9 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Cleanup paths
         /// </summary>
-        /// <param name="inputFileOrFolderPath"></param>
-        /// <param name="outputFolderPath"></param>
-        protected abstract void CleanupPaths(ref string inputFileOrFolderPath, ref string outputFolderPath);
+        /// <param name="inputFileOrDirectoryPath"></param>
+        /// <param name="outputDirectoryPath"></param>
+        protected abstract void CleanupPaths(ref string inputFileOrDirectoryPath, ref string outputDirectoryPath);
 
         /// <summary>
         /// Close the log file
@@ -347,7 +347,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Sets the log file path (<see cref="mLogFilePath"/>),
         /// according to data in <see cref="mLogFilePath"/>,
-        /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogFolderPath"/>
+        /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogDirectoryPath"/>
         /// </summary>
         /// <param name="logFileBaseName">Base name for the log file (ignored if mLogFilePath is defined)</param>
         /// <remarks>
@@ -359,32 +359,32 @@ namespace PRISM.FileProcessor
 
             try
             {
-                if (LogFolderPath == null)
+                if (LogDirectoryPath == null)
                 {
-                    LogFolderPath = string.Empty;
+                    LogDirectoryPath = string.Empty;
                 }
 
-                if (string.IsNullOrWhiteSpace(LogFolderPath))
+                if (string.IsNullOrWhiteSpace(LogDirectoryPath))
                 {
-                    // Log folder is undefined; use mOutputFolderPath if it is defined
-                    if (!string.IsNullOrWhiteSpace(mOutputFolderPath))
+                    // Log directory is undefined; use mOutputDirectoryPath if it is defined
+                    if (!string.IsNullOrWhiteSpace(mOutputDirectoryPath))
                     {
-                        LogFolderPath = string.Copy(mOutputFolderPath);
+                        LogDirectoryPath = string.Copy(mOutputDirectoryPath);
                     }
                 }
 
-                if (LogFolderPath.Length > 0)
+                if (LogDirectoryPath.Length > 0)
                 {
-                    // Create the log folder if it doesn't exist
-                    if (!Directory.Exists(LogFolderPath))
+                    // Create the log directory if it doesn't exist
+                    if (!Directory.Exists(LogDirectoryPath))
                     {
-                        Directory.CreateDirectory(LogFolderPath);
+                        Directory.CreateDirectory(LogDirectoryPath);
                     }
                 }
             }
             catch (Exception)
             {
-                LogFolderPath = string.Empty;
+                LogDirectoryPath = string.Empty;
             }
 
             if (string.IsNullOrWhiteSpace(mLogFilePath))
@@ -400,9 +400,9 @@ namespace PRISM.FileProcessor
                     }
                 }
 
-                if (LogFolderPath.Length > 0)
+                if (LogDirectoryPath.Length > 0)
                 {
-                    mLogFileBasePath = Path.Combine(LogFolderPath, logFileBaseName) + LOG_FILE_SUFFIX;
+                    mLogFileBasePath = Path.Combine(LogDirectoryPath, logFileBaseName) + LOG_FILE_SUFFIX;
                 }
                 else
                 {
@@ -423,16 +423,16 @@ namespace PRISM.FileProcessor
             }
             else
             {
-                if (!Path.IsPathRooted(mLogFilePath) && LogFolderPath.Length > 0 && !mLogFilePath.StartsWith(LogFolderPath))
+                if (!Path.IsPathRooted(mLogFilePath) && LogDirectoryPath.Length > 0 && !mLogFilePath.StartsWith(LogDirectoryPath))
                 {
-                    mLogFilePath = Path.Combine(LogFolderPath, mLogFilePath);
+                    mLogFilePath = Path.Combine(LogDirectoryPath, mLogFilePath);
                 }
             }
 
         }
 
         /// <summary>
-        /// Verifies that the specified .XML settings file exists in the user's local settings folder
+        /// Verifies that the specified .XML settings file exists in the user's local settings directory
         /// </summary>
         /// <param name="applicationName">Application name</param>
         /// <param name="settingsFileName">Settings file name</param>
@@ -446,7 +446,7 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Verifies that the specified .XML settings file exists in the user's local settings folder
+        /// Verifies that the specified .XML settings file exists in the user's local settings directory
         /// </summary>
         /// <param name="settingsFilePathLocal">Full path to the local settings file, for example C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</param>
         /// <returns>True if the file already exists or was created, false if an error</returns>
@@ -460,7 +460,7 @@ namespace PRISM.FileProcessor
             {
                 if (!File.Exists(settingsFilePathLocal))
                 {
-                    var masterSettingsFile = new FileInfo(Path.Combine(GetAppFolderPath(), Path.GetFileName(settingsFilePathLocal)));
+                    var masterSettingsFile = new FileInfo(Path.Combine(GetAppDirectoryPath(), Path.GetFileName(settingsFilePathLocal)));
 
                     if (masterSettingsFile.Exists)
                     {
@@ -532,14 +532,14 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Returns the full path to the folder into which this application should read/write settings file information
+        /// Returns the full path to the directory into which this application should read/write settings file information
         /// </summary>
         /// <param name="appName"></param>
         /// <returns></returns>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
-        public static string GetAppDataFolderPath(string appName)
+        public static string GetAppDataDirectoryPath(string appName)
         {
-            string appDataFolder;
+            string appDataDirectory;
 
             if (string.IsNullOrWhiteSpace(appName))
             {
@@ -548,27 +548,27 @@ namespace PRISM.FileProcessor
 
             try
             {
-                appDataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
-                if (!Directory.Exists(appDataFolder))
+                appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
+                if (!Directory.Exists(appDataDirectory))
                 {
-                    Directory.CreateDirectory(appDataFolder);
+                    Directory.CreateDirectory(appDataDirectory);
                 }
             }
             catch (Exception)
             {
-                // Error creating the folder, revert to using the system Temp folder
-                appDataFolder = Path.GetTempPath();
+                // Error creating the directory, revert to using the system Temp directory
+                appDataDirectory = Path.GetTempPath();
             }
 
-            return appDataFolder;
+            return appDataDirectory;
         }
 
         /// <summary>
-        /// Returns the full path to the folder that contains the currently executing .Exe or .Dll
+        /// Returns the full path to the directory that contains the currently executing .Exe or .Dll
         /// </summary>
         /// <returns></returns>
         /// <remarks></remarks>
-        public static string GetAppFolderPath()
+        public static string GetAppDirectoryPath()
         {
             // Could use Application.StartupPath, but .GetExecutingAssembly is better
             return Path.GetDirectoryName(GetAppPath());
@@ -654,7 +654,7 @@ namespace PRISM.FileProcessor
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</remarks>
         public static string GetSettingsFilePathLocal(string applicationName, string settingsFileName)
         {
-            return Path.Combine(GetAppDataFolderPath(applicationName), settingsFileName);
+            return Path.Combine(GetAppDataDirectoryPath(applicationName), settingsFileName);
         }
 
         /// <summary>
@@ -723,8 +723,8 @@ namespace PRISM.FileProcessor
         /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
         /// </param>
         /// <remarks>
-        /// Note that CleanupPaths() will update mOutputFolderPath, which is used here if mLogFolderPath is blank
-        /// Thus, be sure to call CleanupPaths (or update mLogFolderPath) before the first call to LogMessage
+        /// Note that CleanupPaths() will update mOutputDirectoryPath, which is used here if mLogDirectoryPath is blank
+        /// Thus, be sure to call CleanupPaths (or update mLogDirectoryPath) before the first call to LogMessage
         /// </remarks>
         protected void LogMessage(
             string message,
@@ -997,22 +997,22 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Auto-define the log file path using the given log folder path and base log file name
+        /// Auto-define the log file path using the given log directory path and base log file name
         /// </summary>
-        /// <param name="logFolderPath">
-        /// Log folder path; if blank, mOutputFolderPath will be used
-        /// If mOutputFolderPath is also blank, the log file is created in the same folder as the executing assembly
+        /// <param name="logDirectoryPath">
+        /// Log directory path; if blank, mOutputDirectoryPath will be used
+        /// If mOutputDirectoryPath is also blank, the log file is created in the same directory as the executing assembly
         /// </param>
         /// <param name="logFileBaseName">
         /// Base name for the log file
         /// If blank, will use the name of the entry or executing assembly (without any extension)
         /// </param>
         /// <param name="archiveOldLogFiles">When true, archive old log files immediately</param>
-        protected void UpdateAutoDefinedLogFilePath(string logFolderPath, string logFileBaseName, bool archiveOldLogFiles = true)
+        protected void UpdateAutoDefinedLogFilePath(string logDirectoryPath, string logFileBaseName, bool archiveOldLogFiles = true)
         {
             CloseLogFileNow();
             ResetLogFileName();
-            LogFolderPath = logFolderPath;
+            LogDirectoryPath = logDirectoryPath;
 
             ConfigureLogFilePath(logFileBaseName);
             ConsoleMsgUtils.ShowDebug("Logging to " + LogFilePath);

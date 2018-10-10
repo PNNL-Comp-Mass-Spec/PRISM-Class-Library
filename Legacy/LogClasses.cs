@@ -177,7 +177,7 @@ namespace PRISM
                 // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (m_programVersion == null)
                 {
-                    m_programVersion = FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+                    m_programVersion = FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
                 }
                 return m_programVersion;
             }
@@ -193,7 +193,7 @@ namespace PRISM
                 // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
                 if (m_programName == null)
                 {
-                    m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().Location);
+                    m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
                 }
                 return m_programName;
             }

@@ -15,18 +15,18 @@ namespace PRISMTest
         [TestCase("", "", "PRISM_log")]
         [TestCase("", "TestLogFile", "TestLogFile_log")]
         public void TestLogFileName(
-            string logFolder,
+            string logDirectory,
             string logFileNameBase,
             string expectedBaseName)
         {
             var fileStatsLogger = new SimpleFileStatsLogger
             {
                 LogFileBaseName = logFileNameBase,
-                LogFolderPath = logFolder,
+                LogDirectoryPath = logDirectory,
                 LogMessagesToFile = true
             };
 
-            var fileToFind = ProcessFilesOrFoldersBase.GetAppPath();
+            var fileToFind = ProcessFilesOrDirectoriesBase.GetAppPath();
 
             fileStatsLogger.ProcessFile(fileToFind);
 
@@ -58,7 +58,7 @@ namespace PRISMTest
 
             var startingDirectoryAndFileSpec = Path.Combine(startingDirectory, fileMatchSpec);
 
-            fileFinder.ProcessFilesAndRecurseFolders(startingDirectoryAndFileSpec, "", "", false, "", maxLevelsToRecurse);
+            fileFinder.ProcessFilesAndRecurseDirectories(startingDirectoryAndFileSpec, "", "", false, "", maxLevelsToRecurse);
 
             Console.WriteLine();
             Console.WriteLine("Processed {0} files", fileFinder.FilesProcessed);
@@ -84,9 +84,9 @@ namespace PRISMTest
             return string.Empty;
         }
 
-        public override bool ProcessFile(string inputFilePath, string outputFolderPath, string parameterFilePath, bool resetErrorCode)
+        public override bool ProcessFile(string inputFilePath, string outputDirectoryPath, string parameterFilePath, bool resetErrorCode)
         {
-            CleanupFilePaths(ref inputFilePath, ref outputFolderPath);
+            CleanupFilePaths(ref inputFilePath, ref outputDirectoryPath);
 
             var fileInfo = new FileInfo(inputFilePath);
 
@@ -102,7 +102,7 @@ namespace PRISMTest
 
     /// <summary>
     /// Simple class that derives from ProcessFilesBase
-    /// It looks for a file in the given folder and logs the file size and last write time to a log file
+    /// It looks for a file in the given directory and logs the file size and last write time to a log file
     /// </summary>
     class SimpleFileStatsLogger : ProcessFilesBase
     {
@@ -114,13 +114,13 @@ namespace PRISMTest
             return string.Empty;
         }
 
-        public override bool ProcessFile(string inputFilePath, string outputFolderPath, string parameterFilePath, bool resetErrorCode)
+        public override bool ProcessFile(string inputFilePath, string outputDirectoryPath, string parameterFilePath, bool resetErrorCode)
         {
-            CleanupFilePaths(ref inputFilePath, ref outputFolderPath);
+            CleanupFilePaths(ref inputFilePath, ref outputDirectoryPath);
 
-            if (LogMessagesToFile && (!string.IsNullOrWhiteSpace(LogFolderPath) || !string.IsNullOrWhiteSpace(LogFileBaseName)))
+            if (LogMessagesToFile && (!string.IsNullOrWhiteSpace(LogDirectoryPath) || !string.IsNullOrWhiteSpace(LogFileBaseName)))
             {
-                UpdateAutoDefinedLogFilePath(LogFolderPath, LogFileBaseName);
+                UpdateAutoDefinedLogFilePath(LogDirectoryPath, LogFileBaseName);
             }
 
             var fileInfo = new FileInfo(inputFilePath);

@@ -13,17 +13,17 @@ namespace PRISM.FileProcessor
     /// The derived classes can also set their own local error codes
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public abstract class ProcessFoldersBase : ProcessFilesOrFoldersBase
+    public abstract class ProcessDirectoriesBase : ProcessFilesOrDirectoriesBase
     {
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <remarks></remarks>
-        protected ProcessFoldersBase()
+        protected ProcessDirectoriesBase()
         {
-            mFileDate = "March 15, 2018";
-            ErrorCode = eProcessFoldersErrorCodes.NoError;
+            mFileDate = "October 10, 2018";
+            ErrorCode = ProcessDirectoriesErrorCodes.NoError;
         }
 
         #region "Constants and Enums"
@@ -31,7 +31,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Error code enums
         /// </summary>
-        public enum eProcessFoldersErrorCodes
+        public enum ProcessDirectoriesErrorCodes
         {
             /// <summary>
             /// No error
@@ -41,11 +41,17 @@ namespace PRISM.FileProcessor
             /// <summary>
             /// Invalid input directory path
             /// </summary>
+            InvalidInputDirectoryPath = 1,
+
+            [Obsolete("Use InvalidInputDirectoryPath")]
             InvalidInputFolderPath = 1,
 
             /// <summary>
             /// Invalid output directory path
             /// </summary>
+            InvalidOutputDirectoryPath = 2,
+
+            [Obsolete("Use InvalidOutputDirectoryPath")]
             InvalidOutputFolderPath = 2,
 
             /// <summary>
@@ -104,62 +110,62 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Error code reflecting processing outcome
         /// </summary>
-        public eProcessFoldersErrorCodes ErrorCode { get; set; }
+        public ProcessDirectoriesErrorCodes ErrorCode { get; set; }
 
         #endregion
 
         /// <summary>
         /// Cleanup file/directory paths
         /// </summary>
-        /// <param name="inputFileOrFolderPath"></param>
-        /// <param name="outputFolderPath"></param>
-        protected override void CleanupPaths(ref string inputFileOrFolderPath, ref string outputFolderPath)
+        /// <param name="inputFileOrDirectoryPath"></param>
+        /// <param name="outputDirectoryPath"></param>
+        protected override void CleanupPaths(ref string inputFileOrDirectoryPath, ref string outputDirectoryPath)
         {
-            CleanupFolderPaths(ref inputFileOrFolderPath, ref outputFolderPath);
+            CleanupDirectoryPaths(ref inputFileOrDirectoryPath, ref outputDirectoryPath);
         }
 
         /// <summary>
-        /// Make sure inputFolderPath points to a valid directory and validate the output directory (defining it if null or empty)
+        /// Make sure inputDirectoryPath points to a valid directory and validate the output directory (defining it if null or empty)
         /// </summary>
-        /// <param name="inputFolderPath"></param>
-        /// <param name="outputFolderPath"></param>
+        /// <param name="inputDirectoryPath"></param>
+        /// <param name="outputDirectoryPath"></param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>Create outputFolderPath if it does not exist</remarks>
-        protected bool CleanupFolderPaths(ref string inputFolderPath, ref string outputFolderPath)
+        /// <remarks>Create outputDirectoryPath if it does not exist</remarks>
+        protected bool CleanupDirectoryPaths(ref string inputDirectoryPath, ref string outputDirectoryPath)
         {
 
             try
             {
-                var inputFolder = new DirectoryInfo(inputFolderPath);
+                var inputDirectory = new DirectoryInfo(inputDirectoryPath);
 
-                if (!inputFolder.Exists)
+                if (!inputDirectory.Exists)
                 {
-                    NotifyInvalidInputFolder();
+                    NotifyInvalidInputDirectory();
                     return false;
                 }
 
-                if (string.IsNullOrWhiteSpace(outputFolderPath))
+                if (string.IsNullOrWhiteSpace(outputDirectoryPath))
                 {
-                    // Define outputFolderPath based on inputFolderPath
-                    outputFolderPath = inputFolder.FullName;
+                    // Define outputDirectoryPath based on inputDirectoryPath
+                    outputDirectoryPath = inputDirectory.FullName;
                 }
 
-                // Make sure outputFolderPath points to a folder
-                var outputFolder = new DirectoryInfo(outputFolderPath);
+                // Make sure outputDirectoryPath points to a directory
+                var outputDirectory = new DirectoryInfo(outputDirectoryPath);
 
-                if (!outputFolder.Exists)
+                if (!outputDirectory.Exists)
                 {
-                    // outputFolderPath points to a non-existent directory; attempt to create it
-                    outputFolder.Create();
+                    // outputDirectoryPath points to a non-existent directory; attempt to create it
+                    outputDirectory.Create();
                 }
 
-                mOutputFolderPath = outputFolder.FullName;
+                mOutputDirectoryPath = outputDirectory.FullName;
 
                 return true;
             }
             catch (Exception ex)
             {
-                HandleException("Error cleaning up the folder paths", ex);
+                HandleException("Error cleaning up the directory paths", ex);
                 return false;
             }
 
@@ -176,28 +182,28 @@ namespace PRISM.FileProcessor
 
             switch (ErrorCode)
             {
-                case eProcessFoldersErrorCodes.NoError:
+                case ProcessDirectoriesErrorCodes.NoError:
                     errorMessage = string.Empty;
                     break;
-                case eProcessFoldersErrorCodes.InvalidInputFolderPath:
+                case ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath:
                     errorMessage = "Invalid input directory path";
                     break;
-                case eProcessFoldersErrorCodes.InvalidOutputFolderPath:
+                case ProcessDirectoriesErrorCodes.InvalidOutputDirectoryPath:
                     errorMessage = "Invalid output directory path";
                     break;
-                case eProcessFoldersErrorCodes.ParameterFileNotFound:
+                case ProcessDirectoriesErrorCodes.ParameterFileNotFound:
                     errorMessage = "Parameter file not found";
                     break;
-                case eProcessFoldersErrorCodes.InvalidParameterFile:
+                case ProcessDirectoriesErrorCodes.InvalidParameterFile:
                     errorMessage = "Invalid parameter file";
                     break;
-                case eProcessFoldersErrorCodes.FilePathError:
+                case ProcessDirectoriesErrorCodes.FilePathError:
                     errorMessage = "General file path error";
                     break;
-                case eProcessFoldersErrorCodes.LocalizedError:
+                case ProcessDirectoriesErrorCodes.LocalizedError:
                     errorMessage = "Localized error";
                     break;
-                case eProcessFoldersErrorCodes.UnspecifiedError:
+                case ProcessDirectoriesErrorCodes.UnspecifiedError:
                     errorMessage = "Unspecified error";
                     break;
                 default:
@@ -210,49 +216,49 @@ namespace PRISM.FileProcessor
 
         }
 
-        private DirectoryInfo GetInputFolderAndMatchSpec(string inputFolderPathSpec, out string folderNameMatchPattern)
+        private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)
         {
             // Copy the path into cleanPath and replace any * or ? characters with _
-            var cleanPath = inputFolderPathSpec.Replace("*", "_").Replace("?", "_");
+            var cleanPath = inputDirectoryPathSpec.Replace("*", "_").Replace("?", "_");
 
-            var inputFolderSpec = new DirectoryInfo(cleanPath);
-            string inputFolderToUse;
+            var inputDirectorySpec = new DirectoryInfo(cleanPath);
+            string inputDirectoryToUse;
 
-            if (inputFolderSpec.Parent != null && inputFolderSpec.Parent.Exists)
+            if (inputDirectorySpec.Parent != null && inputDirectorySpec.Parent.Exists)
             {
-                inputFolderToUse = inputFolderSpec.Parent.FullName;
+                inputDirectoryToUse = inputDirectorySpec.Parent.FullName;
             }
             else
             {
                 // Use the current working directory
-                inputFolderToUse = ".";
+                inputDirectoryToUse = ".";
             }
 
-            var inputFolder = new DirectoryInfo(inputFolderToUse);
+            var inputDirectory = new DirectoryInfo(inputDirectoryToUse);
 
-            // Remove any directory information from inputFolderPathSpec
-            folderNameMatchPattern = Path.GetFileName(inputFolderPathSpec);
+            // Remove any directory information from inputDirectoryPathSpec
+            directoryNameMatchPattern = Path.GetFileName(inputDirectoryPathSpec);
 
-            return inputFolder;
+            return inputDirectory;
         }
 
-        private void NotifyInvalidInputFolder()
+        private void NotifyInvalidInputDirectory()
         {
-            ShowErrorMessage("Input folder cannot be empty");
-            ErrorCode = eProcessFoldersErrorCodes.InvalidInputFolderPath;
+            ShowErrorMessage("Input directory cannot be empty");
+            ErrorCode = ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath;
         }
 
         /// <summary>
-        /// Process one or more folders (aka directories)
+        /// Process one or more directories
         /// </summary>
-        /// <param name="inputFolderPath">Match spec for finding directories, can contain * and ?</param>
-        /// <param name="outputFolderAlternatePath">Alternate output directory path</param>
+        /// <param name="inputDirectoryPath">Match spec for finding directories, can contain * and ?</param>
+        /// <param name="outputDirectoryAlternatePath">Alternate output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="resetErrorCode">If True, reset ErrorCode</param>
         /// <returns> True if success, false if an error</returns>
-        public bool ProcessFoldersWildcard(
-            string inputFolderPath,
-            string outputFolderAlternatePath = "",
+        public bool ProcessDirectoriesWildcard(
+            string inputDirectoryPath,
+            string outputDirectoryAlternatePath = "",
             string parameterFilePath = "",
             bool resetErrorCode = true)
         {
@@ -264,31 +270,31 @@ namespace PRISM.FileProcessor
             {
                 // Possibly reset the error code
                 if (resetErrorCode)
-                    ErrorCode = eProcessFoldersErrorCodes.NoError;
+                    ErrorCode = ProcessDirectoriesErrorCodes.NoError;
 
-                if (string.IsNullOrWhiteSpace(inputFolderPath))
+                if (string.IsNullOrWhiteSpace(inputDirectoryPath))
                 {
-                    NotifyInvalidInputFolder();
+                    NotifyInvalidInputDirectory();
                     return false;
                 }
 
-                if (!string.IsNullOrWhiteSpace(outputFolderAlternatePath))
+                if (!string.IsNullOrWhiteSpace(outputDirectoryAlternatePath))
                 {
-                    // Update the cached output folder path
-                    mOutputFolderPath = string.Copy(outputFolderAlternatePath);
+                    // Update the cached output directory path
+                    mOutputDirectoryPath = string.Copy(outputDirectoryAlternatePath);
                 }
 
-                // See if inputFolderPath contains a wildcard (* or ?)
-                if (!inputFolderPath.Contains("*") && !inputFolderPath.Contains("?"))
+                // See if inputDirectoryPath contains a wildcard (* or ?)
+                if (!inputDirectoryPath.Contains("*") && !inputDirectoryPath.Contains("?"))
                 {
-                    success = ProcessFolder(inputFolderPath, outputFolderAlternatePath, parameterFilePath, resetErrorCode);
+                    success = ProcessDirectory(inputDirectoryPath, outputDirectoryAlternatePath, parameterFilePath, resetErrorCode);
                     return success;
                 }
 
-                var inputFolder = GetInputFolderAndMatchSpec(inputFolderPath, out var directoryNameMatchPattern);
+                var inputDirectory = GetInputDirectoryAndMatchSpec(inputDirectoryPath, out var directoryNameMatchPattern);
 
                 var matchCount = 0;
-                var directoriesToProcess = inputFolder.GetDirectories(directoryNameMatchPattern).ToList();
+                var directoriesToProcess = inputDirectory.GetDirectories(directoryNameMatchPattern).ToList();
                 var lastProgress = DateTime.UtcNow;
 
                 foreach (var directory in directoriesToProcess)
@@ -298,7 +304,7 @@ namespace PRISM.FileProcessor
                     var percentComplete = matchCount / (float)directoriesToProcess.Count * 100;
                     OnProgressUpdate("Process " + directory.FullName, percentComplete);
 
-                    success = ProcessFolder(directory.FullName, outputFolderAlternatePath, parameterFilePath, true);
+                    success = ProcessDirectory(directory.FullName, outputDirectoryAlternatePath, parameterFilePath, true);
 
                     if (!success || AbortProcessing)
                         break;
@@ -316,17 +322,17 @@ namespace PRISM.FileProcessor
                     return success;
                 }
 
-                if (ErrorCode != eProcessFoldersErrorCodes.NoError)
+                if (ErrorCode != ProcessDirectoriesErrorCodes.NoError)
                     return success;
 
-                ShowErrorMessage("No match was found for the input directory path: " + inputFolderPath);
+                ShowErrorMessage("No match was found for the input directory path: " + inputDirectoryPath);
 
                 return success;
 
             }
             catch (Exception ex)
             {
-                HandleException("Error in ProcessFoldersWildcard", ex);
+                HandleException("Error in ProcessDirectoriesWildcard", ex);
                 return false;
             }
 
@@ -335,110 +341,109 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process a single directory
         /// </summary>
-        /// <param name="inputFolderPath">Input directory path</param>
+        /// <param name="inputDirectoryPath">Input directory path</param>
         /// <returns>True if success, otherwise false</returns>
-        public bool ProcessFolder(string inputFolderPath)
+        public bool ProcessDirectory(string inputDirectoryPath)
         {
-            return ProcessFolder(inputFolderPath, string.Empty, string.Empty, true);
+            return ProcessDirectory(inputDirectoryPath, string.Empty, string.Empty, true);
         }
 
         /// <summary>
         /// Process a single directory
         /// </summary>
-        /// <param name="inputFolderPath">Input directory path</param>
-        /// <param name="outputFolderAlternatePath">Alternate output directory path</param>
+        /// <param name="inputDirectoryPath">Input directory path</param>
+        /// <param name="outputDirectoryAlternatePath">Alternate output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <returns>True if success, otherwise false</returns>
-        public bool ProcessFolder(string inputFolderPath, string outputFolderAlternatePath, string parameterFilePath)
+        public bool ProcessDirectory(string inputDirectoryPath, string outputDirectoryAlternatePath, string parameterFilePath)
         {
-            return ProcessFolder(inputFolderPath, outputFolderAlternatePath, parameterFilePath, true);
+            return ProcessDirectory(inputDirectoryPath, outputDirectoryAlternatePath, parameterFilePath, true);
         }
 
         /// <summary>
         /// Process a single directory
         /// </summary>
-        /// <param name="inputFolderPath">Input directory path</param>
-        /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
+        /// <param name="inputDirectoryPath">Input directory path</param>
+        /// <param name="outputDirectoryAlternatePath">Alternate directory directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="resetErrorCode">If true, reset the error code</param>
         /// <returns>True if success, otherwise false</returns>
-        public abstract bool ProcessFolder(string inputFolderPath, string outputFolderAlternatePath,
-                                           string parameterFilePath, bool resetErrorCode);
+        public abstract bool ProcessDirectory(string inputDirectoryPath, string outputDirectoryAlternatePath,
+                                              string parameterFilePath, bool resetErrorCode);
 
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
-        /// <param name="inputFolderPath"></param>
-        /// <param name="recurseFoldersMaxLevels"></param>
+        /// <param name="inputDirectoryPath"></param>
+        /// <param name="maxLevelsToRecurse"></param>
         /// <returns></returns>
-        public bool ProcessAndRecurseFolders(string inputFolderPath, int recurseFoldersMaxLevels)
+        public bool ProcessAndRecurseDirectories(string inputDirectoryPath, int maxLevelsToRecurse)
         {
-            return ProcessAndRecurseFolders(inputFolderPath, string.Empty, string.Empty, recurseFoldersMaxLevels);
+            return ProcessAndRecurseDirectories(inputDirectoryPath, string.Empty, string.Empty, maxLevelsToRecurse);
         }
 
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
-        /// <param name="inputFolderPath">Input directory path (supports wildcards)</param>
-        /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
+        /// <param name="inputDirectoryPath">Input directory path (supports wildcards)</param>
+        /// <param name="outputDirectoryAlternatePath">Alternate directory directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
-        /// <param name="recurseFoldersMaxLevels">If 0 or negative, recurse infinitely</param>
+        /// <param name="maxLevelsToRecurse">If 0 or negative, recurse infinitely</param>
         /// <returns></returns>
-        /// <remarks>Calls ProcessFolders for all matching directories in inputFolderPath</remarks>
-        public bool ProcessAndRecurseFolders(
-            string inputFolderPath,
-            string outputFolderAlternatePath = "",
+        /// <remarks>Calls ProcessDirectories for all matching directories in inputDirectoryPath</remarks>
+        public bool ProcessAndRecurseDirectories(
+            string inputDirectoryPath,
+            string outputDirectoryAlternatePath = "",
             string parameterFilePath = "",
-            int recurseFoldersMaxLevels = 0)
+            int maxLevelsToRecurse = 0)
         {
 
             AbortProcessing = false;
-            bool success;
 
             // Examine inputFolderPath to see if it contains a * or ?
             try
             {
-                if (string.IsNullOrWhiteSpace(inputFolderPath))
+                if (string.IsNullOrWhiteSpace(inputDirectoryPath))
                 {
-                    NotifyInvalidInputFolder();
+                    NotifyInvalidInputDirectory();
                     return false;
                 }
 
-                DirectoryInfo inputFolder;
+                DirectoryInfo inputDirectory;
                 string directoryNameMatchPattern;
 
-                if (inputFolderPath.Contains("*") || inputFolderPath.Contains("?"))
+                if (inputDirectoryPath.Contains("*") || inputDirectoryPath.Contains("?"))
                 {
-                    inputFolder = GetInputFolderAndMatchSpec(inputFolderPath, out directoryNameMatchPattern);
+                    inputDirectory = GetInputDirectoryAndMatchSpec(inputDirectoryPath, out directoryNameMatchPattern);
                 }
                 else
                 {
 
-                    if (Directory.Exists(inputFolderPath))
+                    if (Directory.Exists(inputDirectoryPath))
                     {
-                        inputFolder = new DirectoryInfo(inputFolderPath);
+                        inputDirectory = new DirectoryInfo(inputDirectoryPath);
                     }
                     else
                     {
                         // Use the current working directory
-                        inputFolder = new DirectoryInfo(".");
+                        inputDirectory = new DirectoryInfo(".");
                     }
                     directoryNameMatchPattern = "*";
                 }
 
                 // Validate the output directory path
-                if (!string.IsNullOrWhiteSpace(outputFolderAlternatePath))
+                if (!string.IsNullOrWhiteSpace(outputDirectoryAlternatePath))
                 {
                     try
                     {
-                        var alternateOutputFolder = new DirectoryInfo(outputFolderAlternatePath);
-                        if (!alternateOutputFolder.Exists)
-                            alternateOutputFolder.Create();
+                        var alternateOutputDirectory = new DirectoryInfo(outputDirectoryAlternatePath);
+                        if (!alternateOutputDirectory.Exists)
+                            alternateOutputDirectory.Create();
                     }
                     catch (Exception ex)
                     {
-                        HandleException("Error in ProcessAndRecurseFolders", ex);
-                        ErrorCode = eProcessFoldersErrorCodes.InvalidOutputFolderPath;
+                        HandleException("Error validating the alternate output directory path in ProcessAndRecurseDirectories", ex);
+                        ErrorCode = ProcessDirectoriesErrorCodes.InvalidOutputDirectoryPath;
                         return false;
                     }
                 }
@@ -455,11 +460,10 @@ namespace PRISM.FileProcessor
             }
             catch (Exception ex)
             {
-                HandleException("Error in ProcessAndRecurseFolders", ex);
+                HandleException("Error in ProcessAndRecurseDirectories", ex);
                 return false;
             }
 
-            return success;
 
         }
 
@@ -468,50 +472,50 @@ namespace PRISM.FileProcessor
                                         ref int folderProcessCount, ref int folderProcessFailCount,
                                         int recursionLevel, int recurseFoldersMaxLevels)
         {
-            // If recurseFoldersMaxLevels is <=0, we recurse infinitely
+            // If maxLevelsToRecurse is <=0, we recurse infinitely
 
-            DirectoryInfo inputFolder;
+            DirectoryInfo inputDirectory;
 
-            string outputFolderPathToUse;
-            bool success;
+            string outputDirectoryPathToUse;
 
             try
             {
-                inputFolder = new DirectoryInfo(inputFolderPath);
+                inputDirectory = new DirectoryInfo(inputDirectoryPath);
             }
             catch (Exception ex)
             {
                 // Input directory path error
-                HandleException("Error in RecurseFoldersWork", ex);
-                ErrorCode = eProcessFoldersErrorCodes.InvalidInputFolderPath;
+                HandleException("Error in RecurseDirectoriesWork", ex);
+                ErrorCode = ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath;
                 return false;
             }
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(outputFolderAlternatePath))
+                if (!string.IsNullOrWhiteSpace(outputDirectoryAlternatePath))
                 {
-                    outputFolderAlternatePath = Path.Combine(outputFolderAlternatePath, inputFolder.Name);
-                    outputFolderPathToUse = string.Copy(outputFolderAlternatePath);
+                    outputDirectoryAlternatePath = Path.Combine(outputDirectoryAlternatePath, inputDirectory.Name);
+                    outputDirectoryPathToUse = string.Copy(outputDirectoryAlternatePath);
                 }
                 else
                 {
-                    outputFolderPathToUse = string.Empty;
+                    outputDirectoryPathToUse = string.Empty;
                 }
             }
             catch (Exception ex)
             {
                 // Output file path error
-                HandleException("Error in RecurseFoldersWork", ex);
-                ErrorCode = eProcessFoldersErrorCodes.InvalidOutputFolderPath;
+                HandleException("Error in RecurseDirectoriesWork", ex);
+                ErrorCode = ProcessDirectoriesErrorCodes.InvalidOutputDirectoryPath;
                 return false;
             }
 
             try
             {
-                OnDebugEvent("Examining " + inputFolderPath);
+                OnDebugEvent("Examining " + inputDirectoryPath);
+                bool success;
 
-                if (recursionLevel == 1 && folderNameMatchPattern == "*")
+                if (recursionLevel == 1 && directoryNameMatchPattern == "*")
                 {
                     // Need to process the current directory
                     success = ProcessFolder(inputFolder.FullName, outputFolderPathToUse, parameterFilePath, true);
@@ -530,9 +534,8 @@ namespace PRISM.FileProcessor
                 var matchCount = 0;
                 var lastProgress = DateTime.UtcNow;
 
-                var directoriesToProcess = inputFolder.GetDirectories(folderNameMatchPattern).ToList();
+                var directoriesToProcess = inputDirectory.GetDirectories(directoryNameMatchPattern).ToList();
 
-                success = true;
                 foreach (var directory in directoriesToProcess)
                 {
                     matchCount++;
@@ -541,14 +544,14 @@ namespace PRISM.FileProcessor
                     var percentComplete = matchCount / (float)directoriesToProcess.Count * 100;
                     OnProgressUpdate("Process " + directory.FullName, percentComplete);
 
-                    if (outputFolderPathToUse.Length > 0)
+                    if (outputDirectoryPathToUse.Length > 0)
                     {
-                        var alternateOutputDirectoryPath = Path.Combine(outputFolderPathToUse, directory.Name);
-                        success = ProcessFolder(directory.FullName, alternateOutputDirectoryPath, parameterFilePath, true);
+                        var alternateOutputDirectoryPath = Path.Combine(outputDirectoryPathToUse, directory.Name);
+                        success = ProcessDirectory(directory.FullName, alternateOutputDirectoryPath, parameterFilePath, true);
                     }
                     else
                     {
-                        success = ProcessFolder(directory.FullName, string.Empty, parameterFilePath, true);
+                        success = ProcessDirectory(directory.FullName, string.Empty, parameterFilePath, true);
                     }
 
                     if (!success)
@@ -568,23 +571,27 @@ namespace PRISM.FileProcessor
                         continue;
 
                     lastProgress = DateTime.UtcNow;
-                    OnStatusEvent(string.Format("{0:F1}% complete in {1}", percentComplete, FileTools.CompactPathString(inputFolderPath)));
+                    OnStatusEvent(string.Format("{0:F1}% complete in {1}", percentComplete, FileTools.CompactPathString(inputDirectoryPath)));
                 }
 
             }
             catch (Exception ex)
             {
-                HandleException("Error in RecurseFoldersWork", ex);
-                ErrorCode = eProcessFoldersErrorCodes.InvalidInputFolderPath;
+                HandleException("Error in RecurseDirectoriesWork", ex);
+                ErrorCode = ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath;
                 return false;
             }
 
             if (AbortProcessing)
                 return false;
 
-            // If recurseFoldersMaxLevels is <=0, we recurse infinitely
-            //  otherwise, compare recursionLevel to recurseFoldersMaxLevels
-            if (recurseFoldersMaxLevels <= 0 || recursionLevel <= recurseFoldersMaxLevels)
+            // If maxLevelsToRecurse is <=0, we recurse infinitely
+            // otherwise, compare recursionLevel to maxLevelsToRecurse
+            if (maxLevelsToRecurse > 0 && recursionLevel > maxLevelsToRecurse)
+                return true;
+
+            // Call this function for each of the subdirectories of inputDirectory
+            foreach (var subdirectory in inputDirectory.GetDirectories())
             {
                 // Call this function for each of the subdirectories of inputFolder
                 foreach (var subdirectory in inputFolder.GetDirectories())
@@ -597,7 +604,7 @@ namespace PRISM.FileProcessor
                 }
             }
 
-            return success;
+            return true;
 
         }
 
@@ -605,7 +612,7 @@ namespace PRISM.FileProcessor
         /// Update the base class error code
         /// </summary>
         /// <param name="eNewErrorCode"></param>
-        protected void SetBaseClassErrorCode(eProcessFoldersErrorCodes eNewErrorCode)
+        protected void SetBaseClassErrorCode(ProcessDirectoriesErrorCodes eNewErrorCode)
         {
             ErrorCode = eNewErrorCode;
         }
@@ -630,14 +637,14 @@ namespace PRISM.FileProcessor
 
         //        if (eNewErrorCode == eDerivedClassErrorCodes.NoError)
         //        {
-        //            if (base.ErrorCode == ProcessFoldersBase.eProcessFoldersErrorCodes.LocalizedError)
+        //            if (base.ErrorCode == ProcessDirectoriesBase.ProcessDirectoriesErrorCodes.LocalizedError)
         //            {
-        //                base.SetBaseClassErrorCode(ProcessFoldersBase.eProcessFoldersErrorCodes.NoError);
+        //                base.SetBaseClassErrorCode(ProcessDirectoriesBase.ProcessDirectoriesErrorCodes.NoError);
         //            }
         //        }
         //        else
         //        {
-        //            base.SetBaseClassErrorCode(ProcessFoldersBase.eProcessFoldersErrorCodes.LocalizedError);
+        //            base.SetBaseClassErrorCode(ProcessDirectoriesBase.ProcessDirectoriesErrorCodes.LocalizedError);
         //        }
         //    }
 
