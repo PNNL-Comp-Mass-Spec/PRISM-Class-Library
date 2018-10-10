@@ -31,9 +31,9 @@ The latest versions of the DLLs are available on the [AppVeyor CI server](https:
 | Application Settings Management | XmlSettingsFileAccessor | Methods for reading and writing settings in an Xml settings file. |
 | Database Utilities | DBTools | Methods for running an ad-hoc query against a SQL Server database and obtaining the results. |
 | Database Utilities | ExecuteDatabaseSP | Methods for executing a stored procedure in a SQL Server database and optionally obtaining the results. |
-| File/Directory Processor Base Class | ProcessFilesBase | Base class for classes that process a file or files, creating new output files in an output folder. |
-| File/Directory Processor Base Class | ProcessFoldersBase | Base class for classes that process a directory or directories. |
-| File Utilities | FileTools | Methods for copying, moving, and deleting files and folders. Supports a queueing mechanism that uses lock files to avoid overloading a remote server with too many data transfer requests.  Also includes methods for reading/writing Gzipped files that include filename and modification date metadata in the .gz file header. |
+| File/Directory Processor Base Class | ProcessFilesBase | Base class for classes that process a file or files, creating new output files in an output directory. |
+| File/Directory Processor Base Class | ProcessDirectoriesBase | Base class for classes that process a directory or directories. |
+| File Utilities | FileTools | Methods for copying, moving, and deleting files and directories. Supports a queueing mechanism that uses lock files to avoid overloading a remote server with too many data transfer requests.  Also includes methods for reading/writing Gzipped files that include filename and modification date metadata in the .gz file header. |
 | File Utilities | PathUtils | Cross-platform path utilities. | 
 | File Utilities | ShareConnector | Methods for connecting a machine to an SMB/CIFS share using a password and user name. |
 | File Utilities | ZipTools | Methods for programmatically creating and working with zip files using PKZip. |
