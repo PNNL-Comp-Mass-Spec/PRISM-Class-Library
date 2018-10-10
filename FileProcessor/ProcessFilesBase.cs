@@ -633,7 +633,6 @@ namespace PRISM.FileProcessor
             var processAllExtensions = false;
 
             string outputFolderPathToUse;
-            bool success;
 
             try
             {
@@ -655,6 +654,7 @@ namespace PRISM.FileProcessor
                     {
                         outputFolderAlternatePath = Path.Combine(outputFolderAlternatePath, inputFolder.Name);
                     }
+
                     outputFolderPathToUse = Path.Combine(outputFolderAlternatePath, outputFolderName);
                 }
                 else
@@ -665,7 +665,7 @@ namespace PRISM.FileProcessor
             catch (Exception ex)
             {
                 // Output file path error
-                HandleException("Error in RecurseFoldersWork", ex);
+                HandleException("Error in RecurseFoldersWork validating the alternate output folder path", ex);
                 ErrorCode = eProcessFilesErrorCodes.InvalidOutputFolderPath;
                 return false;
             }
@@ -691,16 +691,17 @@ namespace PRISM.FileProcessor
                             processAllExtensions = true;
                             break;
                         }
-
                     }
                 }
             }
             catch (Exception ex)
             {
-                HandleException("Error in RecurseFoldersWork", ex);
+                HandleException("Error in RecurseFoldersWork validating the extensions to parse", ex);
                 ErrorCode = eProcessFilesErrorCodes.UnspecifiedError;
                 return false;
             }
+
+            var filesToProcess = new List<FileInfo>();
 
             try
             {
@@ -712,11 +713,7 @@ namespace PRISM.FileProcessor
 
                 OnDebugEvent("Examining " + inputFolderPath);
 
-                // Process any matching files in this directory
-                success = true;
-
-                var filesToProcess = new List<FileInfo>();
-
+                // Find matching files in this directory
                 foreach (var inputFile in inputFolder.GetFiles(fileNameMatch))
                 {
                     for (var extensionIndex = 0; extensionIndex <= extensionsToParse.Count - 1; extensionIndex++)
@@ -729,9 +726,33 @@ namespace PRISM.FileProcessor
                     }
                 }
 
+            }
+            catch (UnauthorizedAccessException)
+            {
+                OnWarningEvent("Access denied to " + inputFolderPath);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //if (ex.Message.StartsWith("Access", StringComparison.OrdinalIgnoreCase) &&
+                //    ex.Message.EndsWith("Denied.", StringComparison.OrdinalIgnoreCase))
+                //{
+                //    OnWarningEvent("Access denied to " + inputFolderPath);
+                //    return true;
+                //}
+
+                HandleException("Error in RecurseFoldersWork while finding files to process", ex);
+                ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
+                return false;
+            }
+
+            try
+            {
+
                 var matchCount = 0;
                 var lastProgress = DateTime.UtcNow;
 
+                // Process the files that were found
                 foreach (var inputFile in filesToProcess)
                 {
                     matchCount++;
@@ -740,12 +761,11 @@ namespace PRISM.FileProcessor
                     var percentComplete = matchCount / (float)filesToProcess.Count * 100;
                     OnProgressUpdate("Process " + inputFile.FullName, percentComplete);
 
-                    success = ProcessFile(inputFile.FullName, outputFolderPathToUse, parameterFilePath, true);
+                    var success = ProcessFile(inputFile.FullName, outputFolderPathToUse, parameterFilePath, true);
 
                     if (!success)
                     {
                         fileProcessFailCount++;
-                        success = true;
                     }
                     else
                     {
@@ -764,33 +784,33 @@ namespace PRISM.FileProcessor
             }
             catch (Exception ex)
             {
-                HandleException("Error in RecurseFoldersWork", ex);
+                HandleException("Error in RecurseFoldersWork while processing files", ex);
                 ErrorCode = eProcessFilesErrorCodes.InvalidInputFilePath;
                 return false;
             }
 
-            if (!AbortProcessing)
-            {
-                // If recurseFoldersMaxLevels is <=0 then we recurse infinitely
-                //  otherwise, compare recursionLevel to recurseFoldersMaxLevels
-                if (recurseFoldersMaxLevels <= 0 || recursionLevel <= recurseFoldersMaxLevels)
-                {
-                    // Call this function for each of the subfolders of inputFolder
-                    foreach (var subFolder in inputFolder.GetDirectories())
-                    {
-                        success = RecurseFoldersWork(subFolder.FullName, fileNameMatch, outputFolderName,
-                                                        parameterFilePath, outputFolderAlternatePath,
-                                                        recreateFolderHierarchyInAlternatePath, extensionsToParse,
-                                                        ref fileProcessCount, ref fileProcessFailCount,
-                                                        recursionLevel + 1, recurseFoldersMaxLevels);
+            if (AbortProcessing)
+                return true;
 
-                        if (!success)
-                            break;
-                    }
-                }
+            // If recurseFoldersMaxLevels is <=0 then we recurse infinitely
+            // otherwise, compare recursionLevel to recurseFoldersMaxLevels
+            if (recurseFoldersMaxLevels > 0 && recursionLevel > recurseFoldersMaxLevels)
+                return true;
+
+            // Call this function for each of the subfolders of inputFolder
+            foreach (var subFolder in inputFolder.GetDirectories())
+            {
+                var success = RecurseFoldersWork(subFolder.FullName, fileNameMatch, outputFolderName,
+                                                 parameterFilePath, outputFolderAlternatePath,
+                                                 recreateFolderHierarchyInAlternatePath, extensionsToParse,
+                                                 ref fileProcessCount, ref fileProcessFailCount,
+                                                 recursionLevel + 1, recurseFoldersMaxLevels);
+
+                if (!success)
+                    return false;
             }
 
-            return success;
+            return true;
         }
 
         /// <summary>
