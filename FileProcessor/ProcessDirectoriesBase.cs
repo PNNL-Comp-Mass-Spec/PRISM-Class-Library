@@ -112,6 +112,17 @@ namespace PRISM.FileProcessor
         /// </summary>
         public ProcessDirectoriesErrorCodes ErrorCode { get; set; }
 
+
+        /// <summary>
+        /// Number of directories processed successfully when using ProcessAndRecurseDirectories or ProcessDirectoriesWildcard
+        /// </summary>
+        public int DirectoriesProcessed { get; private set; }
+
+        /// <summary>
+        /// Number of directories that could not be processed when using ProcessAndRecurseDirectories or ProcessDirectoriesWildcard
+        /// </summary>
+        public int DirectoryProcessErrors { get; private set; }
+
         #endregion
 
         /// <summary>
@@ -264,6 +275,9 @@ namespace PRISM.FileProcessor
         {
 
             AbortProcessing = false;
+            DirectoriesProcessed = 0;
+            DirectoryProcessErrors = 0;
+
             var success = true;
 
             try
@@ -306,8 +320,19 @@ namespace PRISM.FileProcessor
 
                     success = ProcessDirectory(directory.FullName, outputDirectoryAlternatePath, parameterFilePath, true);
 
-                    if (!success || AbortProcessing)
+                    if (AbortProcessing)
+                    {
                         break;
+                    }
+
+                    if (success)
+                    {
+                        DirectoriesProcessed++;
+                    }
+                    else
+                    {
+                        DirectoryProcessErrors++;
+                    }
 
                     if (!(DateTime.UtcNow.Subtract(lastProgress).TotalSeconds >= 1))
                         continue;
@@ -400,7 +425,11 @@ namespace PRISM.FileProcessor
 
             AbortProcessing = false;
 
-            // Examine inputFolderPath to see if it contains a * or ?
+            DirectoriesProcessed = 0;
+            DirectoryProcessErrors = 0;
+
+
+            // Examine inputDirectoryPath to see if it contains a * or ?
             try
             {
                 if (string.IsNullOrWhiteSpace(inputDirectoryPath))
@@ -448,15 +477,13 @@ namespace PRISM.FileProcessor
                     }
                 }
 
-                // Initialize some parameters
-                AbortProcessing = false;
-                var folderProcessCount = 0;
-                var folderProcessFailCount = 0;
+                // Call RecurseDirectoriesWork
+                const int recursionLevel = 1;
+                var success = RecurseDirectoriesWork(inputDirectory.FullName, directoryNameMatchPattern,
+                                                 parameterFilePath, outputDirectoryAlternatePath,
+                                                 recursionLevel, maxLevelsToRecurse);
 
-                // Call RecurseFoldersWork
-                success = RecurseFoldersWork(inputFolder.FullName, directoryNameMatchPattern, parameterFilePath,
-                                             outputFolderAlternatePath, ref folderProcessCount,
-                                             ref folderProcessFailCount, 1, recurseFoldersMaxLevels);
+                return success;
             }
             catch (Exception ex)
             {
@@ -467,10 +494,13 @@ namespace PRISM.FileProcessor
 
         }
 
-        private bool RecurseFoldersWork(string inputFolderPath, string folderNameMatchPattern,
-                                        string parameterFilePath, string outputFolderAlternatePath,
-                                        ref int folderProcessCount, ref int folderProcessFailCount,
-                                        int recursionLevel, int recurseFoldersMaxLevels)
+        private bool RecurseDirectoriesWork(
+            string inputDirectoryPath,
+            string directoryNameMatchPattern,
+            string parameterFilePath,
+            string outputDirectoryAlternatePath,
+            int recursionLevel,
+            int maxLevelsToRecurse)
         {
             // If maxLevelsToRecurse is <=0, we recurse infinitely
 
@@ -518,14 +548,14 @@ namespace PRISM.FileProcessor
                 if (recursionLevel == 1 && directoryNameMatchPattern == "*")
                 {
                     // Need to process the current directory
-                    success = ProcessFolder(inputFolder.FullName, outputFolderPathToUse, parameterFilePath, true);
-                    if (!success)
+                    success = ProcessDirectory(inputDirectory.FullName, outputDirectoryPathToUse, parameterFilePath, true);
+                    if (success)
                     {
-                        folderProcessFailCount += 1;
+                        DirectoriesProcessed += 1;
                     }
                     else
                     {
-                        folderProcessCount += 1;
+                        DirectoryProcessErrors += 1;
                     }
                 }
 
@@ -554,14 +584,13 @@ namespace PRISM.FileProcessor
                         success = ProcessDirectory(directory.FullName, string.Empty, parameterFilePath, true);
                     }
 
-                    if (!success)
+                    if (success)
                     {
-                        folderProcessFailCount += 1;
-                        success = true;
+                        DirectoriesProcessed += 1;
                     }
                     else
                     {
-                        folderProcessCount += 1;
+                        DirectoryProcessErrors += 1;
                     }
 
                     if (AbortProcessing)
@@ -593,15 +622,11 @@ namespace PRISM.FileProcessor
             // Call this function for each of the subdirectories of inputDirectory
             foreach (var subdirectory in inputDirectory.GetDirectories())
             {
-                // Call this function for each of the subdirectories of inputFolder
-                foreach (var subdirectory in inputFolder.GetDirectories())
-                {
-                    success = RecurseFoldersWork(subdirectory.FullName, folderNameMatchPattern, parameterFilePath,
-                                                 outputFolderAlternatePath, ref folderProcessCount,
-                                                 ref folderProcessFailCount, recursionLevel + 1, recurseFoldersMaxLevels);
-                    if (!success)
-                        break;
-                }
+                var success = RecurseDirectoriesWork(subdirectory.FullName, directoryNameMatchPattern,
+                                                     parameterFilePath, outputDirectoryAlternatePath,
+                                                     recursionLevel + 1, maxLevelsToRecurse);
+                if (!success)
+                    return false;
             }
 
             return true;
