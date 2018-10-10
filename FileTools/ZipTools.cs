@@ -94,8 +94,8 @@ namespace PRISM
         /// </summary>
         /// <param name="cmdOptions">The zip program command line arguments.</param>
         /// <param name="zipFilePath">The file path of the zip file from which to extract files.</param>
-        /// <param name="outFolderPath">The path where you want to put the extracted files.</param>
-        public bool UnzipFile(string cmdOptions, string zipFilePath, string outFolderPath)
+        /// <param name="outputDirectoryPath">The path where you want to put the extracted files.</param>
+        public bool UnzipFile(string cmdOptions, string zipFilePath, string outputDirectoryPath)
         {
 
             // Verify input file and output path have been specified
@@ -123,9 +123,9 @@ namespace PRISM
             }
 
             // Verify output path exists
-            if (!Directory.Exists(outFolderPath))
+            if (!Directory.Exists(outputDirectoryPath))
             {
-                var msg = "Output directory " + outFolderPath + " does not exist";
+                var msg = "Output directory " + outputDirectoryPath + " does not exist";
 #pragma warning disable 618
                 m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
@@ -137,7 +137,7 @@ namespace PRISM
             // Setup the unzip program
             var zipper = new ProgRunner
             {
-                Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outFolderPath + "\"",
+                Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outputDirectoryPath + "\"",
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
                 Program = m_ZipProgramPath,

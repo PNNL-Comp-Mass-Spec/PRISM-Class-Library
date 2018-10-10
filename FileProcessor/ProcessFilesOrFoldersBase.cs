@@ -10,7 +10,7 @@ using System.Threading;
 namespace PRISM.FileProcessor
 {
     /// <summary>
-    /// Base class for both ProcessFilesBase and ProcessFoldersBase
+    /// Old base class for ProcessFilesBase and ProcessFoldersBase
     /// </summary>
     [Obsolete("Use ProcessFilesOrDirectoriesBase instead")]
     public abstract class ProcessFilesOrFoldersBase : ProcessFilesOrDirectoriesBase

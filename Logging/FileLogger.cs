@@ -425,7 +425,7 @@ namespace PRISM.Logging
         /// </param>
         /// <param name="relativeToEntryAssembly">
         /// When true, if baseName is a relative file path (aka is not rooted), the entry assembly's path will be prepended to baseName
-        /// When false, if baseName is a relative file path, the log file will be created in a subfolder relative to the working directory
+        /// When false, if baseName is a relative file path, the log file will be created in a subdirectory relative to the working directory
         /// </param>
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName, bool relativeToEntryAssembly = true)
@@ -457,16 +457,16 @@ namespace PRISM.Logging
             }
             else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
             {
-                var appFolderPath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppDirectoryPath();
+                var appDirectoryPath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppDirectoryPath();
                 string logFilePath;
                 if (string.IsNullOrWhiteSpace(baseName))
                 {
-                    logFilePath = Path.Combine(appFolderPath, DefaultLogFileName);
+                    logFilePath = Path.Combine(appDirectoryPath, DefaultLogFileName);
                     ShowTraceMessage("New log file base name is empty; will use the default path, " + logFilePath);
                 }
                 else
                 {
-                    logFilePath = Path.Combine(appFolderPath, baseName);
+                    logFilePath = Path.Combine(appDirectoryPath, baseName);
                     ShowTraceMessage("New log file will use a relative path: " + logFilePath);
                 }
                 BaseLogFileName = logFilePath;

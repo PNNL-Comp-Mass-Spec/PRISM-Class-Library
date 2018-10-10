@@ -114,55 +114,55 @@ namespace PRISM
         /// <summary>
         /// Find all files that match the given file name pattern, optionally recursing
         /// </summary>
-        /// <param name="pathSpec">Folder/file search specification, e.g. C:\Windows\*.ini</param>
+        /// <param name="pathSpec">Directory/file search specification, e.g. C:\Windows\*.ini</param>
         /// <param name="recurse">True to recurse</param>
         /// <returns>List of FileInfo objects (empty list if the directory does not exist)</returns>
-        /// <remarks>When recursing, skips folders for which the user does not have permission</remarks>
+        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         public static List<FileInfo> FindFilesWildcard(string pathSpec, bool recurse = false)
         {
             var cleanPath = pathSpec.Replace("*", "_").Replace("?", "_");
 
             var cleanFileInfo = new FileInfo(cleanPath);
-            string folderPath;
+            string directoryPath;
             if (cleanFileInfo.Directory != null && cleanFileInfo.Directory.Exists && cleanFileInfo.DirectoryName != null)
             {
-                folderPath = cleanFileInfo.DirectoryName;
+                directoryPath = cleanFileInfo.DirectoryName;
             }
             else
             {
-                folderPath = ".";
+                directoryPath = ".";
             }
 
-            var folder = new DirectoryInfo(folderPath);
+            var directory = new DirectoryInfo(directoryPath);
 
             // Remove any directory information from pathSpec
             var fileMask = Path.GetFileName(pathSpec);
 
-            return FindFilesWildcard(folder, fileMask, recurse);
+            return FindFilesWildcard(directory, fileMask, recurse);
         }
 
         /// <summary>
         /// Find all files that match the given file name pattern in the given directory, optionally recursing
         /// </summary>
-        /// <param name="folder">Folder to search</param>
+        /// <param name="directory">Directory to search</param>
         /// <param name="fileMask">Filename mask to find, e.g. *.txt</param>
         /// <param name="recurse">True to recurse</param>
         /// <returns>List of FileInfo objects (empty list if the directory does not exist)</returns>
-        /// <remarks>When recursing, skips folders for which the user does not have permission</remarks>
-        public static List<FileInfo> FindFilesWildcard(DirectoryInfo folder, string fileMask, bool recurse = false)
+        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
+        public static List<FileInfo> FindFilesWildcard(DirectoryInfo directory, string fileMask, bool recurse = false)
         {
-            if (folder == null || !folder.Exists)
+            if (directory == null || !directory.Exists)
                 return new List<FileInfo>();
 
             try
             {
-                var matchedFiles = folder.GetFiles(fileMask).ToList();
+                var matchedFiles = directory.GetFiles(fileMask).ToList();
 
                 if (recurse)
                 {
-                    foreach (var subFolder in folder.GetDirectories())
+                    foreach (var subdirectory in directory.GetDirectories())
                     {
-                        var additionalFiles = FindFilesWildcard(subFolder, fileMask, true);
+                        var additionalFiles = FindFilesWildcard(subdirectory, fileMask, true);
 
                         matchedFiles.AddRange(additionalFiles);
                     }
