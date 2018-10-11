@@ -1,5 +1,12 @@
 Prism Class Library Log
 
+Version 2.5.1; October 10, 2018
+	- When recursively processing files, report a warning when unable to access a directory ("access denied") and continue processing
+		- Add properties FilesProcessed and FileProcessErrors
+	- Add unit test TestRecurseDirectories
+	- Rename ProcessFilesOrFoldersBase to ProcessFilesOrDirectoriesBase
+	- Rename ProcessFoldersBase to FileProcessor/ProcessDirectoriesBase
+
 Version 2.4.94; October 1, 2018
 	- Fix infinite loop bug in AppendInnerExceptions (used by GetExceptionStackTrace)
 
