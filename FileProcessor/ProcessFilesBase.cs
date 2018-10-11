@@ -93,6 +93,9 @@ namespace PRISM.FileProcessor
             /// </summary>
             InvalidOutputDirectoryPath = 2,
 
+            /// <summary>
+            /// Invalid output directory path
+            /// </summary>
             [Obsolete("Use InvalidOutputDirectoryPath")]
             InvalidOutputFolderPath = 2,
 
@@ -658,9 +661,9 @@ namespace PRISM.FileProcessor
                 // Call RecurseDirectoriesWork
                 const int recursionLevel = 1;
                 var success = RecurseDirectoriesWork(inputDirectory.FullName, fileNameMatchPattern, outputDirectoryName,
-                                                 parameterFilePath, outputDirectoryAlternatePath,
-                                                 recreateDirectoryHierarchyInAlternatePath, extensionsToParse,
-                                                 recursionLevel, maxLevelsToRecurse);
+                                                     parameterFilePath, outputDirectoryAlternatePath,
+                                                     recreateDirectoryHierarchyInAlternatePath, extensionsToParse,
+                                                     recursionLevel, maxLevelsToRecurse);
 
                 return success;
             }

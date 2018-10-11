@@ -43,6 +43,9 @@ namespace PRISM.FileProcessor
             /// </summary>
             InvalidInputDirectoryPath = 1,
 
+            /// <summary>
+            /// Invalid input directory path
+            /// </summary>
             [Obsolete("Use InvalidInputDirectoryPath")]
             InvalidInputFolderPath = 1,
 
@@ -51,6 +54,9 @@ namespace PRISM.FileProcessor
             /// </summary>
             InvalidOutputDirectoryPath = 2,
 
+            /// <summary>
+            /// Invalid output directory path
+            /// </summary>
             [Obsolete("Use InvalidOutputDirectoryPath")]
             InvalidOutputFolderPath = 2,
 
