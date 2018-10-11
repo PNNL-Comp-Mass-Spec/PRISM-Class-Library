@@ -16,24 +16,6 @@ namespace PRISM.FileProcessor
     public abstract class ProcessFilesOrFoldersBase : ProcessFilesOrDirectoriesBase
     {
 
-        #region "Interface Functions"
-
-        /// <summary>
-        /// Log folder path (ignored if LogFilePath is rooted)
-        /// </summary>
-        /// <remarks>
-        /// If blank, mOutputFolderPath will be used
-        /// If mOutputFolderPath is also blank, the log file is created in the same folder as the executing assembly
-        /// </remarks>
-        [Obsolete("Use LogDirectoryPath in ProcessFilesOrDirectoriesBase")]
-        public string LogFolderPath
-        {
-            get => LogDirectoryPath;
-            set => LogDirectoryPath = value;
-        }
-
-        #endregion
-
         /// <summary>
         /// Returns the full path to the folder into which this application should read/write settings file information
         /// </summary>

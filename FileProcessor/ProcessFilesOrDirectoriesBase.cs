@@ -9,6 +9,8 @@ using System.Threading;
 
 namespace PRISM.FileProcessor
 {
+#pragma warning disable IDE1006 // Naming Styles
+
     /// <summary>
     /// Base class for both ProcessFilesBase and ProcessDirectoriesBase
     /// </summary>
@@ -230,6 +232,16 @@ namespace PRISM.FileProcessor
         /// If mOutputDirectoryPath is also blank, the log file is created in the same directory as the executing assembly
         /// </remarks>
         public string LogDirectoryPath { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Log directory path (ignored if LogFilePath is rooted)
+        /// </summary>
+        [Obsolete("Use LogDirectoryPath")]
+        public string LogFolderPath
+        {
+            get => LogDirectoryPath;
+            set => LogDirectoryPath = value;
+        }
 
         /// <summary>
         /// True to log messages to a file
@@ -1292,4 +1304,6 @@ namespace PRISM.FileProcessor
             ProgressComplete?.Invoke();
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
+
 }
