@@ -319,7 +319,15 @@ namespace PRISM
                         {
                             specified = true;
                             keyGiven = key;
-                            value = preprocessed[key];
+                            if (value == null)
+                            {
+                                value = preprocessed[key];
+                            }
+                            else
+                            {
+                                // Add in other values provided by argument keys that belong to this property
+                                value.AddRange(preprocessed[key]);
+                            }
                         }
                     }
 
@@ -347,6 +355,18 @@ namespace PRISM
                     {
                         prop.Key.SetValue(Results.ParsedResults, true);
                         continue;
+                    }
+
+                    // ArgExistsProperty handling
+                    if (prop.Value.ArgExistsPropertyInfo != null)
+                    {
+                        prop.Value.ArgExistsPropertyInfo.SetValue(Results.ParsedResults, true);
+
+                        // if no value provided, then don't set it
+                        if (value == null || value.Count == 0 || value.All(string.IsNullOrWhiteSpace))
+                        {
+                            continue;
+                        }
                     }
 
                     object lastVal = value.Last();
@@ -1010,9 +1030,34 @@ namespace PRISM
             var validArgs = new Dictionary<string, ArgInfo>();
             var props = GetPropertiesAttributes();
 
+            if (props == null)
+            {
+                return null;
+            }
+
             foreach (var prop in props)
             {
                 var canBeSwitch = prop.Key.PropertyType == typeof(bool);
+
+                if (prop.Value.ArgExistsProperty != null && prop.Value.ArgExistsPropertyInfo == null)
+                {
+                    if (string.IsNullOrWhiteSpace(prop.Value.ArgExistsProperty))
+                    {
+                        // ArgExistsProperty is set to a empty or whitespace value
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: {0} must be either null, or a boolean property name (use nameof()); class {1}, property {2}, current value is ""{3}""",
+                            nameof(prop.Value.ArgExistsProperty), typeof(T).Name, prop.Key.Name, prop.Value.ArgExistsProperty));
+                    }
+                    else
+                    {
+                        // ArgExistsProperty is set to a non-existent or non-boolean property name
+                        Results.ParseErrors.Add(string.Format(
+                            @"Error: {0} does not exist or is not a boolean property name; class {1}, property {2}, current value is ""{3}""",
+                            nameof(prop.Value.ArgExistsProperty), typeof(T).Name, prop.Key.Name, prop.Value.ArgExistsProperty));
+                    }
+                    return null;
+                }
+
                 foreach (var key in prop.Value.ParamKeys)
                 {
                     var lower = key.ToLower();
@@ -1183,8 +1228,19 @@ namespace PRISM
                     continue;
                 }
 
+                var optionData = (OptionAttribute) attribList[0];
+
                 // ignore any duplicates (shouldn't occur anyway)
-                props.Add(property, attribList[0] as OptionAttribute);
+                props.Add(property, optionData);
+
+                if (!string.IsNullOrWhiteSpace(optionData.ArgExistsProperty))
+                {
+                    var match = properties.FirstOrDefault(x => x.Name.Equals(optionData.ArgExistsProperty));
+                    if (match != null && match.PropertyType == typeof(bool))
+                    {
+                        optionData.ArgExistsPropertyInfo = match;
+                    }
+                }
             }
 
             propertiesAndAttributes = props;
@@ -1259,6 +1315,16 @@ namespace PRISM
         public bool Hidden { get; set; }
 
         /// <summary>
+        /// If the argument is specified, the given boolean property will be set to "true"
+        /// </summary>
+        public string ArgExistsProperty { get; set; }
+
+        /// <summary>
+        /// If <see cref="ArgExistsProperty"/> is specified, and refers to a valid boolean property, this will be set to that property.
+        /// </summary>
+        internal PropertyInfo ArgExistsPropertyInfo { get; set; }
+
+        /// <summary>
         /// Constructor supporting any number of param keys.
         /// </summary>
         /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
@@ -1278,6 +1344,8 @@ namespace PRISM
             Max = null;
             Min = null;
             HelpShowsDefault = true;
+            ArgExistsProperty = null;
+            ArgExistsPropertyInfo = null;
         }
 
         /// <summary>

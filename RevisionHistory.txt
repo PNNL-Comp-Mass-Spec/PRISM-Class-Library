@@ -1,5 +1,11 @@
 Prism Class Library Log
 
+Version 2.5.2; October 12, 2018
+	- Add CommandLineParser support for non-boolean arguments with optional values, using 'ArgExistsProperty'
+		- e.g., having a LogFilePath string property that has a valid default value, and the argument key is 'L', and ArgExistsProperty set to "LogEnabled" (bool property)
+		- specifying '-L' will not change LogFilePath, but will set LogEnabled to true
+		- specifying '-L myLogFile.txt' will change LogFilePath to 'myLogFile.txt', and set LogEnabled to true
+
 Version 2.5.1; October 10, 2018
 	- When recursively processing files, report a warning when unable to access a directory ("access denied") and continue processing
 		- Add properties FilesProcessed and FileProcessErrors

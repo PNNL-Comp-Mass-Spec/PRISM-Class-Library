@@ -20,6 +20,9 @@ namespace PRISM
             AppendToOutput = true;
 
             Preview = false;
+
+            LogEnabled = false;
+            LogFilePath = "log.txt";
         }
 
         [Option("start", Required = true, HelpText = "First ID to process")]
@@ -37,6 +40,11 @@ namespace PRISM
         [Option("preview", HelpText = "Preview changes")]
         public bool Preview { get; set; }
 
+        public bool LogEnabled { get; set; }
+
+        [Option("log", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
+        public string LogFilePath { get; set; }
+
         public void OutputSetOptions()
         {
             Console.WriteLine("Using options:");
@@ -50,6 +58,11 @@ namespace PRISM
 
             if (Preview)
                 Console.WriteLine("Previewing changes");
+
+            if (LogEnabled)
+            {
+                Console.WriteLine("Logging to file: {0}", LogFilePath);
+            }
         }
 
         public bool ValidateArgs()

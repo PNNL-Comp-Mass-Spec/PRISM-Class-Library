@@ -743,7 +743,114 @@ namespace PRISMTest
 
             [Option("o", ArgPosition = 2)]
             public string OutputFilePath { get; set; }
+        }
 
+        [Test]
+        public void TestArgExistsPropertyFail1()
+        {
+            var parser = new CommandLineParser<ArgExistsPropertyFail1>();
+            var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Contains("null") && x.Contains("boolean")), $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"null\", and \"boolean\"");
+        }
+
+        [Test]
+        public void TestArgExistsPropertyFail2()
+        {
+            var parser = new CommandLineParser<ArgExistsPropertyFail2>();
+            var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not fail with an ArgExistsProperty non-existent property");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Contains("not exist") && x.Contains("not a boolean")), $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
+        }
+
+        [Test]
+        public void TestArgExistsPropertyFail3()
+        {
+            var parser = new CommandLineParser<ArgExistsPropertyFail3>();
+            var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not fail with an ArgExistsProperty non-boolean property");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Contains("not exist") && x.Contains("not a boolean")), $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
+        }
+
+        [Test]
+        public void TestArgExistsPropertyGood1()
+        {
+            var parser = new CommandLineParser<ArgExistsPropertyGood>();
+            var result = parser.ParseArgs(new[] { "-L" }, showHelpOnError, outputErrors);
+            Assert.IsTrue(result.Success, "Parser failed to process with valid and specified ArgExistsProperty");
+            var defaults = new ArgExistsPropertyGood();
+            var options = result.ParsedResults;
+            Assert.AreEqual(true, options.LogEnabled, "LogEnabled should be true!!");
+            Assert.AreEqual(defaults.LogFilePath, options.LogFilePath, "LogFilePath should match the default value!!");
+        }
+
+        [Test]
+        public void TestArgExistsPropertyGood2()
+        {
+            var logFileName = "myLogFile.txt";
+            var parser = new CommandLineParser<ArgExistsPropertyGood>();
+            var result = parser.ParseArgs(new[] { "-L", logFileName }, showHelpOnError, outputErrors);
+            Assert.IsTrue(result.Success, "Parser failed to process with valid and specified ArgExistsProperty");
+            var defaults = new ArgExistsPropertyGood();
+            var options = result.ParsedResults;
+            Assert.AreEqual(true, options.LogEnabled, "LogEnabled should be true!!");
+            Assert.AreEqual(logFileName, options.LogFilePath, "LogFilePath should match the provided value!!");
+        }
+
+        private class ArgExistsPropertyFail1
+        {
+            public ArgExistsPropertyFail1()
+            {
+                LogEnabled = false;
+                LogFilePath = "log.txt";
+            }
+
+            public bool LogEnabled { get; set; }
+
+            [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = " ")]
+            public string LogFilePath { get; set; }
+        }
+
+        private class ArgExistsPropertyFail2
+        {
+            public ArgExistsPropertyFail2()
+            {
+                LogEnabled = false;
+                LogFilePath = "log.txt";
+            }
+
+            public bool LogEnabled { get; set; }
+
+            [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = "LogEnabled1")]
+            public string LogFilePath { get; set; }
+        }
+
+        private class ArgExistsPropertyFail3
+        {
+            public ArgExistsPropertyFail3()
+            {
+                LogEnabled = 0;
+                LogFilePath = "log.txt";
+            }
+
+            public int LogEnabled { get; set; }
+
+            [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = "LogEnabled1")]
+            public string LogFilePath { get; set; }
+        }
+
+        private class ArgExistsPropertyGood
+        {
+            public ArgExistsPropertyGood()
+            {
+                LogEnabled = false;
+                LogFilePath = "log.txt";
+            }
+
+            public bool LogEnabled { get; set; }
+
+            [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
+            public string LogFilePath { get; set; }
         }
     }
 }
