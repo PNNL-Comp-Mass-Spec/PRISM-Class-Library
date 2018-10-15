@@ -1,5 +1,8 @@
 Prism Class Library Log
 
+Version 2.5.3; October 15, 2018
+	- ProcessFilesOrDirectoriesBase: pass the exception object through to the EventNotifier subsystem, so that subscribers to the error event can access exception information, not just get the message.
+
 Version 2.5.2; October 12, 2018
 	- Add CommandLineParser support for non-boolean arguments with optional values, using 'ArgExistsProperty'
 		- e.g., having a LogFilePath string property that has a valid default value, and the argument key is 'L', and ArgExistsProperty set to "LogEnabled" (bool property)

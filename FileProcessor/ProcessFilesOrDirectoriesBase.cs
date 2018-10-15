@@ -687,7 +687,7 @@ namespace PRISM.FileProcessor
                 baseMessage = "Error";
             }
 
-            LogMessage(baseMessage + ": " + ex.Message, eMessageTypeConstants.ErrorMsg);
+            LogMessage(baseMessage + ": " + ex.Message, eMessageTypeConstants.ErrorMsg, exception: ex);
 
             if (ReThrowEvents)
             {
@@ -739,6 +739,7 @@ namespace PRISM.FileProcessor
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
         /// </param>
+        /// <param name="exception">If logging an exception, the exception object</param>
         /// <remarks>
         /// Note that CleanupPaths() will update mOutputDirectoryPath, which is used here if mLogDirectoryPath is blank
         /// Thus, be sure to call CleanupPaths (or update mLogDirectoryPath) before the first call to LogMessage
@@ -747,7 +748,8 @@ namespace PRISM.FileProcessor
             string message,
             eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal,
             int duplicateHoldoffHours = 0,
-            int emptyLinesBeforeMessage = 0)
+            int emptyLinesBeforeMessage = 0,
+            Exception exception = null)
         {
 
             if (mLogFile == null && LogMessagesToFile)
@@ -774,10 +776,10 @@ namespace PRISM.FileProcessor
 
             }
 
-            RaiseMessageEvent(message, eMessageType, emptyLinesBeforeMessage);
+            RaiseMessageEvent(message, eMessageType, emptyLinesBeforeMessage, exception);
         }
 
-        private void RaiseMessageEvent(string message, eMessageTypeConstants eMessageType, int emptyLinesBeforeMessage)
+        private void RaiseMessageEvent(string message, eMessageTypeConstants eMessageType, int emptyLinesBeforeMessage, Exception ex = null)
         {
             if (string.IsNullOrWhiteSpace(message))
                 return;
@@ -805,7 +807,7 @@ namespace PRISM.FileProcessor
 
                     case eMessageTypeConstants.ErrorMsg:
                         EmptyLinesBeforeErrorMessages = emptyLinesBeforeMessage;
-                        OnErrorEvent(message);
+                        OnErrorEvent(message, ex);
                         break;
 
                     case eMessageTypeConstants.Debug:
