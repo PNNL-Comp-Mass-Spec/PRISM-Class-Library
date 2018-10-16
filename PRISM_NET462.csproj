@@ -63,6 +63,7 @@
     <Compile Include="FileTools\PathUtils.cs" />
     <Compile Include="FileTools\ShareConnector.cs" />
     <Compile Include="FileTools\ZipTools.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Legacy\LegacyClassWrappers.cs" />
     <Compile Include="Legacy\LogClasses.cs" />
     <Compile Include="Logging\BaseLogger.cs" />
