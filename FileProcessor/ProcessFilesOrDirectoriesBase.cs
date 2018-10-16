@@ -34,6 +34,38 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Message type enums
         /// </summary>
+        protected enum MessageTypeConstants
+        {
+            /// <summary>
+            /// Normal message
+            /// </summary>
+            Normal = 0,
+
+            /// <summary>
+            /// Error message
+            /// </summary>
+            ErrorMsg = 1,
+
+            /// <summary>
+            /// Warning message
+            /// </summary>
+            Warning = 2,
+
+            /// <summary>
+            /// Debugging message
+            /// </summary>
+            Debug = -1,
+
+            /// <summary>
+            /// Message that should not be output
+            /// </summary>
+            Suppress = -100
+        }
+
+        /// <summary>
+        /// Message type enums
+        /// </summary>
+        [Obsolete("Use MessageTypeConstants")]
         protected enum eMessageTypeConstants
         {
             /// <summary>
@@ -733,7 +765,7 @@ namespace PRISM.FileProcessor
         /// Log a message then raise a Status, Warning, or Error event
         /// </summary>
         /// <param name="message">Message</param>
-        /// <param name="eMessageType">Message type</param>
+        /// <param name="messageType">Message type</param>
         /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
@@ -746,7 +778,7 @@ namespace PRISM.FileProcessor
         /// </remarks>
         protected void LogMessage(
             string message,
-            eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal,
+            MessageTypeConstants messageType = MessageTypeConstants.Normal,
             int duplicateHoldoffHours = 0,
             int emptyLinesBeforeMessage = 0,
             Exception ex = null)
@@ -766,7 +798,7 @@ namespace PRISM.FileProcessor
 
             if (mLogFile != null)
             {
-                WriteToLogFile(message, eMessageType, duplicateHoldoffHours);
+                WriteToLogFile(message, messageType, duplicateHoldoffHours);
 
                 if (ArchiveOldLogFiles && DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours >= 24)
                 {
@@ -779,7 +811,7 @@ namespace PRISM.FileProcessor
             RaiseMessageEvent(message, messageType, emptyLinesBeforeMessage, ex);
         }
 
-        private void RaiseMessageEvent(string message, eMessageTypeConstants eMessageType, int emptyLinesBeforeMessage, Exception ex = null)
+        private void RaiseMessageEvent(string message, MessageTypeConstants messageType, int emptyLinesBeforeMessage, Exception ex = null)
         {
             if (string.IsNullOrWhiteSpace(message))
                 return;
@@ -793,30 +825,30 @@ namespace PRISM.FileProcessor
                 mLastReportTime = DateTime.UtcNow;
                 mLastMessage = string.Copy(message);
 
-                switch (eMessageType)
+                switch (messageType)
                 {
-                    case eMessageTypeConstants.Normal:
+                    case MessageTypeConstants.Normal:
                         EmptyLinesBeforeStatusMessages = emptyLinesBeforeMessage;
                         OnStatusEvent(message);
                         break;
 
-                    case eMessageTypeConstants.Warning:
+                    case MessageTypeConstants.Warning:
                         EmptyLinesBeforeWarningMessages = emptyLinesBeforeMessage;
                         OnWarningEvent(message);
                         break;
 
-                    case eMessageTypeConstants.ErrorMsg:
+                    case MessageTypeConstants.ErrorMsg:
                         EmptyLinesBeforeErrorMessages = emptyLinesBeforeMessage;
                         OnErrorEvent(message, ex);
                         break;
 
-                    case eMessageTypeConstants.Debug:
+                    case MessageTypeConstants.Debug:
                         EmptyLinesBeforeDebugMessages = emptyLinesBeforeMessage;
                         OnDebugEvent(message);
                         break;
 
                     default:
-                        throw new Exception("Unrecognized message type: " + eMessageType);
+                        throw new Exception("Unrecognized message type: " + messageType);
                 }
             }
         }
@@ -863,7 +895,7 @@ namespace PRISM.FileProcessor
         protected void ShowDebug(string message, bool allowLogToFile, int emptyLinesBeforeMessage = 1)
         {
             const int duplicateHoldoffHours = 0;
-            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Debug, emptyLinesBeforeMessage);
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, MessageTypeConstants.Debug, emptyLinesBeforeMessage);
         }
 
         /// <summary>
@@ -900,11 +932,11 @@ namespace PRISM.FileProcessor
             if (allowLogToFile)
             {
                 // Note that LogMessage will call RaiseMessageEvent
-                LogMessage(message, eMessageTypeConstants.ErrorMsg, duplicateHoldoffHours, emptyLinesBeforeMessage);
+                LogMessage(message, MessageTypeConstants.ErrorMsg, duplicateHoldoffHours, emptyLinesBeforeMessage);
             }
             else
             {
-                RaiseMessageEvent(message, eMessageTypeConstants.ErrorMsg, emptyLinesBeforeMessage);
+                RaiseMessageEvent(message, MessageTypeConstants.ErrorMsg, emptyLinesBeforeMessage);
             }
         }
 
@@ -920,7 +952,7 @@ namespace PRISM.FileProcessor
         protected void ShowMessage(string message, int duplicateHoldoffHours, int emptyLinesBeforeMessage = 0)
         {
             const bool allowLogToFile = true;
-            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Normal, emptyLinesBeforeMessage);
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, MessageTypeConstants.Normal, emptyLinesBeforeMessage);
         }
 
         /// <summary>
@@ -929,23 +961,23 @@ namespace PRISM.FileProcessor
         /// <param name="message">Message to show</param>
         /// <param name="allowLogToFile">When true, write to the log file (if the message severity is >= LoggingLevel)</param>
         /// <param name="duplicateHoldoffHours"></param>
-        /// <param name="eMessageType"></param>
+        /// <param name="messageType"></param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         protected void ShowMessage(
             string message,
             bool allowLogToFile = true,
             int duplicateHoldoffHours = 0,
-            eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal,
+            MessageTypeConstants messageType = MessageTypeConstants.Normal,
             int emptyLinesBeforeMessage = 0)
         {
             if (allowLogToFile)
             {
                 // Note that LogMessage will call RaiseMessageEvent
-                LogMessage(message, eMessageType, duplicateHoldoffHours, emptyLinesBeforeMessage);
+                LogMessage(message, messageType, duplicateHoldoffHours, emptyLinesBeforeMessage);
             }
             else
             {
-                RaiseMessageEvent(message, eMessageType, emptyLinesBeforeMessage);
+                RaiseMessageEvent(message, messageType, emptyLinesBeforeMessage);
             }
         }
 
@@ -961,7 +993,7 @@ namespace PRISM.FileProcessor
         protected void ShowWarning(string message, int duplicateHoldoffHours = 0, int emptyLinesBeforeMessage = 1)
         {
             const bool allowLogToFile = true;
-            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Warning, emptyLinesBeforeMessage);
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, MessageTypeConstants.Warning, emptyLinesBeforeMessage);
         }
 
         /// <summary>
@@ -976,7 +1008,7 @@ namespace PRISM.FileProcessor
         protected void ShowWarning(string message, bool allowLogToFile, int emptyLinesBeforeMessage = 1)
         {
             const int duplicateHoldoffHours = 0;
-            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, eMessageTypeConstants.Warning, emptyLinesBeforeMessage);
+            ShowMessage(message, allowLogToFile, duplicateHoldoffHours, MessageTypeConstants.Warning, emptyLinesBeforeMessage);
         }
 
         private void TrimLogDataCache()
@@ -1186,72 +1218,72 @@ namespace PRISM.FileProcessor
             OnProgressUpdate(ProgressStepDescription, ProgressPercentComplete);
         }
 
-        private eMessageTypeConstants ConvertLogLevelToMessageType(LogLevel level)
+        private static MessageTypeConstants ConvertLogLevelToMessageType(LogLevel level)
         {
             switch (level)
             {
                 case LogLevel.Debug:
-                    return eMessageTypeConstants.Debug;
+                    return MessageTypeConstants.Debug;
                 case LogLevel.Normal:
-                    return eMessageTypeConstants.Normal;
+                    return MessageTypeConstants.Normal;
                 case LogLevel.Warning:
-                    return eMessageTypeConstants.Warning;
+                    return MessageTypeConstants.Warning;
                 case LogLevel.Error:
-                    return eMessageTypeConstants.ErrorMsg;
+                    return MessageTypeConstants.ErrorMsg;
                 default:
-                    return eMessageTypeConstants.Normal;
+                    return MessageTypeConstants.Normal;
             }
         }
 
-        private LogLevel ConvertMessageTypeToLogLevel(eMessageTypeConstants messageType)
+        private static LogLevel ConvertMessageTypeToLogLevel(MessageTypeConstants messageType)
         {
             switch (messageType)
             {
-                case eMessageTypeConstants.Debug:
+                case MessageTypeConstants.Debug:
                     return LogLevel.Debug;
-                case eMessageTypeConstants.Normal:
+                case MessageTypeConstants.Normal:
                     return LogLevel.Normal;
-                case eMessageTypeConstants.Warning:
+                case MessageTypeConstants.Warning:
                     return LogLevel.Warning;
-                case eMessageTypeConstants.ErrorMsg:
+                case MessageTypeConstants.ErrorMsg:
                     return LogLevel.Error;
                 default:
                     return LogLevel.Normal;
             }
         }
 
-        private void WriteToLogFile(string message, eMessageTypeConstants eMessageType, int duplicateHoldoffHours)
+        private void WriteToLogFile(string message, MessageTypeConstants messageType, int duplicateHoldoffHours)
         {
-            var level = ConvertMessageTypeToLogLevel(eMessageType);
+            var level = ConvertMessageTypeToLogLevel(messageType);
             if (level < LoggingLevel)
             {
                 return;
             }
 
-            string messageType;
+            string messageTypeName;
 
-            switch (eMessageType)
+            switch (messageType)
             {
-                case eMessageTypeConstants.Normal:
-                    messageType = "Normal";
+                case MessageTypeConstants.Normal:
+                    messageTypeName = "Normal";
                     break;
-                case eMessageTypeConstants.ErrorMsg:
-                    messageType = "Error";
+                case MessageTypeConstants.ErrorMsg:
+                    messageTypeName = "Error";
                     break;
-                case eMessageTypeConstants.Warning:
-                    messageType = "Warning";
+                case MessageTypeConstants.Warning:
+                    messageTypeName = "Warning";
                     break;
-                case eMessageTypeConstants.Debug:
-                    messageType = "Debug";
+                case MessageTypeConstants.Debug:
+                    messageTypeName = "Debug";
                     break;
                 default:
-                    messageType = "Unknown";
+                    messageTypeName = "Unknown";
                     break;
             }
 
             var writeToLog = true;
 
-            var logKey = messageType + "_" + message;
+            var logKey = messageTypeName + "_" + message;
             bool messageCached;
 
             if (mLogDataCache.TryGetValue(logKey, out var lastLogTime))
@@ -1273,7 +1305,7 @@ namespace PRISM.FileProcessor
                 return;
 
             mLogFile.WriteLine(DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss tt") + "\t" +
-                               messageType + "\t" +
+                               messageTypeName + "\t" +
                                message);
 
             if (messageCached)
