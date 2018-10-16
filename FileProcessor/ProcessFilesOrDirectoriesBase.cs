@@ -710,20 +710,35 @@ namespace PRISM.FileProcessor
         /// Log an error message with the exception message
         /// Rethrow the exception if ReThrowEvents is true
         /// </summary>
-        /// <param name="baseMessage"></param>
-        /// <param name="ex"></param>
-        protected void HandleException(string baseMessage, Exception ex)
+        /// <param name="baseMessage">Base error message</param>
+        /// <param name="ex">Exception</param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
+        /// <param name="emptyLinesBeforeMessage">
+        /// Number of empty lines to write to the console before displaying a message
+        /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
+        /// </param>
+        protected void HandleException(string baseMessage, Exception ex, int duplicateHoldoffHours = 0, int emptyLinesBeforeMessage = 0)
         {
             if (string.IsNullOrWhiteSpace(baseMessage))
             {
                 baseMessage = "Error";
             }
 
-            LogMessage(baseMessage + ": " + ex.Message, eMessageTypeConstants.ErrorMsg, exception: ex);
+            string formattedError;
+            if (ex == null || baseMessage.Contains(ex.Message))
+            {
+                formattedError = baseMessage;
+            }
+            else
+            {
+                formattedError = baseMessage + ": " + ex.Message;
+            }
+
+            LogMessage(formattedError, MessageTypeConstants.ErrorMsg, duplicateHoldoffHours, emptyLinesBeforeMessage, ex);
 
             if (ReThrowEvents)
             {
-                throw new Exception(baseMessage, ex);
+                throw new Exception(formattedError, ex);
             }
         }
 

@@ -89,7 +89,7 @@ namespace PRISM
             }
 
             string formattedError;
-            if (ex == null || message.EndsWith(ex.Message))
+            if (ex == null || message.Contains(ex.Message))
             {
                 formattedError = message;
             }
