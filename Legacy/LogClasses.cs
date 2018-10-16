@@ -847,15 +847,15 @@ namespace PRISM
         /// Posts a message to the log.
         /// </summary>
         /// <param name="message">The message to post.</param>
-        /// <param name="e">The exception associated with the error.</param>
+        /// <param name="ex">The exception associated with the error.</param>
         /// <param name="localOnly">
         /// Only used by clsDBLogger
         /// When true, only post the message to the local log file
         /// When false, log to the local log file and the database
         /// </param>
-        public void PostError(string message, Exception e, bool localOnly)
+        public void PostError(string message, Exception ex, bool localOnly)
         {
-            var le = new clsLogEntry(message + ": " + e.Message, logMsgType.logError, localOnly);
+            var le = new clsLogEntry(message + ": " + ex.Message, logMsgType.logError, localOnly);
             m_queue.Enqueue(le);
         }
     }

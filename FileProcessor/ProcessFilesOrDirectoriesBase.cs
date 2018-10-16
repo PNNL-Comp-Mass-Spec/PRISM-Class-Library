@@ -182,7 +182,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         private readonly Dictionary<string, DateTime> mLogDataCache;
 
-        private eMessageTypeConstants progressMessageType = eMessageTypeConstants.Normal;
+        private MessageTypeConstants mProgressMessageType = MessageTypeConstants.Normal;
 
         #endregion
 
@@ -279,8 +279,8 @@ namespace PRISM.FileProcessor
         /// </summary>
         public LogLevel ProgressOutputLevel
         {
-            get => ConvertMessageTypeToLogLevel(progressMessageType);
-            set => progressMessageType = ConvertLogLevelToMessageType(value);
+            get => ConvertMessageTypeToLogLevel(mProgressMessageType);
+            set => mProgressMessageType = ConvertLogLevelToMessageType(value);
         }
 
         #endregion
@@ -739,7 +739,7 @@ namespace PRISM.FileProcessor
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
         /// </param>
-        /// <param name="exception">If logging an exception, the exception object</param>
+        /// <param name="ex">If logging an exception, the exception object</param>
         /// <remarks>
         /// Note that CleanupPaths() will update mOutputDirectoryPath, which is used here if mLogDirectoryPath is blank
         /// Thus, be sure to call CleanupPaths (or update mLogDirectoryPath) before the first call to LogMessage
@@ -749,7 +749,7 @@ namespace PRISM.FileProcessor
             eMessageTypeConstants eMessageType = eMessageTypeConstants.Normal,
             int duplicateHoldoffHours = 0,
             int emptyLinesBeforeMessage = 0,
-            Exception exception = null)
+            Exception ex = null)
         {
 
             if (mLogFile == null && LogMessagesToFile)
@@ -776,7 +776,7 @@ namespace PRISM.FileProcessor
 
             }
 
-            RaiseMessageEvent(message, eMessageType, emptyLinesBeforeMessage, exception);
+            RaiseMessageEvent(message, messageType, emptyLinesBeforeMessage, ex);
         }
 
         private void RaiseMessageEvent(string message, eMessageTypeConstants eMessageType, int emptyLinesBeforeMessage, Exception ex = null)
@@ -1174,12 +1174,12 @@ namespace PRISM.FileProcessor
             {
                 if (mProgressPercentComplete < float.Epsilon)
                 {
-                    LogMessage(ProgressStepDescription.Replace(Environment.NewLine, "; "), progressMessageType);
+                    LogMessage(ProgressStepDescription.Replace(Environment.NewLine, "; "), mProgressMessageType);
                 }
                 else
                 {
                     LogMessage(ProgressStepDescription + " (" + mProgressPercentComplete.ToString("0.0") +
-                               "% complete)".Replace(Environment.NewLine, "; "), progressMessageType);
+                               "% complete)".Replace(Environment.NewLine, "; "), mProgressMessageType);
                 }
             }
 

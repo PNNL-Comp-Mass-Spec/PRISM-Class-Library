@@ -376,15 +376,15 @@ namespace PRISM
                         object castValue;
                         if (prop.Key.PropertyType.IsArray)
                         {
-                            var castVals = Array.CreateInstance(prop.Key.PropertyType.GetElementType(), value.Count);
+                            var castValues = Array.CreateInstance(prop.Key.PropertyType.GetElementType(), value.Count);
                             var i = 0;
                             foreach (var val in value)
                             {
                                 lastVal = val;
                                 var castVal = ParseValueToType(prop.Key.PropertyType.GetElementType(), prop.Value, keyGiven, val);
-                                castVals.SetValue(castVal, i++);
+                                castValues.SetValue(castVal, i++);
                             }
-                            castValue = castVals;
+                            castValue = castValues;
                         }
                         else
                         {
@@ -547,16 +547,16 @@ namespace PRISM
             // Support using '0', '1', 'y', 'yes', 'n', 'no' with booleans
             if (targetType == typeof(bool))
             {
-                var valStr = valueToConvert.ToString().ToLowerInvariant();
-                if (int.TryParse(valStr, out var bResult))
+                var valueLCase = valueToConvert.ToString().ToLowerInvariant();
+                if (int.TryParse(valueLCase, out var boolResult))
                 {
-                    return bResult != 0;
+                    return boolResult != 0;
                 }
-                if (valStr.Equals("n") || valStr.Equals("no"))
+                if (valueLCase.Equals("n") || valueLCase.Equals("no"))
                 {
                     return false;
                 }
-                if (valStr.Equals("y") || valStr.Equals("yes"))
+                if (valueLCase.Equals("y") || valueLCase.Equals("yes"))
                 {
                     return true;
                 }
@@ -964,8 +964,8 @@ namespace PRISM
                     }
 
                     // List the valid enum values
-                    var enumVals = Enum.GetValues(prop.Key.PropertyType);
-                    foreach (var val in enumVals)
+                    var enumValues = Enum.GetValues(prop.Key.PropertyType);
+                    foreach (var val in enumValues)
                     {
                         var enumVal = (Enum)Convert.ChangeType(val, prop.Key.PropertyType);
                         var valName = enumVal.ToString();
