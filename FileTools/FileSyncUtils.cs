@@ -7,6 +7,7 @@ namespace PRISM
     /// <summary>
     /// Methods for copying files to/from a remote server, including creating a .hashcheck file and a .lastused file
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public class FileSyncUtils : EventNotifier
     {
         /// <summary>
@@ -48,6 +49,7 @@ namespace PRISM
         /// </param>
         /// <param name="hashType">Hash type for newly created .hashcheck files</param>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global
         public bool CopyFileToLocal(
             string sourceFilePath,
             string targetDirectoryPath,
@@ -173,7 +175,7 @@ namespace PRISM
                     // Repeat the validation of the .hashcheck file
                     // If valid, return true
                     // Otherwise, delete the local file and the local hashcheck file and re-try the copy to the local directory
-                    var validFileB = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, 0);
+                    var validFileB = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays: 0);
                     if (validFileB)
                     {
                         OnStatusEvent(string.Format("Hash value is now the expected value: {0}", sourceHashInfo.HashValue));
@@ -192,7 +194,7 @@ namespace PRISM
                 mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
 
                 // Create the local .hashcheck file, sending localFilePath and the hash info of the source file
-                var validFileC = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, 0);
+                var validFileC = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays: 0);
                 return validFileC;
 
             }
@@ -284,6 +286,7 @@ namespace PRISM
         /// <param name="expectedHash">Expected hash value</param>
         /// <param name="expectedHashType">Hash type (CRC32, MD5, or SHA1)</param>
         /// <returns>True if the file is valid, otherwise false</returns>
+        // ReSharper disable once UnusedMember.Global
         public bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, string expectedHash, HashUtilities.HashTypeConstants expectedHashType)
         {
             var expectedHashInfo = new HashUtilities.HashInfoType
@@ -312,6 +315,7 @@ namespace PRISM
         /// Will create the .hashcheck file if missing
         /// Will also update the .lastused file for the local file
         /// </remarks>
+        // ReSharper disable once UnusedMember.Global
         public static bool ValidateFileVsHashcheck(
             string localFilePath, string hashCheckFilePath,
             out string errorMessage,
@@ -498,6 +502,7 @@ namespace PRISM
         /// <param name="assumedHashType">Hash type to assume if the .hashcheck file does not have a hashtype entry</param>
         /// <returns>True if the hashcheck file exists and the actual file matches the expected values; false if a mismatch, if .hashcheck is missing, or if a problem</returns>
         /// <remarks>The .hashcheck file has the same name as the data file, but with ".hashcheck" appended</remarks>
+        // ReSharper disable once UnusedMember.Global
         public static bool ValidateFileVsHashcheck(
             string localFilePath, string hashCheckFilePath, out string errorMessage,
             bool checkDate = true, bool computeHash = true, bool checkSize = true,

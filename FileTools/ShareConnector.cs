@@ -17,9 +17,12 @@ namespace PRISM
     /// utility in Windows.  Much of this code came from Microsoft Knowledge Base Article - 173011.  It was
     /// then modified to fit our needs.
     /// </remarks>
+    // ReSharper disable once UnusedMember.Global
     public class ShareConnector
     {
 #pragma warning disable 1591
+        // ReSharper disable UnusedMember.Global
+
         public enum ResourceScope
         {
             Connected = 1,
@@ -52,6 +55,7 @@ namespace PRISM
             Tree = 0xa,
             NdsContainer = 0xb
         }
+
 #pragma warning restore 1591
 
         /// <summary>
@@ -70,6 +74,8 @@ namespace PRISM
             public string lpProvider;
 #pragma warning restore 169,414
         }
+
+        // ReSharper restore UnusedMember.Global
 
         private const short NO_ERROR = 0;
 
@@ -176,6 +182,7 @@ namespace PRISM
         /// the file share name passed as an argument.
         /// </summary>
         /// <param name="shareName">The name of the file share to which you will connect.</param>
+        // ReSharper disable once UnusedMember.Global
         public bool Connect(string shareName)
         {
 
@@ -189,6 +196,7 @@ namespace PRISM
         /// Connects to specified share using account/password specified through the constructor.
         /// Requires you to have specified the share name by setting the <see cref="Share">Share</see> property.
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public bool Connect()
         {
 
@@ -240,6 +248,7 @@ namespace PRISM
         /// <summary>
         /// Disconnects the files share.
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public bool Disconnect()
         {
             var errorNum = WNetCancelConnection2(mNetResource.lpRemoteName, 0, Convert.ToInt32(true));

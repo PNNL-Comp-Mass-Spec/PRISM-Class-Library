@@ -13,7 +13,7 @@ namespace PRISM
     public static class PathUtils
     {
         /// <summary>
-        /// Convert a path to be linux-compatible (backslash to forward slash
+        /// Convert a path to be Linux-compatible (backslash to forward slash
         /// </summary>
         /// <param name="pathSpec"></param>
         /// <returns></returns>

@@ -297,7 +297,7 @@ namespace PRISM.FileProcessor
         public bool ShowMessages { get; set; } = true;
 
         /// <summary>
-        /// When true, if an error occurs a message will be logged, the event will be re-thrown
+        /// When true, if an error occurs, a message will be logged, then the event will be re-thrown
         /// </summary>
         public bool ReThrowEvents { get; set; } = false;
 
@@ -899,9 +899,9 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Show a debug message
+        /// Show a debug message, optionally logging the message to the log file
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message to show</param>
         /// <param name="allowLogToFile"></param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
@@ -914,9 +914,9 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Show an error message
+        /// Show an error message and write it to the log file
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message to show</param>
         /// <param name="duplicateHoldoffHours"></param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
@@ -929,7 +929,7 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Show an error message
+        /// Show an error message, optionally logging the message to the log file
         /// </summary>
         /// <param name="message">Message</param>
         /// <param name="allowLogToFile">When true, allow the message to be logged</param>
@@ -956,9 +956,9 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Show a status message
+        /// Show a status message and write it to the log file
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message to show</param>
         /// <param name="duplicateHoldoffHours"></param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
@@ -971,7 +971,7 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Show a status message
+        /// Show a status message, optionally logging the message to the log file
         /// </summary>
         /// <param name="message">Message to show</param>
         /// <param name="allowLogToFile">When true, write to the log file (if the message severity is >= LoggingLevel)</param>
@@ -999,7 +999,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Show a warning
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message to show</param>
         /// <param name="duplicateHoldoffHours"></param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
@@ -1014,7 +1014,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Show a warning
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message to show</param>
         /// <param name="allowLogToFile"></param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message

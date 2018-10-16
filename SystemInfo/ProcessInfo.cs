@@ -59,6 +59,7 @@ namespace PRISM
         /// Constructor that takes process ID only
         /// </summary>
         /// <param name="processId"></param>
+        // ReSharper disable once UnusedMember.Global
         public ProcessInfo(int processId)
         {
             Arguments = string.Empty;
@@ -163,6 +164,7 @@ namespace PRISM
         /// Returns process name, process ID, exe path, exe name, arguments, and the full command line
         /// </summary>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global
         public string ToStringVerbose()
         {
             var description = new StringBuilder();

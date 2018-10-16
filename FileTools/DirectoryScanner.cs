@@ -9,6 +9,7 @@ namespace PRISM
     /// <summary>
     /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     public class DirectoryScanner
     {
         /// <summary>
@@ -50,6 +51,7 @@ namespace PRISM
         /// </summary>
         /// <param name="searchPatterns">An array of regular expressions to use in the search.</param>
         /// <returns>A list of the file paths found; empty list if no matches</returns>
+        // ReSharper disable once UnusedMember.Global
         public List<string> PerformScan(params string[] searchPatterns)
         {
             mFileList.Clear();

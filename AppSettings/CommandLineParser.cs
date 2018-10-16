@@ -139,6 +139,7 @@ namespace PRISM
         /// <summary>
         /// Get or set the characters allowed as separators between an argument specifier and argument value
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public IEnumerable<char> ParamSeparatorCharacters
         {
             get => separatorChars;
@@ -196,6 +197,7 @@ namespace PRISM
         /// <param name="options"></param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>True on success, false if argument parse failed</returns>
+        // ReSharper disable once UnusedMember.Global
         public static bool ParseArgs(string[] args, T options, string versionInfo = "")
         {
             var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
@@ -224,7 +226,8 @@ namespace PRISM
         /// </summary>
         /// <param name="args"></param>
         /// <param name="versionInfo">Executable version info</param>
-        /// <returns></returns>
+        /// <returns>Parser results</returns>
+        // ReSharper disable once UnusedMember.Global
         public static ParserResults ParseArgs(string[] args, string versionInfo)
         {
             var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
@@ -237,7 +240,7 @@ namespace PRISM
         /// <param name="args"></param>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
-        /// <returns></returns>
+        /// <returns>Parser results</returns>
         public static ParserResults ParseArgs(string[] args, string entryAssemblyName, string versionInfo)
         {
             var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
@@ -250,7 +253,7 @@ namespace PRISM
         /// <param name="args"></param>
         /// <param name="onErrorOutputHelp">When an error occurs, display the error and output the help</param>
         /// <param name="outputErrors">When an error occurs, output the error</param>
-        /// <returns></returns>
+        /// <returns>Parser results</returns>
         public ParserResults ParseArgs(string[] args, bool onErrorOutputHelp = true, bool outputErrors = true)
         {
             if (args.Length == 0)
@@ -449,7 +452,7 @@ namespace PRISM
         /// <param name="parseData"></param>
         /// <param name="argKey"></param>
         /// <param name="valueToParse"></param>
-        /// <returns></returns>
+        /// <returns>Converted value</returns>
         private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
         {
             object castValue = null;
@@ -669,7 +672,7 @@ namespace PRISM
         /// Generate the special argument name used to track positional arguments
         /// </summary>
         /// <param name="argPosition"></param>
-        /// <returns></returns>
+        /// <returns>Argument name</returns>
         private string GetPositionalArgName(int argPosition)
         {
             return "##" + argPosition + "##";
@@ -680,6 +683,7 @@ namespace PRISM
         /// </summary>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
+        // ReSharper disable once UnusedMember.Global
         public static void ShowHelp(string entryAssemblyName = "", string versionInfo = "")
         {
             var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
@@ -832,7 +836,7 @@ namespace PRISM
 
             if (props.Values.Any(x => x.ArgPosition > 0))
             {
-                contents.Add("NOTE:", "arg#1, arg#2, etc. refer to positional arguments, used like \"myexe.exe [arg#1] [arg#2] [other args]\".");
+                contents.Add("NOTE:", "arg#1, arg#2, etc. refer to positional arguments, used like \"AppName.exe [arg#1] [arg#2] [other args]\".");
             }
 
             // Add the default help string

@@ -14,6 +14,7 @@ namespace PRISM.Logging
     /// Connect using an ODBC driver
     /// </summary>
     /// <remarks>Connect using an ODBC driver</remarks>
+    // ReSharper disable once UnusedMember.Global
     public sealed class ODBCDatabaseLogger : DatabaseLogger
     {
         #region "Member variables"
@@ -186,6 +187,7 @@ namespace PRISM.Logging
         ///   "SQL Server"                    for SQL Server 2000
         /// </param>
         /// <returns></returns>
+        // ReSharper disable once UnusedMember.Global
         public static string ConvertSqlServerConnectionStringToODBC(string sqlServerConnectionString, string odbcDriverName = "SQL Server Native Client 11.0")
         {
             // Example connection strings available online at:

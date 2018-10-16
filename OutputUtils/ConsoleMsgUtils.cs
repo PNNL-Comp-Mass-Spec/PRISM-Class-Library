@@ -176,7 +176,7 @@ namespace PRISM
         /// <summary>
         /// Display a debug message at the console with color DebugFontColor (defaults to DarkGray)
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Debug message</param>
         /// <param name="indentChars">Characters to use to indent the message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         public static void ShowDebug(string message, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
@@ -209,7 +209,7 @@ namespace PRISM
         /// <summary>
         /// Display a warning message at the console with color WarningFontColor (defaults to Yellow)
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Warning message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         public static void ShowWarning(string message, int emptyLinesBeforeMessage = 1)
         {

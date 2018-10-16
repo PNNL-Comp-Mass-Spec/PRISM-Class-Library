@@ -21,7 +21,7 @@ namespace PRISM
         /// <summary>
         /// Debug event
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Debug message</param>
         public delegate void DebugEventEventHandler(string message);
 
         /// <summary>
@@ -32,8 +32,8 @@ namespace PRISM
         /// <summary>
         /// Error event
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="message">Error message</param>
+        /// <param name="ex">Exception</param>
         public delegate void ErrorEventEventHandler(string message, Exception ex);
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace PRISM
         /// <summary>
         /// Status event
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Status message</param>
         public delegate void StatusEventEventHandler(string message);
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace PRISM
         /// <summary>
         /// Warning event
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Warning message</param>
         public delegate void WarningEventEventHandler(string message);
 
         #endregion
@@ -223,7 +223,7 @@ namespace PRISM
         /// <summary>
         /// Report a status message
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Status message</param>
         protected void OnStatusEvent(string message)
         {
             if (StatusEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoStatusListener)
@@ -238,7 +238,7 @@ namespace PRISM
         /// <summary>
         /// Report a warning
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Warning message</param>
         protected void OnWarningEvent(string message)
         {
             if (WarningEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoWarningListener)
