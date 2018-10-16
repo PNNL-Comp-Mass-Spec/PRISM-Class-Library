@@ -1,7 +1,11 @@
 Prism Class Library Log
 
+Version 2.5.4; October 15, 2018
+	- Rename eMessageTypeConstants to MessageTypeConstants
+
 Version 2.5.3; October 15, 2018
-	- ProcessFilesOrDirectoriesBase: pass the exception object through to the EventNotifier subsystem, so that subscribers to the error event can access exception information, not just get the message.
+	- In ProcessFilesOrDirectoriesBase, pass the exception object through to the EventNotifier subsystem
+		- This allows subscribers to the error event to have access to the exception details
 
 Version 2.5.2; October 12, 2018
 	- Add CommandLineParser support for non-boolean arguments with optional values, using 'ArgExistsProperty'

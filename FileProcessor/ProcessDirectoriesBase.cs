@@ -1,4 +1,3 @@
-
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -22,7 +21,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessDirectoriesBase()
         {
-            mFileDate = "October 10, 2018";
+            mFileDate = "October 15, 2018";
             ErrorCode = ProcessDirectoriesErrorCodes.NoError;
         }
 
