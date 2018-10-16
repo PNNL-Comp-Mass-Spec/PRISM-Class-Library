@@ -766,7 +766,6 @@ namespace PRISM
             // https://stackoverflow.com/questions/1420426/1179467/how-to-calculate-the-cpu-usage-of-a-process-by-pid-in-linux-from-c
             // See also https://github.com/scaidermern/top-processes/blob/master/top_proc.c
 
-
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreUseByProcessID).TotalSeconds > 15;
             if (showDebugInfo)
                 mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow;

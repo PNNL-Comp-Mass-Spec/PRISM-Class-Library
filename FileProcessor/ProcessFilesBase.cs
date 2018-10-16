@@ -14,6 +14,7 @@ namespace PRISM.FileProcessor
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessFilesBase : ProcessFilesOrDirectoriesBase
     {
+
         /// <summary>
         /// Constructor
         /// </summary>
