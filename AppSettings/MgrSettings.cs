@@ -75,7 +75,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// When true, show additional messages at the console
         /// </summary>
-        public bool TraceMode { get; protected set; }
+        public bool TraceMode { get; set; }
 
         #endregion
 
@@ -162,6 +162,10 @@ namespace PRISM.AppSettings
 
             if (!loadSettingsFromDB)
             {
+                if (TraceMode)
+                {
+                    ShowDictionaryTrace(MgrParams);
+                }
                 return true;
             }
 
@@ -174,6 +178,11 @@ namespace PRISM.AppSettings
 
             // Set flag indicating params have been loaded from the manager control database
             ParamsLoadedFromDB = true;
+
+            if (TraceMode)
+            {
+                ShowDictionaryTrace(MgrParams);
+            }
 
             // No problems found
             return true;
