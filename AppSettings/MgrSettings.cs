@@ -394,7 +394,7 @@ namespace PRISM.AppSettings
         /// </summary>
         /// <returns>Dictionary of settings as key/value pairs; null on error</returns>
         /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
-        public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath, bool traceEnabled)
+        public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath)
         {
 
             XmlDocument configDoc;
@@ -437,7 +437,7 @@ namespace PRISM.AppSettings
                     return null;
                 }
 
-                return ParseXMLSettings(settingNodes, traceEnabled);
+                return ParseXMLSettings(settingNodes, TraceMode);
 
             }
             catch (Exception ex)
