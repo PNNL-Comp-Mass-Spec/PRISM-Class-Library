@@ -153,13 +153,6 @@ namespace PRISM.AppSettings
                 return false;
             }
 
-            // Assure that MgrActive_Local is defined
-            if (!MgrParams.TryGetValue(MGR_PARAM_MGR_ACTIVE_LOCAL, out _))
-            {
-                // MgrActive_Local parameter not defined defined in the AppName.exe.config file
-                HandleParameterNotDefined(MGR_PARAM_MGR_ACTIVE_LOCAL);
-            }
-
             if (!loadSettingsFromDB)
             {
                 if (TraceMode)
