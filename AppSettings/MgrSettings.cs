@@ -501,11 +501,20 @@ namespace PRISM.AppSettings
         /// <param name="settings"></param>
         public static void ShowDictionaryTrace(IReadOnlyDictionary<string, string> settings)
         {
+            // Find the longest key name
+            var longestName = settings.Keys.Select(item => item.Length).Max();
+
             Console.ForegroundColor = ConsoleMsgUtils.DebugFontColor;
             foreach (var key in from item in settings.Keys orderby item select item)
             {
-                var value = settings[key];
-                var keyWidth = Math.Max(30, Math.Ceiling(key.Length / 15.0) * 15);
+                var value = settings[key] ?? string.Empty;
+
+                int keyWidth;
+                if (longestName < 45)
+                    keyWidth = longestName;
+                else
+                    keyWidth = (int)Math.Max(45, Math.Ceiling(key.Length / 15.0) * 15);
+
                 var formatString = "  {0,-" + keyWidth + "} {1}";
                 Console.WriteLine(formatString, key, value);
             }
