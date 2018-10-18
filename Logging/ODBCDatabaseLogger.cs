@@ -297,7 +297,7 @@ namespace PRISM.Logging
         /// <param name="state"></param>
         private static void LogMessagesCallback(object state)
         {
-            ShowTraceMessage("ODBCDatabaseLogger.mQueueLogger callback raised");
+            ShowTrace("ODBCDatabaseLogger.mQueueLogger callback raised");
             StartLogQueuedMessages();
         }
 
@@ -319,7 +319,7 @@ namespace PRISM.Logging
                     return;
 
 #if !(NETSTANDARD2_0)
-                ShowTraceMessage(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
+                ShowTrace(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
 
                 using (var odbcConnection = new OdbcConnection(ConnectionString))
@@ -409,7 +409,7 @@ namespace PRISM.Logging
                     }
                 }
 
-                ShowTraceMessage(string.Format("ODBCDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
+                ShowTrace(string.Format("ODBCDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
 #endif
             }
             catch (Exception ex)
@@ -463,7 +463,7 @@ namespace PRISM.Logging
         /// </summary>
         ~ODBCDatabaseLogger()
         {
-            ShowTraceMessage("Disposing ODBCDatabaseLogger");
+            ShowTrace("Disposing ODBCDatabaseLogger");
             StartLogQueuedMessages();
         }
     }

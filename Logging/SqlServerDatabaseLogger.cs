@@ -169,7 +169,7 @@ namespace PRISM.Logging
         /// <param name="state"></param>
         private static void LogMessagesCallback(object state)
         {
-            ShowTraceMessage("SQLServerDatabaseLogger.mQueueLogger callback raised");
+            ShowTrace("SQLServerDatabaseLogger.mQueueLogger callback raised");
             StartLogQueuedMessages();
         }
 
@@ -181,7 +181,7 @@ namespace PRISM.Logging
                 if (mMessageQueue.IsEmpty)
                     return;
 
-                ShowTraceMessage(string.Format("SQLServerDatabaseLogger connecting to {0}", ConnectionString));
+                ShowTrace(string.Format("SQLServerDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
 
                 using (var sqlConnection = new SqlConnection(ConnectionString))
@@ -264,7 +264,7 @@ namespace PRISM.Logging
                     }
                 }
 
-                ShowTraceMessage(string.Format("SQLServerDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
+                ShowTrace(string.Format("SQLServerDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
             }
             catch (Exception ex)
             {
@@ -317,7 +317,7 @@ namespace PRISM.Logging
         /// </summary>
         ~SQLServerDatabaseLogger()
         {
-            ShowTraceMessage("Disposing SQLServerDatabaseLogger");
+            ShowTrace("Disposing SQLServerDatabaseLogger");
             StartLogQueuedMessages();
         }
     }

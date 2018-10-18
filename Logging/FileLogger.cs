@@ -434,25 +434,25 @@ namespace PRISM.Logging
 
             if (string.IsNullOrWhiteSpace(baseName) && !string.IsNullOrWhiteSpace(BaseLogFileName))
             {
-                ShowTraceMessage("Leaving base log file name unchanged since new base name is empty");
+                ShowTrace("Leaving base log file name unchanged since new base name is empty");
                 return;
             }
 
             if (!mMessageQueue.IsEmpty)
             {
-                ShowTraceMessage("Flushing pending messages prior to updating log file base name");
+                ShowTrace("Flushing pending messages prior to updating log file base name");
                 FlushPendingMessages();
             }
             else
             {
-                ShowTraceMessage("Updating log file base name");
+                ShowTrace("Updating log file base name");
             }
 
             AppendDateToBaseFileName = appendDateToBaseName;
 
             if (Path.IsPathRooted(baseName))
             {
-                ShowTraceMessage("New log file base name is a rooted path; will use as-is: " + baseName);
+                ShowTrace("New log file base name is a rooted path; will use as-is: " + baseName);
                 BaseLogFileName = baseName;
             }
             else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
@@ -462,18 +462,18 @@ namespace PRISM.Logging
                 if (string.IsNullOrWhiteSpace(baseName))
                 {
                     logFilePath = Path.Combine(appDirectoryPath, DefaultLogFileName);
-                    ShowTraceMessage("New log file base name is empty; will use the default path, " + logFilePath);
+                    ShowTrace("New log file base name is empty; will use the default path, " + logFilePath);
                 }
                 else
                 {
                     logFilePath = Path.Combine(appDirectoryPath, baseName);
-                    ShowTraceMessage("New log file will use a relative path: " + logFilePath);
+                    ShowTrace("New log file will use a relative path: " + logFilePath);
                 }
                 BaseLogFileName = logFilePath;
             }
             else
             {
-                ShowTraceMessage("relativeToEntryAssembly is false; new log file path will be " + baseName);
+                ShowTrace("relativeToEntryAssembly is false; new log file path will be " + baseName);
                 BaseLogFileName = baseName;
             }
 
@@ -546,7 +546,7 @@ namespace PRISM.Logging
         /// <param name="state"></param>
         private static void LogMessagesCallback(object state)
         {
-            ShowTraceMessage("FileLogger.mQueueLogger callback raised");
+            ShowTrace("FileLogger.mQueueLogger callback raised");
             StartLogQueuedMessages();
         }
 
@@ -575,7 +575,7 @@ namespace PRISM.Logging
                         var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATE_CODE);
                         if (!string.Equals(testFileDate, LogFileDateText))
                         {
-                            ShowTraceMessage(string.Format("Updating log file date from {0} to {1}", LogFileDateText, testFileDate));
+                            ShowTrace(string.Format("Updating log file date from {0} to {1}", LogFileDateText, testFileDate));
 
                             LogFileDateText = testFileDate;
                             ChangeLogFileName();
@@ -620,7 +620,7 @@ namespace PRISM.Logging
                             RollLogFiles(LogFileDate, LogFilePath);
                         }
 
-                        ShowTraceMessage(string.Format("Opening log file: {0}", LogFilePath));
+                        ShowTrace(string.Format("Opening log file: {0}", LogFilePath));
                         writer = new StreamWriter(new FileStream(logFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
                     }
                     writer.WriteLine(logMessage.GetFormattedMessage(TimestampFormat));
@@ -648,7 +648,7 @@ namespace PRISM.Logging
             finally
             {
                 writer?.Close();
-                ShowTraceMessage(string.Format("FileLogger writer closed; wrote {0} messages", messagesWritten));
+                ShowTrace(string.Format("FileLogger writer closed; wrote {0} messages", messagesWritten));
             }
         }
 
@@ -710,7 +710,7 @@ namespace PRISM.Logging
 
                 var pluralSuffix = pendingRenames.Count == 1 ? "" : "s";
 
-                ShowTraceMessage(string.Format("Renaming {0} old log file{1} in {2}", pendingRenames.Count, pluralSuffix, currentLogFile.DirectoryName));
+                ShowTrace(string.Format("Renaming {0} old log file{1} in {2}", pendingRenames.Count, pluralSuffix, currentLogFile.DirectoryName));
 
                 foreach (var item in (from key in pendingRenames.Keys orderby key select key).Reverse())
                 {
@@ -775,7 +775,7 @@ namespace PRISM.Logging
         {
             if (TraceMode)
             {
-                ShowTraceMessage(callingMethod + " " + StackTraceFormatter.GetCurrentStackTraceMultiLine());
+                ShowTrace(callingMethod + " " + StackTraceFormatter.GetCurrentStackTraceMultiLine());
             }
         }
 
@@ -894,7 +894,7 @@ namespace PRISM.Logging
         /// </summary>
         ~FileLogger()
         {
-            ShowTraceMessage("Disposing FileLogger");
+            ShowTrace("Disposing FileLogger");
             FlushPendingMessages();
         }
     }

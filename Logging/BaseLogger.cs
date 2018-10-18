@@ -257,11 +257,11 @@ namespace PRISM.Logging
         /// Show a trace message at the console if TraceMode is true
         /// </summary>
         /// <param name="message"></param>
-        protected static void ShowTraceMessage(string message)
+        protected static void ShowTrace(string message)
         {
             if (TraceMode)
             {
-                ShowTrace(message, true);
+                ShowTraceMessage(message, true);
             }
         }
 
@@ -273,7 +273,7 @@ namespace PRISM.Logging
         /// <param name="indentChars">Characters to use to indent the message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         /// <remarks>Not dependent on TraceMode</remarks>
-        public static void ShowTrace(string message, bool includeDate, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
+        public static void ShowTraceMessage(string message, bool includeDate, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
         {
             var timeStamp = string.Format(includeDate ? "{0:yyyy-MM-dd hh:mm:ss.fff tt}" : "{0:hh:mm:ss.fff tt}", DateTime.Now);
 

@@ -288,7 +288,7 @@ namespace PRISM.AppSettings
             {
                 // MgrName parameter not defined defined in the AppName.exe.config file
                 HandleParameterNotDefined(MGR_PARAM_MGR_NAME);
-                ShowTraceIfEnabled("LoadMgrSettingsFromDBWork: " + ErrMsg);
+                ShowTrace("LoadMgrSettingsFromDBWork: " + ErrMsg);
                 return false;
             }
 
@@ -345,7 +345,7 @@ namespace PRISM.AppSettings
                 return false;
             }
 
-            ShowTraceIfEnabled("LoadMgrSettingsFromDBWork using [" + dbConnectionString + "] for manager " + managerName);
+            ShowTrace("LoadMgrSettingsFromDBWork using [" + dbConnectionString + "] for manager " + managerName);
 
             var sqlQuery = "SELECT ParameterName, ParameterValue FROM V_MgrParams WHERE ManagerName = '" + managerName + "'";
 
@@ -464,7 +464,7 @@ namespace PRISM.AppSettings
                 {
                     if (traceEnabled)
                     {
-                        ShowTrace(string.Format("Skipping setting node because no attributes: {0}", settingNode));
+                        ShowTraceMessage(string.Format("Skipping setting node because no attributes: {0}", settingNode));
                     }
 
                     continue;
@@ -477,7 +477,7 @@ namespace PRISM.AppSettings
                 {
                     if (traceEnabled)
                     {
-                        ShowTrace(string.Format("Skipping setting node because no value node: <setting name=\"{0}\"/>", settingName));
+                        ShowTraceMessage(string.Format("Skipping setting node because no value node: <setting name=\"{0}\"/>", settingName));
                     }
 
                     continue;
@@ -512,12 +512,12 @@ namespace PRISM.AppSettings
         /// If TraceMode is true, show a message at the console, preceded by a time stamp
         /// </summary>
         /// <param name="message"></param>
-        protected void ShowTraceIfEnabled(string message)
+        protected void ShowTrace(string message)
         {
             if (!TraceMode)
                 return;
 
-            ShowTrace(message);
+            ShowTraceMessage(message);
         }
 
         /// <summary>
@@ -525,9 +525,9 @@ namespace PRISM.AppSettings
         /// </summary>
         /// <param name="message"></param>
         /// <remarks></remarks>
-        protected static void ShowTrace(string message)
+        protected static void ShowTraceMessage(string message)
         {
-            BaseLogger.ShowTrace(message, false);
+            BaseLogger.ShowTraceMessage(message, false);
         }
 
         /// <summary>
