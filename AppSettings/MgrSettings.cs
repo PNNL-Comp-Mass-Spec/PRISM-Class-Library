@@ -149,7 +149,11 @@ namespace PRISM.AppSettings
             // Test the settings retrieved from the config file
             if (!CheckInitialSettings(MgrParams))
             {
-                // Error logging handled by CheckInitialSettings
+                // Error logging was handled by CheckInitialSettings
+                if (TraceMode)
+                {
+                    ShowDictionaryTrace(MgrParams);
+                }
                 return false;
             }
 
@@ -165,7 +169,7 @@ namespace PRISM.AppSettings
             // Get remaining settings from database
             if (!LoadMgrSettingsFromDB())
             {
-                // Error logging handled by LoadMgrSettingsFromDB
+                // Error logging was handled by LoadMgrSettingsFromDB
                 return false;
             }
 
@@ -211,8 +215,10 @@ namespace PRISM.AppSettings
         /// Tests initial settings retrieved from config file
         /// </summary>
         /// <param name="paramDictionary"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <returns>
+        /// True if settings were loaded and MgrActive_Local is true (or MgrActive_Local is missing)
+        /// False if MgrActive_Local is false or if UsingDefaults is true
+        /// </returns>
         private bool CheckInitialSettings(IReadOnlyDictionary<string, string> paramDictionary)
         {
 
