@@ -261,8 +261,23 @@ namespace PRISM.Logging
         {
             if (TraceMode)
             {
-                ConsoleMsgUtils.ShowDebug(string.Format("{0:yyyy-MM-dd hh:mm:ss.fff tt}: {1}", DateTime.Now, message));
+                ShowTrace(message, true);
             }
+        }
+
+        /// <summary>
+        /// Show a trace message at the console, optionally including date
+        /// </summary>
+        /// <param name="message">Message to show</param>
+        /// <param name="includeDate">When true, include the date in the prefix; when false, only prefix with time</param>
+        /// <param name="indentChars">Characters to use to indent the message</param>
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
+        /// <remarks>Not dependent on TraceMode</remarks>
+        public static void ShowTrace(string message, bool includeDate, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
+        {
+            var timeStamp = string.Format(includeDate ? "{0:yyyy-MM-dd hh:mm:ss.fff tt}" : "{0:hh:mm:ss.fff tt}", DateTime.Now);
+
+            ConsoleMsgUtils.ShowDebug(string.Format("{0}: {1}", timeStamp, message), indentChars, emptyLinesBeforeMessage);
         }
 
         #region "Methods to be defined in derived classes"
