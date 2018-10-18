@@ -494,6 +494,9 @@ namespace PRISM.AppSettings
         /// <param name="settings"></param>
         public static void ShowDictionaryTrace(IReadOnlyDictionary<string, string> settings)
         {
+            if (settings.Count == 0)
+                return;
+
             // Find the longest key name
             var longestName = settings.Keys.Select(item => item.Length).Max();
 
