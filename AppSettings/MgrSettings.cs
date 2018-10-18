@@ -14,9 +14,9 @@ namespace PRISM.AppSettings
     /// Class for loading, storing and accessing manager parameters.
     /// </summary>
     /// <remarks>
-    /// Loads initial settings from local config file, then checks to see if remainder of settings should be
-    /// loaded or manager set to inactive. If manager active, retrieves remainder of settings from manager
-    /// parameters database.
+    /// Loads initial settings from the local config file (AppName.exe.config)
+    /// If MgrActive_Local is true, loads additional manager settings
+    /// from the manager control database.
     /// </remarks>
     public class MgrSettings : EventNotifier
     {
@@ -63,7 +63,7 @@ namespace PRISM.AppSettings
         public string ManagerName => GetParam(MGR_PARAM_MGR_NAME, Environment.MachineName + "_Undefined-Manager");
 
         /// <summary>
-        /// This will be true after the parameter have been successfully loaded from the database
+        /// This will be true after the manager settings have been successfully loaded from the manager control database
         /// </summary>
         public bool ParamsLoadedFromDB { get; private set; }
 
@@ -448,13 +448,17 @@ namespace PRISM.AppSettings
         }
 
         /// <summary>
-        /// Parse a list of XML nodes from AnalysisManagerProg.exe.config or ManagerSettingsLocal.xml
+        /// Parse a list of XML nodes from AppName.exe.config or ManagerSettingsLocal.xml
         /// </summary>
-        /// <param name="settingNodes">XML nodes</param>
+        /// <param name="settingNodes">XML nodes, of the form </param>
         /// <param name="traceEnabled">If true, display trace statements</param>
         /// <returns>Dictionary of settings</returns>
         public static Dictionary<string, string> ParseXMLSettings(IEnumerable settingNodes, bool traceEnabled)
         {
+            // Example setting node:
+            // <setting name="MgrName">
+            //   <value>Pub-90-1</value>
+            // </setting>
 
             var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -537,7 +541,10 @@ namespace PRISM.AppSettings
         /// <param name="managerOrGroupName">Manager name or manager group name</param>
         /// <param name="skipExistingParameters">When true, skip existing parameters</param>
         /// <returns></returns>
-        private bool StoreParameters(IReadOnlyDictionary<string, string> mgrSettings, string managerOrGroupName, bool skipExistingParameters)
+        private bool StoreParameters(
+            IReadOnlyDictionary<string, string> mgrSettings,
+            string managerOrGroupName,
+            bool skipExistingParameters)
         {
             bool success;
 
