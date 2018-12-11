@@ -865,6 +865,31 @@ namespace PRISM.Logging
                         continue;
                     }
 
+                    // Verify that the zip file was created and has the expected number of files
+                    zipFile.Refresh();
+
+                    if (!zipFile.Exists)
+                    {
+                        zipWarnings.Add("Expected .zip file not found: " + zipFile.FullName);
+                        continue;
+                    }
+
+                    using (var archive = ZipFile.OpenRead(zipFile.FullName))
+                    {
+                        var expectedFileCount = subDir.GetFiles().Length;
+                        var fileCountInZip = archive.Entries.Count;
+
+                        if (fileCountInZip < expectedFileCount)
+                        {
+                            zipWarnings.Add(string.Format("Zip file {0} has {1} files, but the subdirectory has {2} files: {3}",
+                                                          zipFile.Name, fileCountInZip, expectedFileCount, subDir.FullName));
+                            continue;
+                        }
+
+                        WriteLog(LogLevels.INFO, string.Format("Compressed {0} files in {1} to create {2}",
+                                                               fileCountInZip, subDir.FullName, zipFile.FullName));
+                    }
+
                     try
                     {
                         // Delete the files and the subdirectory
