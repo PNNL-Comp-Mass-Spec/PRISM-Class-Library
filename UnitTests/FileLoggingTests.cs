@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using NUnit.Framework;
 using PRISM;
 using PRISM.Logging;
@@ -9,6 +11,102 @@ namespace PRISMTest
     [TestFixture]
     class FileLoggingTests
     {
+
+        const string LOGFILE_BASENAME = "FileLoggingTester";
+
+        [TestCase(@"C:\Temp", 5, 25)]
+        public void TestArchiveOldLogFiles(string logDirectory, int yearsToSimulate, int filesPerYear)
+        {
+
+            var logDir = new DirectoryInfo(logDirectory);
+
+            if (filesPerYear < 10)
+                filesPerYear = 10;
+            else if (filesPerYear > 100)
+                filesPerYear = 100;
+
+            if (yearsToSimulate > 20)
+                yearsToSimulate = 20;
+
+            if (!logDir.Exists)
+            {
+                try
+                {
+                    logDir.Create();
+                }
+                catch (Exception ex)
+                {
+                    Assert.Fail("Unable to create missing directory " + logDir.FullName + ": " + ex.Message);
+                }
+            }
+
+            // Create dummy log files for 2018, starting on March 1
+            var logFilesCreated = CreateLogFiles(logDir, new DateTime(2018, 3, 1), filesPerYear);
+
+            // If it is more than 30 days after March 1 of this year, the FileLogger will move log files into subdirectory 2018
+            // To avoid duplicates (which leads to filename backups), check for and delete any files that might get moved
+            // (this also avoids Console messages of the form
+            //  "Backing up identically named old log file: C:\Temp\2018\FileLoggingTester_03-08-2018.txt")
+            foreach (var logFile in logFilesCreated)
+            {
+                var candidateFileToDelete = new FileInfo(Path.Combine(logDir.FullName, "2018", logFile.Name));
+
+                if (candidateFileToDelete.Exists)
+                    candidateFileToDelete.Delete();
+            }
+
+            // Cache the list of old log file directories so we can examine the .zip file for each
+            var logFileDirs = new List<DirectoryInfo>();
+
+            // Create dummy log files for previous years, starting on June 1 of each year
+            // In addition, delete any old .zip files
+            for (var i = 1; i <= yearsToSimulate; i++)
+            {
+                var oldLogFileYear = 2018 - i;
+
+                var logFileStartDate = new DateTime(oldLogFileYear, 6, 1);
+
+                var oldLogFilesDir = new DirectoryInfo(Path.Combine(logDir.FullName, oldLogFileYear.ToString()));
+                var oldLogDirZipFile = new FileInfo(Path.Combine(logDir.FullName, oldLogFileYear + ".zip"));
+
+                CreateLogFiles(oldLogFilesDir, logFileStartDate, filesPerYear);
+
+                if (oldLogDirZipFile.Exists)
+                    oldLogDirZipFile.Delete();
+
+                logFileDirs.Add(oldLogFilesDir);
+
+                System.Threading.Thread.Sleep(1000);
+            }
+
+            FileLogger.ChangeLogFileBaseName(Path.Combine(logDirectory, LOGFILE_BASENAME));
+
+            System.Threading.Thread.Sleep(1000);
+
+            // Instruct the logger to create .zip files for previous years
+            FileLogger.ArchiveOldLogFilesNow();
+
+            // Assure that the zip files were created and have data
+            foreach (var oldLogFilesDir in logFileDirs)
+            {
+                var zipFileToCheck = new FileInfo(oldLogFilesDir.FullName + ".zip");
+
+                if (!zipFileToCheck.Exists)
+                {
+                    Assert.Fail("Expected .zip file not found: " + zipFileToCheck.FullName);
+                }
+
+                using (var archive = ZipFile.OpenRead(zipFileToCheck.FullName))
+                {
+                    var fileCountInZip = archive.Entries.Count;
+
+                    Assert.GreaterOrEqual(fileCountInZip, filesPerYear, "Zip file {0} has fewer than {1} files", zipFileToCheck.FullName, filesPerYear);
+
+                    Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
+                }
+
+            }
+        }
 
         [TestCase("", "TestLogFile", true, "TestLogFile")]
         [TestCase(@"C:\Temp", "TestLogFile", true, @"C:\Temp\TestLogFile")]
@@ -381,6 +479,34 @@ namespace PRISMTest
             var formattedMessage = testMessage.GetFormattedMessage(useLocalTime, timestampFormat);
 
             EvaluateFormattedMessageTimestamp(formattedMessage, expectedFormatString, useLocalTime);
+        }
+
+        private List<FileInfo> CreateLogFiles(DirectoryInfo logDir, DateTime logFileDate, int filesPerYear)
+        {
+            var logFilesCreated = new List<FileInfo>();
+
+            if (!logDir.Exists)
+                logDir.Create();
+
+            for (var i = 0; i < filesPerYear; i++)
+            {
+                var logFilePath = Path.Combine(logDir.FullName, string.Format("{0}_{1:MM-dd-yyyy}.txt", LOGFILE_BASENAME, logFileDate));
+
+                using (var writer = new StreamWriter(new FileStream(logFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                {
+                    writer.WriteLine("Test log file, created {0}", DateTime.Now.ToString(LogMessage.DATE_TIME_FORMAT_YEAR_MONTH_DAY_12H));
+                }
+
+                var logFile = new FileInfo(logFilePath) {
+                    LastWriteTime = logFileDate.AddHours(23)
+                };
+
+                logFilesCreated.Add(logFile);
+
+                logFileDate = logFileDate.AddDays(1);
+            }
+
+            return logFilesCreated;
         }
 
         private void EvaluateFormattedMessageTimestamp(string formattedMessage, string expectedFormatString, bool useLocalTime)
