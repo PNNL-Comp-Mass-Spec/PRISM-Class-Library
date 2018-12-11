@@ -160,7 +160,7 @@ namespace PRISMTest
                     throw new Exception("General exception at depth " + depth);
 
                 case ExceptionTypes.FileNotFound:
-                    throw new FileNotFoundException("FileNotFound exception at depth " + depth, @"C:\NotAFolder\NotAFile.txt");
+                    throw new FileNotFoundException("FileNotFound exception at depth " + depth, @"C:\NotADirectory\NotAFile.txt");
 
                 case ExceptionTypes.MyTestException:
 

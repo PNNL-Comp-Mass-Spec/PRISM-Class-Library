@@ -61,11 +61,11 @@ namespace PRISMTest
         [Test]
         public void TestGetLinuxVersion()
         {
-            var etcFolder = new DirectoryInfo("/etc");
+            var etcDirectory = new DirectoryInfo("/etc");
 
-            if (!etcFolder.Exists)
+            if (!etcDirectory.Exists)
             {
-                Assert.Ignore("/etc directory not found at " + etcFolder.FullName);
+                Assert.Ignore("/etc directory not found at " + etcDirectory.FullName);
             }
 
             var osVersionInfo = new OSVersionInfo();

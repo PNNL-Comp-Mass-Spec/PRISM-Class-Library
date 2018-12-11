@@ -21,9 +21,9 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", logMsgType.logNormal, 20, 50)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", logMsgType.logError, 2, 2000)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log warning", logMsgType.logWarning, 15, 100)]
-        public void TestFileLogger(string logFolder, string logFileNameBase, string message, logMsgType entryType, int logCount, int logDelayMilliseconds)
+        public void TestFileLogger(string logDirectory, string logFileNameBase, string message, logMsgType entryType, int logCount, int logDelayMilliseconds)
         {
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             var logger = new clsFileLogger(logFilePath);
             var randGenerator = new Random();
@@ -55,9 +55,9 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestQueuedLogFile", "Test log message", logMsgType.logNormal, 20, 50)]
         [TestCase(@"C:\Temp", "TestQueuedLogFile", "Test log error", logMsgType.logError, 2, 2000)]
         [TestCase(@"C:\Temp", "TestQueuedLogFile", "Test log warning", logMsgType.logWarning, 15, 330)]
-        public void TestQueueLogger(string logFolder, string logFileNameBase, string message, logMsgType entryType, int logCount, int logDelayMilliseconds)
+        public void TestQueueLogger(string logDirectory, string logFileNameBase, string message, logMsgType entryType, int logCount, int logDelayMilliseconds)
         {
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             var logger = new clsFileLogger(logFilePath);
             var randGenerator = new Random();
@@ -102,24 +102,24 @@ namespace PRISMTest
         [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
         [TestCase(@"Gigasax", "DMS5", "", "")]
         [Category("DatabaseIntegrated")]
-        public void TestDBLoggerIntegrated(string server, string database, string logFolder, string logFileNameBase)
+        public void TestDBLoggerIntegrated(string server, string database, string logDirectory, string logFileNameBase)
         {
-            TestDBLogger(server, database, "Integrated", "", logFolder, logFileNameBase);
+            TestDBLogger(server, database, "Integrated", "", logDirectory, logFileNameBase);
         }
 
         [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
         [TestCase(@"Gigasax", "DMS5", "", "")]
         [Category("DatabaseNamedUser")]
-        public void TestDBLoggerNamedUser(string server, string database, string logFolder, string logFileNameBase)
+        public void TestDBLoggerNamedUser(string server, string database, string logDirectory, string logFileNameBase)
         {
-            TestDBLogger(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD, logFolder, logFileNameBase);
+            TestDBLogger(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD, logDirectory, logFileNameBase);
         }
 
-        private void TestDBLogger(string server, string database, string user, string password, string logFolder, string logFileNameBase)
+        private void TestDBLogger(string server, string database, string user, string password, string logDirectory, string logFileNameBase)
         {
             var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
 
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
             var logger = new clsDBLogger(connectionString, logFilePath);
 
             Console.WriteLine("Calling logger.PostEntry using " + database + " as user " + user);

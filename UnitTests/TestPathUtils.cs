@@ -106,12 +106,15 @@ namespace PRISMTest
         }
 
         [TestCase(@"LinuxTestFiles\Ubuntu\proc\cpuinfo", "*info", "cpuinfo, meminfo", 6)]
-        public void TestFindFilesWildcardRelativeFolder(string filePath, string fileMask, string expectedFileNames, int expectedFileCount)
+        public void TestFindFilesWildcardRelativeDirectory(string filePath, string fileMask, string expectedFileNames, int expectedFileCount)
         {
             // Get the full path to the LinuxTestFiles directory, 3 levels up from the cpuinfo test file
             var cpuInfoFile = FileRefs.GetTestFile(filePath);
 
             var currentDirectory = cpuInfoFile.Directory;
+            if (currentDirectory == null)
+                Assert.Fail("Cannot determine the parent directory of " + cpuInfoFile.FullName);
+
             for (var parentCount = 1; parentCount < 3; parentCount++)
             {
                 var parentCandidate = currentDirectory.Parent;
@@ -218,8 +221,8 @@ namespace PRISMTest
         [TestCase(@"TortoiseGit\bin\", @"TortoiseGit", "bin")]
         [TestCase(@"TortoiseGit", @"", "TortoiseGit")]
         [TestCase(@"TortoiseGit\", @"", "TortoiseGit")]
-        [TestCase(@"\\server\Share\Folder", @"\\server\Share", "Folder")]
-        [TestCase(@"\\server\Share\Folder\", @"\\server\Share", "Folder")]
+        [TestCase(@"\\server\Share\Directory", @"\\server\Share", "Directory")]
+        [TestCase(@"\\server\Share\Directory\", @"\\server\Share", "Directory")]
         [TestCase(@"\\server\Share", @"", "Share")]
         [TestCase(@"\\server\Share\", @"", "Share")]
         [TestCase(@"/etc/fonts/conf.d", @"/etc/fonts", "conf.d")]

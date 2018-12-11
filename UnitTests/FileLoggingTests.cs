@@ -117,7 +117,7 @@ namespace PRISMTest
         [TestCase("", "TestLogFile.log", true, "TestLogFile.log")]
         [TestCase("", "", false, "PRISM_log.txt")]
         public void TestLogFileName(
-            string logFolder,
+            string logDirectory,
             string logFileNameBase,
             bool appendDateToBaseFileName,
             string expectedBaseName)
@@ -127,10 +127,10 @@ namespace PRISMTest
             string logFilePath;
             if (string.IsNullOrWhiteSpace(logFileNameBase))
                 logFilePath = string.Empty;
-            else if (string.IsNullOrWhiteSpace(logFolder))
+            else if (string.IsNullOrWhiteSpace(logDirectory))
                 logFilePath = logFileNameBase;
             else
-                logFilePath = Path.Combine(logFolder, logFileNameBase);
+                logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             var logger = new FileLogger(logFilePath, BaseLogger.LogLevels.INFO, appendDateToBaseFileName);
 
@@ -240,7 +240,7 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile", "Test log warning", BaseLogger.LogLevels.WARN, 15, 100)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test fatal log message", BaseLogger.LogLevels.FATAL, 2, 350)]
         public void TestFileLogger(
-            string logFolder,
+            string logDirectory,
             string logFileNameBase,
             string message,
             BaseLogger.LogLevels entryType,
@@ -249,7 +249,7 @@ namespace PRISMTest
         {
             FileLogger.ResetLogFileName();
 
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             var logger = new FileLogger(logFilePath);
             var randGenerator = new Random();
@@ -316,14 +316,14 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log warning", BaseLogger.LogLevels.WARN, 15, 100)]
         public void TestFileLoggerStatic(
-            string logFolder,
+            string logDirectory,
             string logFileNameBase,
             string message,
             BaseLogger.LogLevels entryType,
             int logCount,
             int logDelayMilliseconds)
         {
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             const bool appendDateToBaseName = true;
             FileLogger.ChangeLogFileBaseName(logFilePath, appendDateToBaseName);
@@ -338,14 +338,14 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log warning", BaseLogger.LogLevels.WARN, 15, 100)]
         public void TestFileLoggerFixedLogFileName(
-            string logFolder,
+            string logDirectory,
             string logFileNameBase,
             string message,
             BaseLogger.LogLevels entryType,
             int logCount,
             int logDelayMilliseconds)
         {
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             const bool appendDateToBaseName = false;
             FileLogger.ChangeLogFileBaseName(logFilePath, appendDateToBaseName);
@@ -360,14 +360,14 @@ namespace PRISMTest
         [TestCase(@"C:\Temp", "TestLogFile.log", "Test log error", BaseLogger.LogLevels.ERROR, 2, 250)]
         [TestCase(@"C:\Temp", "TestLogFile.log", "Test log warning", BaseLogger.LogLevels.WARN, 3, 275)]
         public void TestFileLoggerFixedLogFileNameWithExtension(
-            string logFolder,
+            string logDirectory,
             string logFileNameBase,
             string message,
             BaseLogger.LogLevels entryType,
             int logCount,
             int logDelayMilliseconds)
         {
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             const bool appendDateToBaseName = false;
             FileLogger.ChangeLogFileBaseName(logFilePath, appendDateToBaseName);
@@ -413,9 +413,9 @@ namespace PRISMTest
         [TestCase("Logs", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
         [TestCase("Logs", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.DEBUG)]
         [TestCase("Logs", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.ERROR)]
-        public void TestLogTools(string logFolder, string logFileNameBase, BaseLogger.LogLevels entryType, BaseLogger.LogLevels logThresholdLevel)
+        public void TestLogTools(string logDirectory, string logFileNameBase, BaseLogger.LogLevels entryType, BaseLogger.LogLevels logThresholdLevel)
         {
-            var logFilePath = Path.Combine(logFolder, logFileNameBase);
+            var logFilePath = Path.Combine(logDirectory, logFileNameBase);
 
             LogTools.CreateFileLogger(logFilePath, logThresholdLevel);
             Console.WriteLine("Log file; " + LogTools.CurrentLogFilePath);

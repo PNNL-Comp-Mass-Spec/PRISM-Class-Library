@@ -16,11 +16,11 @@ namespace PRISMTest
 
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
-        public void TestGetCentos6Version(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
+        public void TestGetCentos6Version(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
 
-            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
+            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionDirectoryPath, versionFileName));
 
             var versionText = osVersionInfo.GetFirstLineVersion(versionInfoFile.FullName);
 
@@ -29,11 +29,11 @@ namespace PRISMTest
         }
 
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu 17.04 (Zesty Zapus)")]
-        public void TestGetOSReleaseVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
+        public void TestGetOSReleaseVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
 
-            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
+            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionDirectoryPath, versionFileName));
 
             var versionText = osVersionInfo.GetOSReleaseVersion(versionInfoFile.FullName);
 
@@ -42,11 +42,11 @@ namespace PRISMTest
         }
 
         [TestCase(@"LinuxTestFiles\Solaris\etc", @"release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
-        public void TestGetSolarisVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
+        public void TestGetSolarisVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
 
-            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
+            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionDirectoryPath, versionFileName));
 
             var versionText = osVersionInfo.GetFirstLineVersion(versionInfoFile.FullName);
 
@@ -56,11 +56,11 @@ namespace PRISMTest
 
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"lsb-release", "Ubuntu 17.04")]
         [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
-        public void TestGetUbuntuVersion(string remoteVersionFolderPath, string versionFileName, string expectedVersionTextStart)
+        public void TestGetUbuntuVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
 
-            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionFolderPath, versionFileName));
+            var versionInfoFile = VerifyTestFile(Path.Combine(remoteVersionDirectoryPath, versionFileName));
 
             var versionText = osVersionInfo.GetUbuntuVersion(versionInfoFile.FullName);
 
@@ -72,12 +72,12 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\proc", 16, 2)]
         [TestCase(@"LinuxTestFiles\Cygwin\proc", 4, 1)]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 2, 1)]
-        public void TestGetCoreCount(string sourceProcFolderPath, int expectedCoreCount, int expectedProcessorPackages)
+        public void TestGetCoreCount(string sourceProcDirectoryPath, int expectedCoreCount, int expectedProcessorPackages)
         {
-            var procFolder = ValidateLocalProcFolder();
+            var procDirectory = ValidateLocalProcDirectory();
 
             // Update the cpuinfo file in the local proc directory
-            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
+            CopyCPUInfoFile(procDirectory, sourceProcDirectoryPath);
 
             var linuxSystemInfo = new LinuxSystemInfo();
 
@@ -97,28 +97,28 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 7.408)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "InvalidArgs", -1)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "InvalidProgram", "", -1)]
-        public void TestGetCoreUsageByProcessName(string sourceProcFolderPath, int processID, string processName, string arguments, double expectedCoreUsageTotal)
+        public void TestGetCoreUsageByProcessName(string sourceProcDirectoryPath, int processID, string processName, string arguments, double expectedCoreUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
 
-            var procFolder = ValidateLocalProcFolder();
+            var procDirectory = ValidateLocalProcDirectory();
 
             // Update the cpuinfo file in the local proc directory
-            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
+            CopyCPUInfoFile(procDirectory, sourceProcDirectoryPath);
 
-            // Update the cpu stat file in the local proc directory using sourceProcFolderPath
-            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
-            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
-            var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
+            // Update the cpu stat file in the local proc directory using sourceProcDirectoryPath
+            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\CpuStat1\stat"));
+            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\CpuStat2\stat"));
+            var targetCpuStatFile = CopyCPUStatFile(procDirectory, sourceCpuStatFile1);
 
-            // Update the process stat file in the local proc directory using sourceProcFolderPath
-            var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
-            var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
-            var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
+            // Update the process stat file in the local proc directory using sourceProcDirectoryPath
+            var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\ProcStat1\stat"));
+            var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\ProcStat2\stat"));
+            var targetStatFile = CopyProcessStatFile(procDirectory, processID, sourceStatFile1);
 
-            // Update the process cmdline file in the local proc directory using sourceProcFolderPath
-            var sourceCmdLineFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\cmdline"));
-            var targetCmdLineFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\cmdline"));
+            // Update the process cmdline file in the local proc directory using sourceProcDirectoryPath
+            var sourceCmdLineFile = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\ProcStat1\cmdline"));
+            var targetCmdLineFile = new FileInfo(Path.Combine(procDirectory.FullName, processID + @"\cmdline"));
 
             if (targetCmdLineFile.Exists)
             {
@@ -178,24 +178,24 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 3.841, 24)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 7.408, 46.3)]
-        public void TestGetCoreUsageByProcessID(string sourceProcFolderPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
+        public void TestGetCoreUsageByProcessID(string sourceProcDirectoryPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
 
-            var procFolder = ValidateLocalProcFolder();
+            var procDirectory = ValidateLocalProcDirectory();
 
             // Update the cpuinfo file in the local proc directory
-            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
+            CopyCPUInfoFile(procDirectory, sourceProcDirectoryPath);
 
-            // Update the cpu stat file in the local proc directory using sourceProcFolderPath
-            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
-            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
-            var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
+            // Update the cpu stat file in the local proc directory using sourceProcDirectoryPath
+            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\CpuStat1\stat"));
+            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\CpuStat2\stat"));
+            var targetCpuStatFile = CopyCPUStatFile(procDirectory, sourceCpuStatFile1);
 
-            // Update the process stat file in the local proc directory using sourceProcFolderPath
-            var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat1\stat"));
-            var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\ProcStat2\stat"));
-            var targetStatFile = CopyProcessStatFile(procFolder, processID, sourceStatFile1);
+            // Update the process stat file in the local proc directory using sourceProcDirectoryPath
+            var sourceStatFile1 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\ProcStat1\stat"));
+            var sourceStatFile2 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\ProcStat2\stat"));
+            var targetStatFile = CopyProcessStatFile(procDirectory, processID, sourceStatFile1);
 
             var linuxSystemInfo = new LinuxSystemInfo {
                 TraceEnabled = true
@@ -234,12 +234,12 @@ namespace PRISMTest
 
         }
 
-        private void CopyCPUInfoFile(FileSystemInfo procFolder, string sourceProcFolderPath)
+        private void CopyCPUInfoFile(FileSystemInfo procDirectory, string sourceProcDirectoryPath)
         {
 
-            // Update the cpuinfo file in the local proc directory using sourceProcFolderPath
-            var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, LinuxSystemInfo.CPUINFO_FILE));
-            var targetCpuInfoFile = new FileInfo(Path.Combine(procFolder.FullName, LinuxSystemInfo.CPUINFO_FILE));
+            // Update the cpuinfo file in the local proc directory using sourceProcDirectoryPath
+            var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, LinuxSystemInfo.CPUINFO_FILE));
+            var targetCpuInfoFile = new FileInfo(Path.Combine(procDirectory.FullName, LinuxSystemInfo.CPUINFO_FILE));
 
             if (targetCpuInfoFile.Exists)
             {
@@ -264,9 +264,9 @@ namespace PRISMTest
 
         }
 
-        private FileInfo CopyCPUStatFile(FileSystemInfo procFolder, FileInfo sourceCpuStatFile)
+        private FileInfo CopyCPUStatFile(FileSystemInfo procDirectory, FileInfo sourceCpuStatFile)
         {
-            var targetCpuStatFile = new FileInfo(Path.Combine(procFolder.FullName, @"stat"));
+            var targetCpuStatFile = new FileInfo(Path.Combine(procDirectory.FullName, @"stat"));
 
             if (targetCpuStatFile.Exists)
             {
@@ -287,9 +287,9 @@ namespace PRISMTest
             return targetCpuStatFile;
         }
 
-        private FileInfo CopyProcessStatFile(FileSystemInfo procFolder, int processID, FileInfo sourceStatFile)
+        private FileInfo CopyProcessStatFile(FileSystemInfo procDirectory, int processID, FileInfo sourceStatFile)
         {
-            var targetStatFile = new FileInfo(Path.Combine(procFolder.FullName, processID + @"\stat"));
+            var targetStatFile = new FileInfo(Path.Combine(procDirectory.FullName, processID + @"\stat"));
 
             if (targetStatFile.Exists)
             {
@@ -305,12 +305,12 @@ namespace PRISMTest
 
             try
             {
-                var parentFolder = targetStatFile.Directory;
-                if (parentFolder == null)
+                var parentDirectory = targetStatFile.Directory;
+                if (parentDirectory == null)
                     Assert.Fail("Unable to determine the parent directory of " + targetStatFile.FullName);
 
-                if (!parentFolder.Exists)
-                    parentFolder.Create();
+                if (!parentDirectory.Exists)
+                    parentDirectory.Create();
 
                 sourceStatFile.CopyTo(targetStatFile.FullName, true);
 
@@ -343,19 +343,19 @@ namespace PRISMTest
 
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 24.100)]
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 46.366)]
-        public void TestGetCPUUtilization(string sourceProcFolderPath, int processID, double expectedCpuUsageTotal)
+        public void TestGetCPUUtilization(string sourceProcDirectoryPath, int processID, double expectedCpuUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
 
-            var procFolder = ValidateLocalProcFolder();
+            var procDirectory = ValidateLocalProcDirectory();
 
             // Update the cpuinfo file in the local proc directory
-            CopyCPUInfoFile(procFolder, sourceProcFolderPath);
+            CopyCPUInfoFile(procDirectory, sourceProcDirectoryPath);
 
-            // Update the cpu stat file in the local proc directory using sourceProcFolderPath
-            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat1\stat"));
-            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcFolderPath, processID + @"\CpuStat2\stat"));
-            var targetCpuStatFile = CopyCPUStatFile(procFolder, sourceCpuStatFile1);
+            // Update the cpu stat file in the local proc directory using sourceProcDirectoryPath
+            var sourceCpuStatFile1 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\CpuStat1\stat"));
+            var sourceCpuStatFile2 = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, processID + @"\CpuStat2\stat"));
+            var targetCpuStatFile = CopyCPUStatFile(procDirectory, sourceCpuStatFile1);
 
             var linuxSystemInfo = new LinuxSystemInfo();
 
@@ -389,13 +389,13 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\proc", 42128)]
         [TestCase(@"LinuxTestFiles\Cygwin\proc", 13050)]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 1276)]
-        public void TestGetFreeMemory(string sourceProcFolderPath, float expectedFreeMemoryMB)
+        public void TestGetFreeMemory(string sourceProcDirectoryPath, float expectedFreeMemoryMB)
         {
-            var procFolder = ValidateLocalProcFolder();
+            var procDirectory = ValidateLocalProcDirectory();
 
-            // Update the meminfo file in the local proc directory using sourceProcFolderPath
-            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, LinuxSystemInfo.MEMINFO_FILE));
-            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, LinuxSystemInfo.MEMINFO_FILE));
+            // Update the meminfo file in the local proc directory using sourceProcDirectoryPath
+            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, LinuxSystemInfo.MEMINFO_FILE));
+            var targetMemInfoFile = new FileInfo(Path.Combine(procDirectory.FullName, LinuxSystemInfo.MEMINFO_FILE));
 
             if (targetMemInfoFile.Exists)
             {
@@ -431,13 +431,13 @@ namespace PRISMTest
         [TestCase(@"LinuxTestFiles\Centos6\proc", 64183)]
         [TestCase(@"LinuxTestFiles\Cygwin\proc", 32672)]
         [TestCase(@"LinuxTestFiles\Ubuntu\proc", 3938)]
-        public void TestGetTotalMemory(string sourceProcFolderPath, float expectedTotalMemoryMB)
+        public void TestGetTotalMemory(string sourceProcDirectoryPath, float expectedTotalMemoryMB)
         {
-            var procFolder = ValidateLocalProcFolder();
+            var procDirectory = ValidateLocalProcDirectory();
 
-            // Update the meminfo file in the local proc directory using sourceProcFolderPath
-            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcFolderPath, LinuxSystemInfo.MEMINFO_FILE));
-            var targetMemInfoFile = new FileInfo(Path.Combine(procFolder.FullName, LinuxSystemInfo.MEMINFO_FILE));
+            // Update the meminfo file in the local proc directory using sourceProcDirectoryPath
+            var sourceMemInfoFile = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, LinuxSystemInfo.MEMINFO_FILE));
+            var targetMemInfoFile = new FileInfo(Path.Combine(procDirectory.FullName, LinuxSystemInfo.MEMINFO_FILE));
 
             if (targetMemInfoFile.Exists)
             {
@@ -484,23 +484,23 @@ namespace PRISMTest
 #pragma warning restore 162
         }
 
-        private DirectoryInfo ValidateLocalProcFolder()
+        private DirectoryInfo ValidateLocalProcDirectory()
         {
-            var procFolder = new DirectoryInfo(LinuxSystemInfo.ROOT_PROC_DIRECTORY);
-            if (procFolder.Exists)
-                return procFolder;
+            var procDirectory = new DirectoryInfo(LinuxSystemInfo.ROOT_PROC_DIRECTORY);
+            if (procDirectory.Exists)
+                return procDirectory;
 
             // Proc directory not found; try to make it
             try
             {
-                procFolder.Create();
+                procDirectory.Create();
             }
             catch (Exception)
             {
-                Assert.Ignore("Directory not found, and cannot be created: " + procFolder.FullName);
+                Assert.Ignore("Directory not found, and cannot be created: " + procDirectory.FullName);
             }
 
-            return procFolder;
+            return procDirectory;
         }
 
         #region "Event Handlers"

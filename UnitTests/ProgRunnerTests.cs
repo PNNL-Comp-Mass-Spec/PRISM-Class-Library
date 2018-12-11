@@ -11,7 +11,7 @@ namespace PRISMTest
     class ProgRunnerTests
     {
 #if !(NETCOREAPP2_0)
-        private const string UTILITIES_FOLDER = @"\\proto-2\unitTest_Files\PRISM\Utilities";
+        private const string UTILITIES_DIRECTORY = @"\\proto-2\unitTest_Files\PRISM\Utilities";
 
         /// <summary>
         /// Start long running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
@@ -174,7 +174,7 @@ namespace PRISMTest
         {
             const int MONITOR_INTERVAL_MSEC = 500;
 
-            var utilityExe = new FileInfo(Path.Combine(UTILITIES_FOLDER, exeName));
+            var utilityExe = new FileInfo(Path.Combine(UTILITIES_DIRECTORY, exeName));
             if (!utilityExe.Exists)
             {
                 Assert.Fail("Exe not found: " + utilityExe.FullName);
@@ -183,9 +183,9 @@ namespace PRISMTest
             var processStats = new PRISMWin.ProcessStats();
 
             var workDir = @"C:\Temp";
-            var tempFolder = new DirectoryInfo(workDir);
-            if (!tempFolder.Exists)
-                tempFolder.Create();
+            var tempDir = new DirectoryInfo(workDir);
+            if (!tempDir.Exists)
+                tempDir.Create();
 
             var coreCount = processStats.GetCoreCount();
             Console.WriteLine("Machine has {0} cores", coreCount);
