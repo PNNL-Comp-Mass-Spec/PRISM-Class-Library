@@ -8,7 +8,7 @@ using PRISM.Logging;
 namespace PRISM
 {
     /// <summary>
-    /// Makes using a file archiving program easier.
+    /// Routines for calling an external zipping program like 7-zip.exe
     /// </summary>
     /// <remarks>There are a routines to create an archive, extract files from an existing archive,
     /// and to verify an existing archive.
