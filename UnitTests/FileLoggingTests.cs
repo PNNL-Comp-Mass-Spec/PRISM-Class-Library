@@ -80,6 +80,7 @@ namespace PRISMTest
             }
 
             FileLogger.ChangeLogFileBaseName(Path.Combine(logDirectory, LOGFILE_BASENAME));
+            FileLogger.ZipOldLogDirectories = true;
 
             System.Threading.Thread.Sleep(1000);
 
@@ -104,8 +105,9 @@ namespace PRISMTest
 
                     Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
                 }
-
             }
+
+            FileLogger.FlushPendingMessages();
         }
 
         [TestCase("", "TestLogFile", true, "TestLogFile")]
