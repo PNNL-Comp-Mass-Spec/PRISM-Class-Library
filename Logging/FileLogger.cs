@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -41,6 +42,11 @@ namespace PRISM.Logging
         public const string LOG_FILE_EXTENSION = ".txt";
 
         private const int OLD_LOG_FILE_AGE_THRESHOLD_DAYS = 32;
+
+        /// <summary>
+        /// Directories with old log files (typically named by year) will be zipped this many days after January 1
+        /// </summary>
+        private const int OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS = 90;
 
         #endregion
 
@@ -170,6 +176,11 @@ namespace PRISM.Logging
         /// <remarks>Defaults to 5; minimum value is 1</remarks>
         public static int MaxRolledLogFiles { get; set; } = DEFAULT_MAX_ROLLED_LOG_FILES;
 
+        /// <summary>
+        /// When true, ArchiveOldLogFilesNow will also zip subdirectories with old log files
+        /// </summary>
+        public static bool ZipOldLogDirectories { get; set; } = true;
+
         #endregion
 
         /// <summary>
@@ -227,6 +238,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
+        /// <remarks>
+        /// LogQueuedMessages calls this method every 24 hours
+        /// </remarks>
         public static void ArchiveOldLogFilesNow()
         {
             ArchiveOldLogFilesNow(LogFilePath);
@@ -267,7 +281,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
-        /// <param name="logDirectory"></param>
+        /// <param name="logDirectory">Path to the directory with log files</param>
         /// <param name="logFileMatchSpec">Wildcards to use to find date-based log files, for example ??-??-????</param>
         /// <param name="logFileExtension">Log file extension, for example .txt</param>
         /// <param name="logFileDateRegEx">
@@ -280,7 +294,7 @@ namespace PRISM.Logging
         /// <remarks>
         /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named *_??-??-????.txt
         /// </remarks>
-        public static List<string> ArchiveOldLogs(
+        public static IEnumerable<string> ArchiveOldLogs(
             DirectoryInfo logDirectory,
             string logFileMatchSpec,
             string logFileExtension,
@@ -389,6 +403,13 @@ namespace PRISM.Logging
                     {
                         archiveWarnings.Add("Error moving old log file to " + targetFile.FullName + ": " + ex2.Message);
                     }
+                }
+
+                if (ZipOldLogDirectories)
+                {
+                    var zipWarnings = ZipOldLogSubdirectories(logDirectory);
+                    archiveWarnings.AddRange(zipWarnings);
+
                 }
             }
             catch (Exception ex)
@@ -792,6 +813,104 @@ namespace PRISM.Logging
             {
                 LogQueuedMessages();
             }
+        }
+
+        /// <summary>
+        /// Zip subdirectories with old log files
+        /// </summary>
+        /// <param name="logDirectory">Path to the directory with log files</param>
+        /// <returns>List of warning messages</returns>
+        private static IEnumerable<string> ZipOldLogSubdirectories(DirectoryInfo logDirectory)
+        {
+            var yearMatcher = new Regex(@"^\d{4,}$", RegexOptions.Compiled);
+
+            var zipWarnings = new List<string>();
+
+            try
+            {
+                var subDirectories = logDirectory.GetDirectories();
+
+                var dateThresholdForZippingPreviousYearFiles = new DateTime(DateTime.Now.Year, 1, 1).AddDays(OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS);
+
+                foreach (var subDir in subDirectories)
+                {
+                    if (!yearMatcher.IsMatch(subDir.Name))
+                        continue;
+
+                    if (!int.TryParse(subDir.Name, out var subDirYear))
+                        continue;
+
+                    if (subDirYear == DateTime.Now.Year ||
+                        subDirYear == DateTime.Now.Year - 1 && DateTime.Now < dateThresholdForZippingPreviousYearFiles)
+                        continue;
+
+                    // The directory is old enough; zip all of the files
+
+                    var zipFile = new FileInfo(Path.Combine(logDirectory.FullName, subDir.Name + ".zip"));
+                    if (zipFile.Exists)
+                    {
+                        zipWarnings.Add(string.Format(
+                                            "Not compressing old log directory {0} since the Zip file already exists at {1}",
+                                            subDir.Name, zipFile.FullName));
+                        continue;
+                    }
+
+                    try
+                    {
+                        ZipFile.CreateFromDirectory(subDir.FullName, zipFile.FullName);
+                    }
+                    catch (Exception ex2)
+                    {
+                        zipWarnings.Add(string.Format("Error creating zip file {0}: {1}", zipFile.FullName, ex2.Message));
+                        continue;
+                    }
+
+                    try
+                    {
+                        // Delete the files and the subdirectory
+                        // While doing this, determine the date of the newest file
+                        var newestLastWriteTime = DateTime.MinValue;
+
+                        foreach (var oldLogFile in subDir.GetFiles())
+                        {
+                            if (oldLogFile.LastWriteTime > newestLastWriteTime)
+                                newestLastWriteTime = oldLogFile.LastWriteTime;
+
+                            oldLogFile.Delete();
+                        }
+
+                        if (newestLastWriteTime > DateTime.MinValue)
+                        {
+                            // Update the date of the zip file to newestLastWriteTime
+                            zipFile.Refresh();
+                            zipFile.LastWriteTime = newestLastWriteTime;
+                        }
+
+                    }
+                    catch (Exception ex2)
+                    {
+                        zipWarnings.Add("Error deleting old log file after successfully creating the zip file: " + ex2.Message);
+                        continue;
+                    }
+
+                    try
+                    {
+                        if (subDir.GetFiles("*", SearchOption.AllDirectories).Length == 0)
+                            subDir.Delete();
+                    }
+                    catch (Exception ex2)
+                    {
+                        zipWarnings.Add(string.Format("Error removing empty subdirectory {0}: {1}", subDir.FullName, ex2.Message));
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                zipWarnings.Add("Error zipping subdirectory with old log files: " + ex.Message);
+            }
+
+            return zipWarnings;
         }
 
         #region "Message logging methods"
