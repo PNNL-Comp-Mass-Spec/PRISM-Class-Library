@@ -8,23 +8,21 @@ namespace PRISMTest
     class DatabaseLoggingTests
     {
 
-        [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
-        [TestCase(@"Gigasax", "DMS5", "", "")]
+        [TestCase(@"Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
-        public void TestDBLoggerIntegrated(string server, string database, string logFolder, string logFileNameBase)
+        public void TestDBLoggerIntegrated(string server, string database)
         {
-            TestDBLogger(server, database, "Integrated", "", logFolder, logFileNameBase);
+            TestDBLogger(server, database, "Integrated", "");
         }
 
-        [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
-        [TestCase(@"Gigasax", "DMS5", "", "")]
+        [TestCase(@"Gigasax", "DMS5")]
         [Category("DatabaseNamedUser")]
-        public void TestDBLoggerNamedUser(string server, string database, string logFolder, string logFileNameBase)
+        public void TestDBLoggerNamedUser(string server, string database)
         {
-            TestDBLogger(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD, logFolder, logFileNameBase);
+            TestDBLogger(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
         }
 
-        private void TestDBLogger(string server, string database, string user, string password, string logFolder, string logFileNameBase)
+        private void TestDBLogger(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
 
