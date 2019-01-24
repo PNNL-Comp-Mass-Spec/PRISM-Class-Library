@@ -6,7 +6,7 @@
     <AssemblyName>PRISM</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>PRISM-Library</PackageId>
-    <Version>2.5.10</Version>
+    <Version>2.5.11</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <Description>Library of functions used by software applications that automate tasks in the Proteomics Research Information and Management System (PRISM) at Pacific Northwest National Laboratory.</Description>
@@ -88,7 +88,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='net45' OR '$(TargetFramework)'=='net462'">
-    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Management" />
   </ItemGroup>
 
