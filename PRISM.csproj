@@ -16,7 +16,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <PackageLicenseUrl>https://opensource.org/licenses/ECL-2.0</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</PackageProjectUrl>
   </PropertyGroup>
 
