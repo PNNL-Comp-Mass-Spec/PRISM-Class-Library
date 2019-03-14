@@ -1,5 +1,17 @@
 Prism Class Library Log
 
+Version 2.5.12; March 13, 2019
+	- Add StringSimilarityTool class
+
+Version 2.5.11; January 23, 2019
+	- Use the non-NETStandard package reference for the NET 4.5/4.6.2 builds
+
+Version 2.5.10; December 10, 2018
+	- Add functionality to FileLogger for zipping all of the log files in the subdirectory of a prior year, 90 days after the prior year ends.
+
+Version 2.5.5; October 17, 2018
+	- Add ShowTrace to BaseLogger
+
 Version 2.5.4; October 15, 2018
 	- Rename eMessageTypeConstants to MessageTypeConstants
 
