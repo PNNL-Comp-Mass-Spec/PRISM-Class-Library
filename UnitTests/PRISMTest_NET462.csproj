@@ -53,6 +53,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StackTraceFormatterTests.cs" />
     <Compile Include="StoredProcedureTests.cs" />
+    <Compile Include="StringSimilarityTests.cs" />
     <Compile Include="TestDBTools.cs" />
     <Compile Include="TestEvents.cs" />
     <Compile Include="TestFileCopyInfo.cs" />
