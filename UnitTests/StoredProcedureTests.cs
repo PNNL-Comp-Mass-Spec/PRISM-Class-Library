@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using NUnit.Framework;
@@ -48,8 +47,7 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            List<List<string>> lstResults;
-            var returnCode = dbTools.ExecuteSP(spCmd, out lstResults);
+            var returnCode = dbTools.ExecuteSP(spCmd, out var lstResults);
 
             Assert.AreEqual(returnCode, 0, spCmd.CommandText + "Procedure did not return 0");
 
@@ -111,8 +109,7 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            List<List<string>> lstResults;
-            var returnCode = dbTools.ExecuteSP(spCmd, out lstResults);
+            var returnCode = dbTools.ExecuteSP(spCmd, out var lstResults);
 
             Assert.AreEqual(returnCode, 0, spCmd.CommandText + "Procedure did not return 0");
 
