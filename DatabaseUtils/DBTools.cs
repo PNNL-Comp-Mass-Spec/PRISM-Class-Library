@@ -71,6 +71,91 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Converts an database field value to a string, checking for null values
+        /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
+        /// </summary>
+        /// <param name="dbValue">Value from database</param>
+        /// <returns>If dbValue is DBNull, returns "", otherwise returns the string representation of dbValue</returns>
+        /// <remarks></remarks>
+        public static string GetString(object dbValue)
+        {
+            if (ReferenceEquals(dbValue, DBNull.Value))
+            {
+                return string.Empty;
+            }
+
+            return Convert.ToString(dbValue);
+        }
+
+        /// <summary>
+        /// Converts an database field value to a float (single), checking for null values
+        /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
+        /// </summary>
+        /// <param name="dbValue">Value from database</param>
+        /// <returns>If dbValue is DBNull, returns 0.0, otherwise returns the string representation of dbValue</returns>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
+        public static float GetFloat(object dbValue)
+        {
+            if (ReferenceEquals(dbValue, DBNull.Value))
+            {
+                return (float)0.0;
+            }
+
+            return Convert.ToSingle(dbValue);
+        }
+
+        /// <summary>
+        /// Converts an database field value to a double, checking for null values
+        /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
+        /// </summary>
+        /// <param name="dbValue">Value from database</param>
+        /// <returns>If dbValue is DBNull, returns 0.0, otherwise returns the string representation of dbValue</returns>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
+        public static double GetDouble(object dbValue)
+        {
+            if (ReferenceEquals(dbValue, DBNull.Value))
+            {
+                return 0.0;
+            }
+
+            return Convert.ToDouble(dbValue);
+        }
+
+        /// <summary>
+        /// Converts an database field value to an integer (Int32), checking for null values
+        /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
+        /// </summary>
+        /// <param name="dbValue">Value from database</param>
+        /// <returns>If dbValue is DBNull, returns 0, otherwise returns the string representation of dbValue</returns>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
+        public static int GetInteger(object dbValue)
+        {
+            if (ReferenceEquals(dbValue, DBNull.Value))
+            {
+                return 0;
+            }
+
+            return Convert.ToInt32(dbValue);
+        }
+
+        /// <summary>
+        /// Converts an database field value to a long integer (Int64), checking for null values
+        /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
+        /// </summary>
+        /// <param name="dbValue">Value from database</param>
+        /// <returns>If dbValue is DBNull, returns 0, otherwise returns the string representation of dbValue</returns>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
+        public static long GetLong(object dbValue)
+        {
+            if (ReferenceEquals(dbValue, DBNull.Value))
+            {
+                return 0;
+            }
+
+            return Convert.ToInt64(dbValue);
+        }
+
+        /// <summary>
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
         /// <param name="columns"></param>
