@@ -135,6 +135,8 @@ namespace PRISMWin
 
         }
 
+#endif
+
         /// <summary>
         /// Detects when the user uses the control key while typing in a TextBox
         /// Ctrl+A will highlight the entire text box
@@ -387,7 +389,5 @@ namespace PRISMWin
         }
 
     }
-
-#endif
 
 }
