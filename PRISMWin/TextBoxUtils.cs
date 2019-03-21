@@ -152,40 +152,39 @@ namespace PRISMWin
             System.Windows.Forms.KeyPressEventArgs e,
             bool allowCutCopyPaste = true)
         {
-            if (char.IsControl(e.KeyChar))
+            if (!char.IsControl(e.KeyChar)) return;
+
+            switch (Convert.ToInt32(e.KeyChar))
             {
-                switch (Convert.ToInt32(e.KeyChar))
-                {
-                    case 1:
-                        //  Ctrl+A -- Highlight entire text box
-                        thisTextBox.SelectionStart = 0;
-                        thisTextBox.SelectionLength = thisTextBox.TextLength;
+                case 1:
+                    //  Ctrl+A -- Highlight entire text box
+                    thisTextBox.SelectionStart = 0;
+                    thisTextBox.SelectionLength = thisTextBox.TextLength;
+                    e.Handled = true;
+                    break;
+
+                case 24:
+                case 3:
+                case 22:
+                    //  Ctrl+X, Ctrl+C, Ctrl+V
+                    //  Cut, copy, or paste, was pressed; possibly suppress
+                    if (!allowCutCopyPaste)
+                    {
                         e.Handled = true;
-                        break;
+                    }
+                    break;
 
-                    case 24:
-                    case 3:
-                    case 22:
-                        //  Ctrl+X, Ctrl+C, Ctrl+V
-                        //  Cut, copy, or paste, was pressed; possibly suppress
-                        if (!allowCutCopyPaste)
-                        {
-                            e.Handled = true;
-                        }
-                        break;
+                case 26:
+                    //  Ctrl+Z = Undo; allow .NET to handle this
+                    break;
 
-                    case 26:
-                        //  Ctrl+Z = Undo; allow VB.NET to handle this
-                        break;
+                case 8:
+                    //  Backspace is allowed
+                    break;
 
-                    case 8:
-                        //  Backspace is allowed
-                        break;
-
-                    default:
-                        e.Handled = true;
-                        break;
-                }
+                default:
+                    e.Handled = true;
+                    break;
             }
 
         }
