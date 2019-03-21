@@ -30,9 +30,9 @@ namespace PRISMWin
         /// <summary>
         /// Look for a integer value in a TextBox
         /// </summary>
-        /// <param name="thisTextBox"></param>
-        /// <param name="messageIfError"></param>
-        /// <param name="isError"></param>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="messageIfError">Message to show the user if an error and informOnError is true</param>
+        /// <param name="isError">Output: true if an error</param>
         /// <param name="valueIfError">Value to return if not an integer</param>
         /// <param name="informOnError">When true, show a MessageBox if an error</param>
         /// <returns></returns>
@@ -66,9 +66,9 @@ namespace PRISMWin
         /// <summary>
         /// Look for a float value in a TextBox
         /// </summary>
-        /// <param name="thisTextBox"></param>
-        /// <param name="messageIfError"></param>
-        /// <param name="isError"></param>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="messageIfError">Message to show the user if an error and informOnError is true</param>
+        /// <param name="isError">Output: true if an error</param>
         /// <param name="valueIfError">Value to return if not a float</param>
         /// <param name="informOnError">When true, show a MessageBox if an error</param>
         /// <returns></returns>
@@ -102,9 +102,9 @@ namespace PRISMWin
         /// <summary>
         /// Look for a double value in a TextBox
         /// </summary>
-        /// <param name="thisTextBox"></param>
-        /// <param name="messageIfError"></param>
-        /// <param name="isError"></param>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="messageIfError">Message to show the user if an error and informOnError is true</param>
+        /// <param name="isError">Output: true if an error</param>
         /// <param name="valueIfError">Value to return if not a double</param>
         /// <param name="informOnError">When true, show a MessageBox if an error</param>
         /// <returns></returns>
@@ -135,6 +135,16 @@ namespace PRISMWin
 
         }
 
+        /// <summary>
+        /// Detects when the user uses the control key while typing in a TextBox
+        /// Ctrl+A will highlight the entire text box
+        /// Ctrl+X, Ctrl+C, and Ctrl+V are blocked if allowCutCopyPaste is False
+        /// Ctrl+Z and Ctrl+backspace are allowed
+        /// All other key combos are blocked
+        /// </summary>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="e">Keypress event arg</param>
+        /// <param name="allowCutCopyPaste">True to allow Ctrl+X, Ctrl+C, and Ctrl+V</param>
         public static void TextBoxKeyPressHandlerCheckControlChars(
             System.Windows.Forms.TextBox thisTextBox,
             System.Windows.Forms.KeyPressEventArgs e,
@@ -178,6 +188,23 @@ namespace PRISMWin
 
         }
 
+        /// <summary>
+        /// Used to examine every keystroke entered into a TextBox and optionally block certain character classes
+        /// </summary>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="e">Keypress event arg</param>
+        /// <param name="allowNumbers">True to allow 0-9, false to block them</param>
+        /// <param name="allowDecimalPoint">True to allow .</param>
+        /// <param name="allowNegativeSign">True to allow -</param>
+        /// <param name="allowCharacters">True to allow A-Z and a-z</param>
+        /// <param name="allowPlusSign">True to allow +</param>
+        /// <param name="allowUnderscore">True to allow _</param>
+        /// <param name="allowDollarSign">True to allow $</param>
+        /// <param name="allowEmailChars">True to allow @</param>
+        /// <param name="allowSpaces">True to allow a space</param>
+        /// <param name="allowECharacter">True to allow E (used for numbers like 1.83E-4</param>
+        /// <param name="allowCutCopyPaste">True to allow Ctrl+X, Ctrl+C, and Ctrl+V</param>
+        /// <param name="allowDateSeparatorChars">True to allow - or /</param>
         public static void TextBoxKeyPressHandler(
             System.Windows.Forms.TextBox thisTextBox,
             System.Windows.Forms.KeyPressEventArgs e,
@@ -294,6 +321,13 @@ namespace PRISMWin
             }
         }
 
+        /// <summary>
+        /// Examines the value in a TextBox to assure that it is an integer and is within the specified range
+        /// </summary>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="minimum">Minimum allowed integer</param>
+        /// <param name="maximum">Maximum allowed integer</param>
+        /// <param name="defaultValue"></param>
         public static void ValidateTextBoxInt(System.Windows.Forms.TextBox thisTextBox, int minimum, int maximum, int defaultValue)
         {
             if (IsNumber(thisTextBox.Text))
@@ -320,6 +354,13 @@ namespace PRISMWin
 
         }
 
+        /// <summary>
+        /// Examines the value in a TextBox to assure that it is a float and is within the specified range
+        /// </summary>
+        /// <param name="thisTextBox">TextBox</param>
+        /// <param name="minimum">Minimum allowed float</param>
+        /// <param name="maximum">Maximum allowed float</param>
+        /// <param name="defaultValue"></param>
         public static void ValidateTextBoxFloat(System.Windows.Forms.TextBox thisTextBox, float minimum, float maximum, float defaultValue)
         {
             if (IsNumber(thisTextBox.Text))

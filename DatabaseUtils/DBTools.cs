@@ -181,7 +181,7 @@ namespace PRISM
         /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
         /// <param name="columnName">Column Name</param>
         /// <returns>String value</returns>
-        /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.empty</remarks>
+        /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty</remarks>
         public string GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
@@ -351,12 +351,12 @@ namespace PRISM
 
 #if !(NETSTANDARD2_0)
         /// <summary>
-        /// The function gets a disconnected dataset as specified by the SQL statement.
+        /// The function gets a disconnected DataSet as specified by the SQL statement.
         /// </summary>
         /// <param name="sqlQuery">A SQL string.</param>
-        /// <param name="DS">A dataset.</param>
+        /// <param name="DS">A DataSet.</param>
         /// <param name="rowCount">A row counter.</param>
-        /// <return>Returns a disconnected dataset as specified by the SQL statement.</return>
+        /// <return>Returns a disconnected DataSet as specified by the SQL statement.</return>
         [Obsolete("Use GetQueryResults since support for DataSet objects is dropped in .NET Standard")]
         public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
@@ -371,7 +371,7 @@ namespace PRISM
                     {
                         dbConnection.InfoMessage += OnInfoMessage;
 
-                        // Get the dataset
+                        // Get the DataSet
                         var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
                         DS = new DataSet();
                         rowCount = adapter.Fill(DS);
