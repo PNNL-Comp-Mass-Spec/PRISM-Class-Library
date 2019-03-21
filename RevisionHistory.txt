@@ -1,5 +1,10 @@
 Prism Class Library Log
 
+Version 2.5.14; March 21, 2019
+	- Add GetValue methods to the DBTools class
+	- Add class StringToValueUtils to PRISM.dll
+	- Add class TextBoxUtils to PRISMWin.dll
+
 Version 2.5.12; March 13, 2019
 	- Add StringSimilarityTool class
 
