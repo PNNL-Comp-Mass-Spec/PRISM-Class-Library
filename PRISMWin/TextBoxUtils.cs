@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace PRISMWin
 {
+    /// <summary>
+    /// Methods for reading or validating data in a TextBox
+    /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class TextBoxUtils
     {
