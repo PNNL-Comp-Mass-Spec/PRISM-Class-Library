@@ -209,10 +209,18 @@ namespace PRISMWin
         public static void TextBoxKeyPressHandler(
             System.Windows.Forms.TextBox thisTextBox,
             System.Windows.Forms.KeyPressEventArgs e,
-            bool allowNumbers = true, bool allowDecimalPoint = false, bool allowNegativeSign = false, bool allowCharacters = false,
-            bool allowPlusSign = false, bool allowUnderscore = false, bool allowDollarSign = false, bool allowEmailChars = false,
+            bool allowNumbers = true,
+            bool allowDecimalPoint = false,
+            bool allowNegativeSign = false,
+            bool allowCharacters = false,
+            bool allowPlusSign = false,
+            bool allowUnderscore = false,
+            bool allowDollarSign = false,
+            bool allowEmailChars = false,
             bool allowSpaces = false,
-            bool allowECharacter = false, bool allowCutCopyPaste = true, bool allowDateSeparatorChars = false
+            bool allowECharacter = false,
+            bool allowCutCopyPaste = true,
+            bool allowDateSeparatorChars = false
         )
         {
             //  Checks e.KeyChar to see if it's valid
@@ -230,8 +238,7 @@ namespace PRISMWin
             {
                 if (allowCharacters) return;
 
-                if (allowECharacter
-                    && char.ToLower(e.KeyChar) == 'e')
+                if (allowECharacter && char.ToLower(e.KeyChar) == 'e')
                 {
                     //  allow character
                 }
