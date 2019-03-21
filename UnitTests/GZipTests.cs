@@ -195,22 +195,22 @@ namespace PRISMTest
             {
                 PRISM.FileTools.GZipDecompressWithMetadata(compressedFile, tempDirectoryPath);
                 roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
-                MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".withmetadata");
+                MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".WithMetadata");
 
                 var roundRobinFilenameNoMeta = Path.GetFileNameWithoutExtension(fileToCompress.Name) + "_RoundRobinNoMeta" + Path.GetExtension(fileToCompress.Name);
                 PRISM.FileTools.GZipDecompress(compressedFile, tempDirectoryPath, roundRobinFilenameNoMeta);
                 roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, roundRobinFilenameNoMeta));
-                MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".nometadata");
+                MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".NoMetadata");
             }
             else
             {
                 PRISM.FileTools.GZipDecompressWithMetadata(compressedFile);
                 roundRobinFileWithMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
-                MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".withmetadata");
+                MoveFile(roundRobinFileWithMeta, roundRobinFileWithMeta.FullName + ".WithMetadata");
 
                 PRISM.FileTools.GZipDecompress(compressedFile, tempDirectoryPath);
                 roundRobinFileNoMeta = new FileInfo(Path.Combine(tempDirectoryPath, fileToCompress.Name));
-                MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".nometadata");
+                MoveFile(roundRobinFileNoMeta, roundRobinFileNoMeta.FullName + ".NoMetadata");
             }
 
             if (!roundRobinFileWithMeta.Exists)
