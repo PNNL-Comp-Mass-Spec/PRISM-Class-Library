@@ -5,7 +5,7 @@ using System.Globalization;
 namespace PRISMWin
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    class TextBoxUtils
+    public class TextBoxUtils
     {
 
         /// <summary>

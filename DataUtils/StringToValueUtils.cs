@@ -7,7 +7,7 @@ namespace PRISM.DataUtils
     /// Utilities for parsing values from strings
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    class StringToValueUtils
+    public class StringToValueUtils
     {
 
         /// <summary>
