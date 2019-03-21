@@ -50,6 +50,7 @@
     <Compile Include="AppSettings\MgrSettings.cs" />
     <Compile Include="AppSettings\XMLFileReader.cs" />
     <Compile Include="AppSettings\XmlSettingsFileAccessor.cs" />
+    <Compile Include="DatabaseUtils\DataTableUtils.cs" />
     <Compile Include="DatabaseUtils\DBTools.cs" />
     <Compile Include="DatabaseUtils\ExecuteDatabaseSP.cs" />
     <Compile Include="DataUtils\StringToValueUtils.cs" />
