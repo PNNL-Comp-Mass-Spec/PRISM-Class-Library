@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataGridUtils.cs" />
     <Compile Include="DiskInfo.cs" />
     <Compile Include="DotNETVersionChecker.cs" />
     <Compile Include="LegacyClassWrappers.cs" />
