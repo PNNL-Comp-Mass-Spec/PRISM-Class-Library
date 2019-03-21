@@ -52,6 +52,7 @@
     <Compile Include="AppSettings\XmlSettingsFileAccessor.cs" />
     <Compile Include="DatabaseUtils\DBTools.cs" />
     <Compile Include="DatabaseUtils\ExecuteDatabaseSP.cs" />
+    <Compile Include="DataUtils\StringToValueUtils.cs" />
     <Compile Include="FileProcessor\ProcessFilesBase.cs" />
     <Compile Include="FileProcessor\ProcessFilesOrDirectoriesBase.cs" />
     <Compile Include="FileProcessor\ProcessDirectoriesBase.cs" />
