@@ -51,6 +51,11 @@ namespace PRISM
             private readonly List<Thread> producerThreads = new List<Thread>();
 
             /// <summary>
+            /// Count of threads that have exited
+            /// </summary>
+            private int threadsDone = 0;
+
+            /// <summary>
             /// Cancellation token to support early cancellation
             /// </summary>
             private readonly CancellationToken cancelToken;
@@ -63,10 +68,23 @@ namespace PRISM
             {
                 Tuple<bool, TResult> item;
 
-                // while we get an item with a boolean value of true, return the result
-                while ((item = TryConsume().Result).Item1)
+                while (!buffer.IsCompleted)
                 {
-                    yield return item.Item2;
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    // while we get an item with a boolean value of true, return the result
+                    while ((item = TryConsume().Result).Item1)
+                    {
+                        yield return item.Item2;
+                    }
+
+                    if (!buffer.IsCompleted)
+                    {
+                        Thread.Sleep(200);
+                    }
                 }
             }
 
@@ -121,6 +139,7 @@ namespace PRISM
             private void ThreadMonitorCheck(object sender)
             {
                 var done = true;
+
                 foreach (var thread in producerThreads)
                 {
                     if (thread.IsAlive)
@@ -131,11 +150,21 @@ namespace PRISM
                     }
                 }
 
+                if (threadsDone < producerThreads.Count)
+                {
+                    done = false;
+                }
+
                 if (done)
                 {
+                    threadMonitor?.Dispose();
+                    foreach (var thread in producerThreads)
+                    {
+                        thread.Join();
+                    }
+
                     // Report no more items
                     buffer.Complete();
-                    threadMonitor?.Dispose();
                 }
             }
 
@@ -180,6 +209,8 @@ namespace PRISM
                         Console.WriteLine("ERROR: Producer.SendAsync() failed to add item to processing queue!!!");
                     }
                 }
+
+                Interlocked.Increment(ref threadsDone);
             }
 
             /// <summary>
@@ -232,6 +263,8 @@ namespace PRISM
                 private bool complete = false;
 
                 public int BoundedCapacity { get; }
+
+                public bool IsCompleted => complete;
 
                 public BufferQueue(int boundedCapacity = -1)
                 {
