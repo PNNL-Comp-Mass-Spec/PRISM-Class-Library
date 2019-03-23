@@ -118,7 +118,9 @@ namespace PRISM
 
                 for (var i = 0; i < numThreads; i++)
                 {
-                    var thread = new Thread(() => Producer(enumerator, processFunction, enumeratorLock));
+                    // A 'threadId' for debugging purposes
+                    var threadId = i;
+                    var thread = new Thread(() => Producer(enumerator, processFunction, enumeratorLock, threadId));
                     producerThreads.Add(thread);
                     thread.Start();
                 }
@@ -150,7 +152,7 @@ namespace PRISM
                     }
                 }
 
-                if (threadsDone < producerThreads.Count)
+                if (threadsDone < producerThreads.Count && !buffer.IsCompleted)
                 {
                     done = false;
                 }
@@ -174,43 +176,52 @@ namespace PRISM
             /// <param name="sourceEnumerator"></param>
             /// <param name="processFunction"></param>
             /// <param name="accessLock"></param>
-            private async void Producer(IEnumerator<T> sourceEnumerator, Func<T, TResult> processFunction, object accessLock)
+            /// <param name="threadId">A 'threadID' for debugging purposes</param>
+            private async void Producer(IEnumerator<T> sourceEnumerator, Func<T, TResult> processFunction, object accessLock, int threadId)
             {
-                while (true)
+                try
                 {
-                    if (cancelToken.IsCancellationRequested)
+                    while (true)
                     {
-                        return;
-                    }
-
-                    await preprocessedLimiter.WaitAsync(cancelToken); // check the preprocessing limit, wait until there is another "space" available
-                    T item;
-                    // read one item. lock required because we have no guarantees on the thread-safety of the enumerator
-                    lock (accessLock)
-                    {
-                        if (!sourceEnumerator.MoveNext())
+                        if (cancelToken.IsCancellationRequested)
                         {
-                            break;
+                            return;
                         }
 
-                        item = sourceEnumerator.Current;
-                    }
+                        await preprocessedLimiter
+                            .WaitAsync(
+                                cancelToken); // check the preprocessing limit, wait until there is another "space" available
+                        T item;
+                        // read one item. lock required because we have no guarantees on the thread-safety of the enumerator
+                        lock (accessLock)
+                        {
+                            if (!sourceEnumerator.MoveNext())
+                            {
+                                preprocessedLimiter.Release(1); // Release the one we used
+                                break;
+                            }
 
-                    // Run the process function on the item from the enumerator
-                    var processed = processFunction(item);
+                            item = sourceEnumerator.Current;
+                        }
 
-                    // synchronously attempt to add an item to the target block; this will fail if we've hit the upper bound limit of the target block
-                    //buffer.Post(processed);
+                        // Run the process function on the item from the enumerator
+                        var processed = processFunction(item);
 
-                    // asynchronously attempt to add an item to the target block; this will wait if we've hit the upper bound limit of the target block
-                    var result = await buffer.SendAsync(processed, cancelToken);
-                    if (!result)
-                    {
-                        Console.WriteLine("ERROR: Producer.SendAsync() failed to add item to processing queue!!!");
+                        // synchronously attempt to add an item to the target block; this will fail if we've hit the upper bound limit of the target block
+                        //buffer.Post(processed);
+
+                        // asynchronously attempt to add an item to the target block; this will wait if we've hit the upper bound limit of the target block
+                        var result = await buffer.SendAsync(processed, cancelToken);
+                        if (!result)
+                        {
+                            Console.WriteLine("ERROR: Producer.SendAsync() failed to add item to processing queue!!!");
+                        }
                     }
                 }
-
-                Interlocked.Increment(ref threadsDone);
+                finally
+                {
+                    Interlocked.Increment(ref threadsDone);
+                }
             }
 
             /// <summary>
@@ -232,7 +243,7 @@ namespace PRISM
                     maxPreprocessed = maxThreads;
                 }
 
-                preprocessedLimiter = new SemaphoreSlim(maxPreprocessed - 1, maxPreprocessed - 1);
+                preprocessedLimiter = new SemaphoreSlim(maxPreprocessed, maxPreprocessed);
 
                 buffer = new BufferQueue<TResult>(maxPreprocessed + 1);
 

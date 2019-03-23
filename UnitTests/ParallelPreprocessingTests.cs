@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using PRISM;
@@ -20,7 +21,10 @@ namespace PRISMTest
             //var items = Enumerable.Range(0, totalTasks).Select(async x => // non-parallel
             var items = Enumerable.Range(0, totalTasks).ParallelPreprocess(async x =>
             {
-                await Task.Delay(sleepTime * 1000);
+                // Note: using await Task.Delay actually causes the 'simultaneous' count to increase by one.
+                // 'Why' is a question I don't have the answer to
+                //await Task.Delay(sleepTime * 1000);
+                Thread.Sleep(sleepTime * 1000);
                 return x;
             }, simultaneous);
 
