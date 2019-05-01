@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Annotations.cs" />
     <Compile Include="AppSettings\clsParseCommandLine.cs" />
     <Compile Include="AppSettings\CommandLineParser.cs" />
     <Compile Include="AppSettings\GenericParserOptions.cs" />

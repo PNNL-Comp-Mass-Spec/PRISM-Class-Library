@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 // ReSharper disable once CheckNamespace
 namespace PRISM
@@ -62,6 +63,18 @@ namespace PRISM
         public static string ShowError(string message, bool includeSeparator = true, bool writeToErrorStream = true, int emptyLinesBeforeMessage = 1)
         {
             return ShowError(message, null, includeSeparator, writeToErrorStream, emptyLinesBeforeMessage);
+        }
+
+        /// <summary>
+        /// Display an error message at the console with color ErrorFontColor (defaults to Red)
+        /// </summary>
+        /// <param name="format">Message format string</param>
+        /// <param name="args">arguments to use with formatString</param>
+        /// <returns>Error message</returns>
+        [StringFormatMethod("format")]
+        public static string ShowError(string format, params object[] args)
+        {
+            return ShowError(string.Format(format, args));
         }
 
         /// <summary>
@@ -176,6 +189,17 @@ namespace PRISM
         /// <summary>
         /// Display a debug message at the console with color DebugFontColor (defaults to DarkGray)
         /// </summary>
+        /// <param name="format">Message format string</param>
+        /// <param name="args">arguments to use with formatString</param>
+        [StringFormatMethod("format")]
+        public static void ShowDebug(string format, params object[] args)
+        {
+            ShowDebug(string.Format(format, args));
+        }
+
+        /// <summary>
+        /// Display a debug message at the console with color DebugFontColor (defaults to DarkGray)
+        /// </summary>
         /// <param name="message">Debug message</param>
         /// <param name="indentChars">Characters to use to indent the message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
@@ -204,6 +228,17 @@ namespace PRISM
                 Console.WriteLine(indentChars + message);
             }
             Console.ResetColor();
+        }
+
+        /// <summary>
+        /// Display a warning message at the console with color WarningFontColor (defaults to Yellow)
+        /// </summary>
+        /// <param name="format">Message format string</param>
+        /// <param name="args">arguments to use with formatString</param>
+        [StringFormatMethod("format")]
+        public static void ShowWarning(string format, params object[] args)
+        {
+            ShowWarning(string.Format(format, args));
         }
 
         /// <summary>
