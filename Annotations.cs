@@ -13,7 +13,7 @@ namespace JetBrains.Annotations
     {
         // This is a duplicate of a Jetbrains.Annotations attribute,
         // copied here so that we don't need to hold a binary reference to the
-        // Jetbrains.Annotations NuGet package for Visual Studio IDE hints when using Resharper
+        // Jetbrains.Annotations NuGet package for Visual Studio IDE hints when using ReSharper
 
         /// <summary>
         /// Initializes new instance of StringFormatMethodAttribute
@@ -27,6 +27,6 @@ namespace JetBrains.Annotations
         /// <summary>
         /// Gets format parameter name
         /// </summary>
-        public string FormatParameterName { get; private set; }
+        public string FormatParameterName { get; }
     }
 }
