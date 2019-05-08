@@ -715,6 +715,7 @@ namespace PRISM
             }
             if (!string.IsNullOrWhiteSpace(EntryAssemblyName))
             {
+                Console.WriteLine();
                 Console.WriteLine(@"Usage: {0}", EntryAssemblyName + ".exe");
             }
             else
@@ -833,11 +834,6 @@ namespace PRISM
                 return contents;
             }
             var helpArgString = string.Empty;
-
-            if (props.Values.Any(x => x.ArgPosition > 0))
-            {
-                contents.Add("NOTE:", "arg#1, arg#2, etc. refer to positional arguments, used like \"AppName.exe [arg#1] [arg#2] [other args]\".");
-            }
 
             // Add the default help string
             foreach (var helpArg in mDefaultHelpArgs)
@@ -990,6 +986,11 @@ namespace PRISM
                     return contents;
                 }
                 contents.Add(keys, helpText);
+            }
+
+            if (props.Values.Any(x => x.ArgPosition > 0))
+            {
+                contents.Add("NOTE:", "arg#1, arg#2, etc. refer to positional arguments, used like \"AppName.exe [arg#1] [arg#2] [other args]\".");
             }
 
             return contents;
