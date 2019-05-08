@@ -54,42 +54,65 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display an error message at the console with color ErrorFontColor (defaults to Red)
-        /// If an exception is included, the stack trace is shown using StackTraceFontColor
-        /// </summary>
-        /// <param name="message">Error message</param>
-        /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
-        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
-        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
-        /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
-        public static string ShowError(string message, bool includeSeparator = true, bool writeToErrorStream = true, int emptyLinesBeforeMessage = 1)
-        {
-            return ShowError(message, null, includeSeparator, writeToErrorStream, emptyLinesBeforeMessage);
-        }
-
-        /// <summary>
-        /// Display an error message at the console with color ErrorFontColor (defaults to Red)
+        /// Display an error message at the console with color ErrorFontColor (defaults to red)
         /// </summary>
         /// <param name="format">Message format string</param>
-        /// <param name="args">arguments to use with formatString</param>
+        /// <param name="args">Arguments to use with formatString</param>
         /// <returns>Error message</returns>
         [StringFormatMethod("format")]
         public static string ShowError(string format, params object[] args)
         {
-            return ShowError(string.Format(format, args));
+            return ShowErrorCustom(string.Format(format, args));
         }
 
         /// <summary>
-        /// Display an error message at the console with color ErrorFontColor (defaults to Red)
+        /// Display an error message at the console with color ErrorFontColor (defaults to red)
         /// If an exception is included, the stack trace is shown using StackTraceFontColor
         /// </summary>
+        /// <param name="ex">Exception (can be null)</param>
+        /// <param name="format">Message format string (do not include ex.Message)</param>
+        /// <param name="args">Arguments to use with formatString</param>
+        [StringFormatMethod("format")]
+        public static string ShowError(Exception ex, string format, params object[] args)
+        {
+            return ShowErrorCustom(string.Format(format, args), ex);
+        }
+
+        /// <summary>
+        /// Display an error message at the console with color ErrorFontColor (defaults to red)
+        /// If an exception is included, the stack trace is shown using StackTraceFontColor
+        /// </summary>
+        /// <param name="message">Error message (do not include ex.Message)</param>
+        /// <param name="ex">Exception (can be null)</param>
+        public static string ShowError(string message, Exception ex)
+        {
+            return ShowErrorCustom(message, ex);
+        }
+
+        /// <summary>
+        /// Display an error message at the console with color ErrorFontColor (defaults to red)
+        /// </summary>
         /// <param name="message">Error message</param>
+        /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
+        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
+        /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.Message</returns>
+        public static string ShowErrorCustom(string message, bool includeSeparator = true, bool writeToErrorStream = true, int emptyLinesBeforeMessage = 1)
+        {
+            return ShowErrorCustom(message, null, includeSeparator, writeToErrorStream, emptyLinesBeforeMessage);
+        }
+
+        /// <summary>
+        /// Display an error message at the console with color ErrorFontColor (defaults to red)
+        /// If an exception is included, the stack trace is shown using StackTraceFontColor
+        /// </summary>
+        /// <param name="message">Error message (do not include ex.Message)</param>
         /// <param name="ex">Exception (can be null)</param>
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
         /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
-        /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.message</returns>
+        /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.Message</returns>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
-        public static string ShowError(
+        public static string ShowErrorCustom(
             string message,
             Exception ex,
             bool includeSeparator = true,
@@ -192,11 +215,11 @@ namespace PRISM
         /// Display a debug message at the console with color DebugFontColor (defaults to DarkGray)
         /// </summary>
         /// <param name="format">Message format string</param>
-        /// <param name="args">arguments to use with formatString</param>
+        /// <param name="args">Arguments to use with formatString</param>
         [StringFormatMethod("format")]
         public static void ShowDebug(string format, params object[] args)
         {
-            ShowDebug(string.Format(format, args));
+            ShowDebugCustom(string.Format(format, args));
         }
 
         /// <summary>
@@ -205,7 +228,7 @@ namespace PRISM
         /// <param name="message">Debug message</param>
         /// <param name="indentChars">Characters to use to indent the message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
-        public static void ShowDebug(string message, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
+        public static void ShowDebugCustom(string message, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
         {
             if (Path.DirectorySeparatorChar == '/' && !mAutoCheckedDebugFontColor)
             {
@@ -236,11 +259,11 @@ namespace PRISM
         /// Display a warning message at the console with color WarningFontColor (defaults to Yellow)
         /// </summary>
         /// <param name="format">Message format string</param>
-        /// <param name="args">arguments to use with formatString</param>
+        /// <param name="args">Arguments to use with formatString</param>
         [StringFormatMethod("format")]
         public static void ShowWarning(string format, params object[] args)
         {
-            ShowWarning(string.Format(format, args));
+            ShowWarningCustom(string.Format(format, args));
         }
 
         /// <summary>
@@ -248,7 +271,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">Warning message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
-        public static void ShowWarning(string message, int emptyLinesBeforeMessage = 1)
+        public static void ShowWarningCustom(string message, int emptyLinesBeforeMessage = 1)
         {
             ConsoleWriteEmptyLines(emptyLinesBeforeMessage);
             Console.ForegroundColor = WarningFontColor;
@@ -310,7 +333,9 @@ namespace PRISM
         public static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
         {
             // Check for newline characters
-            var textLinesToWrap = textToWrap.Split('\r', '\n');
+            var textToWrapLfOnly = textToWrap.Replace("\r\n", "\n");
+
+            var textLinesToWrap = textToWrapLfOnly.Split('\r', '\n');
 
             // List of wrapped text lines
             var wrappedText = new List<string>();
