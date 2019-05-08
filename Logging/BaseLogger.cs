@@ -216,8 +216,10 @@ namespace PRISM.Logging
                     ConsoleMsgUtils.ShowError("Error writing to the local log file: " + localLogFilePath);
                 }
 
-                ConsoleMsgUtils.ShowError(
-                    string.Format("Error writing '{0}' to the local log file: {1}", logMessage.GetFormattedMessage(TimestampFormat), ex), false, false);
+                ConsoleMsgUtils.ShowErrorCustom(
+                    string.Format("Error writing '{0}' to the local log file: {1}", logMessage.GetFormattedMessage(TimestampFormat), ex),
+                    false,
+                    false);
             }
 
         }
@@ -277,7 +279,7 @@ namespace PRISM.Logging
         {
             var timeStamp = string.Format(includeDate ? "{0:yyyy-MM-dd hh:mm:ss.fff tt}" : "{0:hh:mm:ss.fff tt}", DateTime.Now);
 
-            ConsoleMsgUtils.ShowDebug(string.Format("{0}: {1}", timeStamp, message), indentChars, emptyLinesBeforeMessage);
+            ConsoleMsgUtils.ShowDebugCustom(string.Format("{0}: {1}", timeStamp, message), indentChars, emptyLinesBeforeMessage);
         }
 
         #region "Methods to be defined in derived classes"

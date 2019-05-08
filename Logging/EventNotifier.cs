@@ -170,7 +170,7 @@ namespace PRISM
         {
             if (DebugEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoDebugListener)
             {
-                ConsoleMsgUtils.ShowDebug(message, emptyLinesBeforeMessage: EmptyLinesBeforeDebugMessages);
+                ConsoleMsgUtils.ShowDebugCustom(message, emptyLinesBeforeMessage: EmptyLinesBeforeDebugMessages);
             }
 
             DebugEvent?.Invoke(message);
@@ -184,7 +184,7 @@ namespace PRISM
         {
             if (ErrorEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoErrorListener)
             {
-                ConsoleMsgUtils.ShowError(message, false, false, EmptyLinesBeforeErrorMessages);
+                ConsoleMsgUtils.ShowErrorCustom(message, false, false, EmptyLinesBeforeErrorMessages);
             }
 
             ErrorEvent?.Invoke(message, null);
@@ -199,7 +199,7 @@ namespace PRISM
         {
             if (ErrorEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoErrorListener)
             {
-                ConsoleMsgUtils.ShowError(message, ex, false, false, EmptyLinesBeforeErrorMessages);
+                ConsoleMsgUtils.ShowErrorCustom(message, ex, false, false, EmptyLinesBeforeErrorMessages);
             }
 
             ErrorEvent?.Invoke(message, ex);
@@ -243,7 +243,7 @@ namespace PRISM
         {
             if (WarningEvent == null && WriteToConsoleIfNoListener && !SkipConsoleWriteIfNoWarningListener)
             {
-                ConsoleMsgUtils.ShowWarning(message, EmptyLinesBeforeWarningMessages);
+                ConsoleMsgUtils.ShowWarningCustom(message, EmptyLinesBeforeWarningMessages);
             }
 
             WarningEvent?.Invoke(message);

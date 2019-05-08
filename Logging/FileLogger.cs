@@ -607,7 +607,10 @@ namespace PRISM.Logging
                     }
                     catch (Exception ex2)
                     {
-                        ConsoleMsgUtils.ShowError("Error defining the new log file name: " + ex2.Message, ex2, false, false);
+                        ConsoleMsgUtils.ShowErrorCustom("Error defining the new log file name: " + ex2.Message,
+                                                        ex2,
+                                                        false,
+                                                        false);
                     }
 
                     if (logMessage.LogLevel == LogLevels.ERROR || logMessage.LogLevel == LogLevels.FATAL)
@@ -664,7 +667,7 @@ namespace PRISM.Logging
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowError("Error writing queued log messages to disk: " + ex.Message, ex, false, false);
+                ConsoleMsgUtils.ShowErrorCustom("Error writing queued log messages to disk: " + ex.Message, ex, false, false);
             }
             finally
             {
@@ -759,18 +762,26 @@ namespace PRISM.Logging
                     catch (Exception ex2)
                     {
                         if (item >= oldVersionsToKeep)
-                            ConsoleMsgUtils.ShowError(
-                                string.Format("Error deleting old log file {0}: {1}", logFile.FullName, ex2.Message), ex2, false, false);
+                        {
+                            ConsoleMsgUtils.ShowErrorCustom(
+                                string.Format("Error deleting old log file {0}: {1}", logFile.FullName, ex2.Message), ex2,
+                                false,
+                                false);
+                        }
                         else
-                            ConsoleMsgUtils.ShowError(
-                                string.Format("Error renaming old log file {0}: {1}", logFile.FullName, ex2.Message), ex2, false, false);
+                        {
+                            ConsoleMsgUtils.ShowErrorCustom(
+                                string.Format("Error renaming old log file {0}: {1}", logFile.FullName, ex2.Message), ex2,
+                                false,
+                                false);
+                        }
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowError("Error rolling (renaming) old log files: " + ex.Message, ex, false, false);
+                ConsoleMsgUtils.ShowErrorCustom("Error rolling (renaming) old log files: " + ex.Message, ex, false, false);
             }
         }
 

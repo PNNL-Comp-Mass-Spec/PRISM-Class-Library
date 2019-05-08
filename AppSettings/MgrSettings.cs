@@ -691,7 +691,9 @@ namespace PRISM.AppSettings
         private void OnCriticalErrorEvent(string message)
         {
             if (CriticalErrorEvent == null && WriteToConsoleIfNoListener)
-                ConsoleMsgUtils.ShowError(message, false, false, EmptyLinesBeforeErrorMessages);
+            {
+                ConsoleMsgUtils.ShowErrorCustom(message, false, false, EmptyLinesBeforeErrorMessages);
+            }
 
             CriticalErrorEvent?.Invoke(message, null);
         }

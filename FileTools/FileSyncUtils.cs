@@ -253,7 +253,7 @@ namespace PRISM
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowWarning(string.Format("Unable to create a new .LastUsed file at {0}: {1}", lastUsedFilePath, ex.Message));
+                ConsoleMsgUtils.ShowWarning("Unable to create a new .LastUsed file at {0}: {1}", lastUsedFilePath, ex.Message);
             }
 
         }

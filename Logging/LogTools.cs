@@ -270,7 +270,7 @@ namespace PRISM.Logging
 
             if (isError)
             {
-                ConsoleMsgUtils.ShowError(statusMessage, false);
+                ConsoleMsgUtils.ShowErrorCustom(statusMessage, false);
             }
             else
             {
