@@ -216,8 +216,8 @@ namespace PRISM
         /// <param name="versionInfo">Executable version info</param>
         public CommandLineParser(string entryAsmName = "", string versionInfo = "")
         {
-            EntryAssemblyName = entryAsmName;
-            ExeVersionInfo = versionInfo;
+            EntryAssemblyName = entryAsmName ?? string.Empty;
+            ExeVersionInfo = versionInfo ?? string.Empty;
 
             Results = new ParserResults(new T());
             propertiesAndAttributes = null;
@@ -238,7 +238,7 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public static bool ParseArgs(string[] args, T options, string versionInfo = "")
         {
-            var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+            var entryAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
             return ParseArgs(args, options, entryAssemblyName, versionInfo);
         }
 
@@ -268,7 +268,7 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public static ParserResults ParseArgs(string[] args, string versionInfo)
         {
-            var entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+            var entryAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
             return ParseArgs(args, entryAssemblyName, versionInfo);
         }
 
@@ -1271,7 +1271,7 @@ namespace PRISM
                     continue;
                 }
 
-                var optionData = (OptionAttribute) attribList[0];
+                var optionData = (OptionAttribute)attribList[0];
 
                 // ignore any duplicates (shouldn't occur anyway)
                 props.Add(property, optionData);
@@ -1396,7 +1396,7 @@ namespace PRISM
         /// </summary>
         /// <param name="paramKey">Must supply at least one key for the argument, and it must be distinct within the class; multiple keys can be specified, separated by a '|'</param>
         /// <remarks>CLS compliant</remarks>
-        public OptionAttribute(string paramKey) : this(paramKey?.Split(new [] {'|'}, StringSplitOptions.RemoveEmptyEntries))
+        public OptionAttribute(string paramKey) : this(paramKey?.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
         {
         }
 
@@ -1408,7 +1408,7 @@ namespace PRISM
         /// <param name="paramKey3"></param>
         /// <param name="paramKey4"></param>
         /// <remarks>CLS compliant</remarks>
-        public OptionAttribute(string paramKey1, string paramKey2, string paramKey3 = "", string paramKey4 = "") : this(new[] {paramKey1, paramKey2, paramKey3, paramKey4})
+        public OptionAttribute(string paramKey1, string paramKey2, string paramKey3 = "", string paramKey4 = "") : this(new[] { paramKey1, paramKey2, paramKey3, paramKey4 })
         {
         }
 
