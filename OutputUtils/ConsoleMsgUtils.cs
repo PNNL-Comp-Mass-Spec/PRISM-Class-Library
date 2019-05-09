@@ -56,6 +56,16 @@ namespace PRISM
         /// <summary>
         /// Display an error message at the console with color ErrorFontColor (defaults to red)
         /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static string ShowError(string message)
+        {
+            return ShowErrorCustom(message);
+        }
+
+        /// <summary>
+        /// Display an error message at the console with color ErrorFontColor (defaults to red)
+        /// </summary>
         /// <param name="format">Message format string</param>
         /// <param name="args">Arguments to use with formatString</param>
         /// <returns>Error message</returns>
@@ -212,7 +222,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display a debug message at the console with color DebugFontColor (defaults to DarkGray)
+        /// Display a debug message at the console with color DebugFontColor (defaults to dark gray)
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ShowDebug(string message)
+        {
+            ShowDebugCustom(message);
+        }
+
+        /// <summary>
+        /// Display a debug message at the console with color DebugFontColor (defaults to dark gray)
         /// </summary>
         /// <param name="format">Message format string</param>
         /// <param name="args">Arguments to use with formatString</param>
@@ -223,7 +242,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display a debug message at the console with color DebugFontColor (defaults to DarkGray)
+        /// Display a debug message at the console with color DebugFontColor (defaults to dark gray)
         /// </summary>
         /// <param name="message">Debug message</param>
         /// <param name="indentChars">Characters to use to indent the message</param>
@@ -256,7 +275,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display a warning message at the console with color WarningFontColor (defaults to Yellow)
+        /// Display a warning message at the console with color WarningFontColor (defaults to yellow)
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ShowWarning(string message)
+        {
+            ShowWarningCustom(message);
+        }
+
+        /// <summary>
+        /// Display a warning message at the console with color WarningFontColor (defaults to yellow)
         /// </summary>
         /// <param name="format">Message format string</param>
         /// <param name="args">Arguments to use with formatString</param>
@@ -267,7 +295,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display a warning message at the console with color WarningFontColor (defaults to Yellow)
+        /// Display a warning message at the console with color WarningFontColor (defaults to yellow)
         /// </summary>
         /// <param name="message">Warning message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
