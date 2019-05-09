@@ -21,16 +21,54 @@ namespace PRISM
     /// </summary>
     /// <remarks>
     /// Either call static method ParseArgs like this:
-    ///   var options = new ValidatorOptions();
-    ///   var asmName = typeof(Program).GetTypeInfo().Assembly.GetName();
-    ///   if (!CommandLineParser&lt;ValidatorOptions&gt;.ParseArgs(args, options, asmName.Name, version) || !options.ValidateArgs()) { return false; }
+    ///   static int Main(string[] args) {
+    ///     var options = new ProgramOptions();
+    ///     var asmName = typeof(Program).GetTypeInfo().Assembly.GetName();
+    ///     var version = ProgramOptions.GetAppVersion();
+    ///     if (!CommandLineParser&lt;ProgramOptions&gt;.ParseArgs(args, options, asmName.Name, version))
+    ///     {
+    ///         return -1;
+    ///     }
+    ///     if (!options.ValidateArgs(out var errorMessage))
+    ///     {
+    ///         ConsoleMsgUtils.ShowWarning("Validation error:");
+    ///         ConsoleMsgUtils.ShowWarning(errorMessage);
+    ///         return -1;
+    ///     }
     ///
     /// Or instantiate this class, which allows for suppressing the auto-display of the syntax if an argument error is encountered
-    ///   var parser = new CommandLineParser(asmName.Name, version);
-    ///   parser.Options = options;
-    ///   parser.ParseArgs(args);
+    ///   static int Main(string[] args) {
+    ///     var asmName = typeof(Program).GetTypeInfo().Assembly.GetName();
+    ///     var exeName = Path.GetFileName(Assembly.GetExecutingAssembly().Location);
+    ///     var version = ProgramOptions.GetAppVersion();
+    ///     var parser = new CommandLineParser&lt;ProgramOptions&gt;(asmName.Name, version)
+    ///     {
+    ///         ProgramInfo = "This program ...",
+    ///         ContactInfo = "Program written by ...",
+    ///         UsageExamples = {
+    ///               exeName + @" C:\WorkDir InputFile.txt /Preview",
+    ///               exeName + @" C:\WorkDir InputFile.txt",
+    ///               exeName + @" C:\WorkDir InputFile.txt /Debug",
+    ///         }
+    ///     };
+    ///     var parseResults = parser.ParseArgs(args);
+    ///     var options = parseResults.ParsedResults;
     ///
-    /// Note that args comes from the entry method, static int Main(string[] args)
+    ///     if (!parseResults.Success)
+    ///     {
+    ///       return -1;
+    ///     }
+    ///
+    ///     if (!options.ValidateArgs(out var errorMessage))
+    ///     {
+    ///         parser.PrintHelp();
+    ///         Console.WriteLine();
+    ///         ConsoleMsgUtils.ShowWarning("Validation error:");
+    ///         ConsoleMsgUtils.ShowWarning(errorMessage);
+    ///         return -1;
+    ///     }
+    ///
+    ///     options.OutputSetOptions();
     ///
     /// An example class suitable for use when instantiating the CommandLineParser is GenericParserOptions in this project
     /// </remarks>

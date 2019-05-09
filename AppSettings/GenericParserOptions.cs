@@ -16,6 +16,7 @@ namespace PRISM
             StartID = 0;
             EndID = int.MaxValue;
 
+            InputFilePath = string.Empty;
             OutputDirectoryPath = string.Empty;
             AppendToOutput = true;
 
@@ -31,7 +32,10 @@ namespace PRISM
         [Option("end", HelpText = "Last ID to process", HelpShowsDefault = true)]
         public int EndID { get; set; }
 
-        [Option("output", "o", ArgPosition = 1, HelpText = "Output directory path for creating the results file")]
+        [Option("input", "i", ArgPosition = 1, HelpText = "File to process")]
+        public string InputFilePath { get; set; }
+
+        [Option("output", "o", ArgPosition = 2, HelpText = "Output directory path for creating the results file")]
         public string OutputDirectoryPath { get; set; }
 
         [Option("append", HelpText = "Append results to the output file", HelpShowsDefault = true)]
@@ -65,14 +69,21 @@ namespace PRISM
             }
         }
 
-        public bool ValidateArgs()
+        public bool ValidateArgs(out string errorMessage)
         {
+            if (string.IsNullOrWhiteSpace(InputFilePath))
+            {
+                errorMessage = "Use /I to specify the input file";
+                return false;
+            }
+
             if (string.IsNullOrWhiteSpace(OutputDirectoryPath))
             {
                 var currentDirectory = new DirectoryInfo(".");
                 OutputDirectoryPath = currentDirectory.FullName;
             }
 
+            errorMessage = string.Empty;
             return true;
         }
 
