@@ -105,7 +105,7 @@ namespace PRISMWin
         /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
         /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
         /// </remarks>
-        public static List<Process> WhoIsLocking(string[] paths, bool checkProcessStartTime = false)
+        public static List<Process> WhoIsLocking(string[] paths, bool checkProcessStartTime)
         {
             uint handle;
             string key = Guid.NewGuid().ToString();
