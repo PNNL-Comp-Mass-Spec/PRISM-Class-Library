@@ -99,12 +99,13 @@ namespace PRISMWin
         /// Find out what process(es) have a lock on the specified file.
         /// </summary>
         /// <param name="paths">Full Path(s) of the file(s).</param>
+        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
         /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
         /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
         /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
         /// </remarks>
-        public static List<Process> WhoIsLocking(params string[] paths)
+        public static List<Process> WhoIsLocking(string[] paths, bool checkProcessStartTime = false)
         {
             uint handle;
             string key = Guid.NewGuid().ToString();
@@ -153,9 +154,22 @@ namespace PRISMWin
                             try
                             {
                                 var process = Process.GetProcessById(processInfo[i].Process.dwProcessId);
-                                // Check the process start time to ensure this is the same process
-                                // There is minor possibility that the process id that was returned has been recycled.
-                                if (process.StartTime <= processInfo[i].Process.ProcessStartTime)
+                                var add = true;
+                                if (checkProcessStartTime)
+                                {
+                                    // Check the process start time to ensure this is the same process
+                                    // There is minor possibility that the process id that was returned has been recycled.
+                                    try
+                                    {
+                                        add = process.StartTime <= processInfo[i].Process.ProcessStartTime;
+                                    }
+                                    catch
+                                    {
+                                        // Possibility of win32 exception, particularly 'access denied'. Assume it is the same process.
+                                    }
+                                }
+
+                                if (add)
                                 {
                                     processes.Add(Process.GetProcessById(processInfo[i].Process.dwProcessId));
                                 }
@@ -179,20 +193,50 @@ namespace PRISMWin
         }
 
         /// <summary>
+        /// Find out what process(es) have a lock on the specified file.
+        /// </summary>
+        /// <param name="path">Full Path of the file.</param>
+        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
+        /// <returns>Processes locking the file</returns>
+        /// <remarks>See also:
+        /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
+        /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
+        /// </remarks>
+        public static List<Process> WhoIsLocking(string path, bool checkProcessStartTime = false)
+        {
+            return WhoIsLocking(new string[] { path }, checkProcessStartTime);
+        }
+
+        /// <summary>
+        /// Find out what process(es) have a lock on the specified file.
+        /// </summary>
+        /// <param name="paths">Full Path(s) of the file(s).</param>
+        /// <returns>Processes locking the file</returns>
+        /// <remarks>See also:
+        /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
+        /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
+        /// </remarks>
+        public static List<Process> WhoIsLocking(params string[] paths)
+        {
+            return WhoIsLocking(paths, false);
+        }
+
+        /// <summary>
         /// Find out what process(es) have a lock on files in the specified directory.
         /// </summary>
         /// <param name="path">Full Path of the directory.</param>
+        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
         /// <returns>Processes locking files in the directory</returns>
-        public static List<Process> WhoIsLockingDirectory(string path)
+        public static List<Process> WhoIsLockingDirectory(string path, bool checkProcessStartTime = false)
         {
             if (!Directory.Exists(path))
             {
-                return WhoIsLocking(path);
+                return WhoIsLocking(new string[] { path }, checkProcessStartTime);
             }
 
             var filePaths = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
 
-            return WhoIsLocking(filePaths);
+            return WhoIsLocking(filePaths, checkProcessStartTime);
         }
     }
 }
