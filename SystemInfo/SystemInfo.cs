@@ -9,16 +9,26 @@ namespace PRISM
     /// <remarks>Supports both Windows and Linux (uses OSVersionInfo to determine the OS at runtime)</remarks>
     public class SystemInfo
     {
+        /// <summary>
+        /// True if this is a Linux system
+        /// </summary>
+        public static bool IsLinux { get; }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         static SystemInfo()
         {
             var c = new OSVersionInfo();
             if (c.GetOSVersion().ToLower().Contains("windows"))
             {
                 SystemInfoObject = new WindowsSystemInfo();
+                IsLinux = false;
             }
             else
             {
                 SystemInfoObject = new LinuxSystemInfo();
+                IsLinux = true;
             }
         }
 
