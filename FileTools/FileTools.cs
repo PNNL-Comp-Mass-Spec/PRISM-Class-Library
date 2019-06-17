@@ -314,8 +314,10 @@ namespace PRISM
         /// <returns>The modified directory path.</returns>
         public static string CheckTerminator(string directoryPath, string termChar)
         {
-            return CheckTerminatorEX(directoryPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
-
+            if (!string.IsNullOrWhiteSpace(termChar) && termChar.Length > 0)
+                return CheckTerminatorEX(directoryPath, addTerm: true, termChar: termChar[0]);
+            else
+                return CheckTerminatorEX(directoryPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
         }
 
         /// <summary>
