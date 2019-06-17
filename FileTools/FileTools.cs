@@ -280,6 +280,7 @@ namespace PRISM
 
         /// <summary>
         /// Modifies input directory path string depending on optional settings.
+        /// Overload for all parameters specified
         /// </summary>
         /// <param name="directoryPath">The input directory path.</param>
         /// <param name="addTerm">Specifies whether the directory path string ends with the specified directory separation character.</param>
@@ -287,10 +288,7 @@ namespace PRISM
         /// <returns>The modified directory path.</returns>
         public static string CheckTerminator(string directoryPath, bool addTerm, char termChar)
         {
-
-            // Overload for all parameters specified
             return CheckTerminatorEX(directoryPath, addTerm, termChar);
-
         }
 
         /// <summary>
@@ -301,9 +299,7 @@ namespace PRISM
         /// <returns>The modified directory path.</returns>
         public static string CheckTerminator(string directoryPath, bool addTerm)
         {
-
             return CheckTerminatorEX(directoryPath, addTerm, Path.DirectorySeparatorChar);
-
         }
 
         /// <summary>
@@ -322,15 +318,13 @@ namespace PRISM
 
         /// <summary>
         /// Assures the directory path ends with the DOS path separation character.
+        /// Overload for using all defaults (add DOS terminator char)
         /// </summary>
         /// <param name="directoryPath">The input directory path.</param>
         /// <returns>The modified directory path.</returns>
         public static string CheckTerminator(string directoryPath)
         {
-
-            // Overload for using all defaults (add DOS terminator char)
             return CheckTerminatorEX(directoryPath, addTerm: true, termChar: Path.DirectorySeparatorChar);
-
         }
 
         /// <summary>
@@ -1111,6 +1105,7 @@ namespace PRISM
 
         }
 
+
         /// <summary>
         /// Get the time stamp to be used when naming a lock file
         /// </summary>
@@ -1142,6 +1137,7 @@ namespace PRISM
             }
             return serverShareBase;
         }
+
         #endregion
 
         #region "CopyDirectory Method"
@@ -1194,7 +1190,6 @@ namespace PRISM
 
         }
 
-
         /// <summary>
         /// Copies a source directory to the destination directory. Allows overwriting.
         /// </summary>
@@ -1206,7 +1201,6 @@ namespace PRISM
         {
             const bool readOnly = false;
             CopyDirectory(sourcePath, destPath, overWrite, readOnly, new List<string>(), managerName);
-
         }
 
         /// <summary>
@@ -1220,7 +1214,6 @@ namespace PRISM
         {
             const bool readOnly = false;
             CopyDirectory(sourcePath, destPath, overWrite, readOnly, fileNamesToSkip);
-
         }
 
         /// <summary>
@@ -1234,7 +1227,6 @@ namespace PRISM
         {
             const bool setAttribute = true;
             CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, new List<string>(), ManagerName);
-
         }
 
         /// <summary>
@@ -1249,7 +1241,6 @@ namespace PRISM
         {
             const bool setAttribute = true;
             CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, fileNamesToSkip, ManagerName);
-
         }
 
         /// <summary>
@@ -1265,7 +1256,6 @@ namespace PRISM
         {
             const bool setAttribute = true;
             CopyDirectoryEx(sourcePath, destPath, overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
-
         }
 
         /// <summary>
@@ -2154,7 +2144,6 @@ namespace PRISM
         }
 
         #endregion
-
 
         #region "Utility Methods"
 
