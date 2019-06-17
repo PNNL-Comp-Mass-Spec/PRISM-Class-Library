@@ -69,6 +69,9 @@
     <Compile Include="FileTools\FileTools.cs" />
     <Compile Include="FileTools\GZipMetadataStream.cs" />
     <Compile Include="FileTools\HashUtilities.cs" />
+    <Compile Include="FileTools\NativeIODirectoryTools.cs" />
+    <Compile Include="FileTools\NativeIOFileTools.cs" />
+    <Compile Include="FileTools\NativeIOMethods.cs" />
     <Compile Include="FileTools\PathUtils.cs" />
     <Compile Include="FileTools\ShareConnector.cs" />
     <Compile Include="FileTools\ZipTools.cs" />

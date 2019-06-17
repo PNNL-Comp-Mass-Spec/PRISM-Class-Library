@@ -363,6 +363,7 @@ namespace PRISM
 
             return directoryPath;
         }
+
         #endregion
 
         #region "CopyFile Method"
@@ -460,8 +461,42 @@ namespace PRISM
             }
 
             UpdateCurrentStatus(CopyStatus.NormalCopy, sourcePath);
-            File.Copy(sourcePath, destPath, overWrite);
+
+            CopyFileNative(sourcePath, destPath, overWrite);
+
             UpdateCurrentStatusIdle();
+        }
+
+        /// <summary>
+        /// Try to copy a file using File.Copy
+        /// If the copy fails due to the path length being 260 characters or longer,
+        /// and if we're running Windows, use CopyFileW in kernel32.dll instead
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="destPath"></param>
+        /// <param name="overwrite"></param>
+        private void CopyFileNative(string sourcePath, string destPath, bool overwrite)
+        {
+            try
+            {
+                File.Copy(sourcePath, destPath, overwrite);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                if (!SystemInfo.IsLinux && (sourcePath.Length >= NativeIOFileTools.MAX_PATH || destPath.Length >= NativeIOFileTools.MAX_PATH))
+                {
+                    NativeIOFileTools.Copy(sourcePath, destPath, overwrite);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
         }
 
         #endregion
@@ -915,15 +950,12 @@ namespace PRISM
 
             try
             {
-                if (targetFile.Exists)
-                {
-                    targetFile.Delete();
-                }
+                DeleteFileNative(targetFile);
                 return true;
             }
-            catch (Exception)
+            catch (UnauthorizedAccessException)
             {
-                // Ignore errors here
+                // Ignore
             }
 
             try
@@ -942,7 +974,7 @@ namespace PRISM
                     }
                 }
 
-                targetFile.Delete();
+                DeleteFileNative(targetFile);
 
             }
             catch (Exception ex)
@@ -955,6 +987,39 @@ namespace PRISM
 
             return true;
 
+        }
+
+        /// <summary>
+        /// Try to delete a file using File.Delete
+        /// If the delete fails due to the path length being 260 characters or longer,
+        /// and if we're running Windows, use DeleteFileW in kernel32.dll instead
+        /// </summary>
+        /// <param name="targetFile"></param>
+        private void DeleteFileNative(FileInfo targetFile)
+        {
+            try
+            {
+                if (targetFile.Exists)
+                {
+                    targetFile.Delete();
+                }
+
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                if (!SystemInfo.IsLinux && targetFile.FullName.Length >= NativeIOFileTools.MAX_PATH)
+                {
+                    NativeIOFileTools.Delete(targetFile.FullName);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>
