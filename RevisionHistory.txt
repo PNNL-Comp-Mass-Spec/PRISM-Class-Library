@@ -1,5 +1,21 @@
 Prism Class Library Log
 
+Version 2.5.23; June 21, 2019
+	- Disable using date stamps for log file names if a name is defined using LogFilePath
+
+Version 2.5.22; June 17, 2019
+	- Add support for copying files with long path lengths
+
+Version 2.5.21; June 4, 2019
+	- Add IsLinux property
+
+Version 1.0.12; June 3, 2019
+	- Add a utility class that lets us check what processes currently have locks on a file.
+
+Version 2.5.20; May 9, 2019
+	- Update the ShowMessage methods in ConsoleMsgUtils to support format strings
+	- Update ValidateArgs in the example parser options class to return the error message as an output variable
+
 Version 2.5.16; March 21, 2019
 	- Add GetValue methods to the DBTools class
 	- Add class DataTableUtils to PRISM.dll
