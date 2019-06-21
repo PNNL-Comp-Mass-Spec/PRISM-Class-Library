@@ -153,7 +153,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Time when the a new log file should be created (12 am tomorrow)
         /// </summary>
-        /// <remarks>Ony used if mLogFileUsesDateStamp is true</remarks>
+        /// <remarks>Only used if mLogFileUsesDateStamp is true</remarks>
         protected DateTime mLogFileRolloverTime = DateTime.Now;
 
         /// <summary>
@@ -249,7 +249,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Log file path (relative or absolute path)
         /// </summary>
-        /// <remarks>Leave blank to auto-define</remarks>
+        /// <remarks>Leave blank to auto-define using the executable name and today's date</remarks>
         public string LogFilePath
         {
             get => mLogFilePath;
@@ -416,6 +416,7 @@ namespace PRISM.FileProcessor
                 if (string.IsNullOrWhiteSpace(LogDirectoryPath))
                 {
                     // Log directory is undefined; use mOutputDirectoryPath if it is defined
+                    // LogDirectoryPath will get updated below if mLogFilePath is defined and Rooted
                     if (!string.IsNullOrWhiteSpace(mOutputDirectoryPath))
                     {
                         LogDirectoryPath = string.Copy(mOutputDirectoryPath);
