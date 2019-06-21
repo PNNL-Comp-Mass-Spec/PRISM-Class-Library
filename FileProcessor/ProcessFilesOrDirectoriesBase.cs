@@ -253,7 +253,14 @@ namespace PRISM.FileProcessor
         public string LogFilePath
         {
             get => mLogFilePath;
-            set => mLogFilePath = value ?? string.Empty;
+            set
+            {
+                mLogFilePath = value ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(mLogFilePath))
+                {
+                    mLogFileUsesDateStamp = false;
+                }
+            }
         }
 
         /// <summary>
@@ -477,6 +484,30 @@ namespace PRISM.FileProcessor
                 {
                     mLogFilePath = Path.Combine(LogDirectoryPath, mLogFilePath);
                 }
+
+                var logFile = new FileInfo(mLogFilePath);
+
+                if (logFile.Directory == null)
+                    return;
+
+                if (!string.Equals(LogDirectoryPath, logFile.DirectoryName))
+                {
+                    LogDirectoryPath = logFile.DirectoryName;
+                }
+
+                try
+                {
+                    if (!logFile.Directory.Exists)
+                    {
+                        // Create the log directory if it doesn't exist
+                        logFile.Directory.Create();
+                    }
+                }
+                catch (Exception)
+                {
+                    // Ignore errors here
+                }
+
             }
 
         }
