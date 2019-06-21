@@ -49,6 +49,31 @@ namespace PRISMTest
 
         }
 
+        [TestCase(@"C:\Temp\PRISM_Custom_log_Job1000.txt", 0)]
+        [TestCase(@"C:\Temp\PRISM_Custom_log_Job1001.txt", 1)]
+        [TestCase(@"C:\Temp\PRISM_Custom_log_Job1002.txt", 2)]
+        public void TestLogFileNameFullPath(
+            string logFilePath,
+            int messagesToLog)
+        {
+            var fileStatsLogger = new SimpleFileStatsLogger
+            {
+                LogFilePath = logFilePath,
+                LogMessagesToFile = true,
+                MessagesToLog = messagesToLog,
+                UseLogFilePath = true
+            };
+
+            var fileToFind = ProcessFilesOrDirectoriesBase.GetAppPath();
+
+            fileStatsLogger.ProcessFile(fileToFind);
+
+            Console.WriteLine();
+            Console.WriteLine("Log file path: " + fileStatsLogger.LogFilePath);
+
+            Assert.AreEqual(logFilePath, fileStatsLogger.LogFilePath);
+        }
+
         [TestCase(@"C:\Program Files", "msvcp*.dll", 5)]
         [TestCase(@"C:\Users", "msvcp*.dll", 5)]
         public void TestRecurseDirectories(
