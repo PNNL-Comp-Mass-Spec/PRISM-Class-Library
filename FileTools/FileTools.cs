@@ -412,7 +412,6 @@ namespace PRISM
         public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy, int versionCountToKeep)
         {
             CopyFileEx(sourcePath, destPath, overWrite, backupDestFileBeforeCopy, versionCountToKeep);
-
         }
 
         /// <summary>
@@ -1659,12 +1658,34 @@ namespace PRISM
                     if (!copyFile)
                     {
                         fileCountSkipped += 1;
-
                     }
                     else
                     {
                         var targetFilePath = Path.Combine(targetDirectory.FullName, sourceFile.Name);
-                        success = CopyFileWithResume(sourceFile, targetFilePath, out var copyResumed);
+                        bool copyResumed;
+
+                        try
+                        {
+                            success = CopyFileWithResume(sourceFile, targetFilePath, out copyResumed);
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            throw;
+                        }
+                        catch (Exception)
+                        {
+                            if (sourceFile.FullName.Length >= NativeIOFileTools.MAX_PATH || targetFilePath.Length >= NativeIOFileTools.MAX_PATH)
+                            {
+                                // The source or target path is too long
+                                // Try a normal file copy instead
+                                CopyFile(sourceFile.FullName, targetFilePath, true);
+                                copyResumed = false;
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
 
                         if (!success)
                             break;
