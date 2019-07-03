@@ -1775,13 +1775,13 @@ namespace PRISM
                     UpdateCurrentStatusIdle();
                     copyResumed = false;
                     return true;
-
                 }
 
                 // Delete the target file if it already exists
-                if (File.Exists(targetFilePath))
+                var targetFile = new FileInfo(targetFilePath);
+                if (targetFile.Exists)
                 {
-                    File.Delete(targetFilePath);
+                    DeleteFileNative(targetFile);
                     ProgRunner.SleepMilliseconds(25);
                 }
 
