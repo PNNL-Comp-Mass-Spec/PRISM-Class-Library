@@ -17,7 +17,7 @@ namespace PRISM
 
         public static void Copy(string sourcePath, string destPath, bool overwrite)
         {
-            if (sourcePath.Length < MAX_PATH && (destPath.Length < MAX_PATH))
+            if (sourcePath.Length < MAX_PATH && destPath.Length < MAX_PATH)
             {
                 File.Copy(sourcePath, destPath, overwrite);
             }
