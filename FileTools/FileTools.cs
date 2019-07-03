@@ -1770,7 +1770,7 @@ namespace PRISM
                     // Simply copy the file
 
                     UpdateCurrentStatus(CopyStatus.NormalCopy, sourceFile.FullName);
-                    sourceFile.CopyTo(targetFilePath, true);
+                    CopyFile(sourceFile.FullName, targetFilePath, true);
 
                     UpdateCurrentStatusIdle();
                     copyResumed = false;
