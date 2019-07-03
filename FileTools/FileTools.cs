@@ -1703,6 +1703,10 @@ namespace PRISM
                 }
 
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw new UnauthorizedAccessException("Access denied copying directory with resume: " + ex.Message, ex);
+            }
             catch (Exception ex)
             {
                 throw new IOException("Exception copying directory with resume: " + ex.Message, ex);
