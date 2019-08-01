@@ -2823,7 +2823,9 @@ namespace PRISM
         /// <param name="maxWaitTimeMinutes"></param>
         public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo lockDirectorySource, FileInfo sourceFile, int maxWaitTimeMinutes)
         {
-            WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, null, sourceFile, "Unknown_Target_File_Path", maxWaitTimeMinutes);
+            WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, null,
+                                 sourceFile, "Unknown_Target_File_Path",
+                                 maxWaitTimeMinutes, string.Empty, string.Empty);
 
         }
 
@@ -2836,9 +2838,14 @@ namespace PRISM
         /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="maxWaitTimeMinutes"></param>
+        /// <param name="lockFilePathSource"></param>
+        /// <param name="lockFilePathTarget"></param>
         public void WaitForLockFileQueue(
             long lockFileTimestamp, DirectoryInfo lockDirectorySource,
-            DirectoryInfo lockDirectoryTarget, FileInfo sourceFile, string targetFilePath, int maxWaitTimeMinutes)
+            DirectoryInfo lockDirectoryTarget,
+            FileInfo sourceFile, string targetFilePath,
+            int maxWaitTimeMinutes,
+            string lockFilePathSource, string lockFilePathTarget)
         {
             // Find the recent LockFiles present in the source and/or target lock directories
             // These lists contain the sizes of the lock files with timestamps less than lockFileTimestamp
@@ -2849,6 +2856,26 @@ namespace PRISM
             var waitTimeStart = DateTime.UtcNow;
 
             var sourceFileSizeMB = Convert.ToInt32(sourceFile.Length / 1024.0 / 1024.0);
+
+            var checkForDeletedSourceLockFile = !string.IsNullOrWhiteSpace(lockFilePathSource) && File.Exists(lockFilePathSource);
+            var checkForDeletedTargetLockFile = !string.IsNullOrWhiteSpace(lockFilePathTarget) && File.Exists(lockFilePathTarget);
+
+            int deletedLockFilesThreshold;
+
+            if (checkForDeletedSourceLockFile && checkForDeletedTargetLockFile)
+            {
+                deletedLockFilesThreshold = 2;
+            }
+            else if (checkForDeletedSourceLockFile || checkForDeletedTargetLockFile)
+            {
+                deletedLockFilesThreshold = 1;
+            }
+            else
+            {
+                deletedLockFilesThreshold = 0;
+            }
+
+            var notifiedLockFilePaths = false;
 
             // Wait for up to 180 minutes (3 hours) for the server resources to free up
 
@@ -2870,7 +2897,6 @@ namespace PRISM
                 maxWaitTimeTarget = 30;
             }
 
-
             while (true)
             {
                 // Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
@@ -2882,7 +2908,6 @@ namespace PRISM
                 if (lstLockFileMBSource.Count <= 1 && lstLockFileMBTarget.Count <= 1)
                 {
                     stopWaiting = true;
-
                 }
                 else
                 {
@@ -2899,6 +2924,18 @@ namespace PRISM
                             stopWaiting = true;
                         }
                     }
+                }
+
+                if (!stopWaiting && deletedLockFilesThreshold > 0)
+                {
+                    var lockFilesDeleted = 0;
+                    if (checkForDeletedSourceLockFile && !File.Exists(lockFilePathSource))
+                        lockFilesDeleted++;
+
+                    if (checkForDeletedTargetLockFile && !File.Exists(lockFilePathTarget))
+                        lockFilesDeleted++;
+
+                    stopWaiting = lockFilesDeleted >= deletedLockFilesThreshold;
                 }
 
                 if (stopWaiting)
