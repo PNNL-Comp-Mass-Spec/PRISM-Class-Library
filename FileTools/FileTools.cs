@@ -2884,17 +2884,22 @@ namespace PRISM
 
             var maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES;
             var maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES;
+            if (maxWaitTimeMinutes > 0)
+            {
+                maxWaitTimeSource = maxWaitTimeMinutes;
+                maxWaitTimeTarget = maxWaitTimeMinutes;
+            }
 
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
             if (lockDirectorySource != null && lockDirectorySource.FullName.ToLower().StartsWith(@"\\adms.emsl.pnl.gov\"))
             {
-                maxWaitTimeSource = 30;
+                maxWaitTimeSource = Math.Min(maxWaitTimeSource, 30);
             }
 
             if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.ToLower().StartsWith(@"\\adms.emsl.pnl.gov\"))
             {
-                maxWaitTimeTarget = 30;
+                maxWaitTimeTarget = Math.Min(maxWaitTimeTarget, 30);
             }
 
             while (true)
