@@ -55,18 +55,31 @@ namespace PRISM
         public delegate void FileCopyProgressEventHandler(string filename, float percentComplete);
 
         /// <summary>
-        /// Waiting for the lock queue
+        /// Event raised while waiting for the lock queue
         /// </summary>
         public event WaitingForLockQueueEventHandler WaitingForLockQueue;
 
         /// <summary>
-        /// Waiting for the lock queue
+        /// Reports the source and target paths, plus the source and target backlog
         /// </summary>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="backlogSourceMB">Source computer backlog, in MB</param>
         /// <param name="backlogTargetMB">Target computer backlog, in MB</param>
         public delegate void WaitingForLockQueueEventHandler(string sourceFilePath, string targetFilePath, int backlogSourceMB, int backlogTargetMB);
+
+        /// <summary>
+        /// Event raised after waiting for 5 minutes
+        /// </summary>
+        public event WaitingForLockQueueNotifyLockFilePathsEventHandler WaitingForLockQueueNotifyLockFilePaths;
+
+        /// <summary>
+        /// Information about lock files associated with the current wait
+        /// </summary>
+        /// <param name="sourceLockFilePath">Source lock file path</param>
+        /// <param name="targetLockFilePath">Target lock file path</param>
+        /// <param name="adminBypassMessage">Message that describes deleting the lock files to abort the wait</param>
+        public delegate void WaitingForLockQueueNotifyLockFilePathsEventHandler(string sourceLockFilePath, string targetLockFilePath, string adminBypassMessage);
 
         /// <summary>
         /// Event is raised if we wait to long for our turn in the lock file queue
@@ -737,7 +750,9 @@ namespace PRISM
                     lockFilePathTarget = CreateLockFile(lockDirectoryTarget, lockFileTimestamp, sourceFile, targetFilePath, managerName);
                 }
 
-                WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, lockDirectoryTarget, sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES);
+                WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, lockDirectoryTarget,
+                                     sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES,
+                                     lockFilePathSource, lockFilePathTarget);
 
                 if (DebugLevel >= 1)
                 {
@@ -990,6 +1005,7 @@ namespace PRISM
         /// and if we're running Windows, use DeleteFileW in kernel32.dll instead
         /// </summary>
         /// <param name="targetFile"></param>
+        // ReSharper disable once SuggestBaseTypeForParameter
         private void DeleteFileNative(FileInfo targetFile)
         {
             try
@@ -2675,6 +2691,33 @@ namespace PRISM
             return false;
         }
 
+        private void NotifyLockFilePaths(string lockFilePathSource, string lockFilePathTarget)
+        {
+            var adminBypassBase = "To force the file copy and bypass the lockfile queue";
+
+            string adminBypassMessage;
+            if (!string.IsNullOrWhiteSpace(lockFilePathSource) && !string.IsNullOrWhiteSpace(lockFilePathTarget))
+            {
+                adminBypassMessage = string.Format("{0}, delete {1} and {2}", adminBypassBase, lockFilePathSource, lockFilePathTarget);
+            }
+            else if (!string.IsNullOrWhiteSpace(lockFilePathSource))
+            {
+                adminBypassMessage = string.Format("{0}, delete {1}", adminBypassBase, lockFilePathSource);
+            }
+            else if (!string.IsNullOrWhiteSpace(lockFilePathTarget))
+            {
+                adminBypassMessage = string.Format("{0}, delete {1}", adminBypassBase, lockFilePathTarget);
+            }
+            else
+            {
+                adminBypassMessage = string.Format("Logic error; unable {0}", adminBypassBase.ToLower());
+            }
+
+            WaitingForLockQueueNotifyLockFilePaths?.Invoke(lockFilePathSource ?? string.Empty,
+                                                           lockFilePathTarget ?? string.Empty,
+                                                           adminBypassMessage);
+        }
+
         /// <summary>
         /// Confirms that the drive for the target output file has a minimum amount of free disk space
         /// </summary>
@@ -2864,6 +2907,8 @@ namespace PRISM
                     break;
                 }
 
+                var totalWaitTimeMinutes = DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes;
+
                 // Server resources exceed the thresholds
                 // Sleep for 1 to 30 seconds, depending on mbBacklogSource and mbBacklogTarget
                 // We compute sleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
@@ -2876,15 +2921,21 @@ namespace PRISM
                 if (sleepTimeSec > 30)
                     sleepTimeSec = 30;
 
+                if (totalWaitTimeMinutes >= 5 && !notifiedLockFilePaths)
+                {
+                    NotifyLockFilePaths(lockFilePathSource, lockFilePathTarget);
+                    notifiedLockFilePaths = true;
+                }
+
                 WaitingForLockQueue?.Invoke(sourceFile.FullName, targetFilePath, mbBacklogSource, mbBacklogTarget);
 
                 ProgRunner.SleepMilliseconds(Convert.ToInt32(sleepTimeSec) * 1000);
 
-                if (WaitedTooLong(waitTimeStart, MAX_LOCKFILE_WAIT_TIME_MINUTES))
-                {
-                    LockQueueTimedOut?.Invoke(sourceFile.FullName, targetFilePath, DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes);
-                    break;
-                }
+                if (totalWaitTimeMinutes < MAX_LOCKFILE_WAIT_TIME_MINUTES)
+                    continue;
+
+                LockQueueTimedOut?.Invoke(sourceFile.FullName, targetFilePath, totalWaitTimeMinutes);
+                break;
             }
 
         }
