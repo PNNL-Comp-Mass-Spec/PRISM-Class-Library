@@ -45,10 +45,19 @@ namespace PRISMWin
             // however you should always compile your code on newer versions of
             // the framework to ensure your app works the same.
             // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
+            // Also see https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/versions-and-dependencies
 
-            if (releaseKey > 461310)
+            if (releaseKey > 528049)
             {
-                return "Later than 4.7.1 (build " + releaseKey + ")";
+                return "Later than 4.8 (build " + releaseKey + ")";
+            }
+            if (releaseKey >= 528040)
+            {
+                return "4.8";
+            }
+            if (releaseKey >= 461808)
+            {
+                return "4.7.2";
             }
             if (releaseKey >= 461308)
             {
