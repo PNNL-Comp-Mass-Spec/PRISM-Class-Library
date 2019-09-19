@@ -43,29 +43,44 @@ namespace PRISM
         public static bool UpdatesArePending(DateTime currentTime, out string pendingWindowsUpdateMessage)
         {
 
-            // Determine the third Tuesday in the current month
-            var thirdTuesdayInMonth = GetNthTuesdayInMonth(currentTime, 3);
+            // Previously, Windows 7 / Windows 8 processing machines installed updates around 3 am on the Thursday after the third Tuesday of the month
+            // After migrating to a new OU in 2019, Windows 10 Pubs began installing updates at various times
+            // Therefore, the processing box check is now disabled
 
-            // Windows 7 / Windows 8 Pubs install updates around 3 am on the Thursday after the third Tuesday of the month
-            // Return true between 12 am and 6:30 am on Thursday in the week with the third Tuesday of the month
-            var exclusionStart = thirdTuesdayInMonth.AddDays(2);
-            var exclusionEnd = thirdTuesdayInMonth.AddDays(2).AddHours(6).AddMinutes(30);
+            const bool CHECK_FOR_THURSDAY_UPDATES = false;
 
-            if (currentTime >= exclusionStart && currentTime < exclusionEnd)
+#pragma warning disable 162
+            // ReSharper disable HeuristicUnreachableCode
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (CHECK_FOR_THURSDAY_UPDATES)
             {
-                var pendingUpdateTime = thirdTuesdayInMonth.AddDays(2).AddHours(3);
+                // Determine the third Tuesday in the current month
+                var thirdTuesdayInMonth = GetNthTuesdayInMonth(currentTime, 3);
 
-                if (currentTime < pendingUpdateTime)
-                {
-                    pendingWindowsUpdateMessage = "Processing boxes are expected to install Windows updates around " + pendingUpdateTime.ToString("hh:mm:ss tt");
-                }
-                else
-                {
-                    pendingWindowsUpdateMessage = "Processing boxes should have installed Windows updates at " + pendingUpdateTime.ToString("hh:mm:ss tt");
-                }
+                // Return true between 12 am and 6:30 am on Thursday in the week with the third Tuesday of the month
+                var exclusionStart = thirdTuesdayInMonth.AddDays(2);
+                var exclusionEnd = thirdTuesdayInMonth.AddDays(2).AddHours(6).AddMinutes(30);
 
-                return true;
+                if (currentTime >= exclusionStart && currentTime < exclusionEnd)
+                {
+                    var pendingUpdateTime = thirdTuesdayInMonth.AddDays(2).AddHours(3);
+
+                    if (currentTime < pendingUpdateTime)
+                    {
+                        pendingWindowsUpdateMessage = "Processing boxes are expected to install Windows updates around " +
+                                                      pendingUpdateTime.ToString("hh:mm:ss tt");
+                    }
+                    else
+                    {
+                        pendingWindowsUpdateMessage = "Processing boxes should have installed Windows updates at " +
+                                                      pendingUpdateTime.ToString("hh:mm:ss tt");
+                    }
+
+                    return true;
+                }
             }
+            // ReSharper restore HeuristicUnreachableCode
+#pragma warning restore 162
 
             // No processing box updates are scheduled
             // Check for server updates
@@ -100,35 +115,20 @@ namespace PRISM
             // Determine the second Tuesday in the current month
             var secondTuesdayInMonth = GetNthTuesdayInMonth(currentTime, 2);
 
-            // Windows servers install updates around either 3 am or 10 am on the first Sunday after the second Tuesday of the month
-            // Return true between 2 am and 6:30 am or between 9:30 am and 11 am on the first Sunday after the second Tuesday of the month
+            // Windows servers install updates between 2 am and 6 am on the first Sunday after the second Tuesday of the month
+            // Return true between 2 am and 6:30 am on the first Sunday after the second Tuesday of the month
             var exclusionStart = secondTuesdayInMonth.AddDays(5).AddHours(2);
             var exclusionEnd = secondTuesdayInMonth.AddDays(5).AddHours(6).AddMinutes(30);
 
-            var exclusionStart2 = secondTuesdayInMonth.AddDays(5).AddHours(9).AddMinutes(30);
-            var exclusionEnd2 = secondTuesdayInMonth.AddDays(5).AddHours(11);
+            if (currentTime < exclusionStart || currentTime >= exclusionEnd) return false;
 
-            if (currentTime >= exclusionStart && currentTime < exclusionEnd ||
-                currentTime >= exclusionStart2 && currentTime < exclusionEnd2)
-            {
-                var pendingUpdateTime1 = secondTuesdayInMonth.AddDays(5).AddHours(3);
-                var pendingUpdateTime2 = secondTuesdayInMonth.AddDays(5).AddHours(10);
+            var pendingUpdateTime = secondTuesdayInMonth.AddDays(5).AddHours(3);
 
-                var pendingUpdateTimeText = pendingUpdateTime1.ToString("hh:mm:ss tt") + " or " + pendingUpdateTime2.ToString("hh:mm:ss tt");
+            var pendingUpdateTimeText = pendingUpdateTime.ToString("hh:mm:ss tt");
 
-                if (currentTime < pendingUpdateTime2)
-                {
-                    pendingWindowsUpdateMessage = "Servers are expected to install Windows updates around " + pendingUpdateTimeText;
-                }
-                else
-                {
-                    pendingWindowsUpdateMessage = "Servers should have installed Windows updates around " + pendingUpdateTimeText;
-                }
+            pendingWindowsUpdateMessage = "Servers are expected to install Windows updates around " + pendingUpdateTimeText;
 
-                return true;
-            }
-
-            return false;
+            return true;
 
         }
 
