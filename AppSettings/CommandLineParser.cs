@@ -12,7 +12,7 @@ namespace PRISM
     /// supporting properties of primitive types (and arrays of primitive types).
     ///
     /// Supports parameter flags similar to /d -dd --dir, with case sensitivity when needed,
-    /// with the separator between parameter flag and parameter as ' ' or ':',
+    /// with the separator between parameter flag and parameter as ' ', ':', or '=',
     /// and also supports using a parameter flag as a switch (if the associated property is a bool).
     ///
     /// If an argument is supplied multiple times, it only keeps the last one supplied.
@@ -95,7 +95,7 @@ namespace PRISM
             /// <summary>
             /// Errors that occurred during parsing
             /// </summary>
-            public List<string> ParseErrors { get; }
+            public IReadOnlyList<string> ParseErrors => mParseErrors;
 
             /// <summary>
             /// Target object, populated with the parsed arguments when the parsing completes
@@ -105,13 +105,17 @@ namespace PRISM
             #endregion
 
             /// <summary>
+            /// Modifiable list of parsing errors
+            /// </summary>
+            private readonly List<string> mParseErrors = new List<string>();
+
+            /// <summary>
             /// Constructor
             /// </summary>
             /// <param name="parsed"></param>
             public ParserResults(T parsed)
             {
                 Success = true;
-                ParseErrors = new List<string>();
                 ParsedResults = parsed;
             }
 
@@ -121,6 +125,15 @@ namespace PRISM
             internal void Failed()
             {
                 Success = false;
+            }
+
+            /// <summary>
+            /// Add a Parsing error to the parsing error list.
+            /// </summary>
+            /// <param name="error"></param>
+            internal void AddParseError(string error)
+            {
+                mParseErrors.Add(error);
             }
 
             /// <summary>
@@ -382,7 +395,7 @@ namespace PRISM
 
                     if (prop.Value.Required && (!specified || value == null || value.Count == 0))
                     {
-                        Results.ParseErrors.Add(string.Format(@"Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]));
+                        Results.AddParseError(string.Format(@"Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]));
                         Results.Failed();
                     }
 
@@ -435,28 +448,28 @@ namespace PRISM
                     }
                     catch (InvalidCastException)
                     {
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
                             keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (FormatException)
                     {
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
                             keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (ArgumentException)
                     {
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""",
                             keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
                     }
                     catch (OverflowException)
                     {
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)",
                             keyGiven, lastVal, prop.Key.PropertyType.Name));
                         Results.Failed();
@@ -509,13 +522,13 @@ namespace PRISM
                     {
                         if (castMin.CompareTo(castValue) > 0)
                         {
-                            Results.ParseErrors.Add(string.Format(@"Error: argument {0}, value of {1} is less than minimum of {2}", argKey, castValue, castMin));
+                            Results.AddParseError(string.Format(@"Error: argument {0}, value of {1} is less than minimum of {2}", argKey, castValue, castMin));
                             Results.Failed();
                         }
                     }
                     else
                     {
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""",
                             argKey, castValue, parseData.Min, propertyType.Name));
                         Results.Failed();
@@ -528,7 +541,7 @@ namespace PRISM
                     {
                         if (castMax.CompareTo(castValue) < 0)
                         {
-                            Results.ParseErrors.Add(string.Format(
+                            Results.AddParseError(string.Format(
                                 @"Error: argument {0}, value of {1} is greater than maximum of {2}",
                                 argKey, castValue, castMax));
                             Results.Failed();
@@ -536,7 +549,7 @@ namespace PRISM
                     }
                     else
                     {
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""",
                             argKey, castValue, parseData.Max, propertyType.Name));
                         Results.Failed();
@@ -545,22 +558,22 @@ namespace PRISM
             }
             catch (InvalidCastException)
             {
-                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
+                Results.AddParseError(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
                 Results.Failed();
             }
             catch (FormatException)
             {
-                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
+                Results.AddParseError(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
                 Results.Failed();
             }
             catch (ArgumentException)
             {
-                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
+                Results.AddParseError(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}""", argKey, propertyType.Name));
                 Results.Failed();
             }
             catch (OverflowException)
             {
-                Results.ParseErrors.Add(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)", argKey, propertyType.Name));
+                Results.AddParseError(string.Format(@"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)", argKey, propertyType.Name));
                 Results.Failed();
             }
             return castValue;
@@ -685,7 +698,7 @@ namespace PRISM
                     // if argument is case-sensitive, make sure it matches an argument
                     if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
                     {
-                        Results.ParseErrors.Add(string.Format("Error: Arg " + key + "does not match valid argument"));
+                        Results.AddParseError(string.Format("Error: Arg " + key + "does not match valid argument"));
                         return null;
                     }
 
@@ -1087,14 +1100,14 @@ namespace PRISM
                     if (string.IsNullOrWhiteSpace(prop.Value.ArgExistsProperty))
                     {
                         // ArgExistsProperty is set to a empty or whitespace value
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: {0} must be either null, or a boolean property name (use nameof()); class {1}, property {2}, current value is ""{3}""",
                             nameof(prop.Value.ArgExistsProperty), typeof(T).Name, prop.Key.Name, prop.Value.ArgExistsProperty));
                     }
                     else
                     {
                         // ArgExistsProperty is set to a non-existent or non-boolean property name
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: {0} does not exist or is not a boolean property name; class {1}, property {2}, current value is ""{3}""",
                             nameof(prop.Value.ArgExistsProperty), typeof(T).Name, prop.Key.Name, prop.Value.ArgExistsProperty));
                     }
@@ -1124,7 +1137,7 @@ namespace PRISM
                     if (info.AllArgNormalCase.Contains(key))
                     {
                         // ERROR: Duplicate arguments!
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: Duplicate option keys specified in class {0}; key is ""{1}""", typeof(T).Name,
                             key));
                         return null;
@@ -1135,7 +1148,7 @@ namespace PRISM
                         if (key.StartsWith(invalidChar.ToString()))
                         {
                             // ERROR: Parameter marker character at start of parameter!
-                            Results.ParseErrors.Add(string.Format(
+                            Results.AddParseError(string.Format(
                                 @"Error: bad character in argument key ""{0}"" in {1}; key cannot start with char '{2}'",
                                 key, typeof(T).Name, invalidChar));
                             return null;
@@ -1147,7 +1160,7 @@ namespace PRISM
                         if (key.Contains(invalidChar.ToString()))
                         {
                             // ERROR: Parameter separator character in parameter!
-                            Results.ParseErrors.Add(string.Format(
+                            Results.AddParseError(string.Format(
                                 @"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'",
                                 key, typeof(T).Name, invalidChar));
                             return null;
@@ -1166,7 +1179,7 @@ namespace PRISM
                     if (validArgs.ContainsKey(argName))
                     {
                         // ERROR: Duplicate position specified
-                        Results.ParseErrors.Add(string.Format(
+                        Results.AddParseError(string.Format(
                             @"Error: Multiple properties in class {0} specify ArgPosition {1}; conflict involves ""{2}""",
                             typeof(T).Name, argPosition, prop.Key.Name));
                         return null;
