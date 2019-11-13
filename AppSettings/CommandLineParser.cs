@@ -603,7 +603,17 @@ namespace PRISM
 
             if (createExampleParamFile)
             {
-                WriteParamFile(exampleParamFilePath);
+                if (WriteParamFile(exampleParamFilePath) && !string.IsNullOrWhiteSpace(exampleParamFilePath))
+                {
+                    Results.AddParseError("Created example parameter file at \"{0}\"", exampleParamFilePath);
+                }
+                Results.AddParseError("-CreateParamFile provided. Exiting program.");
+                Results.Failed();
+                if (outputErrors)
+                {
+                    Results.OutputErrors();
+                }
+                return Results;
             }
 
             if (!Results.Success)
@@ -686,6 +696,7 @@ namespace PRISM
                         Console.WriteLine(line);
                     }
                     Console.WriteLine("##### End Example parameter file contents: #####");
+                    Console.WriteLine();
                 }
             }
             catch (Exception e)
@@ -703,26 +714,26 @@ namespace PRISM
             var lines = new List<string>();
 
             var props = GetPropertiesAttributes();
-            foreach (var prop in props)
+            foreach (var prop in props.OrderByDescending(x => x.Value.Required))
             {
                 if (prop.Value.Hidden)
                 {
                     continue;
                 }
-                lines.Add("# " + (prop.Value.Required ? "Required: " : "Optional: ") + prop.Value.HelpText.Replace("\n", "\n# "));
+                lines.Add("# " + (prop.Value.Required ? "Required: " : "") + prop.Value.HelpText.Replace("\n", "\n# "));
                 var key = prop.Value.ParamKeys[0];
                 if (prop.Key.PropertyType.IsArray)
                 {
                     var values = (Array)prop.Key.GetValue(Results.ParsedResults);
                     foreach (var value in values)
                     {
-                        lines.Add(string.Format("{0}:{1}", key, value));
+                        lines.Add(string.Format("{0}={1}", key, value));
                     }
                 }
                 else
                 {
                     var value = prop.Key.GetValue(Results.ParsedResults);
-                    lines.Add(string.Format("{0}:{1}", key, value));
+                    lines.Add(string.Format("{0}={1}", key, value));
                 }
             }
 
@@ -1315,8 +1326,8 @@ namespace PRISM
 
             if (!string.IsNullOrWhiteSpace(createParamFileArgString))
             {
-                contents.Add(createParamFileArgString, "Create an example param file. Can supply a path; if path is not supplied, " +
-                                                       "the example param content will output to the console.");
+                contents.Add(createParamFileArgString, "Create an example parameter file. Can supply a path; if path is not supplied, " +
+                                                       "the example parameter file content will output to the console.");
             }
 
             if (props.Values.Any(x => x.ArgPosition > 0))
