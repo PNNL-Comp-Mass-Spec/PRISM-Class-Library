@@ -360,15 +360,12 @@ namespace PRISM
                 // Show the help if a default help argument is provided, but only if the templated class does not define the arg provided
                 foreach (var helpArg in mDefaultHelpArgs)
                 {
-                    if (preprocessed.ContainsKey(helpArg) && validArgs.ContainsKey(helpArg.ToLower()))
+                    // Make sure the help arg is not defined in the template class
+                    if (preprocessed.ContainsKey(helpArg) && validArgs.ContainsKey(helpArg.ToLower()) && validArgs[helpArg.ToLower()].IsBuiltInArg)
                     {
-                        // Make sure the help arg is not defined in the template class
-                        if (validArgs[helpArg.ToLower()].IsBuiltInArg)
-                        {
-                            PrintHelp();
-                            Results.Failed();
-                            return Results;
-                        }
+                        PrintHelp();
+                        Results.Failed();
+                        return Results;
                     }
                 }
 
@@ -690,17 +687,13 @@ namespace PRISM
                 }
 
                 var containedSeparator = false;
-                foreach (var separatorChar in separatorChars)
+                // Only split off the first separator, since others may be part of drive specifiers
+                var separatorIndex = key.IndexOfAny(separatorChars);
+                if (separatorIndex > -1)
                 {
-                    var separator = separatorChar.ToString();
-                    if (key.Contains(separator))
-                    {
-                        containedSeparator = true;
-                        // Only split off the first separator, since others may be part of drive specifiers
-                        var pos = key.IndexOf(separatorChar);
-                        value = key.Substring(pos + 1);
-                        key = key.Substring(0, pos);
-                    }
+                    containedSeparator = true;
+                    value = key.Substring(separatorIndex + 1);
+                    key = key.Substring(0, separatorIndex);
                 }
 
                 if (!containedSeparator && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
