@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
@@ -80,6 +81,8 @@ namespace PRISM
         private static readonly char[] mDefaultParamChars = { '-', '/' };
         private static readonly char[] mDefaultSeparatorChars = { ' ', ':', '=' };
         private static readonly string[] mDefaultHelpArgs = { "?", "help" };
+        private static readonly string[] mDefaultParamFileArgs = { "ParamFile" };
+        private static readonly string[] mDefaultCreateExampleParamFileArgs = { "CreateParamFile" };
 
         /// <summary>
         /// Results from the parsing
@@ -97,6 +100,11 @@ namespace PRISM
             /// Errors that occurred during parsing
             /// </summary>
             public IReadOnlyList<string> ParseErrors => mParseErrors;
+
+            /// <summary>
+            /// The path to the param file (if one was used)
+            /// </summary>
+            public string ParamFilePath { get; internal set; }
 
             /// <summary>
             /// Target object, populated with the parsed arguments when the parsing completes
@@ -118,6 +126,7 @@ namespace PRISM
             {
                 Success = true;
                 ParsedResults = parsed;
+                ParamFilePath = "";
             }
 
             /// <summary>
@@ -164,6 +173,7 @@ namespace PRISM
         private char[] separatorChars = mDefaultSeparatorChars;
         private Dictionary<string, ArgInfo> validArguments;
         private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes;
+        private List<string> paramFileArgs = new List<string>(mDefaultParamFileArgs);
 
         #region Properties
 
@@ -254,6 +264,43 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Add additional param keys that can be used to specify a parameter file argument
+        /// </summary>
+        /// <param name="paramKey"></param>
+        public void AddParamFileKey(string paramKey)
+        {
+            if (string.IsNullOrWhiteSpace(paramKey))
+            {
+                return;
+            }
+
+            foreach (var existing in paramFileArgs)
+            {
+                if (existing.Equals(paramKey, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            paramFileArgs.Add(paramKey);
+        }
+
+        /// <summary>
+        /// Writes the values in <see cref="Results"/>.ParsedResults as a parameter file
+        /// </summary>
+        /// <param name="paramFilePath">Path for the parameter file</param>
+        /// <returns>True if the write was successful</returns>
+        public bool CreateParamFile(string paramFilePath)
+        {
+            if (string.IsNullOrWhiteSpace(paramFilePath))
+            {
+                return false;
+            }
+
+            return WriteParamFile(paramFilePath);
+        }
+
+        /// <summary>
         /// Parse the arguments into <paramref name="options"/>, returning a bool. Entry assembly name is retrieved via reflection.
         /// </summary>
         /// <param name="args"></param>
@@ -335,6 +382,9 @@ namespace PRISM
                 return Results;
             }
 
+            var createExampleParamFile = false;
+            var exampleParamFilePath = "";
+
             try
             {
                 // Parse the arguments into a dictionary
@@ -366,6 +416,60 @@ namespace PRISM
                         PrintHelp();
                         Results.Failed();
                         return Results;
+                    }
+                }
+
+                var readParamFile = false;
+                // Check for a parameter file, and merge preprocessed arguments
+                foreach (var paramFileArg in paramFileArgs)
+                {
+                    // Make sure the param file arg is not defined in the template class
+                    if (preprocessed.ContainsKey(paramFileArg) && validArgs.ContainsKey(paramFileArg.ToLower()) && validArgs[paramFileArg.ToLower()].IsBuiltInArg)
+                    {
+                        if (readParamFile)
+                        {
+                            // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
+                            Results.AddParseError(@"Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
+                            Results.Failed();
+                            return Results;
+                        }
+
+                        readParamFile = true;
+                        var paramFilePath = preprocessed[paramFileArg].Last();
+                        Results.ParamFilePath = paramFilePath;
+
+                        // Read file into line-array
+                        var lines = ReadParamFile(paramFilePath);
+                        // Call ArgsPreprocess on the line array
+                        var filePreprocessed = ArgsPreprocess(lines);
+                        // Add original results of ArgsPreprocess to the new preprocessed arguments
+                        foreach (var cmdArg in preprocessed)
+                        {
+                            if (filePreprocessed.TryGetValue(cmdArg.Key, out var paramValues))
+                            {
+                                // Always append the argument values to the end, so that command-line arguments will overwrite param file arguments
+                                // The one exception is for array parameters, where the command-line arguments will add to the param file arguments
+                                paramValues.AddRange(cmdArg.Value);
+                            }
+                            else
+                            {
+                                filePreprocessed.Add(cmdArg.Key, cmdArg.Value);
+                            }
+                        }
+
+                        // Use the merged preprocessed arguments
+                        preprocessed = filePreprocessed;
+                    }
+                }
+
+                // Determine if we need to write an example parameter file
+                foreach (var createExampleParamFileArg in mDefaultCreateExampleParamFileArgs)
+                {
+                    // Make sure the help arg is not defined in the template class
+                    if (preprocessed.ContainsKey(createExampleParamFileArg) && validArgs.ContainsKey(createExampleParamFileArg.ToLower()) && validArgs[createExampleParamFileArg.ToLower()].IsBuiltInArg)
+                    {
+                        createExampleParamFile = true;
+                        exampleParamFilePath = preprocessed[createExampleParamFileArg].Last();
                     }
                 }
 
@@ -497,6 +601,11 @@ namespace PRISM
                 Results.Failed();
             }
 
+            if (createExampleParamFile)
+            {
+                WriteParamFile(exampleParamFilePath);
+            }
+
             if (!Results.Success)
             {
                 if (onErrorOutputHelp)
@@ -510,6 +619,114 @@ namespace PRISM
             }
 
             return Results;
+        }
+
+        /// <summary>
+        /// Reads a parameter file.
+        /// </summary>
+        /// <param name="paramFilePath"></param>
+        /// <returns></returns>
+        private List<string> ReadParamFile(string paramFilePath)
+        {
+            var lines = new List<string>();
+            if (!File.Exists(paramFilePath))
+            {
+                return lines;
+            }
+
+            try
+            {
+                using (var reader = new StreamReader(new FileStream(paramFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line))
+                        {
+                            continue;
+                        }
+
+                        line = line.Trim();
+                        if (line.IndexOfAny(new[] {'#', ';'}) == 0)
+                        {
+                            // comment line; skip
+                            continue;
+                        }
+
+                        // Add '-' at the beginning of the list so that the arguments are properly recognized
+                        lines.Add("-" + line);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Results.AddParseError("Error reading parameter file \"{0}\": {1}", paramFilePath, e);
+                Results.Failed();
+            }
+
+            return lines;
+        }
+
+        private bool WriteParamFile(string paramFilePath)
+        {
+            var isFile = !string.IsNullOrWhiteSpace(paramFilePath);
+            try
+            {
+                var lines = GetParamFileContents();
+                if (isFile)
+                {
+                    File.WriteAllLines(paramFilePath, lines);
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("##### Example parameter file contents: #####");
+                    foreach (var line in lines)
+                    {
+                        Console.WriteLine(line);
+                    }
+                    Console.WriteLine("##### End Example parameter file contents: #####");
+                }
+            }
+            catch (Exception e)
+            {
+                var target = isFile ? $"file \"{paramFilePath}\"" : "console";
+                ConsoleMsgUtils.ShowError(e, "Error writing parameters to {0}!", target);
+                return false;
+            }
+
+            return true;
+        }
+
+        private IEnumerable<string> GetParamFileContents()
+        {
+            var lines = new List<string>();
+
+            var props = GetPropertiesAttributes();
+            foreach (var prop in props)
+            {
+                if (prop.Value.Hidden)
+                {
+                    continue;
+                }
+                lines.Add("# " + (prop.Value.Required ? "Required: " : "Optional: ") + prop.Value.HelpText.Replace("\n", "\n# "));
+                var key = prop.Value.ParamKeys[0];
+                if (prop.Key.PropertyType.IsArray)
+                {
+                    var values = (Array)prop.Key.GetValue(Results.ParsedResults);
+                    foreach (var value in values)
+                    {
+                        lines.Add(string.Format("{0}:{1}", key, value));
+                    }
+                }
+                else
+                {
+                    var value = prop.Key.GetValue(Results.ParsedResults);
+                    lines.Add(string.Format("{0}:{1}", key, value));
+                }
+            }
+
+            return lines;
         }
 
         /// <summary>
@@ -1052,6 +1269,56 @@ namespace PRISM
                 contents.Add(keys, helpText);
             }
 
+            var paramFileArgString = string.Empty;
+
+            // Add the default param file string
+            foreach (var paramFileArg in paramFileArgs)
+            {
+                if (validArgs.ContainsKey(paramFileArg.ToLower()))
+                {
+                    if (validArgs[paramFileArg.ToLower()].IsBuiltInArg)
+                    {
+                        if (!string.IsNullOrWhiteSpace(paramFileArgString))
+                        {
+                            paramFileArgString += ", ";
+                        }
+                        paramFileArgString += paramChars[0] + paramFileArg;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(paramFileArgString))
+            {
+                contents.Add(paramFileArgString, "Path to a file containing program parameters. Additional arguments on the command line can " +
+                                                 "supplement or override the arguments in the param file. " +
+                                                 "Lines starting with '#' or ';' will be treated as comments; blank lines are ignored. " +
+                                                 "Lines that start with text that does not match a parameter will also be ignored.");
+            }
+
+            var createParamFileArgString = string.Empty;
+
+            // Add the default param file string
+            foreach (var createParamFileArg in mDefaultCreateExampleParamFileArgs)
+            {
+                if (validArgs.ContainsKey(createParamFileArg.ToLower()))
+                {
+                    if (validArgs[createParamFileArg.ToLower()].IsBuiltInArg)
+                    {
+                        if (!string.IsNullOrWhiteSpace(createParamFileArgString))
+                        {
+                            createParamFileArgString += ", ";
+                        }
+                        createParamFileArgString += paramChars[0] + createParamFileArg;
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(createParamFileArgString))
+            {
+                contents.Add(createParamFileArgString, "Create an example param file. Can supply a path; if path is not supplied, " +
+                                                       "the example param content will output to the console.");
+            }
+
             if (props.Values.Any(x => x.ArgPosition > 0))
             {
                 contents.Add("NOTE:", "arg#1, arg#2, etc. refer to positional arguments, used like \"AppName.exe [arg#1] [arg#2] [other args]\".");
@@ -1216,6 +1483,38 @@ namespace PRISM
                     info.AllArgNormalCase.Add(helpArg);
 
                     validArgs.Add(helpArg, info);
+                }
+            }
+
+            foreach (var paramFileArg in paramFileArgs)
+            {
+                if (!validArgs.ContainsKey(paramFileArg.ToLower()))
+                {
+                    var info = new ArgInfo
+                    {
+                        ArgNormalCase = paramFileArg,
+                        CanBeSwitch = false,
+                        IsBuiltInArg = true,
+                    };
+                    info.AllArgNormalCase.Add(paramFileArg);
+
+                    validArgs.Add(paramFileArg.ToLower(), info);
+                }
+            }
+
+            foreach (var createParamArg in mDefaultCreateExampleParamFileArgs)
+            {
+                if (!validArgs.ContainsKey(createParamArg.ToLower()))
+                {
+                    var info = new ArgInfo
+                    {
+                        ArgNormalCase = createParamArg,
+                        CanBeSwitch = true,
+                        IsBuiltInArg = true,
+                    };
+                    info.AllArgNormalCase.Add(createParamArg);
+
+                    validArgs.Add(createParamArg.ToLower(), info);
                 }
             }
 

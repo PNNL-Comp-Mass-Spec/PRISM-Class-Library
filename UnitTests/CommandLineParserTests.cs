@@ -627,6 +627,43 @@ namespace PRISMTest
         }
 
         [Test]
+        public void TestParamFileOutputConsole()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            var results = parser.ParseArgs(new[] { "-createparamfile" });
+        }
+
+        [Test]
+        public void TestParamFileRoundTrip()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            var results = parser.Results.ParsedResults;
+            results.Smooth = 5;
+            results.Smooth2 = 10;
+            results.OkayName = "A Real Value!";
+            results.Verbose = "Concise";
+
+            var paramFileName = "exampleParams.txt";
+            parser.CreateParamFile(paramFileName);
+
+            var parser2 = new CommandLineParser<OkayKey2>();
+            var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFileName }).ParsedResults;
+            Assert.AreEqual(results.Smooth, results2.Smooth);
+            Assert.AreEqual(results.Smooth2, results2.Smooth2);
+            Assert.AreEqual(results.OkayName, results2.OkayName);
+            Assert.AreEqual(results.Verbose, results2.Verbose);
+
+            var parser3 = new CommandLineParser<OkayKey2>();
+            var smooth2Override = 15;
+            var okayNameOverride = "A Different Value?";
+            var results3 = parser3.ParseArgs(new[] { "-smooth2", smooth2Override.ToString(), "-okay/name", okayNameOverride, "-ParamFile", paramFileName }).ParsedResults;
+            Assert.AreEqual(results.Smooth, results3.Smooth);
+            Assert.AreEqual(smooth2Override, results3.Smooth2);
+            Assert.AreEqual(okayNameOverride, results3.OkayName);
+            Assert.AreEqual(results.Verbose, results3.Verbose);
+        }
+
+        [Test]
         public void TestUpdateHelpText()
         {
             var exeName = "Test.exe";
