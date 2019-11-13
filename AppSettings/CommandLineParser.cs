@@ -402,7 +402,14 @@ namespace PRISM
                     {
                         specified = true;
                         keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
-                        value = preprocessed[positionalArgName];
+                        if (value == null)
+                        {
+                            value = preprocessed[positionalArgName];
+                        }
+                        else
+                        {
+                            value.AddRange(preprocessed[positionalArgName]);
+                        }
                     }
 
                     if (prop.Value.Required && (!specified || value == null || value.Count == 0))
