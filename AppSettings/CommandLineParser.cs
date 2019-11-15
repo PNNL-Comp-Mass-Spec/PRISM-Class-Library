@@ -85,6 +85,26 @@ namespace PRISM
         private static readonly string[] mDefaultCreateExampleParamFileArgs = { "CreateParamFile" };
 
         /// <summary>
+        /// Tracks parameter parsing errors
+        /// </summary>
+        public struct ParseErrorInfo
+        {
+            public readonly bool IsMissingRequiredParameter;
+            public readonly string Message;
+
+            /// <summary>
+            /// Constructor
+            /// </summary>
+            /// <param name="message"></param>
+            /// <param name="isMissingRequiredParameter"></param>
+            public ParseErrorInfo(string message, bool isMissingRequiredParameter = false)
+            {
+                Message = message;
+                IsMissingRequiredParameter = isMissingRequiredParameter;
+            }
+        }
+
+        /// <summary>
         /// Results from the parsing
         /// </summary>
         public class ParserResults
@@ -99,7 +119,7 @@ namespace PRISM
             /// <summary>
             /// Errors that occurred during parsing
             /// </summary>
-            public IReadOnlyList<string> ParseErrors => mParseErrors;
+            public IReadOnlyList<ParseErrorInfo> ParseErrors => mParseErrors;
 
             /// <summary>
             /// The path to the param file (if one was used)
@@ -116,7 +136,7 @@ namespace PRISM
             /// <summary>
             /// Modifiable list of parsing errors
             /// </summary>
-            private readonly List<string> mParseErrors = new List<string>();
+            private readonly List<ParseErrorInfo> mParseErrors = new List<ParseErrorInfo>();
 
             /// <summary>
             /// Constructor
@@ -140,10 +160,12 @@ namespace PRISM
             /// <summary>
             /// Add a Parsing error to the parsing error list.
             /// </summary>
-            /// <param name="error"></param>
-            internal void AddParseError(string error)
+            /// <param name="message">Error message</param>
+            /// <param name="isMissingRequiredParameter">True if this is a missing required parameter</param>
+            internal void AddParseError(string message, bool isMissingRequiredParameter = false)
             {
-                mParseErrors.Add(error);
+                var errorInfo = new ParseErrorInfo(message, isMissingRequiredParameter);
+                mParseErrors.Add(errorInfo);
             }
 
             /// <summary>
@@ -515,7 +537,8 @@ namespace PRISM
 
                     if (prop.Value.Required && (!specified || value == null || value.Count == 0))
                     {
-                        Results.AddParseError(@"Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]);
+                        var message = string.Format("Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]);
+                        Results.AddParseError(message, true);
                         Results.Failed();
                     }
 
@@ -605,7 +628,7 @@ namespace PRISM
             {
                 if (WriteParamFile(exampleParamFilePath) && !string.IsNullOrWhiteSpace(exampleParamFilePath))
                 {
-                    Results.AddParseError("Created example parameter file at \"{0}\"", exampleParamFilePath);
+                    Results.AddParseError(@"Created example parameter file at ""{0}""", exampleParamFilePath);
                 }
                 Results.AddParseError("-CreateParamFile provided. Exiting program.");
                 Results.Failed();
@@ -670,7 +693,7 @@ namespace PRISM
             }
             catch (Exception e)
             {
-                Results.AddParseError("Error reading parameter file \"{0}\": {1}", paramFilePath, e);
+                Results.AddParseError(@"Error reading parameter file ""{0}"": {1}", paramFilePath, e);
                 Results.Failed();
             }
 
