@@ -199,7 +199,7 @@ namespace PRISM
         private char[] separatorChars = mDefaultSeparatorChars;
         private Dictionary<string, ArgInfo> validArguments;
         private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes;
-        private List<string> paramFileArgs = new List<string>(mDefaultParamFileArgs);
+        private readonly List<string> paramFileArgs = new List<string>(mDefaultParamFileArgs);
 
         #region Properties
 
@@ -293,6 +293,7 @@ namespace PRISM
         /// Add additional param keys that can be used to specify a parameter file argument
         /// </summary>
         /// <param name="paramKey"></param>
+        // ReSharper disable once UnusedMember.Global
         public void AddParamFileKey(string paramKey)
         {
             if (string.IsNullOrWhiteSpace(paramKey))
