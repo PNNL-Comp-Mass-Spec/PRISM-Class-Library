@@ -190,7 +190,7 @@ namespace PRISM
                     if (error.IsMissingRequiredParameter && skipMissingParamErrors)
                         continue;
 
-                    Console.WriteLine(error);
+                    Console.WriteLine(error.Message);
                 }
             }
         }
