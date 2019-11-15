@@ -182,10 +182,14 @@ namespace PRISM
             /// <summary>
             /// Print the parsing errors to console
             /// </summary>
-            public void OutputErrors()
+            /// <param name="skipMissingParamErrors">When true, do not show errors regarding missing required parameters</param>
+            public void OutputErrors(bool skipMissingParamErrors = false)
             {
                 foreach (var error in ParseErrors)
                 {
+                    if (error.IsMissingRequiredParameter && skipMissingParamErrors)
+                        continue;
+
                     Console.WriteLine(error);
                 }
             }
@@ -634,7 +638,7 @@ namespace PRISM
                 Results.Failed();
                 if (outputErrors)
                 {
-                    Results.OutputErrors();
+                    Results.OutputErrors(true);
                 }
                 return Results;
             }
