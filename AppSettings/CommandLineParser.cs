@@ -410,7 +410,7 @@ namespace PRISM
             }
 
             var createExampleParamFile = false;
-            var exampleParamFilePath = "";
+            var exampleParamFilePath = string.Empty;
 
             try
             {
@@ -446,20 +446,23 @@ namespace PRISM
                     }
                 }
 
-                var readParamFile = false;
                 // Look for any unknown arguments
                 if (HasUnknownArguments(validArgs, preprocessed))
                 {
                     Results.Failed();
                     return Results;
                 }
+
+                var paramFileLoaded = false;
+                DirectoryInfo paramFileDirectory = null;
+
                 // Check for a parameter file, and merge preprocessed arguments
                 foreach (var paramFileArg in paramFileArgs)
                 {
                     // Make sure the param file arg is not defined in the template class
                     if (preprocessed.ContainsKey(paramFileArg) && validArgs.ContainsKey(paramFileArg.ToLower()) && validArgs[paramFileArg.ToLower()].IsBuiltInArg)
                     {
-                        if (readParamFile)
+                        if (paramFileLoaded)
                         {
                             // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
                             Results.AddParseError(@"Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
@@ -467,12 +470,26 @@ namespace PRISM
                             return Results;
                         }
 
-                        readParamFile = true;
                         var paramFilePath = preprocessed[paramFileArg].Last();
                         Results.ParamFilePath = paramFilePath;
+                        var paramFile = new FileInfo(paramFilePath);
+
+                        if (!paramFile.Exists)
+                        {
+                            Results.AddParseError(
+                                @"Error: Specified parameter file was not found: " + paramFilePath);
+                            Results.AddParseError(
+                                @"  ... Full path: " + paramFile.FullName);
+                            Results.Failed();
+                            return Results;
+                        }
+
+                        paramFileDirectory = paramFile.Directory;
 
                         // Read file into line-array
-                        var lines = ReadParamFile(paramFilePath);
+                        var lines = ReadParamFile(paramFile);
+                        paramFileLoaded = true;
+
                         // Call ArgsPreprocess on the line array
                         var filePreprocessed = ArgsPreprocess(lines);
                         // Add original results of ArgsPreprocess to the new preprocessed arguments
@@ -668,19 +685,22 @@ namespace PRISM
         /// <summary>
         /// Reads a parameter file.
         /// </summary>
-        /// <param name="paramFilePath"></param>
-        /// <returns></returns>
-        private List<string> ReadParamFile(string paramFilePath)
+        /// <param name="paramFile">Parameter file</param>
+        /// <returns>
+        /// List of parameters read from the parameter file
+        /// Each line will starts with a dash
+        /// </returns>
+        private List<string> ReadParamFile(FileSystemInfo paramFile)
         {
             var lines = new List<string>();
-            if (!File.Exists(paramFilePath))
+            if (!paramFile.Exists)
             {
                 return lines;
             }
 
             try
             {
-                using (var reader = new StreamReader(new FileStream(paramFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     while (!reader.EndOfStream)
                     {
@@ -704,7 +724,7 @@ namespace PRISM
             }
             catch (Exception e)
             {
-                Results.AddParseError(@"Error reading parameter file ""{0}"": {1}", paramFilePath, e);
+                Results.AddParseError(@"Error reading parameter file ""{0}"": {1}", paramFile.FullName, e);
                 Results.Failed();
             }
 
