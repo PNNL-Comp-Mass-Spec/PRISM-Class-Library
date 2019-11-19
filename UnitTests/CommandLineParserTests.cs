@@ -636,6 +636,7 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<OkayKey2>();
             var results = parser.ParseArgs(new[] { "-createparamfile" });
+            Console.WriteLine(results);
         }
 
         [Test]
@@ -833,7 +834,6 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgExistsPropertyGood>();
             var result = parser.ParseArgs(new[] { "-L", logFileName }, showHelpOnError, outputErrors);
             Assert.IsTrue(result.Success, "Parser failed to process with valid and specified ArgExistsProperty");
-            var defaults = new ArgExistsPropertyGood();
             var options = result.ParsedResults;
             Assert.AreEqual(true, options.LogEnabled, "LogEnabled should be true!!");
             Assert.AreEqual(logFileName, options.LogFilePath, "LogFilePath should match the provided value!!");
