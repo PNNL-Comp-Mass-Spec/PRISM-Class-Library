@@ -102,6 +102,15 @@ namespace PRISM
                 Message = message;
                 IsMissingRequiredParameter = isMissingRequiredParameter;
             }
+
+            /// <summary>
+            /// ToString overload (show the error message)
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                return Message;
+            }
         }
 
         /// <summary>
