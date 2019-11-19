@@ -1482,6 +1482,14 @@ namespace PRISM
                     return null;
                 }
 
+                if (prop.Value.IsFilePath && prop.Key.PropertyType != typeof(string))
+                {
+                    Results.AddParseError(
+                        @"Error: Property ""{0}"" has attribute IsFilePath=true; the property must be of type String, but is of type {1}",
+                        nameof(prop.Key.Name), prop.Key.PropertyType.Name);
+                    return null;
+                }
+
                 foreach (var key in prop.Value.ParamKeys)
                 {
                     var lower = key.ToLower();
@@ -1768,6 +1776,15 @@ namespace PRISM
         /// </summary>
         /// <remarks>This is useful for supporting obsolete arguments</remarks>
         public bool Hidden { get; set; }
+
+        /// <summary>
+        /// Set to 'true' for properties that specify a file path
+        /// </summary>
+        /// <remarks>
+        /// If a parameter file is specified, will process FilePath properties to look for the files in the working directory
+        /// If the file is not found, will also look for the file in the directory with the parameter file
+        /// </remarks>
+        public bool IsFilePath { get; set; }
 
         /// <summary>
         /// If the argument is specified, the given boolean property will be set to "true"
