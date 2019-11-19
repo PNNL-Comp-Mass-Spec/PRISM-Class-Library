@@ -447,6 +447,12 @@ namespace PRISM
                 }
 
                 var readParamFile = false;
+                // Look for any unknown arguments
+                if (HasUnknownArguments(validArgs, preprocessed))
+                {
+                    Results.Failed();
+                    return Results;
+                }
                 // Check for a parameter file, and merge preprocessed arguments
                 foreach (var paramFileArg in paramFileArgs)
                 {
@@ -998,7 +1004,50 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display the help contents, using the information supplied by the Option attributes and the default constructor for the templated type
+        /// Look for any unrecognized command line arguments
+        /// </summary>
+        /// <param name="validArgs">Dictionary of valid arguments read from the template class; includes mDefaultHelpArgs, mDefaultParamFileArgs, and mDefaultCreateExampleParamFileArgs</param>
+        /// <param name="suppliedArgs">Dictionary of user-supplied arguments; keys are argument names and values are the argument value (or values)</param>
+        /// <returns></returns>
+        private bool HasUnknownArguments(Dictionary<string, ArgInfo> validArgs, Dictionary<string, List<string>> suppliedArgs)
+        {
+            var knownArgNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+            var knownCaseSensitiveArgNames = new SortedSet<string>(StringComparer.Ordinal);
+
+            foreach (var validArg in validArgs)
+            {
+                if (validArg.Value.CaseSensitive)
+                {
+                    foreach (var item in validArg.Value.AllArgNormalCase)
+                    {
+                        knownCaseSensitiveArgNames.Add(item);
+                    }
+                }
+                else
+                {
+                    foreach (var item in validArg.Value.AllArgNormalCase)
+                    {
+                        knownArgNames.Add(item);
+                    }
+                }
+            }
+
+            var invalidArguments = new List<string>();
+
+            foreach (var userArg in suppliedArgs)
+            {
+                if (knownArgNames.Contains(userArg.Key) || knownCaseSensitiveArgNames.Contains(userArg.Key))
+                    continue;
+
+                invalidArguments.Add(userArg.Key);
+                Results.AddParseError(@"Error: Unrecognized argument name: {0}", userArg.Key);
+            }
+
+            return invalidArguments.Count != 0;
+        }
+
+        /// <summary>
+        /// Display the help contents, using the information supplied by the Option attributes and the default constructor for the templated class
         /// </summary>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
