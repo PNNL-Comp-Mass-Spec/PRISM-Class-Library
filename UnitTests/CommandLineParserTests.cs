@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using PRISM;
@@ -894,5 +895,94 @@ namespace PRISMTest
             [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
             public string LogFilePath { get; set; }
         }
+
+
+        [Test]
+        public void TestFileInfoProperty()
+        {
+            var parser = new CommandLineParser<FileInfoPropertyGood>();
+            var result = parser.ParseArgs(new[] { @"-I:..\..\VisibleColors.tsv", "/S" }, showHelpOnError, outputErrors);
+
+            var inputFilePath = parser.Results.ParsedResults.InputFile;
+            Console.WriteLine("Input file: " + inputFilePath);
+            Assert.IsTrue(result.Success, "Parser did not succeed");
+        }
+
+        [Test]
+        public void TestFileInfoPropertyFail()
+        {
+            var parser = new CommandLineParser<FileInfoPropertyBad>();
+            var result = parser.ParseArgs(new[] { "-I", @"..\..\VisibleColors.tsv" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                                                     x.Message.Contains(nameof(OptionAttribute.IsFilePath)) && x.Message.Contains("must be of type")));
+        }
+
+        [Test]
+        [Category("PNL_Domain")]
+        public void TestFileInfoPropertyWithParameterFile()
+        {
+            var remoteParamFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\ParamFileTests\ExampleParamFile.conf");
+            Assert.IsNotNull(remoteParamFile.DirectoryName, "Could not determine the parenter directory of the remote parameter file");
+
+            var parser = new CommandLineParser<FileInfoPropertyGood>();
+            var result = parser.ParseArgs(new[] { "-ParamFile:" + remoteParamFile.FullName }, showHelpOnError, outputErrors);
+            Assert.IsTrue(result.Success, "Parser did not succeed");
+
+            var paramFilePath = parser.Results.ParamFilePath;
+            var inputFilePath = parser.Results.ParsedResults.InputFile;
+
+            Assert.IsNotNull(inputFilePath, "InputFile parameter of the parsed results is null");
+
+            var inputFilePathExpected = Path.Combine(remoteParamFile.DirectoryName, Path.GetFileName(inputFilePath));
+
+            Console.WriteLine("Parameter file path: " + paramFilePath);
+            Console.WriteLine("Input file path: " + inputFilePath);
+
+            Assert.AreEqual(remoteParamFile.FullName, paramFilePath);
+            Assert.AreEqual(inputFilePathExpected, inputFilePath);
+        }
+
+        [Test]
+        public void TestMissingParameterFile()
+        {
+            var parser = new CommandLineParser<FileInfoPropertyGood>();
+            var result = parser.ParseArgs(new[] { "-ParamFile", @"..\MissingFile.conf" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not fail with parameter file not found error");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("parameter file was not found")));
+        }
+
+        private class FileInfoPropertyGood
+        {
+            [Option("I", "InputFile", HelpText = "Input file path", IsFilePath = true)]
+            public string InputFile { get; set; }
+
+            [Option("S", "Recurse", HelpText = "Search in subdirectories")]
+            public bool Recurse { get; set; }
+
+            [Option("DebugMode", HelpText = "Enable debug mode")]
+            public bool Debug { get; set; }
+
+            [Option("Smooth", HelpText = "Number of points to smooth")]
+            public int PointsToSmooth { get; set; }
+        }
+
+        private class FileInfoPropertyBad
+        {
+            [Option("S", HelpText = "Search in subdirectories", IsFilePath = true)]
+            public bool Recurse { get; set; }
+        }
+
+
+        [Test]
+        public void TestUnknownArgumentName()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            var result = parser.ParseArgs(new[] { "-verbose:\"Lots of text for this argument\"", "-smooth:25", "-smooth2:50", "-MaxValue=32" }, showHelpOnError, outputErrors);
+
+            Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+        }
+
     }
 }
