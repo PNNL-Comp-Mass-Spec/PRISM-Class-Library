@@ -645,6 +645,13 @@ namespace PRISM
                             keyGiven, lastVal, prop.Key.PropertyType.Name);
                         Results.Failed();
                     }
+
+                    if (Results.Success && paramFileLoaded && prop.Value.IsFilePath && paramFileDirectory != null)
+                    {
+                        // The current property specifies a file path
+                        // Auto-fix the path if the file does not exist in the working directory, but does exist in the parameter file's directory
+                        VerifyFilePath(prop, paramFileDirectory);
+                    }
                 }
             }
             catch (Exception)
@@ -1636,6 +1643,37 @@ namespace PRISM
 
             validArguments = validArgs;
             return validArgs;
+        }
+
+        /// <summary>
+        /// Look for the file specified by the given property (whose type is string)
+        /// If the file does not exist in the working directory, but does exist in paramFileDirectory, auto-update the path
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <param name="paramFileDirectory"></param>
+        private void VerifyFilePath(KeyValuePair<PropertyInfo, OptionAttribute> prop, FileSystemInfo paramFileDirectory)
+        {
+            try
+            {
+                var filePath = (string)prop.Key.GetValue(Results.ParsedResults);
+                if (Path.IsPathRooted(filePath))
+                    return;
+
+                var fileToFind = new FileInfo(filePath);
+                if (fileToFind.Exists)
+                    return;
+
+                var alternatePath = Path.Combine(paramFileDirectory.FullName, fileToFind.Name);
+                var alternateInputFile = new FileInfo(alternatePath);
+                if (alternateInputFile.Exists)
+                {
+                    prop.Key.SetValue(Results.ParsedResults, alternateInputFile.FullName);
+                }
+            }
+            catch
+            {
+                // Silently ignore errors here
+            }
         }
 
         /// <summary>
