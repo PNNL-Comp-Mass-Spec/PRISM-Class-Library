@@ -717,6 +717,8 @@ namespace PRISM
 
             try
             {
+                var commentChars = new[] { '#', ';' };
+
                 using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     while (!reader.EndOfStream)
@@ -727,15 +729,22 @@ namespace PRISM
                             continue;
                         }
 
-                        line = line.Trim();
-                        if (line.IndexOfAny(new[] {'#', ';'}) == 0)
+                        var trimmedLine = line.Trim();
+                        if (trimmedLine.IndexOfAny(commentChars) == 0)
                         {
-                            // comment line; skip
+                            // Comment line; skip it
                             continue;
                         }
 
                         // Add '-' at the beginning of the list so that the arguments are properly recognized
-                        lines.Add("-" + line);
+                        if (trimmedLine.StartsWith("-"))
+                        {
+                            lines.Add(trimmedLine);
+                        }
+                        else
+                        {
+                            lines.Add("-" + trimmedLine);
+                        }
                     }
                 }
             }
