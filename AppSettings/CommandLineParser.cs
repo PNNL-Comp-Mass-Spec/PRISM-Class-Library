@@ -146,7 +146,7 @@ namespace PRISM
             {
                 Success = true;
                 ParsedResults = parsed;
-                ParamFilePath = "";
+                ParamFilePath = string.Empty;
             }
 
             /// <summary>
@@ -387,10 +387,19 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments, returning the parsing results
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Command line arguments</param>
         /// <param name="onErrorOutputHelp">When an error occurs, display the error and output the help</param>
         /// <param name="outputErrors">When an error occurs, output the error</param>
         /// <returns>Parser results</returns>
+        /// <remarks>
+        /// The command line arguments in the args array can be provided in various forms, including:
+        /// -i InputFile.txt
+        /// -i:InputFile.txt
+        /// -i=InputFile.txt
+        /// /d
+        /// -d
+        /// --dir
+        /// </remarks>
         public ParserResults ParseArgs(string[] args, bool onErrorOutputHelp = true, bool outputErrors = true)
         {
             if (args.Length == 0)
@@ -492,6 +501,7 @@ namespace PRISM
 
                         // Call ArgsPreprocess on the line array
                         var filePreprocessed = ArgsPreprocess(lines);
+
                         // Add original results of ArgsPreprocess to the new preprocessed arguments
                         foreach (var cmdArg in preprocessed)
                         {
@@ -928,7 +938,10 @@ namespace PRISM
         /// Parse the arguments to a dictionary
         /// </summary>
         /// <param name="args"></param>
-        /// <returns>Dictionary where keys are argument names and values are the setting for the argument</returns>
+        /// <returns>
+        /// Dictionary where keys are argument names and values are the setting for the argument
+        /// Values are a list in case the parameter is specified more than once
+        /// </returns>
         private Dictionary<string, List<string>> ArgsPreprocess(IReadOnlyList<string> args)
         {
             var validArgs = GetValidArgs();
@@ -937,6 +950,7 @@ namespace PRISM
                 return null;
             }
 
+            // In this dictionary, keys are argument names and values are the setting for the argument
             var processed = new Dictionary<string, List<string>>();
             var positionArgumentNumber = 0;
 
@@ -976,6 +990,7 @@ namespace PRISM
                 }
 
                 var containedSeparator = false;
+
                 // Only split off the first separator, since others may be part of drive specifiers
                 var separatorIndex = key.IndexOfAny(separatorChars);
                 if (separatorIndex > -1)
@@ -996,6 +1011,7 @@ namespace PRISM
                 if (validArgs.ContainsKey(ciKey))
                 {
                     var argInfo = validArgs[ciKey];
+
                     // if argument is case-sensitive, make sure it matches an argument
                     if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
                     {
@@ -1086,7 +1102,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Display the help contents, using the information supplied by the Option attributes and the default constructor for the templated type
+        /// Display the help contents, using the information supplied by the Option attributes and the default constructor for the templated class
         /// </summary>
         public void PrintHelp()
         {
@@ -1751,7 +1767,7 @@ namespace PRISM
 
                 var optionData = (OptionAttribute)attribList[0];
 
-                // ignore any duplicates (shouldn't occur anyway)
+                // Ignore any duplicates (shouldn't occur anyway)
                 props.Add(property, optionData);
 
                 if (!string.IsNullOrWhiteSpace(optionData.ArgExistsProperty))

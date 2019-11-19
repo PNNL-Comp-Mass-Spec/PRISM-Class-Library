@@ -20,7 +20,7 @@ namespace PRISMTest
         public void TestBadKey1()
         {
             var parser = new CommandLineParser<BadKey1>();
-            var result = parser.ParseArgs(new[] {"-bad-name", "b"}, showHelpOnError, outputErrors);
+            var result = parser.ParseArgs(new[] { "-bad-name", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with '-' at start of arg key");
             Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("bad character") && x.Message.Contains("char '-'")), "Error message does not contain \"bad character\" and \"char '-'\"");
         }
@@ -162,8 +162,9 @@ namespace PRISMTest
         [Test]
         public void TestHelpKey2()
         {
-            var parser = new CommandLineParser<OkayKey2> {
-                ParamFlagCharacters = new[] {'/', '-'}
+            var parser = new CommandLineParser<OkayKey2>
+            {
+                ParamFlagCharacters = new[] { '/', '-' }
             };
             var result = parser.ParseArgs(new[] { "/?" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
@@ -595,7 +596,8 @@ namespace PRISMTest
         {
             var exeName = "Test.exe";
 
-            var parser = new CommandLineParser<OkayKey2>(){
+            var parser = new CommandLineParser<OkayKey2>()
+            {
                 ProgramInfo = "This program sed tempor urna. Proin porta scelerisque nisi, " +
                               "non vestibulum elit varius vel. Sed sed tristique orci, sit amet " +
                               "feugiat risus. \n\n" +
