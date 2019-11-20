@@ -665,7 +665,7 @@ namespace PRISM
                         Results.Failed();
                     }
 
-                    if (Results.Success && paramFileLoaded && prop.Value.IsFilePath && paramFileDirectory != null)
+                    if (Results.Success && paramFileLoaded && prop.Value.IsInputFilePath && paramFileDirectory != null)
                     {
                         // The current property specifies a file path
                         // Auto-fix the path if the file does not exist in the working directory, but does exist in the parameter file's directory
@@ -1543,10 +1543,10 @@ namespace PRISM
                     return null;
                 }
 
-                if (prop.Value.IsFilePath && prop.Key.PropertyType != typeof(string))
+                if (prop.Value.IsInputFilePath && prop.Key.PropertyType != typeof(string))
                 {
                     Results.AddParseError(
-                        @"Error: Property ""{0}"" has attribute IsFilePath=true; the property must be of type String, but is of type {1}",
+                        @"Error: Property ""{0}"" has attribute IsInputFilePath=true; the property must be of type String, but is of type {1}",
                         nameof(prop.Key.Name), prop.Key.PropertyType.Name);
                     return null;
                 }
@@ -1870,13 +1870,15 @@ namespace PRISM
         public bool Hidden { get; set; }
 
         /// <summary>
-        /// Set to 'true' for properties that specify a file path
+        /// Set to 'true' for properties that specify an input file path
         /// </summary>
         /// <remarks>
-        /// If a parameter file is specified, will process FilePath properties to look for the files in the working directory
-        /// If the file is not found, will also look for the file in the directory with the parameter file
+        /// If a parameter file is specified (using -ParamFile:Options.conf), the command line parser
+        /// will process IsInputFilePath properties to look for files in the working directory.
+        /// If the file is not found, the parser will also look for the file in the directory with the parameter file,
+        /// and if the input file is found there, the path stored in the property will be updated.
         /// </remarks>
-        public bool IsFilePath { get; set; }
+        public bool IsInputFilePath { get; set; }
 
         /// <summary>
         /// If the argument is specified, the given boolean property will be set to "true"
@@ -1910,6 +1912,7 @@ namespace PRISM
             HelpShowsDefault = true;
             ArgExistsProperty = null;
             ArgExistsPropertyInfo = null;
+            IsInputFilePath = false;
         }
 
         /// <summary>

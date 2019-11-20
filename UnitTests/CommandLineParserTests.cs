@@ -778,7 +778,6 @@ namespace PRISMTest
             public double[] DblArray { get; set; }
         }
 
-
         private class ArgsPositionalOnly
         {
 
@@ -896,7 +895,6 @@ namespace PRISMTest
             public string LogFilePath { get; set; }
         }
 
-
         [Test]
         public void TestFileInfoProperty()
         {
@@ -915,7 +913,7 @@ namespace PRISMTest
             var result = parser.ParseArgs(new[] { "-I", @"..\..\VisibleColors.tsv" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                                                     x.Message.Contains(nameof(OptionAttribute.IsFilePath)) && x.Message.Contains("must be of type")));
+                                                     x.Message.Contains(nameof(OptionAttribute.IsInputFilePath)) && x.Message.Contains("must be of type")));
         }
 
         [Test]
@@ -954,7 +952,7 @@ namespace PRISMTest
 
         private class FileInfoPropertyGood
         {
-            [Option("I", "InputFile", HelpText = "Input file path", IsFilePath = true)]
+            [Option("I", "InputFile", HelpText = "Input file path", IsInputFilePath = true)]
             public string InputFile { get; set; }
 
             [Option("S", "Recurse", HelpText = "Search in subdirectories")]
@@ -969,10 +967,9 @@ namespace PRISMTest
 
         private class FileInfoPropertyBad
         {
-            [Option("S", HelpText = "Search in subdirectories", IsFilePath = true)]
+            [Option("S", HelpText = "Search in subdirectories", IsInputFilePath = true)]
             public bool Recurse { get; set; }
         }
-
 
         [Test]
         public void TestUnknownArgumentName()
