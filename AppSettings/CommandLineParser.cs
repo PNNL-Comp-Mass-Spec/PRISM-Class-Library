@@ -467,6 +467,10 @@ namespace PRISM
                 // Look for any unknown arguments
                 if (HasUnknownArguments(validArgs, preprocessed))
                 {
+                    if (outputErrors)
+                    {
+                        Results.OutputErrors();
+                    }
                     Results.Failed();
                     return Results;
                 }
@@ -484,6 +488,10 @@ namespace PRISM
                         {
                             // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
                             Results.AddParseError(@"Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
+                            if (outputErrors)
+                            {
+                                Results.OutputErrors();
+                            }
                             Results.Failed();
                             return Results;
                         }
@@ -498,6 +506,10 @@ namespace PRISM
                                 @"Error: Specified parameter file was not found: " + paramFilePath);
                             Results.AddParseError(
                                 @"  ... Full path: " + paramFile.FullName);
+                            if (outputErrors)
+                            {
+                                Results.OutputErrors();
+                            }
                             Results.Failed();
                             return Results;
                         }
@@ -685,11 +697,11 @@ namespace PRISM
                     Results.AddParseError(@"Created example parameter file at ""{0}""", exampleParamFilePath);
                 }
                 Results.AddParseError("-CreateParamFile provided. Exiting program.");
-                Results.Failed();
                 if (outputErrors)
                 {
                     Results.OutputErrors(true);
                 }
+                Results.Failed();
                 return Results;
             }
 
