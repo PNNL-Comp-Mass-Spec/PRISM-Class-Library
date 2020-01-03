@@ -11,6 +11,8 @@ namespace PRISM.Logging
     /// <remarks>
     /// Call method CreateFileLogger to define the log file name
     /// Call method CreateDbLogger to define the database connection info
+    /// Log files have date-based names, for example DataProcessor_01-02-2020.txt
+    /// If you want year-month-day based names, update your class to inherit ProcessFilesBase or ProcessDirectoriesBase
     /// </remarks>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LogTools

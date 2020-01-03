@@ -12,6 +12,10 @@ namespace PRISM.Logging
     /// <summary>
     /// Logs messages to a file
     /// </summary>
+    /// <remarks>
+    /// The filename is date-based, for example DataProcessor_01-02-2020.txt
+    /// If you want year-month-day based names, update your class to inherit ProcessFilesBase or ProcessDirectoriesBase
+    /// </remarks>
     public class FileLogger : BaseLogger
     {
         #region "Constants"
@@ -29,6 +33,10 @@ namespace PRISM.Logging
         /// <summary>
         /// Date format for log file names
         /// </summary>
+        /// <remarks>
+        /// This is month-day-year based for historical reasons
+        /// In contrast, abstract classes ProcessFilesBase and ProcessDirectoriesBase create year-month-day log files
+        /// </remarks>
         public const string LOG_FILE_DATE_CODE = "MM-dd-yyyy";
 
         private const string LOG_FILE_MATCH_SPEC = "??-??-????";
