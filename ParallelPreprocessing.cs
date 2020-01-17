@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PRISM
 {
@@ -36,9 +36,9 @@ namespace PRISM
         private class ParallelPreprocessor<T, TResult> : IDisposable
         {
             /// <summary>
-            /// Target and source block for the producer-consumer pattern
+            /// Target and source collection for the producer-consumer pattern; backed by a queue
             /// </summary>
-            private readonly BufferQueue<TResult> buffer;
+            private readonly BlockingCollection<TResult> buffer;
 
             /// <summary>
             /// Semaphore to limit the number of items that are being/have been preprocessed. Incremented by the producer(s), decremented by the consumer
@@ -66,42 +66,11 @@ namespace PRISM
             /// <returns></returns>
             public IEnumerable<TResult> ConsumeAll()
             {
-                Tuple<bool, TResult> item;
-
-                while (!buffer.IsCompleted)
+                foreach (var item in buffer.GetConsumingEnumerable(cancelToken))
                 {
-                    if (cancelToken.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
-                    // while we get an item with a boolean value of true, return the result
-                    while ((item = TryConsume().Result).Item1)
-                    {
-                        yield return item.Item2;
-                    }
-
-                    if (!buffer.IsCompleted)
-                    {
-                        Thread.Sleep(200);
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Try to consume an item.
-            /// </summary>
-            /// <returns>Tuple with a boolean and TResult; the boolean is true if successful, false otherwise</returns>
-            /// <remarks>out and ref parameters are not allowed with async methods, otherwise this would just return a bool and have an out parameter with the result</remarks>
-            private async Task<Tuple<bool, TResult>> TryConsume()
-            {
-                while (await buffer.OutputAvailableAsync(cancelToken))
-                {
+                    yield return item;
                     preprocessedLimiter.Release(); // release one, allow another item to be preprocessed
-                    return new Tuple<bool, TResult>(true, buffer.Receive());
                 }
-
-                return new Tuple<bool, TResult>(false, default(TResult));
             }
 
             /// <summary>
@@ -166,7 +135,7 @@ namespace PRISM
                     }
 
                     // Report no more items
-                    buffer.Complete();
+                    buffer.CompleteAdding();
                 }
             }
 
@@ -188,9 +157,8 @@ namespace PRISM
                             return;
                         }
 
-                        await preprocessedLimiter
-                            .WaitAsync(
-                                cancelToken); // check the preprocessing limit, wait until there is another "space" available
+                        // check the preprocessing limit, wait until there is another "space" available
+                        await preprocessedLimiter.WaitAsync(cancelToken);
                         T item;
                         // read one item. lock required because we have no guarantees on the thread-safety of the enumerator
                         lock (accessLock)
@@ -207,15 +175,9 @@ namespace PRISM
                         // Run the process function on the item from the enumerator
                         var processed = processFunction(item);
 
-                        // synchronously attempt to add an item to the target block; this will fail if we've hit the upper bound limit of the target block
-                        //buffer.Post(processed);
+                        // Attempt to add an item to the target block; this will wait if we've hit the upper bound limit of the target block
 
-                        // asynchronously attempt to add an item to the target block; this will wait if we've hit the upper bound limit of the target block
-                        var result = await buffer.SendAsync(processed, cancelToken);
-                        if (!result)
-                        {
-                            Console.WriteLine("ERROR: Producer.SendAsync() failed to add item to processing queue!!!");
-                        }
+                        buffer.Add(processed, cancelToken);
                     }
                 }
                 finally
@@ -245,7 +207,7 @@ namespace PRISM
 
                 preprocessedLimiter = new SemaphoreSlim(maxPreprocessed, maxPreprocessed);
 
-                buffer = new BufferQueue<TResult>(maxPreprocessed + 1);
+                buffer = new BlockingCollection<TResult>(new ConcurrentQueue<TResult>(), maxPreprocessed + 1);
 
                 Start(source, processFunction, maxThreads, checkIntervalSeconds);
             }
@@ -258,143 +220,8 @@ namespace PRISM
             public void Dispose()
             {
                 preprocessedLimiter?.Dispose();
+                buffer.Dispose();
                 GC.SuppressFinalize(this);
-            }
-
-            /// <summary>
-            /// Modeled after the idea of a BufferBlock, but not using a BufferBlock because that requires tracking a NuGet package.
-            /// </summary>
-            /// <typeparam name="TU"></typeparam>
-            private class BufferQueue<TU> : IDisposable
-            {
-                private readonly Queue<TU> queue = new Queue<TU>();
-                private readonly SemaphoreSlim trigger = new SemaphoreSlim(0);
-                private readonly SemaphoreSlim maxEntries = null;
-                private readonly object addRemoveLock = new object();
-                private bool complete = false;
-
-                public int BoundedCapacity { get; }
-
-                public bool IsCompleted => complete;
-
-                public BufferQueue(int boundedCapacity = -1)
-                {
-                    BoundedCapacity = boundedCapacity;
-                    if (boundedCapacity <= 0)
-                    {
-                        BoundedCapacity = -1;
-                    }
-                    else
-                    {
-                        maxEntries = new SemaphoreSlim(BoundedCapacity, BoundedCapacity);
-                    }
-                }
-
-                /// <summary>
-                /// Returns true if there is available output, false if an error or marked complete (with no more output)
-                /// </summary>
-                /// <returns></returns>
-                public async Task<bool> OutputAvailableAsync(CancellationToken ct = default(CancellationToken))
-                {
-                    await trigger.WaitAsync(ct).ConfigureAwait(false);
-                    if (ct.IsCancellationRequested)
-                    {
-                        return false;
-                    }
-
-                    return ItemsAvailable() ?? false;
-                }
-
-                /// <summary>
-                /// Retrieve an item off of the queue
-                /// </summary>
-                /// <returns></returns>
-                public TU Receive()
-                {
-                    lock (addRemoveLock)
-                    {
-                        maxEntries?.Release();
-                        return queue.Dequeue();
-                    }
-                }
-
-                private bool? ItemsAvailable()
-                {
-                    if (queue.Count > 0)
-                    {
-                        return true;
-                    }
-
-                    if (complete)
-                    {
-                        return false;
-                    }
-
-                    // error state, or pre-wait check
-                    return null;
-                }
-
-                /// <summary>
-                /// Add an item to the queue, notifying any consumer(s) of the available item.
-                /// </summary>
-                /// <param name="item"></param>
-                private void Post(TU item)
-                {
-                    lock (addRemoveLock)
-                    {
-                        queue.Enqueue(item);
-                    }
-
-                    trigger.Release();
-                }
-
-                /// <summary>
-                /// Add an item to the queue, notifying any consumer(s) of the available item.
-                /// </summary>
-                /// <param name="item"></param>
-                /// <param name="ct"></param>
-                public async Task<bool> SendAsync(TU item, CancellationToken ct = default(CancellationToken))
-                {
-                    if (maxEntries != null)
-                    {
-                        await maxEntries.WaitAsync(ct).ConfigureAwait(false);
-                    }
-                    if (ct.IsCancellationRequested)
-                    {
-                        return false;
-                    }
-
-                    Post(item);
-                    return true;
-                }
-
-                /// <summary>
-                /// Mark the queue as complete, so that things will exit out properly
-                /// </summary>
-                public void Complete()
-                {
-                    this.complete = true;
-                    trigger.Release();
-                }
-
-                ~BufferQueue()
-                {
-                    Dispose();
-                }
-
-                /// <summary>
-                /// Clean up.
-                /// </summary>
-                public void Dispose()
-                {
-                    if (!complete)
-                    {
-                        Complete();
-                    }
-                    trigger?.Dispose();
-                    maxEntries?.Dispose();
-                    GC.SuppressFinalize(this);
-                }
             }
         }
     }
