@@ -89,7 +89,14 @@ namespace PRISM
         /// </summary>
         public struct ParseErrorInfo
         {
+            /// <summary>
+            /// Set to true if a required parameter is missing
+            /// </summary>
             public readonly bool IsMissingRequiredParameter;
+
+            /// <summary>
+            /// Error message
+            /// </summary>
             public readonly string Message;
 
             /// <summary>
