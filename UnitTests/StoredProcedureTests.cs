@@ -2,7 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using NUnit.Framework;
-using PRISM;
+using PRISMDatabaseUtils;
 
 namespace PRISMTest
 {
@@ -29,7 +29,7 @@ namespace PRISMTest
         private void TestSearchLogs(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
-            var dbTools = new ExecuteDatabaseSP(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             var spCmd = new SqlCommand
             {
@@ -47,9 +47,9 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            var returnCode = dbTools.ExecuteSP(spCmd, out var lstResults);
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults);
 
-            Assert.AreEqual(returnCode, 0, spCmd.CommandText + "Procedure did not return 0");
+            Assert.AreEqual(0, returnCode, spCmd.CommandText + "Procedure did not return 0");
 
             var rowsDisplayed = 0;
             foreach (var result in lstResults)
@@ -95,7 +95,7 @@ namespace PRISMTest
         private void TestGetAllPeptideDatabases(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
-            var dbTools = new ExecuteDatabaseSP(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             var spCmd = new SqlCommand
             {
@@ -109,9 +109,9 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            var returnCode = dbTools.ExecuteSP(spCmd, out var lstResults);
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults);
 
-            Assert.AreEqual(returnCode, 0, spCmd.CommandText + "Procedure did not return 0");
+            Assert.AreEqual(0, returnCode, spCmd.CommandText + "Procedure did not return 0");
 
             var rowsDisplayed = 0;
             foreach (var result in lstResults)
@@ -153,6 +153,5 @@ namespace PRISMTest
 
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
-
     }
 }
