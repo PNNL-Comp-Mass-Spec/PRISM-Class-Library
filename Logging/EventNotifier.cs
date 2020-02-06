@@ -1,4 +1,5 @@
 ﻿using System;
+using PRISM.Logging;
 
 [assembly: CLSCompliant(true)]
 
@@ -8,7 +9,7 @@ namespace PRISM
     /// <summary>
     /// This class implements various status events, including status, debug, error, and warning
     /// </summary>
-    public abstract class EventNotifier
+    public abstract class EventNotifier : IEventNotifier
     {
 
         #region "Events and Delegates"
@@ -257,12 +258,20 @@ namespace PRISM
         /// <param name="sourceClass"></param>
         protected void RegisterEvents(EventNotifier sourceClass)
         {
+            RegisterEvents((IEventNotifier)sourceClass);
+        }
+
+        /// <summary>
+        /// Use this method to chain events between classes
+        /// </summary>
+        /// <param name="sourceClass"></param>
+        protected void RegisterEvents(IEventNotifier sourceClass)
+        {
             sourceClass.DebugEvent += OnDebugEvent;
             sourceClass.StatusEvent += OnStatusEvent;
             sourceClass.ErrorEvent += OnErrorEvent;
             sourceClass.WarningEvent += OnWarningEvent;
             sourceClass.ProgressUpdate += OnProgressUpdate;
         }
-
     }
 }

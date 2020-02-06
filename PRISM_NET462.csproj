@@ -82,6 +82,7 @@
     <Compile Include="Logging\DatabaseLogger.cs" />
     <Compile Include="Logging\EventNotifier.cs" />
     <Compile Include="Logging\FileLogger.cs" />
+    <Compile Include="Logging\IEventNotifier.cs" />
     <Compile Include="Logging\LogMessage.cs" />
     <Compile Include="Logging\LogTools.cs" />
     <Compile Include="Logging\ODBCDatabaseLogger.cs" />
