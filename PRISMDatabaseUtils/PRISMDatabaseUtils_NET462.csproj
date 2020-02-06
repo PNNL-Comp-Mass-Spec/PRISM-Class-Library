@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppSettings\MgrSettingsDB.cs" />
     <Compile Include="DatabaseUtilsExtensions.cs" />
     <Compile Include="DataTableUtils.cs" />
     <Compile Include="DbToolsFactory.cs" />
