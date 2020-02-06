@@ -13,6 +13,7 @@ namespace PRISM
     /// Tools to retrieve data from a database
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
     public class DBTools : EventNotifier
     {
 

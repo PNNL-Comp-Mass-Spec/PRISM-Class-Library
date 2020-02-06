@@ -11,6 +11,7 @@ namespace PRISM
     /// Tools to execute a stored procedure
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
     public class ExecuteDatabaseSP : EventNotifier
     {
 

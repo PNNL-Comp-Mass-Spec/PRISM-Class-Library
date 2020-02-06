@@ -8,6 +8,7 @@ namespace PRISM.DatabaseUtils
     /// Methods for appending columns to a data table
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
     public class DataTableUtils
     {
         /// <summary>
