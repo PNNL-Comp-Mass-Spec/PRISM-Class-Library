@@ -48,6 +48,7 @@
     <Compile Include="FileRefs.cs" />
     <Compile Include="GZipTests.cs" />
     <Compile Include="LoggerTests.cs" />
+    <Compile Include="MgrSettingsTests.cs" />
     <Compile Include="MiscellaneousTests.cs" />
     <Compile Include="PathTests.cs" />
     <Compile Include="ProgRunnerTests.cs" />

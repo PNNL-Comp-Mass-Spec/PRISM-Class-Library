@@ -389,13 +389,46 @@ namespace PRISM.AppSettings
         }
 
         /// <summary>
-        /// Read settings from file AppName.exe.config
+        /// Read settings from file AppName.exe.config. If the file path ends with ".exe.config", other files with similar names are also read afterward (matching regex "AppName\.exe\..+config$")
         /// </summary>
+        /// <param name="configFilePath">Path to config file</param>
         /// <returns>Dictionary of settings as key/value pairs; null on error</returns>
         /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
         public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath)
         {
+            var configFile = new FileInfo(configFilePath);
+            if (!configFile.Exists)
+            {
+                ReportError("LoadMgrSettingsFromFile; manager config file not found: " + configFilePath);
+                return null;
+            }
 
+            var settings = LoadMgrSettingsFromFile(configFilePath, new Dictionary<string, string>());
+            if (configFilePath.EndsWith(".exe.config", StringComparison.OrdinalIgnoreCase))
+            {
+                var baseName = configFile.Name.Substring(0, configFile.Name.Length - 6);
+                var dir = configFile.Directory ?? new DirectoryInfo(".");
+                var files = dir.EnumerateFiles(baseName + "*config");
+                foreach (var file in files.Where(x =>
+                    x.Name.EndsWith("config", StringComparison.OrdinalIgnoreCase) &&
+                    !x.Name.Equals(configFile.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    settings = LoadMgrSettingsFromFile(file.FullName, settings);
+                }
+            }
+
+            return settings;
+        }
+
+        /// <summary>
+        /// Read settings from file AppName.exe.config
+        /// </summary>
+        /// <param name="configFilePath">Path to config file</param>
+        /// <param name="existingSettings">Existing settings dictionary; new settings will add to the existing, and overwrite any that match</param>
+        /// <returns>Dictionary of settings as key/value pairs; null on error</returns>
+        /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
+        public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath, Dictionary<string, string> existingSettings)
+        {
             XmlDocument configDoc;
 
             try
@@ -404,7 +437,7 @@ namespace PRISM.AppSettings
                 if (!configFile.Exists)
                 {
                     ReportError("LoadMgrSettingsFromFile; manager config file not found: " + configFilePath);
-                    return null;
+                    return existingSettings;
                 }
 
                 // Load the config document
@@ -414,7 +447,7 @@ namespace PRISM.AppSettings
             catch (Exception ex)
             {
                 ReportError("LoadMgrSettingsFromFile; exception loading settings file", ex);
-                return null;
+                return existingSettings;
             }
 
             try
@@ -425,7 +458,7 @@ namespace PRISM.AppSettings
                 if (appSettingsNode == null)
                 {
                     ReportError("LoadMgrSettingsFromFile; applicationSettings node not found");
-                    return null;
+                    return existingSettings;
                 }
 
                 // Read each of the settings
@@ -433,16 +466,16 @@ namespace PRISM.AppSettings
                 if (settingNodes == null)
                 {
                     ReportError("LoadMgrSettingsFromFile; applicationSettings/*/setting nodes not found");
-                    return null;
+                    return existingSettings;
                 }
 
-                return ParseXMLSettings(settingNodes, TraceMode);
+                return ParseXMLSettings(settingNodes, TraceMode, existingSettings);
 
             }
             catch (Exception ex)
             {
                 ReportError("LoadMgrSettingsFromFile; Exception reading settings file", ex);
-                return null;
+                return existingSettings;
             }
         }
 
@@ -451,15 +484,16 @@ namespace PRISM.AppSettings
         /// </summary>
         /// <param name="settingNodes">XML nodes, of the form </param>
         /// <param name="traceEnabled">If true, display trace statements</param>
+        /// <param name="existingSettings">Existing settings dictionary; new settings will add to the existing, and overwrite any that match</param>
         /// <returns>Dictionary of settings</returns>
-        public static Dictionary<string, string> ParseXMLSettings(IEnumerable settingNodes, bool traceEnabled)
+        public static Dictionary<string, string> ParseXMLSettings(IEnumerable settingNodes, bool traceEnabled, Dictionary<string, string> existingSettings = null)
         {
             // Example setting node:
             // <setting name="MgrName">
             //   <value>Pub-90-1</value>
             // </setting>
 
-            var settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var settings = existingSettings ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (XmlNode settingNode in settingNodes)
             {
@@ -488,7 +522,8 @@ namespace PRISM.AppSettings
 
                 var value = valueNode.InnerText;
 
-                settings.Add(settingName, value);
+                // Don't use Add(...); this code will create non-existing entries, and will overwrite existing entries with new data
+                settings[settingName] = value;
             }
 
             return settings;
