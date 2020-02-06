@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97 
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISM", "PRISM.csproj", "{D4A09264-4F87-44CA-9510-EB435B25E53F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRISM", "PRISM.csproj", "{D4A09264-4F87-44CA-9510-EB435B25E53F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISMTest", "UnitTests\PRISMTest.csproj", "{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRISMTest", "UnitTests\PRISMTest.csproj", "{1EB286F2-5E9F-45C8-8493-1BC5D36B9479}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISMWin", "PRISMWin\PRISMWin.csproj", "{5D3E9902-6E9A-4A88-8F1B-3353D4D5876B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PRISMWin", "PRISMWin\PRISMWin.csproj", "{5D3E9902-6E9A-4A88-8F1B-3353D4D5876B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

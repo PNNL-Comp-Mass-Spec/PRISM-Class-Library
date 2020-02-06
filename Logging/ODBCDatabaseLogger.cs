@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 #if !(NETSTANDARD2_0)
+// Note: Is available as of NETSTANDARD 2.1
 using System.Data.Odbc;
 #endif
 using System.Threading;
