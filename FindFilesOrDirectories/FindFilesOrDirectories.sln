@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindFilesOrDirectories", "FindFilesOrDirectories.csproj", "{3E21F072-568C-4BBD-9784-225FC693E6C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISM_NET472", "..\PRISM_NET472.csproj", "{C37995A7-258D-4B76-9703-AFF6C4C32C8C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PRISM_NET472", "..\PRISM\PRISM_NET472.csproj", "{C37995A7-258D-4B76-9703-AFF6C4C32C8C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

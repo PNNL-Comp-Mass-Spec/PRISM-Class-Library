@@ -76,7 +76,7 @@
       <Project>{0cadd6f6-5dc3-4779-babe-a70d25b724f6}</Project>
       <Name>PRISMWin_NET472</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PRISM_NET472.csproj">
+    <ProjectReference Include="..\PRISM\PRISM_NET472.csproj">
       <Project>{c37995a7-258d-4b76-9703-aff6c4c32c8c}</Project>
       <Name>PRISM_NET472</Name>
     </ProjectReference>

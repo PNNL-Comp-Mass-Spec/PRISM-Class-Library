@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PRISM.csproj" />
+    <ProjectReference Include="..\PRISM\PRISM.csproj" />
     <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils.csproj" />
   </ItemGroup>
 

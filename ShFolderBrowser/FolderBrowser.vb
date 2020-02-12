@@ -133,27 +133,27 @@ Namespace Files.Forms
     <Flags()> _
     Public Enum BrowseFlags As Integer
         ''' <summary>
-        ''' Same as BIF_RETURNONLYFSDIRS 
+        ''' Same as BIF_RETURNONLYFSDIRS
         ''' </summary>
         ReturnOnlyFSDirs = &H1
         ''' <summary>
-        ''' Same as BIF_DONTGOBELOWDOMAIN 
+        ''' Same as BIF_DONTGOBELOWDOMAIN
         ''' </summary>
         DontGoBelowDomain = &H2
         ''' <summary>
-        ''' Same as BIF_STATUSTEXT 
+        ''' Same as BIF_STATUSTEXT
         ''' </summary>
         ShowStatusText = &H4
         ''' <summary>
-        ''' Same as BIF_RETURNFSANCESTORS 
+        ''' Same as BIF_RETURNFSANCESTORS
         ''' </summary>
         ReturnFSancestors = &H8
         ''' <summary>
-        ''' Same as BIF_EDITBOX 
+        ''' Same as BIF_EDITBOX
         ''' </summary>
         EditBox = &H10
         ''' <summary>
-        ''' Same as BIF_VALIDATE 
+        ''' Same as BIF_VALIDATE
         ''' </summary>
         Validate = &H20
         ''' <summary>
@@ -161,7 +161,7 @@ Namespace Files.Forms
         ''' </summary>
         NewDialogStyle = &H40
         ''' <summary>
-        ''' Same as BIF_BROWSEINCLUDEURLS 
+        ''' Same as BIF_BROWSEINCLUDEURLS
         ''' </summary>
         BrowseIncludeURLs = &H80
         ''' <summary>
@@ -169,7 +169,7 @@ Namespace Files.Forms
         ''' </summary>
         AddUsageHint = &H100
         ''' <summary>
-        ''' Same as BIF_NONEWFOLDERBUTTON 
+        ''' Same as BIF_NONEWFOLDERBUTTON
         ''' </summary>
         NoNewFolderButton = &H200
         ''' <summary>
@@ -177,15 +177,15 @@ Namespace Files.Forms
         ''' </summary>
         BrowseForComputer = &H1000
         ''' <summary>
-        ''' Same as BIF_BROWSEFORPRINTER 
+        ''' Same as BIF_BROWSEFORPRINTER
         ''' </summary>
         BrowseForPrinter = &H2000
         ''' <summary>
-        ''' Same as BIF_BROWSEINCLUDEFILES 
+        ''' Same as BIF_BROWSEINCLUDEFILES
         ''' </summary>
         IncludeFiles = &H4000
         ''' <summary>
-        ''' Same as BIF_SHAREABLE 
+        ''' Same as BIF_SHAREABLE
         ''' </summary>
         ShowShareable = &H8000
     End Enum
@@ -210,8 +210,8 @@ Namespace Files.Forms
         End Sub
 
         ''' <summary>
-        ''' String that is displayed above the tree view control in the dialog box. 
-        ''' This string can be used to specify instructions to the user. 
+        ''' String that is displayed above the tree view control in the dialog box.
+        ''' This string can be used to specify instructions to the user.
         ''' Can only be modified if the dalog is not currently displayed.
         ''' </summary>
         <Description("String that is displayed above the tree view control in the dialog box. This string can be used to specify instructions to the user.")> _

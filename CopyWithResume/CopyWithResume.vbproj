@@ -73,7 +73,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PRISM.csproj">
+    <ProjectReference Include="..\PRISM\PRISM.csproj">
       <Project>{d4a09264-4f87-44ca-9510-eb435b25e53f}</Project>
       <Name>PRISM</Name>
     </ProjectReference>

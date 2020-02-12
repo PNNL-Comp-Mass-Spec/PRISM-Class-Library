@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PRISM.csproj" />
+    <ProjectReference Include="..\PRISM\PRISM.csproj" />
   </ItemGroup>
 
 </Project>
