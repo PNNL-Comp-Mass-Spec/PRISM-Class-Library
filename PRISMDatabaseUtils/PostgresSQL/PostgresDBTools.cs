@@ -762,7 +762,6 @@ namespace PRISMDatabaseUtils.PostgresSQL
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
-            string errorMessage;
             var startTime = DateTime.UtcNow;
 
             if (retryCount < 1)
@@ -778,6 +777,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
             using (sqlCmd)
             {
                 // Multiple retry loop for handling SP execution failures
+                string errorMessage;
                 while (retryCount > 0)
                 {
                     var success = false;
