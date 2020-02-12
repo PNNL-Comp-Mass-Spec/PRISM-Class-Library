@@ -144,23 +144,23 @@ namespace PRISM.Logging
         /// <summary>
         /// Configures the database logger
         /// </summary>
-        /// <param name="connStr">System.Data.SqlClient style connection string</param>
+        /// <param name="connectionString">System.Data.SqlClient style connection string</param>
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
-        public static void CreateDbLogger(string connStr, string moduleName, bool traceMode)
+        public static void CreateDbLogger(string connectionString, string moduleName, bool traceMode)
         {
-            CreateDbLogger(connStr, moduleName, BaseLogger.LogLevels.INFO, traceMode);
+            CreateDbLogger(connectionString, moduleName, BaseLogger.LogLevels.INFO, traceMode);
         }
 
         /// <summary>
         /// Configures the database logger
         /// </summary>
-        /// <param name="connStr">System.Data.SqlClient style connection string</param>
+        /// <param name="connectionString">System.Data.SqlClient style connection string</param>
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="logLevel">Log threshold level</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
         public static void CreateDbLogger(
-            string connStr,
+            string connectionString,
             string moduleName,
             BaseLogger.LogLevels logLevel = BaseLogger.LogLevels.INFO,
             bool traceMode = false)
@@ -171,7 +171,7 @@ namespace PRISM.Logging
             mDbLogger.EchoMessagesToFileLogger = true;
             mDbLogger.LogLevel = logLevel;
 
-            mDbLogger.ChangeConnectionInfo(moduleName, connStr, "PostLogEntry", "type", "message", "postedBy");
+            mDbLogger.ChangeConnectionInfo(moduleName, connectionString, "PostLogEntry", "type", "message", "postedBy");
         }
 
         /// <summary>

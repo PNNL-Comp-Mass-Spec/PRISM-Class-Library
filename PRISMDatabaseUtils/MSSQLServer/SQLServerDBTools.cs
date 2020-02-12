@@ -93,11 +93,11 @@ namespace PRISMDatabaseUtils
             mTimeoutSeconds = timeoutSeconds;
         }
 
-        private void ParseConnectionString(string connStr)
+        private void ParseConnectionString(string connectionString)
         {
-            var bldr = new SqlConnectionStringBuilder(connStr);
-            ServerName = bldr.DataSource ?? "";
-            DatabaseName = bldr.InitialCatalog ?? "";
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            ServerName = builder.DataSource ?? string.Empty;
+            DatabaseName = builder.InitialCatalog ?? string.Empty;
         }
 
         /// <summary>

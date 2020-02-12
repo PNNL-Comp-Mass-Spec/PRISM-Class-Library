@@ -83,11 +83,11 @@ namespace PRISMDatabaseUtils.PostgresSQL
             mTimeoutSeconds = timeoutSeconds;
         }
 
-        private void ParseConnectionString(string connStr)
+        private void ParseConnectionString(string connectionString)
         {
-            var bldr = new NpgsqlConnectionStringBuilder(connStr);
-            ServerName = bldr.Host ?? "";
-            DatabaseName = bldr.Database ?? "";
+            var builder = new NpgsqlConnectionStringBuilder(connectionString);
+            ServerName = builder.Host ?? string.Empty;
+            DatabaseName = builder.Database ?? string.Empty;
         }
 
         /// <summary>

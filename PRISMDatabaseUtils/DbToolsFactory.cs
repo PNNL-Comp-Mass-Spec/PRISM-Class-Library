@@ -27,9 +27,9 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Checks elements in the connection string to determine which database engine it refers to.
         /// </summary>
-        /// <param name="connStr"></param>
+        /// <param name="connectionString"></param>
         /// <returns></returns>
-        public static DbServerTypes GetServerTypeFromConnectionString(string connStr)
+        public static DbServerTypes GetServerTypeFromConnectionString(string connectionString)
         {
             if (connStr.IndexOf("Data Source", StringComparison.OrdinalIgnoreCase) > -1 || connStr.IndexOf("Integrated Security", StringComparison.OrdinalIgnoreCase) > -1 || connStr.IndexOf("Initial Catalog", StringComparison.OrdinalIgnoreCase) > -1)
             {
@@ -47,10 +47,10 @@ namespace PRISMDatabaseUtils
         /// <summary>
         ///
         /// </summary>
-        /// <param name="connStr"></param>
+        /// <param name="connectionString"></param>
         /// <param name="timeoutSeconds"></param>
         /// <returns></returns>
-        public static IDBTools GetDBTools(string connStr, int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC)
+        public static IDBTools GetDBTools(string connectionString, int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC)
         {
             switch (GetServerTypeFromConnectionString(connStr))
             {
