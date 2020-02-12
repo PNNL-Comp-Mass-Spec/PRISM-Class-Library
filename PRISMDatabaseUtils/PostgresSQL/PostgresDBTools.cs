@@ -286,10 +286,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -298,10 +298,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryScalar(
             string sqlQuery,
             out object queryResult,
-            [CallerMemberName] string callingFunction = "",
             short retryCount = 3,
             int retryDelaySeconds = 5,
-            int timeoutSeconds = -1)
+            int timeoutSeconds = -1,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             if (timeoutSeconds <= 0)
             {
@@ -309,7 +309,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
             }
 
             var cmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text, CommandTimeout = timeoutSeconds };
-            return GetQueryScalar(cmd, out queryResult, callingFunction, retryCount, retryDelaySeconds);
+            return GetQueryScalar(cmd, out queryResult, retryCount, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -317,9 +317,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -328,9 +328,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryScalar(
             DbCommand cmd,
             out object queryResult,
-            [CallerMemberName] string callingFunction = "",
             short retryCount = 3,
-            int retryDelaySeconds = 5)
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             if (string.IsNullOrWhiteSpace(callingFunction))
             {
@@ -417,11 +417,11 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="lstResults">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -432,11 +432,11 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryResults(
             string sqlQuery,
             out List<List<string>> lstResults,
-            [CallerMemberName] string callingFunction = "UnknownCaller",
             short retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
-            int timeoutSeconds = -1)
+            int timeoutSeconds = -1,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             if (timeoutSeconds <= 0)
             {
@@ -444,7 +444,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
             }
 
             var cmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text, CommandTimeout = timeoutSeconds };
-            return GetQueryResults(cmd, out lstResults, callingFunction, retryCount, maxRowsToReturn, retryDelaySeconds);
+            return GetQueryResults(cmd, out lstResults, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -452,10 +452,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="cmd">Query to run</param>
         /// <param name="lstResults">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -466,10 +466,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryResults(
             DbCommand cmd,
             out List<List<string>> lstResults,
-            [CallerMemberName] string callingFunction = "UnknownCaller",
             short retryCount = 3,
             int maxRowsToReturn = 0,
-            int retryDelaySeconds = 5)
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             var results = new List<List<string>>();
             lstResults = results;
@@ -505,7 +505,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 }
             });
 
-            return GetQueryResults(cmd, readMethod, callingFunction, retryCount, retryDelaySeconds);
+            return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -513,10 +513,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -525,10 +525,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryResultsDataTable(
             string sqlQuery,
             out DataTable queryResults,
-            [CallerMemberName] string callingFunction = "UnknownCaller",
             short retryCount = 3,
             int retryDelaySeconds = 5,
-            int timeoutSeconds = -1)
+            int timeoutSeconds = -1,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             if (timeoutSeconds <= 0)
             {
@@ -536,7 +536,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
             }
 
             var cmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text, CommandTimeout = timeoutSeconds };
-            return GetQueryResultsDataTable(cmd, out queryResults, callingFunction, retryCount, retryDelaySeconds);
+            return GetQueryResultsDataTable(cmd, out queryResults, retryCount, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -544,9 +544,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -555,9 +555,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryResultsDataTable(
             DbCommand cmd,
             out DataTable queryResults,
-            [CallerMemberName] string callingFunction = "UnknownCaller",
             short retryCount = 3,
-            int retryDelaySeconds = 5)
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             var results = new DataTable();
             queryResults = results;
@@ -569,7 +569,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 }
             });
 
-            return GetQueryResults(cmd, readMethod, callingFunction, retryCount, retryDelaySeconds);
+            return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -577,10 +577,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -589,10 +589,10 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryResultsDataSet(
             string sqlQuery,
             out DataSet queryResults,
-            [CallerMemberName] string callingFunction = "UnknownCaller",
             short retryCount = 3,
             int retryDelaySeconds = 5,
-            int timeoutSeconds = -1)
+            int timeoutSeconds = -1,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             if (timeoutSeconds <= 0)
             {
@@ -600,7 +600,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
             }
 
             var cmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text, CommandTimeout = timeoutSeconds };
-            return GetQueryResultsDataSet(cmd, out queryResults, callingFunction, retryCount, retryDelaySeconds);
+            return GetQueryResultsDataSet(cmd, out queryResults, retryCount, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -608,9 +608,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -619,9 +619,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         public bool GetQueryResultsDataSet(
             DbCommand cmd,
             out DataSet queryResults,
-            [CallerMemberName] string callingFunction = "UnknownCaller",
             short retryCount = 3,
-            int retryDelaySeconds = 5)
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             var results = new DataSet();
             queryResults = results;
@@ -633,7 +633,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 }
             });
 
-            return GetQueryResults(cmd, readMethod, callingFunction, retryCount, retryDelaySeconds);
+            return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
@@ -641,9 +641,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// </summary>
         /// <param name="cmd">Query to run</param>
         /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -652,9 +652,9 @@ namespace PRISMDatabaseUtils.PostgresSQL
         private bool GetQueryResults(
             DbCommand cmd,
             Action<NpgsqlCommand> readMethod,
-            string callingFunction,
             short retryCount,
-            int retryDelaySeconds)
+            int retryDelaySeconds,
+            string callingFunction)
         {
             if (string.IsNullOrWhiteSpace(callingFunction))
             {

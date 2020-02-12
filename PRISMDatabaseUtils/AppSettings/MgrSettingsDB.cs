@@ -48,7 +48,7 @@ namespace PRISMDatabaseUtils.AppSettings
                 RegisterEvents(dbTools);
             }
 
-            var success = dbTools.GetQueryResults(sqlQuery, out var queryResults, "LoadMgrSettingsFromDBWork", retryCount);
+            var success = dbTools.GetQueryResults(sqlQuery, out var queryResults, retryCount);
 
             if (!success)
             {

@@ -40,7 +40,7 @@ namespace PRISMTest
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
-            dbTools.GetQueryResults(query, out var lstResults, "Unit Tests");
+            dbTools.GetQueryResults(query, out var lstResults);
 
             var expectedValues = expectedValueList.Split(',');
 
@@ -59,7 +59,6 @@ namespace PRISMTest
 
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
-
 
         [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_FakeTable WHERE U_Name = 'AutoUser'", 0, "")]
@@ -105,7 +104,7 @@ namespace PRISMTest
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
-            dbTools.GetQueryResults(query, out var lstResults, "Unit Tests");
+            dbTools.GetQueryResults(query, out var lstResults);
 
             var expectedValues = expectedValueList.Split(',');
 
