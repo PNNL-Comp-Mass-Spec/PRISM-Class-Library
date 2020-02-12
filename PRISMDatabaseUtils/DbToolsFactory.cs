@@ -11,6 +11,7 @@ namespace PRISMDatabaseUtils
     /// <summary>
     /// Factory class for creating Database interaction objects
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DbToolsFactory
     {
         /// <summary>
@@ -157,6 +158,26 @@ namespace PRISMDatabaseUtils
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="serverType"></param>
+        /// <param name="connectionString"></param>
+        /// <param name="timeoutSeconds"></param>
+        /// <returns></returns>
+        public static IDBTools GetDBTools(DbServerTypes serverType, string connectionString, int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC)
+        {
+            switch (serverType)
+            {
+                case DbServerTypes.Undefined:
+                    return GetDBTools(connectionString, timeoutSeconds);
+
+                case DbServerTypes.PostgresSQL:
+                    return new PostgresDBTools(connectionString, timeoutSeconds);
+
+                default:
+                    // Includes DbServerTypes.MSSQLServer
+                    return new SQLServerDBTools(connectionString, timeoutSeconds);
             }
         }
 
