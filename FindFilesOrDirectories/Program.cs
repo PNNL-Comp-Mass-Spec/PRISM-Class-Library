@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using PRISM;
 using PRISM.Logging;
 
-namespace FindFilesOrFolders
+namespace FindFilesOrDirectories
 {
     internal static class Program
     {
@@ -13,11 +13,11 @@ namespace FindFilesOrFolders
         private static string mInputFileOrDirectoryPath;
         private static string mOutputFileOrDirectoryPath;
 
-        private static string mOutputFolderAlternatePath;
+        private static string mOutputDirectoryAlternatePath;
 
         private static bool mAssumeNoWildcards;
         private static List<string> mKnownExtensions;
-        private static bool mProcessFolders;
+        private static bool mProcessDirectories;
         private static bool mRecurse;
         private static int mRecurseDepth;
 
@@ -28,11 +28,11 @@ namespace FindFilesOrFolders
 
             mInputFileOrDirectoryPath = string.Empty;
             mOutputFileOrDirectoryPath = string.Empty;
-            mOutputFolderAlternatePath = string.Empty;
+            mOutputDirectoryAlternatePath = string.Empty;
 
             mAssumeNoWildcards = false;
             mKnownExtensions = new List<string>();
-            mProcessFolders = false;
+            mProcessDirectories = false;
             mRecurse = false;
             mRecurseDepth = 0;
 
@@ -57,26 +57,26 @@ namespace FindFilesOrFolders
 
                 const string PARAM_FILE_PATH = "";
 
-                if (mProcessFolders)
+                if (mProcessDirectories)
                 {
-                    var folderProcessor = new FolderProcessor();
-                    RegisterEvents(folderProcessor);
-                    folderProcessor.SkipConsoleWriteIfNoProgressListener = true;
+                    var processor = new DirectoryProcessor();
+                    RegisterEvents(processor);
+                    processor.SkipConsoleWriteIfNoProgressListener = true;
 
                     if (mRecurse)
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling folderProcessor.ProcessAndRecurseFolders");
-                        success = folderProcessor.ProcessAndRecurseDirectories(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH, mRecurseDepth);
+                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessAndRecurseDirectories");
+                        success = processor.ProcessAndRecurseDirectories(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH, mRecurseDepth);
                     }
                     else if (mAssumeNoWildcards)
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling folderProcessor.ProcessFolder");
-                        success = folderProcessor.ProcessDirectory(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH);
+                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectory");
+                        success = processor.ProcessDirectory(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH);
                     }
                     else
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling folderProcessor.ProcessFoldersWildcard");
-                        success = folderProcessor.ProcessDirectoriesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
+                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectoriesWildcard");
+                        success = processor.ProcessDirectoriesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
 
                 }
@@ -88,27 +88,27 @@ namespace FindFilesOrFolders
 
                     if (mRecurse)
                     {
-                        const bool RECREATE_FOLDER_HIERARCHY = true;
+                        const bool RECREATE_DIRECTORY_HIERARCHY = true;
 
                         if (mKnownExtensions.Count > 0)
                         {
                             ConsoleMsgUtils.ShowDebug(
-                                "Calling fileProcessor.ProcessFilesAndRecurseFolders with user-defined extensions: " +
+                                "Calling fileProcessor.ProcessFilesAndRecurseDirectories with user-defined extensions: " +
                                 string.Join(", ", mKnownExtensions));
 
                             success = fileProcessor.ProcessFilesAndRecurseDirectories(
-                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputFolderAlternatePath,
-                                RECREATE_FOLDER_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth, mKnownExtensions);
+                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputDirectoryAlternatePath,
+                                RECREATE_DIRECTORY_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth, mKnownExtensions);
                         }
                         else
                         {
-                            ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesAndRecurseFolders with " +
-                                                      "input file [" + mInputFileOrDirectoryPath + "], output folder [" + mOutputFileOrDirectoryPath + "]" +
+                            ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesAndRecurseDirectories with " +
+                                                      "input file [" + mInputFileOrDirectoryPath + "], output directory [" + mOutputFileOrDirectoryPath + "]" +
                                                       " and extensions: " + string.Join(", ", fileProcessor.GetDefaultExtensionsToParse()));
 
                             success = fileProcessor.ProcessFilesAndRecurseDirectories(
-                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputFolderAlternatePath,
-                                RECREATE_FOLDER_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth);
+                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputDirectoryAlternatePath,
+                                RECREATE_DIRECTORY_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth);
 
                         }
 
@@ -116,14 +116,14 @@ namespace FindFilesOrFolders
                     else if (mAssumeNoWildcards)
                     {
                         ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFile with " +
-                                                  "input file [" + mInputFileOrDirectoryPath + "] and output folder [" + mOutputFileOrDirectoryPath + "]");
+                                                  "input file [" + mInputFileOrDirectoryPath + "] and output directory [" + mOutputFileOrDirectoryPath + "]");
 
                         success = fileProcessor.ProcessFile(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
                     else
                     {
                         ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesWildcard with " +
-                                                  "input file [" + mInputFileOrDirectoryPath + "] and output folder [" + mOutputFileOrDirectoryPath + "]");
+                                                  "input file [" + mInputFileOrDirectoryPath + "] and output directory [" + mOutputFileOrDirectoryPath + "]");
 
                         success = fileProcessor.ProcessFilesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
@@ -185,7 +185,7 @@ namespace FindFilesOrFolders
         {
             // Returns True if no problems; otherwise, returns false
             var lstValidParameters = new List<string> {
-                "I", "O", "AltOutput", "Folders", "S", "NoWild", "Ext"};
+                "I", "O", "AltOutput", "Directories", "S", "NoWild", "Ext"};
 
             try
             {
@@ -226,11 +226,11 @@ namespace FindFilesOrFolders
 
                 if (objParseCommandLine.RetrieveValueForParameter("AltOutput", out paramValue))
                 {
-                    mOutputFolderAlternatePath = string.Copy(paramValue);
+                    mOutputDirectoryAlternatePath = string.Copy(paramValue);
                 }
 
-                if (objParseCommandLine.IsParameterPresent("Folders"))
-                    mProcessFolders = true;
+                if (objParseCommandLine.IsParameterPresent("Directories"))
+                    mProcessDirectories = true;
 
                 mRecurse = objParseCommandLine.IsParameterPresent("S");
 
@@ -279,19 +279,19 @@ namespace FindFilesOrFolders
             try
             {
                 Console.WriteLine();
-                Console.WriteLine("This is a test program for FileProcessor and clsProcessFoldersBaseClass");
+                Console.WriteLine("This is a test program for FileProcessor and ProcessDirectoriesBase");
                 Console.WriteLine();
                 Console.WriteLine("Program syntax:" + Environment.NewLine + exeName);
 
-                Console.WriteLine(" InputFileOrDirectoryPath [/Folders] [/O:OutputFileOrFolder] [/AltOutput] " +
+                Console.WriteLine(" InputFileOrDirectoryPath [/Directories] [/O:OutputFileOrDirectory] [/AltOutput] " +
                                   "[/S:MaxDepth] [/NoWild] [/Ext:KnownExtensionList");
 
                 Console.WriteLine();
-                Console.WriteLine("By default finds files; use /Folders to find folders");
+                Console.WriteLine("By default finds files; use /Directories to find directories");
                 Console.WriteLine();
-                Console.WriteLine("Use /O to specify the output file or folder path");
+                Console.WriteLine("Use /O to specify the output file or directory path");
                 Console.WriteLine();
-                Console.WriteLine("Use /AltOutput to create the results in an alternate output folder (will retain the folder hierarchy if /S is provided)");
+                Console.WriteLine("Use /AltOutput to create the results in an alternate output directory (will retain the directory hierarchy if /S is provided)");
                 Console.WriteLine();
                 Console.WriteLine("Use /S to recurse into subdirectories.  Optionally append a number for the max depth");
                 Console.WriteLine();

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using PRISM.FileProcessor;
 
-namespace FindFilesOrFolders
+namespace FindFilesOrDirectories
 {
     class FileProcessor : ProcessFilesBase
     {

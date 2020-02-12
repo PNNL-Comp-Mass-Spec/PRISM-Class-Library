@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using PRISM.FileProcessor;
 
-namespace FindFilesOrFolders
+namespace FindFilesOrDirectories
 {
-    class FolderProcessor : ProcessDirectoriesBase
+    class DirectoryProcessor : ProcessDirectoriesBase
     {
         public override string GetErrorMessage()
         {
@@ -18,7 +18,7 @@ namespace FindFilesOrFolders
                 OnStatusEvent("  Would write results to " + outputDirectoryAlternatePath);
 
             if (!Directory.Exists(inputDirectoryPath))
-                OnWarningEvent("Folder not found: " + inputDirectoryPath);
+                OnWarningEvent("Directory not found: " + inputDirectoryPath);
 
             System.Threading.Thread.Sleep(200);
 

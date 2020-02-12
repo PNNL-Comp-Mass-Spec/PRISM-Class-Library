@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3E21F072-568C-4BBD-9784-225FC693E6C6}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>FindFilesOrFolders</RootNamespace>
-    <AssemblyName>FindFilesOrFolders</AssemblyName>
+    <RootNamespace>FindFilesOrDirectories</RootNamespace>
+    <AssemblyName>FindFilesOrDirectories</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -45,7 +45,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FolderProcessor.cs" />
+    <Compile Include="DirectoryProcessor.cs" />
     <Compile Include="FileProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
