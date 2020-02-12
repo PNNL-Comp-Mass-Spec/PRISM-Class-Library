@@ -255,6 +255,8 @@ namespace PRISMTest
 
             try
             {
+                // Uncomment to see file paths at the console
+                // Console.WriteLine("Copying {0} to {1}", sourceCpuInfoFile.FullName, targetCpuInfoFile.FullName);
                 sourceCpuInfoFile.CopyTo(targetCpuInfoFile.FullName);
             }
             catch (Exception ex)
