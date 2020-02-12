@@ -282,7 +282,7 @@ namespace PRISM.AppSettings
         /// </summary>
         /// <returns>True if success, otherwise false</returns>
         /// <remarks>Performs retries if necessary.</remarks>
-        public bool LoadMgrSettingsFromDB(bool logConnectionErrors = true, short retryCount = 3)
+        public bool LoadMgrSettingsFromDB(bool logConnectionErrors = true, int retryCount = 3)
         {
 
             var managerName = GetParam(MGR_PARAM_MGR_NAME, string.Empty);
@@ -334,7 +334,7 @@ namespace PRISM.AppSettings
             out Dictionary<string, string> mgrSettingsFromDB,
             bool logConnectionErrors,
             bool returnErrorIfNoParameters,
-            short retryCount = 3)
+            int retryCount = 3)
         {
             mgrSettingsFromDB = new Dictionary<string, string>();
             return false;

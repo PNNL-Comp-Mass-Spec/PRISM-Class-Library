@@ -187,7 +187,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryScalar(
             string sqlQuery,
             out object queryResult,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
             [CallerMemberName] string callingFunction = "UnknownMethod")
@@ -217,7 +217,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryScalar(
             DbCommand cmd,
             out object queryResult,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod")
         {
@@ -317,7 +317,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryResults(
             string sqlQuery,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
@@ -351,7 +351,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryResults(
             DbCommand cmd,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod")
@@ -415,7 +415,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryResultsDataTable(
             string sqlQuery,
             out DataTable queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
             [CallerMemberName] string callingFunction = "UnknownMethod")
@@ -445,7 +445,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryResultsDataTable(
             DbCommand cmd,
             out DataTable queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod")
         {
@@ -479,7 +479,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryResultsDataSet(
             string sqlQuery,
             out DataSet queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
             [CallerMemberName] string callingFunction = "UnknownMethod")
@@ -509,7 +509,7 @@ namespace PRISMDatabaseUtils
         public bool GetQueryResultsDataSet(
             DbCommand cmd,
             out DataSet queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod")
         {
@@ -542,7 +542,7 @@ namespace PRISMDatabaseUtils
         private bool GetQueryResults(
             DbCommand cmd,
             Action<SqlCommand> readMethod,
-            short retryCount,
+            int retryCount,
             int retryDelaySeconds,
             string callingFunction)
         {
@@ -675,7 +675,7 @@ namespace PRISMDatabaseUtils
         private int ExecuteSPData(
             DbCommand spCmd,
             Action<SqlCommand> readMethod,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5)
         {
             if (!(spCmd is SqlCommand sqlCmd))
@@ -814,7 +814,7 @@ namespace PRISMDatabaseUtils
         public int ExecuteSPData(
             DbCommand spCmd,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {
@@ -867,7 +867,7 @@ namespace PRISMDatabaseUtils
         public int ExecuteSPDataTable(
             DbCommand spCmd,
             out DataTable results,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5)
         {
             var queryResults = new DataTable();
@@ -895,7 +895,7 @@ namespace PRISMDatabaseUtils
         public int ExecuteSPDataSet(
             DbCommand spCmd,
             out DataSet results,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5)
         {
             var queryResults = new DataSet();

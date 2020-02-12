@@ -164,7 +164,7 @@ namespace PRISM
         public int ExecuteSP(
             SqlCommand spCmd,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {

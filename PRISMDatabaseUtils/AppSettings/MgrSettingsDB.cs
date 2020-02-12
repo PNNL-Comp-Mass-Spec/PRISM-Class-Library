@@ -23,7 +23,7 @@ namespace PRISMDatabaseUtils.AppSettings
             out Dictionary<string, string> mgrSettingsFromDB,
             bool logConnectionErrors,
             bool returnErrorIfNoParameters,
-            short retryCount = 3)
+            int retryCount = 3)
         {
             mgrSettingsFromDB = new Dictionary<string, string>();
 

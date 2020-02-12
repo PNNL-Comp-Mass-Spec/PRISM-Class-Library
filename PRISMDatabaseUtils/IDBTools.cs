@@ -53,7 +53,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryScalar(
             string sqlQuery,
             out object queryResult,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
             [CallerMemberName] string callingFunction = "UnknownMethod"
@@ -75,7 +75,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryScalar(
             DbCommand cmd,
             out object queryResult,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod");
 
@@ -99,7 +99,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryResults(
             string sqlQuery,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
@@ -122,7 +122,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryResultsDataTable(
             string sqlQuery,
             out DataTable queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
             [CallerMemberName] string callingFunction = "UnknownMethod");
@@ -144,7 +144,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryResultsDataSet(
             string sqlQuery,
             out DataSet queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             int timeoutSeconds = -1,
             [CallerMemberName] string callingFunction = "UnknownMethod");
@@ -168,7 +168,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryResults(
             DbCommand cmd,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod");
@@ -189,7 +189,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryResultsDataTable(
             DbCommand cmd,
             out DataTable queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod");
 
@@ -209,7 +209,7 @@ namespace PRISMDatabaseUtils
         bool GetQueryResultsDataSet(
             DbCommand cmd,
             out DataSet queryResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod");
 
@@ -226,7 +226,7 @@ namespace PRISMDatabaseUtils
         int ExecuteSPData(
             DbCommand spCmd,
             out List<List<string>> lstResults,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5);
 
@@ -242,7 +242,7 @@ namespace PRISMDatabaseUtils
         int ExecuteSPDataTable(
             DbCommand spCmd,
             out DataTable results,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5);
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace PRISMDatabaseUtils
         int ExecuteSPDataSet(
             DbCommand spCmd,
             out DataSet results,
-            short retryCount = 3,
+            int retryCount = 3,
             int retryDelaySeconds = 5);
 
         /// <summary>

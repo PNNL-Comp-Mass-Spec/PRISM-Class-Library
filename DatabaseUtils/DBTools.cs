@@ -421,7 +421,7 @@ namespace PRISM
             string sqlQuery,
             out List<List<string>> lstResults,
             string callingFunction,
-            short retryCount = 3,
+            int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {
