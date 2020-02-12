@@ -17,10 +17,10 @@ test:
     - DatabaseNamedUser
     - PNL_Domain
 artifacts:
-- path: bin\Release\net462\PRISM.dll
+- path: PRISM\bin\Release\net462\PRISM.dll
 - path: PRISMDatabaseUtils\bin\Release\net462\PRISMDatabaseUtils.dll
 - path: PRISMWin\bin\Release\net462\PRISMWin.dll
-- path: bin\Release\PRISM-Library*.nupkg
+- path: PRISM\bin\Release\PRISM-Library*.nupkg
 - path: PRISMDatabaseUtils\bin\Release\PRISM-DatabaseUtils*.nupkg
 - path: PRISMWin\bin\Release\PRISMWin-Library*.nupkg
 deploy:
