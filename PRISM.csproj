@@ -32,7 +32,7 @@
     <Compile Remove="CopyWithResume\**" />
     <Compile Remove="DotNETStandard\**" />
     <Compile Remove="DotNETStandard_UnitTests\**" />
-    <Compile Remove="FindFilesOrFolders\**" />
+    <Compile Remove="FindFilesOrDirectories\**" />
     <Compile Remove="LinuxTestFiles\**" />
     <Compile Remove="packages\**" />
     <Compile Remove="PRISMDatabaseUtils\**" />
