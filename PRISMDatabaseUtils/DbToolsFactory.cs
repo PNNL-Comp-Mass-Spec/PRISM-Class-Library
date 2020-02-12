@@ -14,6 +14,11 @@ namespace PRISMDatabaseUtils
         public enum DbServerTypes
         {
             /// <summary>
+            /// Undefined server type
+            /// </summary>
+            Undefined,
+
+            /// <summary>
             /// Microsoft SQL Server
             /// </summary>
             MSSQLServer,
