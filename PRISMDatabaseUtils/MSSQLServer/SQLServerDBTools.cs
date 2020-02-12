@@ -669,7 +669,6 @@ namespace PRISMDatabaseUtils
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
-        /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         /// <remarks></remarks>
@@ -677,7 +676,6 @@ namespace PRISMDatabaseUtils
             DbCommand spCmd,
             Action<SqlCommand> readMethod,
             short retryCount = 3,
-            int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {
             if (!(spCmd is SqlCommand sqlCmd))
@@ -693,7 +691,6 @@ namespace PRISMDatabaseUtils
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
-            string errorMessage;
             var startTime = DateTime.UtcNow;
 
             if (retryCount < 1)
@@ -709,6 +706,7 @@ namespace PRISMDatabaseUtils
             using (sqlCmd)
             {
                 // Multiple retry loop for handling SP execution failures
+                string errorMessage;
                 while (retryCount > 0)
                 {
                     var success = false;
