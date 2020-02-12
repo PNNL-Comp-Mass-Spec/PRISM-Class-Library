@@ -29,51 +29,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CopyWithResume\**" />
-    <Compile Remove="DotNETStandard\**" />
-    <Compile Remove="DotNETStandard_UnitTests\**" />
-    <Compile Remove="FindFilesOrDirectories\**" />
-    <Compile Remove="LinuxTestFiles\**" />
-    <Compile Remove="packages\**" />
-    <Compile Remove="PRISMDatabaseUtils\**" />
-    <Compile Remove="PRISMWin\**" />
     <Compile Remove="Properties\**" />
-    <Compile Remove="ShFolderBrowser\**" />
-    <Compile Remove="SourceCode\**" />
-    <Compile Remove="UnitTests\**" />
-    <Compile Remove="Utilities\**" />
-    <Compile Remove="_Trash\**" />
-    <EmbeddedResource Remove="CopyWithResume\**" />
-    <EmbeddedResource Remove="DotNETStandard\**" />
-    <EmbeddedResource Remove="DotNETStandard_UnitTests\**" />
-    <EmbeddedResource Remove="FindFilesOrDirectories\**" />
-    <EmbeddedResource Remove="LinuxTestFiles\**" />
-    <EmbeddedResource Remove="packages\**" />
-    <EmbeddedResource Remove="PRISMDatabaseUtils\**" />
-    <EmbeddedResource Remove="PRISMWin\**" />
-    <EmbeddedResource Remove="ShFolderBrowser\**" />
-    <EmbeddedResource Remove="SourceCode\**" />
-    <EmbeddedResource Remove="UnitTests\**" />
-    <EmbeddedResource Remove="Utilities\**" />
-    <EmbeddedResource Remove="_Trash\**" />
-    <None Remove="CopyWithResume\**" />
-    <None Remove="DotNETStandard\**" />
-    <None Remove="DotNETStandard_UnitTests\**" />
-    <None Remove="FindFilesOrDirectories\**" />
-    <None Remove="LinuxTestFiles\**" />
-    <None Remove="packages\**" />
-    <None Remove="PRISMDatabaseUtils\**" />
-    <None Remove="PRISMWin\**" />
-    <None Remove="ShFolderBrowser\**" />
-    <None Remove="SourceCode\**" />
-    <None Remove="UnitTests\**" />
-    <None Remove="Utilities\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove="README.txt" />
-    <None Remove="RevisionHistory.txt" />
+    <None Include="..\README.md" />
+    <None Include="..\appveyor.yml" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
