@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using PRISM;
+
+#pragma warning disable 1998
 
 namespace PRISMTest
 {
