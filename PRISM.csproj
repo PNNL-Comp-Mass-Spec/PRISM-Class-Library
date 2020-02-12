@@ -46,7 +46,7 @@
     <EmbeddedResource Remove="CopyWithResume\**" />
     <EmbeddedResource Remove="DotNETStandard\**" />
     <EmbeddedResource Remove="DotNETStandard_UnitTests\**" />
-    <EmbeddedResource Remove="FindFilesOrFolders\**" />
+    <EmbeddedResource Remove="FindFilesOrDirectories\**" />
     <EmbeddedResource Remove="LinuxTestFiles\**" />
     <EmbeddedResource Remove="packages\**" />
     <EmbeddedResource Remove="PRISMDatabaseUtils\**" />
@@ -59,7 +59,7 @@
     <None Remove="CopyWithResume\**" />
     <None Remove="DotNETStandard\**" />
     <None Remove="DotNETStandard_UnitTests\**" />
-    <None Remove="FindFilesOrFolders\**" />
+    <None Remove="FindFilesOrDirectories\**" />
     <None Remove="LinuxTestFiles\**" />
     <None Remove="packages\**" />
     <None Remove="PRISMDatabaseUtils\**" />
