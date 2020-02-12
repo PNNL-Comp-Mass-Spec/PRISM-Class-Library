@@ -10,13 +10,13 @@ namespace FindFilesOrFolders
             return GetBaseClassErrorMessage();
         }
 
-        public override bool ProcessFile(string inputFilePath, string outputFolderPath, string parameterFilePath, bool resetErrorCode)
+        public override bool ProcessFile(string inputFilePath, string outputDirectoryPath, string parameterFilePath, bool resetErrorCode)
         {
 
             OnStatusEvent("Process file " + PRISM.FileTools.CompactPathString(inputFilePath, 60));
 
-            if (!string.IsNullOrWhiteSpace(outputFolderPath))
-                OnStatusEvent("  Would write results to " + outputFolderPath);
+            if (!string.IsNullOrWhiteSpace(outputDirectoryPath))
+                OnStatusEvent("  Would write results to " + outputDirectoryPath);
 
             if (!File.Exists(inputFilePath))
                 OnWarningEvent("File not found: " + inputFilePath);

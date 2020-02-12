@@ -3,22 +3,22 @@ using PRISM.FileProcessor;
 
 namespace FindFilesOrFolders
 {
-    class FolderProcessor : ProcessFoldersBase
+    class FolderProcessor : ProcessDirectoriesBase
     {
         public override string GetErrorMessage()
         {
             return GetBaseClassErrorMessage();
         }
 
-        public override bool ProcessFolder(string inputFolderPath, string outputFolderAlternatePath, string parameterFilePath, bool resetErrorCode)
+        public override bool ProcessDirectory(string inputDirectoryPath, string outputDirectoryAlternatePath, string parameterFilePath, bool resetErrorCode)
         {
-            OnStatusEvent("Process folder " + inputFolderPath);
+            OnStatusEvent("Process directory " + inputDirectoryPath);
 
-            if (!string.IsNullOrWhiteSpace(outputFolderAlternatePath))
-                OnStatusEvent("  Would write results to " + outputFolderAlternatePath);
+            if (!string.IsNullOrWhiteSpace(outputDirectoryAlternatePath))
+                OnStatusEvent("  Would write results to " + outputDirectoryAlternatePath);
 
-            if (!Directory.Exists(inputFolderPath))
-                OnWarningEvent("Folder not found: " + inputFolderPath);
+            if (!Directory.Exists(inputDirectoryPath))
+                OnWarningEvent("Folder not found: " + inputDirectoryPath);
 
             System.Threading.Thread.Sleep(200);
 

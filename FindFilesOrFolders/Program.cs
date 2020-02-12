@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using PRISM;
+using PRISM.Logging;
 
 namespace FindFilesOrFolders
 {
     internal static class Program
     {
 
-        public const string PROGRAM_DATE = "September 20, 2018";
+        public const string PROGRAM_DATE = "February 12, 2020";
 
-        private static string mInputFileOrFolderPath;
-        private static string mOutputFileOrFolderPath;
+        private static string mInputFileOrDirectoryPath;
+        private static string mOutputFileOrDirectoryPath;
 
         private static string mOutputFolderAlternatePath;
 
@@ -25,8 +26,8 @@ namespace FindFilesOrFolders
 
             var objParseCommandLine = new clsParseCommandLine();
 
-            mInputFileOrFolderPath = string.Empty;
-            mOutputFileOrFolderPath = string.Empty;
+            mInputFileOrDirectoryPath = string.Empty;
+            mOutputFileOrDirectoryPath = string.Empty;
             mOutputFolderAlternatePath = string.Empty;
 
             mAssumeNoWildcards = false;
@@ -47,7 +48,7 @@ namespace FindFilesOrFolders
 
                 if (!success ||
                     objParseCommandLine.NeedToShowHelp ||
-                    string.IsNullOrWhiteSpace(mInputFileOrFolderPath))
+                    string.IsNullOrWhiteSpace(mInputFileOrDirectoryPath))
                 {
                     ShowProgramHelp();
                     return -1;
@@ -65,17 +66,17 @@ namespace FindFilesOrFolders
                     if (mRecurse)
                     {
                         ConsoleMsgUtils.ShowDebug("Calling folderProcessor.ProcessAndRecurseFolders");
-                        success = folderProcessor.ProcessAndRecurseFolders(mInputFileOrFolderPath, mOutputFileOrFolderPath, PARAM_FILE_PATH, mRecurseDepth);
+                        success = folderProcessor.ProcessAndRecurseDirectories(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH, mRecurseDepth);
                     }
                     else if (mAssumeNoWildcards)
                     {
                         ConsoleMsgUtils.ShowDebug("Calling folderProcessor.ProcessFolder");
-                        success = folderProcessor.ProcessFolder(mInputFileOrFolderPath, mOutputFileOrFolderPath, PARAM_FILE_PATH);
+                        success = folderProcessor.ProcessDirectory(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH);
                     }
                     else
                     {
                         ConsoleMsgUtils.ShowDebug("Calling folderProcessor.ProcessFoldersWildcard");
-                        success = folderProcessor.ProcessFoldersWildcard(mInputFileOrFolderPath, mOutputFileOrFolderPath);
+                        success = folderProcessor.ProcessDirectoriesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
 
                 }
@@ -95,18 +96,18 @@ namespace FindFilesOrFolders
                                 "Calling fileProcessor.ProcessFilesAndRecurseFolders with user-defined extensions: " +
                                 string.Join(", ", mKnownExtensions));
 
-                            success = fileProcessor.ProcessFilesAndRecurseFolders(
-                                mInputFileOrFolderPath, mOutputFileOrFolderPath, mOutputFolderAlternatePath,
+                            success = fileProcessor.ProcessFilesAndRecurseDirectories(
+                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputFolderAlternatePath,
                                 RECREATE_FOLDER_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth, mKnownExtensions);
                         }
                         else
                         {
                             ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesAndRecurseFolders with " +
-                                                      "input file [" + mInputFileOrFolderPath + "], output folder [" + mOutputFileOrFolderPath + "]" +
+                                                      "input file [" + mInputFileOrDirectoryPath + "], output folder [" + mOutputFileOrDirectoryPath + "]" +
                                                       " and extensions: " + string.Join(", ", fileProcessor.GetDefaultExtensionsToParse()));
 
-                            success = fileProcessor.ProcessFilesAndRecurseFolders(
-                                mInputFileOrFolderPath, mOutputFileOrFolderPath, mOutputFolderAlternatePath,
+                            success = fileProcessor.ProcessFilesAndRecurseDirectories(
+                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputFolderAlternatePath,
                                 RECREATE_FOLDER_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth);
 
                         }
@@ -115,16 +116,16 @@ namespace FindFilesOrFolders
                     else if (mAssumeNoWildcards)
                     {
                         ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFile with " +
-                                                  "input file [" + mInputFileOrFolderPath + "] and output folder [" + mOutputFileOrFolderPath + "]");
+                                                  "input file [" + mInputFileOrDirectoryPath + "] and output folder [" + mOutputFileOrDirectoryPath + "]");
 
-                        success = fileProcessor.ProcessFile(mInputFileOrFolderPath, mOutputFileOrFolderPath);
+                        success = fileProcessor.ProcessFile(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
                     else
                     {
                         ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesWildcard with " +
-                                                  "input file [" + mInputFileOrFolderPath + "] and output folder [" + mOutputFileOrFolderPath + "]");
+                                                  "input file [" + mInputFileOrDirectoryPath + "] and output folder [" + mOutputFileOrDirectoryPath + "]");
 
-                        success = fileProcessor.ProcessFilesWildcard(mInputFileOrFolderPath, mOutputFileOrFolderPath);
+                        success = fileProcessor.ProcessFilesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
                 }
 
@@ -147,7 +148,7 @@ namespace FindFilesOrFolders
 
         }
 
-        static void RegisterEvents(EventNotifier processor)
+        static void RegisterEvents(IEventNotifier processor)
         {
             processor.DebugEvent += Processor_DebugEvent;
             processor.ErrorEvent += Processor_ErrorEvent;
@@ -205,22 +206,22 @@ namespace FindFilesOrFolders
                 // Query objParseCommandLine to see if various parameters are present
                 if (objParseCommandLine.NonSwitchParameterCount > 0)
                 {
-                    mInputFileOrFolderPath = objParseCommandLine.RetrieveNonSwitchParameter(0);
+                    mInputFileOrDirectoryPath = objParseCommandLine.RetrieveNonSwitchParameter(0);
                 }
 
                 if (objParseCommandLine.NonSwitchParameterCount > 1)
                 {
-                    mOutputFileOrFolderPath = objParseCommandLine.RetrieveNonSwitchParameter(1);
+                    mOutputFileOrDirectoryPath = objParseCommandLine.RetrieveNonSwitchParameter(1);
                 }
 
                 if (objParseCommandLine.RetrieveValueForParameter("I", out var paramValue))
                 {
-                    mInputFileOrFolderPath = string.Copy(paramValue);
+                    mInputFileOrDirectoryPath = string.Copy(paramValue);
                 }
 
                 if (objParseCommandLine.RetrieveValueForParameter("O", out paramValue))
                 {
-                    mOutputFileOrFolderPath = string.Copy(paramValue);
+                    mOutputFileOrDirectoryPath = string.Copy(paramValue);
                 }
 
                 if (objParseCommandLine.RetrieveValueForParameter("AltOutput", out paramValue))
@@ -282,7 +283,7 @@ namespace FindFilesOrFolders
                 Console.WriteLine();
                 Console.WriteLine("Program syntax:" + Environment.NewLine + exeName);
 
-                Console.WriteLine(" InputFileOrFolderPath [/Folders] [/O:OutputFileOrFolder] [/AltOutput] " +
+                Console.WriteLine(" InputFileOrDirectoryPath [/Folders] [/O:OutputFileOrFolder] [/AltOutput] " +
                                   "[/S:MaxDepth] [/NoWild] [/Ext:KnownExtensionList");
 
                 Console.WriteLine();
