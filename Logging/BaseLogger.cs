@@ -100,7 +100,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Most recent error message
         /// </summary>
-        public static string MostRecentErrorMessage { get; protected set; } = "";
+        public static string MostRecentErrorMessage { get; protected set; } = string.Empty;
 
         /// <summary>
         /// Timestamp format, defaults to year-month-day time (24 hour clock)

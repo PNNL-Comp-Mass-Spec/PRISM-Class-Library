@@ -224,7 +224,7 @@ namespace PRISM
                 if (Regex.IsMatch(directoryPath, @"^\\\\[^\\]+\\?$") ||
                     Regex.IsMatch(directoryPath, @"^[a-z]:\\?$"))
                 {
-                    directoryName = "";
+                    directoryName = string.Empty;
                     return "";
                 }
             }
@@ -233,7 +233,7 @@ namespace PRISM
                 // sepChar is /
                 if (directoryPath == "/")
                 {
-                    directoryName = "";
+                    directoryName = string.Empty;
                     return "";
                 }
             }

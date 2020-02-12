@@ -27,7 +27,7 @@ namespace PRISMDatabaseUtils.AppSettings
         {
             mgrSettingsFromDB = new Dictionary<string, string>();
 
-            var dbConnectionString = GetParam(MGR_PARAM_MGR_CFG_DB_CONN_STRING, "");
+            var dbConnectionString = GetParam(MGR_PARAM_MGR_CFG_DB_CONN_STRING, string.Empty);
 
             if (string.IsNullOrEmpty(dbConnectionString))
             {

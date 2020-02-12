@@ -55,7 +55,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Error message
         /// </summary>
-        public string ErrMsg { get; protected set; } = "";
+        public string ErrMsg { get; protected set; } = string.Empty;
 
         /// <summary>
         /// Manager name

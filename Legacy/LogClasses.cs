@@ -165,7 +165,7 @@ namespace PRISM
         /// <summary>
         /// Path to the current log file (readonly)
         /// </summary>
-        public string CurrentLogFilePath { get; private set; } = "";
+        public string CurrentLogFilePath { get; private set; } = string.Empty;
 
         /// <summary>
         /// Gets the product version associated with this application.
@@ -222,12 +222,12 @@ namespace PRISM
         /// <summary>
         /// Most recent log message
         /// </summary>
-        public string MostRecentLogMessage { get; private set; } = "";
+        public string MostRecentLogMessage { get; private set; } = string.Empty;
 
         /// <summary>
         /// Most recent error message
         /// </summary>
-        public string MostRecentErrorMessage { get; private set; } = "";
+        public string MostRecentErrorMessage { get; private set; } = string.Empty;
 
         /// <summary>
         /// Move log files more than 32 days old into a year-based directory

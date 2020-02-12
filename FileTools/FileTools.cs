@@ -1313,7 +1313,7 @@ namespace PRISM
             {
                 foreach (var fileName in fileNamesToSkip)
                 {
-                    dctFileNamesToSkip.Add(fileName, "");
+                    dctFileNamesToSkip.Add(fileName, string.Empty);
                 }
             }
 

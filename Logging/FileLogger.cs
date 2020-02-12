@@ -114,7 +114,7 @@ namespace PRISM.Logging
         /// (unless the base name already has an extension, then the user-specified extension will be used)
         /// See also the comments for property AppendDateToBaseFileName
         /// </remarks>
-        public static string BaseLogFileName { get; private set; } = "";
+        public static string BaseLogFileName { get; private set; } = string.Empty;
 
         /// <summary>
         /// Default log file name
@@ -155,13 +155,13 @@ namespace PRISM.Logging
         /// <summary>
         /// Log file date (as a string)
         /// </summary>
-        public static string LogFileDateText { get; private set; } = "";
+        public static string LogFileDateText { get; private set; } = string.Empty;
 
         /// <summary>
         /// Current log file path
         /// </summary>
         /// <remarks>Update using ChangeLogFileBaseName</remarks>
-        public static string LogFilePath { get; private set; } = "";
+        public static string LogFilePath { get; private set; } = string.Empty;
 
         /// <summary>
         /// Get or set the current log threshold level

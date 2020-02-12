@@ -915,7 +915,7 @@ namespace PRISM
                     else
                     {
                         exePath = cmdLine;
-                        arguments = "";
+                        arguments = string.Empty;
                     }
                 }
 

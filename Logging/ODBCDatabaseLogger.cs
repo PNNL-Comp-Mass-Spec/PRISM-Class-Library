@@ -232,7 +232,7 @@ namespace PRISM.Logging
                 sqlServerSettings.Add(settingKey, settingValue);
             }
 
-            var userPassword = "";
+            var userPassword = string.Empty;
 
             var namedUser = sqlServerSettings.TryGetValue("User Id", out var userId) &&
                             sqlServerSettings.TryGetValue("Password", out userPassword);

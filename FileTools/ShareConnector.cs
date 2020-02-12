@@ -266,6 +266,6 @@ namespace PRISM
         /// <summary>
         /// Gets the error message returned by the Connect and Disconnect functions.
         /// </summary>
-        public string ErrorMessage { get; private set; } = "";
+        public string ErrorMessage { get; private set; } = string.Empty;
     }
 }

@@ -44,7 +44,7 @@ namespace PRISM
 
         // XML file reader
         // Call LoadSettings to initialize, even if simply saving settings
-        private string m_XMLFilePath = "";
+        private string m_XMLFilePath = string.Empty;
 
         private XMLFileReader m_XMLFileAccessor;
 

@@ -202,7 +202,7 @@ namespace PRISM
                 Console.WriteLine(title);
 
             if (string.IsNullOrEmpty(indentChars))
-                indentChars = "";
+                indentChars = string.Empty;
 
             foreach (var item in errorMessages)
             {

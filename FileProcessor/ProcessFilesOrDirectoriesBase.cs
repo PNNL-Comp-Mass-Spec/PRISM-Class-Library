@@ -175,7 +175,7 @@ namespace PRISM.FileProcessor
 
         private static DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
-        private string mLastMessage = "";
+        private string mLastMessage = string.Empty;
 
         private DateTime mLastReportTime = DateTime.UtcNow;
 
