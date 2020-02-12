@@ -11,6 +11,42 @@ namespace PRISMTest
         public const string DMS_READER = "dmsreader";
         public const string DMS_READER_PASSWORD = "dms4fun";
 
+        [TestCase(
+            "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
+            DbToolsFactory.DbServerTypes.MSSQLServer)]
+        [TestCase(
+            "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
+            DbToolsFactory.DbServerTypes.MSSQLServer)]
+        [TestCase(
+            "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
+            DbToolsFactory.DbServerTypes.MSSQLServer)]
+        [TestCase(
+            "Host=prismweb3;Username=dmsreader;Database=dms",
+            DbToolsFactory.DbServerTypes.PostgresSQL)]
+        [TestCase(
+            "DbServerType=Postgres;Host=prismweb3;Username=dmsreader;Database=dms",
+            DbToolsFactory.DbServerTypes.PostgresSQL)]
+        public void TestDbToolsInitialization(string connectionString, DbToolsFactory.DbServerTypes expectedServerType)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            if (dbTools is PRISMDatabaseUtils.PostgresSQL.PostgresDBTools)
+            {
+                Console.WriteLine("Connection string was interpreted as PostgreSQL");
+                Assert.AreEqual(expectedServerType, DbToolsFactory.DbServerTypes.PostgresSQL);
+                return;
+            }
+
+            if (dbTools is PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools)
+            {
+                Console.WriteLine("Connection string was interpreted as Microsoft SQL Server");
+                Assert.AreEqual(expectedServerType, DbToolsFactory.DbServerTypes.MSSQLServer);
+                return;
+            }
+
+            Assert.Fail("The dbTools instance returned by DbToolsFactory.GetDBTool is not a recognized class");
+        }
+
         [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
         [TestCase("Gigasax", "DMS5",
