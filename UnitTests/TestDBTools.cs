@@ -33,9 +33,42 @@ namespace PRISMTest
             TestQueryTable(server, database, DMS_READER, DMS_READER_PASSWORD, query, expectedRowCount, expectedValueList);
         }
 
+        [TestCase(
+            "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
+            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'",
+            1, "H09090911,AutoUser,H09090911")]
+        [TestCase(
+            "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
+            "SELECT [Num C], [Num H], [Num N], [Num O], [Num S] FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol",
+            2,
+            "6, 12, 2, 1, 0")]
+        [TestCase(
+            "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
+            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'",
+            1, "H09090911,AutoUser,H09090911")]
+        [TestCase(
+            "DbServerType=Postgres;Host=prismweb3;Username=dmsreader;Database=dms",
+            "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]';",
+            4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
+        [Category("PNL_Domain")]
+        [Category("DatabaseIntegrated")]
+        public void TestQueryTableCustomConnectionString(string connectionString, string query, int expectedRowCount, string expectedValueList)
+        {
+            var database = "Defined via connection string";
+            var user = "Defined via connection string";
+
+            TestQueryTableWork(connectionString, database, user, query, expectedRowCount, expectedValueList);
+        }
+
         private void TestQueryTable(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
         {
             var connectionString = GetConnectionString(server, database, user, password);
+            TestQueryTableWork(connectionString, database, user, query, expectedRowCount, expectedValueList);
+        }
+
+        private void TestQueryTableWork(string connectionString, string database, string user, string query, int expectedRowCount, string expectedValueList)
+        {
+
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
@@ -131,6 +164,14 @@ namespace PRISMTest
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
 
+        /// <summary>
+        /// Get a SQL Server compatible connection string
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public static string GetConnectionString(string server, string database, string user = "Integrated", string password = "")
         {
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))
