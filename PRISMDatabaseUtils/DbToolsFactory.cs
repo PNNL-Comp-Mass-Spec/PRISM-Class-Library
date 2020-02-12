@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Npgsql;
+using PRISMDatabaseUtils.MSSQLServer;
 using PRISMDatabaseUtils.PostgresSQL;
 
 namespace PRISMDatabaseUtils

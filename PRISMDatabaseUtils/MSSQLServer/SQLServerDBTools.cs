@@ -8,8 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using PRISM;
 
-// ReSharper disable once CheckNamespace
-namespace PRISMDatabaseUtils
+namespace PRISMDatabaseUtils.MSSQLServer
 {
     /// <summary>
     /// Tools to retrieve data from a database
