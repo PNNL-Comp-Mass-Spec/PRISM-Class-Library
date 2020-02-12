@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net462</TargetFrameworks>
+    <TargetFrameworks>net462;net472</TargetFrameworks>
     <RootNamespace>PRISMWin</RootNamespace>
     <AssemblyName>PRISMWin</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -35,7 +35,7 @@
     <Reference Include="System.Management" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net45' OR '$(TargetFramework)'=='net462'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Management" />
   </ItemGroup>
