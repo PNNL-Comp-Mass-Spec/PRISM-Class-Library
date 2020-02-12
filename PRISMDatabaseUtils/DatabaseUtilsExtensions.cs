@@ -46,12 +46,7 @@ namespace PRISMDatabaseUtils
         {
             if (value == null || value == DBNull.Value)
             {
-                if (typeof(T) == typeof(string))
-                {
-                    return (T)(object)string.Empty;
-                }
-
-                return default(T);
+                return valueIfNull;
             }
 
             return (T)Convert.ChangeType(value, typeof(T));
