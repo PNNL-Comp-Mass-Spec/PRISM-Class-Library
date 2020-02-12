@@ -68,7 +68,7 @@ namespace PRISMTest
                 }
             }
 
-            var parentToCheck = dataFile.Directory.Parent;
+            var parentToCheck = dataFile.Directory?.Parent;
             while (parentToCheck != null)
             {
                 foreach (var relativePath in relativePathsToCheck)
