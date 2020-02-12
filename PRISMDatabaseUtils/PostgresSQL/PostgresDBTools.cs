@@ -20,7 +20,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// <summary>
         /// Timeout length, in seconds, when waiting for a query or stored procedure to finish running
         /// </summary>
-        private int mTimeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC;
+        private int mTimeoutSeconds;
 
         /// <summary>
         /// Database connection string.
@@ -52,7 +52,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
             get => mTimeoutSeconds;
             set
             {
-                if (value == 0)
+                if (value <= 0)
                     value = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC;
 
                 if (value < 10)
