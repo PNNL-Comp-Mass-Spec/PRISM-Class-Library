@@ -11,7 +11,7 @@ using PRISM;
 namespace PRISMDatabaseUtils.PostgresSQL
 {
     /// <summary>
-    /// Tools to retrieve data from a database or run storde procedures
+    /// Tools to retrieve data from a database or run stored procedures
     /// </summary>
     public class PostgresDBTools : EventNotifier, IDBTools
     {

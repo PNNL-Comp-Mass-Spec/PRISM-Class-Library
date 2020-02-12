@@ -169,16 +169,22 @@ namespace PRISMDatabaseUtils
         {
             if (type == typeof(int))
                 return SqlType.Int;
+
             if (type == typeof(long))
                 return SqlType.BigInt;
+
             if (type == typeof(short))
                 return SqlType.SmallInt;
+
             if (type == typeof(float))
                 return SqlType.Real;
+
             if (type == typeof(double))
                 return SqlType.Float;
+
             if (type == typeof(DateTime))
                 return SqlType.DateTime;
+
             if (type == typeof(string))
                 return SqlType.VarChar;
 

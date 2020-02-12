@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PRISMDatabaseUtils
 {
     /// <summary>
     /// Some extension methods that are useful when reading from databases
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DatabaseUtilsExtensions
     {
         /// <summary>
@@ -23,12 +25,15 @@ namespace PRISMDatabaseUtils
                     return (T)(object)string.Empty;
                 }
 
+                // ReSharper disable once RedundantTypeSpecificationInDefaultExpression
                 return default(T);
             }
 
+            // Simplistic version, which only works if you don't need the string representation of a number
+            // return (T)value;
+
+            // More robust version:
             return (T)Convert.ChangeType(value, typeof(T));
-            // The below works if not wanting the string representation of a number
-            //return (T)value;
         }
 
         /// <summary>
@@ -50,8 +55,6 @@ namespace PRISMDatabaseUtils
             }
 
             return (T)Convert.ChangeType(value, typeof(T));
-            // The below works if not wanting the string representation of a number
-            //return (T)value;
         }
 
 
@@ -154,7 +157,6 @@ namespace PRISMDatabaseUtils
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         public static Dictionary<string, int> GetColumnMapping(this IDBTools dbTools, IReadOnlyList<string> columns)
         {
-
             var columnMap = new Dictionary<string, int>();
 
             for (var i = 0; i < columns.Count; i++)
@@ -174,7 +176,8 @@ namespace PRISMDatabaseUtils
         /// <param name="columnName">Column Name</param>
         /// <returns>String value</returns>
         /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty</remarks>
-        public static string GetColumnValue(this IDBTools dbTools,
+        public static string GetColumnValue(
+            this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName)
@@ -190,7 +193,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get the integer value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
-        public static int GetColumnValue(this IDBTools dbTools,
+        public static int GetColumnValue(
+            this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName,
@@ -209,12 +213,13 @@ namespace PRISMDatabaseUtils
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains an integer</param>
         /// <returns>Integer value</returns>
-        public static int GetColumnValue(this IDBTools dbTools,
-        IReadOnlyList<string> resultRow,
-        IReadOnlyDictionary<string, int> columnMap,
-        string columnName,
-        int defaultValue,
-        out bool validNumber)
+        public static int GetColumnValue(
+            this IDBTools dbTools,
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            int defaultValue,
+            out bool validNumber)
         {
             if (!columnMap.TryGetValue(columnName, out var columnIndex))
                 throw new Exception("Invalid column name: " + columnName);
@@ -234,7 +239,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get the double value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
-        public static double GetColumnValue(this IDBTools dbTools,
+        public static double GetColumnValue(
+            this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName,
@@ -253,7 +259,8 @@ namespace PRISMDatabaseUtils
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains a double (or integer)</param>
         /// <returns>Double value</returns>
-        public static double GetColumnValue(this IDBTools dbTools,
+        public static double GetColumnValue(
+            this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName,
@@ -278,7 +285,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get the date value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
-        public static DateTime GetColumnValue(this IDBTools dbTools,
+        public static DateTime GetColumnValue(
+            this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName,
@@ -297,7 +305,8 @@ namespace PRISMDatabaseUtils
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains a valid date</param>
         /// <returns>True or false</returns>
-        public static DateTime GetColumnValue(this IDBTools dbTools,
+        public static DateTime GetColumnValue(
+            this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName,
