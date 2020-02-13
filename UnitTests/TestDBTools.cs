@@ -13,34 +13,34 @@ namespace PRISMTest
 
         [TestCase(
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
-            DbToolsFactory.DbServerTypes.MSSQLServer)]
+            DbServerTypes.MSSQLServer)]
         [TestCase(
             "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
-            DbToolsFactory.DbServerTypes.MSSQLServer)]
+            DbServerTypes.MSSQLServer)]
         [TestCase(
             "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
-            DbToolsFactory.DbServerTypes.MSSQLServer)]
+            DbServerTypes.MSSQLServer)]
         [TestCase(
             "Host=prismweb3;Username=dmsreader;Database=dms",
-            DbToolsFactory.DbServerTypes.PostgresSQL)]
+            DbServerTypes.PostgresSQL)]
         [TestCase(
             "DbServerType=Postgres;Host=prismweb3;Username=dmsreader;Database=dms",
-            DbToolsFactory.DbServerTypes.PostgresSQL)]
-        public void TestDbToolsInitialization(string connectionString, DbToolsFactory.DbServerTypes expectedServerType)
+            DbServerTypes.PostgresSQL)]
+        public void TestDbToolsInitialization(string connectionString, DbServerTypes expectedServerType)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
-            if (dbTools is PRISMDatabaseUtils.PostgresSQL.PostgresDBTools)
+            if (dbTools.DbServerType == DbServerTypes.PostgresSQL)
             {
                 Console.WriteLine("Connection string was interpreted as PostgreSQL");
-                Assert.AreEqual(expectedServerType, DbToolsFactory.DbServerTypes.PostgresSQL);
+                Assert.AreEqual(expectedServerType, DbServerTypes.PostgresSQL);
                 return;
             }
 
-            if (dbTools is PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools)
+            if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
             {
                 Console.WriteLine("Connection string was interpreted as Microsoft SQL Server");
-                Assert.AreEqual(expectedServerType, DbToolsFactory.DbServerTypes.MSSQLServer);
+                Assert.AreEqual(expectedServerType, DbServerTypes.MSSQLServer);
                 return;
             }
 

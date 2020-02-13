@@ -9,32 +9,34 @@ using PRISMDatabaseUtils.PostgresSQL;
 
 namespace PRISMDatabaseUtils
 {
+
+    /// <summary>
+    /// Enum of supported database server systems
+    /// </summary>
+    public enum DbServerTypes
+    {
+        /// <summary>
+        /// Undefined server type
+        /// </summary>
+        Undefined,
+
+        /// <summary>
+        /// Microsoft SQL Server
+        /// </summary>
+        MSSQLServer,
+
+        /// <summary>
+        /// Postgres SQL
+        /// </summary>
+        PostgresSQL,
+    }
+
     /// <summary>
     /// Factory class for creating Database interaction objects
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DbToolsFactory
     {
-        /// <summary>
-        /// Enum of supported database server systems
-        /// </summary>
-        public enum DbServerTypes
-        {
-            /// <summary>
-            /// Undefined server type
-            /// </summary>
-            Undefined,
-
-            /// <summary>
-            /// Microsoft SQL Server
-            /// </summary>
-            MSSQLServer,
-
-            /// <summary>
-            /// Postgres SQL
-            /// </summary>
-            PostgresSQL,
-        }
 
         /// <summary>
         /// Set to true once mConnectionStringKeywordMap has been initialized
