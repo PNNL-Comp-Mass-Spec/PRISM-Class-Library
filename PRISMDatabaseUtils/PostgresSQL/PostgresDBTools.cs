@@ -272,6 +272,12 @@ namespace PRISMDatabaseUtils.PostgresSQL
             var msg = new StringBuilder();
             var notice = args.Notice;
 
+            if (notice.Severity.Equals("NOTICE") &&
+                notice.Routine.Equals("DropErrorMsgNonExistent", StringComparison.OrdinalIgnoreCase))
+            {
+                // This is an informational message that can be ignored
+                return;
+            }
 
             msg.Append("Message: " + notice.MessageText);
             msg.Append(", Source: " + notice.Where);
