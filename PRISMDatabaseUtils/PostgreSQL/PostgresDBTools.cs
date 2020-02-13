@@ -1126,6 +1126,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                             sqlCmd.Connection = dbConnection;
 
+                            // Uncomment to debug
+                            // OnDebugEvent("Calling procedure with: " + sqlCmd.CommandText);
+
                             startTime = DateTime.UtcNow;
                             sqlCmd.ExecuteNonQuery();
 
@@ -1243,6 +1246,16 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
 
+            // Optional: force the parameter name to be lowercase
+            // See https://stackoverflow.com/a/45080006/1179467
+
+            // string updatedName;
+            // if (name.StartsWith("\""))
+            //     // Surrounded by double quotes; leave as-is
+            //     updatedName = name;
+            // else
+            //     updatedName = name.ToLower();
+
             var param = new NpgsqlParameter(name, ConvertSqlType(dbType), size)
             {
                 Direction = direction,
@@ -1260,7 +1273,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             string name,
             SqlType dbType,
             int size = 0,
-            T value = default(T),
+            T value = default,
             ParameterDirection direction = ParameterDirection.Input)
         {
             if (!(command is NpgsqlCommand npgCmd))
