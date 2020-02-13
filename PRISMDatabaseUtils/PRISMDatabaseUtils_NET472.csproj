@@ -45,6 +45,7 @@
     <Compile Include="AppSettings\MgrSettingsDB.cs" />
     <Compile Include="DatabaseUtilsExtensions.cs" />
     <Compile Include="DataTableUtils.cs" />
+    <Compile Include="DBToolsBase.cs" />
     <Compile Include="DbToolsFactory.cs" />
     <Compile Include="DBUtilsConstants.cs" />
     <Compile Include="IDBTools.cs" />
