@@ -275,7 +275,10 @@ namespace PRISMDatabaseUtils
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         /// <remarks></remarks>
-        int ExecuteSP(DbCommand spCmd, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC);
+        int ExecuteSP(
+            DbCommand spCmd,
+            int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
+            int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC);
 
         /// <summary>
         /// Method for executing a db stored procedure when a data table is not returned
@@ -286,7 +289,11 @@ namespace PRISMDatabaseUtils
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         /// <remarks>No logging is performed by this procedure</remarks>
-        int ExecuteSP(DbCommand spCmd, out string errorMessage, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC);
+        int ExecuteSP(
+            DbCommand spCmd,
+            out string errorMessage,
+            int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
+            int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC);
 
         /// <summary>
         /// Creates a DbCommand for the database type
@@ -305,8 +312,14 @@ namespace PRISMDatabaseUtils
         /// <param name="size"></param>
         /// <param name="value"></param>
         /// <param name="direction"></param>
-        /// <returns></returns>
-        DbParameter AddParameter(DbCommand command, string name, SqlType dbType, int size = 0, object value = null, ParameterDirection direction = ParameterDirection.Input);
+        /// <returns>The newly added parameter</returns>
+        DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size,
+            object value,
+            ParameterDirection direction = ParameterDirection.Input);
 
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives.
@@ -317,7 +330,13 @@ namespace PRISMDatabaseUtils
         /// <param name="size"></param>
         /// <param name="value"></param>
         /// <param name="direction"></param>
-        /// <returns></returns>
-        DbParameter AddTypedParameter<T>(DbCommand command, string name, SqlType dbType, int size = 0, T value = default(T), ParameterDirection direction = ParameterDirection.Input);
+        /// <returns>The newly added parameter</returns>
+        DbParameter AddTypedParameter<T>(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size = 0,
+            T value = default(T),
+            ParameterDirection direction = ParameterDirection.Input);
     }
 }

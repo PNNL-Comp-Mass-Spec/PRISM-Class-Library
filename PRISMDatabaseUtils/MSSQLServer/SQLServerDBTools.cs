@@ -1072,7 +1072,12 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <inheritdoc />
-        public DbParameter AddTypedParameter<T>(DbCommand command, string name, SqlType dbType, int size = 0, T value = default(T),
+        public DbParameter AddTypedParameter<T>(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size = 0,
+            T value = default(T),
             ParameterDirection direction = ParameterDirection.Input)
         {
             return AddParameter(command, name, dbType, size, value, direction);
