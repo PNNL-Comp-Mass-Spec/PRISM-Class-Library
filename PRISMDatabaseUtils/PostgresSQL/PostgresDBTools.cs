@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Npgsql;
@@ -806,6 +807,8 @@ namespace PRISMDatabaseUtils.PostgresSQL
 
             var deadlockOccurred = false;
 
+            ConvertStoredProcedureCommand(sqlCmd);
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -1064,6 +1067,8 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 retryDelaySeconds = 1;
             }
 
+            ConvertStoredProcedureCommand(sqlCmd);
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -1144,6 +1149,22 @@ namespace PRISMDatabaseUtils.PostgresSQL
             }
 
             return resultCode;
+        }
+
+        /// <summary>
+        /// Convert a "stored procedure' command to work properly with Npgsql (because Npgsql treats <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
+        /// </summary>
+        private void ConvertStoredProcedureCommand(NpgsqlCommand sqlCmd)
+        {
+            if (sqlCmd.CommandType != CommandType.StoredProcedure)
+            {
+                return;
+            }
+
+            sqlCmd.CommandType = CommandType.Text;
+            var name = sqlCmd.CommandText;
+            var procArgs = string.Join(", ", sqlCmd.Parameters.Select(x => $"{x.ParameterName} => @{x.ParameterName}"));
+            sqlCmd.CommandText = $"CALL {name}({procArgs})";
         }
 
         /// <inheritdoc />
