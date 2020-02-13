@@ -19,7 +19,10 @@ namespace PRISMDatabaseUtils
                     var returnCodeValue = parameter.Value.CastDBVal<string>();
 
                     if (string.IsNullOrWhiteSpace(returnCodeValue) || returnCodeValue.Equals("0"))
+                    {
+                        parameter.Value = 0;
                         return 0;
+                    }
 
                     // Find the longest integer in returnCodeValue
                     var match = mIntegerMatcher.Match(returnCodeValue);
