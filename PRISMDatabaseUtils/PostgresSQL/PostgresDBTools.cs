@@ -8,12 +8,14 @@ using Npgsql;
 using NpgsqlTypes;
 using PRISM;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMDatabaseUtils.PostgresSQL
 {
     /// <summary>
     /// Tools to retrieve data from a database or run stored procedures
     /// </summary>
-    public class PostgresDBTools : EventNotifier, IDBTools
+    internal class PostgresDBTools : DBToolsBase, IDBTools
     {
         private string mConnStr;
 

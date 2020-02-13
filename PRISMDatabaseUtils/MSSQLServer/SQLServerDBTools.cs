@@ -8,13 +8,15 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using PRISM;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMDatabaseUtils.MSSQLServer
 {
     /// <summary>
     /// Tools to retrieve data from a database
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class SQLServerDBTools : EventNotifier, IDBTools
+    internal class SQLServerDBTools : DBToolsBase, IDBTools
     {
         #region "Member Variables"
 
