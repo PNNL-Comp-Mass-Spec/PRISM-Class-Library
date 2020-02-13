@@ -117,7 +117,7 @@ namespace PRISMTest
 
         private void TestDBLogger(string server, string database, string user, string password, string logDirectory, string logFileNameBase)
         {
-            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
 
             var logFilePath = Path.Combine(logDirectory, logFileNameBase);
             var logger = new clsDBLogger(connectionString, logFilePath);

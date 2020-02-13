@@ -98,7 +98,7 @@ namespace PRISMTest
 
         private void TestQueryTable(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
         {
-            var connectionString = GetConnectionString(server, database, user, password);
+            var connectionString = GetConnectionStringSqlServer(server, database, user, password);
             TestQueryTableWork(connectionString, database, user, query, expectedRowCount, expectedValueList);
         }
 
@@ -168,7 +168,7 @@ namespace PRISMTest
         private void TestQueryFailures(string server, string database, string user, string password,
             string query, int expectedRowCount, string expectedValueList)
         {
-            var connectionString = GetConnectionString(server, database, user, password);
+            var connectionString = GetConnectionStringSqlServer(server, database, user, password);
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
@@ -201,6 +201,18 @@ namespace PRISMTest
         }
 
         /// <summary>
+        /// Get a PostgreSQL compatible connection string
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public static string GetConnectionStringPostgres(string server, string database, string user)
+        {
+            return string.Format("Host={0};Username={1};Database={2}", server, user, database);
+        }
+
+        /// <summary>
         /// Get a SQL Server compatible connection string
         /// </summary>
         /// <param name="server"></param>
@@ -208,7 +220,7 @@ namespace PRISMTest
         /// <param name="user"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public static string GetConnectionString(string server, string database, string user = "Integrated", string password = "")
+        public static string GetConnectionStringSqlServer(string server, string database, string user = "Integrated", string password = "")
         {
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))
                 return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);

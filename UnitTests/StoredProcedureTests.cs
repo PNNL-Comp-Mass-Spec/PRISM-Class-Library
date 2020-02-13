@@ -28,7 +28,7 @@ namespace PRISMTest
 
         private void TestSearchLogs(string server, string database, string user, string password)
         {
-            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             var spCmd = new SqlCommand
@@ -94,7 +94,7 @@ namespace PRISMTest
 
         private void TestGetAllPeptideDatabases(string server, string database, string user, string password)
         {
-            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             var spCmd = new SqlCommand

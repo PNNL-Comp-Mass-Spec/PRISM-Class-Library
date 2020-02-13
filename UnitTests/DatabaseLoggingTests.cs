@@ -24,7 +24,7 @@ namespace PRISMTest
 
         private void TestDBLogger(string server, string database, string user, string password)
         {
-            var connectionString = TestDBTools.GetConnectionString(server, database, user, password);
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
 
             var moduleName = DatabaseLogger.MachineName + ":" + "DatabaseLoggingTests";
             var logger = new SQLServerDatabaseLogger(moduleName, connectionString)
