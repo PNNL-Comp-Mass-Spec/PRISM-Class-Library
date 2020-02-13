@@ -418,7 +418,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         {
                             callingFunction = "Unknown";
                         }
-                        var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
+                        var errorMessage = string.Format(
+                            "Exception querying database (called from {0}): {1}; " +
+                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
@@ -742,7 +745,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         {
                             callingFunction = "Unknown";
                         }
-                        var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
+                        var errorMessage = string.Format(
+                            "Exception querying database (called from {0}): {1}; " +
+                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
