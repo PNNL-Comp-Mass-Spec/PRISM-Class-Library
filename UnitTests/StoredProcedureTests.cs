@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using Npgsql;
 using NUnit.Framework;
@@ -183,6 +184,37 @@ namespace PRISMTest
             ExamineManagerParams(lstResults);
         }
 
+        /// <summary>
+        /// Retrieve values from PostgreSQL function mc.GetManagerParameters()
+        /// </summary>
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestGetManagerParametersPostgresFunctionWithParameters(string server, string database)
+        {
+            var user = TestDBTools.DMS_READER;
+
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var spCmd = new NpgsqlCommand
+            {
+                CommandType = CommandType.Text,
+                CommandText = "SELECT * FROM mc.GetManagerParameters(@managerNameList, @sortMode, @maxRecursion)"
+            };
+
+            dbTools.AddParameter(spCmd, "managerNameList", SqlType.Text).Value = "Pub-12-1, Pub-12-2";
+            dbTools.AddParameter(spCmd, "sortMode", SqlType.Int).Value = 0;
+            dbTools.AddParameter(spCmd, "maxRecursion", SqlType.Int).Value = 50;
+
+            Console.WriteLine("Querying function mc.GetManagerParameters in " + database + " as user " + user);
+
+            var success = dbTools.GetQueryResults(spCmd, out var lstResults, 1);
+
+            Assert.IsTrue(success, "GetQueryResults return false");
+
+            ExamineManagerParams(lstResults);
+        }
+
         [TestCase("ProteinSeqs", "Manager_Control")]
         [Category("DatabaseIntegrated")]
         public void TestGetManagerParametersIntegrated(string server, string database)
@@ -239,7 +271,7 @@ namespace PRISMTest
 
                 var managerName = result[0];
                 var paramName = result[1];
-                var workDirParam = paramName.Equals("workdir", StringComparison.OrdinalIgnoreCase); ;
+                var workDirParam = paramName.Equals("workdir", StringComparison.OrdinalIgnoreCase);
 
                 var workDir = "??";
 
@@ -309,17 +341,19 @@ namespace PRISMTest
 
             dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
             dbTools.AddParameter(spCmd, "@ManagerTypeID", SqlType.Int).Value = 11;
-            dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar).Value = "Pub-12-1, Pub-12-2";
+            dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar, 4000).Value = "Pub-12-1, Pub-12-2";
             dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+
+            DbParameter messageParam;
 
             if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
                 dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Int).Value = 0;
-                dbTools.AddParameter(spCmd, "_message", SqlType.Text).Direction = ParameterDirection.InputOutput;
+                messageParam = dbTools.AddParameter(spCmd, "_message", SqlType.Text, ParameterDirection.InputOutput);
             }
             else
             {
-                dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 4000).Direction = ParameterDirection.InputOutput;
+                messageParam = dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 4000, ParameterDirection.InputOutput);
             }
 
             // The call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
@@ -329,10 +363,73 @@ namespace PRISMTest
 
             var returnCode = dbTools.ExecuteSP(spCmd, out var errorMessage, 1);
 
+            Console.WriteLine();
+            Console.WriteLine("Message: " + messageParam.Value);
+            Console.WriteLine("Return:  " + returnParam.Value);
+            if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                Console.WriteLine("Error:   " + errorMessage);
+            }
+
             Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
             Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestPostLogEntryAsProcedure(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var spCmd = dbTools.CreateCommand("PostLogEntry", CommandType.StoredProcedure);
+
+            dbTools.AddParameter(spCmd, "@type", SqlType.Text).Value = "Info";
+            dbTools.AddParameter(spCmd, "@message", SqlType.Text).Value = "Test message 1";
+            dbTools.AddParameter(spCmd, "@postedBy", SqlType.Text).Value = "Test caller";
+
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+            {
+                dbTools.AddParameter(spCmd, "@targetSchema", SqlType.Text).Value = "public";
+            }
+
+            dbTools.ExecuteSP(spCmd, 1);
+        }
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestPostLogEntryAsQuery(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var query = "call PostLogEntry(_postedBy => 'Test caller', _type =>'Info', _message => 'Test message 2')";
+            var spCmd = dbTools.CreateCommand(query);
+
+            dbTools.GetQueryScalar(spCmd, out _, 1);
+        }
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestPostLogEntryAsQueryWithParameters(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var query = "call PostLogEntry(_postedBy => @_postedBy, _type => @_type, _message => @_message)";
+            var spCmd = dbTools.CreateCommand(query);
+
+            dbTools.AddParameter(spCmd, "_type", SqlType.Text).Value = "Info";
+            var messageParam = dbTools.AddParameter(spCmd, "_message", SqlType.Text);
+            dbTools.AddParameter(spCmd, "_postedBy", SqlType.Text).Value = "Test caller";
+
+            messageParam.Value = "Test message 3";
+            dbTools.GetQueryScalar(spCmd, out _, 1);
+        }
 
     }
 }

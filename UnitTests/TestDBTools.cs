@@ -47,6 +47,99 @@ namespace PRISMTest
             Assert.Fail("The dbTools instance returned by DbToolsFactory.GetDBTool is not a recognized class");
         }
 
+        [TestCase("Gigasax", "dms5")]
+        [Category("DatabaseIntegrated")]
+        public void TestGetRecentLogEntriesSqlServer(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestGetRecentLogEntries(connectionString);
+        }
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestGetRecentLogEntriesPostgres(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            TestGetRecentLogEntries(connectionString);
+        }
+
+        public void TestGetRecentLogEntries(string connectionString)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            string query;
+            string tableName;
+
+            if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
+            {
+                tableName = "t_log_entries";
+
+                query = string.Format("SELECT * FROM (" +
+                                      "   SELECT TOP 5 * FROM {0}" +
+                                      "   Order By entry_id Desc) LookupQ " +
+                                      "Order By entry_id", tableName);
+            }
+            else
+            {
+                tableName = "public.t_log_entries";
+
+                query = string.Format("SELECT * FROM (" +
+                                      "   SELECT * FROM {0}" +
+                                      "   Order By entry_id Desc Limit 5) LookupQ " +
+                                      "Order By entry_id", tableName);
+            }
+
+            var spCmd = dbTools.CreateCommand(query);
+
+            var success = dbTools.GetQueryResults(spCmd, out var results, 1);
+
+            Assert.IsTrue(success, "GetQueryResults returned false");
+
+            Assert.Greater(results.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
+
+            Console.WriteLine("{0} most recent entries in table {1}:", results.Count, tableName);
+
+            foreach (var item in results)
+            {
+                Console.WriteLine(string.Join(", ", item));
+            }
+
+        }
+
+        [TestCase("Gigasax", "dms5", "T_Log_Entries")]
+        [Category("DatabaseIntegrated")]
+        public void TestGetTableRowCountSqlServer(string server, string database, string tableName)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestGetTableRowCount(connectionString, tableName);
+        }
+
+        [TestCase("prismweb3", "dms", "public.t_log_entries")]
+        [Category("DatabaseNamedUser")]
+        public void TestGetTableRowCountPostgres(string server, string database, string tableName)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            TestGetTableRowCount(connectionString, tableName);
+        }
+
+        public void TestGetTableRowCount(string connectionString, string tableName)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var query = "SELECT COUNT(*) FROM " + tableName;
+
+            var spCmd = dbTools.CreateCommand(query);
+
+            var success = dbTools.GetQueryScalar(spCmd, out var queryResult, 1);
+
+            Assert.IsTrue(success, "GetQueryScalar returned false");
+
+            var tableRowCount = queryResult.CastDBVal<int>();
+            Console.WriteLine("RowCount in table {0} is {1:N0}", tableName, tableRowCount);
+
+            Assert.Greater(tableRowCount, 0, "Row count in {0} should be non-zero, but was not", tableName);
+        }
+
         [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
         [TestCase("Gigasax", "DMS5",
