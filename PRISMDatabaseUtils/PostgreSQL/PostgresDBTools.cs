@@ -775,6 +775,34 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
+        /// Convert a "stored procedure" command to work properly with Npgsql
+        /// Npgsql treats <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
+        /// We instead want to handle "stored procedure" command as CALL procedure_name()
+        /// </summary>
+        private void ConvertStoredProcedureCommand(NpgsqlCommand sqlCmd)
+        {
+            if (sqlCmd.CommandType != CommandType.StoredProcedure)
+            {
+                return;
+            }
+
+            // By default, Npgsql commands of type CommandType.StoredProcedure are treated as functions,
+            // and thus when querying the database, Npgsql sends a command of the form
+            // SELECT * FROM my_function_name(param1, param2, param3)
+
+            // PostgreSQL 11 introduced procedures, which are executed via CALL
+            // Auto-update sqlCmd to be CommandType.Text with SQL in the form
+            // CALL my_procedure_name(param1 => @param1, param2 => @param2, param3 => @param3)
+            //
+            // When the command is run, Npgsql will replace @param1, @param2, etc. with the values for each parameter
+
+            sqlCmd.CommandType = CommandType.Text;
+            var procedureName = sqlCmd.CommandText;
+            var procArgs = string.Join(", ", sqlCmd.Parameters.Select(x => $"{x.ParameterName} => @{x.ParameterName}"));
+            sqlCmd.CommandText = $"CALL {procedureName}({procArgs})";
+        }
+
+        /// <summary>
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
@@ -801,6 +829,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             UpdateSqlServerParameterNames(sqlCmd);
 
+            ConvertStoredProcedureCommand(sqlCmd);
+
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
@@ -813,8 +843,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 retryDelaySeconds = 1;
 
             var deadlockOccurred = false;
-
-            ConvertStoredProcedureCommand(sqlCmd);
 
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
@@ -1055,6 +1083,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             UpdateSqlServerParameterNames(sqlCmd);
 
+            ConvertStoredProcedureCommand(sqlCmd);
+
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
@@ -1073,8 +1103,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 retryDelaySeconds = 1;
             }
-
-            ConvertStoredProcedureCommand(sqlCmd);
 
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
@@ -1156,22 +1184,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
             }
 
             return resultCode;
-        }
-
-        /// <summary>
-        /// Convert a "stored procedure' command to work properly with Npgsql (because Npgsql treats <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
-        /// </summary>
-        private void ConvertStoredProcedureCommand(NpgsqlCommand sqlCmd)
-        {
-            if (sqlCmd.CommandType != CommandType.StoredProcedure)
-            {
-                return;
-            }
-
-            sqlCmd.CommandType = CommandType.Text;
-            var name = sqlCmd.CommandText;
-            var procArgs = string.Join(", ", sqlCmd.Parameters.Select(x => $"{x.ParameterName} => @{x.ParameterName}"));
-            sqlCmd.CommandText = $"CALL {name}({procArgs})";
         }
 
         /// <inheritdoc />
