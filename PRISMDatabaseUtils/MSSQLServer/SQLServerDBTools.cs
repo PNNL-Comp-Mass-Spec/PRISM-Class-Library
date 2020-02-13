@@ -728,18 +728,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                             readMethod(sqlCmd);
 
-                            if (sqlCmd.Parameters.Contains("@Return"))
-                            {
-                                resultCode = Convert.ToInt32(sqlCmd.Parameters["@Return"].Value);
-                            }
-                            else
-                            {
-                                //OnDebugEvent(string.Format(
-                                //                 "Cannot read the return code for stored procedure {0} " +
-                                //                 "since cpCmd does not contain a parameter named @Return",
-                                //                 sqlCmd.CommandText));
-                                resultCode = 0;
-                            }
+                            resultCode = GetReturnCode(sqlCmd.Parameters);
                         }
 
                         success = true;
@@ -989,18 +978,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                             startTime = DateTime.UtcNow;
                             sqlCmd.ExecuteNonQuery();
 
-                            if (sqlCmd.Parameters.Contains("@Return"))
-                            {
-                                resultCode = Convert.ToInt32(sqlCmd.Parameters["@Return"].Value);
-                            }
-                            else
-                            {
-                                //OnDebugEvent(string.Format(
-                                //                 "Cannot read the return code for stored procedure {0} " +
-                                //                 "since spCmd does not contain a parameter named @Return",
-                                //                 sqlCmd.CommandText));
-                                resultCode = 0;
-                            }
+                            resultCode = GetReturnCode(sqlCmd.Parameters);
                         }
 
                         errorMessage = string.Empty;
