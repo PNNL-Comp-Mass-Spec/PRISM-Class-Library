@@ -11,6 +11,15 @@
         public const int RET_VAL_OK = 0;
 
         /// <summary>
+        /// Return value indicating an undefined error
+        /// </summary>
+        /// <remarks>
+        /// For PostgreSQL stored procedures that have a _returnCode parameter, if that parameter's value is an empty string or 0, the ExecuteSP methods return 0
+        /// Otherwise, we find the longest integer in the value. If it is 0, or _returnCode does not have an integer, the ExecuteSP methods return RET_VAL_UNDEFINED_ERROR
+        /// </remarks>
+        public const int RET_VAL_UNDEFINED_ERROR = -1;
+
+        /// <summary>
         /// Typically caused by timeout expired
         /// </summary>
         public const int RET_VAL_EXCESSIVE_RETRIES = -5;
