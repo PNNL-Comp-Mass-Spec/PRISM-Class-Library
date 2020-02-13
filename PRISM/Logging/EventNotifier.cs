@@ -273,5 +273,6 @@ namespace PRISM
             sourceClass.WarningEvent += OnWarningEvent;
             sourceClass.ProgressUpdate += OnProgressUpdate;
         }
+
     }
 }

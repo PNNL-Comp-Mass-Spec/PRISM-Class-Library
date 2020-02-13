@@ -154,11 +154,11 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// <param name="validNumber">Output: set to true if the column contains an integer</param>
         /// <returns>Integer value</returns>
         public int GetColumnValue(
-        IReadOnlyList<string> resultRow,
-        IReadOnlyDictionary<string, int> columnMap,
-        string columnName,
-        int defaultValue,
-        out bool validNumber)
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            int defaultValue,
+            out bool validNumber)
         {
             if (!columnMap.TryGetValue(columnName, out var columnIndex))
                 throw new Exception("Invalid column name: " + columnName);
