@@ -42,6 +42,11 @@ namespace PRISMDatabaseUtils.PostgresSQL
         }
 
         /// <summary>
+        /// Database server type
+        /// </summary>
+        public DbServerTypes DbServerType => DbServerTypes.PostgresSQL;
+
+        /// <summary>
         /// Set to True to raise debug events
         /// </summary>
         public bool DebugMessagesEnabled { get; set; }

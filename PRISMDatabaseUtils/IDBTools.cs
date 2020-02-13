@@ -6,15 +6,22 @@ using PRISM.Logging;
 
 namespace PRISMDatabaseUtils
 {
+
     /// <summary>
     /// Tools to retrieve data from a database
     /// </summary>
     public interface IDBTools : IEventNotifier
     {
+
         /// <summary>
         /// Database connection string.
         /// </summary>
         string ConnectStr { get; set; }
+
+        /// <summary>
+        /// Database server type
+        /// </summary>
+        DbServerTypes DbServerType { get; }
 
         /// <summary>
         /// Set to True to raise debug events
