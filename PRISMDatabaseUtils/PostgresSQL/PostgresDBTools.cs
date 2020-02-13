@@ -269,18 +269,37 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// <remarks>Errors and warnings from PostgresSQL are reported here</remarks>
         private void OnNotice(object sender, NpgsqlNoticeEventArgs args)
         {
-            var errMsg = new StringBuilder();
+            var msg = new StringBuilder();
             var notice = args.Notice;
 
-            errMsg.Append("Message: " + notice.MessageText);
-            errMsg.Append(", Source: " + notice.Where);
-            errMsg.Append(", Class: " + notice.Severity);
-            errMsg.Append(", State: " + notice.SqlState);
-            errMsg.Append(", LineNumber: " + notice.Line);
-            errMsg.Append(", Procedure:" + notice.Routine);
-            errMsg.Append(", Server: " + notice.File);
 
-            OnErrorEvent(errMsg.ToString());
+            msg.Append("Message: " + notice.MessageText);
+            msg.Append(", Source: " + notice.Where);
+            msg.Append(", Class: " + notice.Severity);
+            msg.Append(", State: " + notice.SqlState);
+            msg.Append(", LineNumber: " + notice.Line);
+            msg.Append(", Procedure:" + notice.Routine);
+            msg.Append(", Server: " + notice.File);
+
+            if (notice.Severity.Equals("NOTICE"))
+            {
+                OnDebugEvent(msg.ToString());
+                return;
+            }
+
+            if (notice.Severity.Equals("INFO"))
+            {
+                OnStatusEvent(msg.ToString());
+                return;
+            }
+
+            if (notice.Severity.Equals("WARNING"))
+            {
+                OnWarningEvent(msg.ToString());
+                return;
+            }
+
+            OnErrorEvent(msg.ToString());
         }
 
         /// <summary>
