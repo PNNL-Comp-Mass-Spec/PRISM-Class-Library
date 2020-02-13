@@ -16,7 +16,7 @@ namespace PRISMTest
         [Category("DatabaseIntegrated")]
         public void TestSearchLogsIntegrated(string server, string database)
         {
-            TestSearchLogs(server, database, "Integrated", "");
+            TestSearchLogs(server, database, "Integrated", string.Empty);
         }
 
         [TestCase("Gigasax", "DMS5")]
@@ -49,7 +49,7 @@ namespace PRISMTest
 
             var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults);
 
-            Assert.AreEqual(0, returnCode, spCmd.CommandText + "Procedure did not return 0");
+            Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
             foreach (var result in lstResults)
@@ -82,7 +82,7 @@ namespace PRISMTest
         [Category("DatabaseIntegrated")]
         public void TestGetAllPeptideDatabasesIntegrated(string server, string database)
         {
-            TestGetAllPeptideDatabases(server, database, "Integrated", "");
+            TestGetAllPeptideDatabases(server, database, "Integrated", string.Empty);
         }
 
         [TestCase("Pogo", "MTS_Master")]
@@ -111,7 +111,7 @@ namespace PRISMTest
 
             var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults);
 
-            Assert.AreEqual(0, returnCode, spCmd.CommandText + "Procedure did not return 0");
+            Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
             foreach (var result in lstResults)
