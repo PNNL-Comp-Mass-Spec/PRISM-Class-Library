@@ -14,14 +14,6 @@ namespace PRISMTest
         private const string MTS_READER = "mtuser";
         private const string MTS_READER_PASSWORD = "mt4fun";
 
-        private string CombineSchemaAndName(string schemaName, string objectName)
-        {
-            if (string.IsNullOrWhiteSpace(schemaName))
-                return objectName;
-
-            return schemaName + "." + objectName;
-        }
-
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
         public void TestSearchLogsIntegrated(string server, string database)
