@@ -278,9 +278,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
             var msg = new StringBuilder();
             var notice = args.Notice;
 
-            if (notice.Severity.Equals("NOTICE") &&
+            if (notice.InvariantSeverity.Equals("NOTICE") &&
                 notice.Routine.Equals("DropErrorMsgNonExistent", StringComparison.OrdinalIgnoreCase))
             {
+                // Example message: "table \"tmp_mgr_params\" does not exist, skipping"
                 // This is an informational message that can be ignored
                 return;
             }
@@ -293,19 +294,19 @@ namespace PRISMDatabaseUtils.PostgreSQL
             msg.Append(", Procedure:" + notice.Routine);
             msg.Append(", Server: " + notice.File);
 
-            if (notice.Severity.Equals("NOTICE"))
+            if (notice.InvariantSeverity.Equals("NOTICE"))
             {
                 OnDebugEvent(msg.ToString());
                 return;
             }
 
-            if (notice.Severity.Equals("INFO"))
+            if (notice.InvariantSeverity.Equals("INFO"))
             {
                 OnStatusEvent(msg.ToString());
                 return;
             }
 
-            if (notice.Severity.Equals("WARNING"))
+            if (notice.InvariantSeverity.Equals("WARNING"))
             {
                 OnWarningEvent(msg.ToString());
                 return;
