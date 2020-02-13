@@ -407,6 +407,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 sqlCmd.Connection = dbConnection;
 
                                 queryResult = sqlCmd.ExecuteScalar();
+
+                                transaction.Commit();
                             }
                         }
 
@@ -734,6 +736,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 sqlCmd.Connection = dbConnection;
 
                                 readMethod(sqlCmd);
+
+                                transaction.Commit();
                             }
                         }
 
@@ -869,6 +873,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 readMethod(sqlCmd);
 
                                 resultCode = GetReturnCode(sqlCmd.Parameters);
+
+                                transaction.Commit();
                             }
                         }
 
