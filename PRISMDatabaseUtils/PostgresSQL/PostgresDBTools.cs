@@ -791,6 +791,8 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
             }
 
+            UpdateSqlServerParameterNames(sqlCmd);
+
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
@@ -1041,6 +1043,8 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
             }
 
+            UpdateSqlServerParameterNames(sqlCmd);
+
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
@@ -1209,5 +1213,33 @@ namespace PRISMDatabaseUtils.PostgresSQL
                 default: throw new NotSupportedException($"Conversion for type {sqlType} not known");
             }
         }
+
+        /// <summary>
+        /// Look for parameter names that start with @
+        /// Auto-change the @ to _
+        /// </summary>
+        /// <param name="spCmd"></param>
+        private void UpdateSqlServerParameterNames(NpgsqlCommand spCmd)
+        {
+            foreach (NpgsqlParameter parameter in spCmd.Parameters)
+            {
+                if (parameter.ParameterName.Equals("@Return", StringComparison.OrdinalIgnoreCase) &&
+                    parameter.Direction == ParameterDirection.ReturnValue)
+                {
+                    // Auto-change @Return parameters of type ReturnValue to _returnCode of type text
+                    parameter.ParameterName = "_returnCode";
+                    parameter.DbType = DbType.String;
+                    parameter.Direction = ParameterDirection.InputOutput;
+                    continue;
+                }
+
+                if (parameter.ParameterName.Length > 1 && parameter.ParameterName.StartsWith("@"))
+                {
+                    parameter.ParameterName = "_" + parameter.ParameterName.Substring(1);
+                }
+            }
+
+        }
+
     }
 }
