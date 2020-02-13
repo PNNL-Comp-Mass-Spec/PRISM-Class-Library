@@ -320,7 +320,7 @@ namespace PRISMTest
             dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar).Value = "Pub-12-1, Pub-12-2";
             dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
 
-            if (dbTools.DbServerType == DbServerTypes.PostgresSQL)
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
                 dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Int).Value = 0;
                 dbTools.AddParameter(spCmd, "_message", SqlType.Text).Direction = ParameterDirection.InputOutput;

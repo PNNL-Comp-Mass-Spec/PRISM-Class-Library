@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Npgsql;
 using PRISMDatabaseUtils.MSSQLServer;
-using PRISMDatabaseUtils.PostgresSQL;
+using PRISMDatabaseUtils.PostgreSQL;
 
 namespace PRISMDatabaseUtils
 {
@@ -26,9 +26,9 @@ namespace PRISMDatabaseUtils
         MSSQLServer,
 
         /// <summary>
-        /// Postgres SQL
+        /// Postgre SQL
         /// </summary>
-        PostgresSQL,
+        PostgreSQL,
     }
 
     /// <summary>
@@ -100,7 +100,7 @@ namespace PRISMDatabaseUtils
                 if (serverType.Equals("Postgres", StringComparison.OrdinalIgnoreCase) ||
                     serverType.Equals("PostgreSQL", StringComparison.OrdinalIgnoreCase))
                 {
-                    return DbServerTypes.PostgresSQL;
+                    return DbServerTypes.PostgreSQL;
                 }
 
                 throw new Exception(string.Format("Invalid value for {0}; use SqlServer, MSSqlServer, Postgres, or PostgreSQL", match.Value));
@@ -125,7 +125,7 @@ namespace PRISMDatabaseUtils
                 var builder = new NpgsqlConnectionStringBuilder();
                 if (!string.IsNullOrWhiteSpace(builder.Host))
                 {
-                    return DbServerTypes.PostgresSQL;
+                    return DbServerTypes.PostgreSQL;
                 }
             }
             catch
@@ -152,7 +152,7 @@ namespace PRISMDatabaseUtils
 
             switch (serverType)
             {
-                case DbServerTypes.PostgresSQL:
+                case DbServerTypes.PostgreSQL:
                     return new PostgresDBTools(standardConnectionString, timeoutSeconds);
 
                 default:
@@ -175,7 +175,7 @@ namespace PRISMDatabaseUtils
                 case DbServerTypes.Undefined:
                     return GetDBTools(connectionString, timeoutSeconds);
 
-                case DbServerTypes.PostgresSQL:
+                case DbServerTypes.PostgreSQL:
                     return new PostgresDBTools(connectionString, timeoutSeconds);
 
                 default:
@@ -225,8 +225,8 @@ namespace PRISMDatabaseUtils
 
             InitializeKeywordInfo(@"Data Source\s*=", DbServerTypes.MSSQLServer);
             InitializeKeywordInfo(@"Initial Catalog\s*=", DbServerTypes.MSSQLServer);
-            InitializeKeywordInfo(@"host\s*=", DbServerTypes.PostgresSQL);
-            InitializeKeywordInfo(@"db\s*=", DbServerTypes.PostgresSQL);
+            InitializeKeywordInfo(@"host\s*=", DbServerTypes.PostgreSQL);
+            InitializeKeywordInfo(@"db\s*=", DbServerTypes.PostgreSQL);
 
             mConnectionStringKeywordMapInitialized = true;
         }

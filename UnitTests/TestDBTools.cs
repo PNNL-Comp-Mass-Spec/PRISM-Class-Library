@@ -22,18 +22,18 @@ namespace PRISMTest
             DbServerTypes.MSSQLServer)]
         [TestCase(
             "Host=prismweb3;Username=dmsreader;Database=dms",
-            DbServerTypes.PostgresSQL)]
+            DbServerTypes.PostgreSQL)]
         [TestCase(
             "DbServerType=Postgres;Host=prismweb3;Username=dmsreader;Database=dms",
-            DbServerTypes.PostgresSQL)]
+            DbServerTypes.PostgreSQL)]
         public void TestDbToolsInitialization(string connectionString, DbServerTypes expectedServerType)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
-            if (dbTools.DbServerType == DbServerTypes.PostgresSQL)
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
                 Console.WriteLine("Connection string was interpreted as PostgreSQL");
-                Assert.AreEqual(expectedServerType, DbServerTypes.PostgresSQL);
+                Assert.AreEqual(expectedServerType, DbServerTypes.PostgreSQL);
                 return;
             }
 

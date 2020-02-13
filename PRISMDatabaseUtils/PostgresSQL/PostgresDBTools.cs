@@ -11,7 +11,7 @@ using PRISM;
 
 // ReSharper disable UnusedMember.Global
 
-namespace PRISMDatabaseUtils.PostgresSQL
+namespace PRISMDatabaseUtils.PostgreSQL
 {
     /// <summary>
     /// Tools to retrieve data from a database or run stored procedures
@@ -45,7 +45,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
         /// <summary>
         /// Database server type
         /// </summary>
-        public DbServerTypes DbServerType => DbServerTypes.PostgresSQL;
+        public DbServerTypes DbServerType => DbServerTypes.PostgreSQL;
 
         /// <summary>
         /// Set to True to raise debug events
