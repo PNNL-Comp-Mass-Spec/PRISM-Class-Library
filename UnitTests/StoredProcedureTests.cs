@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using Npgsql;
 using NUnit.Framework;
@@ -314,56 +313,32 @@ namespace PRISMTest
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
-            DbCommand spCmd;
+            var spCmd = dbTools.CreateCommand(procedureNameWithSchema, CommandType.StoredProcedure);
 
-            if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
+            dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
+            dbTools.AddParameter(spCmd, "@ManagerTypeID", SqlType.Int).Value = 11;
+            dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar).Value = "Pub-12-1, Pub-12-2";
+            dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+
+            if (dbTools.DbServerType == DbServerTypes.PostgresSQL)
             {
-                var cmd = new SqlCommand
-                {
-                    CommandType = CommandType.StoredProcedure,
-                    CommandText = procedureNameWithSchema
-                };
-
-                cmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
-                cmd.Parameters.Add(new SqlParameter("@Enable", SqlDbType.TinyInt)).Value = 1;
-                cmd.Parameters.Add(new SqlParameter("@ManagerTypeID", SqlDbType.Int)).Value = 11;
-                cmd.Parameters.Add(new SqlParameter("@managerNameList", SqlDbType.VarChar, 4000)).Value = "Pub-12-1, Pub-12-2";
-                cmd.Parameters.Add(new SqlParameter("@infoOnly", SqlDbType.Int)).Value = 1;
-                // cmd.Parameters.Add(new SqlParameter("@includeDisabled", SqlDbType.Int)).Value = 0;
-                cmd.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar, 512)).Direction = ParameterDirection.InputOutput;
-
-                spCmd = cmd;
+                dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Int).Value = 0;
+                dbTools.AddParameter(spCmd, "_message", SqlType.Text).Direction = ParameterDirection.InputOutput;
             }
             else
             {
-                // dbTools.DbServerType == DbServerTypes.PostgresSQL
-
-                var cmd = new NpgsqlCommand
-                {
-                    CommandType = CommandType.StoredProcedure,
-                    CommandText = procedureNameWithSchema
-                };
-
-                cmd.Parameters.Add(new NpgsqlParameter("_Enable", DbType.Int32)).Value = 1;
-                cmd.Parameters.Add(new NpgsqlParameter("_ManagerTypeID", DbType.Int32)).Value = 11;
-                cmd.Parameters.Add(new NpgsqlParameter("_managerNameList", DbType.Int32)).Value = "Pub-12-1, Pub-12-2";
-                cmd.Parameters.Add(new NpgsqlParameter("@infoOnly", DbType.Int32)).Value = 1;
-                cmd.Parameters.Add(new NpgsqlParameter("@includeDisabled", DbType.Int32)).Value = 0;
-                cmd.Parameters.Add(new NpgsqlParameter("@message", DbType.String)).Direction = ParameterDirection.InputOutput;
-
-                // The call to ExecuteSP should auto-change this parameter to _returnCode of type InputOutput
-                // cmd.Parameters.Add(new NpgsqlParameter("@Return", DbType.Int32)).Direction = ParameterDirection.ReturnValue;
-
-                cmd.Parameters.Add(new NpgsqlParameter("_returnCode", DbType.String)).Direction = ParameterDirection.InputOutput;
-
-                spCmd = cmd;
+                dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 4000).Direction = ParameterDirection.InputOutput;
             }
+
+            // The call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
+            var returnParam = dbTools.AddParameter(spCmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
 
             Console.WriteLine("Running stored procedure " + procedureNameWithSchema + " using dbTools of type " + dbTools.DbServerType);
 
             var returnCode = dbTools.ExecuteSP(spCmd, out var errorMessage, 1);
 
             Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
+            Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
 
