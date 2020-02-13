@@ -1153,7 +1153,43 @@ namespace PRISMDatabaseUtils.PostgresSQL
         }
 
         /// <inheritdoc />
-        public DbParameter AddParameter(DbCommand command, string name, SqlType dbType, int size = 0, object value = null,
+        public DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+            return AddParameter(command, name, dbType, 0, direction);
+        }
+
+        /// <inheritdoc />
+        public DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+            if (dbType == SqlType.Text || dbType == SqlType.VarChar && size == 0)
+            {
+                return AddParameter(command, name, SqlType.Text, 0, string.Empty, direction);
+            }
+
+            if (dbType == SqlType.VarChar)
+            {
+                return AddParameter(command, name, dbType, size, string.Empty, direction);
+            }
+
+            return AddParameter(command, name, dbType, size, null, direction);
+        }
+
+        /// <inheritdoc />
+        public DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size,
+            object value,
             ParameterDirection direction = ParameterDirection.Input)
         {
             if (!(command is NpgsqlCommand npgCmd))
@@ -1235,6 +1271,7 @@ namespace PRISMDatabaseUtils.PostgresSQL
                     parameter.ParameterName = "_returnCode";
                     parameter.DbType = DbType.String;
                     parameter.Direction = ParameterDirection.InputOutput;
+                    parameter.Value = string.Empty;
                     continue;
                 }
 
