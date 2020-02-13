@@ -297,7 +297,7 @@ namespace PRISMTest
         public void TestEnableDisableManagersPostgres(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
-            TestEnableDisableManagers(connectionString, "EnableDisableManagers");
+            TestEnableDisableManagers(connectionString, "mc.EnableDisableManagers");
         }
 
 
