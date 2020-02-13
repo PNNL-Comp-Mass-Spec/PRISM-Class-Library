@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
+using Npgsql;
 using NUnit.Framework;
 using PRISMDatabaseUtils;
 
@@ -11,6 +14,14 @@ namespace PRISMTest
     {
         private const string MTS_READER = "mtuser";
         private const string MTS_READER_PASSWORD = "mt4fun";
+
+        private string CombineSchemaAndName(string schemaName, string objectName)
+        {
+            if (string.IsNullOrWhiteSpace(schemaName))
+                return objectName;
+
+            return schemaName + "." + objectName;
+        }
 
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
@@ -153,5 +164,208 @@ namespace PRISMTest
 
             Console.WriteLine("Rows returned: " + lstResults.Count);
         }
+
+        /// <summary>
+        /// Retrieve values from PostgreSQL function mc.GetManagerParameters()
+        /// </summary>
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestGetManagerParametersPostgresFunction(string server, string database)
+        {
+            var user = TestDBTools.DMS_READER;
+
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var spCmd = new NpgsqlCommand
+            {
+                CommandType = CommandType.Text,
+                CommandText = "SELECT * FROM mc.GetManagerParameters('Pub-12-1, Pub-12-2', 0, 50)"
+            };
+
+            Console.WriteLine("Querying function mc.GetManagerParameters in " + database + " as user " + user);
+
+            var success = dbTools.GetQueryResults(spCmd, out var lstResults, 1);
+
+            Assert.IsTrue(success, "GetQueryResults return false");
+
+            ExamineManagerParams(lstResults);
+        }
+
+        [TestCase("ProteinSeqs", "Manager_Control")]
+        [Category("DatabaseIntegrated")]
+        public void TestGetManagerParametersIntegrated(string server, string database)
+        {
+            TestGetManagerParametersSP(server, database, "Integrated", string.Empty);
+        }
+
+        [TestCase("ProteinSeqs", "Manager_Control")]
+        [Category("DatabaseNamedUser")]
+        public void TestGetManagerParametersNamedUser(string server, string database)
+        {
+            TestGetManagerParametersSP(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+        }
+
+        /// <summary>
+        /// Retrieve values from SQL Server stored procedure GetManagerParameters
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        private void TestGetManagerParametersSP(string server, string database, string user, string password)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            var spCmd = new SqlCommand
+            {
+                CommandType = CommandType.StoredProcedure,
+                CommandText = "GetManagerParameters"
+            };
+
+            spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
+            spCmd.Parameters.Add(new SqlParameter("@ManagerNameList", SqlDbType.VarChar, 4000)).Value = "Pub-12-1, Pub-12-2";
+            spCmd.Parameters.Add(new SqlParameter("@SortMode", SqlDbType.TinyInt)).Value = 0;
+            spCmd.Parameters.Add(new SqlParameter("@MaxRecursion", SqlDbType.TinyInt)).Value = 50;
+
+            Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
+
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults, 0);
+
+            Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
+
+            ExamineManagerParams(lstResults);
+        }
+
+        private void ExamineManagerParams(IReadOnlyCollection<List<string>> lstResults)
+        {
+
+            var rowsDisplayed = 0;
+            foreach (var result in lstResults)
+            {
+                Assert.GreaterOrEqual(result.Count, 12, "Result row has fewer than 12 columns");
+
+                var managerName = result[0];
+                var paramName = result[1];
+                var workDirParam = paramName.Equals("workdir", StringComparison.OrdinalIgnoreCase); ;
+
+                var workDir = "??";
+
+                for (var colIndex = 0; colIndex < result.Count; colIndex++)
+                {
+                    if (workDirParam && colIndex < 7)
+                        Console.Write(result[colIndex] + "  ");
+
+                    if (colIndex == 4)
+                    {
+                        workDir = result[colIndex];
+                    }
+                }
+
+                if (!workDirParam)
+                    continue;
+
+                if (managerName.Equals("Pub-12-1", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assert.AreEqual(@"C:\DMS_WorkDir1", workDir);
+                }
+                else if (managerName.Equals("Pub-12-2", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assert.AreEqual(@"C:\DMS_WorkDir2", workDir);
+                }
+
+                Console.WriteLine();
+                rowsDisplayed++;
+
+                if (rowsDisplayed > 10)
+                    break;
+            }
+
+            Console.WriteLine("Rows returned: " + lstResults.Count);
+        }
+
+        [TestCase("ProteinSeqs", "Manager_Control")]
+        [Category("DatabaseIntegrated")]
+        public void TestEnableDisableManagersSqlServer(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestEnableDisableManagers(connectionString, "EnableDisableManagers");
+        }
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestEnableDisableManagersPostgres(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            TestEnableDisableManagers(connectionString, "EnableDisableManagers");
+        }
+
+
+        // ToDo: Make a PostgreSQL version of EnableDisableManagers that returns a cursor instead of using _infoHead and _infoData
+
+
+        /// <summary>
+        /// Invoke stored procedure EnableDisableManagers and examine output parameter @message (or _message)
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="procedureNameWithSchema"></param>
+        private void TestEnableDisableManagers(string connectionString, string procedureNameWithSchema)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+
+            DbCommand spCmd;
+
+            if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
+            {
+                var cmd = new SqlCommand
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = procedureNameWithSchema
+                };
+
+                cmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.Add(new SqlParameter("@Enable", SqlDbType.TinyInt)).Value = 1;
+                cmd.Parameters.Add(new SqlParameter("@ManagerTypeID", SqlDbType.Int)).Value = 11;
+                cmd.Parameters.Add(new SqlParameter("@managerNameList", SqlDbType.VarChar, 4000)).Value = "Pub-12-1, Pub-12-2";
+                cmd.Parameters.Add(new SqlParameter("@infoOnly", SqlDbType.Int)).Value = 1;
+                // cmd.Parameters.Add(new SqlParameter("@includeDisabled", SqlDbType.Int)).Value = 0;
+                cmd.Parameters.Add(new SqlParameter("@message", SqlDbType.VarChar, 512)).Direction = ParameterDirection.InputOutput;
+
+                spCmd = cmd;
+            }
+            else
+            {
+                // dbTools.DbServerType == DbServerTypes.PostgresSQL
+
+                var cmd = new NpgsqlCommand
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandText = procedureNameWithSchema
+                };
+
+                cmd.Parameters.Add(new NpgsqlParameter("_Enable", DbType.Int32)).Value = 1;
+                cmd.Parameters.Add(new NpgsqlParameter("_ManagerTypeID", DbType.Int32)).Value = 11;
+                cmd.Parameters.Add(new NpgsqlParameter("_managerNameList", DbType.Int32)).Value = "Pub-12-1, Pub-12-2";
+                cmd.Parameters.Add(new NpgsqlParameter("@infoOnly", DbType.Int32)).Value = 1;
+                cmd.Parameters.Add(new NpgsqlParameter("@includeDisabled", DbType.Int32)).Value = 0;
+                cmd.Parameters.Add(new NpgsqlParameter("@message", DbType.String)).Direction = ParameterDirection.InputOutput;
+
+                // The call to ExecuteSP should auto-change this parameter to _returnCode of type InputOutput
+                // cmd.Parameters.Add(new NpgsqlParameter("@Return", DbType.Int32)).Direction = ParameterDirection.ReturnValue;
+
+                cmd.Parameters.Add(new NpgsqlParameter("_returnCode", DbType.String)).Direction = ParameterDirection.InputOutput;
+
+                spCmd = cmd;
+            }
+
+            Console.WriteLine("Running stored procedure " + procedureNameWithSchema + " using dbTools of type " + dbTools.DbServerType);
+
+            var returnCode = dbTools.ExecuteSP(spCmd, out var errorMessage, 1);
+
+            Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
+        }
+
+
     }
 }
