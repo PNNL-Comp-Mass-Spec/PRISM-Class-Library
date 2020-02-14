@@ -413,6 +413,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             dbConnection.Notice += OnNotice;
                             dbConnection.Open();
 
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
+                            }
+
                             // PostgresSQL requires a transaction when calling stored procedures that return result sets
                             // Without the transaction, the cursor is closed before we can read any data.
                             using (var transaction = dbConnection.BeginTransaction())
@@ -739,6 +744,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             dbConnection.Notice += OnNotice;
                             dbConnection.Open();
 
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("GetQueryResults: " + cmd.CommandText);
+                            }
+
                             // PostgresSQL requires a transaction when calling stored procedures that return result sets
                             // Without the transaction, the cursor is closed before we can read any data.
                             using (var transaction = dbConnection.BeginTransaction())
@@ -870,6 +880,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         {
                             dbConnection.Notice += OnNotice;
                             dbConnection.Open();
+
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("ExecuteSPData: " + sqlCmd.CommandText);
+                            }
 
                             // PostgresSQL requires a transaction when calling stored procedures that return result sets
                             // Without the transaction, the cursor is closed before we can read any data.
@@ -1130,12 +1145,15 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     {
                         using (var dbConnection = new NpgsqlConnection(mConnStr))
                         {
+                            dbConnection.Notice += OnNotice;
                             dbConnection.Open();
 
                             sqlCmd.Connection = dbConnection;
 
-                            // Uncomment to debug
-                            // OnDebugEvent("Calling procedure with: " + sqlCmd.CommandText);
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("ExecuteSP: " + spCmd.CommandText);
+                            }
 
                             startTime = DateTime.UtcNow;
                             sqlCmd.ExecuteNonQuery();

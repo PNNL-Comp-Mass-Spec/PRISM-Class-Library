@@ -266,6 +266,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                             sqlCmd.Connection = dbConnection;
 
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
+                            }
 
                             queryResult = sqlCmd.ExecuteScalar();
                         }
@@ -591,6 +595,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                             sqlCmd.Connection = dbConnection;
 
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("GetQueryResults: " + sqlCmd.CommandText);
+                            }
 
                             readMethod(sqlCmd);
                         }
@@ -726,6 +734,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                             sqlCmd.Connection = dbConnection;
 
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("ExecuteSPData: " + sqlCmd.CommandText);
+                            }
 
                             readMethod(sqlCmd);
 
@@ -973,9 +985,15 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     {
                         using (var dbConnection = new SqlConnection(mConnStr))
                         {
+                            dbConnection.InfoMessage += OnInfoMessage;
                             dbConnection.Open();
 
                             sqlCmd.Connection = dbConnection;
+
+                            if (DebugMessagesEnabled)
+                            {
+                                OnDebugEvent("ExecuteSP: " + spCmd.CommandText);
+                            }
 
                             startTime = DateTime.UtcNow;
                             sqlCmd.ExecuteNonQuery();
