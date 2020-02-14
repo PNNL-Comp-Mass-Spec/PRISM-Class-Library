@@ -47,5 +47,17 @@ namespace PRISMDatabaseUtils
             // The procedure does not have a standard return or return code parameter
             return DbUtilsConstants.RET_VAL_OK;
         }
+
+        protected bool IsFatalException(Exception ex)
+        {
+            return
+                ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("Invalid object name", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("permission denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
     }
 }

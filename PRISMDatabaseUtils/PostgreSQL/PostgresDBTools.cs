@@ -428,10 +428,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                         OnErrorEvent(errorMessage);
 
-                        if (ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            ex.Message.IndexOf("Invalid object name", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (IsFatalException(ex))
                         {
                             // No point in retrying the query; it will fail again
                             queryResult = null;
@@ -757,10 +754,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                         OnErrorEvent(errorMessage);
 
-                        if (ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            ex.Message.IndexOf("Invalid object name", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                            ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (IsFatalException(ex))
                         {
                             // No point in retrying the query; it will fail again
                             return false;
@@ -888,9 +882,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
 
                         OnErrorEvent(errorMessage);
-                        Console.WriteLine(errorMessage);
 
-                        if (ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
+                        if (IsFatalException(ex) ||
+                            ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
                         {
                             retryCount = 0;
                         }
@@ -1147,7 +1141,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                         OnErrorEvent(errorMessage);
 
-                        if (ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
+                        if (IsFatalException(ex) ||
+                            ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
                         {
                             break;
                         }
