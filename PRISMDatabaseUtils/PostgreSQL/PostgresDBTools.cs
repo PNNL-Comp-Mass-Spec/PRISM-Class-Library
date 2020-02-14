@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -9,21 +10,26 @@ using Npgsql;
 using NpgsqlTypes;
 using PRISM;
 
-// ReSharper disable UnusedMember.Global
-
 namespace PRISMDatabaseUtils.PostgreSQL
 {
     /// <summary>
     /// Tools to retrieve data from a database or run stored procedures
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class PostgresDBTools : DBToolsBase, IDBTools
     {
+        #region "Member Variables"
+
         private string mConnStr;
 
         /// <summary>
         /// Timeout length, in seconds, when waiting for a query or stored procedure to finish running
         /// </summary>
         private int mTimeoutSeconds;
+
+        #endregion
+
+        #region "Properties"
 
         /// <summary>
         /// Database connection string.
@@ -79,6 +85,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// The name of the database to which the connection string connects.
         /// </summary>
         public string DatabaseName { get; private set; }
+
+        #endregion
 
         /// <summary>
         /// Constructor
@@ -961,6 +969,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             var results = new List<List<string>>();
             lstResults = results;
+
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
                 using (var reader = spCmd.ExecuteReader())

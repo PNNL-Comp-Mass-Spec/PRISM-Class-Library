@@ -8,8 +8,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using PRISM;
 
-// ReSharper disable UnusedMember.Global
-
 namespace PRISMDatabaseUtils.MSSQLServer
 {
     /// <summary>
@@ -23,7 +21,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         private string mConnStr;
 
         /// <summary>
-        /// Timeout length, in seconds, when waiting for a query to finish running
+        /// Timeout length, in seconds, when waiting for a query or stored procedure to finish running
         /// </summary>
         private int mTimeoutSeconds;
 
@@ -66,7 +64,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             get => mTimeoutSeconds;
             set
             {
-                if (value == 0)
+                if (value <= 0)
                     value = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC;
 
                 if (value < 10)
@@ -264,10 +262,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         using (var dbConnection = new SqlConnection(ConnectStr))
                         {
                             dbConnection.InfoMessage += OnInfoMessage;
+                            dbConnection.Open();
 
                             sqlCmd.Connection = dbConnection;
 
-                            dbConnection.Open();
 
                             queryResult = sqlCmd.ExecuteScalar();
                         }
@@ -589,10 +587,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         using (var dbConnection = new SqlConnection(ConnectStr))
                         {
                             dbConnection.InfoMessage += OnInfoMessage;
+                            dbConnection.Open();
 
                             sqlCmd.Connection = dbConnection;
 
-                            dbConnection.Open();
 
                             readMethod(sqlCmd);
                         }
@@ -672,8 +670,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
               */
         }
 
-        #region "Methods"
-
         /// <summary>
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
@@ -726,10 +722,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         using (var dbConnection = new SqlConnection(mConnStr))
                         {
                             dbConnection.InfoMessage += OnInfoMessage;
+                            dbConnection.Open();
 
                             sqlCmd.Connection = dbConnection;
 
-                            dbConnection.Open();
 
                             readMethod(sqlCmd);
 
@@ -820,6 +816,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             var results = new List<List<string>>();
             lstResults = results;
+
             var readMethod = new Action<SqlCommand>(x =>
             {
                 using (var reader = spCmd.ExecuteReader())
@@ -1047,10 +1044,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
             return resultCode;
         }
 
-        #endregion
-
-        #region IExecuteSP implementation
-
         /// <inheritdoc />
         public DbCommand CreateCommand(string cmdText, CommandType cmdType = CommandType.Text)
         {
@@ -1119,7 +1112,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             string name,
             SqlType dbType,
             int size = 0,
-            T value = default(T),
+            T value = default,
             ParameterDirection direction = ParameterDirection.Input)
         {
             return AddParameter(command, name, dbType, size, value, direction);
@@ -1145,6 +1138,5 @@ namespace PRISMDatabaseUtils.MSSQLServer
             }
         }
 
-        #endregion
     }
 }
