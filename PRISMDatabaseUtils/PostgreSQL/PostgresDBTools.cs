@@ -1342,6 +1342,18 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
+        /// Examine the exception message to determine whether it is safe to rerun a failed query or failed stored procedure execution
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <returns>True if the same error will happen again, so a retry is pointless</returns>
+        protected bool IsFatalException(Exception ex)
+        {
+            return
+                ex.Message.IndexOf("permission denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        /// <summary>
         /// Look for parameter names that start with @
         /// Auto-change the @ to _
         /// </summary>

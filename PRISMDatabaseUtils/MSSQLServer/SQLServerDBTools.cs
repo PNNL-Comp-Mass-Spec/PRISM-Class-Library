@@ -1156,5 +1156,19 @@ namespace PRISMDatabaseUtils.MSSQLServer
             }
         }
 
+        /// <summary>
+        /// Examine the exception message to determine whether it is safe to rerun a failed query or failed stored procedure execution
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <returns>True if the same error will happen again, so a retry is pointless</returns>
+        protected bool IsFatalException(Exception ex)
+        {
+            return
+                ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("Invalid object name", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
     }
 }
