@@ -399,6 +399,7 @@ namespace PRISMTest
             dbTools.ExecuteSP(spCmd, 1);
         }
 
+        [TestCase("prismweb3", "dms", TestDBTools.DMS_READER, false)]
         [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsQuery(string server, string database, string user, bool expectedPostSuccess)
@@ -410,7 +411,10 @@ namespace PRISMTest
             var query = "call PostLogEntry(_postedBy => 'Test caller', _type =>'Info', _message => 'Test message 2')";
             var spCmd = dbTools.CreateCommand(query);
 
-            dbTools.GetQueryScalar(spCmd, out _, 1);
+            var postSuccess = dbTools.GetQueryScalar(spCmd, out _, 1);
+
+            Console.WriteLine("{0}: " + spCmd.CommandText, postSuccess ? "Complete" : "Failed");
+
         }
 
         [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
@@ -429,7 +433,10 @@ namespace PRISMTest
             dbTools.AddParameter(spCmd, "_postedBy", SqlType.Text).Value = "Test caller";
 
             messageParam.Value = "Test message 3";
-            dbTools.GetQueryScalar(spCmd, out _, 1);
+            var postSuccess = dbTools.GetQueryScalar(spCmd, out _, 1);
+
+            Console.WriteLine("{0}: " + spCmd.CommandText, postSuccess ? "Complete" : "Failed");
+
         }
 
     }
