@@ -60,7 +60,7 @@ namespace PRISMTest
         [Category("DatabaseNamedUser")]
         public void TestGetRecentLogEntriesPostgres(string server, string database)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            var connectionString = GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
             TestGetRecentLogEntries(connectionString);
         }
 
@@ -126,7 +126,7 @@ namespace PRISMTest
         [Category("DatabaseNamedUser")]
         public void TestGetTableRowCountPostgres(string server, string database, string tableName)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
             TestGetTableRowCount(connectionString, tableName);
         }
 
@@ -307,10 +307,22 @@ namespace PRISMTest
         /// <param name="server"></param>
         /// <param name="database"></param>
         /// <param name="user"></param>
+        /// <param name="password">password</param>
         /// <returns></returns>
-        public static string GetConnectionStringPostgres(string server, string database, string user)
+        /// <remarks>
+        /// Instead of providing an explicit password, create a pgpass file
+        /// Linux:   ~/.pgpass
+        /// Windows: c:\users\username\AppData\Roaming\postgresql\pgpass.conf
+        /// </remarks>
+        public static string GetConnectionStringPostgres(string server, string database, string user, string password = "")
         {
-            return string.Format("Host={0};Username={1};Database={2}", server, user, database);
+            string optionalPassword;
+            if (string.IsNullOrWhiteSpace(password))
+                optionalPassword = string.Empty;
+            else
+                optionalPassword = ";Password=" + password;
+
+            return string.Format("Host={0};Username={1};Database={2}{3}", server, user, database, optionalPassword);
         }
 
         /// <summary>

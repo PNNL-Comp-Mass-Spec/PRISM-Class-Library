@@ -168,7 +168,7 @@ namespace PRISMTest
         {
             var user = TestDBTools.DMS_READER;
 
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user, TestDBTools.DMS_READER_PASSWORD);
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             var spCmd = new NpgsqlCommand
@@ -195,7 +195,7 @@ namespace PRISMTest
         {
             var user = TestDBTools.DMS_READER;
 
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user, TestDBTools.DMS_READER_PASSWORD);
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             var spCmd = new NpgsqlCommand
@@ -322,7 +322,7 @@ namespace PRISMTest
         [Category("DatabaseNamedUser")]
         public void TestEnableDisableManagersPostgres(string server, string database)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
             TestEnableDisableManagers(connectionString, "mc.EnableDisableManagers");
         }
 
@@ -417,7 +417,15 @@ namespace PRISMTest
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsQuery(string server, string database, string user, bool expectedPostSuccess)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
+            string connectionString;
+            if (user.Equals(TestDBTools.DMS_READER))
+            {
+                connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user, TestDBTools.DMS_READER_PASSWORD);
+            }
+            else
+            {
+                connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
+            }
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
