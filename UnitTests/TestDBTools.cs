@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using PRISMDatabaseUtils;
@@ -91,19 +92,26 @@ namespace PRISMTest
 
             var spCmd = dbTools.CreateCommand(query);
 
-            var success = dbTools.GetQueryResults(spCmd, out var results, 1);
+            var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
 
             Assert.IsTrue(success, "GetQueryResults returned false");
 
-            Assert.Greater(results.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
+            Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
 
-            Console.WriteLine("{0} most recent entries in table {1}:", results.Count, tableName);
+            Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
 
+            ShowRowsFromTLogEntries(queryResults);
+        }
+
+        public static void ShowRowsFromTLogEntries(List<List<string>> results)
+        {
+
+            Console.WriteLine("{0,-10} {1,-21} {2,-20} {3}", "Entry_ID", "Date", "Posted_By", "Message");
             foreach (var item in results)
             {
-                Console.WriteLine(string.Join(", ", item));
+                var postingTime = DateTime.Parse(item[2]);
+                Console.WriteLine("{0,-10} {1,-21:yyyy-MM-dd hh:mm tt} {2,-20} {3}", item[0], postingTime, item[1], item[4]);
             }
-
         }
 
         [TestCase("Gigasax", "dms5", "T_Log_Entries")]

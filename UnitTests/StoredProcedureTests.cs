@@ -397,6 +397,19 @@ namespace PRISMTest
             }
 
             dbTools.ExecuteSP(spCmd, 1);
+
+            Console.WriteLine("Complete: " + spCmd.CommandText);
+            Console.WriteLine();
+            Console.WriteLine("Selecting recent rows from t_log_entries");
+            Console.WriteLine();
+
+            var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '10 seconds'");
+
+            var success = dbTools.GetQueryResults(spSelectCmd, out var queryResults, 1);
+
+            Assert.IsTrue(success, "GetQueryResults returned false while querying t_log_entries");
+
+            TestDBTools.ShowRowsFromTLogEntries(queryResults);
         }
 
         [TestCase("prismweb3", "dms", TestDBTools.DMS_READER, false)]
@@ -415,6 +428,7 @@ namespace PRISMTest
 
             Console.WriteLine("{0}: " + spCmd.CommandText, postSuccess ? "Complete" : "Failed");
 
+            VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
         }
 
         [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
@@ -437,7 +451,31 @@ namespace PRISMTest
 
             Console.WriteLine("{0}: " + spCmd.CommandText, postSuccess ? "Complete" : "Failed");
 
+            VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
         }
 
+        private void VerifyTestPostLogEntry(IDBTools dbTools, string user, bool expectedPostSuccess, bool actualPostSuccess)
+        {
+
+            if (expectedPostSuccess)
+                Assert.IsTrue(actualPostSuccess, "Call to PostLogEntry failed for user {0}; it should have succeeded", user);
+            else
+                Assert.IsFalse(actualPostSuccess, "Call to PostLogEntry succeeded for user {0}; it should have failed", user);
+
+            if (!actualPostSuccess)
+                return;
+
+            Console.WriteLine();
+            Console.WriteLine("Selecting recent rows from t_log_entries");
+            Console.WriteLine();
+
+            var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '10 seconds'");
+
+            var querySuccess = dbTools.GetQueryResults(spSelectCmd, out var queryResults, 1);
+
+            Assert.IsTrue(querySuccess, "GetQueryResults returned false while querying t_log_entries");
+
+            TestDBTools.ShowRowsFromTLogEntries(queryResults);
+        }
     }
 }
