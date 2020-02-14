@@ -48,59 +48,76 @@ namespace PRISMTest
             Assert.Fail("The dbTools instance returned by DbToolsFactory.GetDBTool is not a recognized class");
         }
 
-        [TestCase("Gigasax", "dms5")]
+        [TestCase("Gigasax", "dms5", 5, 1)]
+        [TestCase("Gigasax", "dms5", 10, 2)]
         [Category("DatabaseIntegrated")]
-        public void TestGetRecentLogEntriesSqlServer(string server, string database)
+        public void TestGetRecentLogEntriesSqlServer(string server, string database, int rowCountToRetrieve, int iterations)
         {
-            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
-            TestGetRecentLogEntries(connectionString);
+            var connectionString = GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismweb3", "dms", 5, 1)]
+        [TestCase("prismweb3", "dms", 10, 2)]
         [Category("DatabaseNamedUser")]
-        public void TestGetRecentLogEntriesPostgres(string server, string database)
+        public void TestGetRecentLogEntriesPostgres(string server, string database, int rowCountToRetrieve, int iterations)
         {
             var connectionString = GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
-            TestGetRecentLogEntries(connectionString);
+            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
         }
 
-        public void TestGetRecentLogEntries(string connectionString)
+        public void TestGetRecentLogEntries(string connectionString, int rowCountToRetrieve, int iterations)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
-            string query;
-            string tableName;
+            if (iterations < 1)
+                iterations = 1;
+            if (iterations > 5)
+                iterations = 5;
 
-            if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
+            for (var i = 0; i < iterations; i++)
             {
-                tableName = "t_log_entries";
+                string query;
+                string tableName;
+                if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
+                {
+                    tableName = "t_log_entries";
 
-                query = string.Format("SELECT * FROM (" +
-                                      "   SELECT TOP 5 * FROM {0}" +
-                                      "   Order By entry_id Desc) LookupQ " +
-                                      "Order By entry_id", tableName);
+                    query = string.Format("SELECT * FROM (" +
+                                          "   SELECT TOP {0} * FROM {1}" +
+                                          "   Order By entry_id Desc) LookupQ " +
+                                          "Order By entry_id", rowCountToRetrieve + i * 2, tableName);
+                }
+                else
+                {
+                    tableName = "public.t_log_entries";
+
+                    query = string.Format("SELECT * FROM (" +
+                                          "   SELECT * FROM {1}" +
+                                          "   Order By entry_id Desc Limit {0}) LookupQ " +
+                                          "Order By entry_id", rowCountToRetrieve + i * 2, tableName);
+                }
+
+                Console.WriteLine("Create command at {0:yyyy-MM-dd hh:mm:ss tt}", DateTime.Now);
+
+                var spCmd = dbTools.CreateCommand(query);
+
+                var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
+
+                Assert.IsTrue(success, "GetQueryResults returned false");
+
+                Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
+
+                Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
+                ShowRowsFromTLogEntries(queryResults);
+
+                if (i < iterations - 1)
+                {
+                    System.Threading.Thread.Sleep(1250);
+                }
+
+                Console.WriteLine();
             }
-            else
-            {
-                tableName = "public.t_log_entries";
-
-                query = string.Format("SELECT * FROM (" +
-                                      "   SELECT * FROM {0}" +
-                                      "   Order By entry_id Desc Limit 5) LookupQ " +
-                                      "Order By entry_id", tableName);
-            }
-
-            var spCmd = dbTools.CreateCommand(query);
-
-            var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
-
-            Assert.IsTrue(success, "GetQueryResults returned false");
-
-            Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
-
-            Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
-
-            ShowRowsFromTLogEntries(queryResults);
         }
 
         public static void ShowRowsFromTLogEntries(List<List<string>> results)
