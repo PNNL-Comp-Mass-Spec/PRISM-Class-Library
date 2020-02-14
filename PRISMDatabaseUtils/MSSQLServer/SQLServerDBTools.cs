@@ -92,11 +92,16 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Constructor
         /// </summary>
         /// <param name="connectionString">Database connection string</param>
-        /// <param name="timeoutSeconds"></param>
-        public SQLServerDBTools(string connectionString, int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC)
+        /// <param name="timeoutSeconds">Query timeout, in seconds</param>
+        /// <param name="debugMode">When true, show queries and procedure calls using OnDebugEvent</param>
+        public SQLServerDBTools(
+            string connectionString,
+            int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC,
+            bool debugMode = false)
         {
             ConnectStr = connectionString;
             mTimeoutSeconds = timeoutSeconds;
+            DebugMessagesEnabled = debugMode;
         }
 
         private void ParseConnectionString(string connectionString)

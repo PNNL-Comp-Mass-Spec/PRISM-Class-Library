@@ -66,7 +66,7 @@ namespace PRISMTest
 
         public void TestGetRecentLogEntries(string connectionString)
         {
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             string query;
             string tableName;
@@ -132,7 +132,7 @@ namespace PRISMTest
 
         public void TestGetTableRowCount(string connectionString, string tableName)
         {
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var query = "SELECT COUNT(*) FROM " + tableName;
 

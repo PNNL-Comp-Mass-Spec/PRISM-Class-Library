@@ -54,7 +54,7 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Checks elements in the connection string to determine which database engine it refers to.
         /// </summary>
-        /// <param name="connectionString"></param>
+        /// <param name="connectionString">Database connection string</param>
         /// <returns></returns>
         public static DbServerTypes GetServerTypeFromConnectionString(string connectionString)
         {
@@ -138,12 +138,16 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        ///
+        /// Get a SQL Server or PostgreSQL DBTools instance, depending on the contents of the connection string
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <param name="timeoutSeconds"></param>
+        /// <param name="connectionString">Database connection string</param>
+        /// <param name="timeoutSeconds">Query timeout, in seconds</param>
+        /// <param name="debugMode">When true, show queries and procedure calls using OnDebugEvent</param>
         /// <returns></returns>
-        public static IDBTools GetDBTools(string connectionString, int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC)
+        public static IDBTools GetDBTools(
+            string connectionString,
+            int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC,
+            bool debugMode = false)
         {
             var serverType = GetServerTypeFromConnectionString(connectionString);
 
@@ -153,34 +157,39 @@ namespace PRISMDatabaseUtils
             switch (serverType)
             {
                 case DbServerTypes.PostgreSQL:
-                    return new PostgresDBTools(standardConnectionString, timeoutSeconds);
+                    return new PostgresDBTools(standardConnectionString, timeoutSeconds, debugMode);
 
                 default:
                     // Includes DbServerTypes.MSSQLServer
-                    return new SQLServerDBTools(standardConnectionString, timeoutSeconds);
+                    return new SQLServerDBTools(standardConnectionString, timeoutSeconds, debugMode);
             }
         }
 
         /// <summary>
-        ///
+        /// Get a SQL Server or PostgreSQL DBTools instance, as specified by serverType
         /// </summary>
         /// <param name="serverType"></param>
-        /// <param name="connectionString"></param>
-        /// <param name="timeoutSeconds"></param>
+        /// <param name="connectionString">Database connection string</param>
+        /// <param name="timeoutSeconds">Query timeout, in seconds</param>
+        /// <param name="debugMode">When true, show queries and procedure calls using OnDebugEvent</param>
         /// <returns></returns>
-        public static IDBTools GetDBTools(DbServerTypes serverType, string connectionString, int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC)
+        public static IDBTools GetDBTools(
+            DbServerTypes serverType,
+            string connectionString,
+            int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC,
+            bool debugMode = false)
         {
             switch (serverType)
             {
                 case DbServerTypes.Undefined:
-                    return GetDBTools(connectionString, timeoutSeconds);
+                    return GetDBTools(connectionString, timeoutSeconds, debugMode);
 
                 case DbServerTypes.PostgreSQL:
-                    return new PostgresDBTools(connectionString, timeoutSeconds);
+                    return new PostgresDBTools(connectionString, timeoutSeconds, debugMode);
 
                 default:
                     // Includes DbServerTypes.MSSQLServer
-                    return new SQLServerDBTools(connectionString, timeoutSeconds);
+                    return new SQLServerDBTools(connectionString, timeoutSeconds, debugMode);
             }
         }
 

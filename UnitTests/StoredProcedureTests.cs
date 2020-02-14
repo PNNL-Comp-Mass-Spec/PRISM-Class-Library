@@ -34,7 +34,7 @@ namespace PRISMTest
         private void TestSearchLogs(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = new SqlCommand
             {
@@ -100,7 +100,7 @@ namespace PRISMTest
         private void TestGetAllPeptideDatabases(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = new SqlCommand
             {
@@ -169,7 +169,7 @@ namespace PRISMTest
             var user = TestDBTools.DMS_READER;
 
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user, TestDBTools.DMS_READER_PASSWORD);
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = new NpgsqlCommand
             {
@@ -196,7 +196,7 @@ namespace PRISMTest
             var user = TestDBTools.DMS_READER;
 
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user, TestDBTools.DMS_READER_PASSWORD);
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = new NpgsqlCommand
             {
@@ -241,7 +241,7 @@ namespace PRISMTest
         private void TestGetManagerParametersSP(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = new SqlCommand
             {
@@ -337,7 +337,7 @@ namespace PRISMTest
         /// <param name="procedureNameWithSchema"></param>
         private void TestEnableDisableManagers(string connectionString, string procedureNameWithSchema)
         {
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = dbTools.CreateCommand(procedureNameWithSchema, CommandType.StoredProcedure);
 
@@ -383,7 +383,7 @@ namespace PRISMTest
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
 
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = dbTools.CreateCommand("PostLogEntry", CommandType.StoredProcedure);
 
@@ -413,6 +413,7 @@ namespace PRISMTest
         }
 
         [TestCase("prismweb3", "dms", TestDBTools.DMS_READER, false)]
+        [TestCase("prismweb3", "dms", "NonExistentUser", false)]
         [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsQuery(string server, string database, string user, bool expectedPostSuccess)
@@ -427,14 +428,12 @@ namespace PRISMTest
                 connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
             }
 
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var query = "call PostLogEntry(_postedBy => 'Test caller', _type =>'Info', _message => 'Test message 2')";
             var spCmd = dbTools.CreateCommand(query);
 
             var postSuccess = dbTools.GetQueryScalar(spCmd, out _, 1);
-
-            Console.WriteLine("{0}: " + spCmd.CommandText, postSuccess ? "Complete" : "Failed");
 
             VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
         }
@@ -445,7 +444,7 @@ namespace PRISMTest
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
 
-            var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var query = "call PostLogEntry(_postedBy => @_postedBy, _type => @_type, _message => @_message)";
             var spCmd = dbTools.CreateCommand(query);
@@ -456,8 +455,6 @@ namespace PRISMTest
 
             messageParam.Value = "Test message 3";
             var postSuccess = dbTools.GetQueryScalar(spCmd, out _, 1);
-
-            Console.WriteLine("{0}: " + spCmd.CommandText, postSuccess ? "Complete" : "Failed");
 
             VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
         }
