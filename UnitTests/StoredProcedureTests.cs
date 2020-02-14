@@ -12,6 +12,8 @@ namespace PRISMTest
     [TestFixture]
     class StoredProcedureTests
     {
+        private const string DMS_WEB_USER = "dmswebuser";
+
         private const string MTS_READER = "mtuser";
         private const string MTS_READER_PASSWORD = "mt4fun";
 
@@ -375,12 +377,11 @@ namespace PRISMTest
             Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
-
         [TestCase("prismweb3", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsProcedure(string server, string database)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
@@ -398,11 +399,11 @@ namespace PRISMTest
             dbTools.ExecuteSP(spCmd, 1);
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
         [Category("DatabaseNamedUser")]
-        public void TestPostLogEntryAsQuery(string server, string database)
+        public void TestPostLogEntryAsQuery(string server, string database, string user, bool expectedPostSuccess)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
@@ -412,11 +413,11 @@ namespace PRISMTest
             dbTools.GetQueryScalar(spCmd, out _, 1);
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
         [Category("DatabaseNamedUser")]
-        public void TestPostLogEntryAsQueryWithParameters(string server, string database)
+        public void TestPostLogEntryAsQueryWithParameters(string server, string database, string user, bool expectedPostSuccess)
         {
-            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user);
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
