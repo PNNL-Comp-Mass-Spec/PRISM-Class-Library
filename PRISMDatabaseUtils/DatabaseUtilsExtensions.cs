@@ -16,6 +16,10 @@ namespace PRISMDatabaseUtils
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns>If value is DBNull, then returns default(t) (string.Empty for string); otherwise casts value to T</returns>
+        /// <remarks>
+        /// This method does not with VB.NET when Option Strict is enabled.
+        /// As an alternative, use GetInteger, GetString, etc. (in this class)
+        /// </remarks>
         public static T CastDBVal<T>(this object value)
         {
             if (value == null || value == DBNull.Value)

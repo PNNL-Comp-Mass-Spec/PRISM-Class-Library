@@ -566,7 +566,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="queryResults">Results (list of list of strings)</param>
+        /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
@@ -597,7 +597,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
         /// <param name="cmd">Query to run</param>
-        /// <param name="queryResults">Results (list of list of strings)</param>
+        /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
@@ -630,7 +630,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataSet object
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="queryResults">Results (list of list of strings)</param>
+        /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
@@ -661,7 +661,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataSet object
         /// </summary>
         /// <param name="cmd">Query to run</param>
-        /// <param name="queryResults">Results (list of list of strings)</param>
+        /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
