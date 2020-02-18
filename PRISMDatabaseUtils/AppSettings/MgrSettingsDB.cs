@@ -38,7 +38,7 @@ namespace PRISMDatabaseUtils.AppSettings
 
             ShowTrace("LoadMgrSettingsFromDBWork using [" + dbConnectionString + "] for manager " + managerName);
 
-            var sqlQuery = "SELECT ParameterName, ParameterValue FROM V_MgrParams WHERE ManagerName = '" + managerName + "'";
+            var sqlQuery = "SELECT ParameterName, ParameterValue FROM V_Mgr_Params WHERE ManagerName = '" + managerName + "'";
 
             // Query the database
             var dbTools = DbToolsFactory.GetDBTools(dbConnectionString);
