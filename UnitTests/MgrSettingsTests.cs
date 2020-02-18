@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using PRISM.AppSettings;
+using PRISMDatabaseUtils.AppSettings;
 
 namespace PRISMTest
 {
@@ -90,6 +87,58 @@ namespace PRISMTest
             {
                 Assert.IsTrue(settings.ContainsKey(setting.Key));
                 Assert.AreEqual(setting.Value, settings[setting.Key]);
+            }
+        }
+
+        [TestCase("ProteinSeqs", "Manager_Control")]
+        [Category("DatabaseIntegrated")]
+        public void TestLoadManagerConfigDBSqlServer(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestLoadManagerConfigDB(connectionString);
+        }
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestLoadManagerConfigDBPostgres(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+            TestLoadManagerConfigDB(connectionString);
+        }
+
+        private void TestLoadManagerConfigDB(string connectionString)
+        {
+            var mgrSettings = new MgrSettingsDB();
+            var testSettings = new Dictionary<string, string>()
+            {
+                { MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, connectionString },
+                { MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, "True" },
+                { MgrSettings.MGR_PARAM_MGR_NAME, "Proto-5_InstDirScan" },
+                { MgrSettings.MGR_PARAM_USING_DEFAULTS, "False" },
+            };
+
+            mgrSettings.LoadSettings(testSettings, true);
+
+            var expectedSettings = new Dictionary<string, string>()
+            {
+                { "workdir", @"\\gigasax\DMS_InstSourceDirScans" },
+                { "bionetuser", "ftms" },
+                { "configfilename", "DMS_InstDirScanner.exe.config" },
+                { "localmgrpath", @"C:\DMS_Programs" },
+                { "programfoldername", "InstDirScanner" },
+                { "MessageQueueTopicMgrStatus", "Manager.InstDirScan" },
+            };
+
+            foreach (var expected in expectedSettings)
+            {
+                if (mgrSettings.MgrParams.TryGetValue(expected.Key, out var actual))
+                {
+                    Assert.AreEqual(expected.Value, actual, "Parameter value is different");
+                }
+                else
+                {
+                    Assert.Fail($"Expected parameter with name {expected.Key}, but it does not exist.");
+                }
             }
         }
     }
