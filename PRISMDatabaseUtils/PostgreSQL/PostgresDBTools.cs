@@ -892,7 +892,37 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             {
                                 sqlCmd.Connection = dbConnection;
 
-                                readMethod(sqlCmd);
+                                // Multiple cursors not supported
+                                var cursorName = "";
+                                using (var reader = sqlCmd.ExecuteReader())
+                                {
+                                    while (reader.Read())
+                                    {
+                                        // Really only expecting a single row; extract all refcursors.
+                                        foreach (var column in reader.GetColumnSchema().Where(x => x.NpgsqlDbType == NpgsqlDbType.Refcursor))
+                                        {
+                                            var name = reader[column.ColumnName].CastDBVal<string>();
+                                            if (string.IsNullOrWhiteSpace(cursorName))
+                                            {
+                                                cursorName = name;
+                                            }
+                                            else
+                                            {
+                                                OnWarningEvent($"Reading of multiple RefCursors not supported; ignoring RefCursor {name}.");
+                                                // Log error: Multiple cursors not supported
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(cursorName))
+                                {
+                                    // We got a cursor; read it and populate the output object
+                                    using (var cmd = new NpgsqlCommand($"FETCH ALL FROM {cursorName}", dbConnection))
+                                    {
+                                        readMethod(cmd);
+                                    }
+                                }
 
                                 resultCode = GetReturnCode(sqlCmd.Parameters);
 
@@ -987,7 +1017,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var reader = spCmd.ExecuteReader())
+                using (var reader = x.ExecuteReader())
                 {
                     while (reader.Read())
                     {

@@ -326,10 +326,6 @@ namespace PRISMTest
             TestEnableDisableManagers(connectionString, "mc.EnableDisableManagers");
         }
 
-
-        // ToDo: Make a PostgreSQL version of EnableDisableManagers that returns a cursor instead of using _infoHead and _infoData
-
-
         /// <summary>
         /// Invoke stored procedure EnableDisableManagers and examine output parameter @message (or _message)
         /// </summary>
@@ -371,6 +367,69 @@ namespace PRISMTest
             if (!string.IsNullOrWhiteSpace(errorMessage))
             {
                 Console.WriteLine("Error:   " + errorMessage);
+            }
+
+            Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
+            Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+        }
+
+        [TestCase("ProteinSeqs", "Manager_Control")]
+        [Category("DatabaseIntegrated")]
+        public void TestEnableDisableManagersDataSqlServer(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestEnableDisableManagersData(connectionString, "EnableDisableManagers");
+        }
+
+        [TestCase("prismweb3", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestEnableDisableManagersDataPostgres(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+            TestEnableDisableManagersData(connectionString, "mc.EnableDisableManagers");
+        }
+
+        /// <summary>
+        /// Invoke stored procedure EnableDisableManagers and examine output parameter @message (or _message)
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="procedureNameWithSchema"></param>
+        private void TestEnableDisableManagersData(string connectionString, string procedureNameWithSchema)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+
+            var spCmd = dbTools.CreateCommand(procedureNameWithSchema, CommandType.StoredProcedure);
+
+            dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
+            dbTools.AddParameter(spCmd, "@ManagerTypeID", SqlType.Int).Value = 11;
+            dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar, 4000).Value = "Pub-12-1, Pub-12-2";
+            dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+
+            DbParameter messageParam;
+
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+            {
+                dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Int).Value = 0;
+                messageParam = dbTools.AddParameter(spCmd, "_message", SqlType.Text, ParameterDirection.InputOutput);
+            }
+            else
+            {
+                messageParam = dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 4000, ParameterDirection.InputOutput);
+            }
+
+            // The call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
+            var returnParam = dbTools.AddParameter(spCmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
+
+            Console.WriteLine("Running stored procedure " + procedureNameWithSchema + " using dbTools of type " + dbTools.DbServerType);
+
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var results, 1);
+
+            Console.WriteLine();
+            Console.WriteLine("Message: " + messageParam.Value);
+            Console.WriteLine("Return:  " + returnParam.Value);
+            foreach (var row in results)
+            {
+                Console.WriteLine(string.Join(", ", row));
             }
 
             Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
