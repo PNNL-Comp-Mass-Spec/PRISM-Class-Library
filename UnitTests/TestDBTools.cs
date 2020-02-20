@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
+using Npgsql;
+using NpgsqlTypes;
 using NUnit.Framework;
 using PRISMDatabaseUtils;
 
@@ -46,6 +51,161 @@ namespace PRISMTest
             }
 
             Assert.Fail("The dbTools instance returned by DbToolsFactory.GetDBTool is not a recognized class");
+        }
+
+        [TestCase(false, "")]
+        [TestCase(true, "")]
+        [TestCase(false, "_acqDate:Date,_acqTime:DateTime,_acqInfo:Xml,_status:TinyInt")]
+        [TestCase(true, "_acqDate:Date,_acqTime:DateTime,_acqInfo:Xml,_status:TinyInt")]
+        public void TestAddParameter(bool usePostgres, string parameterList)
+        {
+            var server = "DbServer";
+            var database = "TestDB";
+
+            if (string.IsNullOrWhiteSpace(parameterList))
+            {
+                // Use the default parameter list
+                parameterList = "@message:VarChar,@eventID:Int,@eventDate:DateTime,@success:TinyInt";
+            }
+
+            var connectionString = usePostgres ?
+                                       GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD) :
+                                       GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+
+            var parameters = ParseParameterList(parameterList);
+
+            TestAddParameter(connectionString, parameters);
+        }
+
+        public void TestAddParameter(string connectionString, List<KeyValuePair<string, SqlType>> parameters)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+
+            var cmd = dbTools.CreateCommand("TestProcedure", CommandType.StoredProcedure);
+
+            var addedParameters = new List<DbParameter>();
+
+            foreach (var parameter in parameters)
+            {
+                var newParam = dbTools.AddParameter(cmd, parameter.Key, parameter.Value);
+                addedParameters.Add(newParam);
+            }
+
+            DisplayParameters(addedParameters);
+        }
+
+        [TestCase(false, "")]
+        [TestCase( true, "")]
+        [TestCase( true, "_acqDate:Date,_acqTime:Time,_acqInfo:Json,_status:Bit")]
+        public void TestAddPgSqlParameter(bool usePostgres, string parameterList)
+        {
+            var server = "DbServer";
+            var database = "TestDB";
+
+            if (string.IsNullOrWhiteSpace(parameterList))
+            {
+                // Use the default parameter list
+                parameterList = "@message:Varchar,@eventID:Integer,@eventDate:Timestamp,@maxValue:Double,@success:Boolean,@source:Citext";
+            }
+
+            var connectionString = usePostgres ?
+                                       GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD) :
+                                       GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+
+            var parameters = ParsePgSqlParameterList(parameterList);
+
+            TestAddPgSqlParameter(connectionString, parameters);
+        }
+
+        public void TestAddPgSqlParameter(string connectionString, List<KeyValuePair<string, NpgsqlDbType>> parameters)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+
+            var cmd = dbTools.CreateCommand("TestProcedure", CommandType.StoredProcedure);
+
+            var addedParameters = new List<DbParameter>();
+
+            foreach (var parameter in parameters)
+            {
+                var newParam = dbTools.AddPgSqlParameter(cmd, parameter.Key, parameter.Value);
+                addedParameters.Add(newParam);
+            }
+
+            DisplayParameters(addedParameters);
+        }
+
+        private void DisplayParameters(IEnumerable<DbParameter> addedParameters)
+        {
+
+            Console.WriteLine("{0,-15} {1,-15} {2}", "Param Name", "SqlType", "Db Type");
+            foreach (var item in addedParameters)
+            {
+                string dbType;
+                if (item is NpgsqlParameter npgSqlParam)
+                {
+                    dbType = npgSqlParam.NpgsqlDbType.ToString();
+                }
+                else if (item is SqlParameter sqlParam)
+                {
+                    dbType = sqlParam.SqlDbType.ToString();
+                }
+                else
+                {
+                    dbType = string.Empty;
+                }
+
+                Console.WriteLine("{0,-15} {1,-15} {2}", item.ParameterName, item.DbType, dbType);
+            }
+        }
+
+        private List<KeyValuePair<string, SqlType>> ParseParameterList(string parameterList)
+        {
+            var parameters = new List<KeyValuePair<string, SqlType>>();
+
+            foreach (var item in parameterList.Split(','))
+            {
+                var colonIndex = item.IndexOf(':');
+                if (colonIndex < 0)
+                    throw new Exception("Colon not found in the parameter list for " + item);
+
+                var argName = item.Substring(0, colonIndex);
+                var argType = item.Substring(colonIndex + 1);
+
+                if (Enum.TryParse<SqlType>(argType, out var parsedType))
+                {
+                    parameters.Add(new KeyValuePair<string, SqlType>(argName, parsedType));
+                    continue;
+                }
+
+                throw new Exception(string.Format("Cannot convert {0} to enum SqlType", argType));
+            }
+
+            return parameters;
+        }
+
+        private List<KeyValuePair<string, NpgsqlDbType>> ParsePgSqlParameterList(string parameterList)
+        {
+            var parameters = new List<KeyValuePair<string, NpgsqlDbType>>();
+
+            foreach (var item in parameterList.Split(','))
+            {
+                var colonIndex = item.IndexOf(':');
+                if (colonIndex < 0)
+                    throw new Exception("Colon not found in the parameter list for " + item);
+
+                var argName = item.Substring(0, colonIndex);
+                var argType = item.Substring(colonIndex + 1);
+
+                if (Enum.TryParse<NpgsqlDbType>(argType, out var parsedType))
+                {
+                    parameters.Add(new KeyValuePair<string, NpgsqlDbType>(argName, parsedType));
+                    continue;
+                }
+
+                throw new Exception(string.Format("Cannot convert {0} to enum NpgsqlDbType", argType));
+            }
+
+            return parameters;
         }
 
         [TestCase("Gigasax", "dms5", 5, 1)]
