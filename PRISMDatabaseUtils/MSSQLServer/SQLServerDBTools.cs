@@ -960,7 +960,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         /// <remarks></remarks>
-        public int ExecuteSP(DbCommand spCmd, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
+        public int ExecuteSP(
+            DbCommand spCmd,
+            int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
+            int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
             return ExecuteSP(spCmd, out _, maxRetryCount, retryDelaySeconds);
         }
@@ -974,7 +977,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         /// <remarks>No logging is performed by this procedure</remarks>
-        public int ExecuteSP(DbCommand spCmd, out string errorMessage, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
+        public int ExecuteSP(
+            DbCommand spCmd,
+            out string errorMessage,
+            int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
+            int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
             if (!(spCmd is SqlCommand sqlCmd))
             {
