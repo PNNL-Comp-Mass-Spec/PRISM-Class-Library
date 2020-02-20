@@ -1324,6 +1324,37 @@ namespace PRISMDatabaseUtils.PostgreSQL
             return param;
         }
 
+        /// <summary>
+        /// Adds a PostgreSQL specific parameter to the DbCommand
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name"></param>
+        /// <param name="dbType"></param>
+        /// <param name="size"></param>
+        /// <param name="direction"></param>
+        /// <returns>The newly added parameter</returns>
+        public DbParameter AddPgSqlParameter(
+            DbCommand command,
+            string name,
+            NpgsqlDbType dbType,
+            int size = 0,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+            if (!(command is NpgsqlCommand npgCmd))
+            {
+                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
+            }
+
+            var param = new NpgsqlParameter(name, dbType, size)
+            {
+                Direction = direction
+            };
+
+            npgCmd.Parameters.Add(param);
+
+            return param;
+        }
+
         /// <inheritdoc />
         public DbParameter AddTypedParameter<T>(
             DbCommand command,

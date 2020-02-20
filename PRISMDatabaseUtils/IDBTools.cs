@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
+using NpgsqlTypes;
 using PRISM.Logging;
 
 namespace PRISMDatabaseUtils
@@ -359,16 +360,35 @@ namespace PRISMDatabaseUtils
             ParameterDirection direction = ParameterDirection.Input);
 
         /// <summary>
-        /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives.
+        /// Adds a PostgreSQL specific parameter to the DbCommand
         /// </summary>
         /// <param name="command"></param>
         /// <param name="name"></param>
         /// <param name="dbType"></param>
         /// <param name="size"></param>
-        /// <param name="value"></param>
         /// <param name="direction"></param>
         /// <returns>The newly added parameter</returns>
-        DbParameter AddTypedParameter<T>(
+        /// <remarks>
+        /// If this method is called on an instance of SQLServerDBTools, it will try to auto-switch to the correct SqlType value
+        /// </remarks>
+        DbParameter AddPgSqlParameter(
+            DbCommand command,
+            string name,
+            NpgsqlDbType dbType,
+            int size = 0,
+            ParameterDirection direction = ParameterDirection.Input);
+
+            /// <summary>
+            /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives.
+            /// </summary>
+            /// <param name="command"></param>
+            /// <param name="name"></param>
+            /// <param name="dbType"></param>
+            /// <param name="size"></param>
+            /// <param name="value"></param>
+            /// <param name="direction"></param>
+            /// <returns>The newly added parameter</returns>
+            DbParameter AddTypedParameter<T>(
             DbCommand command,
             string name,
             SqlType dbType,
