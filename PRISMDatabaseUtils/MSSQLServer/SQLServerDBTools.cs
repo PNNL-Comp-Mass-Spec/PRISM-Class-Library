@@ -1179,19 +1179,73 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             switch (sqlType)
             {
-                case SqlType.Int: return SqlDbType.Int;
-                case SqlType.BigInt: return SqlDbType.BigInt;
-                case SqlType.Real: return SqlDbType.Real;
-                case SqlType.Float: return SqlDbType.Float;
-                case SqlType.TinyInt: return SqlDbType.TinyInt;
-                case SqlType.SmallInt: return SqlDbType.SmallInt;
-                case SqlType.Char: return SqlDbType.Char;
-                case SqlType.VarChar: return SqlDbType.VarChar;
-                case SqlType.Text: return SqlDbType.Text;
-                case SqlType.Date: return SqlDbType.Date;
-                case SqlType.DateTime: return SqlDbType.DateTime;
-                case SqlType.Xml: return SqlDbType.Xml;
-                default: throw new NotSupportedException($"Conversion for type {sqlType} not known");
+                case SqlType.Bit:
+                    return SqlDbType.Bit;
+
+                case SqlType.Boolean:
+                case SqlType.TinyInt:
+                    return SqlDbType.TinyInt;
+
+                case SqlType.SmallInt:
+                    return SqlDbType.SmallInt;
+
+                case SqlType.Int:
+                    return SqlDbType.Int;
+
+                case SqlType.BigInt:
+                    return SqlDbType.BigInt;
+
+                case SqlType.Real:
+                    return SqlDbType.Real;
+
+                case SqlType.Float:
+                    return SqlDbType.Float;
+
+                case SqlType.Decimal:
+                    // Includes Numeric
+                    return SqlDbType.Decimal;
+
+                case SqlType.Money:
+                    return SqlDbType.Money;
+
+                case SqlType.Char:
+                    return SqlDbType.Char;
+
+                case SqlType.VarChar:
+                    return SqlDbType.VarChar;
+
+                case SqlType.Text:
+                case SqlType.Citext:
+                case SqlType.Name:
+                    return SqlDbType.Text;
+
+                case SqlType.Date:
+                    return SqlDbType.Date;
+
+                case SqlType.Time:
+                    return SqlDbType.Time;
+
+                case SqlType.DateTime:
+                    // Includes Timestamp
+                    return SqlDbType.DateTime;
+
+                case SqlType.TimestampTz:
+                    return SqlDbType.DateTimeOffset;
+
+                case SqlType.UUID:
+                    return SqlDbType.UniqueIdentifier;
+
+                case SqlType.Xml:
+                    return SqlDbType.Xml;
+
+                case SqlType.Interval:
+                    throw new NotSupportedException($"SQL Server does not support the {sqlType} type");
+
+                case SqlType.Json:
+                    throw new NotSupportedException($"SQL Server does not support the {sqlType} type");
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(sqlType), sqlType, $"Conversion for SqlType {sqlType} is not defined");
             }
         }
 
