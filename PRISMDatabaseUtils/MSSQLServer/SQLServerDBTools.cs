@@ -11,7 +11,7 @@ using PRISM;
 namespace PRISMDatabaseUtils.MSSQLServer
 {
     /// <summary>
-    /// Tools to retrieve data from a database
+    /// Tools to retrieve data from a database or run stored procedures
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class SQLServerDBTools : DBToolsBase, IDBTools
@@ -572,7 +572,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataSet object
+        /// Run a query against a SQL database, return the results via <paramref name="readMethod"/>
         /// </summary>
         /// <param name="cmd">Query to run</param>
         /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
@@ -722,8 +722,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
         private int ExecuteSPData(
             DbCommand spCmd,
             Action<SqlCommand> readMethod,
-            int retryCount = 3,
-            int retryDelaySeconds = 5)
+            int retryCount,
+            int retryDelaySeconds)
         {
             if (!(spCmd is SqlCommand sqlCmd))
             {

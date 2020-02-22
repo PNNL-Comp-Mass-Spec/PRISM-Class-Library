@@ -898,7 +898,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 {
                                     while (reader.Read())
                                     {
-                                        // Really only expecting a single row; extract all refcursors.
+                                        // Really only expecting a single row; extract all ref cursors.
                                         foreach (var column in reader.GetColumnSchema().Where(x => x.NpgsqlDbType == NpgsqlDbType.Refcursor))
                                         {
                                             var name = reader[column.ColumnName].CastDBVal<string>();
