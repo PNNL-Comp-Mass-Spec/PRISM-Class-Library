@@ -1158,6 +1158,9 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 Value = value,
             };
 
+            if (dbType == SqlType.Decimal)
+                SetDefaultPrecision(param);
+
             sqlCmd.Parameters.Add(param);
 
             return param;

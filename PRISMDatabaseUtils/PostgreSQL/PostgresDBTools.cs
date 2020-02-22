@@ -1319,6 +1319,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 Value = value,
             };
 
+            if (dbType == SqlType.Decimal)
+                SetDefaultPrecision(param);
 
             npgCmd.Parameters.Add(param);
 
@@ -1346,6 +1348,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 Direction = direction,
                 Value = value,
             };
+
+            if (dbType == SqlType.Decimal)
+                SetDefaultPrecision(param);
 
             npgCmd.Parameters.Add(param);
 

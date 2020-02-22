@@ -48,5 +48,19 @@ namespace PRISMDatabaseUtils
             return DbUtilsConstants.RET_VAL_OK;
         }
 
+        /// <summary>
+        /// Set the default precision for a Decimal (aka Numeric) parameter
+        /// </summary>
+        /// <param name="param"></param>
+        protected void SetDefaultPrecision(DbParameter param)
+        {
+            if (param.DbType != DbType.Decimal)
+                return;
+
+            // Assign a default precision and scale
+            param.Precision = 9;
+            param.Scale = 5;
+        }
+
     }
 }
