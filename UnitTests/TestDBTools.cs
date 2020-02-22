@@ -5,7 +5,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using Npgsql;
-using NpgsqlTypes;
 using NUnit.Framework;
 using PRISMDatabaseUtils;
 
@@ -105,19 +104,19 @@ namespace PRISMTest
             if (string.IsNullOrWhiteSpace(parameterList))
             {
                 // Use the default parameter list
-                parameterList = "@message:Varchar,@eventID:Integer,@eventDate:Timestamp,@maxValue:Double,@success:Boolean,@source:Citext";
+                parameterList = "@message:VarChar,@eventID:Integer,@eventDate:Timestamp,@maxValue:Double,@success:Boolean,@source:Citext";
             }
 
             var connectionString = usePostgres ?
                                        GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD) :
                                        GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
 
-            var parameters = ParsePgSqlParameterList(parameterList);
+            var parameters = ParseParameterList(parameterList);
 
             TestAddPgSqlParameter(connectionString, parameters);
         }
 
-        public void TestAddPgSqlParameter(string connectionString, List<KeyValuePair<string, NpgsqlDbType>> parameters)
+        public void TestAddPgSqlParameter(string connectionString, List<KeyValuePair<string, SqlType>> parameters)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
@@ -127,7 +126,7 @@ namespace PRISMTest
 
             foreach (var parameter in parameters)
             {
-                var newParam = dbTools.AddPgSqlParameter(cmd, parameter.Key, parameter.Value);
+                var newParam = dbTools.AddParameter(cmd, parameter.Key, parameter.Value);
                 addedParameters.Add(newParam);
             }
 
@@ -178,31 +177,6 @@ namespace PRISMTest
                 }
 
                 throw new Exception(string.Format("Cannot convert {0} to enum SqlType", argType));
-            }
-
-            return parameters;
-        }
-
-        private List<KeyValuePair<string, NpgsqlDbType>> ParsePgSqlParameterList(string parameterList)
-        {
-            var parameters = new List<KeyValuePair<string, NpgsqlDbType>>();
-
-            foreach (var item in parameterList.Split(','))
-            {
-                var colonIndex = item.IndexOf(':');
-                if (colonIndex < 0)
-                    throw new Exception("Colon not found in the parameter list for " + item);
-
-                var argName = item.Substring(0, colonIndex);
-                var argType = item.Substring(colonIndex + 1);
-
-                if (Enum.TryParse<NpgsqlDbType>(argType, out var parsedType))
-                {
-                    parameters.Add(new KeyValuePair<string, NpgsqlDbType>(argName, parsedType));
-                    continue;
-                }
-
-                throw new Exception(string.Format("Cannot convert {0} to enum NpgsqlDbType", argType));
             }
 
             return parameters;
