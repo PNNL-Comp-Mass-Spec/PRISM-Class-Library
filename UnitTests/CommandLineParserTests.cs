@@ -955,10 +955,10 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { @"-I:..\..\VisibleColors.tsv", "/S" }, showHelpOnError, outputErrors);
+            Assert.IsTrue(result.Success, "Parser did not succeed");
 
             var inputFilePath = parser.Results.ParsedResults.InputFile;
             Console.WriteLine("Input file: " + inputFilePath);
-            Assert.IsTrue(result.Success, "Parser did not succeed");
         }
 
         [Test]
@@ -969,10 +969,39 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { @"-I:" + inputFilePath, "/S" }, showHelpOnError, outputErrors);
+            Assert.IsTrue(result.Success, "Parser did not succeed");
 
             var parsedInputFilePath = parser.Results.ParsedResults.InputFile;
-            Console.WriteLine("Input file: " + parsedInputFilePath);
+            Console.WriteLine("Parsed input file path:");
+            Console.WriteLine(parsedInputFilePath);
+
+            Assert.IsTrue(parsedInputFilePath.IndexOfAny(new[] { '\'', '"' }) < 0, "Quotes in the path were not removed");
+        }
+
+        [Test]
+        [TestCase(@"This is a comment", false)]
+        [TestCase(@"""This is a comment surrounded by double quotes""", true)]
+        [TestCase(@"'This is a comment surrounded by single quotes'", true)]
+        public void TestPropertyKeepQuotes(string propertyValue, bool commentShouldHaveQuotes)
+        {
+            var parser = new CommandLineParser<FileInfoPropertyGood>();
+            var result = parser.ParseArgs(new[] { @"-Comment", propertyValue, "/S" }, showHelpOnError, outputErrors);
             Assert.IsTrue(result.Success, "Parser did not succeed");
+
+            var parsedComment = parser.Results.ParsedResults.Comment;
+            Console.WriteLine("Comment: " + parsedComment);
+
+            var commentIsQuoted = parsedComment.StartsWith("'") && parsedComment.EndsWith("'") ||
+                                  parsedComment.StartsWith("\"") && parsedComment.EndsWith("\"");
+
+            if (commentShouldHaveQuotes)
+            {
+                Assert.IsTrue(commentIsQuoted, "Leading/trailing quotes were removed, but should not have been");
+            }
+            else
+            {
+                Assert.IsFalse(commentIsQuoted, "Comment has quotes, but shouldn't");
+            }
         }
 
         [Test]
@@ -1024,6 +1053,9 @@ namespace PRISMTest
             [Option("I", "InputFile", HelpText = "Input file path", IsInputFilePath = true)]
             public string InputFile { get; set; }
 
+            [Option("O", "OutputFile", HelpText = "Output file path")]
+            public string OutputFile { get; set; }
+
             [Option("S", "Recurse", HelpText = "Search in subdirectories")]
             public bool Recurse { get; set; }
 
@@ -1032,6 +1064,9 @@ namespace PRISMTest
 
             [Option("Smooth", HelpText = "Number of points to smooth")]
             public int PointsToSmooth { get; set; }
+
+            [Option("Comment", HelpText = "Optional comment")]
+            public string Comment { get; set; }
         }
 
         private class FileInfoPropertyBad
