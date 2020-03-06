@@ -26,27 +26,27 @@ namespace PRISM
             LogFilePath = "log.txt";
         }
 
-        [Option("start", Required = true, HelpText = "First ID to process")]
+        [Option("Start", Required = true, HelpText = "First ID to process")]
         public int StartID { get; set; }
 
-        [Option("end", HelpText = "Last ID to process", HelpShowsDefault = true)]
+        [Option("End", HelpText = "Last ID to process", HelpShowsDefault = true)]
         public int EndID { get; set; }
 
-        [Option("input", "i", ArgPosition = 1, HelpText = "File to process")]
+        [Option("Input", "I", ArgPosition = 1, HelpText = "File to process", IsInputFilePath = true)]
         public string InputFilePath { get; set; }
 
-        [Option("output", "o", ArgPosition = 2, HelpText = "Output directory path for creating the results file")]
+        [Option("Output", "O", ArgPosition = 2, HelpText = "Output directory path for creating the results file")]
         public string OutputDirectoryPath { get; set; }
 
-        [Option("append", HelpText = "Append results to the output file", HelpShowsDefault = true)]
+        [Option("Append", HelpText = "Append results to the output file", HelpShowsDefault = true)]
         public bool AppendToOutput { get; set; }
 
-        [Option("preview", HelpText = "Preview changes")]
+        [Option("Preview", HelpText = "Preview changes")]
         public bool Preview { get; set; }
 
         public bool LogEnabled { get; set; }
 
-        [Option("log", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
+        [Option("Log", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
         public string LogFilePath { get; set; }
 
         public void OutputSetOptions()
