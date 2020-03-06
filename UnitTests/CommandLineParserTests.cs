@@ -961,6 +961,19 @@ namespace PRISMTest
             Assert.IsTrue(result.Success, "Parser did not succeed");
         }
 
+        [Test]
+        [TestCase(@"C:\My Documents\Test\InputFile.txt")]
+        [TestCase(@"""C:\My Documents\Test\InputFile.txt""")]
+        [TestCase(@"'C:\My Documents\Test\InputFile.txt'")]
+        public void TestFileInfoPropertyRemoveQuotes(string inputFilePath)
+        {
+            var parser = new CommandLineParser<FileInfoPropertyGood>();
+            var result = parser.ParseArgs(new[] { @"-I:" + inputFilePath, "/S" }, showHelpOnError, outputErrors);
+
+            var parsedInputFilePath = parser.Results.ParsedResults.InputFile;
+            Console.WriteLine("Input file: " + parsedInputFilePath);
+            Assert.IsTrue(result.Success, "Parser did not succeed");
+        }
 
         [Test]
         public void TestFileInfoPropertyFail()
