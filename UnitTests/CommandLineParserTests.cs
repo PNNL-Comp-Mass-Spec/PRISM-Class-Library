@@ -23,7 +23,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey1>();
             var result = parser.ParseArgs(new[] { "-bad-name", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with '-' at start of arg key");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("bad character") && x.Message.Contains("char '-'")), "Error message does not contain \"bad character\" and \"char '-'\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char '-'")),
+                "Error message does not contain \"bad character\" and \"char '-'\"");
         }
 
         [Test]
@@ -32,7 +34,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey2>();
             var result = parser.ParseArgs(new[] { "/bad/name", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with '/' at start of arg key");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("bad character") && x.Message.Contains("char '/'")), "Error message does not contain \"bad character\" and \"char '/'\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char '/'")),
+                "Error message does not contain \"bad character\" and \"char '/'\"");
         }
 
         [Test]
@@ -41,7 +45,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey3>();
             var result = parser.ParseArgs(new[] { "-badname", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with duplicate arg keys");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("duplicate") && x.Message.Contains("badname")), "Error message does not contain \"duplicate\" and \"badname\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("duplicate") && x.Message.Contains("badname")),
+                "Error message does not contain \"duplicate\" and \"badname\"");
         }
 
         [Test]
@@ -50,7 +56,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey4>();
             var result = parser.ParseArgs(new[] { "-NoGood", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with duplicate arg keys");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("duplicate") && x.Message.Contains("NoGood")), "Error message does not contain \"duplicate\" and \"NoGood\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("duplicate") && x.Message.Contains("NoGood")),
+                "Error message does not contain \"duplicate\" and \"NoGood\"");
         }
         [Test]
         public void TestBadKey5()
@@ -58,7 +66,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey5>();
             var result = parser.ParseArgs(new[] { "-bad name", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with ' ' in arg key");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("bad character") && x.Message.Contains("char ' '")), "Error message does not contain \"bad character\" and \"char ' '\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char ' '")),
+                "Error message does not contain \"bad character\" and \"char ' '\"");
         }
 
         [Test]
@@ -67,7 +77,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey6>();
             var result = parser.ParseArgs(new[] { "/bad:name", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with ':' in arg key");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("bad character") && x.Message.Contains("char ':'")), "Error message does not contain \"bad character\" and \"char ':'\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char ':'")),
+                "Error message does not contain \"bad character\" and \"char ':'\"");
         }
 
         [Test]
@@ -76,7 +88,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<BadKey7>();
             var result = parser.ParseArgs(new[] { "-bad=name", "b" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with '=' in arg key");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("bad character") && x.Message.Contains("char '='")), "Error message does not contain \"bad character\" and \"char '='\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char '='")),
+                "Error message does not contain \"bad character\" and \"char '='\"");
         }
 
         private class BadKey1
@@ -240,6 +254,7 @@ namespace PRISMTest
                 "-intArray", "4",
                 "-dblArray", "1.0"
             };
+
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
@@ -309,7 +324,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("minint") && x.Message.Contains("is less than minimum")), "Error message does not contain \"minInt\" and \"is less than minimum\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("minint") && x.Message.Contains("is less than minimum")),
+                "Error message does not contain \"minInt\" and \"is less than minimum\"");
         }
 
         [Test]
@@ -322,7 +339,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("minmaxint") && x.Message.Contains("is less than minimum")), "Error message does not contain \"minMaxInt\" and \"is less than minimum\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("minmaxint") && x.Message.Contains("is less than minimum")),
+                "Error message does not contain \"minMaxInt\" and \"is less than minimum\"");
         }
 
         [Test]
@@ -335,7 +354,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on invalid min type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("minintbad") && x.Message.Contains("cannot cast min or max to type")), "Error message does not contain \"minIntBad\" and \"cannot cast min or max to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("minintbad") && x.Message.Contains("cannot cast min or max to type")),
+                "Error message does not contain \"minIntBad\" and \"cannot cast min or max to type\"");
         }
 
         [Test]
@@ -348,7 +369,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not on invalid type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("minint") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), "Error message does not contain \"minInt\", \"cannot cast\", and \"to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("minint") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                "Error message does not contain \"minInt\", \"cannot cast\", and \"to type\"");
         }
 
         [Test]
@@ -361,7 +384,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on value greater than max");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("maxint") && x.Message.Contains("is greater than maximum")), "Error message does not contain \"maxInt\" and \"is greater than maximum\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("maxint") && x.Message.Contains("is greater than maximum")),
+                "Error message does not contain \"maxInt\" and \"is greater than maximum\"");
         }
 
         [Test]
@@ -374,7 +399,10 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on invalid max type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("maxintbad") && x.Message.Contains("cannot cast min or max to type")), "Error message does not contain \"maxIntBad\" and \"cannot cast min or max to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("maxintbad") &&
+                x.Message.Contains("cannot cast min or max to type")),
+                "Error message does not contain \"maxIntBad\" and \"cannot cast min or max to type\"");
         }
 
         [Test]
@@ -387,7 +415,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not on invalid type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("maxint") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), "Error message does not contain \"maxInt\", \"cannot cast\", and \"to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("maxint") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                "Error message does not contain \"maxInt\", \"cannot cast\", and \"to type\"");
         }
 
         [Test]
@@ -400,7 +430,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("mindbl") && x.Message.Contains("is less than minimum")), "Error message does not contain \"minDbl\" and \"is less than minimum\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("mindbl") && x.Message.Contains("is less than minimum")),
+                "Error message does not contain \"minDbl\" and \"is less than minimum\"");
         }
 
         [Test]
@@ -413,7 +445,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("minmaxdbl") && x.Message.Contains("is less than minimum")), "Error message does not contain \"minMaxDbl\" and \"is less than minimum\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("minmaxdbl") && x.Message.Contains("is less than minimum")),
+                "Error message does not contain \"minMaxDbl\" and \"is less than minimum\"");
         }
 
         [Test]
@@ -426,7 +460,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on invalid min type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("mindblbad") && x.Message.Contains("cannot cast min or max to type")), "Error message does not contain \"minDblBad\" and \"cannot cast min or max to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("mindblbad") && x.Message.Contains("cannot cast min or max to type")),
+                "Error message does not contain \"minDblBad\" and \"cannot cast min or max to type\"");
         }
 
         [Test]
@@ -439,7 +475,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on invalid type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("mindbl") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), "Error message does not contain \"minDbl\", \"cannot cast\", and \"to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("mindbl") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                "Error message does not contain \"minDbl\", \"cannot cast\", and \"to type\"");
         }
 
         [Test]
@@ -452,7 +490,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on value greater than max");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("maxdbl") && x.Message.Contains("is greater than maximum")), "Error message does not contain \"maxDbl\" and \"is greater than maximum\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("maxdbl") && x.Message.Contains("is greater than maximum")),
+                "Error message does not contain \"maxDbl\" and \"is greater than maximum\"");
         }
 
         [Test]
@@ -465,7 +505,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on invalid max type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("maxdblbad") && x.Message.Contains("cannot cast min or max to type")), "Error message does not contain \"maxDblBad\" and \"cannot cast min or max to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("maxdblbad") && x.Message.Contains("cannot cast min or max to type")),
+                "Error message does not contain \"maxDblBad\" and \"cannot cast min or max to type\"");
         }
 
         [Test]
@@ -478,7 +520,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail on invalid type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("maxdbl") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("maxdbl") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
         }
 
         // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
@@ -574,7 +618,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsEnum>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not on invalid type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("2t") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("2t") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
         }
 
         [Test]
@@ -589,7 +635,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsEnum>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not on invalid type");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.ToLower().Contains("2t") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.ToLower().Contains("2t") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
         }
 
         [Test]
@@ -663,7 +711,8 @@ namespace PRISMTest
             var parser3 = new CommandLineParser<OkayKey2>();
             var smooth2Override = 15;
             var okayNameOverride = "A Different Value?";
-            var results3 = parser3.ParseArgs(new[] { "-smooth2", smooth2Override.ToString(), "-okay/name", okayNameOverride, "-ParamFile", paramFileName }).ParsedResults;
+            var results3 = parser3.ParseArgs(
+                new[] { "-smooth2", smooth2Override.ToString(), "-okay/name", okayNameOverride, "-ParamFile", paramFileName }).ParsedResults;
             Assert.AreEqual(results.Smooth, results3.Smooth);
             Assert.AreEqual(smooth2Override, results3.Smooth2);
             Assert.AreEqual(okayNameOverride, results3.OkayName);
@@ -794,7 +843,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgExistsPropertyFail1>();
             var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("null") && x.Message.Contains("boolean")), $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"null\", and \"boolean\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("null") && x.Message.Contains("boolean")),
+                $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"null\", and \"boolean\"");
         }
 
         [Test]
@@ -803,7 +854,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgExistsPropertyFail2>();
             var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with an ArgExistsProperty non-existent property");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")), $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")),
+                $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
         }
 
         [Test]
@@ -812,7 +865,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgExistsPropertyFail3>();
             var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with an ArgExistsProperty non-boolean property");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")), $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")),
+                $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
         }
 
         [Test]
@@ -906,6 +961,7 @@ namespace PRISMTest
             Assert.IsTrue(result.Success, "Parser did not succeed");
         }
 
+
         [Test]
         public void TestFileInfoPropertyFail()
         {
@@ -913,7 +969,7 @@ namespace PRISMTest
             var result = parser.ParseArgs(new[] { "-I", @"..\..\VisibleColors.tsv" }, showHelpOnError, outputErrors);
             Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                                                     x.Message.Contains(nameof(OptionAttribute.IsInputFilePath)) && x.Message.Contains("must be of type")));
+                x.Message.Contains(nameof(OptionAttribute.IsInputFilePath)) && x.Message.Contains("must be of type")));
         }
 
         [Test]
@@ -975,7 +1031,9 @@ namespace PRISMTest
         public void TestUnknownArgumentName()
         {
             var parser = new CommandLineParser<OkayKey2>();
-            var result = parser.ParseArgs(new[] { "-verbose:\"Lots of text for this argument\"", "-smooth:25", "-smooth2:50", "-MaxValue=32" }, showHelpOnError, outputErrors);
+            var result = parser.ParseArgs(
+                new[] { "-verbose:\"Lots of text for this argument\"", "-smooth:25", "-smooth2:50", "-MaxValue=32" },
+                showHelpOnError, outputErrors);
 
             Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
             Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));

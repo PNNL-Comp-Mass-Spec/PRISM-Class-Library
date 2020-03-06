@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 namespace PRISM
 {
     /// <summary>
-    /// Basic class for keeping parameters flags and properties for command line arguments tied together,
+    /// Class for keeping parameters flags and properties for command line arguments tied together,
     /// supporting properties of primitive types (and arrays of primitive types).
     ///
     /// Supports parameter flags similar to /d -dd --dir, with case sensitivity when needed,
@@ -238,6 +238,7 @@ namespace PRISM
         /// <summary>
         /// Get or set the characters allowed at the beginning of an argument specifier
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public IEnumerable<char> ParamFlagCharacters
         {
             get => paramChars;
@@ -333,6 +334,7 @@ namespace PRISM
         /// </summary>
         /// <param name="paramFilePath">Path for the parameter file</param>
         /// <returns>True if the write was successful</returns>
+        // ReSharper disable once UnusedMember.Global
         public bool CreateParamFile(string paramFilePath)
         {
             if (string.IsNullOrWhiteSpace(paramFilePath))
@@ -1235,6 +1237,7 @@ namespace PRISM
         /// </summary>
         /// <param name="propertyName">Property to update (case-sensitive)</param>
         /// <param name="helpText">New help text</param>
+        // ReSharper disable once UnusedMember.Global
         public void UpdatePropertyHelpText(string propertyName, string helpText)
         {
             foreach (var property in GetPropertiesAttributes())
@@ -1252,6 +1255,7 @@ namespace PRISM
         /// <param name="propertyName">Property to update (case-sensitive)</param>
         /// <param name="textToFind">Text to find</param>
         /// <param name="replacementText">Text to use for a replacement</param>
+        // ReSharper disable once UnusedMember.Global
         public void UpdatePropertyHelpText(string propertyName, string textToFind, string replacementText)
         {
             foreach (var property in GetPropertiesAttributes())
