@@ -1823,14 +1823,14 @@ namespace PRISM
                     continue;
                 }
 
-                var attrib = property.GetCustomAttributes(typeof(OptionAttribute), true);
-                var attribList = attrib.ToArray();
-                if (attribList.Length == 0)
+                var attribute = property.GetCustomAttributes(typeof(OptionAttribute), true);
+                var attributeList = attribute.ToArray();
+                if (attributeList.Length == 0)
                 {
                     continue;
                 }
 
-                var optionData = (OptionAttribute)attribList[0];
+                var optionData = (OptionAttribute)attributeList[0];
 
                 // Ignore any duplicates (shouldn't occur anyway)
                 props.Add(property, optionData);
