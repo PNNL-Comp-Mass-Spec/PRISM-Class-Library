@@ -1835,13 +1835,13 @@ namespace PRISM
                 // Ignore any duplicates (shouldn't occur anyway)
                 props.Add(property, optionData);
 
-                if (!string.IsNullOrWhiteSpace(optionData.ArgExistsProperty))
+                if (string.IsNullOrWhiteSpace(optionData.ArgExistsProperty))
+                    continue;
+
+                var match = properties.FirstOrDefault(x => x.Name.Equals(optionData.ArgExistsProperty));
+                if (match != null && match.PropertyType == typeof(bool))
                 {
-                    var match = properties.FirstOrDefault(x => x.Name.Equals(optionData.ArgExistsProperty));
-                    if (match != null && match.PropertyType == typeof(bool))
-                    {
-                        optionData.ArgExistsPropertyInfo = match;
-                    }
+                    optionData.ArgExistsPropertyInfo = match;
                 }
             }
 
