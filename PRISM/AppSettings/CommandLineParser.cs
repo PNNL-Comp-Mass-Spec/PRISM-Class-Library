@@ -688,6 +688,8 @@ namespace PRISM
 
                     if (Results.Success && prop.Value.IsInputFilePath)
                     {
+                        // Assure that the path is not surrounded by single quotes or by double quotes
+                        VerifyPathNotQuoted(prop);
 
                         if (paramFileLoaded)
                         {
@@ -1749,6 +1751,28 @@ namespace PRISM
                 // Silently ignore errors here
             }
         }
+
+        /// <summary>
+        /// Assure that the path is not surrounded by single quotes or by double quotes
+        /// </summary>
+        /// <param name="prop"></param>
+        private void VerifyPathNotQuoted(KeyValuePair<PropertyInfo, OptionAttribute> prop)
+        {
+            try
+            {
+                var fileOrDirectoryPath = (string)prop.Key.GetValue(Results.ParsedResults);
+
+                if (fileOrDirectoryPath.StartsWith("\"") && fileOrDirectoryPath.EndsWith("\""))
+                {
+                    // The path is surrounded by double quotes; remove them
+                    prop.Key.SetValue(Results.ParsedResults, fileOrDirectoryPath.Trim('"'));
+                    return;
+                }
+
+                if (fileOrDirectoryPath.StartsWith("'") && fileOrDirectoryPath.EndsWith("'"))
+                {
+                    // The path is surrounded by single quotes; remove them
+                    prop.Key.SetValue(Results.ParsedResults, fileOrDirectoryPath.Trim('\''));
                 }
             }
             catch
