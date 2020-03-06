@@ -686,11 +686,16 @@ namespace PRISM
                         Results.Failed();
                     }
 
-                    if (Results.Success && paramFileLoaded && prop.Value.IsInputFilePath && paramFileDirectory != null)
+                    if (Results.Success && prop.Value.IsInputFilePath)
                     {
-                        // The current property specifies a file path
-                        // Auto-fix the path if the file does not exist in the working directory, but does exist in the parameter file's directory
-                        VerifyFilePath(prop, paramFileDirectory);
+
+                        if (paramFileLoaded)
+                        {
+                            // The current property specifies a file path
+                            // Auto-update it if the file is not located in the current working directory
+                            // Only do this if this path was read from a parameter file (and if it's not rooted)
+                            VerifyFileOrDirectoryPath(prop, paramFileDirectory);
+                        }
                     }
                 }
             }
@@ -1703,21 +1708,26 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Look for the file specified by the given property (whose type is string)
-        /// If the file does not exist in the working directory, but does exist in paramFileDirectory, auto-update the path
+        /// Look for the file (or directory) specified by the given property (whose type is string)
+        /// If the item does not exist in the working directory, but does exist in paramFileDirectory, auto-update the path
         /// </summary>
         /// <param name="prop"></param>
         /// <param name="paramFileDirectory"></param>
-        private void VerifyFilePath(KeyValuePair<PropertyInfo, OptionAttribute> prop, FileSystemInfo paramFileDirectory)
+        private void VerifyFileOrDirectoryPath(KeyValuePair<PropertyInfo, OptionAttribute> prop, FileSystemInfo paramFileDirectory)
         {
             try
             {
-                var filePath = (string)prop.Key.GetValue(Results.ParsedResults);
-                if (Path.IsPathRooted(filePath))
+                var fileOrDirectoryPath = (string)prop.Key.GetValue(Results.ParsedResults);
+
+                if (Path.IsPathRooted(fileOrDirectoryPath) || paramFileDirectory == null)
                     return;
 
-                var fileToFind = new FileInfo(filePath);
+                var fileToFind = new FileInfo(fileOrDirectoryPath);
                 if (fileToFind.Exists)
+                    return;
+
+                var directoryToFind = new DirectoryInfo(fileOrDirectoryPath);
+                if (directoryToFind.Exists)
                     return;
 
                 var alternatePath = Path.Combine(paramFileDirectory.FullName, fileToFind.Name);
@@ -1725,6 +1735,20 @@ namespace PRISM
                 if (alternateInputFile.Exists)
                 {
                     prop.Key.SetValue(Results.ParsedResults, alternateInputFile.FullName);
+                    return;
+                }
+
+                var alternateInputDirectory = new DirectoryInfo(alternatePath);
+                if (alternateInputDirectory.Exists)
+                {
+                    prop.Key.SetValue(Results.ParsedResults, alternateInputDirectory.FullName);
+                }
+            }
+            catch
+            {
+                // Silently ignore errors here
+            }
+        }
                 }
             }
             catch
@@ -1893,13 +1917,14 @@ namespace PRISM
         public bool Hidden { get; set; }
 
         /// <summary>
-        /// Set to 'true' for properties that specify an input file path
+        /// Set to 'true' for properties that specify an input file path (or input directory path)
         /// </summary>
         /// <remarks>
-        /// If a parameter file is specified (using -ParamFile:Options.conf), the command line parser
-        /// will process IsInputFilePath properties to look for files in the working directory.
-        /// If the file is not found, the parser will also look for the file in the directory with the parameter file,
-        /// and if the input file is found there, the path stored in the property will be updated.
+        /// If the path stored in this parameter is surrounded by double quotes or by single quotes, those quotes will be auto-removed
+        /// Furthermore, if a parameter file is specified (using -ParamFile:Options.conf), the command line parser
+        /// will process IsInputFilePath properties to look for files (or directories) in the working directory.
+        /// If the file (or directory) is not found, the parser will also look for the file (or directory) in the directory with the parameter file,
+        /// and if the item is found there, the path stored in the property will be updated.
         /// </remarks>
         public bool IsInputFilePath { get; set; }
 
