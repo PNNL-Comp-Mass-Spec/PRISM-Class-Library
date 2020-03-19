@@ -498,7 +498,6 @@ namespace PRISM.FileProcessor
                 return false;
             }
 
-
         }
 
         private bool RecurseDirectoriesWork(
@@ -643,21 +642,21 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update the base class error code
         /// </summary>
-        /// <param name="eNewErrorCode"></param>
-        protected void SetBaseClassErrorCode(ProcessDirectoriesErrorCodes eNewErrorCode)
+        /// <param name="newErrorCode"></param>
+        protected void SetBaseClassErrorCode(ProcessDirectoriesErrorCodes newErrorCode)
         {
-            ErrorCode = eNewErrorCode;
+            ErrorCode = newErrorCode;
         }
 
         // The following functions should be placed in any derived class
         // Cannot define as MustOverride since it contains a customized enumerated type (eDerivedClassErrorCodes) in the function declaration
         //
-        //private void SetLocalErrorCode(eDerivedClassErrorCodes eNewErrorCode)
+        //private void SetLocalErrorCode(eDerivedClassErrorCodes newErrorCode)
         //{
-        //    SetLocalErrorCode(eNewErrorCode, false);
+        //    SetLocalErrorCode(newErrorCode, false);
         //}
 
-        //private void SetLocalErrorCode(eDerivedClassErrorCodes eNewErrorCode, bool leaveExistingErrorCodeUnchanged)
+        //private void SetLocalErrorCode(eDerivedClassErrorCodes newErrorCode, bool leaveExistingErrorCodeUnchanged)
         //{
         //    if (leaveExistingErrorCodeUnchanged && mLocalErrorCode != eDerivedClassErrorCodes.NoError)
         //    {
@@ -665,9 +664,9 @@ namespace PRISM.FileProcessor
         //    }
         //    else
         //    {
-        //        mLocalErrorCode = eNewErrorCode;
+        //        mLocalErrorCode = newErrorCode;
 
-        //        if (eNewErrorCode == eDerivedClassErrorCodes.NoError)
+        //        if (newErrorCode == eDerivedClassErrorCodes.NoError)
         //        {
         //            if (base.ErrorCode == ProcessDirectoriesBase.ProcessDirectoriesErrorCodes.LocalizedError)
         //            {

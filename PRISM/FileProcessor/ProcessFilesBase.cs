@@ -549,11 +549,12 @@ namespace PRISM.FileProcessor
         /// <param name="maxLevelsToRecurse">Levels to recurse, 0 or negative to process all subdirectories</param>
         /// <returns>True if success, false if an error</returns>
         public bool ProcessFilesAndRecurseDirectories(
-            string inputFilePathOrDirectory, string outputDirectoryName, string outputDirectoryAlternatePath,
+            string inputFilePathOrDirectory, string outputDirectoryNameOrPath, string outputDirectoryAlternatePath,
             bool recreateDirectoryHierarchyInAlternatePath, string parameterFilePath = "", int maxLevelsToRecurse = 0)
         {
             return ProcessFilesAndRecurseDirectories(
-                inputFilePathOrDirectory, outputDirectoryName, outputDirectoryAlternatePath, recreateDirectoryHierarchyInAlternatePath,
+                inputFilePathOrDirectory, outputDirectoryNameOrPath,
+                outputDirectoryAlternatePath, recreateDirectoryHierarchyInAlternatePath,
                 parameterFilePath, maxLevelsToRecurse, GetDefaultExtensionsToParse());
         }
 
@@ -578,7 +579,7 @@ namespace PRISM.FileProcessor
         /// </remarks>
         public bool ProcessFilesAndRecurseDirectories(
             string inputFilePathOrDirectory,
-            string outputDirectoryName,
+            string outputDirectoryNameOrPath,
             string outputDirectoryAlternatePath,
             bool recreateDirectoryHierarchyInAlternatePath,
             string parameterFilePath,
@@ -661,7 +662,7 @@ namespace PRISM.FileProcessor
 
                 // Call RecurseDirectoriesWork
                 const int recursionLevel = 1;
-                var success = RecurseDirectoriesWork(inputDirectory.FullName, fileNameMatchPattern, outputDirectoryName,
+                var success = RecurseDirectoriesWork(inputDirectory.FullName, fileNameMatchPattern, outputDirectoryNameOrPath,
                                                      parameterFilePath, outputDirectoryAlternatePath,
                                                      recreateDirectoryHierarchyInAlternatePath, extensionsToParse,
                                                      recursionLevel, maxLevelsToRecurse);
@@ -679,7 +680,7 @@ namespace PRISM.FileProcessor
         private bool RecurseDirectoriesWork(
             string inputDirectoryPath,
             string fileNameMatch,
-            string outputDirectoryName,
+            string outputDirectoryNameOrPath,
             string parameterFilePath,
             string outputDirectoryAlternatePath,
             bool recreateDirectoryHierarchyInAlternatePath,
@@ -716,11 +717,11 @@ namespace PRISM.FileProcessor
                         outputDirectoryAlternatePath = Path.Combine(outputDirectoryAlternatePath, inputDirectory.Name);
                     }
 
-                    outputDirectoryPathToUse = Path.Combine(outputDirectoryAlternatePath, outputDirectoryName);
+                    outputDirectoryPathToUse = Path.Combine(outputDirectoryAlternatePath, outputDirectoryNameOrPath);
                 }
                 else
                 {
-                    outputDirectoryPathToUse = outputDirectoryName;
+                    outputDirectoryPathToUse = outputDirectoryNameOrPath;
                 }
             }
             catch (Exception ex)
@@ -861,7 +862,7 @@ namespace PRISM.FileProcessor
             // Call this function for each of the subdirectories of inputDirectory
             foreach (var subdirectory in inputDirectory.GetDirectories())
             {
-                var success = RecurseDirectoriesWork(subdirectory.FullName, fileNameMatch, outputDirectoryName,
+                var success = RecurseDirectoriesWork(subdirectory.FullName, fileNameMatch, outputDirectoryNameOrPath,
                                                      parameterFilePath, outputDirectoryAlternatePath,
                                                      recreateDirectoryHierarchyInAlternatePath, extensionsToParse,
                                                      recursionLevel + 1, maxLevelsToRecurse);
@@ -876,21 +877,21 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update the base class error code
         /// </summary>
-        /// <param name="eNewErrorCode"></param>
-        protected void SetBaseClassErrorCode(ProcessFilesErrorCodes eNewErrorCode)
+        /// <param name="newErrorCode"></param>
+        protected void SetBaseClassErrorCode(ProcessFilesErrorCodes newErrorCode)
         {
-            ErrorCode = eNewErrorCode;
+            ErrorCode = newErrorCode;
         }
 
         // The following functions should be placed in any derived class
         // Cannot define as abstract since it contains a customized enumerated type (eDerivedClassErrorCodes) in the function declaration
 
-        // private void SetLocalErrorCode(eDerivedClassErrorCodes eNewErrorCode)
+        // private void SetLocalErrorCode(eDerivedClassErrorCodes newErrorCode)
         // {
-        //     SetLocalErrorCode(eNewErrorCode, false);
+        //     SetLocalErrorCode(newErrorCode, false);
         // }
         //
-        // private void SetLocalErrorCode(eDerivedClassErrorCodes eNewErrorCode, bool leaveExistingErrorCodeUnchanged)
+        // private void SetLocalErrorCode(eDerivedClassErrorCodes newErrorCode, bool leaveExistingErrorCodeUnchanged)
         // {
         //     if (leaveExistingErrorCodeUnchanged && mLocalErrorCode != eDerivedClassErrorCodes.NoError)
         //     {
@@ -898,9 +899,9 @@ namespace PRISM.FileProcessor
         //     }
         //     else
         //     {
-        //         mLocalErrorCode = eNewErrorCode;
+        //         mLocalErrorCode = newErrorCode;
         //
-        //         if (eNewErrorCode == eDerivedClassErrorCodes.NoError)
+        //         if (newErrorCode == eDerivedClassErrorCodes.NoError)
         //         {
         //             if (base.ErrorCode == ProcessFilesBase.ProcessFilesErrorCodes.LocalizedError)
         //             {
