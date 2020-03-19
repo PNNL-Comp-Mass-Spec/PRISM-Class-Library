@@ -21,7 +21,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessDirectoriesBase()
         {
-            mFileDate = "October 15, 2018";
+            mFileDate = "March 18, 2020";
             ErrorCode = ProcessDirectoriesErrorCodes.NoError;
         }
 
@@ -116,7 +116,6 @@ namespace PRISM.FileProcessor
         /// Error code reflecting processing outcome
         /// </summary>
         public ProcessDirectoriesErrorCodes ErrorCode { get; set; }
-
 
         /// <summary>
         /// Number of directories processed successfully when using ProcessAndRecurseDirectories or ProcessDirectoriesWildcard
