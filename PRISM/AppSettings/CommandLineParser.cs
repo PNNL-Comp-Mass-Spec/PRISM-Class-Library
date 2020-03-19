@@ -1724,14 +1724,14 @@ namespace PRISM
                 // Replace wildcard characters with underscores
                 var cleanFileOrDirectoryPath = PathUtils.GetCleanPath(fileOrDirectoryPath);
 
-                if (Path.IsPathRooted(fileOrDirectoryPath) || paramFileDirectory == null)
+                if (Path.IsPathRooted(cleanFileOrDirectoryPath) || paramFileDirectory == null)
                     return;
 
-                var fileToFind = new FileInfo(fileOrDirectoryPath);
+                var fileToFind = new FileInfo(cleanFileOrDirectoryPath);
                 if (fileToFind.Exists)
                     return;
 
-                var directoryToFind = new DirectoryInfo(fileOrDirectoryPath);
+                var directoryToFind = new DirectoryInfo(cleanFileOrDirectoryPath);
                 if (directoryToFind.Exists)
                     return;
 
