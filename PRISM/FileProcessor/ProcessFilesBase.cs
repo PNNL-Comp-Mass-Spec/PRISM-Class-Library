@@ -867,8 +867,10 @@ namespace PRISM.FileProcessor
                                                      recreateDirectoryHierarchyInAlternatePath, extensionsToParse,
                                                      recursionLevel + 1, maxLevelsToRecurse);
 
-                if (!success)
+                if (!success && !IgnoreErrorsWhenUsingWildcardMatching)
+                {
                     return false;
+                }
             }
 
             return true;
