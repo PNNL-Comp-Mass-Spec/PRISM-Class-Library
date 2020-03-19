@@ -802,16 +802,21 @@ namespace PRISM
                 var lines = GetParamFileContents();
                 if (isFile)
                 {
-                    File.WriteAllLines(paramFilePath, lines);
+                    var paramFile = new FileInfo(paramFilePath);
+                    File.WriteAllLines(paramFile.FullName, lines);
                 }
                 else
                 {
                     Console.WriteLine();
                     Console.WriteLine("##### Example parameter file contents: #####");
+                    Console.WriteLine();
+
                     foreach (var line in lines)
                     {
                         Console.WriteLine(line);
                     }
+
+                    Console.WriteLine();
                     Console.WriteLine("##### End Example parameter file contents: #####");
                     Console.WriteLine();
                 }
@@ -829,15 +834,32 @@ namespace PRISM
         private IEnumerable<string> GetParamFileContents()
         {
             var lines = new List<string>();
+            var commentsProcessed = 0;
 
             var props = GetPropertiesAttributes();
+
             foreach (var prop in props.OrderByDescending(x => x.Value.Required))
             {
                 if (prop.Value.Hidden)
                 {
                     continue;
                 }
-                lines.Add("# " + (prop.Value.Required ? "Required: " : "") + prop.Value.HelpText.Replace("\n", "\n# "));
+
+                // Construct the comment description, e.g.
+                // # Required: The name of the input file
+                // or
+                // # When true, log messages to a file
+
+                // Parameter comments after the first comment will be preceded by a newline
+
+                var paramComment = string.Format(
+                    "{0}# {1}{2}",
+                    commentsProcessed == 0 ? string.Empty : "\n",
+                    prop.Value.Required ? "Required: " : string.Empty,
+                    prop.Value.HelpText.Replace("\n", "\n# "));
+
+                lines.Add(paramComment);
+
                 var key = prop.Value.ParamKeys[0];
                 if (prop.Key.PropertyType.IsArray)
                 {
@@ -852,6 +874,8 @@ namespace PRISM
                     var value = prop.Key.GetValue(Results.ParsedResults);
                     lines.Add(string.Format("{0}={1}", key, value));
                 }
+
+                commentsProcessed++;
             }
 
             return lines;
