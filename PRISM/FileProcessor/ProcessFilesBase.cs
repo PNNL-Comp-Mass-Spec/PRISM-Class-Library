@@ -734,8 +734,13 @@ namespace PRISM.FileProcessor
 
             try
             {
+                if (extensionsToParse.Count == 0)
+                {
+                    processAllExtensions = true;
+                }
+
                 // Validate extensionsToParse()
-                for (var extensionIndex = 0; extensionIndex <= extensionsToParse.Count - 1; extensionIndex++)
+                for (var extensionIndex = 0; extensionIndex < extensionsToParse.Count; extensionIndex++)
                 {
                     if (extensionsToParse[extensionIndex] == null)
                     {
