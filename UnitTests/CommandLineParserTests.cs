@@ -872,10 +872,18 @@ namespace PRISMTest
             results.Verbose = "Concise";
 
             var paramFileName = "exampleParams.txt";
-            parser.CreateParamFile(paramFileName);
+            var paramFile = new FileInfo(paramFileName);
+
+            parser.CreateParamFile(paramFile.FullName);
+
+            using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                var contents = reader.ReadToEnd();
+                Console.WriteLine(contents);
+            }
 
             var parser2 = new CommandLineParser<OkayKey2>();
-            var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFileName }).ParsedResults;
+            var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
             Assert.AreEqual(results.Smooth, results2.Smooth);
             Assert.AreEqual(results.Smooth2, results2.Smooth2);
             Assert.AreEqual(results.OkayName, results2.OkayName);
