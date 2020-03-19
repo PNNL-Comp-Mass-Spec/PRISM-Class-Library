@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using PRISM.Logging;
 
 namespace PRISM.FileProcessor
 {
@@ -365,7 +366,7 @@ namespace PRISM.FileProcessor
 
                 mLastCheckOldLogs = DateTime.UtcNow;
 
-                var archiveWarnings = Logging.FileLogger.ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX);
+                var archiveWarnings = FileLogger.ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX);
 
                 foreach (var warning in archiveWarnings)
                 {
@@ -666,15 +667,6 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
-        /// Returns the entry assembly, if it is unavailable, returns the executing assembly
-        /// </summary>
-        /// <returns></returns>
-        public static Assembly GetEntryOrExecutingAssembly()
-        {
-            return Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-        }
-
-        /// <summary>
         /// Returns the .NET assembly version followed by the program date
         /// </summary>
         /// <param name="programDate"></param>
@@ -698,6 +690,15 @@ namespace PRISM.FileProcessor
             }
 
             return mLogFileBasePath + "_" + date.ToString(LOG_FILE_TIMESTAMP_FORMAT) + LOG_FILE_EXTENSION;
+        }
+
+        /// <summary>
+        /// Returns the entry assembly, if it is unavailable, returns the executing assembly
+        /// </summary>
+        /// <returns></returns>
+        public static Assembly GetEntryOrExecutingAssembly()
+        {
+            return Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
         }
 
         /// <summary>
