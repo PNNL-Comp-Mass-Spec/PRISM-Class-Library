@@ -235,7 +235,7 @@ namespace PRISM.FileProcessor
         private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)
         {
             // Copy the path into cleanPath and replace any * or ? characters with _
-            var cleanPath = inputDirectoryPathSpec.Replace("*", "_").Replace("?", "_");
+            var cleanPath = PathUtils.GetCleanPath(inputDirectoryPathSpec);
 
             var inputDirectorySpec = new DirectoryInfo(cleanPath);
             string inputDirectoryToUse;

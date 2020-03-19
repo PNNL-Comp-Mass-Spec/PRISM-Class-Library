@@ -120,7 +120,7 @@ namespace PRISM
         /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         public static List<FileInfo> FindFilesWildcard(string pathSpec, bool recurse = false)
         {
-            var cleanPath = pathSpec.Replace("*", "_").Replace("?", "_");
+            var cleanPath = GetCleanPath(pathSpec);
 
             var cleanFileInfo = new FileInfo(cleanPath);
             string directoryPath;
@@ -189,6 +189,16 @@ namespace PRISM
             var convertedMask = "^" + Regex.Escape(fileMask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
             var regexMask = new Regex(convertedMask, RegexOptions.IgnoreCase);
             return regexMask.IsMatch(fileName);
+        }
+
+        /// <summary>
+        /// Replace * and ? characters in fileOrDirectoryPath with underscores
+        /// </summary>
+        /// <param name="fileOrDirectoryPath"></param>
+        /// <returns></returns>
+        public static string GetCleanPath(string fileOrDirectoryPath)
+        {
+            return fileOrDirectoryPath.Replace("*", "_").Replace("?", "_");
         }
 
         /// <summary>

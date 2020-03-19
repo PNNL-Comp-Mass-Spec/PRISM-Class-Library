@@ -318,7 +318,7 @@ namespace PRISM.FileProcessor
         {
 
             // Copy the path into cleanPath and replace any * or ? characters with _
-            var cleanPath = inputFilePathSpec.Replace("*", "_").Replace("?", "_");
+            var cleanPath = PathUtils.GetCleanPath(inputFilePathSpec);
 
             var inputFileSpec = new FileInfo(cleanPath);
             string inputDirectoryToUse;

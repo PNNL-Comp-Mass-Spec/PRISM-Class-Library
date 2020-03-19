@@ -1721,6 +1721,9 @@ namespace PRISM
             {
                 var fileOrDirectoryPath = (string)prop.Key.GetValue(Results.ParsedResults);
 
+                // Replace wildcard characters with underscores
+                var cleanFileOrDirectoryPath = PathUtils.GetCleanPath(fileOrDirectoryPath);
+
                 if (Path.IsPathRooted(fileOrDirectoryPath) || paramFileDirectory == null)
                     return;
 
