@@ -21,7 +21,7 @@ namespace PRISM.FileProcessor
         /// <remarks></remarks>
         protected ProcessFilesBase()
         {
-            mFileDate = "October 10, 2018";
+            mFileDate = "March 18, 2020";
             ErrorCode = ProcessFilesErrorCodes.NoError;
         }
 
@@ -505,13 +505,17 @@ namespace PRISM.FileProcessor
         /// If a directory path, or if empty, processes files with known entries in the working directory
         /// If a file path, will process matching files, ignoring the default extensions and ignoring extensionsToParse
         /// </param>
-        /// <param name="outputDirectoryName">Output directory name</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <returns>True if success, false if an error</returns>
         /// <returns></returns>
-        public bool ProcessFilesAndRecurseDirectories(string inputFilePathOrDirectory, string outputDirectoryName = "", string parameterFilePath = "")
+        public bool ProcessFilesAndRecurseDirectories(
+            string inputFilePathOrDirectory, string outputDirectoryPath = "", string parameterFilePath = "")
         {
-            return ProcessFilesAndRecurseDirectories(inputFilePathOrDirectory, outputDirectoryName, string.Empty, false, parameterFilePath);
+            return ProcessFilesAndRecurseDirectories(
+                inputFilePathOrDirectory, outputDirectoryPath,
+                string.Empty, false,
+                parameterFilePath);
         }
 
         /// <summary>
@@ -522,16 +526,45 @@ namespace PRISM.FileProcessor
         /// If a directory path, or if empty, processes files with known entries in the working directory
         /// If a file path, will process matching files, ignoring the default extensions and ignoring extensionsToParse
         /// </param>
-        /// <param name="outputDirectoryName">Output directory name</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
+        /// <param name="maxLevelsToRecurse">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
+        /// <returns>True if success, false if an error</returns>
+        public bool ProcessFilesAndRecurseDirectories(
+            string inputFilePathOrDirectory, string outputDirectoryPath, int maxLevelsToRecurse)
+        {
+            return ProcessFilesAndRecurseDirectories(
+                inputFilePathOrDirectory, outputDirectoryPath,
+                string.Empty, false,
+                string.Empty, maxLevelsToRecurse,
+                GetDefaultExtensionsToParse());
+        }
+
+        /// <summary>
+        /// Process files in a directory and in its subdirectories
+        /// </summary>
+        /// <param name="inputFilePathOrDirectory">
+        /// Input directory or directory (supports wildcards)
+        /// If a directory path, or if empty, processes files with known entries in the working directory
+        /// If a file path, will process matching files, ignoring the default extensions and ignoring extensionsToParse
+        /// </param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="extensionsToParse">List of file extensions to parse</param>
         /// <returns>True if success, false if an error</returns>
         /// <returns></returns>
         public bool ProcessFilesAndRecurseDirectories(
-            string inputFilePathOrDirectory, string outputDirectoryName,
+            string inputFilePathOrDirectory, string outputDirectoryPath,
             string parameterFilePath, IList<string> extensionsToParse)
         {
-            return ProcessFilesAndRecurseDirectories(inputFilePathOrDirectory, outputDirectoryName, string.Empty, false, parameterFilePath, 0, extensionsToParse);
+            return ProcessFilesAndRecurseDirectories(
+                inputFilePathOrDirectory, outputDirectoryPath,
+                string.Empty, false,
+                parameterFilePath, 0,
+                extensionsToParse);
         }
 
         /// <summary>
@@ -542,11 +575,18 @@ namespace PRISM.FileProcessor
         /// If a directory path, or if empty, processes files with known entries in the working directory
         /// If a file path, will process matching files, ignoring the default extensions and ignoring extensionsToParse
         /// </param>
-        /// <param name="outputDirectoryName">Output directory name</param>
+        /// <param name="outputDirectoryNameOrPath">
+        /// If outputDirectoryAlternatePath is empty, this is the output directory path
+        /// If outputDirectoryAlternatePath is defined, this is the output directory name
+        /// </param>
         /// <param name="outputDirectoryAlternatePath">Output directory alternate path</param>
         /// <param name="recreateDirectoryHierarchyInAlternatePath">Recreate directory hierarchy in alternate path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
-        /// <param name="maxLevelsToRecurse">Levels to recurse, 0 or negative to process all subdirectories</param>
+        /// <param name="maxLevelsToRecurse">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
         /// <returns>True if success, false if an error</returns>
         public bool ProcessFilesAndRecurseDirectories(
             string inputFilePathOrDirectory, string outputDirectoryNameOrPath, string outputDirectoryAlternatePath,
@@ -566,11 +606,18 @@ namespace PRISM.FileProcessor
         /// If a directory path, or if empty, processes files with known entries in the working directory
         /// If a file path, will process matching files, ignoring the default extensions and ignoring extensionsToParse
         /// </param>
-        /// <param name="outputDirectoryName">Output directory name</param>
+        /// <param name="outputDirectoryNameOrPath">
+        /// If outputDirectoryAlternatePath is empty, this is the output directory path
+        /// If outputDirectoryAlternatePath is defined, this is the output directory name
+        /// </param>
         /// <param name="outputDirectoryAlternatePath">Output directory alternate path</param>
         /// <param name="recreateDirectoryHierarchyInAlternatePath">Recreate directory hierarchy in alternate path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
-        /// <param name="maxLevelsToRecurse">Levels to recurse, 0 or negative to process all subdirectories</param>
+        /// <param name="maxLevelsToRecurse">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
         /// <param name="extensionsToParse">List of file extensions to parse</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
@@ -677,6 +724,30 @@ namespace PRISM.FileProcessor
 
         }
 
+        /// <summary>
+        /// Process files in a directory and in its subdirectories
+        /// </summary>
+        /// <param name="inputDirectoryPath">Path to the directory with files to process</param>
+        /// <param name="fileNameMatch">File name or file spec to process</param>
+        /// <param name="outputDirectoryNameOrPath">
+        /// If outputDirectoryAlternatePath is empty, this is the output directory path
+        /// If outputDirectoryAlternatePath is defined, this is the output directory name
+        /// </param>
+        /// <param name="parameterFilePath">Optional parameter file path; loading of parameters is handled by classes that inherit this base class</param>
+        /// <param name="outputDirectoryAlternatePath">Output directory alternate path; primarily useful if recreateDirectoryHierarchyInAlternatePath is true</param>
+        /// <param name="recreateDirectoryHierarchyInAlternatePath">Recreate directory hierarchy in alternate path</param>
+        /// <param name="extensionsToParse">
+        /// List of file extensions to process
+        /// If the list is empty, or if it contains "*" or ".*", process all files
+        /// Otherwise, a list of extensions to process, e.g. ".txt" and ".tsv"
+        /// </param>
+        /// <param name="recursionLevel">Current level of recursion</param>
+        /// <param name="maxLevelsToRecurse">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
+        /// <returns>True if success, false if an error</returns>
         private bool RecurseDirectoriesWork(
             string inputDirectoryPath,
             string fileNameMatch,

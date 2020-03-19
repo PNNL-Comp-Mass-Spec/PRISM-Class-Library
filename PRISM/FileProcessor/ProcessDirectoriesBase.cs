@@ -420,7 +420,11 @@ namespace PRISM.FileProcessor
         /// <param name="inputDirectoryPath">Input directory path (supports wildcards)</param>
         /// <param name="outputDirectoryAlternatePath">Alternate directory directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
-        /// <param name="maxLevelsToRecurse">If 0 or negative, recurse infinitely</param>
+        /// <param name="maxLevelsToRecurse">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
         /// <returns></returns>
         /// <remarks>Calls ProcessDirectories for all matching directories in inputDirectoryPath</remarks>
         public bool ProcessAndRecurseDirectories(
@@ -434,7 +438,6 @@ namespace PRISM.FileProcessor
 
             DirectoriesProcessed = 0;
             DirectoryProcessErrors = 0;
-
 
             // Examine inputDirectoryPath to see if it contains a * or ?
             try
