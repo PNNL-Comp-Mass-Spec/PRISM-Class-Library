@@ -54,8 +54,8 @@ namespace PRISMTest
 
         [TestCase(false, "")]
         [TestCase(true, "")]
-        [TestCase(false, "_acqDate:Date,_acqTime:DateTime,_acqInfo:Xml,_status:TinyInt")]
-        [TestCase(true, "_acqDate:Date,_acqTime:DateTime,_acqInfo:Xml,_status:TinyInt")]
+        [TestCase(false, "_acqDate:Date,_acqTime:DateTime,_acqInfo:XML,_status:TinyInt")]
+        [TestCase(true, "_acqDate:Date,_acqTime:DateTime,_acqInfo:XML,_status:TinyInt")]
         public void TestAddParameter(bool usePostgres, string parameterList)
         {
             var server = "DbServer";
@@ -95,7 +95,7 @@ namespace PRISMTest
 
         [TestCase(false, "")]
         [TestCase( true, "")]
-        [TestCase( true, "_acqDate:Date,_acqTime:Time,_acqInfo:Json,_status:Bit")]
+        [TestCase( true, "_acqDate:Date,_acqTime:Time,_acqInfo:JSON,_status:Bit")]
         public void TestAddPgSqlParameter(bool usePostgres, string parameterList)
         {
             var server = "DbServer";
