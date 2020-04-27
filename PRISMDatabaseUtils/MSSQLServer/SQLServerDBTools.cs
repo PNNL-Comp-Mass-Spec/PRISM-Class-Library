@@ -287,7 +287,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
             {
-                while (retryCount > 0)
+                while (true)
                 {
                     try
                     {
@@ -616,7 +616,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
             {
-                while (retryCount > 0)
+                while (true)
                 {
                     try
                     {

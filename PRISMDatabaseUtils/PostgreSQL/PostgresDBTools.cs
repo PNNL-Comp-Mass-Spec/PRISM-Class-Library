@@ -291,7 +291,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             var msg = new StringBuilder();
             var notice = args.Notice;
 
-            if (notice.InvariantSeverity.Equals("NOTICE") &&
+            if (notice.Routine != null &&
+                notice.InvariantSeverity.Equals("NOTICE") &&
                 notice.Routine.Equals("DropErrorMsgNonExistent", StringComparison.OrdinalIgnoreCase))
             {
                 // Example message: "table \"tmp_mgr_params\" does not exist, skipping"
@@ -404,7 +405,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
             {
-                while (retryCount > 0)
+                while (true)
                 {
                     try
                     {
@@ -735,7 +736,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
             {
-                while (retryCount > 0)
+                while (true)
                 {
                     try
                     {
