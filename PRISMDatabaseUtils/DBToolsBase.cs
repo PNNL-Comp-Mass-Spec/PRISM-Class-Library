@@ -6,6 +6,9 @@ using PRISM;
 
 namespace PRISMDatabaseUtils
 {
+    /// <summary>
+    /// Base class for SQLServerDBTools and PostgresDBTools, which are used to retrieve data from a database or run stored procedures
+    /// </summary>
     public abstract class DBToolsBase : EventNotifier
     {
         private static readonly Regex mIntegerMatcher = new Regex(@"\d+", RegexOptions.Compiled);
@@ -45,7 +48,21 @@ namespace PRISMDatabaseUtils
             object value,
             ParameterDirection direction = ParameterDirection.Input);
 
-        protected DbParameter AddParameterByDataTypeName(DbCommand command, string name, string dataTypeName, int size, ParameterDirection direction)
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dataTypeName">Database data type name</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        protected DbParameter AddParameterByDataTypeName(
+            DbCommand command,
+            string name,
+            string dataTypeName,
+            int size,
+            ParameterDirection direction)
         {
 
             var success = GetSqlTypeByDataTypeName(dataTypeName, out var dataType, out var supportsSize);
@@ -358,6 +375,11 @@ namespace PRISMDatabaseUtils
             }
         }
 
+        /// <summary>
+        /// Determine the return code to report after calling a stored procedure or function
+        /// </summary>
+        /// <param name="cmdParameters"></param>
+        /// <returns></returns>
         protected int GetReturnCode(DbParameterCollection cmdParameters)
         {
             foreach (DbParameter parameter in cmdParameters)
@@ -379,7 +401,6 @@ namespace PRISMDatabaseUtils
                         var matchValue = int.Parse(match.Value);
                         if (matchValue != 0)
                             return matchValue;
-
                     }
 
                     return DbUtilsConstants.RET_VAL_UNDEFINED_ERROR;

@@ -154,7 +154,7 @@
         UUID,
 
         /// <summary>
-        /// 4-byte int
+        /// Used to store XML (Extensible Markup Language) data
         /// </summary>
         XML,
 
