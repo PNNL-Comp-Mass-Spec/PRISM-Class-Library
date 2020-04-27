@@ -36,6 +36,8 @@ Namespace FolderBrowser
 
 #End Region
 
+        ' ReSharper disable UnusedMember.Global
+
         ''' <summary>
         ''' Show a window to allow the user to choose a folder
         ''' </summary>
@@ -110,68 +112,86 @@ End Namespace
 Namespace Files.Forms
 
 #Region "BrowseFlags Enum"
+    ' ReSharper disable CommentTypo
+
     ''' <summary>
     ''' Flags that control display and behaviour of folder browse dialog
     ''' </summary>
-    <Flags()> _
+    <Flags()>
     Public Enum BrowseFlags As Integer
         ''' <summary>
         ''' Same as BIF_RETURNONLYFSDIRS
         ''' </summary>
         ReturnOnlyFSDirs = &H1
+
         ''' <summary>
         ''' Same as BIF_DONTGOBELOWDOMAIN
         ''' </summary>
         DontGoBelowDomain = &H2
+
         ''' <summary>
         ''' Same as BIF_STATUSTEXT
         ''' </summary>
         ShowStatusText = &H4
+
+        ' ReSharper disable once IdentifierTypo
         ''' <summary>
         ''' Same as BIF_RETURNFSANCESTORS
         ''' </summary>
         ReturnFSancestors = &H8
+
         ''' <summary>
         ''' Same as BIF_EDITBOX
         ''' </summary>
         EditBox = &H10
+
         ''' <summary>
         ''' Same as BIF_VALIDATE
         ''' </summary>
         Validate = &H20
+
         ''' <summary>
         ''' Same as BIF_NEWDIALOGSTYLE
         ''' </summary>
         NewDialogStyle = &H40
+
         ''' <summary>
         ''' Same as BIF_BROWSEINCLUDEURLS
         ''' </summary>
         BrowseIncludeURLs = &H80
+
         ''' <summary>
         ''' Same as BIF_UAHINT
         ''' </summary>
         AddUsageHint = &H100
+
         ''' <summary>
         ''' Same as BIF_NONEWFOLDERBUTTON
         ''' </summary>
         NoNewFolderButton = &H200
+
         ''' <summary>
         ''' Same as BIF_BROWSEFORCOMPUTER
         ''' </summary>
         BrowseForComputer = &H1000
+
         ''' <summary>
         ''' Same as BIF_BROWSEFORPRINTER
         ''' </summary>
         BrowseForPrinter = &H2000
+
         ''' <summary>
         ''' Same as BIF_BROWSEINCLUDEFILES
         ''' </summary>
         IncludeFiles = &H4000
+
         ''' <summary>
         ''' Same as BIF_SHAREABLE
         ''' </summary>
         ShowShareable = &H8000
     End Enum
+
+    ' ReSharper restore CommentTypo
 #End Region
 
 #Region "Class ShellFolderBrowser"
@@ -195,9 +215,8 @@ Namespace Files.Forms
         ''' <summary>
         ''' String that is displayed above the tree view control in the dialog box.
         ''' This string can be used to specify instructions to the user.
-        ''' Can only be modified if the dalog is not currently displayed.
+        ''' Can only be modified if the dialog is not currently displayed.
         ''' </summary>
-        <Description("String that is displayed above the tree view control in the dialog box. This string can be used to specify instructions to the user.")> _
         Public Property Title As String
             Get
                 Return titleValue
@@ -213,7 +232,6 @@ Namespace Files.Forms
         ''' <summary>
         ''' The display name of the folder selected by the user
         ''' </summary>
-        <Description("The display name of the folder selected by the user")> _
         Public ReadOnly Property FolderDisplayName() As String
             Get
                 Return displayNameValue
@@ -254,7 +272,7 @@ Namespace Files.Forms
             bi.callback = New BrowseCallBackProc(AddressOf Me.CallBack)
             bi.flags = CInt(flagsValue)
 
-            'Free any old pidls
+            ' Free any old pidl pointers
             If IntPtr.op_Inequality(pidlReturnedValue, IntPtr.Zero) Then
                 UnManagedMethods.SHMemFree(pidlReturnedValue)
             End If
@@ -295,12 +313,16 @@ Namespace Files.Forms
             Return ShowDialog(Windows.Forms.Form.ActiveForm)
         End Function
 
+        ' ReSharper disable IdentifierTypo
+
         Const WM_USER As Integer = &H400
         Const BFFM_SETSTATUSTEXTA As Integer = WM_USER + 100
         Const BFFM_SETSTATUSTEXTW As Integer = WM_USER + 104
 
+        ' ReSharper restore IdentifierTypo
+
         ''' <summary>
-        ''' Sets the text of the staus area of the folder dialog
+        ''' Sets the text of the status area of the folder dialog
         ''' </summary>
         ''' <param name="text">Text to set</param>
         Public Sub SetStatusText([text] As String)
@@ -320,12 +342,13 @@ Namespace Files.Forms
             Runtime.InteropServices.Marshal.FreeHGlobal(stringPointer)
         End Sub
 
+        ' ReSharper disable once IdentifierTypo
         Const BFFM_ENABLEOK As Integer = WM_USER + 101
 
         ''' <summary>
         ''' Enables or disables the ok button
         ''' </summary>
-        ''' <param name="bEnable">true to enable false to diasble the OK button</param>
+        ''' <param name="bEnable">true to enable false to disable the OK button</param>
         Public Sub EnableOkButton(bEnable As Boolean)
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
@@ -340,9 +363,10 @@ Namespace Files.Forms
             UnManagedMethods.SendMessage(handleValue, BFFM_ENABLEOK, IntPtr.Zero, lp)
         End Sub
 
+        ' ReSharper disable IdentifierTypo
         Const BFFM_SETSELECTIONA As Integer = WM_USER + 102
         Const BFFM_SETSELECTIONW As Integer = WM_USER + 103
-
+        ' ReSharper restore IdentifierTypo
 
         ''' <summary>
         ''' Sets the selection the text specified
@@ -405,24 +429,29 @@ Namespace Files.Forms
         ''' Fired when the dialog is initialized
         ''' </summary>
         Public Event Initialized As EventHandler
+
         ''' <summary>
         ''' Fired when selection changes
         ''' </summary>
         Public Event SelChanged As FolderSelChangedEventHandler
+
         ''' <summary>
         ''' Shell provides an IUnknown through this event. For details see documentation of SHBrowseForFolder
         ''' </summary>
         Public Event IUnknownObtained As IUnknownObtainedEventHandler
+
         ''' <summary>
         ''' Fired when validation of text typed by user fails
         ''' </summary>
         Public Event ValidateFailed As ValidateFailedEventHandler
 
+        ' ReSharper disable IdentifierTypo
         Const BFFM_INITIALIZED As Integer = 1
         Const BFFM_SELCHANGED As Integer = 2
         Const BFFM_VALIDATEFAILEDA As Integer = 3
         Const BFFM_VALIDATEFAILEDW As Integer = 4
         Const BFFM_IUNKNOWN As Integer = 5
+        ' ReSharper restore IdentifierTypo
 
         Private Function CallBack(hwnd As IntPtr, msg As Integer, lp As IntPtr, lpData As IntPtr) As Integer
             Dim ret = 0
