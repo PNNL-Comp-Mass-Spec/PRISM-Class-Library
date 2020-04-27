@@ -156,13 +156,13 @@
         /// <summary>
         /// 4-byte int
         /// </summary>
-        Xml,
+        XML,
 
         /// <summary>
         /// Used to store JSON (JavaScript Object Notation) data
         /// Specific to PostgreSQL
         /// </summary>
-        Json
+        JSON
     }
 
 }

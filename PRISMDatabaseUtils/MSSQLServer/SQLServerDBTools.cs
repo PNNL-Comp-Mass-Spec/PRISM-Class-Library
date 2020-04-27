@@ -1238,13 +1238,13 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 case SqlType.UUID:
                     return SqlDbType.UniqueIdentifier;
 
-                case SqlType.Xml:
+                case SqlType.XML:
                     return SqlDbType.Xml;
 
                 case SqlType.Interval:
                     throw new NotSupportedException($"SQL Server does not support the {sqlType} type");
 
-                case SqlType.Json:
+                case SqlType.JSON:
                     throw new NotSupportedException($"SQL Server does not support the {sqlType} type");
 
                 default:

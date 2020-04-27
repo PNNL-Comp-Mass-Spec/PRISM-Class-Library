@@ -1421,13 +1421,13 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 case SqlType.UUID:
                     return NpgsqlDbType.Uuid;
 
-                case SqlType.Xml:
+                case SqlType.XML:
                     return NpgsqlDbType.Xml;
 
                 case SqlType.Interval:
                     return NpgsqlDbType.Interval;
 
-                case SqlType.Json:
+                case SqlType.JSON:
                     return NpgsqlDbType.Json;
 
                 default:
