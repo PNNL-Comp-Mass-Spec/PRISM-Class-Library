@@ -10,6 +10,76 @@ namespace PRISMDatabaseUtils
     {
         private static readonly Regex mIntegerMatcher = new Regex(@"\d+", RegexOptions.Compiled);
 
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// </remarks>
+        public abstract DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            ParameterDirection direction = ParameterDirection.Input);
+
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
+        /// <param name="value"></param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        public abstract DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size,
+            object value,
+            ParameterDirection direction = ParameterDirection.Input);
+
+        protected DbParameter AddParameterByDataTypeName(DbCommand command, string name, string dataTypeName, int size, ParameterDirection direction)
+        {
+
+            var success = GetSqlTypeByDataTypeName(dataTypeName, out var dataType, out var supportsSize);
+
+            if (!success)
+            {
+                OnWarningEvent(string.Format("AddParameterByDataTypeName: Data type {0} not recognized for parameter {1}", dataTypeName, name));
+                return null;
+            }
+
+            if (!supportsSize)
+            {
+                var parameter = AddParameter(command, name, dataType, direction);
+                return parameter;
+            }
+
+            switch (dataType)
+            {
+                case SqlType.Char:
+                    var charParameter = AddParameter(command, name, dataType, size, string.Empty, direction);
+                    return charParameter;
+
+                default:
+                    // Includes:
+                    //   SqlType.Name
+                    //   SqlType.Date
+                    //   SqlType.Time
+                    //   SqlType.DateTime
+                    //   SqlType.TimestampTz
+
+                    var parameterWithNull = AddParameter(command, name, dataType, size, null, direction);
+                    return parameterWithNull;
+            }
+        }
 
         /// <summary>
         /// Get the .NET DbType for the given data type name

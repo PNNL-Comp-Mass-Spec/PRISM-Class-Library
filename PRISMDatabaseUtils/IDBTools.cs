@@ -307,9 +307,9 @@ namespace PRISMDatabaseUtils
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="name"></param>
-        /// <param name="dbType"></param>
-        /// <param name="direction"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         /// <remarks>
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
@@ -324,10 +324,10 @@ namespace PRISMDatabaseUtils
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="name"></param>
-        /// <param name="dbType"></param>
-        /// <param name="size"></param>
-        /// <param name="direction"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
+        /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         /// <remarks>
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
@@ -344,11 +344,31 @@ namespace PRISMDatabaseUtils
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="name"></param>
-        /// <param name="dbType"></param>
-        /// <param name="size"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dataTypeName">Database data type name</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
+        /// </remarks>
+        DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            string dataTypeName,
+            int size,
+            ParameterDirection direction = ParameterDirection.Input);
+
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
         /// <param name="value"></param>
-        /// <param name="direction"></param>
+        /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         DbParameter AddParameter(
             DbCommand command,
@@ -362,11 +382,11 @@ namespace PRISMDatabaseUtils
         /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives.
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="name"></param>
-        /// <param name="dbType"></param>
-        /// <param name="size"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
         /// <param name="value"></param>
-        /// <param name="direction"></param>
+        /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         DbParameter AddTypedParameter<T>(
             DbCommand command,

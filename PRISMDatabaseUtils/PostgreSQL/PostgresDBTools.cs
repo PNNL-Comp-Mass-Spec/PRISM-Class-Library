@@ -1259,8 +1259,18 @@ namespace PRISMDatabaseUtils.PostgreSQL
             return new NpgsqlCommand(cmdText) { CommandType = cmdType, CommandTimeout = TimeoutSeconds };
         }
 
-        /// <inheritdoc />
-        public DbParameter AddParameter(
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// </remarks>
+        public override DbParameter AddParameter(
             DbCommand command,
             string name,
             SqlType dbType,
@@ -1292,6 +1302,28 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
         /// <inheritdoc />
         public DbParameter AddParameter(
+            DbCommand command,
+            string name,
+            string dataTypeName,
+            int size,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+
+            var parameter = AddParameterByDataTypeName(command, name, dataTypeName, size, direction);
+            return parameter;
+        }
+
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
+        /// <param name="value"></param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        public override DbParameter AddParameter(
             DbCommand command,
             string name,
             SqlType dbType,
@@ -1358,6 +1390,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
             return param;
         }
 
+        /// <summary>
+        /// Convert from enum SqlType to NpgsqlDbTypes.NpgsqlDbType
+        /// </summary>
+        /// <param name="sqlType"></param>
+        /// <returns></returns>
         private NpgsqlDbType ConvertSqlType(SqlType sqlType)
         {
             switch (sqlType)
