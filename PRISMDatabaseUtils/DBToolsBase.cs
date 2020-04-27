@@ -6,7 +6,7 @@ using PRISM;
 
 namespace PRISMDatabaseUtils
 {
-    internal abstract class DBToolsBase : EventNotifier
+    public abstract class DBToolsBase : EventNotifier
     {
         private static readonly Regex mIntegerMatcher = new Regex(@"\d+", RegexOptions.Compiled);
 
