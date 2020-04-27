@@ -3,7 +3,6 @@ Option Strict On
 Imports System.ComponentModel
 Imports System.Text
 Imports ShFolderBrowser.Files.Forms
-Imports ShFolderBrowser.FolderBrowser
 
 Namespace FolderBrowser
 
@@ -17,42 +16,24 @@ Namespace FolderBrowser
 
         Private WithEvents mFolderBrowserDialog As ShellFolderBrowser
 
-        Private mCurrentFolderPath As String
-        Private mBrowseFlags As BrowseFlags
-        Private mTitle As String
-
 #End Region
 
 #Region "Interface Functions"
-        ''' <summary>Browsing flags</summary>
-        Public Property BrowseFlags() As BrowseFlags
-            Get
-                Return mBrowseFlags
-            End Get
-            Set(Value As BrowseFlags)
-                mBrowseFlags = Value
-            End Set
-        End Property
+        ''' <summary>
+        ''' Browsing flags
+        ''' </summary>
+        Public Property BrowseFlags As BrowseFlags
 
-        ''' <summary>Folder selected by the user</summary>
-        Public Property FolderPath() As String
-            Get
-                Return mCurrentFolderPath
-            End Get
-            Set(Value As String)
-                mCurrentFolderPath = Value
-            End Set
-        End Property
+        ''' <summary>
+        ''' Folder selected by the user
+        ''' </summary>
+        Public Property FolderPath As String
 
-        ''' <summary>Window caption</summary>
-        Public Property Title() As String
-            Get
-                Return mTitle
-            End Get
-            Set(Value As String)
-                mTitle = Value
-            End Set
-        End Property
+        ''' <summary>
+        ''' Window caption
+        ''' </summary>
+        Public Property Title As String
+
 #End Region
 
         ''' <summary>
@@ -69,16 +50,16 @@ Namespace FolderBrowser
                 blnSuccess = False
 
                 If Not strFolderStartPath Is Nothing AndAlso strFolderStartPath.Length > 0 Then
-                    mCurrentFolderPath = strFolderStartPath
+                    FolderPath = strFolderStartPath
                 End If
 
                 mFolderBrowserDialog = New ShellFolderBrowser() With {
-                    .Title = mTitle,
-                    .BrowseFlags = mBrowseFlags
+                    .Title = Title,
+                    .BrowseFlags = BrowseFlags
                 }
 
                 If mFolderBrowserDialog.ShowDialog() Then
-                    mCurrentFolderPath = mFolderBrowserDialog.FolderPath
+                    FolderPath = mFolderBrowserDialog.FolderPath
                     blnSuccess = True
                 Else
                     ' Do not update mCurrentFolderPath
@@ -94,11 +75,13 @@ Namespace FolderBrowser
 
         End Function
 
+        ' ReSharper restore UnusedMember.Global
+
         ''' <summary>Handles the folder browser initialization event</summary>
         Private Sub mFolderBrowserDialog_Initialized(sender As Object, e As EventArgs) Handles mFolderBrowserDialog.Initialized
-            If Not mCurrentFolderPath Is Nothing AndAlso mCurrentFolderPath.Length > 0 Then
+            If Not FolderPath Is Nothing AndAlso FolderPath.Length > 0 Then
                 Try
-                    mFolderBrowserDialog.SetExpanded(mCurrentFolderPath)
+                    mFolderBrowserDialog.SetExpanded(FolderPath)
                 Catch ex As Exception
                     ' Ignore any errors here
                 End Try
@@ -107,11 +90,11 @@ Namespace FolderBrowser
 
         ''' <summary>Constructor</summary>
         Public Sub New()
-            mCurrentFolderPath = String.Empty
-            mTitle = "Select Folder"
+            FolderPath = String.Empty
+            Title = "Select Folder"
 
             ' Define the default Browse Flags
-            mBrowseFlags = BrowseFlags.ReturnOnlyFSDirs Or
+            BrowseFlags = BrowseFlags.ReturnOnlyFSDirs Or
                            BrowseFlags.DontGoBelowDomain Or
                            BrowseFlags.ShowStatusText Or
                            BrowseFlags.EditBox Or
@@ -215,11 +198,11 @@ Namespace Files.Forms
         ''' Can only be modified if the dalog is not currently displayed.
         ''' </summary>
         <Description("String that is displayed above the tree view control in the dialog box. This string can be used to specify instructions to the user.")> _
-        Public Property Title() As String
+        Public Property Title As String
             Get
                 Return titleValue
             End Get
-            Set(Value As String)
+            Set
                 If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
                     Throw New InvalidOperationException
                 End If
@@ -259,12 +242,12 @@ Namespace Files.Forms
             Get
                 Return flagsValue
             End Get
-            Set(Value As BrowseFlags)
+            Set
                 flagsValue = Value
             End Set
         End Property
 
-        Private Function ShowDialogInternal(ByRef bi As BrowseInfo) As Boolean '
+        Private Function ShowDialogInternal(ByRef bi As BrowseInfo) As Boolean
 
             bi.title = Title
             bi.displayname = New String(ControlChars.NullChar, 260)
@@ -293,7 +276,7 @@ Namespace Files.Forms
         ''' Shows the dialog
         ''' </summary>
         ''' <param name="owner">The window to use as the owner</param>
-        Public Function ShowDialog(owner As System.Windows.Forms.IWin32Window) As Boolean
+        Public Function ShowDialog(owner As Windows.Forms.IWin32Window) As Boolean
             If IntPtr.op_Inequality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -309,7 +292,7 @@ Namespace Files.Forms
         ''' Shows the dialog using active window as the owner
         ''' </summary>
         Public Function ShowDialog() As Boolean
-            Return ShowDialog(System.Windows.Forms.Form.ActiveForm)
+            Return ShowDialog(Windows.Forms.Form.ActiveForm)
         End Function
 
         Const WM_USER As Integer = &H400
@@ -330,11 +313,11 @@ Namespace Files.Forms
             Else
                 msg = BFFM_SETSTATUSTEXTA
             End If
-            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalAuto([text])
+            Dim stringPointer As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalAuto([text])
 
-            UnManagedMethods.SendMessage(handleValue, msg, IntPtr.Zero, strptr)
+            UnManagedMethods.SendMessage(handleValue, msg, IntPtr.Zero, stringPointer)
 
-            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(stringPointer)
         End Sub
 
         Const BFFM_ENABLEOK As Integer = WM_USER + 101
@@ -364,8 +347,8 @@ Namespace Files.Forms
         ''' <summary>
         ''' Sets the selection the text specified
         ''' </summary>
-        ''' <param name="newsel">The path of the folder which is to be selected</param>
-        Public Sub SetSelection(newsel As String)
+        ''' <param name="newSelection">The path of the folder which is to be selected</param>
+        Public Sub SetSelection(newSelection As String)
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
@@ -377,13 +360,14 @@ Namespace Files.Forms
                 msg = BFFM_SETSELECTIONW
             End If
 
-            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalAuto(newsel)
+            Dim stringPointer As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalAuto(newSelection)
 
-            UnManagedMethods.SendMessage(handleValue, msg, New IntPtr(1), strptr)
+            UnManagedMethods.SendMessage(handleValue, msg, New IntPtr(1), stringPointer)
 
-            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(stringPointer)
         End Sub
 
+        ' ReSharper disable once IdentifierTypo
         Const BFFM_SETOKTEXT As Integer = WM_USER + 105
 
         ''' <summary>
@@ -394,13 +378,15 @@ Namespace Files.Forms
             If IntPtr.op_Equality(handleValue, IntPtr.Zero) Then
                 Throw New InvalidOperationException
             End If
-            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni([text])
 
-            UnManagedMethods.SendMessage(handleValue, BFFM_SETOKTEXT, New IntPtr(1), strptr)
+            Dim stringPointer As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni([text])
 
-            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            UnManagedMethods.SendMessage(handleValue, BFFM_SETOKTEXT, New IntPtr(1), stringPointer)
+
+            Runtime.InteropServices.Marshal.FreeHGlobal(stringPointer)
         End Sub
 
+        ' ReSharper disable once IdentifierTypo
         Const BFFM_SETEXPANDED As Integer = WM_USER + 106
 
         ''' <summary>
@@ -408,11 +394,11 @@ Namespace Files.Forms
         ''' </summary>
         ''' <param name="path">The path to expand</param>
         Public Sub SetExpanded(path As String)
-            Dim strptr As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni(path)
+            Dim stringPointer As IntPtr = Runtime.InteropServices.Marshal.StringToHGlobalUni(path)
 
-            UnManagedMethods.SendMessage(handleValue, BFFM_SETEXPANDED, New IntPtr(1), strptr)
+            UnManagedMethods.SendMessage(handleValue, BFFM_SETEXPANDED, New IntPtr(1), stringPointer)
 
-            Runtime.InteropServices.Marshal.FreeHGlobal(strptr)
+            Runtime.InteropServices.Marshal.FreeHGlobal(stringPointer)
         End Sub
 
         ''' <summary>
@@ -528,20 +514,15 @@ Namespace Files.Forms
     ''' </summary>
     Friend Class IUnknownObtainedEventArgs
         Inherits EventArgs
-        Private ReadOnly siteUnknownValue As Object
 
         Friend Sub New(siteUnknown As Object)
-            Me.siteUnknownValue = siteUnknown
+            Me.SiteUnknown = siteUnknown
         End Sub
 
         ''' <summary>
-        ''' Object that corrensponds to the IUnknown obtained
+        ''' Object that corresponds to the IUnknown obtained
         ''' </summary>
-        Public ReadOnly Property SiteUnknown() As Object
-            Get
-                Return siteUnknownValue
-            End Get
-        End Property
+        Public ReadOnly Property SiteUnknown As Object
     End Class
 #End Region
 
@@ -551,35 +532,21 @@ Namespace Files.Forms
     ''' Provides data for validation failed event.
     ''' </summary>
     Friend Class ValidateFailedEventArgs
-        Private ReadOnly invalidTextValue As String
-        Private dismissDialogValue As Boolean = False
-
-
         Friend Sub New(invalidText As String)
-            Me.invalidTextValue = invalidText
+            Me.InvalidText = invalidText
         End Sub
 
         ''' <summary>
         ''' The text which called validation to fail
         ''' </summary>
-        Public ReadOnly Property InvalidText() As String
-            Get
-                Return invalidTextValue
-            End Get
-        End Property
+        Public ReadOnly Property InvalidText As String
 
         ''' <summary>
         ''' Sets whether the dialog needs to be dismissed or not
         ''' </summary>
-        Public Property DismissDialog() As Boolean
-            Get
-                Return dismissDialogValue
-            End Get
-            Set(Value As Boolean)
-                dismissDialogValue = Value
-            End Set
-        End Property
+        Public Property DismissDialog As Boolean = False
     End Class
+
 #End Region
 
 End Namespace
