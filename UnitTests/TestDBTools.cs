@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using Npgsql;
 using NUnit.Framework;
 using PRISMDatabaseUtils;
@@ -94,8 +95,8 @@ namespace PRISMTest
         }
 
         [TestCase(false, "")]
-        [TestCase( true, "")]
-        [TestCase( true, "_acqDate:Date,_acqTime:Time,_acqInfo:JSON,_status:Bit")]
+        [TestCase(true, "")]
+        [TestCase(true, "_acqDate:Date,_acqTime:Time,_acqInfo:JSON,_status:Bit")]
         public void TestAddPgSqlParameter(bool usePostgres, string parameterList)
         {
             var server = "DbServer";
@@ -182,6 +183,196 @@ namespace PRISMTest
             return parameters;
         }
 
+
+        [TestCase("Gigasax", "dms5", "T_Event_Log", 15)]
+        [TestCase("Gigasax", "dms5", "T_Event_Target", 15)]
+        [Category("DatabaseIntegrated")]
+        public void TestGetColumnValueSqlServer(string server, string database, string tableName, int rowCountToRetrieve)
+        {
+            var connectionString = GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
+        }
+
+        [TestCase("prismweb3", "dms", "T_Event_Log", 15)]
+        [TestCase("prismweb3", "dms", "T_Event_Target", 15)]
+        [Category("DatabaseNamedUser")]
+        public void TestGetColumnValuePostgres(string server, string database, string tableName, int rowCountToRetrieve)
+        {
+            var connectionString = GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
+            TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
+        }
+
+        public void TestGetColumnValue(string connectionString, string tableName, int rowCountToRetrieve)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+
+            string query;
+            var columnNames = new List<string>();
+
+            if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
+            {
+                if (tableName.Equals("T_Event_Log", StringComparison.OrdinalIgnoreCase))
+                {
+                    columnNames.Add("[Index]");
+                    columnNames.Add("LookupQ.Target_Type");
+                    columnNames.Add("LookupQ.Target_ID");
+                    columnNames.Add("Target_State");
+                    columnNames.Add("Entered");
+                    columnNames.Add("Entered_By");
+                }
+                else if (tableName.Equals("T_Event_Target", StringComparison.OrdinalIgnoreCase))
+                {
+                    columnNames.Add("[ID]");
+                    columnNames.Add("Name");
+                    columnNames.Add("Target_Table");
+                    columnNames.Add("LookupQ.Target_ID_Column");
+                    columnNames.Add("Target_State_Column");
+                }
+                else
+                {
+                    throw new Exception("Invalid table name: " + tableName);
+                }
+
+                query = string.Format("SELECT " + string.Join(", ", columnNames) + " FROM (" +
+                                      "   SELECT TOP {0} * FROM {1}" +
+                                      "   Order By {2} Desc) LookupQ " +
+                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
+
+            }
+            else
+            {
+                if (tableName.Equals("T_Event_Log", StringComparison.OrdinalIgnoreCase))
+                {
+                    tableName = "mc.t_event_log";
+                    columnNames.Add("event_id");
+                    columnNames.Add("LookupQ.target_type");
+                    columnNames.Add("LookupQ.target_id");
+                    columnNames.Add("target_state");
+                    columnNames.Add("entered");
+                    columnNames.Add("entered_by");
+                }
+                else if (tableName.Equals("T_Event_Target", StringComparison.OrdinalIgnoreCase))
+                {
+                    tableName = "mc.t_event_target";
+                    columnNames.Add("id");
+                    columnNames.Add("name");
+                    columnNames.Add("target_table");
+                    columnNames.Add("LookupQ.target_id_column");
+                    columnNames.Add("target_state_column");
+                }
+                else
+                {
+                    throw new Exception("Invalid table name: " + tableName);
+                }
+
+                query = string.Format("SELECT  " + string.Join(", ", columnNames) + " FROM (" +
+                                      "   SELECT * FROM {1}" +
+                                      "   Order By {2} Desc Limit {0}) LookupQ " +
+                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
+
+
+            }
+
+            var columnDataTypes = new List<SqlType>();
+
+            if (tableName.Equals("T_Event_Log", StringComparison.OrdinalIgnoreCase) || tableName.Equals("mc.t_event_log"))
+            {
+                columnDataTypes.Add(SqlType.Int);
+                columnDataTypes.Add(SqlType.Int);
+                columnDataTypes.Add(SqlType.Int);
+                columnDataTypes.Add(SqlType.SmallInt);
+                columnDataTypes.Add(SqlType.DateTime);
+                columnDataTypes.Add(SqlType.VarChar);
+            }
+            else if (tableName.Equals("T_Event_Target") || tableName.Equals("mc.t_event_target"))
+            {
+                columnDataTypes.Add(SqlType.Int);
+                columnDataTypes.Add(SqlType.VarChar);
+                columnDataTypes.Add(SqlType.VarChar);
+                columnDataTypes.Add(SqlType.VarChar);
+                columnDataTypes.Add(SqlType.VarChar);
+            }
+
+            Console.WriteLine("Create command at {0:yyyy-MM-dd hh:mm:ss tt}", DateTime.Now);
+
+            var spCmd = dbTools.CreateCommand(query);
+
+            var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
+
+            Assert.IsTrue(success, "GetQueryResults returned false");
+
+            Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
+
+            var columnMapping = dbTools.GetColumnMapping(columnNames);
+
+            Console.WriteLine();
+            Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
+            Console.WriteLine();
+
+            var dataLine = new StringBuilder();
+            foreach (var column in columnNames)
+            {
+                if (dataLine.Length > 0)
+                    dataLine.Append("   ");
+                dataLine.Append(string.Format("{0,-15}", column.Split('.').Last()));
+            }
+            Console.WriteLine(dataLine.ToString());
+
+            var rowNumber = 0;
+            foreach (var resultRow in queryResults)
+            {
+                rowNumber += 1;
+
+                dataLine.Clear();
+                for (var i = 0; i < columnNames.Count; i++)
+                {
+                    if (dataLine.Length > 0)
+                        dataLine.Append("   ");
+
+                    string currentColumnName;
+                    if (rowNumber % 3 == 0)
+                    {
+                        // Force a fuzzy name match
+                        currentColumnName = columnNames[i].Substring(0, columnNames[i].Length - 1);
+                    }
+                    else if (rowNumber % 3 == 1 && columnNames[i].IndexOf('.') >= 0)
+                    {
+                        // Match the name after the period
+                        currentColumnName = columnNames[i].Split('.').Last();
+                    }
+                    else
+                    {
+                        // Match the entire name
+                        currentColumnName = columnNames[i];
+                    }
+
+                    switch (columnDataTypes[i])
+                    {
+                        case SqlType.Int:
+                        case SqlType.SmallInt:
+                            var intValue = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName, 0);
+                            dataLine.Append(string.Format("{0,-15}", intValue));
+                            break;
+
+                        case SqlType.Date:
+                        case SqlType.DateTime:
+                            var dateValue = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName, DateTime.MinValue);
+                            dataLine.Append(string.Format("{0,-15}", dateValue));
+                            break;
+
+                        default:
+                            var value = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName);
+                            dataLine.Append(string.Format("{0,-15}", value));
+                            break;
+                    }
+                }
+                Console.WriteLine(dataLine.ToString());
+            }
+
+            Console.WriteLine();
+
+        }
+
         [TestCase("Gigasax", "dms5", 5, 1)]
         [TestCase("Gigasax", "dms5", 10, 2)]
         [Category("DatabaseIntegrated")]
@@ -256,7 +447,6 @@ namespace PRISMTest
 
         public static void ShowRowsFromTLogEntries(List<List<string>> results)
         {
-
             Console.WriteLine("{0,-10} {1,-21} {2,-20} {3}", "Entry_ID", "Date", "Posted_By", "Message");
             foreach (var item in results)
             {
