@@ -10,6 +10,19 @@ namespace PRISMDatabaseUtils
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DatabaseUtilsExtensions
     {
+
+        /// <summary>
+        /// When using GetColumnValue, if an exact match is not found and this is true,
+        /// look for columnName matching ColumnNameX in TableName.ColumnNameX
+        /// </summary>
+        public static bool GetColumnIndexAllowColumnNameMatchOnly { get; set; } = true;
+
+        /// <summary>
+        /// When using GetColumnValue, if an exact match is not found and this is true,
+        /// look for columnName matching any part of a column name
+        /// </summary>
+        public static bool GetColumnIndexAllowFuzzyMatch { get; set; } = true;
+
         /// <summary>
         /// Simple conversion that handles DBNull for parsing database fields
         /// </summary>
@@ -148,6 +161,72 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
+        /// Search the columnMap dictionary for the best match to columnName
+        /// First looks for an exact match for columnName
+        /// If no match, and if property GetColumnIndexAllowColumnNameMatchOnly is true, looks for a match after the last period seen in each name
+        /// If still no match, and if property GetColumnIndexAllowFuzzyMatch is true, looks for a column that contains the desired column name
+        /// </summary>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column name to find</param>
+        /// <returns>The zero-based column index, or -1 if no match</returns>
+        public static int GetColumnIndex(
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName)
+        {
+            return GetColumnIndex(columnMap, columnName, GetColumnIndexAllowColumnNameMatchOnly, GetColumnIndexAllowFuzzyMatch);
+        }
+
+        /// <summary>
+        /// Search the columnMap dictionary for the best match to columnName
+        /// First looks for an exact match for columnName
+        /// If no match, and if allowColumnNameMatchOnly is true, looks for a match after the last period seen in each name
+        /// If still no match, and if allowFuzzyMatch is true, looks for a column that contains the desired column name
+        /// </summary>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column name to find</param>
+        /// <param name="allowColumnNameMatchOnly">
+        /// When true and an exact match is not found, look for columns in the dictionary matching
+        /// the pattern Table.ColumnX, where ColumnX matches columnName
+        /// </param>
+        /// <param name="allowFuzzyMatch">
+        /// When true and a clear match is not found, look for a column that contains the desired column
+        /// </param>
+        /// <returns>The zero-based column index, or -1 if no match</returns>
+        public static int GetColumnIndex(
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            bool allowColumnNameMatchOnly,
+            bool allowFuzzyMatch = true)
+        {
+            if (columnMap.TryGetValue(columnName, out var columnIndex))
+            {
+                return columnIndex;
+            }
+
+            if (allowColumnNameMatchOnly)
+            {
+                var periodAndName = "." + columnName;
+                foreach (var item in columnMap)
+                {
+                    if (item.Key.EndsWith(periodAndName, StringComparison.OrdinalIgnoreCase))
+                        return item.Value;
+                }
+            }
+
+            // ReSharper disable once InvertIf
+            if (allowFuzzyMatch)
+            {
+                foreach (var item in columnMap)
+                {
+                    if (item.Key.IndexOf(columnName, StringComparison.OrdinalIgnoreCase) >= 0)
+                        return item.Value;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
         /// <param name="dbTools">Reference to dbTools so this can resolve as an extension method</param>
@@ -181,7 +260,8 @@ namespace PRISMDatabaseUtils
             IReadOnlyDictionary<string, int> columnMap,
             string columnName)
         {
-            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+            var columnIndex = GetColumnIndex(columnMap, columnName);
+            if (columnIndex < 0)
                 throw new Exception("Invalid column name: " + columnName);
 
             var value = resultRow[columnIndex];
@@ -220,7 +300,8 @@ namespace PRISMDatabaseUtils
             int defaultValue,
             out bool validNumber)
         {
-            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+            var columnIndex = GetColumnIndex(columnMap, columnName);
+            if (columnIndex < 0)
                 throw new Exception("Invalid column name: " + columnName);
 
             var valueText = resultRow[columnIndex];
@@ -266,7 +347,8 @@ namespace PRISMDatabaseUtils
             double defaultValue,
             out bool validNumber)
         {
-            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+            var columnIndex = GetColumnIndex(columnMap, columnName);
+            if (columnIndex < 0)
                 throw new Exception("Invalid column name: " + columnName);
 
             var valueText = resultRow[columnIndex];
@@ -312,7 +394,8 @@ namespace PRISMDatabaseUtils
             DateTime defaultValue,
             out bool validNumber)
         {
-            if (!columnMap.TryGetValue(columnName, out var columnIndex))
+            var columnIndex = GetColumnIndex(columnMap, columnName);
+            if (columnIndex < 0)
                 throw new Exception("Invalid column name: " + columnName);
 
             var valueText = resultRow[columnIndex];
