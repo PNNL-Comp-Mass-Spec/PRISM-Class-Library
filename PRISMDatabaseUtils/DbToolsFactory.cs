@@ -11,7 +11,7 @@ namespace PRISMDatabaseUtils
 {
 
     /// <summary>
-    /// Enum of supported database server systems
+    /// Enum of supported relational database systems
     /// </summary>
     public enum DbServerTypes
     {

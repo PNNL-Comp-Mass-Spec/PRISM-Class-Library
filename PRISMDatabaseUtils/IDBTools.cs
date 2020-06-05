@@ -4,6 +4,8 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using PRISM.Logging;
 
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMemberInSuper.Global
 namespace PRISMDatabaseUtils
 {
 
@@ -393,6 +395,7 @@ namespace PRISMDatabaseUtils
             string name,
             SqlType dbType,
             int size = 0,
+            // ReSharper disable once RedundantTypeSpecificationInDefaultExpression
             T value = default(T),
             ParameterDirection direction = ParameterDirection.Input);
     }
