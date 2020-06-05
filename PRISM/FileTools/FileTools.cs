@@ -2879,7 +2879,7 @@ namespace PRISM
 
             // Wait for up to 180 minutes (3 hours) for the server resources to free up
 
-            // However, if retrieving files from adms.emsl.pnl.gov only wait for a maximum of 30 minutes
+            // However, if retrieving files from agate.emsl.pnl.gov only wait for a maximum of 30 minutes
             // because sometimes that directory's permissions get messed up and we can create files there, but cannot delete them
 
             var maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES;
@@ -2892,12 +2892,13 @@ namespace PRISM
 
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
-            if (lockDirectorySource != null && lockDirectorySource.FullName.ToLower().StartsWith(@"\\adms.emsl.pnl.gov\"))
+            // Switched from adms.emsl.pnl.gov to agate.emsl.pnl.gov in 2020
+            if (lockDirectorySource != null && lockDirectorySource.FullName.ToLower().StartsWith(@"\\agate.emsl.pnl.gov\"))
             {
                 maxWaitTimeSource = Math.Min(maxWaitTimeSource, 30);
             }
 
-            if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.ToLower().StartsWith(@"\\adms.emsl.pnl.gov\"))
+            if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.ToLower().StartsWith(@"\\agate.emsl.pnl.gov\"))
             {
                 maxWaitTimeTarget = Math.Min(maxWaitTimeTarget, 30);
             }
