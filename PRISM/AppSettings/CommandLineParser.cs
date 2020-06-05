@@ -87,7 +87,7 @@ namespace PRISM
         /// <summary>
         /// Tracks parameter parsing errors
         /// </summary>
-        public struct ParseErrorInfo
+        public readonly struct ParseErrorInfo
         {
             /// <summary>
             /// Set to true if a required parameter is missing
