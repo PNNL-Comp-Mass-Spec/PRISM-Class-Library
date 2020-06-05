@@ -700,11 +700,11 @@ namespace PRISM
 
                     if (matchProgramNameOnly)
                     {
-                        var processIdProgName = Path.GetFileName(process.ExePath);
-                        if (string.IsNullOrWhiteSpace(processIdProgName))
+                        var processIdProgramName = Path.GetFileName(process.ExePath);
+                        if (string.IsNullOrWhiteSpace(processIdProgramName))
                             continue;
 
-                        if (!processIdProgName.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                        if (!processIdProgramName.Equals(processName, StringComparison.OrdinalIgnoreCase))
                             continue;
                     }
                     else
