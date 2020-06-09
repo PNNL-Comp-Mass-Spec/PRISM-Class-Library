@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using PRISM;
 
 namespace PRISMDatabaseUtils
 {
     /// <summary>
     /// Methods for appending columns to a data table
+    /// Also includes methods for retrieving data from a row of values, using a columnMap dictionary
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class DataTableUtils
     {
         #region "Properties"
@@ -31,6 +33,54 @@ namespace PRISMDatabaseUtils
         public static bool GetColumnValueThrowExceptions { get; set; } = true;
 
         #endregion
+
+        /// <summary>
+        /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
+        /// Assumes case-insensitive column names
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnNamesByIdentifier"></param>
+        /// <param name="columnIdentifier"></param>
+        /// <param name="columnNames"></param>
+        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
+        public static void AddColumnNamesForIdentifier<T>(
+            Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
+            T columnIdentifier,
+            params string[] columnNames)
+        {
+            AddColumnNamesForIdentifier(columnNamesByIdentifier, columnIdentifier, false, columnNames);
+        }
+
+        /// <summary>
+        /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnNamesByIdentifier"></param>
+        /// <param name="columnIdentifier"></param>
+        /// <param name="caseSensitiveColumnNames"></param>
+        /// <param name="columnNames"></param>
+        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
+        public static void AddColumnNamesForIdentifier<T>(
+            Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
+            T columnIdentifier,
+            bool caseSensitiveColumnNames,
+            params string[] columnNames)
+        {
+            StringComparer stringComparer;
+            if (caseSensitiveColumnNames)
+                stringComparer = StringComparer.Ordinal;
+            else
+                stringComparer = StringComparer.OrdinalIgnoreCase;
+
+            var columnNameList = new SortedSet<string>(stringComparer);
+
+            foreach (var columnName in columnNames)
+            {
+                columnNameList.Add(columnName);
+            }
+
+            columnNamesByIdentifier.Add(columnIdentifier, columnNameList);
+        }
 
         /// <summary>
         /// Append a column of the given type to the DataTable
