@@ -402,6 +402,59 @@ namespace PRISM.FileProcessor
         }
 
         /// <summary>
+        /// Computes the incremental progress that has been made beyond currentTaskProgressAtStart,
+        /// based on the number of items processed and the next overall progress level
+        /// </summary>
+        /// <param name="currentTaskProgressAtStart">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="subTaskProgress">Progress of the current task (value between 0 and 100)</param>
+        /// <returns>Overall progress (value between 0 and 100)</returns>
+        /// <remarks></remarks>
+        public static float ComputeIncrementalProgress(float currentTaskProgressAtStart, float currentTaskProgressAtEnd, float subTaskProgress)
+        {
+            if (subTaskProgress < 0)
+            {
+                return currentTaskProgressAtStart;
+            }
+
+            if (subTaskProgress >= 100)
+            {
+                return currentTaskProgressAtEnd;
+            }
+
+            return (float)(currentTaskProgressAtStart + (subTaskProgress / 100.0) * (currentTaskProgressAtEnd - currentTaskProgressAtStart));
+        }
+
+        /// <summary>
+        /// Computes the incremental progress that has been made beyond currentTaskProgressAtStart,
+        /// based on the number of items processed and the next overall progress level
+        /// </summary>
+        /// <param name="currentTaskProgressAtStart">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="currentTaskItemsProcessed">Number of items processed so far during this task</param>
+        /// <param name="currentTaskTotalItems">Total number of items to process during this task</param>
+        /// <returns>Overall progress (value between 0 and 100)</returns>
+        /// <remarks></remarks>
+        public static float ComputeIncrementalProgress(
+            float currentTaskProgressAtStart, float currentTaskProgressAtEnd,
+            int currentTaskItemsProcessed, int currentTaskTotalItems)
+        {
+            if (currentTaskTotalItems < 1)
+            {
+                return currentTaskProgressAtStart;
+            }
+
+            if (currentTaskItemsProcessed > currentTaskTotalItems)
+            {
+                return currentTaskProgressAtEnd;
+            }
+
+            return currentTaskProgressAtStart +
+                currentTaskItemsProcessed / (float)currentTaskTotalItems * (currentTaskProgressAtEnd - currentTaskProgressAtStart);
+
+        }
+
+        /// <summary>
         /// Sets the log file path (<see cref="mLogFilePath"/>),
         /// according to data in <see cref="mLogFilePath"/>,
         /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogDirectoryPath"/>
