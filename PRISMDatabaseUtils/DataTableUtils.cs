@@ -213,27 +213,29 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Search the columnMap dictionary for the best match to columnName
-        /// First looks for an exact match for columnName
-        /// If no match, and if property GetColumnIndexAllowColumnNameMatchOnly is true, looks for a match after the last period seen in each name
-        /// If still no match, and if property GetColumnIndexAllowFuzzyMatch is true, looks for a column that contains the desired column name
+        /// Search the columnMap dictionary for the best match to columnIdentifier
+        /// First looks for an exact match for columnIdentifier
+        /// If no match, and columnIdentifier is a string, will try a partial match:
+        ///   If property GetColumnIndexAllowColumnNameMatchOnly is true, looks for a match after the last period seen in each name
+        ///   If property GetColumnIndexAllowFuzzyMatch is true, looks for a column that contains the desired column name
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
-        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
-        /// <param name="columnName">Column name to find</param>
+        /// <param name="columnMap">Map of column identifier to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column identifier to find</param>
         /// <returns>The zero-based column index, or -1 if no match</returns>
         public static int GetColumnIndex<T>(
             IReadOnlyDictionary<T, int> columnMap,
-            T columnName)
+            T columnIdentifier)
         {
-            return GetColumnIndex(columnMap, columnName, GetColumnIndexAllowColumnNameMatchOnly, GetColumnIndexAllowFuzzyMatch);
+            return GetColumnIndex(columnMap, columnIdentifier, GetColumnIndexAllowColumnNameMatchOnly, GetColumnIndexAllowFuzzyMatch);
         }
 
         /// <summary>
         /// Search the columnMap dictionary for the best match to columnIdentifier
         /// First looks for an exact match for columnIdentifier
-        /// If no match, and if allowColumnNameMatchOnly is true and columnIdentifier is a string, looks for a match after the last period seen in each name
-        /// If still no match, and if allowFuzzyMatch is true and columnIdentifier is a string, looks for a column that contains the desired column name
+        /// If no match, and columnIdentifier is a string, will try a partial match:
+        ///   If property allowColumnNameMatchOnly is true, looks for a match after the last period seen in each name
+        ///   If property allowFuzzyMatch is true, looks for a column that contains the desired column name
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
