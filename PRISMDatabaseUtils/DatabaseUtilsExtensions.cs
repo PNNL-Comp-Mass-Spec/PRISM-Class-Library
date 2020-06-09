@@ -173,7 +173,7 @@ namespace PRISMDatabaseUtils
             IReadOnlyDictionary<string, int> columnMap,
             string columnName)
         {
-            return GetColumnIndex(columnMap, columnName, GetColumnIndexAllowColumnNameMatchOnly, GetColumnIndexAllowFuzzyMatch);
+            return DataTableUtils.GetColumnIndex(columnMap, columnName, GetColumnIndexAllowColumnNameMatchOnly, GetColumnIndexAllowFuzzyMatch);
         }
 
         /// <summary>
@@ -198,32 +198,7 @@ namespace PRISMDatabaseUtils
             bool allowColumnNameMatchOnly,
             bool allowFuzzyMatch = true)
         {
-            if (columnMap.TryGetValue(columnName, out var columnIndex))
-            {
-                return columnIndex;
-            }
-
-            if (allowColumnNameMatchOnly)
-            {
-                var periodAndName = "." + columnName;
-                foreach (var item in columnMap)
-                {
-                    if (item.Key.EndsWith(periodAndName, StringComparison.OrdinalIgnoreCase))
-                        return item.Value;
-                }
-            }
-
-            // ReSharper disable once InvertIf
-            if (allowFuzzyMatch)
-            {
-                foreach (var item in columnMap)
-                {
-                    if (item.Key.IndexOf(columnName, StringComparison.OrdinalIgnoreCase) >= 0)
-                        return item.Value;
-                }
-            }
-
-            return -1;
+            return DataTableUtils.GetColumnIndex(columnMap, columnName, allowColumnNameMatchOnly, allowFuzzyMatch);
         }
 
         /// <summary>
@@ -235,14 +210,7 @@ namespace PRISMDatabaseUtils
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         public static Dictionary<string, int> GetColumnMapping(this IDBTools dbTools, IReadOnlyList<string> columns)
         {
-            var columnMap = new Dictionary<string, int>();
-
-            for (var i = 0; i < columns.Count; i++)
-            {
-                columnMap.Add(columns[i], i);
-            }
-
-            return columnMap;
+            return DataTableUtils.GetColumnMapping(columns);
         }
 
         /// <summary>
@@ -253,20 +221,24 @@ namespace PRISMDatabaseUtils
         /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
         /// <param name="columnName">Column Name</param>
         /// <returns>String value</returns>
-        /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty</remarks>
+        /// <remarks>
+        /// The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty
+        /// Throws an exception if the columnIdentifier is not present in columnMap
+        /// Also throws an exception if resultRow does not have enough columns
+        /// </remarks>
         public static string GetColumnValue(
             this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName)
         {
-            var columnIndex = GetColumnIndex(columnMap, columnName);
-            if (columnIndex < 0)
-                throw new Exception("Invalid column name: " + columnName);
+            var value = DataTableUtils.GetColumnValue(resultRow, columnMap, columnName, string.Empty, out var validColumn);
 
-            var value = resultRow[columnIndex];
+            if (validColumn)
+                return value;
 
-            return value;
+            var exceptionMessage = DataTableUtils.GetInvalidColumnNameExceptionMessage(columnMap, columnName);
+            throw new Exception(exceptionMessage);
         }
 
         /// <summary>
@@ -292,6 +264,10 @@ namespace PRISMDatabaseUtils
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains an integer</param>
         /// <returns>Integer value</returns>
+        /// <remarks>
+        /// Throws an exception if the columnIdentifier is not present in columnMap
+        /// Also throws an exception if resultRow does not have enough columns
+        /// </remarks>
         public static int GetColumnValue(
             this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
@@ -300,20 +276,7 @@ namespace PRISMDatabaseUtils
             int defaultValue,
             out bool validNumber)
         {
-            var columnIndex = GetColumnIndex(columnMap, columnName);
-            if (columnIndex < 0)
-                throw new Exception("Invalid column name: " + columnName);
-
-            var valueText = resultRow[columnIndex];
-
-            if (int.TryParse(valueText, out var value))
-            {
-                validNumber = true;
-                return value;
-            }
-
-            validNumber = false;
-            return defaultValue;
+            return DataTableUtils.GetColumnValue(resultRow, columnMap, columnName, defaultValue, out validNumber);
         }
 
         /// <summary>
@@ -339,6 +302,10 @@ namespace PRISMDatabaseUtils
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains a double (or integer)</param>
         /// <returns>Double value</returns>
+        /// <remarks>
+        /// Throws an exception if the columnIdentifier is not present in columnMap
+        /// Also throws an exception if resultRow does not have enough columns
+        /// </remarks>
         public static double GetColumnValue(
             this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
@@ -347,20 +314,7 @@ namespace PRISMDatabaseUtils
             double defaultValue,
             out bool validNumber)
         {
-            var columnIndex = GetColumnIndex(columnMap, columnName);
-            if (columnIndex < 0)
-                throw new Exception("Invalid column name: " + columnName);
-
-            var valueText = resultRow[columnIndex];
-
-            if (double.TryParse(valueText, out var value))
-            {
-                validNumber = true;
-                return value;
-            }
-
-            validNumber = false;
-            return defaultValue;
+            return DataTableUtils.GetColumnValue(resultRow, columnMap, columnName, defaultValue, out validNumber);
         }
 
         /// <summary>
@@ -384,30 +338,21 @@ namespace PRISMDatabaseUtils
         /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
         /// <param name="columnName">Column Name</param>
         /// <param name="defaultValue">Default value</param>
-        /// <param name="validNumber">Output: set to true if the column contains a valid date</param>
-        /// <returns>True or false</returns>
+        /// <param name="validDate">Output: set to true if the column contains a valid date</param>
+        /// <returns>DateTime value</returns>
+        /// <remarks>
+        /// Throws an exception if the columnIdentifier is not present in columnMap
+        /// Also throws an exception if resultRow does not have enough columns
+        /// </remarks>
         public static DateTime GetColumnValue(
             this IDBTools dbTools,
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
             string columnName,
             DateTime defaultValue,
-            out bool validNumber)
+            out bool validDate)
         {
-            var columnIndex = GetColumnIndex(columnMap, columnName);
-            if (columnIndex < 0)
-                throw new Exception("Invalid column name: " + columnName);
-
-            var valueText = resultRow[columnIndex];
-
-            if (DateTime.TryParse(valueText, out var value))
-            {
-                validNumber = true;
-                return value;
-            }
-
-            validNumber = false;
-            return defaultValue;
+            return DataTableUtils.GetColumnValue(resultRow, columnMap, columnName, defaultValue, out validDate);
         }
     }
 }

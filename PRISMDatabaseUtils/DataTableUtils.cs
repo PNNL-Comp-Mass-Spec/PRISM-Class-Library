@@ -24,7 +24,14 @@ namespace PRISMDatabaseUtils
         /// </summary>
         public static bool GetColumnIndexAllowFuzzyMatch { get; set; } = true;
 
+        /// <summary>
+        /// When using GetColumnValue, throw an exception if an invalid column name
+        /// or if the column index is out of range vs. the actual number of columns
+        /// </summary>
+        public static bool GetColumnValueThrowExceptions { get; set; } = true;
+
         #endregion
+
         /// <summary>
         /// Append a column of the given type to the DataTable
         /// </summary>
@@ -153,6 +160,415 @@ namespace PRISMDatabaseUtils
         public static bool AppendColumnStringToTable(DataTable dataTable, string columnName, string defaultValue = null, bool isReadOnly = false, bool isUnique = false)
         {
             return AppendColumnToTable(dataTable, columnName, Type.GetType("System.String"), defaultValue, isReadOnly, isUnique);
+        }
+
+        /// <summary>
+        /// Search the columnMap dictionary for the best match to columnName
+        /// First looks for an exact match for columnName
+        /// If no match, and if property GetColumnIndexAllowColumnNameMatchOnly is true, looks for a match after the last period seen in each name
+        /// If still no match, and if property GetColumnIndexAllowFuzzyMatch is true, looks for a column that contains the desired column name
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnName">Column name to find</param>
+        /// <returns>The zero-based column index, or -1 if no match</returns>
+        public static int GetColumnIndex<T>(
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnName)
+        {
+            return GetColumnIndex(columnMap, columnName, GetColumnIndexAllowColumnNameMatchOnly, GetColumnIndexAllowFuzzyMatch);
+        }
+
+        /// <summary>
+        /// Search the columnMap dictionary for the best match to columnIdentifier
+        /// First looks for an exact match for columnIdentifier
+        /// If no match, and if allowColumnNameMatchOnly is true and columnIdentifier is a string, looks for a match after the last period seen in each name
+        /// If still no match, and if allowFuzzyMatch is true and columnIdentifier is a string, looks for a column that contains the desired column name
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column identifier to find</param>
+        /// <param name="allowColumnNameMatchOnly">
+        /// When true and an exact match is not found, look for columns in the dictionary matching
+        /// the pattern Table.ColumnX, where ColumnX matches columnIdentifier
+        /// </param>
+        /// <param name="allowFuzzyMatch">
+        /// When true and a clear match is not found, look for a column that contains the desired column
+        /// </param>
+        /// <returns>The zero-based column index, or -1 if no match</returns>
+        public static int GetColumnIndex<T>(
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
+            bool allowColumnNameMatchOnly,
+            bool allowFuzzyMatch = true)
+        {
+            if (columnMap.TryGetValue(columnIdentifier, out var columnIndex))
+            {
+                return columnIndex;
+            }
+
+            if (!(columnIdentifier is string columnName))
+            {
+                return -1;
+            }
+
+            if (allowColumnNameMatchOnly)
+            {
+                var periodAndName = "." + columnName;
+                foreach (var item in columnMap)
+                {
+                    if (item.Key is string keyName &&
+                        keyName.EndsWith(periodAndName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return item.Value;
+                    }
+                }
+            }
+
+            // ReSharper disable once InvertIf
+            if (allowFuzzyMatch)
+            {
+                foreach (var item in columnMap)
+                {
+                    if (item.Key is string keyName &&
+                        keyName.IndexOf(columnName, StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        return item.Value;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Get a mapping from column name to column index, based on column order
+        /// </summary>
+        /// <param name="columnNames"></param>
+        /// <param name="caseSensitiveColumnNames"></param>
+        /// <returns>Mapping from column name to column index</returns>
+        /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
+        public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columnNames, bool caseSensitiveColumnNames = true)
+        {
+            StringComparer stringComparer;
+            if (caseSensitiveColumnNames)
+                stringComparer = StringComparer.Ordinal;
+            else
+                stringComparer = StringComparer.OrdinalIgnoreCase;
+
+            var columnMap = new Dictionary<string, int>(stringComparer);
+
+            for (var i = 0; i < columnNames.Count; i++)
+            {
+                columnMap.Add(columnNames[i], i);
+            }
+
+            return columnMap;
+        }
+
+
+        /// <summary>
+        /// Examine a tab-delimited list of column names (as read from the first line of a text file)
+        /// Compare the column names to the names in the columnNamesByIdentifier dictionary to determine the column index of each column name
+        /// If a name is not found, the column index will be zero
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="headerLine">Tab-delimited list of column names</param>
+        /// <param name="columnNamesByIdentifier">Dictionary of known column names for each column identifier</param>
+        /// <returns>Mapping from column identifier of type T (either a string or an enum) to the index of the column in the header line</returns>
+        public static Dictionary<T, int> GetColumnMappingFromHeaderLine<T>(
+            string headerLine,
+            Dictionary<T, SortedSet<string>> columnNamesByIdentifier)
+        {
+            var columnMap = new Dictionary<T, int>();
+            GetColumnMappingFromHeaderLine(columnMap, headerLine, columnNamesByIdentifier);
+            return columnMap;
+        }
+
+        /// <summary>
+        /// Examine a tab-delimited list of column names (as read from the first line of a text file)
+        /// Compare the column names to the names in the columnNamesByIdentifier dictionary to determine the column index of each column name
+        /// If a name is not found, the column index will be zero
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnMap">Mapping from column identifier of type T (either a string or an enum) to the index of the column in the header line</param>
+        /// <param name="headerLine">Tab-delimited list of column names</param>
+        /// <param name="columnNamesByIdentifier">Dictionary of known column names for each column identifier</param>
+        /// <returns>True if at least one standard column is found, otherwise false</returns>
+        public static bool GetColumnMappingFromHeaderLine<T>(
+            IDictionary<T, int> columnMap,
+            string headerLine,
+            Dictionary<T, SortedSet<string>> columnNamesByIdentifier)
+        {
+            columnMap.Clear();
+            foreach (var candidateColumn in columnNamesByIdentifier)
+            {
+                columnMap.Add(candidateColumn.Key, -1);
+            }
+
+            var columnNames = headerLine.Split('\t').ToList();
+
+            if (columnNames.Count < 1)
+            {
+                ConsoleMsgUtils.ShowWarning("Invalid header line sent to GetColumnMappingFromHeaderLine");
+                return false;
+            }
+
+            var columnIndex = 0;
+            var matchFound = false;
+
+            foreach (var columnName in columnNames)
+            {
+                foreach (var candidateColumn in columnNamesByIdentifier)
+                {
+                    if (!candidateColumn.Value.Contains(columnName))
+                        continue;
+
+                    // Match found
+                    columnMap[candidateColumn.Key] = columnIndex;
+                    matchFound = true;
+                    break;
+                }
+                columnIndex++;
+            }
+
+            return matchFound;
+        }
+
+        /// <summary>
+        /// Get the string value for the specified column (of type T)
+        /// Returns valueIfMissing if the column is not found
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column name or enum</param>
+        /// <param name="valueIfMissing">Value to return if the column identifier is invalid or if resultRow does not have enough columns</param>
+        /// <returns>String value</returns>
+        public static string GetColumnValue<T>(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
+            string valueIfMissing = "")
+        {
+            var value = GetColumnValue(resultRow, columnMap, columnIdentifier, valueIfMissing, out _);
+            return value;
+        }
+
+        /// <summary>
+        /// Get the string value for the specified column (of type T)
+        /// Returns valueIfMissing if the column is not found
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column name or enum</param>
+        /// <param name="valueIfMissing">Value to return if the column identifier is invalid or if resultRow does not have enough columns</param>
+        /// <param name="validColumn">Output: True if the column identifier is valid and if resultRow has enough columns</param>
+        /// <returns>String value</returns>
+        public static string GetColumnValue<T>(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
+            string valueIfMissing,
+            out bool validColumn)
+        {
+            var columnIndex = GetColumnIndex(columnMap, columnIdentifier);
+
+            if (columnIndex < 0 || columnIndex >= resultRow.Count)
+            {
+                if (GetColumnValueThrowExceptions)
+                {
+                    var exceptionMessage = GetInvalidColumnNameExceptionMessage(columnIndex, columnIdentifier);
+                    throw new Exception(exceptionMessage);
+                }
+
+                validColumn = false;
+                return valueIfMissing;
+            }
+
+            validColumn = true;
+            var value = resultRow[columnIndex];
+
+            return value;
+        }
+
+        /// <summary>
+        /// Get the string value for the specified column (of type T)
+        /// Returns valueIfMissing if the column is not found
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column name or enum</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="validNumber">Output: True if the column identifier is valid, the resultRow has enough columns, and the value is an integer</param>
+        /// <returns>Integer value</returns>
+        public static int GetColumnValue<T>(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
+            int defaultValue,
+            out bool validNumber)
+        {
+            var valueText = GetColumnValue(resultRow, columnMap, columnIdentifier, string.Empty, out var validColumn);
+            if (!validColumn)
+            {
+                validNumber = false;
+                return defaultValue;
+            }
+
+            if (int.TryParse(valueText, out var value))
+            {
+                validNumber = true;
+                return value;
+            }
+
+            validNumber = false;
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Get the string value for the specified column (of type T)
+        /// Returns valueIfMissing if the column is not found
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column name or enum</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="validNumber">Output: True if the column identifier is valid, the resultRow has enough columns, and the value is a double</param>
+        /// <returns>Double value</returns>
+        public static double GetColumnValue<T>(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
+            double defaultValue,
+            out bool validNumber)
+        {
+            var valueText = GetColumnValue(resultRow, columnMap, columnIdentifier, string.Empty, out var validColumn);
+            if (!validColumn)
+            {
+                validNumber = false;
+                return defaultValue;
+            }
+
+            if (double.TryParse(valueText, out var value))
+            {
+                validNumber = true;
+                return value;
+            }
+
+            validNumber = false;
+            return defaultValue;
+        }
+
+
+        /// <summary>
+        /// Get the string value for the specified column (of type T)
+        /// Returns valueIfMissing if the column is not found
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column name or enum</param>
+        /// <param name="defaultValue">Default value</param>
+        /// <param name="validNumber">Output: True if the column identifier is valid, the resultRow has enough columns, and the value is DateTime</param>
+        /// <returns>DateTime value</returns>
+        public static DateTime GetColumnValue<T>(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
+            DateTime defaultValue,
+            out bool validNumber)
+        {
+            var valueText = GetColumnValue(resultRow, columnMap, columnIdentifier, string.Empty, out var validColumn);
+            if (!validColumn)
+            {
+                validNumber = false;
+                return defaultValue;
+            }
+
+            if (DateTime.TryParse(valueText, out var value))
+            {
+                validNumber = true;
+                return value;
+            }
+
+            validNumber = false;
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Get the integer value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        public static int GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            int defaultValue)
+        {
+            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+        }
+
+        /// <summary>
+        /// Get the double value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        public static double GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            double defaultValue)
+        {
+            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+        }
+
+        /// <summary>
+        /// Get the date value for the specified column, or the default value if the value is empty or non-numeric
+        /// </summary>
+        public static DateTime GetColumnValue(
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            DateTime defaultValue)
+        {
+            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+        }
+
+        /// <summary>
+        /// Get the error message for either an invalid column name or not enough columns
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnIndex"></param>
+        /// <param name="columnIdentifier"></param>
+        /// <returns></returns>
+        public static string GetInvalidColumnNameExceptionMessage<T>(int columnIndex, T columnIdentifier)
+        {
+            string errorReason;
+            if (columnIndex < 0)
+                errorReason = "invalid column name";
+            else
+                errorReason = "not enough columns in resultRow (index out of range)";
+
+            return string.Format("Cannot retrieve value for column {0}; {1}", columnIdentifier, errorReason);
+        }
+
+        /// <summary>
+        /// Get the error message for either an invalid column name or not enough columns
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnMap"></param>
+        /// <param name="columnIdentifier"></param>
+        /// <returns></returns>
+        public static string GetInvalidColumnNameExceptionMessage<T>(IReadOnlyDictionary<T, int> columnMap, T columnIdentifier)
+        {
+            string errorReason;
+            if (!columnMap.ContainsKey(columnIdentifier))
+                errorReason = "invalid column name";
+            else
+                errorReason = "not enough columns in resultRow (index out of range)";
+
+            return string.Format("Cannot retrieve value for column {0}; {1}", columnIdentifier, errorReason);
         }
     }
 }
