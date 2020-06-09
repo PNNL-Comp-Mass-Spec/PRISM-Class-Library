@@ -162,9 +162,9 @@ namespace PRISM
         /// <param name="columns"></param>
         /// <returns>Mapping from column name to column index</returns>
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
-        public Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
+        public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
         {
-
             var columnMap = new Dictionary<string, int>();
 
             for (var i = 0; i < columns.Count; i++)
@@ -183,6 +183,7 @@ namespace PRISM
         /// <param name="columnName">Column Name</param>
         /// <returns>String value</returns>
         /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty</remarks>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public string GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
@@ -199,6 +200,7 @@ namespace PRISM
         /// <summary>
         /// Get the integer value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public int GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
@@ -217,12 +219,13 @@ namespace PRISM
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains an integer</param>
         /// <returns>Integer value</returns>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public int GetColumnValue(
-        IReadOnlyList<string> resultRow,
-        IReadOnlyDictionary<string, int> columnMap,
-        string columnName,
-        int defaultValue,
-        out bool validNumber)
+            IReadOnlyList<string> resultRow,
+            IReadOnlyDictionary<string, int> columnMap,
+            string columnName,
+            int defaultValue,
+            out bool validNumber)
         {
             if (!columnMap.TryGetValue(columnName, out var columnIndex))
                 throw new Exception("Invalid column name: " + columnName);
@@ -242,6 +245,7 @@ namespace PRISM
         /// <summary>
         /// Get the double value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public double GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
@@ -260,6 +264,7 @@ namespace PRISM
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains a double (or integer)</param>
         /// <returns>Double value</returns>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public double GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
@@ -285,6 +290,7 @@ namespace PRISM
         /// <summary>
         /// Get the date value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public DateTime GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
@@ -303,6 +309,7 @@ namespace PRISM
         /// <param name="defaultValue">Default value</param>
         /// <param name="validNumber">Output: set to true if the column contains a valid date</param>
         /// <returns>True or false</returns>
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public DateTime GetColumnValue(
             IReadOnlyList<string> resultRow,
             IReadOnlyDictionary<string, int> columnMap,
