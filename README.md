@@ -58,8 +58,8 @@ The latest versions of the DLLs are available on the [AppVeyor CI server](https:
 | Category                        | Class            | Description |
 |---------------------------------|------------------|-------------|
 | Database Utilities              | DbToolsFactory   | Methods for obtaining an instance of SQLServerDBTools or PostgresDBTools, which can be used to query databases or call stored procedures in databases. |
-| Database Utilities              | DataTableUtils   | Methods for appending columns to a data table. |
-| Database Utilities              | PostgresDBTools  | Methods for interacting with a PostgreSQL database to run ad-hoc queries and obtain the results. Also supports calling stored procedures (which may return results via INOUT parameters).  |
+| Database Utilities              | DataTableUtils   | Methods for appending columns to a data table. Also includes methods for retrieving data from a row of values, using a columnMap dictionary. |
+| Database Utilities              | PostgresDBTools  | Methods for interacting with a PostgreSQL database to run ad-hoc queries and obtain the results. Also supports calling stored procedures (which may return results via INOUT parameters). |
 | Database Utilities              | SQLServerDBTools | Methods for interacting with a SQL Server database to run ad-hoc queries and obtain the results. Also supports calling stored procedures (which may or may not return results). |
 | Application Settings Management | MgrSettingsDB    | Inherits from MgrSettings. Loads settings from the Manager_Control database, and merges those settings with those loaded from the .exe.config files by the base class. |
 
