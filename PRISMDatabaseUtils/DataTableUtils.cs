@@ -10,6 +10,21 @@ namespace PRISMDatabaseUtils
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class DataTableUtils
     {
+        #region "Properties"
+
+        /// <summary>
+        /// When using GetColumnValue, if an exact match is not found and this is true,
+        /// look for columnName matching ColumnNameX in TableName.ColumnNameX
+        /// </summary>
+        public static bool GetColumnIndexAllowColumnNameMatchOnly { get; set; } = true;
+
+        /// <summary>
+        /// When using GetColumnValue, if an exact match is not found and this is true,
+        /// look for columnName matching any part of a column name
+        /// </summary>
+        public static bool GetColumnIndexAllowFuzzyMatch { get; set; } = true;
+
+        #endregion
         /// <summary>
         /// Append a column of the given type to the DataTable
         /// </summary>

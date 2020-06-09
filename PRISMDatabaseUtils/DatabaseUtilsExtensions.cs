@@ -15,13 +15,13 @@ namespace PRISMDatabaseUtils
         /// When using GetColumnValue, if an exact match is not found and this is true,
         /// look for columnName matching ColumnNameX in TableName.ColumnNameX
         /// </summary>
-        public static bool GetColumnIndexAllowColumnNameMatchOnly { get; set; } = true;
+        public static bool GetColumnIndexAllowColumnNameMatchOnly => DataTableUtils.GetColumnIndexAllowColumnNameMatchOnly;
 
         /// <summary>
         /// When using GetColumnValue, if an exact match is not found and this is true,
         /// look for columnName matching any part of a column name
         /// </summary>
-        public static bool GetColumnIndexAllowFuzzyMatch { get; set; } = true;
+        public static bool GetColumnIndexAllowFuzzyMatch => DataTableUtils.GetColumnIndexAllowFuzzyMatch;
 
         /// <summary>
         /// Simple conversion that handles DBNull for parsing database fields
