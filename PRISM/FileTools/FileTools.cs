@@ -2001,7 +2001,7 @@ namespace PRISM
         /// <param name="time2">Second file time</param>
         /// <returns>True if the times agree within 2 seconds</returns>
         /// <remarks></remarks>
-        private bool NearlyEqualFileTimes(DateTime time1, DateTime time2)
+        public static bool NearlyEqualFileTimes(DateTime time1, DateTime time2)
         {
             if (Math.Abs(time1.Subtract(time2).TotalSeconds) <= 2.05)
             {
