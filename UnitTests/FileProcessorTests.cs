@@ -10,6 +10,75 @@ namespace PRISMTest
     [TestFixture]
     class FileProcessorTests
     {
+        /// <summary>
+        /// Test ComputeIncrementalProgress that accepts a subTask progress value
+        /// </summary>
+        /// <param name="currentTaskProgressAtStart">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="subTaskProgress">Progress of the current task (value between 0 and 100)</param>
+        /// <param name="expectedOverallProgress"></param>
+        [TestCase(0, 5, 0, 0)]
+        [TestCase(0, 5, 20, 1)]
+        [TestCase(5, 25, 33, 11.6)]
+        [TestCase(5, 25, 66, 18.2)]
+        [TestCase(5, 25, 100, 25)]
+        [TestCase(5, 25, 133, 25)]
+        [TestCase(5, 25, -5, 5)]
+        [TestCase(75, 100, 50, 87.5)]
+        [TestCase(75, 100, 98, 99.5)]
+        public void TestComputeIncrementalProgress(
+            float currentTaskProgressAtStart,
+            float currentTaskProgressAtEnd,
+            float subTaskProgress,
+            double expectedOverallProgress)
+        {
+
+            var overallProgress = ProcessFilesOrDirectoriesBase.ComputeIncrementalProgress(
+                currentTaskProgressAtStart, currentTaskProgressAtEnd, subTaskProgress);
+
+            Console.WriteLine(
+                "Current task progress range is {0:F0}% to {1:F0}%; current task {2:F0}% complete; overall progress: {3:F2}% complete",
+                currentTaskProgressAtStart, currentTaskProgressAtEnd,
+                subTaskProgress, overallProgress);
+
+            Assert.AreEqual(expectedOverallProgress, overallProgress, 0.01);
+
+        }
+
+        /// <summary>
+        /// Test ComputeIncrementalProgress that accepts item counts
+        /// </summary>
+        /// <param name="currentTaskProgressAtStart">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
+        /// <param name="currentTaskItemsProcessed">Number of items processed so far during this task</param>
+        /// <param name="currentTaskTotalItems">Total number of items to process during this task</param>
+        /// <param name="expectedOverallProgress"></param>
+        [TestCase(0, 5, 0, 5, 0)]
+        [TestCase(0, 5, 1, 5, 1)]
+        [TestCase(5, 25, 25, 75, 11.6666)]
+        [TestCase(5, 25, 50, 75, 18.3333)]
+        [TestCase(5, 25, 75, 75, 25)]
+        [TestCase(5, 25, 100, 75, 25)]
+        [TestCase(5, 25, -5, 75, 3.6666)]
+        [TestCase(5, 25, 5, -10, 5)]
+        [TestCase(75, 100, 25, 50, 87.5)]
+        [TestCase(75, 100, 49, 50, 99.5)]
+        public void TestComputeIncrementalProgressWithItemCounts(
+            float currentTaskProgressAtStart, float currentTaskProgressAtEnd,
+            int currentTaskItemsProcessed, int currentTaskTotalItems,
+            double expectedOverallProgress)
+        {
+
+            var overallProgress = ProcessFilesOrDirectoriesBase.ComputeIncrementalProgress(
+                currentTaskProgressAtStart, currentTaskProgressAtEnd, currentTaskItemsProcessed, currentTaskTotalItems);
+
+            Console.WriteLine(
+                "Current task progress range is {0:F0}% to {1:F0}%; current task processed {2} / {3} items; overall progress: {4:F3}% complete",
+                currentTaskProgressAtStart, currentTaskProgressAtEnd,
+                currentTaskItemsProcessed, currentTaskTotalItems, overallProgress);
+
+            Assert.AreEqual(expectedOverallProgress, overallProgress, 0.01);
+        }
 
         [TestCase(@"C:\Temp", "", @"C:\Temp\PRISM_log", 0)]
         [TestCase(@"C:\Temp", "TestLogFile", @"C:\Temp\TestLogFile_log", 0)]

@@ -17,6 +17,14 @@ namespace PRISMTest
         public const string DMS_READER = "dmsreader";
         public const string DMS_READER_PASSWORD = "dms4fun";
 
+        private enum TestTableColumnNames
+        {
+            ShapeName = 0,
+            Sides = 1,
+            Color = 2,
+            Perimeter = 3
+        }
+
         [TestCase(
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             DbServerTypes.MSSQLServer)]
@@ -183,7 +191,6 @@ namespace PRISMTest
             return parameters;
         }
 
-
         [TestCase("Gigasax", "dms5", "T_Event_Log", 15)]
         [TestCase("Gigasax", "dms5", "T_Event_Target", 15)]
         [Category("DatabaseIntegrated")]
@@ -269,7 +276,6 @@ namespace PRISMTest
                                       "   SELECT * FROM {1}" +
                                       "   Order By {2} Desc Limit {0}) LookupQ " +
                                       "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
-
 
             }
 
@@ -371,6 +377,175 @@ namespace PRISMTest
 
             Console.WriteLine();
 
+        }
+
+        [TestCase(false, "Shape", "Sides", "Color")]
+        [TestCase(false, "ShapeName", "SideCount", "Color")]
+        [TestCase(false, "Shape", "Side_Count", "Color")]
+        [TestCase(false, "Shape", "Sides_Count", "Color")]
+        [TestCase(false, "Shape", "Side_Count", "Color", "Perimeter")]
+        [TestCase(true, "Shape", "Sides", "Color")]
+        [TestCase(true, "ShapeName", "SideCount", "Color")]
+        [TestCase(true, "Shape", "Sides_Count", "Color")]
+        [TestCase(true, "Shape", "Side_Count", "Color")]
+        [TestCase(true, "Shape", "Side_Count", "Color", "Perimeter")]
+        public void TestGetColumnValueEnum(bool throwExceptions, params string[] headerNames)
+        {
+            DataTableUtils.GetColumnValueThrowExceptions = throwExceptions;
+
+            try
+            {
+                var columnNamesByIdentifier = new Dictionary<TestTableColumnNames, SortedSet<string>>();
+
+                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.ShapeName, "Shape", "ShapeName", "Shape_Name");
+                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Sides, "Sides", "SideCount", "Side_Count");
+                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Color, "Color");
+                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Perimeter, "Perimeter");
+
+                var columnMap = DataTableUtils.GetColumnMappingFromHeaderLine(string.Join("\t", headerNames), columnNamesByIdentifier);
+
+                var results = new List<List<string>>();
+
+                if (headerNames.Contains("Perimeter"))
+                {
+                    results.Add(new List<string> { "Square", "4", "Red", "25" });
+                    results.Add(new List<string> { "Square", "4", "Blue", "35" });
+                    results.Add(new List<string> { "Circle", "1", "Green", string.Empty });
+                    results.Add(new List<string> { "Triangle", "3", "Yellow" });
+                }
+                else
+                {
+                    results.Add(new List<string> { "Square", "4", "Red" });
+                    results.Add(new List<string> { "Square", "4", "Blue" });
+                    results.Add(new List<string> { "Circle", "1" });
+                    results.Add(new List<string> { "Triangle", "3", "Yellow" });
+                }
+
+                var perimeterColumnName = headerNames.Length > 3 ? headerNames[3] : string.Empty;
+
+                Console.WriteLine("Header names");
+                Console.WriteLine("{0,-15} {1,-12} {2,-10} {3,-12}", headerNames[0], headerNames[1], headerNames[2], perimeterColumnName);
+
+                Console.WriteLine();
+                Console.WriteLine("{0,-15} {1,-12} {2,-10} {3,-12} {4,-15}", "Shape", "Sides", "Color", "Perimeter", "Perimeter_Value");
+
+                foreach (var resultRow in results)
+                {
+                    try
+                    {
+                        var shapeName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.ShapeName);
+                        var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Sides, 0, out var validSideCount);
+                        var colorName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Color, "No color");
+
+                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, "Undefined", out var perimeterIsValid);
+                        var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, 0, out var validPerimeter);
+
+                        Console.WriteLine("{0,-15} {1,-12} {2,-10} {3,-12} {4,-15}", shapeName, sideCount, colorName, perimeterText, perimeter);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (throwExceptions)
+                        {
+                            Console.WriteLine("Exception caught (this is allowed): " + ex.Message);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Exception caught (this is unexpected): " + ex.Message);
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (throwExceptions)
+                {
+                    Console.WriteLine("Exception caught (this is allowed): " + ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine("Exception caught (this is unexpected): " + ex.Message);
+                    throw;
+                }
+            }
+        }
+
+        [TestCase(true, "Shape", "Sides", "Color")]
+        [TestCase(false, "Shape", "Sides", "Color")]
+        [TestCase(true, "Shape", "Sides", "Color", "Perimeter")]
+        [TestCase(false, "Shape", "Sides", "Color", "Perimeter")]
+        public void TestGetColumnValueGeneric(bool throwExceptions, params string[] headerNames)
+        {
+            DataTableUtils.GetColumnValueThrowExceptions = throwExceptions;
+
+            try
+            {
+                var columnMap = DataTableUtils.GetColumnMapping(headerNames);
+
+                var results = new List<List<string>>();
+
+                if (headerNames.Contains("Perimeter"))
+                {
+                    results.Add(new List<string> { "Square", "4", "Red", "25" });
+                    results.Add(new List<string> { "Square", "4", "Blue", "35" });
+                    results.Add(new List<string> { "Circle", "1", "Green", string.Empty });
+                    results.Add(new List<string> { "Triangle", "3", "Yellow" });
+                }
+                else
+                {
+                    results.Add(new List<string> { "Square", "4", "Red" });
+                    results.Add(new List<string> { "Square", "4", "Blue" });
+                    results.Add(new List<string> { "Circle", "1" });
+                    results.Add(new List<string> { "Triangle", "3", "Yellow" });
+                }
+
+                var perimeterColumnName = headerNames.Length > 3 ? headerNames[3] : string.Empty;
+
+                Console.WriteLine("Header names");
+                Console.WriteLine("{0,-15} {1,-6} {2,-10} {3,-12}", headerNames[0], headerNames[1], headerNames[2], perimeterColumnName);
+
+                Console.WriteLine();
+                Console.WriteLine("{0,-15} {1,-6} {2,-10} {3,-12} {4,-15}", "Shape", "Sides", "Color", "Perimeter", "Perimeter_Value");
+
+                foreach (var resultRow in results)
+                {
+                    try
+                    {
+                        var shapeName = DataTableUtils.GetColumnValue(resultRow, columnMap, "Shape");
+                        var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, "Sides", 0, out var validSideCount);
+                        var colorName = DataTableUtils.GetColumnValue(resultRow, columnMap, "Color", "No color");
+
+                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, "Perimeter", "Undefined", out var perimeterIsValid);
+                        var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, "Perimeter", 0, out var validPerimeter);
+
+                        Console.WriteLine("{0,-15} {1,-6} {2,-10} {3,-12} {4,-15}", shapeName, sideCount, colorName, perimeterText, perimeter);
+                    }
+                    catch (Exception ex)
+                    {
+                        if (throwExceptions)
+                        {
+                            Console.WriteLine("Exception caught (this is allowed): " + ex.Message);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Exception caught (this is unexpected): " + ex.Message);
+                            throw;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (throwExceptions)
+                {
+                    Console.WriteLine("Exception caught (this is allowed): " + ex.Message);
+                }
+                else
+                {
+                    Console.WriteLine("Exception caught (this is unexpected): " + ex.Message);
+                    throw;
+                }
+            }
         }
 
         [TestCase("Gigasax", "dms5", 5, 1)]
