@@ -2014,7 +2014,10 @@ namespace PRISM
         private void OnStatusEvent(string message, string detailedMessage)
         {
             OnStatusEvent(message);
-            OnDebugEvent("  " + detailedMessage);
+            if (DebugLevel >= 2)
+            {
+                OnDebugEvent("  " + detailedMessage);
+            }
         }
 
         private void OnWarningEvent(string message, string detailedMessage)
