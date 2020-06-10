@@ -554,37 +554,39 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get the integer value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
-        public static int GetColumnValue(
+        public static int GetColumnValue<T>(
             IReadOnlyList<string> resultRow,
-            IReadOnlyDictionary<string, int> columnMap,
-            string columnName,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
             int defaultValue)
         {
-            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+            return GetColumnValue(resultRow, columnMap, columnIdentifier, defaultValue, out _);
         }
 
         /// <summary>
         /// Get the double value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
-        public static double GetColumnValue(
+        public static double GetColumnValue<T>(
             IReadOnlyList<string> resultRow,
-            IReadOnlyDictionary<string, int> columnMap,
-            string columnName,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
             double defaultValue)
         {
-            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+            return GetColumnValue(resultRow, columnMap, columnIdentifier, defaultValue, out _);
         }
 
         /// <summary>
         /// Get the date value for the specified column, or the default value if the value is empty or non-numeric
         /// </summary>
-        public static DateTime GetColumnValue(
+        public static DateTime GetColumnValue<T>(
             IReadOnlyList<string> resultRow,
-            IReadOnlyDictionary<string, int> columnMap,
-            string columnName,
+            IReadOnlyDictionary<T, int> columnMap,
+            T columnIdentifier,
             DateTime defaultValue)
         {
-            return GetColumnValue(resultRow, columnMap, columnName, defaultValue, out _);
+            return GetColumnValue(resultRow, columnMap, columnIdentifier, defaultValue, out _);
+        }
+
         }
 
         /// <summary>
