@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using PRISM;
 
+// ReSharper disable UnusedMember.Global
 namespace PRISMDatabaseUtils
 {
     /// <summary>
