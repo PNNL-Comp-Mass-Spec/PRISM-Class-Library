@@ -27,6 +27,8 @@ namespace PRISM
 
         private const string MD5_HASH = "md5";
 
+        private const string MD5_BASE64_HASH = "md5_base64";
+
         private const string SHA1_HASH = "sha1";
 
         /// <summary>
@@ -52,7 +54,12 @@ namespace PRISM
             /// <summary>
             /// SHA1
             /// </summary>
-            SHA1 = 3
+            SHA1 = 3,
+
+            /// <summary>
+            /// MD5, as a Base64 encoded string
+            /// </summary>
+            MD5Base64 = 4,
         }
 
         /// <summary>
@@ -134,18 +141,27 @@ namespace PRISM
         /// <returns>MD5 hash, as a hex string</returns>
         public static string ComputeFileHashMD5(string filePath)
         {
+            return ComputeFileHashMD5(filePath, out _);
+        }
 
+        /// <summary>
+        /// Computes the MD5 hash of a file, both as a hex string and as a Base64 encoded string
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
+        /// <returns>MD5 hash, as a hex string</returns>
+        public static string ComputeFileHashMD5(string filePath, out string base64MD5)
+        {
             string hashValue;
 
             // Open file (as read-only)
             using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 // Hash contents of this stream
-                hashValue = ComputeMD5Hash(reader);
+                hashValue = ComputeMD5Hash(reader, out base64MD5);
             }
 
             return hashValue;
-
         }
 
         /// <summary>
@@ -156,11 +172,20 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashMD5(string text)
         {
+            return ComputeStringHashMD5(text, out _);
+        }
 
-            var hashValue = ComputeMD5Hash(new MemoryStream(Encoding.UTF8.GetBytes(text)));
+        /// <summary>
+        /// Computes the MD5 hash of a string, both as a hex string and as a Base64 encoded string
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
+        /// <returns>MD5 hash, as a hex string</returns>
+        public static string ComputeStringHashMD5(string text, out string base64MD5)
+        {
+            var hashValue = ComputeMD5Hash(new MemoryStream(Encoding.UTF8.GetBytes(text)), out base64MD5);
 
             return hashValue;
-
         }
 
         /// <summary>
@@ -178,10 +203,17 @@ namespace PRISM
             {
                 case HashTypeConstants.CRC32:
                     return ComputeFileHashCrc32(filePath);
+
                 case HashTypeConstants.MD5:
                     return ComputeFileHashMD5(filePath);
+
+                case HashTypeConstants.MD5Base64:
+                    ComputeFileHashMD5(filePath, out var base64MD5);
+                    return base64MD5;
+
                 case HashTypeConstants.SHA1:
                     return ComputeFileHashSha1(filePath);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type");
             }
@@ -237,14 +269,17 @@ namespace PRISM
         /// Computes the MD5 hash of a given stream
         /// </summary>
         /// <param name="data"></param>
+        /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
         /// <returns>MD5 hash, as a string</returns>
-        /// <remarks></remarks>
-        private static string ComputeMD5Hash(Stream data)
-        {
+        private static string ComputeMD5Hash(Stream data, out string base64MD5) {
 
             var md5Hasher = new MD5CryptoServiceProvider();
-            return ComputeHash(md5Hasher, data);
+            var byteArray = ComputeHashGetByteArray(md5Hasher, data);
 
+            base64MD5 = Convert.ToBase64String(byteArray);
+
+            // Return the hash, formatted as a string
+            return ByteArrayToString(byteArray);
         }
 
         /// <summary>
@@ -271,7 +306,19 @@ namespace PRISM
 
             // Return the hash, formatted as a string
             return ByteArrayToString(arrHash);
+        }
 
+        /// <summary>
+        /// Use the given hash algorithm to compute a hash of the data stream
+        /// </summary>
+        /// <param name="hasher"></param>
+        /// <param name="data"></param>
+        /// <returns>Hash string</returns>
+        private static byte[] ComputeHashGetByteArray(HashAlgorithm hasher, Stream data)
+        {
+            // hash contents of this stream
+            var byteArray = hasher.ComputeHash(data);
+            return byteArray;
         }
 
         /// <summary>
@@ -354,6 +401,11 @@ namespace PRISM
                 case HashTypeConstants.MD5:
                     hashTypeDescription = MD5_HASH;
                     break;
+
+                case HashTypeConstants.MD5Base64:
+                    hashTypeDescription = MD5_BASE64_HASH;
+                    break;
+
                 case HashTypeConstants.SHA1:
                     hashTypeDescription = SHA1_HASH;
                     break;
@@ -434,12 +486,19 @@ namespace PRISM
                                 case CRC32_HASH:
                                     hashInfo.HashType = HashTypeConstants.CRC32;
                                     break;
+
                                 case MD5_HASH:
                                     hashInfo.HashType = HashTypeConstants.MD5;
                                     break;
+
+                                case MD5_BASE64_HASH:
+                                    hashInfo.HashType = HashTypeConstants.MD5Base64;
+                                    break;
+
                                 case SHA1_HASH:
                                     hashInfo.HashType = HashTypeConstants.SHA1;
                                     break;
+
                                 default:
                                     hashInfo.HashType = HashTypeConstants.Undefined;
                                     break;
@@ -452,14 +511,28 @@ namespace PRISM
             if (hashInfo.HashType != HashTypeConstants.Undefined)
                 return hashInfo;
 
-            if (hashInfo.HashValue.Length == 8)
-                hashInfo.HashType = HashTypeConstants.CRC32;
-            else if (hashInfo.HashValue.Length == 32)
-                hashInfo.HashType = HashTypeConstants.MD5;
-            else if (hashInfo.HashValue.Length == 40)
-                hashInfo.HashType = HashTypeConstants.SHA1;
-            else
-                hashInfo.HashType = assumedHashType;
+            switch (hashInfo.HashValue.Length)
+            {
+                case 8:
+                    hashInfo.HashType = HashTypeConstants.CRC32;
+                    break;
+
+                case 24:
+                    hashInfo.HashType = HashTypeConstants.MD5Base64;
+                    break;
+
+                case 32:
+                    hashInfo.HashType = HashTypeConstants.MD5;
+                    break;
+
+                case 40:
+                    hashInfo.HashType = HashTypeConstants.SHA1;
+                    break;
+
+                default:
+                    hashInfo.HashType = assumedHashType;
+                    break;
+            }
 
             return hashInfo;
         }
