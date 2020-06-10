@@ -386,7 +386,6 @@ namespace PRISM
             {
                 m_CachedConsoleOutput.Clear();
             }
-
         }
 
         /// <summary>
@@ -403,7 +402,6 @@ namespace PRISM
             {
                 m_CachedConsoleError.Clear();
             }
-
         }
 
         /// <summary>
@@ -505,7 +503,6 @@ namespace PRISM
             {
                 // Ignore errors here
             }
-
         }
 
         private static void GarbageCollectWaitForGC()
@@ -553,7 +550,6 @@ namespace PRISM
         [Obsolete("This method is no longer valid due to a change in how threads are started")]
         public void JoinThreadNow()
         {
-
         }
 
         /// <summary>

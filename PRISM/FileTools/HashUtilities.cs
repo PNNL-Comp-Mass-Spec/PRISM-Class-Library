@@ -53,7 +53,7 @@ namespace PRISM
             MD5 = 2,
 
             /// <summary>
-            /// SHA1
+            /// SHA-1
             /// </summary>
             SHA1 = 3,
 

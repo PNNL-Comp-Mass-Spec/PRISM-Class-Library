@@ -65,6 +65,7 @@ namespace PRISM
         /// <summary>
         /// Database connection string
         /// </summary>
+        // ReSharper disable once IdentifierTypo
         public string DBconnectionString
         {
             get => m_ConnStr;
