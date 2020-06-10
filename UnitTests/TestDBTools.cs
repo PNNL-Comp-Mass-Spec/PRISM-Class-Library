@@ -555,6 +555,71 @@ namespace PRISMTest
             }
         }
 
+        [TestCase(
+            "Shape  SideCount  Color  Perimeter")]
+        [TestCase(
+            "Shape  SideCount  Color",
+            TestTableColumnNames.ShapeName, TestTableColumnNames.Sides, TestTableColumnNames.Color)]
+        [TestCase(
+            "Shape  SideCount  Perimeter",
+            TestTableColumnNames.ShapeName, TestTableColumnNames.Sides, TestTableColumnNames.Perimeter)]
+        [TestCase(
+            "SideCount  Perimeter  Color  Shape",
+            TestTableColumnNames.Sides, TestTableColumnNames.Perimeter, TestTableColumnNames.Color, TestTableColumnNames.ShapeName)]
+        public void TestGetExpectedHeaderLine(string expectedHeaderNames, params TestTableColumnNames[] customHeaderOrder)
+        {
+            var columnNamesByIdentifier = GetShapeTableColumnNamesByIdentifier();
+
+            if (customHeaderOrder.Length == 0)
+            {
+                var defaultHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, "  ");
+                Console.WriteLine(defaultHeaderNames);
+
+                Assert.AreEqual(expectedHeaderNames, defaultHeaderNames);
+            }
+
+            var customHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, customHeaderOrder.ToList(), "  ");
+            Console.WriteLine(customHeaderNames);
+
+            Assert.AreEqual(expectedHeaderNames, customHeaderNames);
+        }
+
+        [Test]
+        public void TestGetExpectedHeaderLineEmptyLists()
+        {
+            var columnNamesByIdentifier = new Dictionary<TestTableColumnNames, SortedSet<string>>();
+
+            var emptyHeaderListA = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, "  ");
+
+            var emptyHeaderListB = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, new List<TestTableColumnNames>(), "  ");
+
+            Assert.IsEmpty(emptyHeaderListA);
+            Assert.IsEmpty(emptyHeaderListB);
+
+            Console.WriteLine("Header lines were empty, as expected");
+        }
+
+        [Test]
+        public void TestGetExpectedHeaderLineInvalidDictionary()
+        {
+            var columnNamesByIdentifier = GetShapeTableColumnNamesByIdentifier();
+
+            var columnIdentifierList = columnNamesByIdentifier.Keys.ToList();
+
+            columnNamesByIdentifier.Remove(TestTableColumnNames.Color);
+            columnNamesByIdentifier.Remove(TestTableColumnNames.Perimeter);
+
+            try
+            {
+                DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, columnIdentifierList, "  ");
+                Assert.Fail("GetExpectedHeaderLine did not throw an exception, but it should have");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Expected exception has been thrown: " + ex.Message);
+            }
+        }
+
         [TestCase("Gigasax", "dms5", 5, 1)]
         [TestCase("Gigasax", "dms5", 10, 2)]
         [Category("DatabaseIntegrated")]
