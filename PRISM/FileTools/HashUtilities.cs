@@ -96,18 +96,16 @@ namespace PRISM
         /// <summary>
         /// Converts a byte array into a hex string
         /// </summary>
-        private static string ByteArrayToString(byte[] arrInput)
+        private static string ByteArrayToString(byte[] byteArray)
         {
+            var output = new StringBuilder(byteArray.Length);
 
-            var output = new StringBuilder(arrInput.Length);
-
-            for (var i = 0; i <= arrInput.Length - 1; i++)
+            for (var i = 0; i <= byteArray.Length - 1; i++)
             {
-                output.Append(arrInput[i].ToString("X2"));
+                output.Append(byteArray[i].ToString("X2"));
             }
 
             return output.ToString().ToLower();
-
         }
 
         /// <summary>
@@ -381,13 +379,13 @@ namespace PRISM
             try
             {
 
-                using (var swOutFile = new StreamWriter(new FileStream(hashCheckFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
+                using (var writer = new StreamWriter(new FileStream(hashCheckFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
-                    swOutFile.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
-                    swOutFile.WriteLine("size=" + fiDataFile.Length);
-                    swOutFile.WriteLine("modification_date_utc=" + fiDataFile.LastWriteTimeUtc.ToString(DATE_TIME_FORMAT));
-                    swOutFile.WriteLine("hash=" + hashValue);
-                    swOutFile.WriteLine("hashtype=" + hashTypeDescription);
+                    writer.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
+                    writer.WriteLine("size=" + fiDataFile.Length);
+                    writer.WriteLine("modification_date_utc=" + fiDataFile.LastWriteTimeUtc.ToString(DATE_TIME_FORMAT));
+                    writer.WriteLine("hash=" + hashValue);
+                    writer.WriteLine("hashtype=" + hashTypeDescription);
                 }
 
                 warningMessage = string.Empty;
