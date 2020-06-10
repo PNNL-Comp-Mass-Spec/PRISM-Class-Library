@@ -17,7 +17,7 @@ namespace PRISMTest
         public const string DMS_READER = "dmsreader";
         public const string DMS_READER_PASSWORD = "dms4fun";
 
-        private enum TestTableColumnNames
+        public enum TestTableColumnNames
         {
             ShapeName = 0,
             Sides = 1,
@@ -36,6 +36,7 @@ namespace PRISMTest
 
             return columnNamesByIdentifier;
         }
+
         [TestCase(
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             DbServerTypes.MSSQLServer)]
@@ -220,7 +221,7 @@ namespace PRISMTest
             TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
         }
 
-        public void TestGetColumnValue(string connectionString, string tableName, int rowCountToRetrieve)
+        private void TestGetColumnValue(string connectionString, string tableName, int rowCountToRetrieve)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
