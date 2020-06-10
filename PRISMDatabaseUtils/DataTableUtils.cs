@@ -587,6 +587,59 @@ namespace PRISMDatabaseUtils
             return GetColumnValue(resultRow, columnMap, columnIdentifier, defaultValue, out _);
         }
 
+        /// <summary>
+        /// Return a string of the expected column names in a header line for a tab-delimited text file
+        /// The order of the columns will be based on the default sort of the identifier data type, T
+        /// When T is an enum, the sort order will be by the integer value of each enum
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnNamesByIdentifier">Column names, by identifier</param>
+        /// <param name="columnDelimiter">Column delimiter, by default a tab</param>
+        /// <returns>Delimited list of column names</returns>
+        /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
+        public static string GetExpectedHeaderLine<T>(
+            IReadOnlyDictionary<T, SortedSet<string>> columnNamesByIdentifier,
+            string columnDelimiter = "\t")
+        {
+            var columnIdentifierList = (from item in columnNamesByIdentifier.Keys orderby item select item).ToList();
+
+            return GetExpectedHeaderLine(columnNamesByIdentifier, columnIdentifierList, columnDelimiter);
+        }
+
+        /// <summary>
+        /// Return a string of the expected column names in a header line for a tab-delimited text file
+        /// </summary>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <param name="columnNamesByIdentifier">Column names, by identifier</param>
+        /// <param name="columnIdentifierList">Ordered list of column identifiers (typically a string or an enum)</param>
+        /// <param name="columnDelimiter">Column delimiter, by default a tab</param>
+        /// <returns>Delimited list of column names</returns>
+        /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
+        public static string GetExpectedHeaderLine<T>(
+            IReadOnlyDictionary<T, SortedSet<string>> columnNamesByIdentifier,
+            IEnumerable<T> columnIdentifierList,
+            string columnDelimiter = "\t")
+        {
+            var headerColumnNames = new List<string>();
+
+            foreach (var identifier in columnIdentifierList)
+            {
+                if (!columnNamesByIdentifier.ContainsKey(identifier))
+                {
+                    throw new Exception("Error in GetExpectedHeaderLine; columnNamesByIdentifier does not contain enum " + identifier);
+                }
+
+                headerColumnNames.Add(columnNamesByIdentifier[identifier].First());
+            }
+
+            if (headerColumnNames.Count == 0 && columnNamesByIdentifier.Count > 0)
+            {
+                // columnIdentifierList was empty
+                // Return the headers using the default order
+                return GetExpectedHeaderLine(columnNamesByIdentifier, columnDelimiter);
+            }
+
+            return string.Join(columnDelimiter, headerColumnNames);
         }
 
         /// <summary>
