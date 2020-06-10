@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -103,9 +104,9 @@ namespace PRISM
         /// <summary>
         /// Converts a byte array into a hex string
         /// </summary>
-        private static string ByteArrayToString(byte[] byteArray)
+        private static string ByteArrayToString(IReadOnlyCollection<byte> byteArray)
         {
-            var output = new StringBuilder(byteArray.Length);
+            var output = new StringBuilder(byteArray.Count);
 
             foreach (var oneByte in byteArray)
             {
