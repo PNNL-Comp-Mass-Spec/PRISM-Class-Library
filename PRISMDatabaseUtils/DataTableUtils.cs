@@ -362,7 +362,7 @@ namespace PRISMDatabaseUtils
 
             if (columnNames.Count < 1)
             {
-                ConsoleMsgUtils.ShowWarning("Invalid header line sent to GetColumnMappingFromHeaderLine");
+                ConsoleMsgUtils.ShowWarning("Invalid header line sent to GetColumnMappingFromHeaderLine; should be a tab-delimited list");
                 return false;
             }
 
