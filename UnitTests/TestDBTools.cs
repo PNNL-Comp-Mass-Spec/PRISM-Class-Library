@@ -440,11 +440,11 @@ namespace PRISMTest
                     try
                     {
                         var shapeName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.ShapeName);
-                        var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Sides, 0, out var validSideCount);
+                        var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Sides, 0);
                         var colorName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Color, "No color");
 
-                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, "Undefined", out var perimeterIsValid);
-                        var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, 0, out var validPerimeter);
+                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, "Undefined");
+                        var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, 0);
 
                         Console.WriteLine("{0,-15} {1,-12} {2,-10} {3,-12} {4,-15}", shapeName, sideCount, colorName, perimeterText, perimeter);
                     }
@@ -518,11 +518,11 @@ namespace PRISMTest
                     try
                     {
                         var shapeName = DataTableUtils.GetColumnValue(resultRow, columnMap, "Shape");
-                        var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, "Sides", 0, out var validSideCount);
+                        var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, "Sides", 0);
                         var colorName = DataTableUtils.GetColumnValue(resultRow, columnMap, "Color", "No color");
 
-                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, "Perimeter", "Undefined", out var perimeterIsValid);
-                        var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, "Perimeter", 0, out var validPerimeter);
+                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, "Perimeter", "Undefined");
+                        var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, "Perimeter", 0);
 
                         Console.WriteLine("{0,-15} {1,-6} {2,-10} {3,-12} {4,-15}", shapeName, sideCount, colorName, perimeterText, perimeter);
                     }
