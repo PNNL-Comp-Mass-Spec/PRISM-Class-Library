@@ -442,12 +442,29 @@ namespace PRISMTest
                     {
                         var shapeName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.ShapeName);
                         var sideCount = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Sides, 0);
-                        var colorName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Color, "No color");
-
-                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, "Undefined");
+                        var colorName = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Color, "No color", out var colorDefined);
+                        var perimeterText = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, "Undefined", out var perimeterDefined);
                         var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, 0);
 
                         Console.WriteLine("{0,-15} {1,-12} {2,-10} {3,-12} {4,-15}", shapeName, sideCount, colorName, perimeterText, perimeter);
+
+                        if (colorName.Equals("No color"))
+                            Assert.False(colorDefined, "Color column found unexpectedly");
+                        else
+                            Assert.True(colorDefined, "Color column not found");
+
+                        if (headerNames.Contains("Perimeter"))
+                        {
+                            if (perimeterText.Equals("Undefined"))
+                                Assert.False(perimeterDefined, "Perimeter column found unexpectedly");
+                            else
+                                Assert.True(perimeterDefined, "Perimeter column not found");
+                        }
+                        else
+                        {
+                            Assert.False(perimeterDefined, "perimeterDefined should be false");
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -573,10 +590,18 @@ namespace PRISMTest
             if (customHeaderOrder.Length == 0)
             {
                 var defaultHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, "  ");
+
+                Console.WriteLine("Header names in default sort order");
                 Console.WriteLine(defaultHeaderNames);
+                Console.WriteLine();
 
                 Assert.AreEqual(expectedHeaderNames, defaultHeaderNames);
             }
+
+            if (customHeaderOrder.Length == 0)
+                Console.WriteLine("Header names calling overloaded DataTableUtils.GetExpectedHeaderLine");
+            else
+                Console.WriteLine("Header names given order: \n{0}\n", string.Join("  ", customHeaderOrder));
 
             var customHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, customHeaderOrder.ToList(), "  ");
             Console.WriteLine(customHeaderNames);
