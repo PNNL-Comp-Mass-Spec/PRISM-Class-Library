@@ -319,11 +319,10 @@ namespace PRISMDatabaseUtils
             return columnMap;
         }
 
-
         /// <summary>
         /// Examine a tab-delimited list of column names (as read from the first line of a text file)
         /// Compare the column names to the names in the columnNamesByIdentifier dictionary to determine the column index of each column name
-        /// If a name is not found, the column index will be -1
+        /// If a name is not found for an identifier, the column index will be -1
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="headerLine">Tab-delimited list of column names</param>
@@ -341,13 +340,13 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Examine a tab-delimited list of column names (as read from the first line of a text file)
         /// Compare the column names to the names in the columnNamesByIdentifier dictionary to determine the column index of each column name
-        /// If a name is not found, the column index will be -1
+        /// If a name is not found for an identifier, the column index will be -1
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnMap">Mapping from column identifier of type T (either a string or an enum) to the index of the column in the header line</param>
         /// <param name="headerLine">Tab-delimited list of column names</param>
         /// <param name="columnNamesByIdentifier">Dictionary of known column names for each column identifier</param>
-        /// <returns>True if at least one standard column is found, otherwise false</returns>
+        /// <returns>True if at least one recognized column name is found, otherwise false</returns>
         public static bool GetColumnMappingFromHeaderLine<T>(
             IDictionary<T, int> columnMap,
             string headerLine,
