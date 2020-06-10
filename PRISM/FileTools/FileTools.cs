@@ -2349,7 +2349,7 @@ namespace PRISM
             if (maxLength < 3)
                 maxLength = 3;
 
-            for (pathPartCount = 0; pathPartCount <= pathParts.Length - 1; pathPartCount++)
+            for (pathPartCount = 0; pathPartCount < pathParts.Length; pathPartCount++)
             {
                 pathParts[pathPartCount] = string.Empty;
             }

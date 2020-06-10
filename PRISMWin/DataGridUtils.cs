@@ -47,7 +47,7 @@ namespace PRISMWin
             else if (decimalPlaces >= 0)
             {
                 newColumn.Format = "0.";
-                for (var i = 0; i <= decimalPlaces - 1; i++)
+                for (var i = 0; i < decimalPlaces; i++)
                 {
                     newColumn.Format += "0";
                 }

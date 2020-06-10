@@ -88,7 +88,7 @@ namespace PRISM
 
             var stackTraceLines = new List<string>();
 
-            for (var index = 0; index <= stackTraceData.Count - 1; index++)
+            for (var index = 0; index < stackTraceData.Count; index++)
             {
                 if (index == stackTraceData.Count - 1 && stackTraceData[index].StartsWith(FINAL_FILE_PREFIX))
                 {

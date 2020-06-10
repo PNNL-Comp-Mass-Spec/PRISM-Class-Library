@@ -416,7 +416,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     {
                         var lstCurrentRow = new List<string>();
 
-                        for (var columnIndex = 0; columnIndex <= reader.FieldCount - 1; columnIndex++)
+                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                         {
                             var value = reader.GetValue(columnIndex);
 
@@ -869,7 +869,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     {
                         var lstCurrentRow = new List<string>();
 
-                        for (var columnIndex = 0; columnIndex <= reader.FieldCount - 1; columnIndex++)
+                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                         {
                             var value = reader.GetValue(columnIndex);
 

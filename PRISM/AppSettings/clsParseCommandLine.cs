@@ -321,7 +321,7 @@ namespace PRISM
                 // Parse the command line
                 // Note that paramList[0] is the path to the Executable for the calling program
 
-                for (var paramIndex = 1; paramIndex <= paramList.Length - 1; paramIndex++)
+                for (var paramIndex = 1; paramIndex < paramList.Length; paramIndex++)
                 {
                     if (paramList[paramIndex].Length <= 0)
                     {
