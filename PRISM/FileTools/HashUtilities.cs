@@ -45,7 +45,7 @@ namespace PRISM
             CRC32 = 1,
 
             /// <summary>
-            /// MD5
+            /// MD5, as a hex string
             /// </summary>
             MD5 = 2,
 
@@ -109,11 +109,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Computes the CRC32 hash for a file
+        /// Computes the CRC32 hash of a file
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <returns>CRC32 hash, as a string</returns>
         public static string ComputeFileHashCrc32(string filePath)
         {
             string hashValue;
@@ -129,11 +128,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Computes the MD5 hash for a file
+        /// Computes the MD5 hash of a file
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <returns>MD5 hash, as a hex string</returns>
         public static string ComputeFileHashMD5(string filePath)
         {
 
@@ -151,11 +149,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Computes the MD5 hash for a string
+        /// Computes the MD5 hash of a string
         /// </summary>
         /// <param name="text"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <returns>MD5 hash, as a hex string</returns>
         // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashMD5(string text)
         {
@@ -167,7 +164,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Computes the hash for a file
+        /// Computes the hash of a file
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="hashType">Hash type</param>
@@ -195,8 +192,7 @@ namespace PRISM
         /// Computes the SHA-1 hash for a file
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <returns>SHA-1 hash, as a hex string</returns>
         public static string ComputeFileHashSha1(string filePath)
         {
 
@@ -210,23 +206,19 @@ namespace PRISM
             }
 
             return hashValue;
-
         }
 
         /// <summary>
         /// Computes the SHA-1 hash for a string
         /// </summary>
         /// <param name="text"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
+        /// <returns>SHA-1 hash, as a hex string</returns>
         // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashSha1(string text)
         {
-
             var hashValue = ComputeSha1Hash(new MemoryStream(Encoding.UTF8.GetBytes(text)));
 
             return hashValue;
-
         }
 
         /// <summary>
@@ -234,7 +226,6 @@ namespace PRISM
         /// </summary>
         /// <param name="data"></param>
         /// <returns>CRC32 hash, as a string</returns>
-        /// <remarks></remarks>
         private static string ComputeCRC32Hash(Stream data)
         {
             var crc = Crc32.Crc(data);
@@ -261,13 +252,10 @@ namespace PRISM
         /// </summary>
         /// <param name="data"></param>
         /// <returns>SHA1 hash, as a string</returns>
-        /// <remarks></remarks>
         private static string ComputeSha1Hash(Stream data)
         {
-
             var sha1Hasher = new SHA1CryptoServiceProvider();
             return ComputeHash(sha1Hasher, data);
-
         }
 
         /// <summary>
@@ -276,7 +264,6 @@ namespace PRISM
         /// <param name="hasher"></param>
         /// <param name="data"></param>
         /// <returns>Hash string</returns>
-        /// <remarks></remarks>
         private static string ComputeHash(HashAlgorithm hasher, Stream data)
         {
             // hash contents of this stream
@@ -296,14 +283,12 @@ namespace PRISM
         /// <param name="hashValue">Output: the computed file hash</param>
         /// <param name="warningMessage">Output: warning message</param>
         /// <returns>The full path to the .hashcheck file; empty string if a problem</returns>
-        /// <remarks></remarks>
         public static string CreateHashcheckFile(
             string dataFilePath,
             HashTypeConstants hashType,
             out string hashValue,
             out string warningMessage)
         {
-
             if (!File.Exists(dataFilePath))
             {
                 hashValue = string.Empty;
@@ -325,7 +310,6 @@ namespace PRISM
                                                dataFilePath, ex.Message);
                 return string.Empty;
             }
-
         }
 
         /// <summary>
@@ -337,7 +321,6 @@ namespace PRISM
         /// <param name="hashValue">Output: the computed file hash</param>
         /// <param name="warningMessage">Output: warning message</param>
         /// <returns>The full path to the .hashcheck file; empty string if a problem</returns>
-        /// <remarks></remarks>
         public static string CreateHashcheckFileWithHash(
             string dataFilePath,
             HashTypeConstants hashType,
@@ -363,15 +346,18 @@ namespace PRISM
                 case HashTypeConstants.Undefined:
                     hashTypeDescription = UNDEFINED_HASH;
                     break;
+
                 case HashTypeConstants.CRC32:
                     hashTypeDescription = CRC32_HASH;
                     break;
+
                 case HashTypeConstants.MD5:
                     hashTypeDescription = MD5_HASH;
                     break;
                 case HashTypeConstants.SHA1:
                     hashTypeDescription = SHA1_HASH;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type");
             }
