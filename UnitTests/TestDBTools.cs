@@ -25,6 +25,17 @@ namespace PRISMTest
             Perimeter = 3
         }
 
+        private static Dictionary<TestTableColumnNames, SortedSet<string>> GetShapeTableColumnNamesByIdentifier()
+        {
+            var columnNamesByIdentifier = new Dictionary<TestTableColumnNames, SortedSet<string>>();
+
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.ShapeName, "Shape", "ShapeName", "Shape_Name");
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Sides, "Sides", "SideCount", "Side_Count");
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Color, "Color");
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Perimeter, "Perimeter");
+
+            return columnNamesByIdentifier;
+        }
         [TestCase(
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             DbServerTypes.MSSQLServer)]
@@ -395,12 +406,7 @@ namespace PRISMTest
 
             try
             {
-                var columnNamesByIdentifier = new Dictionary<TestTableColumnNames, SortedSet<string>>();
-
-                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.ShapeName, "Shape", "ShapeName", "Shape_Name");
-                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Sides, "Sides", "SideCount", "Side_Count");
-                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Color, "Color");
-                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Perimeter, "Perimeter");
+                var columnNamesByIdentifier = GetShapeTableColumnNamesByIdentifier();
 
                 var columnMap = DataTableUtils.GetColumnMappingFromHeaderLine(string.Join("\t", headerNames), columnNamesByIdentifier);
 
