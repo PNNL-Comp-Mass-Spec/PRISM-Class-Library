@@ -107,9 +107,9 @@ namespace PRISM
         {
             var output = new StringBuilder(byteArray.Length);
 
-            for (var i = 0; i <= byteArray.Length - 1; i++)
+            foreach (var oneByte in byteArray)
             {
-                output.Append(byteArray[i].ToString("X2"));
+                output.Append(oneByte.ToString("X2"));
             }
 
             return output.ToString().ToLower();

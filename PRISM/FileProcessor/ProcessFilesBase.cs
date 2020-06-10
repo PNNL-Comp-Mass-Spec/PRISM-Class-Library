@@ -854,10 +854,10 @@ namespace PRISM.FileProcessor
                 // Find matching files in this directory
                 foreach (var inputFile in inputDirectory.GetFiles(fileNameMatch))
                 {
-                    for (var extensionIndex = 0; extensionIndex <= extensionsToParse.Count - 1; extensionIndex++)
+                    foreach (var extension in extensionsToParse)
                     {
                         if (processAllExtensions ||
-                            string.Equals(inputFile.Extension, extensionsToParse[extensionIndex], StringComparison.OrdinalIgnoreCase))
+                            string.Equals(inputFile.Extension, extension, StringComparison.OrdinalIgnoreCase))
                         {
                             filesToProcess.Add(inputFile);
                         }

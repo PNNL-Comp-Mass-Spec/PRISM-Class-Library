@@ -167,9 +167,9 @@ namespace PRISM
         {
             var sections = m_XMLFileAccessor.AllSections;
 
-            for (var index = 0; index <= sections.Count - 1; index++)
+            foreach (var section in sections)
             {
-                if (SetNameCase(sections[index]) == SetNameCase(sectionName))
+                if (SetNameCase(section) == SetNameCase(sectionName))
                     return true;
             }
 
@@ -210,23 +210,22 @@ namespace PRISM
                 mCachedSection.SectionName = sectionNameInFile;
                 mCachedSection.dtKeys.Clear();
 
-                for (var index = 0; index <= keys.Count - 1; index++)
+                foreach (var keyName in keys)
                 {
                     string keyNameToStore;
                     if (mCaseSensitive)
                     {
-                        keyNameToStore = keys[index];
+                        keyNameToStore = keyName;
                     }
                     else
                     {
-                        keyNameToStore = keys[index].ToLower();
+                        keyNameToStore = keyName.ToLower();
                     }
 
                     if (!mCachedSection.dtKeys.ContainsKey(keyNameToStore))
                     {
-                        mCachedSection.dtKeys.Add(keyNameToStore, keys[index]);
+                        mCachedSection.dtKeys.Add(keyNameToStore, keyName);
                     }
-
                 }
             }
 
@@ -243,23 +242,22 @@ namespace PRISM
 
             dtSectionNames.Clear();
 
-            for (var index = 0; index <= sections.Count - 1; index++)
+            foreach (var section in sections)
             {
                 string sectionNameToStore;
                 if (mCaseSensitive)
                 {
-                    sectionNameToStore = sections[index];
+                    sectionNameToStore = section;
                 }
                 else
                 {
-                    sectionNameToStore = sections[index].ToLower();
+                    sectionNameToStore = section.ToLower();
                 }
 
                 if (!dtSectionNames.ContainsKey(sectionNameToStore))
                 {
-                    dtSectionNames.Add(sectionNameToStore, sections[index]);
+                    dtSectionNames.Add(sectionNameToStore, section);
                 }
-
             }
 
         }
