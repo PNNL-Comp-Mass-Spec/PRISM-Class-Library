@@ -125,7 +125,7 @@ namespace PRISMTest
             TestLoadManagerConfigDB(connectionString);
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestLoadManagerConfigDBPostgres(string server, string database)
         {
