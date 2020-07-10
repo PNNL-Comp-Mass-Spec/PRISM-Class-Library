@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using PRISM.AppSettings;
@@ -35,6 +36,32 @@ namespace PRISMTest
             { "UsingDefaults", "False" },
             { "DefaultDMSConnString", "Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI" },
         };
+
+        [Test]
+        [Category("PNL_Domain")]
+        [TestCase("MgrActive_Local", "False")]
+        [TestCase("MgrName", "Pub-xx-y")]
+        [TestCase("MgrCnfgDbConnectStr", "Data Source=mgrCtrlDbServer;Initial Catalog=manager_control;Integrated Security=SSPI")]
+        public void TestGetXmlConfigFileSetting(string settingName, string expectedValue)
+        {
+            var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
+
+            Assert.IsTrue(configFile.Exists);
+            Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
+
+            var configFilePaths = new List<string>()
+            {
+                configFile.FullName
+            };
+
+            var mgrSettings = new MgrSettings();
+            var settingFound = mgrSettings.GetXmlConfigFileSetting(configFilePaths, settingName, out var settingValue);
+            Assert.IsTrue(settingFound);
+
+            Console.WriteLine("Value for {0} is '{1}'", settingName, settingValue);
+
+            Assert.AreEqual(expectedValue, settingValue);
+        }
 
         [Test]
         [Category("PNL_Domain")]
