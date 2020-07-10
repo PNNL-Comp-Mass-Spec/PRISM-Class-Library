@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using PRISM.Logging;
 
@@ -263,6 +265,126 @@ namespace PRISM.AppSettings
                 return string.Empty;
 
             return string.IsNullOrWhiteSpace(groupName) ? string.Empty : groupName;
+        }
+
+        /// <summary>
+        /// Extract the value for the given setting from the given config files
+        /// </summary>
+        /// <param name="configFilePaths">List of config files to check (in order)</param>
+        /// <param name="settingName">Setting to find</param>
+        /// <param name="settingValue">Output: the setting, if found</param>
+        /// <returns>True if found, otherwise false</returns>
+        /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
+        public bool GetXmlConfigFileSetting(IReadOnlyList<string> configFilePaths, string settingName, out string settingValue)
+        {
+            //  <setting name="SettingName" serializeAs="String">
+            //    <value>SettingValue</value>
+            //  </setting>
+
+            settingValue = string.Empty;
+
+            foreach (var configFilePath in configFilePaths)
+            {
+                ShowTrace(string.Format("Looking for setting {0} in {1}", settingName, configFilePath));
+
+                var valueFound = GetXmlConfigFileSetting(configFilePath, settingName, out var configFileExists, out settingValue);
+
+                if (!configFileExists)
+                {
+                    ConsoleMsgUtils.ShowWarning("Config file not found: {0}", configFilePath);
+                }
+                else if (valueFound)
+                {
+                    return true;
+                }
+            }
+
+            if (configFilePaths.Count == 0)
+            {
+                OnErrorEvent(string.Format(
+                    "{0} setting not found in manager config file {1}",
+                    settingName, configFilePaths));
+            }
+            else
+            {
+                var fileNameList = new StringBuilder();
+                foreach (var item in configFilePaths)
+                {
+                    if (fileNameList.Length > 0)
+                        fileNameList.Append(", ");
+
+                    fileNameList.Append(Path.GetFileName(item));
+                }
+
+                OnErrorEvent(string.Format(
+                    "{0} setting not found in the specified manager config files ({1})",
+                    settingName, fileNameList));
+
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Extract the value for the given setting from the given config file
+        /// </summary>
+        /// <param name="configFilePath">Config file path</param>
+        /// <param name="settingName">Setting to find</param>
+        /// <param name="configFileExists">Output: true if the file exists</param>
+        /// <param name="settingValue">Output: the setting, if found</param>
+        /// <returns>True if found, otherwise false</returns>
+        /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
+        private bool GetXmlConfigFileSetting(string configFilePath, string settingName, out bool configFileExists, out string settingValue)
+        {
+            configFileExists = false;
+            settingValue = string.Empty;
+
+            try
+            {
+                var configFile = new FileInfo(configFilePath);
+
+                configFileExists = configFile.Exists;
+
+                if (!configFileExists)
+                {
+                    return false;
+                }
+
+                var configXml = new StringBuilder();
+
+                // Open the config file using a simple text reader in case the file has malformed XML
+
+                using (var reader = new StreamReader(new FileStream(configFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var dataLine = reader.ReadLine();
+                        if (string.IsNullOrWhiteSpace(dataLine))
+                            continue;
+
+                        configXml.Append(dataLine);
+                    }
+                }
+
+                // This regex uses lazy matching to match the next <value>SettingValue</value> after the setting name
+                var matcher = new Regex(settingName + ".+?<value>(?<ParamValue>.+?)</value>", RegexOptions.IgnoreCase);
+
+                var match = matcher.Match(configXml.ToString());
+
+                if (match.Success)
+                {
+                    settingValue = match.Groups["ParamValue"].Value;
+                    return true;
+                }
+
+                ConsoleMsgUtils.ShowDebug("Setting {0} not found in {1}", settingName, configFilePath);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                OnErrorEvent(string.Format("Exception reading setting {0} in {1}", settingName, configFilePath), ex);
+                return false;
+            }
         }
 
         /// <summary>
