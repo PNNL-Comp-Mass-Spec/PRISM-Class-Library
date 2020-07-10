@@ -5,6 +5,8 @@ using NUnit.Framework;
 using PRISM.AppSettings;
 using PRISMDatabaseUtils.AppSettings;
 
+// ReSharper disable StringLiteralTypo
+
 namespace PRISMTest
 {
     [TestFixture]
@@ -144,6 +146,8 @@ namespace PRISMTest
                 { MgrSettings.MGR_PARAM_USING_DEFAULTS, "False" },
             };
 
+            Console.WriteLine("Connecting to database using " + connectionString);
+
             mgrSettings.LoadSettings(testSettings, true);
 
             var expectedSettings = new Dictionary<string, string>()
@@ -160,6 +164,7 @@ namespace PRISMTest
             {
                 if (mgrSettings.MgrParams.TryGetValue(expected.Key, out var actual))
                 {
+                    Console.WriteLine("Value for {0,-30} {1}", expected.Key + ":", actual);
                     Assert.AreEqual(expected.Value, actual, "Parameter value is different");
                 }
                 else
