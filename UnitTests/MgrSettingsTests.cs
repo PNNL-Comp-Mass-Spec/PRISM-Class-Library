@@ -135,6 +135,17 @@ namespace PRISMTest
             TestLoadManagerConfigDB(connectionString);
         }
 
+        [TestCase("prismdb1", "dms")]
+        [Category("DatabaseNamedUser_DeveloperMachine")]
+        public void TestLoadManagerConfigDBPostgresPgPass(string server, string database)
+        {
+            // The password for the dmsreader user will read from file c:\users\CurrentUser\AppData\Roaming\postgresql\pgpass.conf
+            // Authentication will fail if that file does not exist
+
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
+            TestLoadManagerConfigDB(connectionString);
+        }
+
         private void TestLoadManagerConfigDB(string connectionString)
         {
             var mgrSettings = new MgrSettingsDB();
