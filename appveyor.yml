@@ -15,6 +15,7 @@ test:
     - DatabaseIntegrated
     - SkipNetworkService
     - DatabaseNamedUser
+    - DeveloperMachine
     - PNL_Domain
 artifacts:
 - path: PRISM\bin\Release\net462\PRISM.dll
