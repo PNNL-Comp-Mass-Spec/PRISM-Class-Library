@@ -797,7 +797,11 @@ namespace PRISMTest
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
-            "DbServerType=Postgres;Host=prismweb3;Username=dmsreader;Database=dms",
+            "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
+            "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]';",
+            4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
+        [TestCase(
+            "DbServerType=Postgres;Server=prismdb1;Username=dmsreader;Database=dms",
             "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]';",
             4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
         [Category("PNL_Domain")]
@@ -822,6 +826,7 @@ namespace PRISMTest
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
+            Console.WriteLine("Connection string: " + connectionString);
 
             dbTools.GetQueryResults(query, out var lstResults);
 

@@ -76,11 +76,7 @@ namespace PRISMTest
             var mgrSettings = new MgrSettings();
             var settings = mgrSettings.LoadMgrSettingsFromFile(configFile.FullName, new Dictionary<string, string>());
 
-            foreach (var setting in testProgSingleConfig)
-            {
-                Assert.IsTrue(settings.ContainsKey(setting.Key));
-                Assert.AreEqual(setting.Value, settings[setting.Key]);
-            }
+            ValidateSettings(testProgSingleConfig, settings);
         }
 
         [Test]
@@ -94,11 +90,7 @@ namespace PRISMTest
             var mgrSettings = new MgrSettings();
             var settings = mgrSettings.LoadMgrSettingsFromFile(configFile.FullName);
 
-            foreach (var setting in testProgMultiConfig)
-            {
-                Assert.IsTrue(settings.ContainsKey(setting.Key));
-                Assert.AreEqual(setting.Value, settings[setting.Key]);
-            }
+            ValidateSettings(testProgMultiConfig, settings);
         }
 
         [Test]
@@ -112,9 +104,16 @@ namespace PRISMTest
             var mgrSettings = new MgrSettings();
             var settings = mgrSettings.LoadMgrSettingsFromFile(configFile.FullName);
 
-            foreach (var setting in testProg2MultiConfig)
+            ValidateSettings(testProg2MultiConfig, settings);
+        }
+
+        private void ValidateSettings(Dictionary<string, string> expectedSettings, IReadOnlyDictionary<string, string> settings)
+        {
+            foreach (var setting in expectedSettings)
             {
                 Assert.IsTrue(settings.ContainsKey(setting.Key));
+
+                Console.WriteLine("Value for {0,-30} {1}", setting.Key + ":", settings[setting.Key]);
                 Assert.AreEqual(setting.Value, settings[setting.Key]);
             }
         }
@@ -160,6 +159,8 @@ namespace PRISMTest
             Console.WriteLine("Connecting to database using " + connectionString);
 
             mgrSettings.LoadSettings(testSettings, true);
+
+            mgrSettings.ValidatePgPass();
 
             var expectedSettings = new Dictionary<string, string>()
             {
