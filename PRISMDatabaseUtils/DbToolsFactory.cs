@@ -62,8 +62,9 @@ namespace PRISMDatabaseUtils
             // Example SQL Server connection string:
             // "Data Source=MyServer;Initial Catalog=MyDatabase;integrated security=SSPI"
 
-            // Example PostgreSQL connection string:
+            // Example PostgreSQL connection strings:
             // "Host=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"
+            // "DbServerType=Postgres;Server=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"
 
             if (!mConnectionStringKeywordMapInitialized)
             {
