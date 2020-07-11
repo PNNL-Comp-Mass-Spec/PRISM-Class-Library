@@ -31,9 +31,15 @@ namespace PRISM.AppSettings
         public const string DEACTIVATED_LOCALLY = "Manager deactivated locally";
 
         /// <summary>
-        /// Manager parameter: config database connection string
+        /// Manager parameter: manager config database connection string
         /// </summary>
         public const string MGR_PARAM_MGR_CFG_DB_CONN_STRING = "MgrCnfgDbConnectStr";
+
+        /// <summary>
+        /// Manager parameter: DMS database connection string
+        /// </summary>
+        public const string DEFAULT_DMS_CONN_STRING = "DefaultDMSConnString";
+
         /// <summary>
         /// Manager parameter: manager active
         /// </summary>
