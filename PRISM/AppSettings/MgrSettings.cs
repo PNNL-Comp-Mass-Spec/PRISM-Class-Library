@@ -283,6 +283,8 @@ namespace PRISM.AppSettings
         /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
         public bool GetXmlConfigFileSetting(IReadOnlyList<string> configFilePaths, string settingName, out string settingValue)
         {
+            // Supported config file format:
+            //
             //  <setting name="SettingName" serializeAs="String">
             //    <value>SettingValue</value>
             //  </setting>
@@ -537,7 +539,7 @@ namespace PRISM.AppSettings
 
                 if (appSettingsNode == null)
                 {
-                    ReportError("LoadMgrSettingsFromFile; applicationSettings node not found");
+                    ReportError("LoadMgrSettingsFromFile; applicationSettings node not found in " + configFilePath);
                     return existingSettings;
                 }
 
@@ -545,7 +547,7 @@ namespace PRISM.AppSettings
                 var settingNodes = appSettingsNode.SelectNodes("//setting[@name]");
                 if (settingNodes == null)
                 {
-                    ReportError("LoadMgrSettingsFromFile; applicationSettings/*/setting nodes not found");
+                    ReportError("LoadMgrSettingsFromFile; applicationSettings/*/setting nodes not found in " + configFilePath);
                     return existingSettings;
                 }
 
