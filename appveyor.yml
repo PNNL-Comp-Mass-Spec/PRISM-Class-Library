@@ -13,7 +13,6 @@ test:
   categories:
     except:
     - DatabaseIntegrated
-    - SkipNetworkService
     - DatabaseNamedUser
     - DesktopInteraction
     - PNL_Domain
