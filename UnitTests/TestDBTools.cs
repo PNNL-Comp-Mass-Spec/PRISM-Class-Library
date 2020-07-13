@@ -47,10 +47,10 @@ namespace PRISMTest
             "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             DbServerTypes.MSSQLServer)]
         [TestCase(
-            "Host=prismweb3;Username=dmsreader;Database=dms",
+            "Host=prismdb1;Username=dmsreader;Database=dms",
             DbServerTypes.PostgreSQL)]
         [TestCase(
-            "DbServerType=Postgres;Host=prismweb3;Username=dmsreader;Database=dms",
+            "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
             DbServerTypes.PostgreSQL)]
         public void TestDbToolsInitialization(string connectionString, DbServerTypes expectedServerType)
         {
@@ -212,8 +212,8 @@ namespace PRISMTest
             TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
         }
 
-        [TestCase("prismweb3", "dms", "T_Event_Log", 15)]
-        [TestCase("prismweb3", "dms", "T_Event_Target", 15)]
+        [TestCase("prismdb1", "dms", "T_Event_Log", 15)]
+        [TestCase("prismdb1", "dms", "T_Event_Target", 15)]
         [Category("DatabaseNamedUser")]
         public void TestGetColumnValuePostgres(string server, string database, string tableName, int rowCountToRetrieve)
         {
@@ -654,8 +654,8 @@ namespace PRISMTest
             TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
         }
 
-        [TestCase("prismweb3", "dms", 5, 1)]
-        [TestCase("prismweb3", "dms", 10, 2)]
+        [TestCase("prismdb1", "dms", 5, 1)]
+        [TestCase("prismdb1", "dms", 10, 2)]
         [Category("DatabaseNamedUser")]
         public void TestGetRecentLogEntriesPostgres(string server, string database, int rowCountToRetrieve, int iterations)
         {
@@ -735,7 +735,7 @@ namespace PRISMTest
             TestGetTableRowCount(connectionString, tableName);
         }
 
-        [TestCase("prismweb3", "dms", "public.t_log_entries")]
+        [TestCase("prismdb1", "dms", "public.t_log_entries")]
         [Category("DatabaseNamedUser")]
         public void TestGetTableRowCountPostgres(string server, string database, string tableName)
         {

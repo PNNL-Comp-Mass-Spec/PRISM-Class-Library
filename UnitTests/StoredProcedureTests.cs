@@ -162,7 +162,7 @@ namespace PRISMTest
         /// <summary>
         /// Retrieve values from PostgreSQL function mc.GetManagerParameters()
         /// </summary>
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestGetManagerParametersPostgresFunction(string server, string database)
         {
@@ -189,7 +189,7 @@ namespace PRISMTest
         /// <summary>
         /// Retrieve values from PostgreSQL function mc.GetManagerParameters()
         /// </summary>
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestGetManagerParametersPostgresFunctionWithParameters(string server, string database)
         {
@@ -318,7 +318,7 @@ namespace PRISMTest
             TestEnableDisableManagers(connectionString, "EnableDisableManagers");
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestEnableDisableManagersPostgres(string server, string database)
         {
@@ -381,7 +381,7 @@ namespace PRISMTest
             TestEnableDisableManagersData(connectionString, "EnableDisableManagers");
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestEnableDisableManagersDataPostgres(string server, string database)
         {
@@ -436,7 +436,7 @@ namespace PRISMTest
             Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
-        [TestCase("prismweb3", "dms")]
+        [TestCase("prismweb3", "dmsdev")]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsProcedure(string server, string database)
         {
@@ -471,9 +471,9 @@ namespace PRISMTest
             TestDBTools.ShowRowsFromTLogEntries(queryResults);
         }
 
-        [TestCase("prismweb3", "dms", TestDBTools.DMS_READER, false)]
-        [TestCase("prismweb3", "dms", "NonExistentUser", false)]
-        [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
+        [TestCase("prismweb3", "dmsdev", TestDBTools.DMS_READER, false)]
+        [TestCase("prismweb3", "dmsdev", "NonExistentUser", false)]
+        [TestCase("prismweb3", "dmsdev", DMS_WEB_USER, true)]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsQuery(string server, string database, string user, bool expectedPostSuccess)
         {
@@ -497,7 +497,7 @@ namespace PRISMTest
             VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
         }
 
-        [TestCase("prismweb3", "dms", DMS_WEB_USER, true)]
+        [TestCase("prismweb3", "dmsdev", DMS_WEB_USER, true)]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsQueryWithParameters(string server, string database, string user, bool expectedPostSuccess)
         {
