@@ -208,6 +208,7 @@ namespace PRISMTest
                 ConsoleOutputFileIncludesCommandLine = true
             };
 
+            Console.WriteLine("Running {0} using ProgRunner", utilityExe.FullName);
             progRunner.StartAndMonitorProgram();
 
             var cachedProcessID = 0;
@@ -216,8 +217,11 @@ namespace PRISMTest
 
             while (progRunner.State != ProgRunner.States.NotMonitoring)
             {
-                if (cachedProcessID == 0)
+                if (cachedProcessID == 0 && progRunner.PID != 0)
+                {
+                    Console.WriteLine("Program ID is {0}", progRunner.PID);
                     cachedProcessID = progRunner.PID;
+                }
 
                 ProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
 
