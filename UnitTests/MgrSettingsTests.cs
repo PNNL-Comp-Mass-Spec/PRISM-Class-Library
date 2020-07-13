@@ -137,7 +137,7 @@ namespace PRISMTest
         }
 
         [TestCase("prismdb1", "dms")]
-        [Category("DeveloperMachine")]
+        [Category("DatabaseNamedUser")]
         public void TestLoadManagerConfigDBPostgresPgPass(string server, string database)
         {
             // The password for the dmsreader user will read from file c:\users\CurrentUser\AppData\Roaming\postgresql\pgpass.conf

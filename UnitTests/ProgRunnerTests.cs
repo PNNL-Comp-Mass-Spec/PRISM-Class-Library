@@ -27,7 +27,7 @@ namespace PRISMTest
         /// </remarks>
         [TestCase("sleep.exe", "20", false, true, 6)]
         [TestCase("ls.exe", @"-alFR c:\", true, true, 3)]
-        [Category("SkipNetworkService")]
+        [Category("DesktopInteraction")]
         [Category("PNL_Domain")]
         public void TestAbortRunningProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
         {
