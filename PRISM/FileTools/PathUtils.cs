@@ -78,10 +78,10 @@ namespace PRISM
             if (path1 == null || path2 == null)
                 throw new ArgumentNullException(path1 == null ? "path1" : "path2");
 
-            if (String.IsNullOrWhiteSpace(path2))
+            if (string.IsNullOrWhiteSpace(path2))
                 return path1;
 
-            if (String.IsNullOrWhiteSpace(path1))
+            if (string.IsNullOrWhiteSpace(path1))
                 return path2;
 
             if (Path.IsPathRooted(path2))
@@ -217,7 +217,7 @@ namespace PRISM
                 directoryName = directory.Name;
 
                 var parent = directory.Parent;
-                return parent?.FullName ?? String.Empty;
+                return parent?.FullName ?? string.Empty;
             }
 
             char sepChar;
@@ -234,7 +234,7 @@ namespace PRISM
                 if (Regex.IsMatch(directoryPath, @"^\\\\[^\\]+\\?$") ||
                     Regex.IsMatch(directoryPath, @"^[a-z]:\\?$"))
                 {
-                    directoryName = String.Empty;
+                    directoryName = string.Empty;
                     return "";
                 }
             }
@@ -243,7 +243,7 @@ namespace PRISM
                 // sepChar is /
                 if (directoryPath == "/")
                 {
-                    directoryName = String.Empty;
+                    directoryName = string.Empty;
                     return "";
                 }
             }
@@ -288,9 +288,9 @@ namespace PRISM
         /// <remarks></remarks>
         public static string PossiblyQuotePath(string filePath)
         {
-            if (String.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(filePath))
             {
-                return String.Empty;
+                return string.Empty;
 
             }
 
@@ -318,7 +318,7 @@ namespace PRISM
         /// <returns></returns>
         public static string ReplaceFilenameInPath(string existingFilePath, string newFileName)
         {
-            if (String.IsNullOrWhiteSpace(existingFilePath))
+            if (string.IsNullOrWhiteSpace(existingFilePath))
                 return newFileName;
 
             var existingFile = new FileInfo(existingFilePath);
