@@ -12,6 +12,8 @@ namespace PRISMTest
     [TestFixture]
     class MgrSettingsTests
     {
+        private static readonly SortedSet<string> mValidatedConnectionStrings = new SortedSet<string>();
+
         private readonly Dictionary<string, string> testProgSingleConfig = new Dictionary<string, string>()
         {
             { "MgrActive_Local", "False" },
@@ -160,7 +162,14 @@ namespace PRISMTest
 
             mgrSettings.LoadSettings(testSettings, true);
 
-            mgrSettings.ValidatePgPass();
+            if (!mValidatedConnectionStrings.Contains(connectionString))
+            {
+                Console.WriteLine();
+                mgrSettings.ValidatePgPass();
+                Console.WriteLine();
+
+                mValidatedConnectionStrings.Add(connectionString);
+            }
 
             var expectedSettings = new Dictionary<string, string>()
             {
