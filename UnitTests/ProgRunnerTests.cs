@@ -161,9 +161,9 @@ namespace PRISMTest
         /// <param name="writeConsoleOutput"></param>
         /// <param name="maxRuntimeSeconds"></param>
         /// <remarks>Category PNL_Domain is included here because these tests do not work on AppVeyor</remarks>
-        [TestCase("sleep.exe", "3", false, false, 30)]
-        [TestCase("sleep.exe", "3", true, false, 30)]
-        [TestCase("ls.exe", @"-alF c:\", false, false, 30)]
+        [TestCase("sleep.exe", "3", false, false, 15)]
+        [TestCase("sleep.exe", "3", true, false, 15)]
+        [TestCase("ls.exe", @"-alF c:\", false, false, 15)]
         [Category("PNL_Domain")]
         public void TestRunProgram(string exeName, string cmdArgs, bool createNoWindow, bool writeConsoleOutput, int maxRuntimeSeconds)
         {
