@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using PRISM;
 using PRISM.AppSettings;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMDatabaseUtils.AppSettings
 {
     /// <summary>
