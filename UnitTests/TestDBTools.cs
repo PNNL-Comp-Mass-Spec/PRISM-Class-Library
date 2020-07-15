@@ -37,6 +37,103 @@ namespace PRISMTest
             return columnNamesByIdentifier;
         }
 
+        /// <summary>
+        /// This method tests using the same name for each column identifier and column name
+        /// </summary>
+        /// <param name="columnIdentifierList"></param>
+        [TestCase("Shape,Sides,Color,Perimeter")]
+        [TestCase("ShapeName,SideCount,Color,Perimeter")]
+        public void TestAddColumnIdentifiers(string columnIdentifierList)
+        {
+            var columnIdentifiers = columnIdentifierList.Split(',');
+
+            var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
+            foreach (var columnIdentifier in columnIdentifiers)
+            {
+                DataTableUtils.AddColumnIdentifier(columnNamesByIdentifier, columnIdentifier);
+            }
+
+            var columnMap = DataTableUtils.GetColumnMappingFromHeaderLine(string.Join("\t", columnIdentifiers), columnNamesByIdentifier);
+
+            TestResultRowRoundTrip(columnMap, columnIdentifiers);
+        }
+
+        /// <summary>
+        /// This method tests using different strings for column identifier and column name
+        /// </summary>
+        /// <param name="columnIdentifierList"></param>
+        /// <param name="columnNameList"></param>
+        [TestCase("Shape,Sides,Color,Perimeter","")]
+        [TestCase("ShapeName,SideCount,Color,Perimeter", "Shape,Sides,Color,Perimeter")]
+        public void TestAddColumnIdentifiersString(string columnIdentifierList, string columnNameList)
+        {
+            var columnIdentifiers = columnIdentifierList.Split(',');
+            var columnNames = string.IsNullOrEmpty(columnNameList) ? columnIdentifierList.Split(',') : columnNameList.Split(',');
+
+            Assert.AreEqual(columnIdentifiers.Length, columnNames.Length,
+                "columnIdentifierList.Count does not match columnNameList.Count: {0} vs. {1}", columnIdentifiers.Length, columnNames.Length);
+
+            var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
+            for (var i = 0; i < columnIdentifiers.Length; i++) {
+                DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, columnIdentifiers[i], columnNames[i]);
+            }
+
+            var columnMap = DataTableUtils.GetColumnMappingFromHeaderLine(string.Join("\t", columnNames), columnNamesByIdentifier);
+
+            TestResultRowRoundTrip(columnMap, columnIdentifiers);
+        }
+
+        private void TestResultRowRoundTrip(IReadOnlyDictionary<string, int> columnMap, IReadOnlyList<string> columnIdentifiers)
+        {
+            var resultRow = "Square,4,Yellow,16".Split(',');
+
+            var shape = DataTableUtils.GetColumnValue(resultRow, columnMap, columnIdentifiers[0]);        // Shape
+            var sides = DataTableUtils.GetColumnValue(resultRow, columnMap, columnIdentifiers[1], 0);     // Sides
+            var color = DataTableUtils.GetColumnValue(resultRow, columnMap, columnIdentifiers[2]);        // Color
+            var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, columnIdentifiers[3], 0); // Perimeter
+
+            Console.WriteLine("Validating {0} {1}, side count {2}, perimeter {3}", color, shape, sides, perimeter);
+
+            Assert.AreEqual("Square", shape, "Shape name mismatch");
+            Assert.AreEqual(4, sides, "Side count mismatch");
+            Assert.AreEqual("Yellow", color, "Color mismatch");
+            Assert.AreEqual(16, perimeter, "Perimeter mismatch");
+        }
+
+        /// <summary>
+        /// This method tests allowing multiple column names for the same column identifier
+        /// </summary>
+        /// <param name="columnNameList">List of valid column names, both semicolon and comma separated</param>
+        [TestCase("ShapeName;SideCount;Color;Perimeter")]
+        [TestCase("Shape;Sides;Color;Perimeter")]
+        [TestCase("ShapeName,Shape;Sides,SideCount;Color;Perimeter")]
+        public void TestAddColumnIdentifiersEnum(string columnNameList)
+        {
+            var columnNames = columnNameList.Split(';');
+
+            var columnNamesByIdentifier = new Dictionary<TestTableColumnNames, SortedSet<string>>();
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.ShapeName, columnNames[0]);
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Sides, columnNames[1]);
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Color, columnNames[2]);
+            DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, TestTableColumnNames.Perimeter, columnNames[3]);
+
+            var columnMap = DataTableUtils.GetColumnMappingFromHeaderLine(string.Join("\t", columnNames), columnNamesByIdentifier);
+
+            var resultRow = "Square,4,Yellow,16".Split(',');
+
+            var shape = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.ShapeName);
+            var sides = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Sides, 0);
+            var color = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Color);
+            var perimeter = DataTableUtils.GetColumnValue(resultRow, columnMap, TestTableColumnNames.Perimeter, 0);
+
+            Console.WriteLine("Validating {0} {1}, side count {2}, perimeter {3}", color, shape, sides, perimeter);
+
+            Assert.AreEqual("Square", shape, "Shape name mismatch");
+            Assert.AreEqual(4, sides, "Side count mismatch");
+            Assert.AreEqual("Yellow", color, "Color mismatch");
+            Assert.AreEqual(16, perimeter, "Perimeter mismatch");
+        }
+
         [TestCase(
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             DbServerTypes.MSSQLServer)]
@@ -660,6 +757,14 @@ namespace PRISMTest
         public void TestGetRecentLogEntriesPostgres(string server, string database, int rowCountToRetrieve, int iterations)
         {
             var connectionString = GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
+            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
+        }
+
+        [TestCase("prismweb2", "dmsdev2", 5, 2)]
+        [Category("DatabaseIntegrated")]
+        public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations)
+        {
+            var connectionString = string.Format("Host={0};Database={1};Integrated Security=true;Username=d3l243", server, database);
             TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
         }
 
