@@ -37,6 +37,21 @@ namespace PRISMDatabaseUtils
 
         /// <summary>
         /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
+        /// Use this method to add a column with the same identifier and name
+        /// Assumes case-insensitive column names
+        /// </summary>
+        /// <param name="columnNamesByIdentifier"></param>
+        /// <param name="columnIdentifier"></param>
+        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
+        public static void AddColumnIdentifier(
+            Dictionary<string, SortedSet<string>> columnNamesByIdentifier,
+            string columnIdentifier)
+        {
+            AddColumnNamesForIdentifier(columnNamesByIdentifier, columnIdentifier, false, columnIdentifier);
+        }
+
+        /// <summary>
+        /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
         /// Assumes case-insensitive column names
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
