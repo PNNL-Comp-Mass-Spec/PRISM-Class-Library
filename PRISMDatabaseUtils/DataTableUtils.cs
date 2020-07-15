@@ -57,7 +57,7 @@ namespace PRISMDatabaseUtils
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnNamesByIdentifier"></param>
         /// <param name="columnIdentifier"></param>
-        /// <param name="columnNames"></param>
+        /// <param name="columnNames">Comma separated list of column names</param>
         /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         public static void AddColumnNamesForIdentifier<T>(
             Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
@@ -110,7 +110,14 @@ namespace PRISMDatabaseUtils
         /// <param name="isUnique"></param>
         /// <param name="autoIncrement"></param>
         /// <returns></returns>
-        private static bool AppendColumnToTable<T>(DataTable dataTable, string columnName, Type columnType, T defaultValue, bool isReadOnly, bool isUnique, bool autoIncrement = false)
+        private static bool AppendColumnToTable<T>(
+            DataTable dataTable,
+            string columnName,
+            Type columnType,
+            T defaultValue,
+            bool isReadOnly,
+            bool isUnique,
+            bool autoIncrement = false)
         {
 
             try
