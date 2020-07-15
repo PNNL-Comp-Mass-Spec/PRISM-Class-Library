@@ -700,7 +700,7 @@ namespace PRISMTest
             else
                 Console.WriteLine("Header names given order: \n{0}\n", string.Join("  ", customHeaderOrder));
 
-            var customHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, customHeaderOrder.ToList(), "  ");
+            var customHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, customHeaderOrder, "  ");
             Console.WriteLine(customHeaderNames);
 
             Assert.AreEqual(expectedHeaderNames, customHeaderNames);
@@ -726,7 +726,7 @@ namespace PRISMTest
         {
             var columnNamesByIdentifier = GetShapeTableColumnNamesByIdentifier();
 
-            var columnIdentifierList = columnNamesByIdentifier.Keys.ToList();
+            var columnIdentifierList = columnNamesByIdentifier.Keys;
 
             columnNamesByIdentifier.Remove(TestTableColumnNames.Color);
             columnNamesByIdentifier.Remove(TestTableColumnNames.Perimeter);
