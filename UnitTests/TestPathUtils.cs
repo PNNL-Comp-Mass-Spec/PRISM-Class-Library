@@ -142,7 +142,7 @@ namespace PRISMTest
             int allowedVariance;
 
             // The results should be the same, though the number of .ini files in the Windows directory can vary so we allow some variance
-            if (directoryPath.ToLower().Contains(@"\windows") || files1.Count > 1000)
+            if (directoryPath.IndexOf(@"\windows", StringComparison.OrdinalIgnoreCase) >= 0 || files1.Count > 1000)
                 allowedVariance = (int)Math.Floor(files1.Count * 0.05);
             else
                 allowedVariance = 0;

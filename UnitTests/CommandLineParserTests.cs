@@ -64,7 +64,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("duplicate") && x.Message.Contains("badname")),
+                x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("badname")),
                 "Error message does not contain \"duplicate\" and \"badname\"");
         }
 
@@ -81,7 +81,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("duplicate") && x.Message.Contains("NoGood")),
+                x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("NoGood")),
                 "Error message does not contain \"duplicate\" and \"NoGood\"");
         }
         [Test]
@@ -408,7 +408,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("minint") && x.Message.Contains("is less than minimum")),
+                x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minInt\" and \"is less than minimum\"");
         }
 
@@ -429,7 +429,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("minmaxint") && x.Message.Contains("is less than minimum")),
+                x.Message.IndexOf("minmaxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minMaxInt\" and \"is less than minimum\"");
         }
 
@@ -450,7 +450,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("minintbad") && x.Message.Contains("cannot cast min or max to type")),
+                x.Message.IndexOf("minintbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"minIntBad\" and \"cannot cast min or max to type\"");
         }
 
@@ -471,7 +471,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("minint") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"minInt\", \"cannot cast\", and \"to type\"");
         }
 
@@ -492,7 +492,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("maxint") && x.Message.Contains("is greater than maximum")),
+                x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")),
                 "Error message does not contain \"maxInt\" and \"is greater than maximum\"");
         }
 
@@ -513,7 +513,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("maxintbad") &&
+                x.Message.IndexOf("maxintbad", StringComparison.OrdinalIgnoreCase) >= 0 &&
                 x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"maxIntBad\" and \"cannot cast min or max to type\"");
         }
@@ -535,7 +535,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("maxint") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"maxInt\", \"cannot cast\", and \"to type\"");
         }
 
@@ -556,7 +556,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("mindbl") && x.Message.Contains("is less than minimum")),
+                x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minDbl\" and \"is less than minimum\"");
         }
 
@@ -577,7 +577,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("minmaxdbl") && x.Message.Contains("is less than minimum")),
+                x.Message.IndexOf("minmaxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minMaxDbl\" and \"is less than minimum\"");
         }
 
@@ -598,7 +598,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("mindblbad") && x.Message.Contains("cannot cast min or max to type")),
+                x.Message.IndexOf("mindblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"minDblBad\" and \"cannot cast min or max to type\"");
         }
 
@@ -619,7 +619,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("mindbl") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"minDbl\", \"cannot cast\", and \"to type\"");
         }
 
@@ -640,7 +640,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("maxdbl") && x.Message.Contains("is greater than maximum")),
+                x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")),
                 "Error message does not contain \"maxDbl\" and \"is greater than maximum\"");
         }
 
@@ -661,7 +661,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("maxdblbad") && x.Message.Contains("cannot cast min or max to type")),
+                x.Message.IndexOf("maxdblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"maxDblBad\" and \"cannot cast min or max to type\"");
         }
 
@@ -682,7 +682,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("maxdbl") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
         }
 
@@ -786,7 +786,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("2t") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
         }
 
@@ -809,7 +809,7 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.ToLower().Contains("2t") && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+                x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
         }
 

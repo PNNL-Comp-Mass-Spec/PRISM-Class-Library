@@ -69,7 +69,7 @@ namespace PRISMTest
 
                     if (colIndex == 5)
                     {
-                        var completeFound = result[colIndex].ToLower().Contains("complete");
+                        var completeFound = result[colIndex].IndexOf("complete", StringComparison.OrdinalIgnoreCase) >= 0;
 
                         Assert.True(completeFound, "Result row does not have complete in the Message column");
                         break;
@@ -126,7 +126,7 @@ namespace PRISMTest
                 Assert.GreaterOrEqual(result.Count, 9, "Result row has fewer than 9 columns");
 
                 var dbName = result[0];
-                var showData = dbName.ToLower().Contains("human");
+                var showData = dbName.IndexOf("human", StringComparison.OrdinalIgnoreCase) >= 0;
 
                 var organism = "??";
 
@@ -143,7 +143,7 @@ namespace PRISMTest
 
                 if (dbName.StartsWith("PT_Human", StringComparison.OrdinalIgnoreCase))
                 {
-                    var humanFound = organism.ToLower().Contains("homo_sapiens");
+                    var humanFound = organism.IndexOf("homo_sapiens", StringComparison.OrdinalIgnoreCase) >= 0;
 
                     Assert.True(humanFound, "Human PT database does not have organism Homo_Sapiens");
                 }
