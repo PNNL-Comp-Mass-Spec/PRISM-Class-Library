@@ -1,0 +1,18 @@
+﻿// This file is used by Code Analysis to maintain SuppressMessage
+// attributes that are applied to this project.
+// Project-level suppressions either have no target or are given
+// a specific target and scoped to a namespace, type, member, etc.
+
+using System.Diagnostics.CodeAnalysis;
+
+[assembly: SuppressMessage("Performance", "RCS1197:Optimize StringBuilder.Append/AppendLine call.", Justification = "Allowed for readability", Scope = "module")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetLong(PRISMDatabaseUtils.IDBTools,System.Object)~System.Int64")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnMapping(PRISMDatabaseUtils.IDBTools,System.Collections.Generic.IReadOnlyList{System.String})~System.Collections.Generic.Dictionary{System.String,System.Int32}")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnValue(PRISMDatabaseUtils.IDBTools,System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.IReadOnlyDictionary{System.String,System.Int32},System.String)~System.String")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnValue(PRISMDatabaseUtils.IDBTools,System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.IReadOnlyDictionary{System.String,System.Int32},System.String,System.DateTime,System.Boolean@)~System.DateTime")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnValue(PRISMDatabaseUtils.IDBTools,System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.IReadOnlyDictionary{System.String,System.Int32},System.String,System.Double,System.Boolean@)~System.Double")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnValue(PRISMDatabaseUtils.IDBTools,System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.IReadOnlyDictionary{System.String,System.Int32},System.String,System.Int32,System.Boolean@)~System.Int32")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetDouble(PRISMDatabaseUtils.IDBTools,System.Object)~System.Double")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetFloat(PRISMDatabaseUtils.IDBTools,System.Object)~System.Single")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetInteger(PRISMDatabaseUtils.IDBTools,System.Object)~System.Int32")]
+[assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "<Pending>", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetString(PRISMDatabaseUtils.IDBTools,System.Object)~System.String")]
