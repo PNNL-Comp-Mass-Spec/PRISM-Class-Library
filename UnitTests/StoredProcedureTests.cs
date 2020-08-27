@@ -438,6 +438,90 @@ namespace PRISMTest
             Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
+        [TestCase("Gigasax", "dms5", "FindLogEntry", false, 0)]
+        public void TestGetReturnCodeSqlServer(string server, string database, string procedureName, bool skipProcedureCall, int expectedReturnCode)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+            TestGetReturnCode(connectionString, procedureName, skipProcedureCall, expectedReturnCode);
+        }
+
+        [TestCase("prismweb3", "dmsdev", "FindLogEntry", true, 0, "")]
+        [TestCase("prismweb3", "dmsdev", "FindLogEntry", true, 2200, "2200L")]
+        [TestCase("prismweb3", "dmsdev", "FindLogEntry", true, 2, "2F005")]
+        public void TestGetReturnCodePostgres(
+            string server,
+            string database,
+            string procedureName,
+            bool skipProcedureCall,
+            int expectedReturnCode,
+            string returnCodeOverride
+            )
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
+            TestGetReturnCode(connectionString, procedureName, skipProcedureCall, expectedReturnCode, returnCodeOverride);
+        }
+
+        private void TestGetReturnCode(
+            string connectionString,
+            string procedureName,
+            bool skipProcedureCall,
+            int expectedReturnCode,
+            string returnCodeOverride = "")
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+
+            var spCmd = dbTools.CreateCommand(procedureName, CommandType.StoredProcedure);
+
+            // On Postgres, the call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
+            var returnParam = dbTools.AddParameter(spCmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
+
+            if (!skipProcedureCall)
+            {
+                dbTools.ExecuteSPData(spCmd, out var lstResults);
+                var rowsDisplayed = 0;
+                foreach (var result in lstResults)
+                {
+
+                    for (var colIndex = 0; colIndex < result.Count; colIndex++)
+                    {
+                        string valueToShow;
+                        if (result[colIndex].Length > 20)
+                            valueToShow = result[colIndex].Substring(0, 20) + " ...";
+                        else
+                            valueToShow = result[colIndex];
+
+                        Console.Write(valueToShow + "  ");
+                        if (colIndex > 3)
+                            break;
+                    }
+
+                    Console.WriteLine();
+                    rowsDisplayed++;
+
+                    if (rowsDisplayed > 10)
+                        break;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(returnCodeOverride))
+            {
+                // Auto-change returnParam to be named _returnCode of type text
+                returnParam.ParameterName = "_returnCode";
+                returnParam.DbType = DbType.String;
+                returnParam.Direction = ParameterDirection.InputOutput;
+                returnParam.Value = returnCodeOverride;
+            }
+
+            var returnCodeValue = DBToolsBase.GetReturnCode(returnParam);
+
+            if (string.IsNullOrWhiteSpace(returnCodeOverride))
+                Console.WriteLine("Return value: {0}", returnCodeValue);
+            else
+                Console.WriteLine("_returnCode {0} evaluates to return value {1}", returnCodeOverride, returnCodeValue);
+
+            Assert.AreEqual(expectedReturnCode, returnCodeValue, "Return code mismatch");
+        }
+
         [TestCase("prismweb3", "dmsdev")]
         [Category("DatabaseNamedUser")]
         public void TestPostLogEntryAsProcedure(string server, string database)
