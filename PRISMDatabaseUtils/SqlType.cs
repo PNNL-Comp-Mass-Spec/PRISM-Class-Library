@@ -6,15 +6,18 @@
     /// Commonly used SQL database types; converted by implementations of IExecuteSP to the database-specific types
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This enum used instead of System.Data.DbType to allow the commonly-used names with understandable behavior, instead of just Int32/String/etc.
     /// This also allows us to differentiate between Time, Date, and DateTime.
     /// If you need to access a data type not listed here, use this design pattern:
-    ///
+    /// </para>
+    /// <para>
     ///   var newParam = dbTools.AddParameter(cmd, argName, SqlType.Real);
     ///   if (newParam is NpgsqlParameter sqlParam)
     ///   {
     ///       sqlParam.NpgsqlDbType = NpgsqlDbType.Range;
     ///   }
+    /// </para>
     /// </remarks>
     public enum SqlType
     {
