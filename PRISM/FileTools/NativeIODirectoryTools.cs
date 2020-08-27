@@ -68,7 +68,6 @@ namespace PRISM
             {
                 if (findHandle != new IntPtr(-1))
                 {
-
                     do
                     {
                         if ((findData.dwFileAttributes & FileAttributes.Directory) != 0)
@@ -119,7 +118,6 @@ namespace PRISM
                 {
                     if (findHandle != new IntPtr(-1))
                     {
-
                         do
                         {
                             if ((findData.dwFileAttributes & FileAttributes.Directory) == 0)
@@ -140,6 +138,5 @@ namespace PRISM
 
             return files.ToArray();
         }
-
     }
 }

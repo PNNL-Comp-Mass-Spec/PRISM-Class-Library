@@ -122,7 +122,6 @@ namespace PRISMWin
 
             using (var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, ""))
             {
-
                 var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
 
                 var releaseValue = v4FullKey?.GetValue("Release");
@@ -154,7 +153,6 @@ namespace PRISMWin
             // Keys in dotNETVersions are major versions (2, 3, or 4)
             // Values are a list of minor versions
             var dotNETVersions = new Dictionary<int, List<string>>();
-
 
             if (!findingLegacyVersions)
             {
@@ -202,7 +200,6 @@ namespace PRISMWin
                         {
                             StoreVersion(dotNETVersions, majorVersion, versionName + "  SP" + versionSP);
                         }
-
                     }
 
                     if (versionName != "")
@@ -241,12 +238,10 @@ namespace PRISMWin
                         }
                     }
                 }
-
             }
 
             return dotNETVersions;
         }
-
 
         /// <summary>
         /// Lookup the newest version of .NET in the registry
@@ -304,7 +299,6 @@ namespace PRISMWin
                             updateNewest = true;
                     }
 
-
                     if (updateNewest)
                     {
                         newestVersion = string.Copy(installedVersion);
@@ -318,14 +312,12 @@ namespace PRISMWin
                     return UNKNOWN_VERSION;
 
                 return newestVersion;
-
             }
             catch (Exception ex)
             {
                 OnErrorEvent("Error determining the .NET version: " + ex.Message, ex);
                 return UNKNOWN_VERSION;
             }
-
         }
 
         /// <summary>
@@ -345,7 +337,6 @@ namespace PRISMWin
             }
 
             return 0;
-
         }
 
         /// <summary>
@@ -377,6 +368,5 @@ namespace PRISMWin
                 dotNETVersions.Add(majorVersion, installedVariants);
             }
         }
-
     }
 }

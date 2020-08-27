@@ -10,7 +10,6 @@ namespace PRISMWin
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class TextBoxUtils
     {
-
         /// <summary>
         /// Tries to convert the string to a double
         /// </summary>
@@ -63,7 +62,6 @@ namespace PRISMWin
                 isError = true;
                 return valueIfError;
             }
-
         }
 
         /// <summary>
@@ -99,7 +97,6 @@ namespace PRISMWin
                 isError = true;
                 return valueIfError;
             }
-
         }
 
         /// <summary>
@@ -135,7 +132,6 @@ namespace PRISMWin
                 isError = true;
                 return valueIfError;
             }
-
         }
 
 #endif
@@ -189,7 +185,6 @@ namespace PRISMWin
                     e.Handled = true;
                     break;
             }
-
         }
 
         /// <summary>
@@ -350,19 +345,16 @@ namespace PRISMWin
                     {
                         thisTextBox.Text = defaultValue.ToString();
                     }
-
                 }
                 catch (Exception)
                 {
                     thisTextBox.Text = defaultValue.ToString();
                 }
-
             }
             else
             {
                 thisTextBox.Text = defaultValue.ToString();
             }
-
         }
 
         /// <summary>
@@ -388,15 +380,11 @@ namespace PRISMWin
                 {
                     thisTextBox.Text = defaultValue.ToString(CultureInfo.InvariantCulture);
                 }
-
             }
             else
             {
                 thisTextBox.Text = defaultValue.ToString(CultureInfo.InvariantCulture);
             }
-
         }
-
     }
-
 }

@@ -28,7 +28,6 @@ namespace PRISMTest
                 {
                     Assert.Fail("Error creating test directory: " + sourceDirectory + ": " + ex.Message);
                 }
-
             }
 
             var hashTestFile = new FileInfo(HashTestFilePath);
@@ -133,6 +132,5 @@ namespace PRISMTest
             Console.WriteLine("SHA-1 hash for '{0}' is {1}", text, sha1);
             Assert.AreEqual(expectedHash, sha1);
         }
-
     }
 }

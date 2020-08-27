@@ -9,7 +9,6 @@ namespace PRISMTest
     [TestFixture]
     class TestPathUtils
     {
-
         [TestCase(@"/proc/12343/stat", @"/proc/12343/stat")]
         [TestCase(@"/proc/subdir\filename", @"/proc/subdir/filename")]
         [TestCase(@"/proc\subdir\filename.txt", @"/proc/subdir/filename.txt")]
@@ -186,7 +185,6 @@ namespace PRISMTest
 
             if (expectedFileCount > 0)
                 Assert.GreaterOrEqual(files1.Count, expectedFileCount, "Found {0} files; expected to find {1}", files1.Count, expectedFileCount);
-
         }
 
         [TestCase("Results.txt", "*.txt", true)]
@@ -277,6 +275,5 @@ namespace PRISMTest
             var newPath = PathUtils.ReplaceFilenameInPath(existingFilePath, newFileName);
             Assert.AreEqual(expectedResult, newPath);
         }
-
     }
 }

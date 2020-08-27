@@ -83,7 +83,6 @@ namespace PRISM
         /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         public static string GetExceptionStackTrace(Exception ex, bool includeInnerExceptionMessages = true)
         {
-
             var stackTraceData = GetExceptionStackTraceData(ex).ToList();
 
             var stackTraceLines = new List<string>();
@@ -112,7 +111,6 @@ namespace PRISM
             AppendInnerExceptions(ex, stackTraceLines, STACK_CHAIN_SEPARATOR);
 
             return string.Join("", stackTraceLines);
-
         }
 
         /// <summary>
@@ -135,13 +133,11 @@ namespace PRISM
             bool includeInnerExceptionMessages = true,
             bool includeMethodParams = false)
         {
-
             var stackTraceData = GetExceptionStackTraceData(ex, includeMethodParams);
 
             var stackTraceLines = new List<string> {
                 STACK_TRACE_TITLE
             };
-
 
             foreach (var traceItem in stackTraceData)
             {
@@ -154,7 +150,6 @@ namespace PRISM
             AppendInnerExceptions(ex, stackTraceLines, string.Empty);
 
             return string.Join("\n", stackTraceLines);
-
         }
 
         /// <summary>
@@ -190,7 +185,6 @@ namespace PRISM
         /// <remarks></remarks>
         public static IEnumerable<string> GetExceptionStackTraceData(string stackTraceText, bool includeMethodParams = false)
         {
-
             const string CODE_LINE_PREFIX = ":line ";
             const string REGEX_LINE_IN_CODE = CODE_LINE_PREFIX + "\\d+";
 
@@ -213,7 +207,6 @@ namespace PRISM
             // Populate methods with the method name of each line, optionally including method arguments
             using (var reader = new StringReader(stackTraceText))
             {
-
                 while (reader.Peek() > -1)
                 {
                     var dataLine = reader.ReadLine();
@@ -295,7 +288,6 @@ namespace PRISM
                             currentMethod = string.Empty;
                             currentMethodArgs = string.Empty;
                         }
-
                     }
 
                     string methodDescription;
@@ -322,7 +314,6 @@ namespace PRISM
 
                     methods.Add(methodDescription);
                 }
-
             }
 
             var stackTraceData = new List<string>();
@@ -335,12 +326,10 @@ namespace PRISM
             }
 
             return stackTraceData;
-
         }
 
         private static void AppendInnerExceptions(Exception ex, ICollection<string> stackTraceLines, string messagePrefix)
         {
-
             var innerException = ex.InnerException;
             while (innerException != null)
             {
@@ -383,7 +372,6 @@ namespace PRISM
 
         private static string TrimLinePrefix(string fileDescription, string codeLinePrefix)
         {
-
             var matchIndex = fileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal);
             if (matchIndex > 0)
             {
@@ -392,6 +380,5 @@ namespace PRISM
 
             return fileDescription;
         }
-
     }
 }

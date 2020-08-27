@@ -25,7 +25,6 @@ namespace PRISM.DatabaseUtils
         /// <returns></returns>
         private static bool AppendColumnToTable<T>(DataTable dataTable, string columnName, Type columnType, T defaultValue, bool isReadOnly, bool isUnique, bool autoIncrement = false)
         {
-
             try
             {
                 var newColumn = dataTable.Columns.Add(columnName);
@@ -52,7 +51,6 @@ namespace PRISM.DatabaseUtils
             {
                 return false;
             }
-
         }
 
         /// <summary>

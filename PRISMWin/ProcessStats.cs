@@ -100,14 +100,12 @@ namespace PRISMWin
             {
                 // Ignore errors
             }
-
         }
 
         private void ConditionalLogError(string message, Exception ex = null)
         {
             if (mLimitLoggingByTimeOfDay)
             {
-
                 // To avoid seeing this in the logs continually, we will only post this log message between 12 am and 12:30 am
                 if (DateTime.Now.Hour == 0 && DateTime.Now.Minute <= 30)
                 {
@@ -129,7 +127,6 @@ namespace PRISMWin
         /// </remarks>
         public int GetCoreCount()
         {
-
             try
             {
                 if (mCachedCoreCount > 0)
@@ -148,14 +145,12 @@ namespace PRISMWin
                 Interlocked.Exchange(ref mCachedCoreCount, coreCount);
 
                 return mCachedCoreCount;
-
             }
             catch (Exception)
             {
                 // This value will be affected by hyperthreading
                 return Environment.ProcessorCount;
             }
-
         }
 
         /// <summary>
@@ -180,7 +175,6 @@ namespace PRISMWin
         /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         public float GetCoreUsageByProcessID(int processId, ref string processIdInstanceName)
         {
-
             try
             {
                 if (mCachedCoreCount == 0)
@@ -246,7 +240,6 @@ namespace PRISMWin
                 var coresInUse = cpuUsage / 100.0;
 
                 return Convert.ToSingle(coresInUse);
-
             }
             catch (InvalidOperationException)
             {
@@ -257,7 +250,6 @@ namespace PRISMWin
             {
                 throw new Exception("Exception in GetCoreUsageByProcessID for processId " + processId + ": " + ex.Message, ex);
             }
-
         }
 
         /// <summary>
@@ -272,13 +264,11 @@ namespace PRISMWin
         /// </remarks>
         private float GetCoreUsageForPerfCounter(PerformanceCounter perfCounter, int maxAttempts)
         {
-
             if (maxAttempts < 1)
                 maxAttempts = 1;
 
             for (var iteration = 1; iteration <= maxAttempts; iteration++)
             {
-
                 try
                 {
                     // Take a sample, wait 1 second, then sample again
@@ -289,7 +279,6 @@ namespace PRISMWin
                     // Each core contributes "100" to the overall cpuUsage
                     var cpuUsage = CounterSample.Calculate(sample1, sample2);
                     return cpuUsage;
-
                 }
                 catch (InvalidOperationException)
                 {
@@ -306,11 +295,9 @@ namespace PRISMWin
                     // Wait 500 milliseconds then try again
                     Thread.Sleep(500);
                 }
-
             }
 
             return 0;
-
         }
 
         /// <summary>
@@ -342,7 +329,6 @@ namespace PRISMWin
         /// </remarks>
         public float GetCoreUsageByProcessName(string processName, out List<int> processIDs)
         {
-
             processIDs = new List<int>();
             var processInstances = Process.GetProcessesByName(processName);
             if (processInstances.Length == 0)
@@ -363,7 +349,6 @@ namespace PRISMWin
             }
 
             return coreUsageOverall;
-
         }
 
         /// <summary>
@@ -394,7 +379,6 @@ namespace PRISMWin
             }
 
             return cpuUtilization;
-
         }
 
         /// <summary>
@@ -407,7 +391,6 @@ namespace PRISMWin
         /// <remarks></remarks>
         public PerformanceCounter GetPerfCounterForProcessID(int processId, out string instanceName, string processCounterName = "% Processor Time")
         {
-
             instanceName = GetInstanceNameForProcessId(processId);
             if (string.IsNullOrEmpty(instanceName))
             {
@@ -415,7 +398,6 @@ namespace PRISMWin
             }
 
             return new PerformanceCounter("Process", processCounterName, instanceName);
-
         }
 
         /// <summary>
@@ -426,7 +408,6 @@ namespace PRISMWin
         /// <remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
         public string GetInstanceNameForProcessId(int processId)
         {
-
             try
             {
                 var runningProcess = Process.GetProcessById(processId);
@@ -436,7 +417,6 @@ namespace PRISMWin
                 var processCategory = new PerformanceCounterCategory("Process");
 
                 var perfCounterInstances = (from item in processCategory.GetInstanceNames() where item.StartsWith(processName) select item).ToList();
-
 
                 foreach (var instanceName in perfCounterInstances)
                 {
@@ -448,9 +428,7 @@ namespace PRISMWin
                             return instanceName;
                         }
                     }
-
                 }
-
             }
             catch (Exception)
             {
@@ -458,7 +436,6 @@ namespace PRISMWin
             }
 
             return string.Empty;
-
         }
 
         private void InitializePerformanceCounters()
@@ -468,7 +445,6 @@ namespace PRISMWin
 
             try
             {
-
                 if (mPerformanceCounterInitAttempts > 2)
                 {
                     // Initialization has failed 3 times
@@ -490,7 +466,6 @@ namespace PRISMWin
             {
                 ConditionalLogError("Error instantiating the Processor.[% Processor Time] performance counter: " + ex.Message, ex);
             }
-
         }
 
         /// <summary>

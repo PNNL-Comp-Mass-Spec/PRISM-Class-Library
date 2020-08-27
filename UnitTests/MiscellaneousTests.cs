@@ -53,6 +53,5 @@ namespace PRISMTest
 
             Assert.AreEqual(expectedValue, pendingUpdates, "Unexpected value for {0}: {1}", dateToTest, pendingUpdates);
         }
-
     }
 }

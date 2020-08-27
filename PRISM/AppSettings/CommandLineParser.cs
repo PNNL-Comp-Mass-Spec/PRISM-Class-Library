@@ -1260,7 +1260,6 @@ namespace PRISM
                 Console.WriteLine();
                 Console.WriteLine(WrapParagraph(ContactInfo));
             }
-
         }
 
         /// <summary>

@@ -17,7 +17,6 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class clsParseCommandLine
     {
-
         /// <summary>
         /// Default switch char
         /// </summary>
@@ -135,7 +134,6 @@ namespace PRISM
         {
             var lstInvalidParameters = new List<string>();
 
-
             try
             {
                 // Find items in mSwitches whose keys are not in validParameters)
@@ -163,7 +161,6 @@ namespace PRISM
                         lstInvalidParameters.Add(item.Key);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -171,7 +168,6 @@ namespace PRISM
             }
 
             return lstInvalidParameters;
-
         }
 
         /// <summary>
@@ -392,7 +388,6 @@ namespace PRISM
                         mNonSwitchParameters.Add(paramName);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -451,7 +446,6 @@ namespace PRISM
             } while (iteration < totalIterations);
 
             Console.WriteLine();
-
         }
 
         /// <summary>
@@ -474,7 +468,6 @@ namespace PRISM
             }
 
             return paramValue;
-
         }
 
         /// <summary>
@@ -519,7 +512,6 @@ namespace PRISM
             }
 
             return false;
-
         }
 
         /// <summary>
@@ -542,7 +534,6 @@ namespace PRISM
         /// <returns>True if present, otherwise false</returns>
         public bool RetrieveValueForParameter(string paramName, out string paramValue, bool caseSensitive)
         {
-
             try
             {
                 paramValue = string.Empty;
@@ -574,7 +565,6 @@ namespace PRISM
             {
                 throw new Exception("Error in RetrieveValueForParameter", ex);
             }
-
         }
 
         private string[] SplitCommandLineParams(string commandLine)
@@ -586,7 +576,6 @@ namespace PRISM
 
             try
             {
-
                 if (!string.IsNullOrEmpty(commandLine))
                 {
                     // Make sure the command line doesn't have any carriage return or linefeed characters
@@ -645,7 +634,6 @@ namespace PRISM
             }
 
             return paramList.ToArray();
-
         }
     }
 }

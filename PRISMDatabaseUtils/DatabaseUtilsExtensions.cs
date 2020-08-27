@@ -70,7 +70,6 @@ namespace PRISMDatabaseUtils
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-
         /// <summary>
         /// Converts an database field value to a string, checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter

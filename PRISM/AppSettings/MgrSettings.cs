@@ -229,7 +229,6 @@ namespace PRISM.AppSettings
         /// </returns>
         private bool CheckInitialSettings(IReadOnlyDictionary<string, string> paramDictionary)
         {
-
             // Verify that UsingDefaults is false
             if (!paramDictionary.TryGetValue(MGR_PARAM_USING_DEFAULTS, out var usingDefaultsText))
             {
@@ -327,7 +326,6 @@ namespace PRISM.AppSettings
                 OnErrorEvent(string.Format(
                     "{0} setting not found in the specified manager config files ({1})",
                     settingName, fileNameList));
-
             }
 
             return false;
@@ -414,7 +412,6 @@ namespace PRISM.AppSettings
         /// <remarks>Performs retries if necessary.</remarks>
         public bool LoadMgrSettingsFromDB(bool logConnectionErrors = true, int retryCount = 3)
         {
-
             var managerName = GetParam(MGR_PARAM_MGR_NAME, string.Empty);
 
             if (string.IsNullOrEmpty(managerName))
@@ -552,7 +549,6 @@ namespace PRISM.AppSettings
                 }
 
                 return ParseXMLSettings(settingNodes, TraceMode, existingSettings);
-
             }
             catch (Exception ex)
             {

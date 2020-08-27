@@ -54,7 +54,6 @@ namespace PRISM
         public bool MakeZipFile(string cmdOptions, string outputFile, string inputSpec)
         {
 
-
             // Verify input file and output path have been specified
             if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
             {
@@ -97,7 +96,6 @@ namespace PRISM
         /// <param name="outputDirectoryPath">The path where you want to put the extracted files.</param>
         public bool UnzipFile(string cmdOptions, string zipFilePath, string outputDirectoryPath)
         {
-
             // Verify input file and output path have been specified
             if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
             {
@@ -216,7 +214,6 @@ namespace PRISM
         /// <param name="zipFilePath">The file path of the zip file to verify.</param>
         public bool VerifyZippedFile(string zipFilePath)
         {
-
             // Verify test file exists
             if (!File.Exists(zipFilePath))
             {
@@ -317,6 +314,5 @@ namespace PRISM
         /// Gets or Sets notify on exception.
         /// </summary>
         public bool NotifyOnException { get; set; }
-
     }
 }

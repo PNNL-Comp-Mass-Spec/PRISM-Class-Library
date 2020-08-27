@@ -11,13 +11,11 @@ namespace PRISMTest
     [TestFixture]
     class FileLoggingTests
     {
-
         const string LOGFILE_BASENAME = "FileLoggingTester";
 
         [TestCase(@"C:\Temp", 5, 25)]
         public void TestArchiveOldLogFiles(string logDirectory, int yearsToSimulate, int filesPerYear)
         {
-
             var logDir = new DirectoryInfo(logDirectory);
 
             if (filesPerYear < 10)
@@ -292,7 +290,6 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
-
         }
 
         [TestCase("Test log message", BaseLogger.LogLevels.INFO, 4, 125)]
@@ -311,7 +308,6 @@ namespace PRISMTest
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
                 logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
-
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -333,7 +329,6 @@ namespace PRISMTest
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
                 logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
-
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -355,7 +350,6 @@ namespace PRISMTest
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
                 logFileNameBase + FileLogger.LOG_FILE_EXTENSION);
-
         }
 
         [TestCase(@"C:\Temp", "TestLogFile.log", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -377,7 +371,6 @@ namespace PRISMTest
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
                 logFileNameBase);
-
         }
 
         [TestCase("TestLogFile", "Test log message via FileLogger.WriteLog", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -396,7 +389,6 @@ namespace PRISMTest
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
                 logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
-
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
@@ -457,7 +449,6 @@ namespace PRISMTest
         [TestCase(LogMessage.TimestampFormatMode.YearMonthDay12hr, "yyyy-MM-dd hh:mm:ss tt")]
         public void TestTimestampFormatting(LogMessage.TimestampFormatMode timestampFormat, string expectedFormatString)
         {
-
             var testMessage = new LogMessage(BaseLogger.LogLevels.INFO, "Test message");
 
             var formattedMessage = testMessage.GetFormattedMessage(timestampFormat);
@@ -475,7 +466,6 @@ namespace PRISMTest
         [TestCase(LogMessage.TimestampFormatMode.YearMonthDay12hr, "yyyy-MM-dd hh:mm:ss tt", false)]
         public void TestTimestampFormattingLocalVsUtc(LogMessage.TimestampFormatMode timestampFormat, string expectedFormatString, bool useLocalTime)
         {
-
             var testMessage = new LogMessage(BaseLogger.LogLevels.INFO, "Test message");
 
             var formattedMessage = testMessage.GetFormattedMessage(useLocalTime, timestampFormat);
@@ -513,7 +503,6 @@ namespace PRISMTest
 
         private void EvaluateFormattedMessageTimestamp(string formattedMessage, string expectedFormatString, bool useLocalTime)
         {
-
             Console.WriteLine(formattedMessage);
 
             if (!formattedMessage.Contains(","))
@@ -554,7 +543,6 @@ namespace PRISMTest
             int logDelayMilliseconds,
             string expectedLogFileName)
         {
-
             var randGenerator = new Random();
 
             string formatString;
@@ -578,8 +566,6 @@ namespace PRISMTest
             FileLogger.FlushPendingMessages();
 
             Console.WriteLine("Log entries written to " + FileLogger.LogFilePath);
-
         }
-
     }
 }

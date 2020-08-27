@@ -96,7 +96,6 @@ namespace PRISM.Logging
             }
         }
 
-
         /// <summary>
         /// Most recent error message
         /// </summary>
@@ -221,7 +220,6 @@ namespace PRISM.Logging
                     false,
                     false);
             }
-
         }
 
         /// <summary>
@@ -321,5 +319,4 @@ namespace PRISM.Logging
 
         #endregion
     }
-
 }

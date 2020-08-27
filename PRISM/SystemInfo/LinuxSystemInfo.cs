@@ -8,13 +8,11 @@ using System.Threading;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
     /// <summary>
     /// Methods to determine memory usage, CPU usage, and Linux system version
     /// </summary>
     public class LinuxSystemInfo : EventNotifier, ISystemInfo
     {
-
         #region "Constants and Enums"
 
         /// <summary>
@@ -136,7 +134,6 @@ namespace PRISM
         /// <returns>Total CPU time, in jiffies</returns>
         private long ComputeTotalCPUTime(out long idleTime)
         {
-
             idleTime = 0;
 
             var cpuStatFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, "stat");
@@ -218,14 +215,12 @@ namespace PRISM
 
                 return totalJiffies;
             }
-
         }
 
         private void ConditionalLogError(string message, Exception ex = null)
         {
             if (mLimitLoggingByTimeOfDay)
             {
-
                 // To avoid seeing this in the logs continually, we will only post this log message between 12 am and 12:30 am
                 if (DateTime.Now.Hour == 0 && DateTime.Now.Minute <= 30)
                 {
@@ -254,7 +249,6 @@ namespace PRISM
         /// </remarks>
         private bool ExtractCPUTimes(FileSystemInfo statFile, out long utime, out long stime)
         {
-
             if (TraceEnabled)
             {
                 OnDebugEvent("Opening " + statFile.FullName);
@@ -323,7 +317,6 @@ namespace PRISM
                         return false;
                     }
 
-
                     utime = long.Parse(match.Groups["utime"].Value);
                     stime = long.Parse(match.Groups["stime"].Value);
                     return true;
@@ -358,7 +351,6 @@ namespace PRISM
 
         private float ExtractMemoryMB(string dataLine, bool showDebugInfo)
         {
-
             Match match;
             string units;
 
@@ -484,7 +476,6 @@ namespace PRISM
         /// </remarks>
         public int GetCoreCount()
         {
-
             if (mCoreCountCached > 0)
                 return mCoreCountCached;
 
@@ -562,7 +553,6 @@ namespace PRISM
                                 }
                             }
                         }
-
                     }
                 }
 
@@ -607,7 +597,6 @@ namespace PRISM
                     ConditionalLogError("Cannot determine core count; expected fields not found in " + cpuInfoFilePath);
 
                 return -1;
-
             }
             catch (Exception ex)
             {
@@ -676,7 +665,6 @@ namespace PRISM
         /// </remarks>
         public float GetCoreUsageByProcessName(string processName, string argumentText, out List<int> processIDs, float samplingTimeSeconds = 1)
         {
-
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreUseByProcessID).TotalSeconds > 15;
             if (showDebugInfo)
                 mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow;
@@ -697,7 +685,6 @@ namespace PRISM
 
                 foreach (var process in processes.Values)
                 {
-
                     if (matchProgramNameOnly)
                     {
                         var processIdProgramName = Path.GetFileName(process.ExePath);
@@ -728,7 +715,6 @@ namespace PRISM
 
                 var coreUsage = GetCoreUsageByProcessID(processIDs, out _, samplingTimeSeconds);
                 return coreUsage;
-
             }
             catch (Exception ex)
             {
@@ -900,7 +886,6 @@ namespace PRISM
                 }
 
                 return totalCoreUsage;
-
             }
             catch (Exception ex)
             {
@@ -937,7 +922,6 @@ namespace PRISM
                 else
                     Thread.Sleep((int)(samplingTimeSeconds * 1000));
 
-
                 var timeTotal2 = ComputeTotalCPUTime(out var idleTime2);
                 if (timeTotal2 == 0)
                 {
@@ -968,7 +952,6 @@ namespace PRISM
         /// <returns>Free memory, or -1 if an error</returns>
         public float GetFreeMemoryMB()
         {
-
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeMemory).TotalSeconds > 15;
             if (showDebugInfo)
                 mLastDebugInfoTimeMemory = DateTime.UtcNow;
@@ -1068,7 +1051,6 @@ namespace PRISM
                     ConditionalLogError("MemFree statistic not found in " + memInfoFilePath);
 
                 return -1;
-
             }
             catch (Exception ex)
             {
@@ -1087,7 +1069,6 @@ namespace PRISM
         /// <remarks></remarks>
         public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
         {
-
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeProcesses).TotalSeconds > 15;
             if (showDebugInfo)
                 mLastDebugInfoTimeProcesses = DateTime.UtcNow;
@@ -1144,7 +1125,6 @@ namespace PRISM
                 }
 
                 return processList;
-
             }
             catch (Exception ex)
             {
@@ -1153,7 +1133,6 @@ namespace PRISM
 
                 return processList;
             }
-
         }
 
         /// <summary>
@@ -1215,7 +1194,6 @@ namespace PRISM
                     ConditionalLogError("MemTotal statistic not found in " + memInfoFilePath);
 
                 return -1;
-
             }
             catch (Exception ex)
             {

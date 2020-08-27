@@ -57,6 +57,5 @@ namespace PRISM
         /// </summary>
         /// <returns>Total memory, or -1 if an error</returns>
         float GetTotalMemoryMB();
-
     }
 }

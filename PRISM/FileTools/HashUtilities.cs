@@ -218,7 +218,6 @@ namespace PRISM
                 default:
                     throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type");
             }
-
         }
 
         /// <summary>
@@ -228,7 +227,6 @@ namespace PRISM
         /// <returns>SHA-1 hash, as a hex string</returns>
         public static string ComputeFileHashSha1(string filePath)
         {
-
             string hashValue;
 
             // open file (as read-only)
@@ -273,7 +271,6 @@ namespace PRISM
         /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
         /// <returns>MD5 hash, as a string</returns>
         private static string ComputeMD5Hash(Stream data, out string base64MD5) {
-
             var md5Hasher = new MD5CryptoServiceProvider();
             var byteArray = ComputeHashGetByteArray(md5Hasher, data);
 
@@ -375,7 +372,6 @@ namespace PRISM
             string hashValue,
             out string warningMessage)
         {
-
             var fiDataFile = new FileInfo(dataFilePath);
 
             if (!fiDataFile.Exists)
@@ -417,7 +413,6 @@ namespace PRISM
 
             try
             {
-
                 using (var writer = new StreamWriter(new FileStream(hashCheckFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
                     writer.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
@@ -436,7 +431,6 @@ namespace PRISM
                 warningMessage = string.Format("Unable to create .hashcheck file {0}: {1}", hashCheckFilePath, ex.Message);
                 return string.Empty;
             }
-
         }
 
         /// <summary>

@@ -17,7 +17,6 @@ namespace PRISM.Logging
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LogTools
     {
-
         #region "Enums"
 
         /// <summary>
@@ -213,7 +212,6 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(statusMessage, ex);
             }
-
         }
 
         /// <summary>
@@ -236,7 +234,6 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(formattedError, ex2);
             }
-
         }
 
         /// <summary>
@@ -259,7 +256,6 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(formattedError, ex2);
             }
-
         }
         /// <summary>
         /// Show a status message at the console and optionally include in the log file
@@ -269,7 +265,6 @@ namespace PRISM.Logging
         /// <param name="writeToLog">True to write to the log file; false to only display at console</param>
         public static void LogMessage(string statusMessage, bool isError = false, bool writeToLog = true)
         {
-
             if (isError)
             {
                 ConsoleMsgUtils.ShowErrorCustom(statusMessage, false);
@@ -297,7 +292,6 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(statusMessage, ex);
             }
-
         }
 
         /// <summary>
@@ -318,7 +312,6 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(warningMessage, ex);
             }
-
         }
 
         /// <summary>
@@ -432,7 +425,6 @@ namespace PRISM.Logging
 
             // Send the log message
             myLogger?.LogMessage(logLevel, message, ex);
-
         }
 
         #endregion

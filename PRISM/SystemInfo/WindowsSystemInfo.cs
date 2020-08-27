@@ -125,7 +125,6 @@ namespace PRISM
     /// </summary>
     internal class WindowsSystemInfoInternal : EventNotifier, ISystemInfo
     {
-
         /// <summary>
         /// Matches strings surrounded by double quotes
         /// </summary>
@@ -1022,7 +1021,6 @@ namespace PRISM
         /// <remarks>Command line lookup can be slow because it uses WMI; set lookupCommandLineInfo to false to speed things up</remarks>
         public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
         {
-
             var processList = new Dictionary<int, ProcessInfo>();
 
             if (lookupCommandLineInfo)
@@ -1070,7 +1068,6 @@ namespace PRISM
                 }
 
                 processList.Add(item.Id, process);
-
             }
 
             if (lookupCommandLineInfo)
@@ -1079,7 +1076,6 @@ namespace PRISM
             }
 
             return processList;
-
         }
 
         /// <summary>

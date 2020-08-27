@@ -32,7 +32,6 @@ namespace PRISMTest
                 foreach (var installedVersion in majorVersion.Value)
                     Console.WriteLine(installedVersion);
             }
-
         }
 #endif
     }

@@ -54,8 +54,6 @@ namespace PRISMTest
             reader.SaveSettings();
 
             Console.WriteLine("Setting {0} updated in file {1}", settingName, reader.XMLFilePath);
-
         }
-
     }
 }

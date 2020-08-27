@@ -49,7 +49,6 @@ namespace PRISMTest
                 {
                     Assert.Fail("Error creating test directory and/or test files at " + sourceDirectory + ": " + ex.Message);
                 }
-
             }
 
             CopyDirectory(sourceDirectoryPath, targetDirectoryPath);
@@ -131,7 +130,6 @@ namespace PRISMTest
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
 
 
-
         }
 
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
@@ -191,7 +189,6 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
-
         }
 
 #if !(NETCOREAPP2_0)
@@ -220,7 +217,6 @@ namespace PRISMTest
 
         private void GetDriveFreeSpaceForDirectory(string directoryPath)
         {
-
             var success = PRISMWin.DiskInfo.GetDiskFreeSpace(
                 directoryPath,
                 out var freeBytesAvailableToUser,
@@ -237,7 +233,6 @@ namespace PRISMTest
             Console.WriteLine("{0,-25} {1}", "Free Space", FileTools.BytesToHumanReadable(totalNumberOfFreeBytes));
             Console.WriteLine("{0,-25} {1}", "Space available to User", FileTools.BytesToHumanReadable(freeBytesAvailableToUser));
             Console.WriteLine("{0,-25} {1}", "Drive Capacity", FileTools.BytesToHumanReadable(totalDriveCapacityBytes));
-
         }
 
         [TestCase(@"C:\Temp\Testfile.txt", false)]
@@ -264,7 +259,6 @@ namespace PRISMTest
 
         public void GetDriveFreeSpaceForFile(string targetFilePath, bool reportFreeSpaceAvailableToUser)
         {
-
             var success = PRISMWin.DiskInfo.GetDiskFreeSpace(targetFilePath, out var freeSpaceBytes, out var errorMessage, reportFreeSpaceAvailableToUser);
 
             if (!success)
@@ -276,7 +270,6 @@ namespace PRISMTest
 
             Console.WriteLine("Free space at {0} is {1} (ReportFreeSpaceAvailableToUse = {2}))",
                 directoryPath, FileTools.BytesToHumanReadable(freeSpaceBytes), reportFreeSpaceAvailableToUser);
-
         }
 
         [TestCase(@"C:\Temp\Testfile.txt", 0)]
@@ -309,7 +302,6 @@ namespace PRISMTest
 
         public void ValidateFreeDiskSpace(string targetFilePath, long minimumFreeSpaceMB)
         {
-
             var success = PRISMWin.DiskInfo.GetDiskFreeSpace(targetFilePath, out var currentDiskFreeSpaceBytes, out var errorMessage);
 
             if (!success)
@@ -324,7 +316,6 @@ namespace PRISMTest
             Console.WriteLine("Target drive has {0} free space to copy {1} file {2}; {3} free",
                 sufficientOrNot, FileTools.BytesToHumanReadable(minimumFreeSpaceMB * 1024 * 1024),
                 targetFilePath, FileTools.BytesToHumanReadable(currentDiskFreeSpaceBytes));
-
 
         }
 #endif

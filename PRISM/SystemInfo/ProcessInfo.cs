@@ -132,7 +132,6 @@ namespace PRISM
                 {
                     ExeName = System.IO.Path.GetFileName(exePath);
                 }
-
             }
             catch (Exception)
             {

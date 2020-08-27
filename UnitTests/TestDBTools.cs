@@ -255,7 +255,6 @@ namespace PRISMTest
 
         private void DisplayParameters(IEnumerable<DbParameter> addedParameters)
         {
-
             Console.WriteLine("{0,-15} {1,-15} {2}", "Param Name", "SqlType", "Db Type");
             foreach (var item in addedParameters)
             {
@@ -355,7 +354,6 @@ namespace PRISMTest
                                       "   SELECT TOP {0} * FROM {1}" +
                                       "   Order By {2} Desc) LookupQ " +
                                       "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
-
             }
             else
             {
@@ -387,7 +385,6 @@ namespace PRISMTest
                                       "   SELECT * FROM {1}" +
                                       "   Order By {2} Desc Limit {0}) LookupQ " +
                                       "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
-
             }
 
             var columnDataTypes = new List<SqlType>();
@@ -487,7 +484,6 @@ namespace PRISMTest
             }
 
             Console.WriteLine();
-
         }
 
         [TestCase(false, "Shape", "Sides", "Color")]
@@ -563,7 +559,6 @@ namespace PRISMTest
                         {
                             Assert.False(perimeterDefined, "perimeterDefined should be false");
                         }
-
                     }
                     catch (Exception ex)
                     {
@@ -929,7 +924,6 @@ namespace PRISMTest
 
         private void TestQueryTableWork(string connectionString, string database, string user, string query, int expectedRowCount, string expectedValueList)
         {
-
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);

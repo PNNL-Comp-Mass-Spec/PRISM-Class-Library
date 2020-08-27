@@ -404,6 +404,5 @@ namespace PRISM
             get => BaseStream.Position;
             set => BaseStream.Position = value;
         }
-
     }
 }

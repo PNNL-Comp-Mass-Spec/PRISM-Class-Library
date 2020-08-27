@@ -9,7 +9,6 @@ using PRISMDatabaseUtils.PostgreSQL;
 
 namespace PRISMDatabaseUtils
 {
-
     /// <summary>
     /// Enum of supported relational database systems
     /// </summary>
@@ -59,7 +58,6 @@ namespace PRISMDatabaseUtils
         /// <returns></returns>
         public static DbServerTypes GetServerTypeFromConnectionString(string connectionString)
         {
-
             // Example SQL Server connection string:
             // "Data Source=MyServer;Initial Catalog=MyDatabase;integrated security=SSPI"
 
@@ -106,7 +104,6 @@ namespace PRISMDatabaseUtils
                 }
 
                 throw new Exception(string.Format("Invalid value for {0}; use SqlServer, MSSqlServer, Postgres, or PostgreSQL", match.Value));
-
             }
 
             try
@@ -136,7 +133,6 @@ namespace PRISMDatabaseUtils
             }
 
             return DbServerTypes.MSSQLServer;
-
         }
 
         /// <summary>
@@ -249,6 +245,5 @@ namespace PRISMDatabaseUtils
             var keywordInfo = new KeyValuePair<Regex, DbServerTypes>(keywordMatcher, serverType);
             mConnectionStringKeywordMap.Add(keywordInfo);
         }
-
     }
 }

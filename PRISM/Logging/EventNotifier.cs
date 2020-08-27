@@ -11,7 +11,6 @@ namespace PRISM
     /// </summary>
     public abstract class EventNotifier : IEventNotifier
     {
-
         #region "Events and Delegates"
 
         /// <summary>
@@ -273,6 +272,5 @@ namespace PRISM
             sourceClass.WarningEvent += OnWarningEvent;
             sourceClass.ProgressUpdate += OnProgressUpdate;
         }
-
     }
 }

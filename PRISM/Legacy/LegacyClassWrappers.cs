@@ -5,7 +5,6 @@ using System.IO;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
 #pragma warning disable CS1591  // Missing XML comments
 #pragma warning disable IDE1006 // Naming Styles
 
@@ -37,7 +36,6 @@ namespace PRISM
     [Obsolete("Use the FileTools class")]
     public class clsFileTools : FileTools
     {
-
         /// <summary>
         /// Constructor
         /// </summary>

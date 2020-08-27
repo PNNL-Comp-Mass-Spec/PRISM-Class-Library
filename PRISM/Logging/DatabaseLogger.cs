@@ -8,7 +8,6 @@ namespace PRISM.Logging
     /// </summary>
     public abstract class DatabaseLogger : BaseLogger
     {
-
         #region "Constants"
 
         /// <summary>
@@ -82,7 +81,6 @@ namespace PRISM.Logging
             get => mLogThresholdLevel;
             set => SetLogLevel(value);
         }
-
 
         /// <summary>
         /// The module name identifies the logging process

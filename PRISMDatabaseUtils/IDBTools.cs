@@ -8,13 +8,11 @@ using PRISM.Logging;
 // ReSharper disable UnusedMemberInSuper.Global
 namespace PRISMDatabaseUtils
 {
-
     /// <summary>
     /// Tools to retrieve data from a database
     /// </summary>
     public interface IDBTools : IEventNotifier
     {
-
         /// <summary>
         /// Database connection string.
         /// </summary>

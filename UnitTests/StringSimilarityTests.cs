@@ -7,7 +7,6 @@ namespace PRISMTest
     [TestFixture]
     class StringSimilarityTests
     {
-
         [Test]
         [TestCase("Breadbox", "Redbox", 0.6666666, 0.6666666)]
         [TestCase("CSharp", "Csharp", 1, 1)]
@@ -72,7 +71,6 @@ namespace PRISMTest
 
         private void DisplayAndCompareScores(string text1, string text2, double similarityScore, double similarityScoreNoSymbolsOrWhitespace, double expectedSimilarityScore, double expectedSimilarityScoreNoSymbolsOrWhitespace)
         {
-
             Console.WriteLine("With whitespace, similarity score is \n{0:F4} for \n{1} vs.\n{2}",
                               similarityScore, text1, text2);
             Console.WriteLine();
@@ -94,8 +92,6 @@ namespace PRISMTest
             Assert.AreEqual(expectedSimilarityScoreNoSymbolsOrWhitespace, similarityScoreNoSymbolsOrWhitespace, 0.0001,
                             "Actual score of {0} does not match the expected score, {1} (ignore whitespace)",
                             similarityScoreNoSymbolsOrWhitespace, expectedSimilarityScoreNoSymbolsOrWhitespace);
-
         }
     }
-
 }

@@ -69,7 +69,6 @@ namespace PRISMDatabaseUtils
             int size,
             ParameterDirection direction)
         {
-
             var success = GetSqlTypeByDataTypeName(dataTypeName, out var dataType, out var supportsSize);
 
             if (!success)
@@ -215,7 +214,6 @@ namespace PRISMDatabaseUtils
                 case "sql_variant":
                     dataType = DbType.Object;
                     return true;
-
             }
 
             dataType = DbType.Int32;
@@ -446,6 +444,5 @@ namespace PRISMDatabaseUtils
             param.Precision = 9;
             param.Scale = 5;
         }
-
     }
 }

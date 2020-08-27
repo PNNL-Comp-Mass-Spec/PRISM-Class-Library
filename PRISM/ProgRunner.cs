@@ -9,14 +9,12 @@ using PRISM.Logging;
 
 namespace PRISM
 {
-
     /// <summary>
     /// This class runs a single program as an external process and monitors it with an internal thread
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgRunner : EventNotifier
     {
-
         #region "Constants and Enums"
 
         /// <summary>
@@ -420,7 +418,6 @@ namespace PRISM
 
                 m_CachedConsoleError?.Append(outLine.Data);
             }
-
         }
 
         /// <summary>
@@ -497,7 +494,6 @@ namespace PRISM
 
                 if (gcThread.IsAlive)
                     gcThread.Abort();
-
             }
             catch
             {
@@ -525,7 +521,6 @@ namespace PRISM
         /// <remarks>Before calling this function, define WorkDir (working directory) and Program (full path to the .exe to run)</remarks>
         public string GetConsoleOutputFilePath()
         {
-
             string consoleOutputFileName;
             if (string.IsNullOrEmpty(Program))
             {
@@ -666,7 +661,6 @@ namespace PRISM
                 m_Process.StartInfo.RedirectStandardOutput = false;
                 standardOutputRedirected = false;
             }
-
 
             if (!File.Exists(m_Process.StartInfo.FileName))
             {
@@ -837,7 +831,6 @@ namespace PRISM
                     mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
 #pragma warning restore 618
                     mLogger?.Error(errorMsg);
-
                 }
 
                 if (m_ConsoleOutputStreamWriter != null)
@@ -871,7 +864,6 @@ namespace PRISM
                     break;
                 }
             } while (true);
-
         }
 
         /// <summary>
@@ -896,7 +888,6 @@ namespace PRISM
             catch (Exception ex)
             {
                 ThrowConditionalException(ex, "Caught exception while trying to start thread.");
-
             }
         }
 

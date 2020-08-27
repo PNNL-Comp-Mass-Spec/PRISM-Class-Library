@@ -7,7 +7,6 @@ using System.Xml;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
     /// <summary>
     /// Tools for manipulating XML settings files
     /// </summary>
@@ -60,7 +59,6 @@ namespace PRISM
                 UpdateSections();
                 XmlFilePath = xmlFilename;
                 Initialized = true;
-
             }
             catch
             {
@@ -614,7 +612,6 @@ namespace PRISM
                     m_SectionNames.Add(nameAttribute.Value);
                     return true;
                 }
-
             }
             catch (Exception e)
             {
@@ -635,7 +632,6 @@ namespace PRISM
         /// <remarks></remarks>
         public bool ManualParseXmlOrIniFile(string filePath)
         {
-
             // Create a new, blank XML document
             m_XmlDoc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><sections></sections>");
 
@@ -658,7 +654,6 @@ namespace PRISM
 
                     using (var srInFile = new StreamReader(new FileStream(fileToFind.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                     {
-
                         while (!srInFile.EndOfStream)
                         {
                             var s = srInFile.ReadLine();
@@ -669,7 +664,6 @@ namespace PRISM
 
                         XmlFilePath = filePath;
                         Initialized = true;
-
                     }
                 }
                 else
@@ -684,7 +678,6 @@ namespace PRISM
                 }
 
                 return true;
-
             }
             catch (Exception e)
             {
@@ -695,7 +688,6 @@ namespace PRISM
             }
 
             return false;
-
         }
 
         /// <summary>
@@ -743,7 +735,6 @@ namespace PRISM
 
                         // Create a new section element
                         CreateSection(keyName);
-
                     }
                     else
                     {
@@ -752,7 +743,6 @@ namespace PRISM
                         {
                             // This is an XML-style key
                             ParseLineManualCheckTag(dataLine, VALUE_TAG, out value);
-
                         }
                         else
                         {
@@ -787,7 +777,6 @@ namespace PRISM
 
                             switch (keyName.ToLower().Trim())
                             {
-
                                 case "<sections>":
                                 case "</section>":
                                 case "</sections>":
@@ -799,7 +788,6 @@ namespace PRISM
 
                                     break;
                             }
-
                         }
                         else
                         {
@@ -818,14 +806,11 @@ namespace PRISM
                             newSetting.Attributes.SetNamedItem(valueAttribute);
 
                             GetLastSection().AppendChild(newSetting);
-
                         }
-
                     }
 
                     break;
             }
-
         }
 
         private bool ParseLineManualCheckTag(string dataLine, string tagToFind, out string tagValue)
@@ -915,7 +900,6 @@ namespace PRISM
                 {
                     m_XmlDoc.Save(settingsFile);
                 }
-
             }
             else
             {
@@ -967,7 +951,6 @@ namespace PRISM
                 return sb.ToString();
             }
         }
-
     }
 
     /// <summary>
@@ -980,5 +963,4 @@ namespace PRISM
         /// </summary>
         public override string Message { get; } = "The XMLFileReader instance has not been properly initialized.";
     }
-
 }

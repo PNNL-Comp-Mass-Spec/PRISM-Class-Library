@@ -13,7 +13,6 @@ namespace PRISM
     /// <remarks>For Windows and Linux, reports details about the OS version</remarks>
     public class OSVersionInfo : EventNotifier
     {
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -129,7 +128,6 @@ namespace PRISM
                 {
                     return string.Join("; ", versionInfo);
                 }
-
             }
 
             // Expected Linux version files were not found
@@ -189,12 +187,10 @@ namespace PRISM
             {
                 return GetFirstLineVersion(reader, osName);
             }
-
         }
 
         private string GetFirstLineVersion(StreamReader reader, string osName)
         {
-
             // The first line should have the version info
             while (!reader.EndOfStream)
             {
@@ -226,7 +222,6 @@ namespace PRISM
                 if (uniqueValues.Count == valuesToReturn)
                     break;
             }
-
         }
 
         private static string GetGenericOSVersion()
@@ -371,7 +366,6 @@ namespace PRISM
         /// <returns></returns>
         private string GetWin32Version(OperatingSystem osInfo)
         {
-
             //Code to determine specific version of Windows 95,
             //Windows 98, Windows 98 Second Edition, or Windows Me.
             switch (osInfo.Version.Minor)
@@ -391,7 +385,6 @@ namespace PRISM
                 default:
                     return GetGenericOSVersion();
             }
-
         }
 
         /// <summary>
@@ -401,7 +394,6 @@ namespace PRISM
         /// <returns></returns>
         private string GetWinNTVersion(OperatingSystem osInfo)
         {
-
             // Code to determine specific version of Windows NT 3.51,
             // Windows NT 4.0, Windows 2000, or Windows XP.
             switch (osInfo.Version.Major)
@@ -484,7 +476,6 @@ namespace PRISM
             }
 
             return osInfo;
-
         }
 
         /// <summary>
@@ -499,6 +490,5 @@ namespace PRISM
 
             return dataLine.TrimStart('"').TrimEnd('"');
         }
-
     }
 }

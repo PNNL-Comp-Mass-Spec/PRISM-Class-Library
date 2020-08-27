@@ -8,7 +8,6 @@ namespace PRISM.FileProcessor
     [Obsolete("Use ProcessFilesOrDirectoriesBase instead")]
     public abstract class ProcessFilesOrFoldersBase : ProcessFilesOrDirectoriesBase
     {
-
         /// <summary>
         /// Returns the full path to the folder into which this application should read/write settings file information
         /// </summary>
@@ -31,6 +30,5 @@ namespace PRISM.FileProcessor
         {
             return GetAppDirectoryPath();
         }
-
     }
 }

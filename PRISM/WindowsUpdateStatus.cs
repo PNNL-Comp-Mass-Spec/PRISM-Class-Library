@@ -11,7 +11,6 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class WindowsUpdateStatus
     {
-
         /// <summary>
         /// Checks whether Windows Updates are expected to occur close to the current time of day
         /// </summary>
@@ -42,7 +41,6 @@ namespace PRISM
         /// <remarks></remarks>
         public static bool UpdatesArePending(DateTime currentTime, out string pendingWindowsUpdateMessage)
         {
-
             // Previously, Windows 7 / Windows 8 processing machines installed updates around 3 am on the Thursday after the third Tuesday of the month
             // After migrating to a new OU in 2019, Windows 10 Pubs began installing updates at various times
             // Therefore, the processing box check is now disabled
@@ -87,7 +85,6 @@ namespace PRISM
             var pendingUpdates = ServerUpdatesArePending(currentTime, out pendingWindowsUpdateMessage);
 
             return pendingUpdates;
-
         }
 
         /// <summary>
@@ -109,7 +106,6 @@ namespace PRISM
         /// <remarks></remarks>
         public static bool ServerUpdatesArePending(DateTime currentTime, out string pendingWindowsUpdateMessage)
         {
-
             pendingWindowsUpdateMessage = "No pending update";
 
             // Determine the second Tuesday in the current month
@@ -129,7 +125,6 @@ namespace PRISM
             pendingWindowsUpdateMessage = "Servers are expected to install Windows updates around " + pendingUpdateTimeText;
 
             return true;
-
         }
 
         /// <summary>
@@ -155,6 +150,5 @@ namespace PRISM
             var targetTuesday = candidateDate.AddDays(addOn);
             return targetTuesday;
         }
-
     }
 }

@@ -7,7 +7,6 @@ namespace PRISMTest
     [TestFixture]
     class TestValueToString
     {
-
         [Test]
         public void TestValueString()
         {
@@ -267,8 +266,6 @@ namespace PRISMTest
 
             var errMsg = "Result " + result + " did not match expected result (" + resultExpected + ")";
             Assert.IsTrue(expectedResultFound, errMsg);
-
         }
-
     }
 }

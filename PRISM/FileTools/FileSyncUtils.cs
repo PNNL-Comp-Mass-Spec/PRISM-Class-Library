@@ -162,7 +162,6 @@ namespace PRISM
                 }
                 else
                 {
-
                     // Wait for a random time between 5 and 15 seconds, plus an additional 1 second per 50 MB, to give other processes a chance to copy the file
                     var rand = new Random();
                     var fileSizeMB = sourceFile.Length / 1024.0 / 1024;
@@ -196,7 +195,6 @@ namespace PRISM
                 // Create the local .hashcheck file, sending localFilePath and the hash info of the source file
                 var validFileC = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays: 0);
                 return validFileC;
-
             }
             catch (Exception ex)
             {
@@ -204,7 +202,6 @@ namespace PRISM
                 OnWarningEvent(errorMessage);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -228,7 +225,6 @@ namespace PRISM
             {
                 // Ignore errors here
             }
-
         }
 
         /// <summary>
@@ -237,7 +233,6 @@ namespace PRISM
         /// <param name="dataFile"></param>
         public static void UpdateLastUsedFile(FileInfo dataFile)
         {
-
             var lastUsedFilePath = dataFile.FullName + LASTUSED_FILE_EXTENSION;
 
             try
@@ -255,7 +250,6 @@ namespace PRISM
             {
                 ConsoleMsgUtils.ShowWarning("Unable to create a new .LastUsed file at {0}: {1}", lastUsedFilePath, ex.Message);
             }
-
         }
 
         /// <summary>
@@ -359,7 +353,6 @@ namespace PRISM
             bool checkDate = true, bool computeHash = true, bool checkSize = true,
             int recheckIntervalDays = 0)
         {
-
             try
             {
                 var localFile = new FileInfo(localFilePath);
@@ -472,7 +465,6 @@ namespace PRISM
                             return false;
                         }
                     }
-
                 }
 
                 // Create/update the .lastused file
@@ -508,7 +500,6 @@ namespace PRISM
             bool checkDate = true, bool computeHash = true, bool checkSize = true,
             HashUtilities.HashTypeConstants assumedHashType = HashUtilities.HashTypeConstants.MD5)
         {
-
             errorMessage = string.Empty;
 
             try
@@ -535,15 +526,12 @@ namespace PRISM
                 var validFile = ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage,
                                                         expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
                 return validFile;
-
             }
             catch (Exception ex)
             {
                 ConsoleMsgUtils.ShowWarning("Error in ValidateLocalFile: " + ex.Message);
                 return false;
             }
-
         }
-
     }
 }

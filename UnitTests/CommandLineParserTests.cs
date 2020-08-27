@@ -1010,7 +1010,6 @@ namespace PRISMTest
 
         private class ArgsPositionalOnly
         {
-
             [Option("i", ArgPosition = 1)]
             public string InputFilePath { get; set; }
 
@@ -1098,7 +1097,6 @@ namespace PRISMTest
 
             Console.WriteLine("{0,-15} {1}", "LogEnabled:", options.LogEnabled);
             Console.WriteLine("{0,-15} {1}", "LogFilePath:", options.LogFilePath);
-
 
             Assert.AreEqual(true, options.LogEnabled, "LogEnabled should be true!!");
             Assert.AreEqual(logFileName, options.LogFilePath, "LogFilePath should match the provided value!!");
@@ -1312,9 +1310,7 @@ namespace PRISMTest
                 Console.WriteLine(message);
             }
 
-
             Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
         }
-
     }
 }

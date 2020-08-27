@@ -155,7 +155,6 @@ namespace PRISMDatabaseUtils.AppSettings
                     pgPassFile = new FileInfo(Path.Combine(appDataDirectory, "postgresql", passwordFileName));
                 }
 
-
                 if (pgPassFile.Exists)
                 {
                     Console.WriteLine("Postgres user password will be read from " + pgPassFile.FullName);
@@ -166,6 +165,5 @@ namespace PRISMDatabaseUtils.AppSettings
                 return;
             }
         }
-
     }
 }

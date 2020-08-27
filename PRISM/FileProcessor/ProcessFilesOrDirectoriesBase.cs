@@ -187,7 +187,6 @@ namespace PRISM.FileProcessor
         /// </summary>
         public event ProgressResetEventHandler ProgressReset;
 
-
         /// <summary>
         /// Delegate to indicate that progress was reset
         /// </summary>
@@ -350,7 +349,6 @@ namespace PRISM.FileProcessor
         /// <remarks>Only valid if the log file name was auto-defined</remarks>
         public void ArchiveOldLogFilesNow()
         {
-
             if (string.IsNullOrWhiteSpace(mLogFileBasePath))
                 return;
 
@@ -451,7 +449,6 @@ namespace PRISM.FileProcessor
 
             return currentTaskProgressAtStart +
                 currentTaskItemsProcessed / (float)currentTaskTotalItems * (currentTaskProgressAtEnd - currentTaskProgressAtStart);
-
         }
 
         /// <summary>
@@ -466,7 +463,6 @@ namespace PRISM.FileProcessor
         /// </remarks>
         private void ConfigureLogFilePath(string logFileBaseName = "")
         {
-
             try
             {
                 if (LogDirectoryPath == null)
@@ -561,9 +557,7 @@ namespace PRISM.FileProcessor
                 {
                     // Ignore errors here
                 }
-
             }
-
         }
 
         /// <summary>
@@ -884,7 +878,6 @@ namespace PRISM.FileProcessor
             int emptyLinesBeforeMessage = 0,
             Exception ex = null)
         {
-
             if (mLogFile == null && LogMessagesToFile)
             {
                 InitializeLogFile();
@@ -906,7 +899,6 @@ namespace PRISM.FileProcessor
                     mLastCheckOldLogs = DateTime.UtcNow;
                     ArchiveOldLogFilesNow();
                 }
-
             }
 
             RaiseMessageEvent(message, messageType, emptyLinesBeforeMessage, ex);
@@ -1201,7 +1193,6 @@ namespace PRISM.FileProcessor
             {
                 ShowWarning("Error caching log messages: " + ex.Message, false);
             }
-
         }
 
         private void UpdateLogDataCache(string logFilePath, DateTime dateThresholdToStoreUTC)

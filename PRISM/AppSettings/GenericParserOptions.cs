@@ -86,6 +86,5 @@ namespace PRISM
             errorMessage = string.Empty;
             return true;
         }
-
     }
 }

@@ -9,7 +9,6 @@ namespace PRISMWin
     /// </summary>
     public class DiskInfo
     {
-
         [DllImport("Kernel32.dll", EntryPoint = "GetDiskFreeSpaceEx", SetLastError = true, CharSet = CharSet.Auto)]
         private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, ref UInt64 lpFreeBytesAvailable, ref UInt64 lpTotalNumberOfBytes, ref UInt64 lpTotalNumberOfFreeBytes);
 
@@ -36,7 +35,6 @@ namespace PRISMWin
 
             try
             {
-
                 var directoryInfo = new FileInfo(filePath).Directory;
                 if (directoryInfo == null)
                 {
@@ -50,7 +48,6 @@ namespace PRISMWin
                 {
                     directoryInfo = directoryInfo.Parent;
                 }
-
 
                 if (GetDiskFreeSpace(
                     directoryInfo.FullName,
@@ -70,14 +67,12 @@ namespace PRISMWin
                                              "(GetDiskFreeSpaceEx returned false): {0}", directoryInfo.FullName);
 
                 return false;
-
             }
             catch (Exception ex)
             {
                 errorMessage = "Exception validating target drive free space for " + filePath + ": " + ex.Message;
                 return false;
             }
-
         }
 
         /// <summary>
@@ -98,7 +93,6 @@ namespace PRISMWin
             out long totalDriveCapacityBytes,
             out long totalNumberOfFreeBytes)
         {
-
             ulong freeAvailableUser = 0;
             ulong totalDriveCapacity = 0;
             ulong totalFree = 0;
@@ -131,8 +125,6 @@ namespace PRISMWin
                 return Convert.ToInt64(bytes);
 
             return long.MaxValue;
-
         }
-
     }
 }

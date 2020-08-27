@@ -32,7 +32,6 @@ namespace PRISMTest
             float subTaskProgress,
             double expectedOverallProgress)
         {
-
             var overallProgress = ProcessFilesOrDirectoriesBase.ComputeIncrementalProgress(
                 currentTaskProgressAtStart, currentTaskProgressAtEnd, subTaskProgress);
 
@@ -42,7 +41,6 @@ namespace PRISMTest
                 subTaskProgress, overallProgress);
 
             Assert.AreEqual(expectedOverallProgress, overallProgress, 0.01);
-
         }
 
         /// <summary>
@@ -68,7 +66,6 @@ namespace PRISMTest
             int currentTaskItemsProcessed, int currentTaskTotalItems,
             double expectedOverallProgress)
         {
-
             var overallProgress = ProcessFilesOrDirectoriesBase.ComputeIncrementalProgress(
                 currentTaskProgressAtStart, currentTaskProgressAtEnd, currentTaskItemsProcessed, currentTaskTotalItems);
 
@@ -92,7 +89,6 @@ namespace PRISMTest
             string expectedBaseName,
             int messagesToLog)
         {
-
             var fileStatsLogger = new SimpleFileStatsLogger
             {
                 LogFileBaseName = logFileNameBase,
@@ -115,7 +111,6 @@ namespace PRISMTest
             {
                 Assert.Fail("Unexpected log file name; does not end with " + logFileSuffix);
             }
-
         }
 
         [TestCase(@"C:\Temp\PRISM_Custom_log_Job1000.txt", 0)]
@@ -169,7 +164,6 @@ namespace PRISMTest
                 Console.WriteLine("Error processing {0} files", fileFinder.FileProcessErrors);
             }
         }
-
     }
 
     /// <summary>
@@ -179,7 +173,6 @@ namespace PRISMTest
     /// </summary>
     class SimpleFileFinder : ProcessFilesBase
     {
-
         public override string GetErrorMessage()
         {
             return string.Empty;
@@ -207,7 +200,6 @@ namespace PRISMTest
     /// </summary>
     class SimpleFileStatsLogger : ProcessFilesBase
     {
-
         public string LogFileBaseName { get; set; }
 
         public int MessagesToLog { get; set; }
@@ -261,7 +253,6 @@ namespace PRISMTest
             }
 
             return false;
-
 
         }
     }

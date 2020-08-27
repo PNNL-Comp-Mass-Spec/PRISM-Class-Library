@@ -185,11 +185,9 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public bool Connect(string shareName)
         {
-
             DefineShareName(shareName);
             mNetResource.lpRemoteName = mShareName;
             return RealConnect();
-
         }
 
         /// <summary>
@@ -199,14 +197,12 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public bool Connect()
         {
-
             if (string.IsNullOrEmpty(mNetResource.lpRemoteName))
             {
                 ErrorMessage = "Share name not specified";
                 return false;
             }
             return RealConnect();
-
         }
 
         /// <summary>

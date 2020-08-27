@@ -7,7 +7,6 @@ namespace PRISMTest
     [TestFixture]
     class DatabaseLoggingTests
     {
-
         [TestCase(@"Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
         public void TestDBLoggerIntegrated(string server, string database)

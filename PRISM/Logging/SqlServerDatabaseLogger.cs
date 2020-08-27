@@ -120,7 +120,6 @@ namespace PRISM.Logging
                 logTypeParamSize, messageParamSize, postedByParamSize);
 
             LogLevel = logLevel;
-
         }
 
         /// <summary>
@@ -175,7 +174,6 @@ namespace PRISM.Logging
 
         private static void LogQueuedMessages()
         {
-
             try
             {
                 if (mMessageQueue.IsEmpty)
@@ -258,9 +256,7 @@ namespace PRISM.Logging
                                 else
                                     break;
                             }
-
                         }
-
                     }
                 }
 
@@ -273,7 +269,6 @@ namespace PRISM.Logging
                                                 false,
                                                 false);
             }
-
         }
 
         /// <summary>

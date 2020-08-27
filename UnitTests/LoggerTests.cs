@@ -15,7 +15,6 @@ namespace PRISMTest
     [TestFixture]
     class LoggerTests
     {
-
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", logMsgType.logNormal, 4, 500)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", logMsgType.logError, 2, 250)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", logMsgType.logNormal, 20, 50)]
@@ -47,7 +46,6 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Log entries written to " + logger.CurrentLogFilePath);
-
         }
 
         [TestCase(@"C:\Temp", "TestQueuedLogFile", "Test log message", logMsgType.logNormal, 4, 500)]
@@ -96,7 +94,6 @@ namespace PRISMTest
             }
 
             Console.WriteLine("Log entries written to " + logger.CurrentLogFilePath);
-
         }
 
         [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
@@ -127,6 +124,5 @@ namespace PRISMTest
             // Call stored procedure PostLogEntry
             logger.PostEntry("Test log entry on " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"), logMsgType.logDebug, false);
         }
-
     }
 }

@@ -9,7 +9,6 @@ namespace PRISMWin
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class DataGridUtils
     {
-
         /// <summary>
         /// Append a column to a DataGrid table style
         /// </summary>
@@ -51,7 +50,6 @@ namespace PRISMWin
                 {
                     newColumn.Format += "0";
                 }
-
             }
 
             tableStyle.GridColumnStyles.Add(newColumn);
@@ -77,7 +75,6 @@ namespace PRISMWin
             bool isReadOnly = false,
             bool sourceIsTrueFalse = true)
         {
-
             var newColumn = new System.Windows.Forms.DataGridBoolColumn
             {
                 MappingName = mappingName,

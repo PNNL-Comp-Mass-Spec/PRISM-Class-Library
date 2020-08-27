@@ -27,7 +27,6 @@ namespace PRISM
                 if (!ok)
                     ThrowWin32Exception();
             }
-
         }
 
         public static void Delete(string filePath)

@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
     /// <summary>
     /// Tools to execute a stored procedure
     /// </summary>
@@ -14,7 +13,6 @@ namespace PRISM
     [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
     public class ExecuteDatabaseSP : EventNotifier
     {
-
         #region "Constants"
 
         /// <summary>
@@ -105,7 +103,6 @@ namespace PRISM
 
         #region "Methods"
 
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -113,7 +110,6 @@ namespace PRISM
         public ExecuteDatabaseSP(string connectionString)
         {
             m_ConnStr = connectionString;
-
         }
 
         /// <summary>
@@ -124,7 +120,6 @@ namespace PRISM
         {
             m_ConnStr = connectionString;
             mTimeoutSeconds = timeoutSeconds;
-
         }
 
         /// <summary>
@@ -135,7 +130,6 @@ namespace PRISM
         /// <remarks>Errors and warnings from SQL Server are caught here</remarks>
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args)
         {
-
             foreach (SqlError err in args.Errors)
             {
                 var s = "Message: " + err.Message +
@@ -149,7 +143,6 @@ namespace PRISM
 
                 OnErrorEvent(s);
             }
-
         }
 
         /// <summary>
@@ -188,7 +181,6 @@ namespace PRISM
             // Multiple retry loop for handling SP execution failures
             while (retryCount > 0)
             {
-
                 var success = false;
 
                 try
@@ -220,7 +212,6 @@ namespace PRISM
                                 {
                                     lstCurrentRow.Add(value.ToString());
                                 }
-
                             }
 
                             lstResults.Add(lstCurrentRow);
@@ -243,7 +234,6 @@ namespace PRISM
                                              spCmd.CommandText));
                             resultCode = 0;
                         }
-
                     }
                     success = true;
                 }
@@ -329,9 +319,7 @@ namespace PRISM
         /// <remarks></remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount)
         {
-
             return ExecuteSP(spCmd, maxRetryCount, DEFAULT_SP_RETRY_DELAY_SEC);
-
         }
 
         /// <summary>
@@ -371,7 +359,6 @@ namespace PRISM
         /// <remarks>No logging is performed by this procedure</remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, out string errorMessage, int retryDelaySeconds)
         {
-
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
 
@@ -399,7 +386,6 @@ namespace PRISM
                 {
                     using (var dbConnection = new SqlConnection(m_ConnStr))
                     {
-
                         dbConnection.Open();
 
                         spCmd.Connection = dbConnection;
@@ -420,7 +406,6 @@ namespace PRISM
                                              spCmd.CommandText));
                             resultCode = 0;
                         }
-
                     }
 
                     errorMessage = string.Empty;
@@ -481,10 +466,8 @@ namespace PRISM
             }
 
             return resultCode;
-
         }
 
         #endregion
     }
-
 }

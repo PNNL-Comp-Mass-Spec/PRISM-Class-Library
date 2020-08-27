@@ -8,7 +8,6 @@ namespace PRISMTest
     [TestFixture]
     class TestOSVersionInfo
     {
-
         [Test]
         public void TestGetOSVersion()
         {
@@ -54,7 +53,6 @@ namespace PRISMTest
                     Assert.Ignore("Unknown OS Platform");
                     break;
             }
-
 
         }
 

@@ -5,7 +5,6 @@ using System.Linq;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
     /// <summary>
     /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
     /// </summary>
@@ -65,7 +64,6 @@ namespace PRISM
             }
 
             return mFileList;
-
         }
 
         private void RecursiveFileSearch(string searchDir, string filePattern)
@@ -81,6 +79,5 @@ namespace PRISM
                 RecursiveFileSearch(d, filePattern);
             }
         }
-
     }
 }

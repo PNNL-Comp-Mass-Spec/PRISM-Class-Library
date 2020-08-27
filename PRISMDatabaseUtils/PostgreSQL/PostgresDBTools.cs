@@ -121,7 +121,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         public Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
         {
-
             var columnMap = new Dictionary<string, int>();
 
             for (var i = 0; i < columns.Count; i++)
@@ -1160,7 +1159,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
             int size,
             ParameterDirection direction = ParameterDirection.Input)
         {
-
             var parameter = AddParameterByDataTypeName(command, name, dataTypeName, size, direction);
             return parameter;
         }
@@ -1362,8 +1360,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     parameter.ParameterName = "_" + parameter.ParameterName.Substring(1);
                 }
             }
-
         }
-
     }
 }

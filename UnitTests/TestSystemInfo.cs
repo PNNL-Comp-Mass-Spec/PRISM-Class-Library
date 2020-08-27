@@ -57,7 +57,6 @@ namespace PRISMTest
             Console.WriteLine("Logical Core Count:  {0}", logicalCoreCount);
             Console.WriteLine("NUMA Node Count:     {0}", numaNodeCount);
             Console.WriteLine("Processor Pkg Count: {0}", processorPackageCount);
-
         }
 
         [TestCase]

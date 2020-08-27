@@ -8,7 +8,6 @@ namespace PRISMTest
 {
     class StackTraceFormatterTests
     {
-
         public enum ExceptionTypes
         {
             General = 0,
@@ -65,7 +64,6 @@ namespace PRISMTest
 
                 Console.WriteLine(stackTrace);
             }
-
         }
 
         private void RecursiveMethodA(ExceptionTypes targetException, List<string> parents, int depth, int maxDepth)
@@ -178,7 +176,6 @@ namespace PRISMTest
                     return;
             }
         }
-
     }
 
     class MyTestException : Exception
@@ -187,6 +184,5 @@ namespace PRISMTest
             : base(message, innerException)
         { }
     }
-
 
 }

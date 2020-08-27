@@ -5,7 +5,6 @@ using System.Linq;
 
 namespace PRISM.FileProcessor
 {
-
     /// <summary>
     /// This class can be used as a base class for classes that process a directory or directories
     /// Note that this class contains simple error codes that can be set from any derived classes.
@@ -14,7 +13,6 @@ namespace PRISM.FileProcessor
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessDirectoriesBase : ProcessFilesOrDirectoriesBase
     {
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -148,7 +146,6 @@ namespace PRISM.FileProcessor
         /// <remarks>Create outputDirectoryPath if it does not exist</remarks>
         protected bool CleanupDirectoryPaths(ref string inputDirectoryPath, ref string outputDirectoryPath)
         {
-
             try
             {
                 var inputDirectory = new DirectoryInfo(inputDirectoryPath);
@@ -183,7 +180,6 @@ namespace PRISM.FileProcessor
                 HandleException("Error cleaning up the directory paths", ex);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -192,7 +188,6 @@ namespace PRISM.FileProcessor
         /// <returns>Error message</returns>
         protected string GetBaseClassErrorMessage()
         {
-
             string errorMessage;
 
             switch (ErrorCode)
@@ -228,7 +223,6 @@ namespace PRISM.FileProcessor
             }
 
             return errorMessage;
-
         }
 
         private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)
@@ -277,7 +271,6 @@ namespace PRISM.FileProcessor
             string parameterFilePath = "",
             bool resetErrorCode = true)
         {
-
             AbortProcessing = false;
             DirectoriesProcessed = 0;
             DirectoryProcessErrors = 0;
@@ -359,14 +352,12 @@ namespace PRISM.FileProcessor
                 ShowErrorMessage("No match was found for the input directory path: " + inputDirectoryPath);
 
                 return success;
-
             }
             catch (Exception ex)
             {
                 HandleException("Error in ProcessDirectoriesWildcard", ex);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -432,7 +423,6 @@ namespace PRISM.FileProcessor
             string parameterFilePath = "",
             int maxLevelsToRecurse = 0)
         {
-
             AbortProcessing = false;
 
             DirectoriesProcessed = 0;
@@ -456,7 +446,6 @@ namespace PRISM.FileProcessor
                 }
                 else
                 {
-
                     if (Directory.Exists(inputDirectoryPath))
                     {
                         inputDirectory = new DirectoryInfo(inputDirectoryPath);
@@ -499,7 +488,6 @@ namespace PRISM.FileProcessor
                 HandleException("Error in ProcessAndRecurseDirectories", ex);
                 return false;
             }
-
         }
 
         private bool RecurseDirectoriesWork(
@@ -610,7 +598,6 @@ namespace PRISM.FileProcessor
                     lastProgress = DateTime.UtcNow;
                     OnStatusEvent(string.Format("{0:F1}% complete in {1}", percentComplete, FileTools.CompactPathString(inputDirectoryPath)));
                 }
-
             }
             catch (Exception ex)
             {
@@ -638,7 +625,6 @@ namespace PRISM.FileProcessor
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -684,5 +670,4 @@ namespace PRISM.FileProcessor
         //}
 
     }
-
 }

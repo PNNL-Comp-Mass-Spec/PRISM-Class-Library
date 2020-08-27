@@ -10,14 +10,12 @@ using System.Text.RegularExpressions;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
     /// <summary>
     /// Tools to manipulate paths and directories.
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class FileTools : EventNotifier
     {
-
         #region "Events"
 
         /// <summary>
@@ -350,7 +348,6 @@ namespace PRISM
         /// <remarks>addTerm=True forces the path to end with specified termChar while addTerm=False will remove termChar from the end if present</remarks>
         private static string CheckTerminatorEX(string directoryPath, bool addTerm, char termChar)
         {
-
             if (string.IsNullOrWhiteSpace(directoryPath))
             {
                 return directoryPath;
@@ -387,7 +384,6 @@ namespace PRISM
             // Overload with overWrite set to default (false)
             const bool backupDestFileBeforeCopy = false;
             CopyFileEx(sourcePath, destPath, overWrite: false, backupDestFileBeforeCopy: backupDestFileBeforeCopy);
-
         }
 
         /// <summary>
@@ -504,7 +500,6 @@ namespace PRISM
                     throw;
                 }
             }
-
         }
 
         #endregion
@@ -565,7 +560,6 @@ namespace PRISM
         /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         public bool CopyFileUsingLocks(FileInfo sourceFile, string targetFilePath, string managerName = "", bool overWrite = false)
         {
-
             var useLockFile = false;
 
             if (!overWrite && File.Exists(targetFilePath))
@@ -646,7 +640,6 @@ namespace PRISM
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
         public string GetLockDirectory(FileInfo dataFile)
         {
-
             var lockDirectoryPath = GetLockDirectoryPath(dataFile);
 
             if (!string.IsNullOrEmpty(lockDirectoryPath) && Directory.Exists(lockDirectoryPath))
@@ -655,7 +648,6 @@ namespace PRISM
             }
 
             return string.Empty;
-
         }
 
         /// <summary>
@@ -666,7 +658,6 @@ namespace PRISM
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
         private string GetLockDirectoryPath(FileInfo dataFile)
         {
-
             if (Path.IsPathRooted(dataFile.FullName))
             {
                 var directory = dataFile.Directory;
@@ -677,7 +668,6 @@ namespace PRISM
             }
 
             return string.Empty;
-
         }
 
         /// <summary>
@@ -725,7 +715,6 @@ namespace PRISM
                 return true;
             }
 
-
             var lockFilePathSource = string.Empty;
             var lockFilePathTarget = string.Empty;
 
@@ -766,7 +755,6 @@ namespace PRISM
                 // Delete the lock file(s)
                 DeleteFileIgnoreErrors(lockFilePathSource);
                 DeleteFileIgnoreErrors(lockFilePathTarget);
-
             }
             catch (Exception)
             {
@@ -779,7 +767,6 @@ namespace PRISM
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -794,7 +781,6 @@ namespace PRISM
         /// <remarks></remarks>
         public string CreateLockFile(DirectoryInfo lockDirectory, long lockFileTimestamp, FileInfo sourceFile, string targetFilePath, string managerName)
         {
-
             if (lockDirectory == null)
             {
                 return string.Empty;
@@ -828,7 +814,6 @@ namespace PRISM
                 }
 
                 OnStatusEvent("Created lock file in " + lockDirectory.FullName, lockFilePath);
-
             }
             catch (Exception ex)
             {
@@ -839,7 +824,6 @@ namespace PRISM
             }
 
             return lockFilePath;
-
         }
 
         /// <summary>
@@ -862,7 +846,6 @@ namespace PRISM
         /// <remarks></remarks>
         public bool DeleteDirectory(string directoryPath, bool ignoreErrors)
         {
-
             var targetDirectory = new DirectoryInfo(directoryPath);
 
             try
@@ -883,7 +866,6 @@ namespace PRISM
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -906,7 +888,6 @@ namespace PRISM
         /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
         public bool DeleteDirectoryFiles(string directoryPath, bool deleteDirectoryIfEmpty)
         {
-
             var targetDirectory = new DirectoryInfo(directoryPath);
             if (!targetDirectory.Exists)
                 return true;
@@ -952,7 +933,6 @@ namespace PRISM
         /// If not readonly, performs a garbage collection (minimum 500 msec between GC calls).</remarks>
         private bool DeleteFileIgnoreErrors(string filePath)
         {
-
             if (string.IsNullOrWhiteSpace(filePath))
                 return true;
 
@@ -985,7 +965,6 @@ namespace PRISM
                 }
 
                 DeleteFileNative(targetFile);
-
             }
             catch (Exception ex)
             {
@@ -996,7 +975,6 @@ namespace PRISM
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -1014,7 +992,6 @@ namespace PRISM
                 {
                     targetFile.Delete();
                 }
-
             }
             catch (UnauthorizedAccessException)
             {
@@ -1076,7 +1053,6 @@ namespace PRISM
             }
 
             return lockFiles;
-
         }
 
         /// <summary>
@@ -1091,7 +1067,6 @@ namespace PRISM
         /// <remarks></remarks>
         private string GenerateLockFileName(long lockFileTimestamp, FileInfo sourceFile, string managerName)
         {
-
             if (string.IsNullOrWhiteSpace(managerName))
             {
                 managerName = "UnknownManager";
@@ -1117,9 +1092,7 @@ namespace PRISM
 
             // Replace any invalid characters (including spaces) with an underscore
             return mInvalidDosChars.Replace(lockFileName, "_");
-
         }
-
 
         /// <summary>
         /// Get the time stamp to be used when naming a lock file
@@ -1165,7 +1138,6 @@ namespace PRISM
         public void CopyDirectory(string sourcePath, string destPath)
         {
             CopyDirectory(sourcePath, destPath, overWrite: false);
-
         }
 
         /// <summary>
@@ -1177,7 +1149,6 @@ namespace PRISM
         public void CopyDirectory(string sourcePath, string destPath, string managerName)
         {
             CopyDirectory(sourcePath, destPath, overWrite: false, managerName: managerName);
-
         }
 
         /// <summary>
@@ -1189,7 +1160,6 @@ namespace PRISM
         public void CopyDirectory(string sourcePath, string destPath, List<string> fileNamesToSkip)
         {
             CopyDirectory(sourcePath, destPath, overWrite: false, fileNamesToSkip: fileNamesToSkip);
-
         }
 
         /// <summary>
@@ -1202,7 +1172,6 @@ namespace PRISM
         {
             const bool readOnly = false;
             CopyDirectory(sourcePath, destPath, overWrite, readOnly);
-
         }
 
         /// <summary>
@@ -1408,7 +1377,6 @@ namespace PRISM
                 // Set the attributes of the destination file
                 File.SetAttributes(targetFilePath, fa);
             }
-
         }
 
         #endregion
@@ -1426,7 +1394,6 @@ namespace PRISM
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath)
         {
-
             const bool recurse = false;
             const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
             var fileNamesToSkip = new List<string>();
@@ -1446,7 +1413,6 @@ namespace PRISM
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath, bool recurse)
         {
-
             const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
             var fileNamesToSkip = new List<string>();
 
@@ -1474,7 +1440,6 @@ namespace PRISM
 
             return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out _, out _, out _);
-
         }
 
         /// <summary>
@@ -1496,14 +1461,12 @@ namespace PRISM
             bool recurse, FileOverwriteMode fileOverwriteMode,
             out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
         {
-
             const bool setAttribute = false;
             const bool readOnly = false;
             var fileNamesToSkip = new List<string>();
 
             return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
-
         }
 
         /// <summary>
@@ -1526,13 +1489,11 @@ namespace PRISM
             bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip,
             out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
         {
-
             const bool setAttribute = false;
             const bool readOnly = false;
 
             return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
-
         }
 
         /// <summary>
@@ -1667,7 +1628,6 @@ namespace PRISM
                                     copyFile = false;
                                     break;
                             }
-
                         }
                     }
 
@@ -1719,9 +1679,7 @@ namespace PRISM
                         {
                             UpdateReadonlyAttribute(sourceFile, targetFilePath, readOnly);
                         }
-
                     }
-
                 }
 
                 if (success && recurse)
@@ -1738,7 +1696,6 @@ namespace PRISM
                             out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
                     }
                 }
-
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -1750,7 +1707,6 @@ namespace PRISM
             }
 
             return success;
-
         }
 
         /// <summary>
@@ -1765,7 +1721,6 @@ namespace PRISM
         {
             var sourceFile = new FileInfo(sourceFilePath);
             return CopyFileWithResume(sourceFile, targetFilePath, out copyResumed);
-
         }
 
         /// <summary>
@@ -1779,7 +1734,6 @@ namespace PRISM
         /// <remarks></remarks>
         public bool CopyFileWithResume(FileInfo sourceFile, string targetFilePath, out bool copyResumed)
         {
-
             const string FILE_PART_TAG = ".#FilePart#";
             const string FILE_PART_INFO_TAG = ".#FilePartInfo#";
 
@@ -1842,7 +1796,6 @@ namespace PRISM
 
                         using (var infoFileReader = new StreamReader(new FileStream(filePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                         {
-
                             var lstSourceLines = new List<string>();
 
                             while (!infoFileReader.EndOfStream)
@@ -1863,24 +1816,18 @@ namespace PRISM
 
                                     if (DateTime.TryParse(lstSourceLines[2], out var cachedLastWriteTimeUTC))
                                     {
-
                                         if (NearlyEqualFileTimes(sourceFileLastWriteTimeUTC, cachedLastWriteTimeUTC))
                                         {
                                             // Source file is unchanged; safe to resume
 
                                             fileOffsetStart = filePart.Length;
                                             resumeCopy = true;
-
                                         }
                                     }
-
                                 }
-
                             }
                         }
-
                     }
-
                 }
 
                 if (resumeCopy)
@@ -1903,7 +1850,6 @@ namespace PRISM
                     // Create the FILE_PART_INFO_TAG file
                     using (var infoWriter = new StreamWriter(new FileStream(filePartInfo.FullName, FileMode.Create, FileAccess.Write, FileShare.Read)))
                     {
-
                         // The first line contains the source file path
                         // The second contains the file length, in bytes
                         // The third contains the file modification time (UTC)
@@ -1921,7 +1867,6 @@ namespace PRISM
                 // Open the source and seek to fileOffsetStart if > 0
                 using (var reader = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-
                     if (fileOffsetStart > 0)
                     {
                         reader.Seek(fileOffsetStart, SeekOrigin.Begin);
@@ -1979,7 +1924,6 @@ namespace PRISM
 
                 // Delete filePartInfo
                 filePartInfo.Delete();
-
             }
             catch (Exception ex)
             {
@@ -1990,7 +1934,6 @@ namespace PRISM
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -2051,7 +1994,6 @@ namespace PRISM
                 {
                     CopyingFile?.Invoke(sourceFilePath);
                 }
-
             }
         }
 
@@ -2095,7 +2037,6 @@ namespace PRISM
         /// <returns>The directory size.</returns>
         private long GetDirectorySizeEx(string directoryPath, ref long fileCount, ref long subDirectoryCount)
         {
-
             long directorySize = 0;
             var directory = new DirectoryInfo(directoryPath);
 
@@ -2115,7 +2056,6 @@ namespace PRISM
             }
 
             return directorySize;
-
         }
         #endregion
 
@@ -2184,7 +2124,6 @@ namespace PRISM
             }
 
             return true;
-
         }
 
         #endregion
@@ -2216,7 +2155,6 @@ namespace PRISM
         /// <remarks></remarks>
         public static bool BackupFileBeforeCopy(string targetFilePath, int versionCountToKeep)
         {
-
             var targetFile = new FileInfo(targetFilePath);
 
             if (!targetFile.Exists)
@@ -2267,11 +2205,9 @@ namespace PRISM
                 {
                     fileToRename.MoveTo(newFilePath);
                 }
-
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -2299,7 +2235,6 @@ namespace PRISM
 
             scaledBytes /= 1024.0;
             return string.Format("{0:F1} TB", scaledBytes);
-
         }
 
         /// <summary>
@@ -2314,7 +2249,6 @@ namespace PRISM
         /// <returns>Shortened path</returns>
         public static string CompactPathString(string pathToCompact, int maxLength = 40)
         {
-
             // The following is example output
             // Note that when drive letters or subdirectories are present, a minimum length is imposed
             // For "C:\My Documents\Readme.txt"
@@ -2430,7 +2364,6 @@ namespace PRISM
                 loopCount += 1;
             } while (loopCount < 3);
 
-
             if (pathPartCount == 1)
             {
                 // No \ or / found, we're forced to shorten the filename (though if a UNC, can shorten part of the UNC)
@@ -2448,7 +2381,6 @@ namespace PRISM
                                 shortLength = 3;
                             leadingChars = leadingChars.Substring(0, shortLength) + @"..\";
                         }
-
                     }
                 }
 
@@ -2565,7 +2497,6 @@ namespace PRISM
 
                         shortenedPath = leadingChars + pathParts[0] + pathParts[1] + pathParts[2] + pathParts[3];
                     }
-
                 }
             }
 
@@ -2594,7 +2525,6 @@ namespace PRISM
         /// <remarks></remarks>
         public bool DeleteFileWithRetry(FileInfo fileToDelete, int retryCount, out string errorMessage)
         {
-
             var fileDeleted = false;
             var sleepTimeMsec = 500;
 
@@ -2656,7 +2586,6 @@ namespace PRISM
                         sleepTimeMsec = Convert.ToInt32(Math.Round(sleepTimeMsec * 1.5, 0));
                     }
                 }
-
             }
 
             if (fileDeleted)
@@ -2670,7 +2599,6 @@ namespace PRISM
 
             // ReSharper disable once NotAssignedOutParameter
             return true;
-
         }
 
         /// <summary>
@@ -2681,7 +2609,6 @@ namespace PRISM
         /// <remarks></remarks>
         public static bool IsVimSwapFile(string filePath)
         {
-
             var fileName = Path.GetFileName(filePath);
             if (fileName == null)
                 return false;
@@ -2766,7 +2693,6 @@ namespace PRISM
             long currentDiskFreeSpaceBytes,
             out string errorMessage)
         {
-
             const int DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150;
             errorMessage = string.Empty;
 
@@ -2796,16 +2722,13 @@ namespace PRISM
 
                         return false;
                     }
-
                 }
                 else if (freeSpaceMB < minimumFreeSpaceMB)
                 {
                     errorMessage = "Target drive has less than " + minimumFreeSpaceMB.ToString("0") + " MB free: " +
                         freeSpaceMB.ToString("0.0") + " MB available";
                     return false;
-
                 }
-
             }
             catch (Exception ex)
             {
@@ -2829,7 +2752,6 @@ namespace PRISM
             WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, null,
                                  sourceFile, "Unknown_Target_File_Path",
                                  maxWaitTimeMinutes, string.Empty, string.Empty);
-
         }
 
         /// <summary>
@@ -2983,7 +2905,6 @@ namespace PRISM
                 LockQueueTimedOut?.Invoke(sourceFile.FullName, targetFilePath, totalWaitTimeMinutes);
                 break;
             }
-
         }
 
         private bool WaitedTooLong(DateTime waitTimeStart, int maxLockfileWaitTimeMinutes)
@@ -2999,7 +2920,6 @@ namespace PRISM
         #endregion
 
         #region "GZip Compression"
-
 
         /// <summary>
         /// Compress a file using the built-in GZipStream (stores minimal GZip metadata)
@@ -3033,7 +2953,6 @@ namespace PRISM
         /// <param name="addHeaderCrc">if true, a CRC16 hash of the header information is written to the gzip metadata</param>
         public static void GZipCompressWithMetadata(FileInfo fileToCompress, string compressedDirectoryPath = null, string compressedFileName = null, bool doNotStoreFileName = false, string comment = null, bool addHeaderCrc = false)
         {
-
             var compressedFilePath = ConstructCompressedGZipFilePath(fileToCompress, compressedDirectoryPath, compressedFileName);
 
             string storedFileName = null;

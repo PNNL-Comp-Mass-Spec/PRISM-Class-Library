@@ -8,7 +8,6 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-
     /// <summary>
     /// Tools to retrieve data from a database
     /// </summary>
@@ -16,7 +15,6 @@ namespace PRISM
     [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
     public class DBTools : EventNotifier
     {
-
         #region "Constants"
 
         /// <summary>
@@ -384,9 +382,7 @@ namespace PRISM
                         DS = new DataSet();
                         rowCount = adapter.Fill(DS);
                         return true;
-
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -399,12 +395,10 @@ namespace PRISM
 
                     // Delay for 5 seconds before trying again
                     ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
-
                 }
             }
 
             return false;
-
         }
 #endif
 
@@ -432,7 +426,6 @@ namespace PRISM
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {
-
             if (retryCount < 1)
                 retryCount = 1;
 
@@ -451,7 +444,6 @@ namespace PRISM
 
                         using (var cmd = new SqlCommand(sqlQuery, dbConnection))
                         {
-
                             cmd.CommandTimeout = TimeoutSeconds;
 
                             dbConnection.Open();
@@ -474,7 +466,6 @@ namespace PRISM
                                     {
                                         lstCurrentRow.Add(value.ToString());
                                     }
-
                                 }
 
                                 lstResults.Add(lstCurrentRow);
@@ -484,12 +475,10 @@ namespace PRISM
                                     break;
                                 }
                             }
-
                         }
                     }
 
                     return true;
-
                 }
                 catch (Exception ex)
                 {
@@ -513,12 +502,10 @@ namespace PRISM
 
                     // Delay for 5 seconds before trying again
                     ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
-
                 }
             }
 
             return false;
-
         }
 
         /// <summary>

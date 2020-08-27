@@ -123,7 +123,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
             foreach (SqlError err in args.Errors)
             {
-
                 // Class is the severity level of the message returned from SQL Server
                 var severity = err.Class;
 
@@ -1158,7 +1157,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
             int size,
             ParameterDirection direction = ParameterDirection.Input)
         {
-
             var parameter = AddParameterByDataTypeName(command, name, dataTypeName, size, direction);
             return parameter;
         }
@@ -1304,6 +1302,5 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0;
         }
-
     }
 }

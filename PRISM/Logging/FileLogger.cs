@@ -260,7 +260,6 @@ namespace PRISM.Logging
         /// <param name="logFilePath"></param>
         private static void ArchiveOldLogFilesNow(string logFilePath)
         {
-
             try
             {
                 var currentLogFile = new FileInfo(logFilePath);
@@ -308,7 +307,6 @@ namespace PRISM.Logging
             string logFileExtension,
             string logFileDateRegEx)
         {
-
             // Be careful when updating this method's arguments and how they're used,
             // since this method is called by the following classes
             //   PRISM.Logging.FileLogger
@@ -344,7 +342,6 @@ namespace PRISM.Logging
                     int logFileYear;
                     if (yearGroup.Success && monthGroup.Success)
                     {
-
                         logFileYear = int.Parse(match.Groups["Year"].Value);
                         var logFileMonth = int.Parse(match.Groups["Month"].Value);
 
@@ -417,7 +414,6 @@ namespace PRISM.Logging
                 {
                     var zipWarnings = ZipOldLogSubdirectories(logDirectory);
                     archiveWarnings.AddRange(zipWarnings);
-
                 }
             }
             catch (Exception ex)
@@ -566,7 +562,6 @@ namespace PRISM.Logging
 
                 ProgRunner.SleepMilliseconds(10);
             }
-
         }
 
         /// <summary>
@@ -586,7 +581,6 @@ namespace PRISM.Logging
 
             try
             {
-
                 while (!mMessageQueue.IsEmpty)
                 {
                     if (!mMessageQueue.TryDequeue(out var logMessage))
@@ -639,7 +633,6 @@ namespace PRISM.Logging
                             // Create the log file in the current directory
                             LogFilePath = logFile.Name;
                             logFile = new FileInfo(LogFilePath);
-
                         }
                         else if (!logFile.Directory.Exists)
                         {
@@ -663,7 +656,6 @@ namespace PRISM.Logging
                     }
 
                     messagesWritten++;
-
                 }
 
                 if (DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours >= 24)
@@ -671,7 +663,6 @@ namespace PRISM.Logging
                     mLastCheckOldLogs = DateTime.UtcNow;
                     ArchiveOldLogFilesNow();
                 }
-
             }
             catch (Exception ex)
             {
@@ -785,7 +776,6 @@ namespace PRISM.Logging
                         }
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -929,7 +919,6 @@ namespace PRISM.Logging
                             zipFile.Refresh();
                             zipFile.LastWriteTime = newestLastWriteTime;
                         }
-
                     }
                     catch (Exception ex2)
                     {
@@ -946,7 +935,6 @@ namespace PRISM.Logging
                     {
                         zipWarnings.Add(string.Format("Error removing empty subdirectory {0}: {1}", subDir.FullName, ex2.Message));
                     }
-
                 }
             }
             catch (Exception ex)

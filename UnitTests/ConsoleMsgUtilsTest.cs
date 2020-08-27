@@ -164,8 +164,6 @@ namespace PRISMTest
             {
                 Console.WriteLine("Skipped character count validation");
             }
-
         }
-
     }
 }

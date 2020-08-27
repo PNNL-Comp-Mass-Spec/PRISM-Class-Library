@@ -10,7 +10,7 @@ using PRISMDatabaseUtils;
 namespace PRISMTest
 {
     [TestFixture]
-    class StoredProcedureTests
+    public class StoredProcedureTests
     {
         // Ignore Spelling: dmsdev, dmswebuser, mtuser, workdir, PostgreSQL, ProteinSeqs
 
@@ -269,7 +269,6 @@ namespace PRISMTest
 
         private void ExamineManagerParams(IReadOnlyCollection<List<string>> lstResults)
         {
-
             var rowsDisplayed = 0;
             foreach (var result in lstResults)
             {
@@ -483,7 +482,6 @@ namespace PRISMTest
                 var rowsDisplayed = 0;
                 foreach (var result in lstResults)
                 {
-
                     for (var colIndex = 0; colIndex < result.Count; colIndex++)
                     {
                         string valueToShow;
@@ -608,7 +606,6 @@ namespace PRISMTest
 
         private void VerifyTestPostLogEntry(IDBTools dbTools, string user, bool expectedPostSuccess, bool actualPostSuccess)
         {
-
             if (expectedPostSuccess)
                 Assert.IsTrue(actualPostSuccess, "Call to PostLogEntry failed for user {0}; it should have succeeded", user);
             else

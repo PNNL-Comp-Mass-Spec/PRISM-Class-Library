@@ -131,7 +131,6 @@ namespace PRISM.Logging
                 logTypeParamSize, messageParamSize, postedByParamSize);
 
             LogLevel = logLevel;
-
         }
 
         /// <summary>
@@ -200,7 +199,6 @@ namespace PRISM.Logging
             //   Data Source=myServerAddress;Initial Catalog=myDataBase;Integrated Security=SSPI
             // To ODBC style:
             //   Driver={SQL Server Native Client 11.0};Server=myServerAddress;Database=myDataBase;Trusted_Connection=yes;
-
 
             // Standard security:
             // Convert from one of these forms:
@@ -304,7 +302,6 @@ namespace PRISM.Logging
 
         private static void LogQueuedMessages()
         {
-
 #if (NETSTANDARD2_0)
                 if (NotifiedNotSupported)
                     return;
@@ -404,9 +401,7 @@ namespace PRISM.Logging
                                 else
                                     break;
                             }
-
                         }
-
                     }
                 }
 
@@ -420,7 +415,6 @@ namespace PRISM.Logging
                                                 false,
                                                 false);
             }
-
         }
 
         /// <summary>

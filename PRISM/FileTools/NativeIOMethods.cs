@@ -12,7 +12,6 @@ namespace PRISM
     /// </remarks>
     internal static class NativeIOMethods
     {
-
         internal const int FILE_ATTRIBUTE_ARCHIVE = 0x20;
         internal const int INVALID_FILE_ATTRIBUTES = -1;
 
@@ -42,8 +41,6 @@ namespace PRISM
                                                 FILE_READ_ATTRIBUTES |
                                                 FILE_READ_EA |
                                                 SYNCHRONIZE;
-
-
 
         internal const long READ_CONTROL = 0x00020000L;
         internal const long STANDARD_RIGHTS_READ = READ_CONTROL;
@@ -75,54 +72,41 @@ namespace PRISM
             public string cAlternate;
         }
 
-
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
-
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool CopyFileW(string lpExistingFileName, string lpNewFileName, bool bFailIfExists);
 
-
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern int GetFileAttributesW(string lpFileName);
-
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool DeleteFileW(string lpFileName);
 
-
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool MoveFileW(string lpExistingFileName, string lpNewFileName);
-
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool SetFileTime(SafeFileHandle hFile, ref long lpCreationTime, ref long lpLastAccessTime, ref long lpLastWriteTime);
 
-
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool GetFileTime(SafeFileHandle hFile, ref long lpCreationTime, ref long lpLastAccessTime, ref long lpLastWriteTime);
-
 
         [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
 
-
         [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
-
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool FindClose(IntPtr hFindFile);
 
-
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool RemoveDirectory(string path);
 
-
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool CreateDirectory(string lpPathName, IntPtr lpSecurityAttributes);
-
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern int SetFileAttributesW(string lpFileName, int fileAttributes);

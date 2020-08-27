@@ -9,7 +9,6 @@ namespace PRISM.DataUtils
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class StringToValueUtils
     {
-
         /// <summary>
         /// Converts a string value of True or False to a boolean equivalent
         /// </summary>
@@ -31,7 +30,6 @@ namespace PRISM.DataUtils
 
             return defaultValue;
         }
-
 
         /// <summary>
         /// Converts value to an integer
@@ -214,6 +212,5 @@ namespace PRISM.DataUtils
             value = 0;
             return false;
         }
-
     }
 }

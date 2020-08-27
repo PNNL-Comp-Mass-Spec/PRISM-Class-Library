@@ -52,7 +52,6 @@ namespace PRISM
     [Obsolete("Use Logging.FileLogger, Logging.SQLServerDatabaseLogger, or Logging.ODBCDatabaseLogger")]
     public interface ILogger
     {
-
         /// <summary>
         /// Current log file path
         /// </summary>
@@ -234,7 +233,6 @@ namespace PRISM
         /// </summary>
         private void ArchiveOldLogs()
         {
-
             try
             {
                 var currentLogFile = new FileInfo(CurrentLogFilePath);
@@ -249,7 +247,6 @@ namespace PRISM
                 {
                     ConsoleMsgUtils.ShowWarning(warning);
                 }
-
             }
             catch (Exception ex)
             {
@@ -277,10 +274,8 @@ namespace PRISM
             {
                 using (var writer = new StreamWriter(new FileStream(CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
                 {
-
                     foreach (var item in messages)
                     {
-
                         var formattedLogMessage = string.Format("{0}, {1}, {2}",
                             DateTime.Now.ToString(DATE_TIME_FORMAT), item.Message, TypeToString(item.EntryType));
 
@@ -296,7 +291,6 @@ namespace PRISM
                         }
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -405,7 +399,6 @@ namespace PRISM
                 // Define log file name by appending the current date to m_logFileBaseName
                 CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATE_STAMP) + LOG_FILE_EXTENSION;
         }
-
     }
     #endregion
 
@@ -417,7 +410,6 @@ namespace PRISM
     [Obsolete("Use Logging.SQLServerDatabaseLogger or Logging.ODBCDatabaseLogger")]
     public class clsDBLogger : clsFileLogger
     {
-
         // connection string
         private string m_connection_str;
 
@@ -621,9 +613,7 @@ namespace PRISM
 
                     // Execute the stored procedure
                     sc.ExecuteNonQuery();
-
                 }
-
             }
             catch (Exception ex)
             {
@@ -650,7 +640,6 @@ namespace PRISM
                 m_error_list.Add(s);
             }
         }
-
     }
     #endregion
 
@@ -812,7 +801,6 @@ namespace PRISM
             }
 
             m_logger.PostEntries(messages);
-
         }
 
         /// <summary>

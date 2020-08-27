@@ -14,7 +14,6 @@ namespace PRISM.FileProcessor
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessFilesBase : ProcessFilesOrDirectoriesBase
     {
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -187,7 +186,6 @@ namespace PRISM.FileProcessor
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupFilePaths(ref string inputFilePath, ref string outputDirectoryPath)
         {
-
             try
             {
                 var validFile = CleanupInputFilePath(ref inputFilePath);
@@ -226,7 +224,6 @@ namespace PRISM.FileProcessor
                 HandleException("Error cleaning up the file paths", ex);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -236,7 +233,6 @@ namespace PRISM.FileProcessor
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupInputFilePath(ref string inputFilePath)
         {
-
             try
             {
                 var inputFile = new FileInfo(inputFilePath);
@@ -256,7 +252,6 @@ namespace PRISM.FileProcessor
                 HandleException("Error cleaning up the file paths", ex);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -265,7 +260,6 @@ namespace PRISM.FileProcessor
         /// <returns>Error message</returns>
         protected string GetBaseClassErrorMessage()
         {
-
             string errorMessage;
 
             switch (ErrorCode)
@@ -316,7 +310,6 @@ namespace PRISM.FileProcessor
 
         private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputFilePathSpec, out string fileNameMatchPattern)
         {
-
             // Copy the path into cleanPath and replace any * or ? characters with _
             var cleanPath = PathUtils.GetCleanPath(inputFilePathSpec);
 
@@ -362,7 +355,6 @@ namespace PRISM.FileProcessor
             string parameterFilePath = "",
             bool resetErrorCode = true)
         {
-
             AbortProcessing = false;
             FilesProcessed = 0;
             FileProcessErrors = 0;
@@ -444,14 +436,12 @@ namespace PRISM.FileProcessor
                 ShowErrorMessage("No match was found for the input file path: " + inputFilePath);
 
                 return success;
-
             }
             catch (Exception ex)
             {
                 HandleException("Error in ProcessFilesWildcard", ex);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -633,7 +623,6 @@ namespace PRISM.FileProcessor
             int maxLevelsToRecurse,
             IList<string> extensionsToParse)
         {
-
             AbortProcessing = false;
 
             FilesProcessed = 0;
@@ -661,7 +650,6 @@ namespace PRISM.FileProcessor
                 }
                 else
                 {
-
                     var candidateInputDirectory = new DirectoryInfo(inputFilePathOrDirectory);
                     if (candidateInputDirectory.Exists)
                     {
@@ -721,7 +709,6 @@ namespace PRISM.FileProcessor
                 HandleException("Error in ProcessFilesAndRecurseDirectories", ex);
                 return false;
             }
-
         }
 
         /// <summary>
@@ -863,7 +850,6 @@ namespace PRISM.FileProcessor
                         }
                     }
                 }
-
             }
             catch (UnauthorizedAccessException)
             {
@@ -886,7 +872,6 @@ namespace PRISM.FileProcessor
 
             try
             {
-
                 var matchCount = 0;
                 var lastProgress = DateTime.UtcNow;
 

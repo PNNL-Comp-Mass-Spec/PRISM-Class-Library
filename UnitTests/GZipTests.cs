@@ -7,7 +7,6 @@ namespace PRISMTest
     [TestFixture]
     class GZipTests
     {
-
         [TestCase(@"C:\Windows\win.ini", false)]
         [TestCase(@"C:\Windows\win.ini", true)]
         public void TestGZipCompressLocalFile(string filePath, bool includeMetadata)
@@ -65,7 +64,6 @@ namespace PRISMTest
 
             // Validate the newly created .gz file, then delete it and delete the validated round-robin file
             ValidateGZipFile(fileToCompress, compressedFile, tempDirectoryPath, expectedSizeBytes, includeMetadata, true);
-
         }
 
         [TestCase(@"GZipTest\QC_Shew_10_01_e_3Mar10_Andromeda_09-10-15.mzML", false, 23358833)]
@@ -182,7 +180,6 @@ namespace PRISMTest
             string tempDirectoryPath, long expectedSizeBytes,
             bool includedMetadata, bool usedExplicitNames)
         {
-
             PRISM.ProgRunner.SleepMilliseconds(250);
 
             // Decompress the newly created .gz file

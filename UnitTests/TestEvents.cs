@@ -43,7 +43,6 @@ namespace PRISMTest
             }
 
             parentClass.TestEventChaining();
-
         }
 
         private void WriteSeparator()
@@ -102,7 +101,6 @@ namespace PRISMTest
 
             public void TestAllEvents()
             {
-
                 OnStatusEvent("Testing all events in " + ClassID);
                 OnProgressUpdate("Starting", 0);
 
@@ -155,14 +153,12 @@ namespace PRISMTest
                     var result = 5 / value1;
 
                     Console.WriteLine(result);
-
                 }
                 catch (Exception ex)
                 {
                     OnErrorEvent("As expected, error in TestDivideByZero", ex);
                 }
             }
-
         }
 
         #endregion

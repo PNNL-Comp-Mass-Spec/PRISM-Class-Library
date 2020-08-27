@@ -68,7 +68,6 @@ namespace PRISM
             {
                 return "0.0";
             }
-
         }
 
         /// <summary>
@@ -115,7 +114,6 @@ namespace PRISM
             {
                 return "0.00E+00";
             }
-
         }
 
         /// <summary>
@@ -201,7 +199,6 @@ namespace PRISM
                     var digitsAfterDecimal = (int)Math.Floor(-Math.Log10(Math.Abs(value))) + totalDigitsOfPrecision;
                     var formatString = GetFormatString(digitsAfterDecimal);
 
-
                     valueText = value.ToString(formatString);
                     if (Math.Abs(double.Parse(valueText)) < double.Epsilon)
                     {
@@ -248,14 +245,12 @@ namespace PRISM
                 // The number may now look like 1.E+43
                 // If it does, re-insert a zero after the decimal point
                 return updatedValue.Replace(".E", ".0E");
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error in ValueToString: " + ex.Message);
                 return value.ToString(CultureInfo.InvariantCulture);
             }
-
         }
 
         /// <summary>
@@ -294,7 +289,6 @@ namespace PRISM
             double thresholdScientific = 0.001,
             bool invariantCulture = true)
         {
-
             if (Math.Abs(value) < double.Epsilon)
                 return "0";
 
@@ -320,7 +314,6 @@ namespace PRISM
                     effectiveDigitsAfterDecimal = (byte)digitsRightOfDecimal;
                 else
                     effectiveDigitsAfterDecimal = 0;
-
             }
 
             if (effectiveDigitsAfterDecimal <= 0)
@@ -408,6 +401,5 @@ namespace PRISM
 
             return value.ToString(formatString, invariantCulture ? NumberFormatInfo.InvariantInfo : NumberFormatInfo.CurrentInfo);
         }
-
     }
 }

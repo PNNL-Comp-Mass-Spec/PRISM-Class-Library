@@ -156,7 +156,6 @@ namespace PRISMTest
                 foreach (var key in dictionary.Keys)
                 {
                     totalValues += dictionary[key].Count;
-
                 }
             }
 
@@ -165,7 +164,6 @@ namespace PRISMTest
 
             Console.WriteLine("{0} keys removed", keysRemoved);
             Console.WriteLine("{0} values removed", valuesRemoved);
-
 
         }
 

@@ -11,7 +11,6 @@ namespace PRISMTest
     [TestFixture]
     class TestLinuxSystemInfo
     {
-
         internal const bool SHOW_TRACE_MESSAGES = false;
 
         [TestCase(@"LinuxTestFiles\Centos6\etc", @"lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
@@ -231,12 +230,10 @@ namespace PRISMTest
 
             Assert.AreEqual(expectedCoreUsage, coreUsage, 0.01, "Core usage mismatch");
             Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.1, "Total CPU usage mismatch");
-
         }
 
         private void CopyCPUInfoFile(FileSystemInfo procDirectory, string sourceProcDirectoryPath)
         {
-
             // Update the cpuinfo file in the local proc directory using sourceProcDirectoryPath
             var sourceCpuInfoFile = VerifyTestFile(Path.Combine(sourceProcDirectoryPath, LinuxSystemInfo.CPUINFO_FILE));
             var targetCpuInfoFile = new FileInfo(Path.Combine(procDirectory.FullName, LinuxSystemInfo.CPUINFO_FILE));
@@ -263,7 +260,6 @@ namespace PRISMTest
             {
                 Assert.Fail("Could not copy the CpuInfo file to " + targetCpuInfoFile.FullName + ": " + ex.Message);
             }
-
         }
 
         private FileInfo CopyCPUStatFile(FileSystemInfo procDirectory, FileInfo sourceCpuStatFile)
@@ -340,7 +336,6 @@ namespace PRISMTest
             {
                 fileToCopy.CopyToTargetNow();
             }
-
         }
 
         [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 24.100)]
@@ -385,7 +380,6 @@ namespace PRISMTest
             Console.WriteLine("Overall CPU usage: {0:F1}%", cpuUsageTotal);
 
             Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.01, "CPU usage mismatch");
-
         }
 
         [TestCase(@"LinuxTestFiles\Centos6\proc", 42128)]
@@ -427,7 +421,6 @@ namespace PRISMTest
             Console.WriteLine("Free memory: {0:F0} MB", freeMemoryMB);
 
             Assert.AreEqual(expectedFreeMemoryMB, freeMemoryMB, 1);
-
         }
 
         [TestCase(@"LinuxTestFiles\Centos6\proc", 64183)]
@@ -469,7 +462,6 @@ namespace PRISMTest
             Console.WriteLine("Total memory: {0:F0} MB", totalMemoryMB);
 
             Assert.AreEqual(expectedTotalMemoryMB, totalMemoryMB, 1);
-
         }
 
         private FileInfo VerifyTestFile(string filePath)

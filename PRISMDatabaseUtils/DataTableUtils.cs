@@ -119,7 +119,6 @@ namespace PRISMDatabaseUtils
             bool isUnique,
             bool autoIncrement = false)
         {
-
             try
             {
                 var newColumn = dataTable.Columns.Add(columnName);
@@ -146,7 +145,6 @@ namespace PRISMDatabaseUtils
             {
                 return false;
             }
-
         }
 
         /// <summary>
@@ -536,7 +534,6 @@ namespace PRISMDatabaseUtils
             validNumber = false;
             return defaultValue;
         }
-
 
         /// <summary>
         /// Get the string value for the specified column (of type T)

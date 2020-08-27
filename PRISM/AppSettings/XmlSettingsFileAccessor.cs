@@ -14,7 +14,6 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class XmlSettingsFileAccessor
     {
-
         /// <summary>
         /// XML file path
         /// </summary>
@@ -134,7 +133,6 @@ namespace PRISM
             }
 
             return false;
-
         }
 
         /// <summary>
@@ -174,7 +172,6 @@ namespace PRISM
             }
 
             return false;
-
         }
 
         private bool CacheKeyNames(string sectionName)
@@ -230,7 +227,6 @@ namespace PRISM
             }
 
             return true;
-
         }
 
         private void CacheSectionNames()
@@ -259,7 +255,6 @@ namespace PRISM
                     dtSectionNames.Add(sectionNameToStore, section);
                 }
             }
-
         }
 
         private string GetCachedKeyName(string sectionName, string keyName)
@@ -541,7 +536,6 @@ namespace PRISM
         /// </return>
         public int GetParam(string sectionName, string keyName, int valueIfMissing, out bool valueNotPresent)
         {
-
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
             if (result == null || notFound)
             {
@@ -590,7 +584,6 @@ namespace PRISM
         /// </return>
         public long GetParam(string sectionName, string keyName, long valueIfMissing, out bool valueNotPresent)
         {
-
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
             if (result == null || notFound)
             {
@@ -639,7 +632,6 @@ namespace PRISM
         /// </return>
         public float GetParam(string sectionName, string keyName, float valueIfMissing, out bool valueNotPresent)
         {
-
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out var notFound);
             if (result == null || notFound)
             {
@@ -688,7 +680,6 @@ namespace PRISM
         /// </return>
         public double GetParam(string sectionName, string keyName, double valueIfMissing, out bool valueNotPresent)
         {
-
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out var notFound);
             if (result == null || notFound)
             {
@@ -867,9 +858,6 @@ namespace PRISM
 
             // If we get here, either mCaseSensitive = True or the section wasn't found using GetCachedSectionName
             return m_XMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
-
         }
-
     }
-
 }

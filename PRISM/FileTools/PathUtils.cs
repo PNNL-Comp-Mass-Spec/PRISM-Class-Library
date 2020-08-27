@@ -92,7 +92,6 @@ namespace PRISM
                 return path1 + directorySepChar + path2;
 
             return path1 + path2;
-
         }
 
         /// <summary>
@@ -174,7 +173,6 @@ namespace PRISM
             {
                 return new List<FileInfo>();
             }
-
         }
 
         /// <summary>
@@ -277,7 +275,6 @@ namespace PRISM
                 return "/" + parentPath;
 
             return parentPath;
-
         }
 
         /// <summary>
@@ -291,7 +288,6 @@ namespace PRISM
             if (string.IsNullOrWhiteSpace(filePath))
             {
                 return string.Empty;
-
             }
 
             if (!filePath.Contains(" "))
