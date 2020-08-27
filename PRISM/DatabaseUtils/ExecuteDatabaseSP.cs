@@ -167,7 +167,7 @@ namespace PRISM
             out List<List<string>> lstResults,
             int retryCount = 3,
             int maxRowsToReturn = 0,
-            int retryDelaySeconds = 5)
+            int retryDelaySeconds = DEFAULT_SP_RETRY_COUNT)
         {
             // If this value is in error msg, exception occurred before resultCode was set
             var resultCode = -9999;
@@ -307,11 +307,7 @@ namespace PRISM
             }
 
             return resultCode;
-
         }
-
-
-
 
         /// <summary>
         /// Method for executing a db stored procedure, assuming no data table is returned; will retry the call to the procedure up to DEFAULT_SP_RETRY_COUNT=3 times
@@ -487,7 +483,6 @@ namespace PRISM
             return resultCode;
 
         }
-
 
         #endregion
     }
