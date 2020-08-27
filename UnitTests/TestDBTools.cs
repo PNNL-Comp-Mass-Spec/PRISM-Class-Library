@@ -12,7 +12,7 @@ using PRISMDatabaseUtils;
 namespace PRISMTest
 {
     [TestFixture]
-    class TestDBTools
+    public class TestDBTools
     {
         // Ignore Spelling: dmsreader, Sql, Username, PostgreSQL, acq, Citext, Desc, yyyy-MM-dd hh:mm tt, mgrs, pgpass
 
@@ -428,7 +428,7 @@ namespace PRISMTest
             {
                 if (dataLine.Length > 0)
                     dataLine.Append("   ");
-                dataLine.Append(string.Format("{0,-15}", column.Split('.').Last()));
+                dataLine.AppendFormat("{0,-15}", column.Split('.').Last());
             }
             Console.WriteLine(dataLine.ToString());
 
@@ -465,18 +465,18 @@ namespace PRISMTest
                         case SqlType.Int:
                         case SqlType.SmallInt:
                             var intValue = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName, 0);
-                            dataLine.Append(string.Format("{0,-15}", intValue));
+                            dataLine.AppendFormat("{0,-15}", intValue);
                             break;
 
                         case SqlType.Date:
                         case SqlType.DateTime:
                             var dateValue = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName, DateTime.MinValue);
-                            dataLine.Append(string.Format("{0,-15}", dateValue));
+                            dataLine.AppendFormat("{0,-15}", dateValue);
                             break;
 
                         default:
                             var value = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName);
-                            dataLine.Append(string.Format("{0,-15}", value));
+                            dataLine.AppendFormat("{0,-15}", value);
                             break;
                     }
                 }
