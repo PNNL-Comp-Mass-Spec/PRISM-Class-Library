@@ -3,7 +3,7 @@
     /// <summary>
     /// Constants for use by classes implementing or using <see cref="IDBTools"/>
     /// </summary>
-    public class DbUtilsConstants
+    public static class DbUtilsConstants
     {
         // Ignore Spelling: PostgreSQL
 

@@ -11,7 +11,7 @@ namespace PRISMDatabaseUtils
     /// Methods for appending columns to a data table
     /// Also includes methods for retrieving data from a row of values, using a columnMap dictionary
     /// </summary>
-    public class DataTableUtils
+    public static class DataTableUtils
     {
         #region "Properties"
 
