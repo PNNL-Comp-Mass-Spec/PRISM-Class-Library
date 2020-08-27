@@ -14,6 +14,8 @@ namespace PRISMDatabaseUtils.AppSettings
     /// </summary>
     public class MgrSettingsDB : MgrSettings
     {
+        // Ignore Spelling: PostgreSQL, pgpass
+
         /// <summary>
         /// Load manager settings from the database
         /// </summary>
@@ -36,7 +38,7 @@ namespace PRISMDatabaseUtils.AppSettings
 
             if (string.IsNullOrEmpty(dbConnectionString))
             {
-                // MgrCnfgDbConnectStr parameter not defined defined in the AppName.exe.config file
+                // MgrCnfgDbConnectStr parameter not defined in the AppName.exe.config file
                 HandleParameterNotDefined(MGR_PARAM_MGR_CFG_DB_CONN_STRING);
                 return false;
             }

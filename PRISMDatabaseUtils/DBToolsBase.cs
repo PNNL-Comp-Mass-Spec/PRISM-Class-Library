@@ -11,6 +11,11 @@ namespace PRISMDatabaseUtils
     /// </summary>
     public abstract class DBToolsBase : EventNotifier
     {
+        // ReSharper disable CommentTypo
+        // Ignore Spelling: smallint, tinyint, bigint, bool, nchar, nvarchar, citext, ntext, datetime
+        // Ignore Spelling: datetimeoffset, timestamptz, uuid, uniqueidentifier, sql, json
+        // ReSharper restore CommentTypo
+
         private static readonly Regex mIntegerMatcher = new Regex(@"\d+", RegexOptions.Compiled);
 
         /// <summary>
@@ -379,7 +384,8 @@ namespace PRISMDatabaseUtils
         /// Determine the return code to report after calling a stored procedure or function
         /// </summary>
         /// <param name="cmdParameters"></param>
-        /// <returns></returns>
+        /// <returns>Numeric return code</returns>
+        /// <remarks>Looks for a parameter named _returnCode or with Direction == ParameterDirection.ReturnValue</remarks>
         protected int GetReturnCode(DbParameterCollection cmdParameters)
         {
             foreach (DbParameter parameter in cmdParameters)

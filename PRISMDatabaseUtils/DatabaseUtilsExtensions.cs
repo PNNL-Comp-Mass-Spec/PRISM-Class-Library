@@ -10,6 +10,7 @@ namespace PRISMDatabaseUtils
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DatabaseUtilsExtensions
     {
+        // Ignore Spelling: Sql
 
         /// <summary>
         /// When using GetColumnValue, if an exact match is not found and this is true,

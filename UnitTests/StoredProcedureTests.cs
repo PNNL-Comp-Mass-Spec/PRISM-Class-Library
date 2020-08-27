@@ -12,6 +12,8 @@ namespace PRISMTest
     [TestFixture]
     class StoredProcedureTests
     {
+        // Ignore Spelling: dmsdev, dmswebuser, mtuser, workdir, PostgreSQL, ProteinSeqs
+
         private const string DMS_WEB_USER = "dmswebuser";
 
         private const string MTS_READER = "mtuser";
@@ -354,7 +356,7 @@ namespace PRISMTest
                 messageParam = dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 4000, ParameterDirection.InputOutput);
             }
 
-            // The call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
+            // On Postgres, the call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
             var returnParam = dbTools.AddParameter(spCmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
 
             Console.WriteLine("Running stored procedure " + procedureNameWithSchema + " using dbTools of type " + dbTools.DbServerType);
@@ -417,7 +419,7 @@ namespace PRISMTest
                 messageParam = dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 4000, ParameterDirection.InputOutput);
             }
 
-            // The call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
+            // On Postgres, the call to ExecuteSPData will auto-change this parameter to _returnCode of type InputOutput
             var returnParam = dbTools.AddParameter(spCmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
 
             Console.WriteLine("Running stored procedure " + procedureNameWithSchema + " using dbTools of type " + dbTools.DbServerType);

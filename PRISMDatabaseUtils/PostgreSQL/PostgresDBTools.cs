@@ -18,6 +18,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class PostgresDBTools : DBToolsBase, IDBTools
     {
+        // Ignore Spelling: Npgsql, PostgreSQL, sqlCmd, tmp
+
         #region "Member Variables"
 
         private string mConnStr;

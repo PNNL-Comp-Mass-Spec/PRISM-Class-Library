@@ -1,5 +1,7 @@
 ﻿namespace PRISMDatabaseUtils
 {
+    // Ignore Spelling: cmd, arg, sql, Npgsql, PostgreSQL
+
     /// <summary>
     /// Commonly used SQL database types; converted by implementations of IExecuteSP to the database-specific types
     /// </summary>

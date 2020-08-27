@@ -26,7 +26,7 @@ namespace PRISMDatabaseUtils
         MSSQLServer,
 
         /// <summary>
-        /// Postgre SQL
+        /// Postgres
         /// </summary>
         PostgreSQL,
     }
@@ -37,6 +37,7 @@ namespace PRISMDatabaseUtils
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DbToolsFactory
     {
+        // Ignore Spelling: PostgreSQL, Username, Sql
 
         /// <summary>
         /// Set to true once mConnectionStringKeywordMap has been initialized
@@ -47,7 +48,7 @@ namespace PRISMDatabaseUtils
             Regex(@"DbServerType\s*=(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
-        /// Map between Regex matchers and the server type for each Regex
+        /// Map between RegEx matchers and the server type for each RegEx
         /// </summary>
         private static readonly List<KeyValuePair<Regex, DbServerTypes>> mConnectionStringKeywordMap = new List<KeyValuePair<Regex, DbServerTypes>>();
 

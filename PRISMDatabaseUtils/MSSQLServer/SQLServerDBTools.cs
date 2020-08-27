@@ -16,6 +16,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class SQLServerDBTools : DBToolsBase, IDBTools
     {
+        // Ignore Spelling: Sql, cmd, Cn
+
         #region "Member Variables"
 
         private string mConnStr;

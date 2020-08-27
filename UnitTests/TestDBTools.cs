@@ -14,6 +14,8 @@ namespace PRISMTest
     [TestFixture]
     class TestDBTools
     {
+        // Ignore Spelling: dmsreader, Sql, Username, PostgreSQL, acq, Citext, Desc, yyyy-MM-dd hh:mm tt, mgrs, pgpass
+
         public const string DMS_READER = "dmsreader";
         public const string DMS_READER_PASSWORD = "dms4fun";
 

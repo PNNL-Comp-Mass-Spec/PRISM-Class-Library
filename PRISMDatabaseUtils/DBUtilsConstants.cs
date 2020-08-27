@@ -5,8 +5,10 @@
     /// </summary>
     public class DbUtilsConstants
     {
+        // Ignore Spelling: PostgreSQL
+
         /// <summary>
-        /// Return value indicating everything is ok
+        /// Return value indicating everything is OK
         /// </summary>
         public const int RET_VAL_OK = 0;
 
