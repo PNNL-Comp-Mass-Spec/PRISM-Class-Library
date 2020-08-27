@@ -199,7 +199,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 {
                     retryCount--;
                     var errorMessage =
-                        string.Format("Exception querying database ({0}; " + "ConnectionString: {1}, RetryCount = {2}, Query {3}",
+                        string.Format("Exception querying database ({0}; ConnectionString: {1}, RetryCount = {2}, Query {3}",
                                       ex.Message, ConnectStr, retryCount, sqlQuery);
 
                     OnErrorEvent(errorMessage);
@@ -862,7 +862,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             var results = new List<List<string>>();
             lstResults = results;
 
-            var readMethod = new Action<SqlCommand>(x =>
+            var readMethod = new Action<SqlCommand>(_ =>
             {
                 using (var reader = spCmd.ExecuteReader())
                 {
