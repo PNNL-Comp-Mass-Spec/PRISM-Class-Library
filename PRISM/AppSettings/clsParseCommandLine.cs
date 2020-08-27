@@ -442,7 +442,7 @@ namespace PRISM
 
                 ProgRunner.SleepMilliseconds(millisecondsBetweenDots);
 
-                iteration += 1;
+                iteration++;
             } while (iteration < totalIterations);
 
             Console.WriteLine();
@@ -497,7 +497,7 @@ namespace PRISM
                                 paramValue = iEnum.Current.Value;
                                 return true;
                             }
-                            switchIndex += 1;
+                            switchIndex++;
                         }
                     }
                 }
@@ -624,7 +624,7 @@ namespace PRISM
                             }
                         }
 
-                        indexEnd += 1;
+                        indexEnd++;
                     }
                 }
             }

@@ -585,7 +585,7 @@ namespace PRISM.Logging
                 {
                     if (!mMessageQueue.TryDequeue(out var logMessage))
                     {
-                        mFailedDequeueEvents += 1;
+                        mFailedDequeueEvents++;
                         LogDequeueError(mFailedDequeueEvents, mMessageQueue.Count);
                         return;
                     }

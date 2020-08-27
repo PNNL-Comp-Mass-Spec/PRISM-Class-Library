@@ -197,7 +197,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 }
                 catch (Exception ex)
                 {
-                    retryCount -= 1;
+                    retryCount--;
                     var errorMessage =
                         string.Format("Exception querying database ({0}; " + "ConnectionString: {1}, RetryCount = {2}, Query {3}",
                                       ex.Message, ConnectStr, retryCount, sqlQuery);
@@ -311,7 +311,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         if (string.IsNullOrWhiteSpace(callingFunction))
                         {
                             callingFunction = "Unknown";
@@ -640,7 +640,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         if (string.IsNullOrWhiteSpace(callingFunction))
                         {
                             callingFunction = "Unknown";
@@ -781,7 +781,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         errorMessage = "Exception filling data adapter for " + sqlCmd.CommandText + ": " + ex.Message;
                         errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                         errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
@@ -1046,7 +1046,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         errorMessage = "Exception calling stored procedure " + sqlCmd.CommandText + ": " + ex.Message;
                         errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                         errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);

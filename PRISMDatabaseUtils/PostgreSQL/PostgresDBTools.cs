@@ -286,7 +286,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         if (string.IsNullOrWhiteSpace(callingFunction))
                         {
                             callingFunction = "Unknown";
@@ -617,7 +617,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         if (string.IsNullOrWhiteSpace(callingFunction))
                         {
                             callingFunction = "Unknown";
@@ -786,7 +786,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         errorMessage = "Exception filling data adapter for " + sqlCmd.CommandText + ": " + ex.Message;
                         errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                         errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
@@ -1048,7 +1048,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
                     catch (Exception ex)
                     {
-                        retryCount -= 1;
+                        retryCount--;
                         errorMessage = "Exception calling stored procedure " + sqlCmd.CommandText + ": " + ex.Message;
                         errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                         errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);

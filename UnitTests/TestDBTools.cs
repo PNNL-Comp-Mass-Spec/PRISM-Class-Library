@@ -435,7 +435,7 @@ namespace PRISMTest
             var rowNumber = 0;
             foreach (var resultRow in queryResults)
             {
-                rowNumber += 1;
+                rowNumber++;
 
                 dataLine.Clear();
                 for (var i = 0; i < columnNames.Count; i++)

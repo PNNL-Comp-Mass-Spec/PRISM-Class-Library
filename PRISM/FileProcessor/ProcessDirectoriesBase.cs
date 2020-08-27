@@ -310,7 +310,7 @@ namespace PRISM.FileProcessor
 
                 foreach (var directory in directoriesToProcess)
                 {
-                    matchCount += 1;
+                    matchCount++;
 
                     var percentComplete = matchCount / (float)directoriesToProcess.Count * 100;
                     OnProgressUpdate("Process " + directory.FullName, percentComplete);
@@ -547,11 +547,11 @@ namespace PRISM.FileProcessor
                     success = ProcessDirectory(inputDirectory.FullName, outputDirectoryPathToUse, parameterFilePath, true);
                     if (success)
                     {
-                        DirectoriesProcessed += 1;
+                        DirectoriesProcessed++;
                     }
                     else
                     {
-                        DirectoryProcessErrors += 1;
+                        DirectoryProcessErrors++;
                     }
                 }
 
@@ -582,11 +582,11 @@ namespace PRISM.FileProcessor
 
                     if (success)
                     {
-                        DirectoriesProcessed += 1;
+                        DirectoriesProcessed++;
                     }
                     else
                     {
-                        DirectoryProcessErrors += 1;
+                        DirectoryProcessErrors++;
                     }
 
                     if (AbortProcessing)

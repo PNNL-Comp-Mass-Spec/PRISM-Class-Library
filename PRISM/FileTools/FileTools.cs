@@ -898,7 +898,7 @@ namespace PRISM
             {
                 if (!DeleteFileIgnoreErrors(targetFile.FullName))
                 {
-                    errorCount += 1;
+                    errorCount++;
                 }
             }
 
@@ -911,7 +911,7 @@ namespace PRISM
                 catch (Exception ex)
                 {
                     OnWarningEvent("Error removing empty directory", "Unable to delete directory " + targetDirectory.FullName + ": " + ex.Message);
-                    errorCount += 1;
+                    errorCount++;
                 }
             }
 
@@ -1633,7 +1633,7 @@ namespace PRISM
 
                     if (!copyFile)
                     {
-                        fileCountSkipped += 1;
+                        fileCountSkipped++;
                     }
                     else
                     {
@@ -1668,11 +1668,11 @@ namespace PRISM
 
                         if (copyResumed)
                         {
-                            fileCountResumed += 1;
+                            fileCountResumed++;
                         }
                         else
                         {
-                            fileCountNewlyCopied += 1;
+                            fileCountNewlyCopied++;
                         }
 
                         if (setAttribute)
@@ -2044,7 +2044,7 @@ namespace PRISM
             foreach (var childFile in directory.GetFiles())
             {
                 directorySize += childFile.Length;
-                fileCount += 1;
+                fileCount++;
             }
 
             // Add the size of each sub-directory, that is retrieved by recursively
@@ -2052,7 +2052,7 @@ namespace PRISM
             foreach (var subDir in directory.GetDirectories())
             {
                 directorySize += GetDirectorySizeEx(subDir.FullName, ref fileCount, ref subDirectoryCount);
-                subDirectoryCount += 1;
+                subDirectoryCount++;
             }
 
             return directorySize;
@@ -2355,13 +2355,13 @@ namespace PRISM
                 {
                     pathParts[pathPartCount] = pathParts[pathPartCount - 1].Substring(charIndex + 1);
                     pathParts[pathPartCount - 1] = pathParts[pathPartCount - 1].Substring(0, charIndex + 1);
-                    pathPartCount += 1;
+                    pathPartCount++;
                 }
                 else
                 {
                     break;
                 }
-                loopCount += 1;
+                loopCount++;
             } while (loopCount < 3);
 
             if (pathPartCount == 1)
@@ -2536,7 +2536,7 @@ namespace PRISM
 
             while (!fileDeleted && retriesRemaining >= 0)
             {
-                retriesRemaining -= 1;
+                retriesRemaining--;
 
                 try
                 {

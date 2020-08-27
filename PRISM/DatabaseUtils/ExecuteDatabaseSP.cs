@@ -239,7 +239,7 @@ namespace PRISM
                 }
                 catch (Exception ex)
                 {
-                    retryCount -= 1;
+                    retryCount--;
                     errorMessage = "Exception filling data adapter for " + spCmd.CommandText + ": " + ex.Message;
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                     errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
@@ -414,7 +414,7 @@ namespace PRISM
                 }
                 catch (Exception ex)
                 {
-                    retryCount -= 1;
+                    retryCount--;
                     errorMessage = "Exception calling stored procedure " + spCmd.CommandText + ": " + ex.Message;
                     errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                     errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
