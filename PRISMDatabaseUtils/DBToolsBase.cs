@@ -392,35 +392,45 @@ namespace PRISMDatabaseUtils
             {
                 if (parameter.ParameterName.Equals("_returnCode", StringComparison.OrdinalIgnoreCase))
                 {
-                    var returnCodeValue = parameter.Value.CastDBVal<string>();
-
-                    if (string.IsNullOrWhiteSpace(returnCodeValue) || returnCodeValue.Equals("0"))
-                    {
-                        parameter.Value = 0;
-                        return 0;
-                    }
-
-                    // Find the longest integer in returnCodeValue
-                    var match = mIntegerMatcher.Match(returnCodeValue);
-                    if (match.Success)
-                    {
-                        var matchValue = int.Parse(match.Value);
-                        if (matchValue != 0)
-                            return matchValue;
-                    }
-
-                    return DbUtilsConstants.RET_VAL_UNDEFINED_ERROR;
+                    return GetReturnCode(parameter);
                 }
 
                 if (parameter.Direction == ParameterDirection.ReturnValue)
                 {
-                    var returnCodeValue = parameter.Value.CastDBVal(0);
-                    return returnCodeValue;
+                    return parameter.Value.CastDBVal(0);
                 }
             }
 
             // The procedure does not have a standard return or return code parameter
             return DbUtilsConstants.RET_VAL_OK;
+        }
+
+        /// <summary>
+        /// Parse a parameter (of type string or integer) to determine the return code
+        /// Supports Postgres error codes that might contain a letter, e.g. 22P06 or 2200L
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns>Parsed integer, or -1 if does not start with an integer</returns>
+        public static int GetReturnCode(IDataParameter parameter)
+        {
+            var returnCodeValue = parameter.Value.CastDBVal<string>();
+
+            if (string.IsNullOrWhiteSpace(returnCodeValue) || returnCodeValue.Equals("0"))
+            {
+                parameter.Value = 0;
+                return 0;
+            }
+
+            // Find the longest integer in returnCodeValue
+            var match = mIntegerMatcher.Match(returnCodeValue);
+            if (match.Success)
+            {
+                var matchValue = int.Parse(match.Value);
+                if (matchValue != 0)
+                    return matchValue;
+            }
+
+            return DbUtilsConstants.RET_VAL_UNDEFINED_ERROR;
         }
 
         /// <summary>
