@@ -111,8 +111,10 @@ namespace PRISMTest
             };
 
             spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
-            spCmd.Parameters.Add(new SqlParameter("@IncludeUnused", SqlDbType.Int)).Value = 0;
-            spCmd.Parameters.Add(new SqlParameter("@IncludeDeleted", SqlDbType.Int)).Value = 0;
+
+            // Test adding parameters using dbTools
+            dbTools.AddParameter(spCmd, "@IncludeUnused", SqlType.Int).Value = 0;
+            dbTools.AddTypedParameter(spCmd, "@IncludeDeleted", SqlType.Int, 0, 0);
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
