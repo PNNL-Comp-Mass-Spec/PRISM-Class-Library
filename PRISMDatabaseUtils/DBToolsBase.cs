@@ -419,7 +419,7 @@ namespace PRISMDatabaseUtils
                 return 0;
             }
 
-            // Find the longest integer in returnCodeValue
+            // Find the first integer in returnCodeValue
             var match = mIntegerMatcher.Match(returnCodeValue);
             if (match.Success)
             {

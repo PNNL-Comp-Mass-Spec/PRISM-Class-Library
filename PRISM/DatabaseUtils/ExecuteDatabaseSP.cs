@@ -13,10 +13,12 @@ namespace PRISM
     [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
     public class ExecuteDatabaseSP : EventNotifier
     {
+        //Ignore Spelling: spCmd, Namespace
+
         #region "Constants"
 
         /// <summary>
-        /// Return value indicating everything is ok
+        /// Return value indicating everything is OK
         /// </summary>
         public const int RET_VAL_OK = 0;
 
@@ -230,7 +232,7 @@ namespace PRISM
                         {
                             OnDebugEvent(string.Format(
                                              "Cannot read the return code for stored procedure {0} " +
-                                             "since cpCmd does not contain a parameter named @Return",
+                                             "since spCmd does not contain a parameter named @Return",
                                              spCmd.CommandText));
                             resultCode = 0;
                         }
