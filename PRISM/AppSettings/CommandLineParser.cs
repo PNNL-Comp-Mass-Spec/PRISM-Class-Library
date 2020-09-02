@@ -211,6 +211,9 @@ namespace PRISM
             }
         }
 
+        private const int DEFAULT_PARAM_KEYS_FIELD_WIDTH = 18;
+        private const int DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH = 56;
+
         private char[] paramChars = mDefaultParamChars;
         private char[] separatorChars = mDefaultSeparatorChars;
         private Dictionary<string, ArgInfo> validArguments;
@@ -234,6 +237,18 @@ namespace PRISM
         /// Executable version info
         /// </summary>
         public string ExeVersionInfo { get; }
+
+        /// <summary>
+        /// Field width for the left column (key names)
+        /// </summary>
+        /// <remarks>Minimum allowed value: 10</remarks>
+        public int ParamKeysFieldWidth { get; set; }
+
+        /// <summary>
+        /// Field width for the right column (parameter descriptions)
+        /// </summary>
+        /// <remarks>Minimum allowed value: 20</remarks>
+        public int ParamDescriptionFieldWidth { get; set; }
 
         /// <summary>
         /// Get or set the characters allowed at the beginning of an argument specifier
@@ -300,6 +315,9 @@ namespace PRISM
             Results = new ParserResults(new T());
             propertiesAndAttributes = null;
             validArguments = null;
+
+            ParamKeysFieldWidth = DEFAULT_PARAM_KEYS_FIELD_WIDTH;
+            ParamDescriptionFieldWidth = DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH;
 
             ProgramInfo = string.Empty;
             ContactInfo = string.Empty;
@@ -425,7 +443,7 @@ namespace PRISM
                 if (onErrorOutputHelp)
                 {
                     // Automatically output help when no arguments are supplied
-                    PrintHelp();
+                    PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
                 }
                 else if (outputErrors)
                 {
@@ -448,7 +466,7 @@ namespace PRISM
                     // Preprocessing failed, tell the user why
                     if (onErrorOutputHelp)
                     {
-                        PrintHelp();
+                        PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
                     }
                     else if (outputErrors)
                     {
@@ -461,13 +479,13 @@ namespace PRISM
                 var props = GetPropertiesAttributes();
                 var validArgs = GetValidArgs();
 
-                // Show the help if a default help argument is provided, but only if the templated class does not define the arg provided
+                // Show the help if a default help argument is provided, but only if the templated class does not define the argument provided
                 foreach (var helpArg in mDefaultHelpArgs)
                 {
-                    // Make sure the help arg is not defined in the template class
+                    // Make sure the help argument is not defined in the template class
                     if (preprocessed.ContainsKey(helpArg) && validArgs.ContainsKey(helpArg.ToLower()) && validArgs[helpArg.ToLower()].IsBuiltInArg)
                     {
-                        PrintHelp();
+                        PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
                         Results.Failed();
                         return Results;
                     }
@@ -725,7 +743,7 @@ namespace PRISM
             {
                 if (onErrorOutputHelp)
                 {
-                    PrintHelp();
+                    PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
                 }
                 else if (outputErrors)
                 {
@@ -1164,20 +1182,22 @@ namespace PRISM
         /// </summary>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
+        /// <param name="paramKeysWidth">Field width for the left column (key names); minimum 10</param>
+        /// <param name="helpDescriptionWidth">Field width for the right column (parameter descriptions); minimum 20</param>
         // ReSharper disable once UnusedMember.Global
-        public static void ShowHelp(string entryAssemblyName = "", string versionInfo = "")
+        public static void ShowHelp(string entryAssemblyName = "", string versionInfo = "", int paramKeysWidth = 18, int helpDescriptionWidth = 56)
         {
             var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
-            parser.PrintHelp();
+            parser.PrintHelp(paramKeysWidth, helpDescriptionWidth);
         }
 
         /// <summary>
         /// Display the help contents, using the information supplied by the Option attributes and the default constructor for the templated class
         /// </summary>
-        public void PrintHelp()
+        /// <param name="paramKeysWidth">Field width for the left column (key names); minimum 10</param>
+        /// <param name="helpDescriptionWidth">Field width for the right column (parameter descriptions); minimum 20</param>
+        public void PrintHelp(int paramKeysWidth = 18, int helpDescriptionWidth = 56)
         {
-            const int paramKeysWidth = 18;
-            const int helpTextWidth = 56;
             var contents = CreateHelpContents();
 
             // Output any errors that occurring while creating the help content
@@ -1204,6 +1224,18 @@ namespace PRISM
                 Console.WriteLine(@"Usage:");
             }
 
+            if (paramKeysWidth <= 0 && helpDescriptionWidth <= 0)
+            {
+                paramKeysWidth = DEFAULT_PARAM_KEYS_FIELD_WIDTH;
+                helpDescriptionWidth = DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH;
+            }
+
+            if (paramKeysWidth < 10)
+                paramKeysWidth = 10;
+
+            if (helpDescriptionWidth < 20)
+                helpDescriptionWidth = 20;
+
             var outputFormatString = "  {0,-" + paramKeysWidth + "}  {1}";
 
             // Output the help contents, creating columns with wrapping before outputting
@@ -1215,13 +1247,14 @@ namespace PRISM
                 var keyOverflow = WrapParagraphAsList(option.Key, paramKeysWidth);
 
                 // Wrap the argument help text
-                var textOverflow = WrapParagraphAsList(option.Value, helpTextWidth);
+                var textOverflow = WrapParagraphAsList(option.Value, helpDescriptionWidth);
 
                 // Join the wrapped argument names and help text
                 for (var i = 0; i < keyOverflow.Count || i < textOverflow.Count; i++)
                 {
                     var key = string.Empty;
                     var text = string.Empty;
+
                     if (i < keyOverflow.Count)
                     {
                         key = keyOverflow[i];
