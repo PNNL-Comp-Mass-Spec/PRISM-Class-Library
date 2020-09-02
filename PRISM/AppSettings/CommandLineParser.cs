@@ -1261,7 +1261,10 @@ namespace PRISM
                     }
                     if (i < textOverflow.Count)
                     {
-                        text = textOverflow[i];
+                        if (textOverflow[i].StartsWith(" (Default:"))
+                            text = textOverflow[i].Trim();
+                        else
+                            text = textOverflow[i];
                     }
                     overflow.Add(new Tuple<string, string>(key, text));
                 }
