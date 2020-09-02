@@ -14,6 +14,8 @@ namespace PRISMTest
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     class CommandLineParserTests
     {
+        // Ignore Spelling: tda, arg, args
+
         private const bool showHelpOnError = false;
         private const bool outputErrors = false;
 
@@ -187,6 +189,25 @@ namespace PRISMTest
         {
             [Option("bad=name")]
             public string BadName { get; set; }
+        }
+
+        private class WrappingTestKeys
+        {
+            [Option("tda", Min = -1, Max = 1,
+                HelpText = "Database search mode:\n0: don't search decoy database, \n1: search shuffled decoy database\n")]
+            public int TdaInt { get; set; }
+
+            [Option("threads", Min = 0, HelpText = "Maximum number of threads, or 0 to set automatically")]
+            public int MaxNumThreads { get; set; }
+
+            [Option("cores", Min = 0, HelpText = "Maximum number of CPUs, or 0 to set automatically")]
+            public int MaxNumCPUs { get; set; }
+
+            [Option("n", "NumMatchesPerSpec", "MatchesPerSpectrumToReport", HelpText = "Number of results to report for each mass spectrum")]
+            public int MatchesPerSpectrumToReport { get; set; }
+
+            [Option("v", "verbose", "VerboseMode", HelpText = "When true, show additional debug messages")]
+            public bool VerboseMode { get; set; }
         }
 
         [Test]
@@ -684,6 +705,77 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
+        }
+
+        /// <summary>
+        /// Test setting the value of a boolean parameter using true, false, 1, 0, yes, or no
+        /// </summary>
+        /// <param name="testCaseIndex"></param>
+        /// <param name="verboseFlagValue"></param>
+        /// <param name="expectedParseResult"></param>
+        /// <param name="parseErrorExpected"></param>
+        /// <remarks>
+        /// Test cases using On and Off will produce an error.
+        /// This is expected since the CommandLineParser does not support On or Off for bool args.
+        /// </remarks>
+        [Test]
+        [TestCase(0, "True", true)]
+        [TestCase(1, "False", false)]
+        [TestCase(2, "TRUE", true)]
+        [TestCase(3, "false", false)]
+        [TestCase(4, "1", true)]
+        [TestCase(5, "0", false)]
+        [TestCase(6, "Yes", true)]
+        [TestCase(7, "No", false)]
+        [TestCase(8, "On", false, true)]
+        [TestCase(9, "Off", false, true)]
+        public void TestBoolParameter(int testCaseIndex, string verboseFlagValue, bool expectedParseResult, bool parseErrorExpected = false)
+        {
+            var parser = new CommandLineParser<WrappingTestKeys> { ParamKeysFieldWidth = 20 };
+            var random = new Random(314 + testCaseIndex);
+
+            var tdaValue = random.Next(0, 2).ToString();
+            var threads = random.Next(1, 17).ToString();
+            var cores = random.Next(1, 5).ToString();
+            var matchesPerSpectrum = random.Next(1, 4).ToString();
+
+            var result = parser.ParseArgs(new[] {
+                "/tda", tdaValue,
+                "-threads", threads,
+                "--cores", cores,
+                "-n", matchesPerSpectrum,
+                "--verbose", verboseFlagValue }, showHelpOnError, outputErrors);
+
+            if (!result.Success)
+            {
+                result.OutputErrors();
+
+                if (!parseErrorExpected)
+                    Assert.True(result.Success, "result.Success is false");
+            }
+
+            Console.WriteLine("{0,-25} {1}", "Tda Flag:", result.ParsedResults.TdaInt);
+            Console.WriteLine("{0,-25} {1}", "Max Threads:", result.ParsedResults.MaxNumThreads);
+            Console.WriteLine("{0,-25} {1}", "Max CPUs:", result.ParsedResults.MaxNumCPUs);
+            Console.WriteLine("{0,-25} {1}", "Matches per Spectrum:", result.ParsedResults.MatchesPerSpectrumToReport);
+            Console.WriteLine("{0,-25} {1}", "Verbose Mode:", result.ParsedResults.VerboseMode);
+
+            Assert.AreEqual(expectedParseResult, result.ParsedResults.VerboseMode, "{0} did not get parsed as {1}", verboseFlagValue, expectedParseResult);
+        }
+
+        [Test]
+        public void TestDescriptionWrapping()
+        {
+            var parser = new CommandLineParser<WrappingTestKeys>
+            {
+                ParamKeysFieldWidth = 20,
+                ParamDescriptionFieldWidth = 56
+            };
+
+            var result = parser.ParseArgs(new[] { "--help" }, showHelpOnError, outputErrors);
+
+            if (result.Success)
+                Assert.Fail("result.Success should be false, not true");
         }
 
         // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
