@@ -372,7 +372,7 @@ namespace PRISM.AppSettings
                     }
                 }
 
-                // This regex uses lazy matching to match the next <value>SettingValue</value> after the setting name
+                // This RegEx uses lazy matching to match the next <value>SettingValue</value> after the setting name
                 var matcher = new Regex(settingName + ".+?<value>(?<ParamValue>.+?)</value>", RegexOptions.IgnoreCase);
 
                 var match = matcher.Match(configXml.ToString());
@@ -399,7 +399,7 @@ namespace PRISM.AppSettings
         /// <param name="parameterName"></param>
         protected void HandleParameterNotDefined(string parameterName)
         {
-            ErrMsg = string.Format("Parameter '{0}' is not defined defined in file {1}",
+            ErrMsg = string.Format("Parameter '{0}' is not defined in file {1}",
                                    parameterName,
                                    GetConfigFileName());
             ReportError(ErrMsg);
@@ -416,7 +416,7 @@ namespace PRISM.AppSettings
 
             if (string.IsNullOrEmpty(managerName))
             {
-                // MgrName parameter not defined defined in the AppName.exe.config file
+                // MgrName parameter not defined in the AppName.exe.config file
                 HandleParameterNotDefined(MGR_PARAM_MGR_NAME);
                 ShowTrace("LoadMgrSettingsFromDBWork: " + ErrMsg);
                 return false;
@@ -468,7 +468,9 @@ namespace PRISM.AppSettings
         }
 
         /// <summary>
-        /// Read settings from file AppName.exe.config. If the file path ends with ".exe.config", other files with similar names are also read afterward (matching regex "AppName\.exe\..+config$")
+        /// Read settings from file AppName.exe.config
+        /// If the file path ends with ".exe.config", other files with similar names are also read afterward
+        /// (matching RegEx "AppName\.exe\..+config$")
         /// </summary>
         /// <param name="configFilePath">Path to config file</param>
         /// <returns>Dictionary of settings as key/value pairs; null on error</returns>

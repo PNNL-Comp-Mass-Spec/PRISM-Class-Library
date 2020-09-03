@@ -9,19 +9,26 @@ using JetBrains.Annotations;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
+    // Ignore Spelling: dd, dir, args, asm, typeof, arg, Preprocess, nameof
+
     /// <summary>
+    /// <para>
     /// Class for keeping parameters flags and properties for command line arguments tied together,
     /// supporting properties of primitive types (and arrays of primitive types).
-    ///
+    /// </para>
+    /// <para>
     /// Supports parameter flags similar to /d -dd --dir, with case sensitivity when needed,
     /// with the separator between parameter flag and parameter as ' ', ':', or '=',
     /// and also supports using a parameter flag as a switch (if the associated property is a bool).
-    ///
+    /// </para>
+    /// <para>
     /// If an argument is supplied multiple times, it only keeps the last one supplied.
     /// If the property is an array, multiple values are provided using '-paramName value -paramName value ...' or similar.
     /// Includes support for showing help with no args supplied, or with argument names of "?" and "help" (can be overridden).
+    /// </para>
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Either call static method ParseArgs like this:
     ///   static int Main(string[] args) {
     ///     var options = new ProgramOptions();
@@ -37,7 +44,8 @@ namespace PRISM
     ///         ConsoleMsgUtils.ShowWarning(errorMessage);
     ///         return -1;
     ///     }
-    ///
+    /// </para>
+    /// <para>
     /// Or instantiate this class, which allows for suppressing the auto-display of the syntax if an argument error is encountered
     ///   static int Main(string[] args) {
     ///     var asmName = typeof(Program).GetTypeInfo().Assembly.GetName();
@@ -55,12 +63,14 @@ namespace PRISM
     ///     };
     ///     var parseResults = parser.ParseArgs(args);
     ///     var options = parseResults.ParsedResults;
-    ///
+    /// </para>
+    /// <para>
     ///     if (!parseResults.Success)
     ///     {
     ///       return -1;
     ///     }
-    ///
+    /// </para>
+    /// <para>
     ///     if (!options.ValidateArgs(out var errorMessage))
     ///     {
     ///         parser.PrintHelp();
@@ -69,10 +79,9 @@ namespace PRISM
     ///         ConsoleMsgUtils.ShowWarning(errorMessage);
     ///         return -1;
     ///     }
-    ///
-    ///     options.OutputSetOptions();
-    ///
-    /// An example class suitable for use when instantiating the CommandLineParser is GenericParserOptions in this project
+    /// </para>
+    /// <para>    options.OutputSetOptions();</para>
+    /// <para>An example class suitable for use when instantiating the CommandLineParser is GenericParserOptions in this project</para>
     /// </remarks>
     /// <typeparam name="T"></typeparam>
     public class CommandLineParser<T> where T : class, new()

@@ -388,7 +388,7 @@ namespace PRISM
                 {
                     retryCount--;
                     var errorMessage =
-                        string.Format("Exception querying database ({0}; " + "ConnectionString: {1}, RetryCount = {2}, Query {3}",
+                        string.Format("Exception querying database ({0}; ConnectionString: {1}, RetryCount = {2}, Query {3}",
                                       ex.Message, ConnectStr, retryCount, sqlQuery);
 
                     OnErrorEvent(errorMessage);
@@ -487,7 +487,8 @@ namespace PRISM
                     {
                         callingFunction = "Unknown";
                     }
-                    var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " + "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, ConnectStr, retryCount, sqlQuery);
+                    var errorMessage = string.Format("Exception querying database (called from {0}): {1}; " +
+                                                     "ConnectionString: {2}, RetryCount = {3}, Query {4}", callingFunction, ex.Message, ConnectStr, retryCount, sqlQuery);
 
                     OnErrorEvent(errorMessage);
 
