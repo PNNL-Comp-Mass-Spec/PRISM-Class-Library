@@ -96,16 +96,16 @@ namespace PRISMTest
             Console.WriteLine("Log entries written to " + logger.CurrentLogFilePath);
         }
 
-        [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
-        [TestCase(@"Gigasax", "DMS5", "", "")]
+        [TestCase("Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
+        [TestCase("Gigasax", "DMS5", "", "")]
         [Category("DatabaseIntegrated")]
         public void TestDBLoggerIntegrated(string server, string database, string logDirectory, string logFileNameBase)
         {
             TestDBLogger(server, database, "Integrated", "", logDirectory, logFileNameBase);
         }
 
-        [TestCase(@"Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
-        [TestCase(@"Gigasax", "DMS5", "", "")]
+        [TestCase("Gigasax", "DMS5", @"C:\Temp", "TestLogFileForDBLogging")]
+        [TestCase("Gigasax", "DMS5", "", "")]
         [Category("DatabaseNamedUser")]
         public void TestDBLoggerNamedUser(string server, string database, string logDirectory, string logFileNameBase)
         {

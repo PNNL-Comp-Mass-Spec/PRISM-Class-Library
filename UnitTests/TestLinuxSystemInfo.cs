@@ -13,8 +13,8 @@ namespace PRISMTest
     {
         internal const bool SHOW_TRACE_MESSAGES = false;
 
-        [TestCase(@"LinuxTestFiles\Centos6\etc", @"lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
-        [TestCase(@"LinuxTestFiles\Centos6\etc", @"redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
+        [TestCase(@"LinuxTestFiles\Centos6\etc", "lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
+        [TestCase(@"LinuxTestFiles\Centos6\etc", "redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
         public void TestGetCentos6Version(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -27,7 +27,7 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu 17.04 (Zesty Zapus)")]
+        [TestCase(@"LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu 17.04 (Zesty Zapus)")]
         public void TestGetOSReleaseVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -40,7 +40,7 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Solaris\etc", @"release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
+        [TestCase(@"LinuxTestFiles\Solaris\etc", "release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
         public void TestGetSolarisVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -53,8 +53,8 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"lsb-release", "Ubuntu 17.04")]
-        [TestCase(@"LinuxTestFiles\Ubuntu\etc", @"os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
+        [TestCase(@"LinuxTestFiles\Ubuntu\etc", "lsb-release", "Ubuntu 17.04")]
+        [TestCase(@"LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
         public void TestGetUbuntuVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -264,7 +264,7 @@ namespace PRISMTest
 
         private FileInfo CopyCPUStatFile(FileSystemInfo procDirectory, FileInfo sourceCpuStatFile)
         {
-            var targetCpuStatFile = new FileInfo(Path.Combine(procDirectory.FullName, @"stat"));
+            var targetCpuStatFile = new FileInfo(Path.Combine(procDirectory.FullName, "stat"));
 
             if (targetCpuStatFile.Exists)
             {

@@ -257,7 +257,7 @@ namespace PRISMTest
             var result = StringUtilities.ValueToString(value, digitsOfPrecision, scientificNotationThreshold);
             var expectedResultFound = string.CompareOrdinal(result, resultExpected) == 0;
 
-            Console.WriteLine(@"{0,20}, digits={1,2}: {2,-14}", value, digitsOfPrecision, result);
+            Console.WriteLine("{0,20}, digits={1,2}: {2,-14}", value, digitsOfPrecision, result);
 
             if (expectedResultFound)
             {

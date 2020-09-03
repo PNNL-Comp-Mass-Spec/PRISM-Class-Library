@@ -1268,7 +1268,7 @@ namespace PRISMTest
         public void TestFileInfoPropertyRemoveQuotes(string inputFilePath)
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
-            var result = parser.ParseArgs(new[] { @"-I:" + inputFilePath, "/S" }, showHelpOnError, outputErrors);
+            var result = parser.ParseArgs(new[] { "-I:" + inputFilePath, "/S" }, showHelpOnError, outputErrors);
             Assert.IsTrue(result.Success, "Parser did not succeed");
 
             var parsedInputFilePath = parser.Results.ParsedResults.InputFile;
@@ -1279,13 +1279,13 @@ namespace PRISMTest
         }
 
         [Test]
-        [TestCase(@"This is a comment", false)]
+        [TestCase("This is a comment", false)]
         [TestCase(@"""This is a comment surrounded by double quotes""", true)]
-        [TestCase(@"'This is a comment surrounded by single quotes'", true)]
+        [TestCase("'This is a comment surrounded by single quotes'", true)]
         public void TestPropertyKeepQuotes(string propertyValue, bool commentShouldHaveQuotes)
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
-            var result = parser.ParseArgs(new[] { @"-Comment", propertyValue, "/S" }, showHelpOnError, outputErrors);
+            var result = parser.ParseArgs(new[] { "-Comment", propertyValue, "/S" }, showHelpOnError, outputErrors);
             Assert.IsTrue(result.Success, "Parser did not succeed");
 
             var parsedComment = parser.Results.ParsedResults.Comment;

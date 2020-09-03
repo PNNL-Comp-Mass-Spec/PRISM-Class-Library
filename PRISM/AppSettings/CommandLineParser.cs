@@ -523,7 +523,7 @@ namespace PRISM
                         if (paramFileLoaded)
                         {
                             // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
-                            Results.AddParseError(@"Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
+                            Results.AddParseError("Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
                             if (outputErrors)
                             {
                                 Results.OutputErrors();
@@ -539,9 +539,9 @@ namespace PRISM
                         if (!paramFile.Exists)
                         {
                             Results.AddParseError(
-                                @"Error: Specified parameter file was not found: " + paramFilePath);
+                                "Error: Specified parameter file was not found: " + paramFilePath);
                             Results.AddParseError(
-                                @"  ... Full path: " + paramFile.FullName);
+                                "  ... Full path: " + paramFile.FullName);
                             if (outputErrors)
                             {
                                 Results.OutputErrors();
@@ -934,7 +934,7 @@ namespace PRISM
                     {
                         if (castMin.CompareTo(castValue) > 0)
                         {
-                            Results.AddParseError(@"Error: argument {0}, value of {1} is less than minimum of {2}", argKey, castValue, castMin);
+                            Results.AddParseError("Error: argument {0}, value of {1} is less than minimum of {2}", argKey, castValue, castMin);
                             Results.Failed();
                         }
                     }
@@ -954,7 +954,7 @@ namespace PRISM
                         if (castMax.CompareTo(castValue) < 0)
                         {
                             Results.AddParseError(
-                                @"Error: argument {0}, value of {1} is greater than maximum of {2}",
+                                "Error: argument {0}, value of {1} is greater than maximum of {2}",
                                 argKey, castValue, castMax);
                             Results.Failed();
                         }
@@ -1180,7 +1180,7 @@ namespace PRISM
                     continue;
 
                 invalidArguments.Add(userArg.Key);
-                Results.AddParseError(@"Error: Unrecognized argument name: {0}", userArg.Key);
+                Results.AddParseError("Error: Unrecognized argument name: {0}", userArg.Key);
             }
 
             return invalidArguments.Count != 0;
@@ -1221,16 +1221,16 @@ namespace PRISM
             Console.WriteLine();
             if (!string.IsNullOrWhiteSpace(ExeVersionInfo))
             {
-                Console.WriteLine(@"{0} {1}", EntryAssemblyName, ExeVersionInfo);
+                Console.WriteLine("{0} {1}", EntryAssemblyName, ExeVersionInfo);
             }
             if (!string.IsNullOrWhiteSpace(EntryAssemblyName))
             {
                 Console.WriteLine();
-                Console.WriteLine(@"Usage: {0}", EntryAssemblyName + ".exe");
+                Console.WriteLine("Usage: {0}", EntryAssemblyName + ".exe");
             }
             else
             {
-                Console.WriteLine(@"Usage:");
+                Console.WriteLine("Usage:");
             }
 
             if (paramKeysWidth <= 0 && helpDescriptionWidth <= 0)

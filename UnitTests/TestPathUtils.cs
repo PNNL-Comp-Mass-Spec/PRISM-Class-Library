@@ -9,9 +9,9 @@ namespace PRISMTest
     [TestFixture]
     class TestPathUtils
     {
-        [TestCase(@"/proc/12343/stat", @"/proc/12343/stat")]
-        [TestCase(@"/proc/subdir\filename", @"/proc/subdir/filename")]
-        [TestCase(@"/proc\subdir\filename.txt", @"/proc/subdir/filename.txt")]
+        [TestCase("/proc/12343/stat", "/proc/12343/stat")]
+        [TestCase(@"/proc/subdir\filename", "/proc/subdir/filename")]
+        [TestCase(@"/proc\subdir\filename.txt", "/proc/subdir/filename.txt")]
         public void TestAssureLinuxPath(string pathSpec, string expectedResult)
         {
             var result = PathUtils.AssureLinuxPath(pathSpec);
@@ -32,14 +32,14 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
-        [TestCase(@"/proc/12343", "stat", @"/proc/12343/stat")]
-        [TestCase(@"/proc/12343/", "stat", @"/proc/12343/stat")]
-        [TestCase(@"/proc/12343", "/stat", @"/stat")]
-        [TestCase(@"/proc/12343/", "/stat/", @"/stat/")]
-        [TestCase(@"/share/item", "dataset/results", @"/share/item/dataset/results")]
-        [TestCase(@"/share/item/", "dataset/results", @"/share/item/dataset/results")]
-        [TestCase(@"/share/item", "/dataset/results", @"/dataset/results")]
-        [TestCase(@"/share/item/", "/dataset/results/", @"/dataset/results/")]
+        [TestCase("/proc/12343", "stat", "/proc/12343/stat")]
+        [TestCase("/proc/12343/", "stat", "/proc/12343/stat")]
+        [TestCase("/proc/12343", "/stat", "/stat")]
+        [TestCase("/proc/12343/", "/stat/", "/stat/")]
+        [TestCase("/share/item", "dataset/results", "/share/item/dataset/results")]
+        [TestCase("/share/item/", "dataset/results", "/share/item/dataset/results")]
+        [TestCase("/share/item", "/dataset/results", "/dataset/results")]
+        [TestCase("/share/item/", "/dataset/results/", "/dataset/results/")]
         public void TestCombineLinuxPaths(string path1, string path2, string expectedResult)
         {
             var result = PathUtils.CombineLinuxPaths(path1, path2);
@@ -209,30 +209,30 @@ namespace PRISMTest
         [TestCase(@"C:\Windows\System32", @"C:\Windows", "System32")]
         [TestCase(@"C:\Windows", @"C:\", "Windows")]
         [TestCase(@"C:\Windows\", @"C:\", "Windows")]
-        [TestCase(@"C:\", @"", @"C:\")]
+        [TestCase(@"C:\", "", @"C:\")]
         [TestCase(@"C:\DMS_WorkDir", @"C:\", "DMS_WorkDir")]
         [TestCase(@"C:\DMS_WorkDir\", @"C:\", "DMS_WorkDir")]
         [TestCase(@"C:\DMS_WorkDir\SubDir", @"C:\DMS_WorkDir", "SubDir")]
         [TestCase(@"C:\DMS_WorkDir\SubDir\", @"C:\DMS_WorkDir", "SubDir")]
         [TestCase(@"Microsoft SQL Server\Client SDK\ODBC", @"Microsoft SQL Server\Client SDK", "ODBC")]
-        [TestCase(@"TortoiseGit\bin", @"TortoiseGit", "bin")]
-        [TestCase(@"TortoiseGit\bin\", @"TortoiseGit", "bin")]
-        [TestCase(@"TortoiseGit", @"", "TortoiseGit")]
-        [TestCase(@"TortoiseGit\", @"", "TortoiseGit")]
+        [TestCase(@"TortoiseGit\bin", "TortoiseGit", "bin")]
+        [TestCase(@"TortoiseGit\bin\", "TortoiseGit", "bin")]
+        [TestCase("TortoiseGit", "", "TortoiseGit")]
+        [TestCase(@"TortoiseGit\", "", "TortoiseGit")]
         [TestCase(@"\\server\Share\Directory", @"\\server\Share", "Directory")]
         [TestCase(@"\\server\Share\Directory\", @"\\server\Share", "Directory")]
-        [TestCase(@"\\server\Share", @"", "Share")]
-        [TestCase(@"\\server\Share\", @"", "Share")]
-        [TestCase(@"/etc/fonts/conf.d", @"/etc/fonts", "conf.d")]
-        [TestCase(@"/etc/fonts/conf.d/", @"/etc/fonts", "conf.d")]
-        [TestCase(@"/etc/fonts", @"/etc", "fonts")]
-        [TestCase(@"/etc/fonts/", @"/etc", "fonts")]
-        [TestCase(@"/etc", @"/", "etc")]
-        [TestCase(@"/etc/", @"/", "etc")]
-        [TestCase(@"/", @"", "")]
-        [TestCase(@"log/xymon", @"log", "xymon")]
-        [TestCase(@"log/xymon/old", @"log/xymon", "old")]
-        [TestCase(@"log", @"", "log")]
+        [TestCase(@"\\server\Share", "", "Share")]
+        [TestCase(@"\\server\Share\", "", "Share")]
+        [TestCase("/etc/fonts/conf.d", "/etc/fonts", "conf.d")]
+        [TestCase("/etc/fonts/conf.d/", "/etc/fonts", "conf.d")]
+        [TestCase("/etc/fonts", "/etc", "fonts")]
+        [TestCase("/etc/fonts/", "/etc", "fonts")]
+        [TestCase("/etc", "/", "etc")]
+        [TestCase("/etc/", "/", "etc")]
+        [TestCase("/", "", "")]
+        [TestCase("log/xymon", "log", "xymon")]
+        [TestCase("log/xymon/old", "log/xymon", "old")]
+        [TestCase("log", "", "log")]
         public void TestGetParentDirectoryPath(string directoryPath, string expectedParentPath, string expectedDirectoryName)
         {
             var parentPath = PathUtils.GetParentDirectoryPath(directoryPath, out var directoryName);
@@ -255,10 +255,10 @@ namespace PRISMTest
         [TestCase(@"C:\DMS_WorkDir\Result Directory\", true)]
         [TestCase(@"C:\DMS_WorkDir\ResultDirectory\filename.txt", false)]
         [TestCase(@"C:\DMS_WorkDir\Result Directory\filename.txt", true)]
-        [TestCase(@"/proc/12343", false)]
-        [TestCase(@"/proc/Result Directory", true)]
-        [TestCase(@"/proc/ResultDirectory/filename.txt", false)]
-        [TestCase(@"/proc/Result Directory/filename.txt", true)]
+        [TestCase("/proc/12343", false)]
+        [TestCase("/proc/Result Directory", true)]
+        [TestCase("/proc/ResultDirectory/filename.txt", false)]
+        [TestCase("/proc/Result Directory/filename.txt", true)]
         public void TestPossiblyQuotePath(string filePath, bool expectedQuoteRequired)
         {
             var quotedPath = PathUtils.PossiblyQuotePath(filePath);
