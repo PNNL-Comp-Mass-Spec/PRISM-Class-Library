@@ -594,7 +594,7 @@ namespace PRISM
                 {
                     var specified = false;
                     var keyGiven = string.Empty;
-                    List<string> value = null;
+                    var value = new List<string>();
 
                     // Find any arguments that match this property
                     foreach (var key in prop.Value.ParamKeys)
@@ -603,15 +603,9 @@ namespace PRISM
                         {
                             specified = true;
                             keyGiven = key;
-                            if (value == null)
-                            {
-                                value = preprocessed[key];
-                            }
-                            else
-                            {
-                                // Add in other values provided by argument keys that belong to this property
-                                value.AddRange(preprocessed[key]);
-                            }
+
+                            // Add in other values provided by argument keys that belong to this property
+                            AppendArgumentValues(value, preprocessed[key]);
                         }
                     }
 
@@ -620,17 +614,11 @@ namespace PRISM
                     {
                         specified = true;
                         keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
-                        if (value == null)
-                        {
-                            value = preprocessed[positionalArgName];
-                        }
-                        else
-                        {
-                            value.AddRange(preprocessed[positionalArgName]);
-                        }
+
+                        AppendArgumentValues(value, preprocessed[positionalArgName]);
                     }
 
-                    if (prop.Value.Required && (!specified || value == null || value.Count == 0))
+                    if (prop.Value.Required && (!specified || value.Count == 0))
                     {
                         var message = string.Format("Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]);
                         Results.AddParseError(message, true);
@@ -643,7 +631,7 @@ namespace PRISM
                     }
 
                     // switch handling - no value specified
-                    if (prop.Key.PropertyType == typeof(bool) && (value == null || value.Count == 0 || string.IsNullOrWhiteSpace(value.Last())))
+                    if (prop.Key.PropertyType == typeof(bool) && (value.Count == 0 || string.IsNullOrWhiteSpace(value.Last())))
                     {
                         prop.Key.SetValue(Results.ParsedResults, true);
                         continue;
@@ -655,7 +643,7 @@ namespace PRISM
                         prop.Value.ArgExistsPropertyInfo.SetValue(Results.ParsedResults, true);
 
                         // if no value provided, then don't set it
-                        if (value == null || value.Count == 0 || value.All(string.IsNullOrWhiteSpace))
+                        if (value.Count == 0 || value.All(string.IsNullOrWhiteSpace))
                         {
                             continue;
                         }
@@ -728,8 +716,16 @@ namespace PRISM
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ConsoleMsgUtils.ShowError("Error in CommandLineParser.ParseArgs", ex);
+                Console.WriteLine();
+                Console.WriteLine("Command line arguments:");
+                foreach (var arg in args)
+                {
+                    Console.WriteLine(arg);
+                }
+
                 Results.Failed();
             }
 
@@ -1029,6 +1025,22 @@ namespace PRISM
             }
 
             return Convert.ChangeType(valueToConvert, targetType);
+        }
+
+        private void AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
+        {
+            // Append new argument values, trimming trailing \r or \n characters
+            // This can happen while debugging with Visual Studio if the user pastes a list of arguments into the
+            // Command Line Arguments text box, and the pasted text contains a carriage return
+
+            foreach (var value in newArgumentValues)
+            {
+                var trimmedValue = value.Trim('\r', '\n');
+                if (string.IsNullOrWhiteSpace(trimmedValue))
+                    continue;
+
+                existingArgumentValues.Add(trimmedValue);
+            }
         }
 
         /// <summary>
