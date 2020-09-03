@@ -1500,7 +1500,7 @@ namespace PRISM
                         var valValue = Convert.ChangeType(enumVal, Enum.GetUnderlyingType(prop.Key.PropertyType));
                         var desc = enumVal.GetDescriptionAttribute(prop.Key.PropertyType);
                         helpText += $"\n  {valValue} or '{valName}'";
-                        if (desc != null && !desc.IsDefaultAttribute() && !string.IsNullOrWhiteSpace(desc.Description))
+                        if (desc?.IsDefaultAttribute() == false && !string.IsNullOrWhiteSpace(desc.Description))
                         {
                             helpText += $": {desc.Description}";
                         }
@@ -1933,7 +1933,7 @@ namespace PRISM
                 if (string.IsNullOrWhiteSpace(optionData.ArgExistsProperty))
                     continue;
 
-                var match = properties.FirstOrDefault(x => x.Name.Equals(optionData.ArgExistsProperty));
+                var match = Array.Find(properties, x => x.Name.Equals(optionData.ArgExistsProperty));
                 if (match != null && match.PropertyType == typeof(bool))
                 {
                     optionData.ArgExistsPropertyInfo = match;

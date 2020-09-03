@@ -619,7 +619,7 @@ namespace PRISM.AppSettings
                 return;
 
             // Find the longest key name
-            var longestName = settings.Keys.Select(item => item.Length).Max();
+            var longestName = settings.Keys.Max(item => item.Length);
 
             Console.ForegroundColor = ConsoleMsgUtils.DebugFontColor;
             foreach (var key in from item in settings.Keys orderby item select item)
@@ -785,14 +785,7 @@ namespace PRISM.AppSettings
         // ReSharper disable once UnusedMember.Global
         public void SetParam(string itemKey, string itemValue)
         {
-            if (MgrParams.ContainsKey(itemKey))
-            {
-                MgrParams[itemKey] = itemValue;
-            }
-            else
-            {
-                MgrParams.Add(itemKey, itemValue);
-            }
+            MgrParams[itemKey] = itemValue;
         }
 
         #endregion

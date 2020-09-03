@@ -12,7 +12,7 @@ namespace PRISMTest
     [TestFixture]
     [SuppressMessage("ReSharper", "StringLiteralTypo")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    class CommandLineParserTests
+    public class CommandLineParserTests
     {
         // Ignore Spelling: tda, arg, args
 
@@ -809,11 +809,11 @@ namespace PRISMTest
 
         private enum TestEnum
         {
+            False = -1,
             Unknown = 0,
             True = 1,
             DoublyTrue = 2,
             CantBeTruer = 3,
-            False = -1,
             Legend = 100
         }
 

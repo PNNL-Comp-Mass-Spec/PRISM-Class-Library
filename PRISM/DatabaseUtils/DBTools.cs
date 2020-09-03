@@ -355,7 +355,7 @@ namespace PRISM
             }
         }
 
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
         /// <summary>
         /// The function gets a disconnected DataSet as specified by the SQL statement.
         /// </summary>
@@ -367,7 +367,7 @@ namespace PRISM
         public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
             var retryCount = 3;
-            var retryDelaySeconds = 5;
+            const int retryDelaySeconds = 5;
 
             while (retryCount > 0)
             {
