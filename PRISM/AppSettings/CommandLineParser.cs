@@ -147,8 +147,9 @@ namespace PRISM
             public IReadOnlyList<ParseErrorInfo> ParseErrors => mParseErrors;
 
             /// <summary>
-            /// The path to the param file (if one was used)
+            /// The path to the parameter file (if one was defined)
             /// </summary>
+            /// <remarks>This is the parameter file name or path defined by the user; it is not necessarily a full path</remarks>
             public string ParamFilePath { get; internal set; }
 
             /// <summary>
@@ -260,6 +261,24 @@ namespace PRISM
         public int ParamDescriptionFieldWidth { get; set; }
 
         /// <summary>
+        /// Full path to the parameter file, if a parameter file was defined
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This path will be updated after calling ParseArgs
+        /// </para>
+        /// <para>
+        /// A parameter file is defined, by default, using /ParamFile:ParameterFilePath.conf or -ParamFile ParameterFilePath.conf
+        /// </para>
+        /// <para>
+        /// Additional argument names for specifying the parameter file can be defined
+        /// by calling AddParamFileKey after instantiating the CommandLineParser class
+        /// </para>
+        /// </remarks>
+        // ReSharper disable once UnusedMember.Global
+        public string ParameterFilePath {get; private set; }
+
+        /// <summary>
         /// Get or set the characters allowed at the beginning of an argument specifier
         /// </summary>
         // ReSharper disable once UnusedMember.Global
@@ -320,6 +339,7 @@ namespace PRISM
         {
             EntryAssemblyName = entryAsmName ?? string.Empty;
             ExeVersionInfo = versionInfo ?? string.Empty;
+            ParameterFilePath = string.Empty;
 
             Results = new ParserResults(new T());
             propertiesAndAttributes = null;
@@ -334,7 +354,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Add additional param keys that can be used to specify a parameter file argument
+        /// Add additional param keys that can be used to specify a parameter file argument, for example "Conf"
         /// </summary>
         /// <param name="paramKey"></param>
         // ReSharper disable once UnusedMember.Global
@@ -535,6 +555,8 @@ namespace PRISM
                         var paramFilePath = preprocessed[paramFileArg].Last();
                         Results.ParamFilePath = paramFilePath;
                         var paramFile = new FileInfo(paramFilePath);
+
+                        ParameterFilePath = paramFile.FullName;
 
                         if (!paramFile.Exists)
                         {
@@ -1892,6 +1914,7 @@ namespace PRISM
             /// <summary>
             /// If the argument key is internally defined
             /// </summary>
+            /// <remarks>Examples include: ?, help, ParamFile, and CreateParamFile</remarks>
             public bool IsBuiltInArg { get; set; }
 
             /// <summary>
