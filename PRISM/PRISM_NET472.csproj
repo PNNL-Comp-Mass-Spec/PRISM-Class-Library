@@ -51,6 +51,8 @@
     <Compile Include="AppSettings\clsParseCommandLine.cs" />
     <Compile Include="AppSettings\CommandLineParser.cs" />
     <Compile Include="AppSettings\GenericParserOptions.cs" />
+    <Compile Include="AppSettings\KeyValueParamFileLine.cs" />
+    <Compile Include="AppSettings\KeyValueParamFileReader.cs" />
     <Compile Include="AppSettings\MgrSettings.cs" />
     <Compile Include="AppSettings\XMLFileReader.cs" />
     <Compile Include="AppSettings\XmlSettingsFileAccessor.cs" />
