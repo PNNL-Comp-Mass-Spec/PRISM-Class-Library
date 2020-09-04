@@ -47,6 +47,7 @@
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="FileRefs.cs" />
     <Compile Include="GZipTests.cs" />
+    <Compile Include="KeyValueParamFileReaderTests.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="MgrSettingsTests.cs" />
     <Compile Include="MiscellaneousTests.cs" />
