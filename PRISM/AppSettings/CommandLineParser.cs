@@ -623,21 +623,29 @@ namespace PRISM
                     {
                         if (preprocessed.ContainsKey(key))
                         {
-                            specified = true;
                             keyGiven = key;
 
                             // Add in other values provided by argument keys that belong to this property
-                            AppendArgumentValues(value, preprocessed[key]);
+                            var validValue = AppendArgumentValues(value, preprocessed[key]);
+
+                            if (validValue)
+                            {
+                                specified = true;
+                            }
                         }
                     }
 
                     var positionalArgName = GetPositionalArgName(prop.Value.ArgPosition);
                     if (prop.Value.ArgPosition > 0 && preprocessed.ContainsKey(positionalArgName))
                     {
-                        specified = true;
                         keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
 
-                        AppendArgumentValues(value, preprocessed[positionalArgName]);
+                        var validValue = AppendArgumentValues(value, preprocessed[positionalArgName]);
+
+                        if (validValue)
+                        {
+                            specified = true;
+                        }
                     }
 
                     if (prop.Value.Required && (!specified || value.Count == 0))
@@ -1049,11 +1057,13 @@ namespace PRISM
             return Convert.ChangeType(valueToConvert, targetType);
         }
 
-        private void AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
+        private bool AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
         {
             // Append new argument values, trimming trailing \r or \n characters
             // This can happen while debugging with Visual Studio if the user pastes a list of arguments into the
             // Command Line Arguments text box, and the pasted text contains a carriage return
+
+            var validValue = false;
 
             foreach (var value in newArgumentValues)
             {
@@ -1062,7 +1072,10 @@ namespace PRISM
                     continue;
 
                 existingArgumentValues.Add(trimmedValue);
+                validValue = true;
             }
+
+            return validValue;
         }
 
         /// <summary>
