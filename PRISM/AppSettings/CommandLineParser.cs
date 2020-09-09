@@ -224,6 +224,8 @@ namespace PRISM
         private const int DEFAULT_PARAM_KEYS_FIELD_WIDTH = 18;
         private const int DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH = 56;
 
+        private const string NULL_VALUE_FLAG = "null";
+
         private char[] paramChars = mDefaultParamChars;
         private char[] separatorChars = mDefaultSeparatorChars;
         private Dictionary<string, ArgInfo> validArguments;
@@ -951,7 +953,7 @@ namespace PRISM
         private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
         {
             object castValue = null;
-            if (!string.Equals("null", valueToParse, StringComparison.OrdinalIgnoreCase))
+            if (!string.Equals(NULL_VALUE_FLAG, valueToParse, StringComparison.OrdinalIgnoreCase))
             {
                 castValue = ConvertToType(valueToParse, propertyType);
             }
@@ -1446,7 +1448,7 @@ namespace PRISM
 
                 // Get the default value to display
                 var defaultValueObj = prop.Key.GetValue(optionsForDefaults);
-                var defaultValue = "null";
+                var defaultValue = NULL_VALUE_FLAG;
                 if (defaultValueObj != null)
                 {
                     defaultValue = defaultValueObj.ToString();
