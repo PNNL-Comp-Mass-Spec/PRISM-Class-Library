@@ -679,6 +679,12 @@ namespace PRISM
                         }
                     }
 
+                    if (value.Count == 0)
+                    {
+                        ConsoleMsgUtils.ShowWarning("Logic bug in ParseArgs: the value list is empty; not updating property " + prop.Key.Name);
+                        continue;
+                    }
+
                     object lastVal = value.Last();
                     try
                     {
