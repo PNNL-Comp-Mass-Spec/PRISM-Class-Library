@@ -626,14 +626,10 @@ namespace PRISM
                         if (preprocessed.ContainsKey(key))
                         {
                             keyGiven = key;
+                            specified = true;
 
                             // Add in other values provided by argument keys that belong to this property
-                            var validValue = AppendArgumentValues(value, preprocessed[key]);
-
-                            if (validValue)
-                            {
-                                specified = true;
-                            }
+                            AppendArgumentValues(value, preprocessed[key]);
                         }
                     }
 
@@ -641,13 +637,9 @@ namespace PRISM
                     if (prop.Value.ArgPosition > 0 && preprocessed.ContainsKey(positionalArgName))
                     {
                         keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
+                        specified = true;
 
-                        var validValue = AppendArgumentValues(value, preprocessed[positionalArgName]);
-
-                        if (validValue)
-                        {
-                            specified = true;
-                        }
+                        AppendArgumentValues(value, preprocessed[positionalArgName]);
                     }
 
                     if (prop.Value.Required && (!specified || value.Count == 0))
@@ -683,8 +675,8 @@ namespace PRISM
 
                     if (value.Count == 0)
                     {
-                        ConsoleMsgUtils.ShowWarning("Logic bug in ParseArgs: the value list is empty; not updating property " + prop.Key.Name);
-                        continue;
+                        // The value was likely an empty string, which AppendArgumentValues ignores
+                        value.Add(string.Empty);
                     }
 
                     object lastVal = value.Last();
@@ -1065,13 +1057,11 @@ namespace PRISM
             return Convert.ChangeType(valueToConvert, targetType);
         }
 
-        private bool AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
+        private void AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
         {
             // Append new argument values, trimming trailing \r or \n characters
             // This can happen while debugging with Visual Studio if the user pastes a list of arguments into the
             // Command Line Arguments text box, and the pasted text contains a carriage return
-
-            var validValue = false;
 
             foreach (var value in newArgumentValues)
             {
@@ -1080,10 +1070,7 @@ namespace PRISM
                     continue;
 
                 existingArgumentValues.Add(trimmedValue);
-                validValue = true;
             }
-
-            return validValue;
         }
 
         /// <summary>
