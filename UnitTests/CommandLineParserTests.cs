@@ -193,6 +193,23 @@ namespace PRISMTest
 
         private class WrappingTestKeys
         {
+            [Option("InputFile", "InputFilePath", "i", "input", ArgPosition = 1, HelpShowsDefault = false, IsInputFilePath = true,
+                HelpText = "Input file path (UIMF File);\nsupports wildcards, e.g. *.uimf")]
+            public string InputFilePath { get; set; }
+
+            [Option("OutputFile", "OutputFilePath", "o", "output", ArgPosition = 2, HelpShowsDefault = false, HelpText =
+                "Output file path; ignored if the input file path has a wildcard or if /S was used (or a parameter file has Recurse=True)")]
+            public string OutputFilePath { get; set; }
+
+            [Option("BaseFrameMode", "BaseFrame", HelpText =
+                "Method for selecting the base frame to align all the other frames to")]
+            public int BaseFrameSelectionMode { get; set; }
+
+            [Option("Smooth", "ScanSmoothCount", HelpText =
+                "Number of points to use when smoothing TICs before aligning. " +
+                "If 0 or 1; no smoothing is applied.")]
+            public int ScanSmoothCount { get; set; }
+
             [Option("tda", Min = -1, Max = 1,
                 HelpText = "Database search mode:\n0: don't search decoy database, \n1: search shuffled decoy database\n")]
             public int TdaInt { get; set; }
@@ -768,13 +785,26 @@ namespace PRISMTest
         }
 
         [Test]
-        public void TestDescriptionWrapping()
+        [TestCase(0, 0)]
+        [TestCase(20, 56)]
+        [TestCase(18, 60)]
+        [TestCase(19, 60)]
+        [TestCase(20, 60)]
+        [TestCase(21, 60)]
+        [TestCase(22, 60)]
+        [TestCase(23, 60)]
+        [TestCase(24, 60)]
+        [TestCase(25, 60)]
+        [TestCase(26, 60)]
+        public void TestDescriptionWrapping(int keyNamesFieldWidth, int descriptionFieldWidth)
         {
-            var parser = new CommandLineParser<WrappingTestKeys>
-            {
-                ParamKeysFieldWidth = 20,
-                ParamDescriptionFieldWidth = 56
-            };
+            var parser = new CommandLineParser<WrappingTestKeys>();
+
+            if (keyNamesFieldWidth > 0)
+                parser.ParamKeysFieldWidth = keyNamesFieldWidth;
+
+            if (descriptionFieldWidth > 0)
+                parser.ParamDescriptionFieldWidth = descriptionFieldWidth;
 
             var result = parser.ParseArgs(new[] { "--help" }, showHelpOnError, outputErrors);
 
