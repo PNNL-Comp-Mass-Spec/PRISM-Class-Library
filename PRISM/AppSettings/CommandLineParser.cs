@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-    // Ignore Spelling: dd, dir, args, asm, typeof, arg, Preprocess, nameof
+    // Ignore Spelling: dd, dir, args, asm, typeof, arg, Preprocess, nameof, Conf
 
     /// <summary>
     /// <para>
@@ -251,6 +251,12 @@ namespace PRISM
         public string ExeVersionInfo { get; }
 
         /// <summary>
+        /// When true, if a parameter has multiple key names, when showing the syntax using PrintHelp,
+        /// hide any whose length is greater than ParamKeysFieldWidth - 2
+        /// </summary>
+        public bool HideLongParamKeyNamesAtConsole { get; set; }
+
+        /// <summary>
         /// Field width for the left column (key names)
         /// </summary>
         /// <remarks>Minimum allowed value: 10</remarks>
@@ -347,6 +353,7 @@ namespace PRISM
             propertiesAndAttributes = null;
             validArguments = null;
 
+            HideLongParamKeyNamesAtConsole=true;
             ParamKeysFieldWidth = DEFAULT_PARAM_KEYS_FIELD_WIDTH;
             ParamDescriptionFieldWidth = DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH;
 
@@ -1387,10 +1394,18 @@ namespace PRISM
         /// <summary>
         /// Create the help text and argument name list for each argument
         /// </summary>
+        /// <param name="paramKeysWidth">
+        /// Field width for the left column (key names)
+        /// If HideLongParamKeyNamesAtConsole is true, key names longer than this width - 2 will be hidden
+        /// </param>
         /// <returns></returns>
-        private Dictionary<string, string> CreateHelpContents()
+        private Dictionary<string, string> CreateHelpContents(int paramKeysWidth)
         {
+            // This dictionary tracks the key name(s) and help text for each parameter
+            // Keys are the key name or list of key names (e.g. -InputFile, -InputFilePath, -i, -input, arg#1)
+            // Values are the help text
             var contents = new Dictionary<string, string>();
+
             var duplicateKeyCheck = new Dictionary<string, PropertyInfo>();
 
             var optionsForDefaults = new T();
@@ -1445,10 +1460,22 @@ namespace PRISM
                     defaultValue = $"\"{defaultValue}\"";
                 }
 
+                // Look for long key names that will be hidden
+                var keyNamesToHide = new SortedSet<string>();
                 foreach (var key in prop.Value.ParamKeys)
                 {
+                    if (key.Length > paramKeysWidth - 2 && HideLongParamKeyNamesAtConsole)
                     {
+                        // Do not show this parameter key name since it is long
+                        keyNamesToHide.Add(key);
                     }
+                }
+
+                if (keyNamesToHide.Count > 0 && keyNamesToHide.Count == prop.Value.ParamKeys.Length)
+                {
+                    // All of the key names are long; only show the first one
+                    keyNamesToHide.Remove(keyNamesToHide.First());
+                }
 
                 // Create the list of parameter keys
                 var keys = new List<string>();
@@ -1458,10 +1485,18 @@ namespace PRISM
                     {
                         // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
                         contents.Clear();
+
+                        ConsoleMsgUtils.ShowWarning(
+                            "Critical error in CommandLineParser.CreateHelpContents: duplicateKeyCheck.ContainsKey(key): " + key);
                         return contents;
                     }
                     duplicateKeyCheck.Add(key, prop.Key);
 
+                    if (keyNamesToHide.Contains(key))
+                    {
+                        // Do not show this parameter key name since it is long
+                        continue;
+                    }
 
                     keys.Add(paramChars[0] + key);
                 }
@@ -1474,6 +1509,9 @@ namespace PRISM
                     {
                         // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
                         contents.Clear();
+
+                        ConsoleMsgUtils.ShowWarning(
+                            "Critical error in CommandLineParser.CreateHelpContents: duplicateKeyCheck.ContainsKey(key): " + key);
                         return contents;
                     }
                     duplicateKeyCheck.Add(key, prop.Key);
@@ -1551,6 +1589,9 @@ namespace PRISM
                 {
                     // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
                     contents.Clear();
+
+                    ConsoleMsgUtils.ShowWarning(
+                        "Critical error in CommandLineParser.CreateHelpContents: contents.ContainsKey(delimitedKeyNames): " + delimitedKeyNames);
                     return contents;
                 }
                 contents.Add(delimitedKeyNames, helpText);
