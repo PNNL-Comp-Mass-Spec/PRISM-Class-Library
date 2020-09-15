@@ -284,7 +284,7 @@ namespace PRISM
         /// </para>
         /// </remarks>
         // ReSharper disable once UnusedMember.Global
-        public string ParameterFilePath {get; private set; }
+        public string ParameterFilePath { get; private set; }
 
         /// <summary>
         /// Get or set the characters allowed at the beginning of an argument specifier
@@ -353,7 +353,7 @@ namespace PRISM
             propertiesAndAttributes = null;
             validArguments = null;
 
-            HideLongParamKeyNamesAtConsole=true;
+            HideLongParamKeyNamesAtConsole = true;
             ParamKeysFieldWidth = DEFAULT_PARAM_KEYS_FIELD_WIDTH;
             ParamDescriptionFieldWidth = DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH;
 
@@ -1294,7 +1294,7 @@ namespace PRISM
                 Console.WriteLine("Usage:");
             }
 
-            var outputFormatString = "  {0,-" + paramKeysWidth + "}  {1}";
+            var outputFormatString = "  {0,-" + (paramKeysWidth + 1) + "}  {1}";
 
             // Output the help contents, creating columns with wrapping before outputting
             foreach (var option in contents)
