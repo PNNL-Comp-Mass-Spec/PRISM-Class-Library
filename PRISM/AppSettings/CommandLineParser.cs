@@ -1249,7 +1249,19 @@ namespace PRISM
         /// <param name="helpDescriptionWidth">Field width for the right column (parameter descriptions); minimum 20</param>
         public void PrintHelp(int paramKeysWidth = 18, int helpDescriptionWidth = 56)
         {
-            var contents = CreateHelpContents();
+            if (paramKeysWidth <= 0 && helpDescriptionWidth <= 0)
+            {
+                paramKeysWidth = DEFAULT_PARAM_KEYS_FIELD_WIDTH;
+                helpDescriptionWidth = DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH;
+            }
+
+            if (paramKeysWidth < 10)
+                paramKeysWidth = 10;
+
+            if (helpDescriptionWidth < 20)
+                helpDescriptionWidth = 20;
+
+            var contents = CreateHelpContents(paramKeysWidth);
 
             // Output any errors that occurring while creating the help content
             Results.OutputErrors();
@@ -1274,18 +1286,6 @@ namespace PRISM
             {
                 Console.WriteLine("Usage:");
             }
-
-            if (paramKeysWidth <= 0 && helpDescriptionWidth <= 0)
-            {
-                paramKeysWidth = DEFAULT_PARAM_KEYS_FIELD_WIDTH;
-                helpDescriptionWidth = DEFAULT_PARAM_DESCRIPTION_FIELD_WIDTH;
-            }
-
-            if (paramKeysWidth < 10)
-                paramKeysWidth = 10;
-
-            if (helpDescriptionWidth < 20)
-                helpDescriptionWidth = 20;
 
             var outputFormatString = "  {0,-" + paramKeysWidth + "}  {1}";
 
