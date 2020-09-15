@@ -1445,15 +1445,15 @@ namespace PRISM
                     defaultValue = $"\"{defaultValue}\"";
                 }
 
-                // Create the list of parameter keys
-                var keys = string.Empty;
                 foreach (var key in prop.Value.ParamKeys)
                 {
-                    if (!string.IsNullOrWhiteSpace(keys))
                     {
-                        keys += ", ";
                     }
 
+                // Create the list of parameter keys
+                var keys = new List<string>();
+                foreach (var key in prop.Value.ParamKeys)
+                {
                     if (duplicateKeyCheck.ContainsKey(key))
                     {
                         // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
@@ -1462,15 +1462,12 @@ namespace PRISM
                     }
                     duplicateKeyCheck.Add(key, prop.Key);
 
-                    keys += paramChars[0] + key;
+
+                    keys.Add(paramChars[0] + key);
                 }
 
                 if (prop.Value.ArgPosition > 0)
                 {
-                    if (!string.IsNullOrWhiteSpace(keys))
-                    {
-                        keys += ", ";
-                    }
                     var key = $"arg#{prop.Value.ArgPosition}";
 
                     if (duplicateKeyCheck.ContainsKey(key))
@@ -1481,7 +1478,7 @@ namespace PRISM
                     }
                     duplicateKeyCheck.Add(key, prop.Key);
 
-                    keys += key;
+                    keys.Add(key);
                 }
 
                 // Create the help text
@@ -1549,13 +1546,14 @@ namespace PRISM
                     }
                 }
 
-                if (contents.ContainsKey(keys))
+                var delimitedKeyNames = string.Join(", ", keys);
+                if (contents.ContainsKey(delimitedKeyNames))
                 {
                     // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
                     contents.Clear();
                     return contents;
                 }
-                contents.Add(keys, helpText);
+                contents.Add(delimitedKeyNames, helpText);
             }
 
             var paramFileArgString = string.Empty;
