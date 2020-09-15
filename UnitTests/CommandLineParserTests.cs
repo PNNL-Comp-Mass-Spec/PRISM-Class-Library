@@ -14,7 +14,7 @@ namespace PRISMTest
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class CommandLineParserTests
     {
-        // Ignore Spelling: tda, arg, args
+        // Ignore Spelling: tda, arg, args, badname
 
         private const bool showHelpOnError = false;
         private const bool outputErrors = false;
@@ -848,7 +848,7 @@ namespace PRISMTest
         {
             var args = new[]
             {
-                "-u", "doublytrue",
+                "-u", "DoublyTrue",
                 "-f", "100",
                 "-result", "14"
             };
@@ -891,7 +891,7 @@ namespace PRISMTest
         {
             var args = new[]
             {
-                "-u", "doublytrue",
+                "-u", "DoublyTrue",
                 "-f", "100",
                 "-2t", "Legendary"
             };
@@ -910,7 +910,23 @@ namespace PRISMTest
         }
 
         [Test]
-        public void TestPrintHelp()
+        [TestCase(0, 0, false)]
+        [TestCase(20, 0, false)]
+        [TestCase(30, 0, false)]
+        [TestCase(30, 40, false)]
+        [TestCase(0, 0, true)]
+        [TestCase(18, 0, true)]
+        [TestCase(19, 0, true)]
+        [TestCase(20, 0, true)]
+        [TestCase(21, 0, true)]
+        [TestCase(22, 0, true)]
+        [TestCase(23, 0, true)]
+        [TestCase(24, 0, true)]
+        [TestCase(25, 0, true)]
+        [TestCase(26, 0, true)]
+        [TestCase(30, 0, true)]
+        [TestCase(30, 40, true)]
+        public void TestPrintHelp(int paramKeysWidth, int helpDescriptionWidth, bool hideLongKeyNames)
         {
             var exeName = "Test.exe";
 
@@ -943,17 +959,18 @@ namespace PRISMTest
                     exeName + " InputFile.txt",
                     exeName + " InputFile.txt /Start:2",
                     exeName + " InputFile.txt /Start:2 /EnumTypeMode:2 /Smooth:7"
-                }
+                },
+                HideLongParamKeyNamesAtConsole = hideLongKeyNames
             };
 
-            parser.PrintHelp();
+            parser.PrintHelp(paramKeysWidth, helpDescriptionWidth);
         }
 
         [Test]
         public void TestParamFileOutputConsole()
         {
             var parser = new CommandLineParser<OkayKey2>();
-            var results = parser.ParseArgs(new[] { "-createparamfile" });
+            var results = parser.ParseArgs(new[] { "-CreateParamFile" });
             Console.WriteLine(results);
         }
 
