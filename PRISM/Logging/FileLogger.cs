@@ -525,7 +525,9 @@ namespace PRISM.Logging
                     newLogFilePath = Path.ChangeExtension(BaseLogFileName, null) + "_" + LogFileDateText + currentExtension;
                 }
                 else
+                {
                     newLogFilePath = BaseLogFileName + "_" + LogFileDateText + LOG_FILE_EXTENSION;
+                }
             }
             else
             {

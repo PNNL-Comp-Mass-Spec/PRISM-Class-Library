@@ -1054,7 +1054,9 @@ namespace PRISMTest
             var parser = new CommandLineParser<OkayKey2>();
             var args = new List<string> {"-CreateParamFile"};
             if (!string.IsNullOrWhiteSpace(parameterFileName))
+            {
                 args.Add(parameterFileName);
+            }
 
             var result = parser.ParseArgs(args.ToArray());
 

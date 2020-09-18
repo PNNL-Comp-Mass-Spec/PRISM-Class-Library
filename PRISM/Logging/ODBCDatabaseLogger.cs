@@ -399,7 +399,9 @@ namespace PRISM.Logging
                                     // Try again
                                 }
                                 else
+                                {
                                     break;
+                                }
                             }
                         }
                     }

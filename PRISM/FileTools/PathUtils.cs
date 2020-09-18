@@ -220,7 +220,9 @@ namespace PRISM
 
             char sepChar;
             if (directoryPath.Contains(Path.DirectorySeparatorChar))
+            {
                 sepChar = Path.DirectorySeparatorChar;
+            }
             else
             {
                 sepChar = Path.DirectorySeparatorChar == '\\' ? '/' : '\\';

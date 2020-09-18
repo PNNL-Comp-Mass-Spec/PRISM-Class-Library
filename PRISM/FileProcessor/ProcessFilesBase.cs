@@ -200,10 +200,14 @@ namespace PRISM.FileProcessor
                 if (string.IsNullOrWhiteSpace(outputDirectoryPath))
                 {
                     if (string.IsNullOrWhiteSpace(inputFile.DirectoryName))
+                    {
                         outputDirectoryPath = ".";
+                    }
                     else
+                    {
                         // Define outputDirectoryPath based on inputFilePath
                         outputDirectoryPath = inputFile.DirectoryName;
+                    }
                 }
 
                 // Make sure outputDirectoryPath points to a directory

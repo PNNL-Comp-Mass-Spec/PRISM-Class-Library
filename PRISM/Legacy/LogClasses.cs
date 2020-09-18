@@ -394,10 +394,14 @@ namespace PRISM
         private void UpdateCurrentLogFilePath()
         {
             if (string.IsNullOrWhiteSpace(LogFileBaseName))
+            {
                 CurrentLogFilePath = string.Empty;
+            }
             else
+            {
                 // Define log file name by appending the current date to m_logFileBaseName
                 CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATE_STAMP) + LOG_FILE_EXTENSION;
+            }
         }
     }
     #endregion
