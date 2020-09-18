@@ -1102,6 +1102,14 @@ namespace PRISM
 
             for (var i = 0; i < args.Count; i++)
             {
+                if (string.IsNullOrWhiteSpace(args[i]))
+                {
+                    // The argument is likely "\r\n"
+                    // This can happen while debugging with Visual Studio if the user pastes a list of arguments
+                    // into the Command Line Arguments text box, and the pasted text contains a carriage return
+                    continue;
+                }
+
                 if (!paramChars.Contains(args[i][0]))
                 {
                     // Positional argument
