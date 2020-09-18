@@ -1047,11 +1047,20 @@ namespace PRISMTest
         }
 
         [Test]
-        public void TestParamFileOutputConsole()
+        [TestCase("")]
+        [TestCase("ParamFileExample.conf")]
+        public void TestParamFileOutputConsole(string parameterFileName)
         {
             var parser = new CommandLineParser<OkayKey2>();
-            var results = parser.ParseArgs(new[] { "-CreateParamFile" });
-            Console.WriteLine(results);
+            var args = new List<string> {"-CreateParamFile"};
+            if (!string.IsNullOrWhiteSpace(parameterFileName))
+                args.Add(parameterFileName);
+
+            var result = parser.ParseArgs(args.ToArray());
+
+            Console.WriteLine();
+            Console.WriteLine("Class description of parsed results:");
+            Console.WriteLine(result);
         }
 
         [Test]
