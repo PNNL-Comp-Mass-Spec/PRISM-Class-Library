@@ -1064,11 +1064,17 @@ namespace PRISM
             return Convert.ChangeType(valueToConvert, targetType);
         }
 
+        private void AppendArgumentValue(ICollection<string> existingArgumentValues, string newArgumentValue)
+        {
+            AppendArgumentValues(existingArgumentValues, new List<string> { newArgumentValue });
+        }
+
         private void AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
         {
             // Append new argument values, trimming trailing \r or \n characters
-            // This can happen while debugging with Visual Studio if the user pastes a list of arguments into the
-            // Command Line Arguments text box, and the pasted text contains a carriage return
+
+            // This can happen while debugging with Visual Studio if the user pastes a list of arguments
+            // into the Command Line Arguments text box, and the pasted text contains a carriage return
 
             foreach (var value in newArgumentValues)
             {
@@ -1123,8 +1129,8 @@ namespace PRISM
                     {
                         processed.Add(argName, new List<string>());
                     }
-                    processed[argName].Add(args[i]);
 
+                    AppendArgumentValue(processed[argName], args[i]);
                     continue;
                 }
 
@@ -1184,7 +1190,8 @@ namespace PRISM
                 {
                     processed.Add(key, new List<string>());
                 }
-                processed[key].Add(value);
+
+                AppendArgumentValue(processed[key], value);
             }
 
             return processed;
