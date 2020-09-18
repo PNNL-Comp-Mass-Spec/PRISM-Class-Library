@@ -618,7 +618,7 @@ namespace PRISM
             else if (sleepTimeMsec > 10000)
                 sleepTimeMsec = 10000;
 
-            await Task.Delay(TimeSpan.FromMilliseconds(sleepTimeMsec));
+            await Task.Delay(TimeSpan.FromMilliseconds(sleepTimeMsec)).ConfigureAwait(false);
         }
 
         /// <summary>

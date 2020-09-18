@@ -264,41 +264,36 @@ namespace PRISM.FileProcessor
         /// <returns>Error message</returns>
         protected string GetBaseClassErrorMessage()
         {
-            string errorMessage;
-
             switch (ErrorCode)
             {
                 case ProcessFilesErrorCodes.NoError:
-                    errorMessage = string.Empty;
-                    break;
+                    return string.Empty;
+
                 case ProcessFilesErrorCodes.InvalidInputFilePath:
-                    errorMessage = "Invalid input file path";
-                    break;
+                    return "Invalid input file path";
+
                 case ProcessFilesErrorCodes.InvalidOutputDirectoryPath:
-                    errorMessage = "Invalid output directory path";
-                    break;
+                    return "Invalid output directory path";
+
                 case ProcessFilesErrorCodes.ParameterFileNotFound:
-                    errorMessage = "Parameter file not found";
-                    break;
+                    return "Parameter file not found";
+
                 case ProcessFilesErrorCodes.InvalidParameterFile:
-                    errorMessage = "Invalid parameter file";
-                    break;
+                    return "Invalid parameter file";
+
                 case ProcessFilesErrorCodes.FilePathError:
-                    errorMessage = "General file path error";
-                    break;
+                    return "General file path error";
+
                 case ProcessFilesErrorCodes.LocalizedError:
-                    errorMessage = "Localized error";
-                    break;
+                    return "Localized error";
+
                 case ProcessFilesErrorCodes.UnspecifiedError:
-                    errorMessage = "Unspecified error";
-                    break;
+                    return "Unspecified error";
+
                 default:
                     // This shouldn't happen
-                    errorMessage = "Unknown error state";
-                    break;
+                    return "Unknown error state";
             }
-
-            return errorMessage;
         }
 
         /// <summary>
@@ -307,9 +302,7 @@ namespace PRISM.FileProcessor
         /// <returns></returns>
         public virtual IList<string> GetDefaultExtensionsToParse()
         {
-            var extensionsToParse = new List<string> { ".*" };
-
-            return extensionsToParse;
+            return new List<string> { ".*" };
         }
 
         private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputFilePathSpec, out string fileNameMatchPattern)

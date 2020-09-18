@@ -40,6 +40,11 @@ namespace PRISM.FileProcessor
         protected enum MessageTypeConstants
         {
             /// <summary>
+            /// Debugging message
+            /// </summary>
+            Debug = -1,
+
+            /// <summary>
             /// Normal message
             /// </summary>
             Normal = 0,
@@ -53,11 +58,6 @@ namespace PRISM.FileProcessor
             /// Warning message
             /// </summary>
             Warning = 2,
-
-            /// <summary>
-            /// Debugging message
-            /// </summary>
-            Debug = -1,
 
             /// <summary>
             /// Message that should not be output
@@ -72,6 +72,11 @@ namespace PRISM.FileProcessor
         protected enum eMessageTypeConstants
         {
             /// <summary>
+            /// Debugging message
+            /// </summary>
+            Debug = -1,
+
+            /// <summary>
             /// Normal message
             /// </summary>
             Normal = 0,
@@ -85,11 +90,6 @@ namespace PRISM.FileProcessor
             /// Warning message
             /// </summary>
             Warning = 2,
-
-            /// <summary>
-            /// Debugging message
-            /// </summary>
-            Debug = -1,
 
             /// <summary>
             /// Message that should not be output

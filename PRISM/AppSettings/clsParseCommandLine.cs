@@ -463,7 +463,7 @@ namespace PRISM
         /// <param name="parameterIndex">Parameter index</param>
         /// <param name="paramName">Parameter name (output)</param>
         /// <param name="paramValue">Value associated with the parameter; empty string if no value (output)</param>
-        /// <returns></returns>
+        /// <returns>True if a parameterIndex is valid; false if >= mSwitches.Count</returns>
         public bool RetrieveParameter(int parameterIndex, out string paramName, out string paramValue)
         {
             try
@@ -475,16 +475,14 @@ namespace PRISM
                 {
                     using (var iEnum = mSwitches.GetEnumerator())
                     {
-                        var switchIndex = 0;
-                        while (iEnum.MoveNext())
+                        for (var switchIndex = 0; iEnum.MoveNext(); switchIndex++)
                         {
-                            if (switchIndex == parameterIndex)
-                            {
-                                paramName = iEnum.Current.Key;
-                                paramValue = iEnum.Current.Value;
-                                return true;
-                            }
-                            switchIndex++;
+                            if (switchIndex != parameterIndex)
+                                continue;
+
+                            paramName = iEnum.Current.Key;
+                            paramValue = iEnum.Current.Value;
+                            return true;
                         }
                     }
                 }
