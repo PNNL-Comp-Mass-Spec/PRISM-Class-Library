@@ -13,10 +13,11 @@ namespace PRISM
     /// </summary>
     public class LinuxSystemInfo : EventNotifier, ISystemInfo
     {
+        // Ignore Spelling: proc, cpuinfo, meminfo iowait, cpu, irq, utime, stime, ctime, mem, cmdline
         #region "Constants and Enums"
 
         /// <summary>
-        /// Path to proc virtual filesystem
+        /// Path to proc virtual file system
         /// </summary>
         public const string ROOT_PROC_DIRECTORY = "/proc";
 
@@ -32,7 +33,7 @@ namespace PRISM
 
         #endregion
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         private int mCoreCountCached;
         private int mProcessorPackageCountCached;
@@ -105,13 +106,13 @@ namespace PRISM
 
             mCpuIdleTimeMatcherNoIOWait = new Regex(@"^\S+\s+(?<User>\d+) (?<Nice>\d+) (?<System>\d+) (?<Idle>\d+)", RegexOptions.Compiled);
 
-            // The following two Regex are used to parse stat files for running processes
+            // The following two RegEx are used to parse stat files for running processes
             // Fields are described in method ExtractCPUTimes
 
-            // This regex matches the ProcessID and command name, plus the various stats
+            // This RegEx matches the ProcessID and command name, plus the various stats
             mStatLineMatcher = new Regex(@"^(?<pid>\d+) (?<command>\([^)]+\)) (?<state>\S) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
-            // This is a fallback Regex that starts at state in case mStatLineMatcher fails
+            // This is a fall back RegEx that starts at state in case mStatLineMatcher fails
             mStatLineMatcherNoCommand = new Regex(@"(?<state>[A-Za-z]) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
             // Prevent DebugEvent messages from being displayed at console if the calling class has not subscribed to DebugEvent
@@ -329,7 +330,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Match the data line with the Regex matcher
+        /// Match the data line with the RegEx matcher
         /// If success, extract the ID group, returning the integer via parameter id
         /// </summary>
         /// <param name="reIdMatcher"></param>
@@ -814,7 +815,7 @@ namespace PRISM
                     return 0;
                 }
 
-                // Wait samplingTimeSeconds seconds, then read the values again
+                // Wait samplingTimeSeconds, then read the values again
                 if (samplingTimeSeconds < 0.1)
                     Thread.Sleep(100);
                 if (samplingTimeSeconds > 10)
@@ -1095,7 +1096,7 @@ namespace PRISM
                         continue;
                     }
 
-                    // Open the cmdline file (if it exists) to determine the process name and commandline arguments
+                    // Open the cmdline file (if it exists) to determine the process name and command line arguments
                     var cmdLineFilePath = PathUtils.CombineLinuxPaths(PathUtils.CombineLinuxPaths(
                         ROOT_PROC_DIRECTORY, processIdDirectory.Name), "cmdline");
 

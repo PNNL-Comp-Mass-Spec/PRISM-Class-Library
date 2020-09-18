@@ -59,7 +59,7 @@ namespace PRISM
         }
         #endregion
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         /// <summary>
         /// Log class
@@ -202,7 +202,7 @@ namespace PRISM
 
         /// <summary>
         /// When true then will cache the text the external program writes to the console
-        /// Can retrieve using the CachedConsoleOutput readonly property
+        /// Can retrieve using the CachedConsoleOutput ReadOnly property
         /// Will also fire event ConsoleOutputEvent as new text is written to the console
         /// </summary>
         /// <remarks>If this is true, no window will be shown, even if CreateNoWindow=False</remarks>
@@ -601,9 +601,9 @@ namespace PRISM
             Task.Delay(sleepTimeMsec).Wait();
 
             // Option 2:
-            // using (EventWaitHandle tmpEvent = new ManualResetEvent(false))
+            // using (EventWaitHandle tempEvent = new ManualResetEvent(false))
             // {
-            //     tmpEvent.WaitOne(TimeSpan.FromMilliseconds(sleepTimeMsec));
+            //     tempEvent.WaitOne(TimeSpan.FromMilliseconds(sleepTimeMsec));
             // }
 
             // Option 3, though this will be deprecated in .NET Standard
@@ -980,7 +980,7 @@ namespace PRISM
             }
             else
             {
-                OnWarningEvent("Rethrowing exception: " + ex.Message);
+                OnWarningEvent("Re-throwing exception: " + ex.Message);
                 throw ex;
             }
         }

@@ -187,7 +187,7 @@ namespace PRISM
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         /// <remarks>
         /// If /? or /help is found, returns False and sets mShowHelp to True
-        /// If there are no arguments at the commandline, returns false, but sets NoArgumentsProvided to true
+        /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
         public bool ParseCommandLine()
         {
@@ -200,7 +200,7 @@ namespace PRISM
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         /// <remarks>
         /// If /? or /help is found, returns False and sets mShowHelp to True
-        /// If there are no arguments at the commandline, returns false, but sets NoArgumentsProvided to true
+        /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
         public bool ParseCommandLine(char switchStartChar)
         {
@@ -215,7 +215,7 @@ namespace PRISM
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         /// <remarks>
         /// If /? or /help is found, returns False and sets mShowHelp to True
-        /// If there are no arguments at the commandline, returns false, but sets NoArgumentsProvided to true
+        /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
         public bool ParseCommandLine(char switchStartChar, char switchParameterChar)
         {

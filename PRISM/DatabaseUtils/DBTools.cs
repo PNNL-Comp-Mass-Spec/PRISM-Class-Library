@@ -15,6 +15,8 @@ namespace PRISM
     [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
     public class DBTools : EventNotifier
     {
+        // Ignore Spelling: cmd, Sql
+
         #region "Constants"
 
         /// <summary>

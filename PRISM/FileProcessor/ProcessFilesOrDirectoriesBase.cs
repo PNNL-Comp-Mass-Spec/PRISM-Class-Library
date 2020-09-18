@@ -18,6 +18,8 @@ namespace PRISM.FileProcessor
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessFilesOrDirectoriesBase : EventNotifier
     {
+        // Ignore Spelling: username, yyyy-MM-dd, hh:mm:ss tt
+
         #region "Constants and Enums"
 
         private const string LOG_FILE_EXTENSION = ".txt";
@@ -132,7 +134,7 @@ namespace PRISM.FileProcessor
 
         #endregion
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         /// <summary>
         /// File date (program date)
@@ -788,7 +790,7 @@ namespace PRISM.FileProcessor
 
         /// <summary>
         /// Log an error message with the exception message
-        /// Rethrow the exception if ReThrowEvents is true
+        /// Re-throw the exception if ReThrowEvents is true
         /// </summary>
         /// <param name="baseMessage">Base error message</param>
         /// <param name="ex">Exception</param>
@@ -1113,7 +1115,7 @@ namespace PRISM.FileProcessor
             {
                 // Remove entries from mLogDataCache so that the list count is 90% of MAX_LOG_DATA_CACHE_SIZE
 
-                // First construct a list of dates that we can sort to determine the datetime threshold for removal
+                // First construct a list of dates that we can sort to determine the date/time threshold for removal
                 var lstDates = (from entry in mLogDataCache select entry.Value).ToList();
 
                 // Sort by date

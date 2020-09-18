@@ -133,7 +133,7 @@ namespace PRISM.FileProcessor
 
         #endregion
 
-        #region "Classwide Variables"
+        #region "Class wide Variables"
 
         // Copy the following to any derived classes
         //
