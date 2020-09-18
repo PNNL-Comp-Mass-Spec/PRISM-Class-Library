@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains("bad character") && x.Message.Contains("char '-'")),
                 "Error message does not contain \"bad character\" and \"char '-'\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -51,6 +54,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains("bad character") && x.Message.Contains("char '/'")),
                 "Error message does not contain \"bad character\" and \"char '/'\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -68,6 +73,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("badname")),
                 "Error message does not contain \"duplicate\" and \"badname\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -85,6 +92,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("NoGood")),
                 "Error message does not contain \"duplicate\" and \"NoGood\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
         [Test]
         public void TestBadKey5()
@@ -101,6 +110,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains("bad character") && x.Message.Contains("char ' '")),
                 "Error message does not contain \"bad character\" and \"char ' '\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -118,6 +129,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains("bad character") && x.Message.Contains("char ':'")),
                 "Error message does not contain \"bad character\" and \"char ':'\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -135,6 +148,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains("bad character") && x.Message.Contains("char '='")),
                 "Error message does not contain \"bad character\" and \"char '='\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         private class BadKey1
@@ -429,6 +444,9 @@ namespace PRISMTest
             Assert.IsTrue(result.Success, "Parser failed to parse valid args");
             Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
 
+            Console.WriteLine("Input file path: {0}", options.InputFilePath);
+            Console.WriteLine("Output file path: {0}", options.OutputFilePath);
+
             Assert.AreEqual("MyInputFile.txt", options.InputFilePath);
             Assert.AreEqual("OutputFile.txt", options.OutputFilePath);
         }
@@ -452,6 +470,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minInt\" and \"is less than minimum\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -473,6 +493,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("minmaxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minMaxInt\" and \"is less than minimum\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -494,6 +516,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("minintbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"minIntBad\" and \"cannot cast min or max to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -515,6 +539,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"minInt\", \"cannot cast\", and \"to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -536,6 +562,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")),
                 "Error message does not contain \"maxInt\" and \"is greater than maximum\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -558,6 +586,8 @@ namespace PRISMTest
                 x.Message.IndexOf("maxintbad", StringComparison.OrdinalIgnoreCase) >= 0 &&
                 x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"maxIntBad\" and \"cannot cast min or max to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -579,6 +609,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"maxInt\", \"cannot cast\", and \"to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -600,6 +632,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minDbl\" and \"is less than minimum\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -621,6 +655,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("minmaxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
                 "Error message does not contain \"minMaxDbl\" and \"is less than minimum\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -642,6 +678,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("mindblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"minDblBad\" and \"cannot cast min or max to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -663,6 +701,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"minDbl\", \"cannot cast\", and \"to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -684,6 +724,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")),
                 "Error message does not contain \"maxDbl\" and \"is greater than maximum\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -705,6 +747,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxdblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
                 "Error message does not contain \"maxDblBad\" and \"cannot cast min or max to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -726,6 +770,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         /// <summary>
@@ -914,6 +960,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -937,6 +985,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
                 "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -1175,6 +1225,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("null") && x.Message.Contains("boolean")),
                 $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"null\", and \"boolean\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -1192,6 +1244,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")),
                 $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -1209,6 +1263,8 @@ namespace PRISMTest
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")),
                 $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -1347,11 +1403,11 @@ namespace PRISMTest
 
             if (commentShouldHaveQuotes)
             {
-                Assert.IsTrue(commentIsQuoted, "Leading/trailing quotes were removed, but should not have been");
+                Assert.IsTrue(commentIsQuoted, "Leading/trailing quotes were removed from the comment, but they should not have been");
             }
             else
             {
-                Assert.IsFalse(commentIsQuoted, "Comment has quotes, but shouldn't");
+                Assert.IsFalse(commentIsQuoted, "The comment has quotes, but it shouldn't be quoted");
             }
         }
 
@@ -1369,6 +1425,8 @@ namespace PRISMTest
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.Contains(nameof(OptionAttribute.IsInputFilePath)) && x.Message.Contains("must be of type")));
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         [Test]
@@ -1409,6 +1467,8 @@ namespace PRISMTest
 
             Assert.IsFalse(result.Success, "Parser did not fail with parameter file not found error");
             Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("parameter file was not found")));
+
+            Console.WriteLine("\nThis error message was expected");
         }
 
         private class FileInfoPropertyGood
@@ -1454,6 +1514,8 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+
+            Console.WriteLine("\nThis error message was expected");
         }
     }
 }
