@@ -661,7 +661,7 @@ namespace PRISM
             if (Path.IsPathRooted(dataFile.FullName))
             {
                 var directory = dataFile.Directory;
-                if (directory != null && directory.Root.FullName.StartsWith(@"\\"))
+                if (directory?.Root.FullName.StartsWith(@"\\") == true)
                 {
                     return Path.Combine(GetServerShareBase(directory.Root.FullName), "DMS_LockFiles");
                 }
@@ -1266,7 +1266,7 @@ namespace PRISM
             }
 
             // Verify the parent directory of the destination directory
-            if (destDir.Parent != null && !destDir.Parent.Exists)
+            if (destDir.Parent?.Exists == false)
             {
                 throw new DirectoryNotFoundException("Destination directory does not exist: " + destDir.Parent.FullName);
             }
@@ -2818,12 +2818,12 @@ namespace PRISM
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
             // Switched from adms.emsl.pnl.gov to agate.emsl.pnl.gov in 2020
-            if (lockDirectorySource != null && lockDirectorySource.FullName.StartsWith(@"\\agate.emsl.pnl.gov\", StringComparison.OrdinalIgnoreCase))
+            if (lockDirectorySource?.FullName.StartsWith(@"\\agate.emsl.pnl.gov\", StringComparison.OrdinalIgnoreCase) == true)
             {
                 maxWaitTimeSource = Math.Min(maxWaitTimeSource, 30);
             }
 
-            if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.StartsWith(@"\\agate.emsl.pnl.gov\", StringComparison.OrdinalIgnoreCase))
+            if (lockDirectoryTarget?.FullName.StartsWith(@"\\agate.emsl.pnl.gov\", StringComparison.OrdinalIgnoreCase) == true)
             {
                 maxWaitTimeTarget = Math.Min(maxWaitTimeTarget, 30);
             }

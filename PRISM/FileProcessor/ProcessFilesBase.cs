@@ -320,7 +320,7 @@ namespace PRISM.FileProcessor
             var inputFileSpec = new FileInfo(cleanPath);
             string inputDirectoryToUse;
 
-            if (inputFileSpec.Directory != null && inputFileSpec.Directory.Exists)
+            if (inputFileSpec.Directory?.Exists == true)
             {
                 inputDirectoryToUse = inputFileSpec.Directory.FullName;
             }
@@ -662,7 +662,7 @@ namespace PRISM.FileProcessor
                     }
                     else
                     {
-                        if (candidateInputDirectory.Parent != null && candidateInputDirectory.Parent.Exists)
+                        if (candidateInputDirectory.Parent?.Exists == true)
                         {
                             inputDirectory = candidateInputDirectory.Parent;
                         }

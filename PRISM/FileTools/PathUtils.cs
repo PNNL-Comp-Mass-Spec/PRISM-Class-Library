@@ -123,7 +123,7 @@ namespace PRISM
 
             var cleanFileInfo = new FileInfo(cleanPath);
             string directoryPath;
-            if (cleanFileInfo.Directory != null && cleanFileInfo.Directory.Exists && cleanFileInfo.DirectoryName != null)
+            if (cleanFileInfo.Directory?.Exists == true && cleanFileInfo.DirectoryName != null)
             {
                 directoryPath = cleanFileInfo.DirectoryName;
             }
@@ -150,7 +150,7 @@ namespace PRISM
         /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         public static List<FileInfo> FindFilesWildcard(DirectoryInfo directory, string fileMask, bool recurse = false)
         {
-            if (directory == null || !directory.Exists)
+            if (directory?.Exists != true)
                 return new List<FileInfo>();
 
             try

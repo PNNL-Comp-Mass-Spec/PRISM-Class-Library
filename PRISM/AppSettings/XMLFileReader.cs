@@ -338,7 +338,7 @@ namespace PRISM
             }
 
             var commentNodes = target?.SelectNodes("comment");
-            if (commentNodes != null && commentNodes.Count > 0)
+            if (commentNodes?.Count > 0)
             {
                 foreach (XmlElement commentNode in commentNodes)
                 {
@@ -452,7 +452,7 @@ namespace PRISM
             }
 
             var nodes = section.SelectNodes("item");
-            if (nodes != null && nodes.Count > 0)
+            if (nodes?.Count > 0)
             {
                 foreach (XmlNode setting in nodes)
                 {
@@ -857,7 +857,7 @@ namespace PRISM
                     throw new XMLFileReaderNotInitializedException();
 
                 var fi = new FileInfo(value);
-                if (fi.Directory != null && !fi.Directory.Exists)
+                if (fi.Directory?.Exists == false)
                 {
                     if (NotifyOnException)
                     {
@@ -882,7 +882,7 @@ namespace PRISM
             if (OutputFilename != null && m_XmlDoc != null)
             {
                 var outputFile = new FileInfo(OutputFilename);
-                if (outputFile.Directory != null && !outputFile.Directory.Exists)
+                if (outputFile.Directory?.Exists == false)
                 {
                     if (NotifyOnException)
                     {

@@ -821,7 +821,7 @@ namespace PRISM
 #pragma warning restore 618
                 mLogger?.Debug(msg);
 
-                if (m_CachedConsoleError != null && m_CachedConsoleError.Length > 0)
+                if (m_CachedConsoleError?.Length > 0)
                 {
                     var errorMsg = "Cached error text for process " + Name + ": " + m_CachedConsoleError;
 #pragma warning disable 618
@@ -935,7 +935,7 @@ namespace PRISM
             {
                 try
                 {
-                    if (m_Process != null && !m_Process.HasExited)
+                    if (m_Process?.HasExited == false)
                         m_Process.Kill();
                 }
                 catch (Exception ex)

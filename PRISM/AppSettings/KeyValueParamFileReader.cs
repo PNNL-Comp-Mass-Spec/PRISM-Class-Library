@@ -105,7 +105,7 @@ namespace PRISM.AppSettings
 
                 foreach (var kvSetting in paramFileEntries)
                 {
-                    if (paramNamesToSkip != null && paramNamesToSkip.Contains(kvSetting.Key))
+                    if (paramNamesToSkip?.Contains(kvSetting.Key) == true)
                         continue;
 
                     // Check whether kvSetting.key is one of the standard keys defined in paramToArgMapping
