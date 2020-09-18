@@ -561,18 +561,8 @@ namespace PRISM
                             return Results;
                         }
 
-                        var paramFilePath = preprocessed[paramFileArg].Last();
-                        Results.ParamFilePath = paramFilePath;
-                        var paramFile = new FileInfo(paramFilePath);
-
-                        ParameterFilePath = paramFile.FullName;
-
-                        if (!paramFile.Exists)
+                        if (!ReadParamFile(preprocessed[paramFileArg].LastOrDefault(), out var paramFileLines, out paramFileDirectory))
                         {
-                            Results.AddParseError(
-                                "Error: Specified parameter file was not found: " + paramFilePath);
-                            Results.AddParseError(
-                                "  ... Full path: " + paramFile.FullName);
                             if (outputErrors)
                             {
                                 Results.OutputErrors();
@@ -581,14 +571,10 @@ namespace PRISM
                             return Results;
                         }
 
-                        paramFileDirectory = paramFile.Directory;
-
-                        // Read file into line-array
-                        var lines = ReadParamFile(paramFile);
                         paramFileLoaded = true;
 
                         // Call ArgsPreprocess on the line array
-                        var filePreprocessed = ArgsPreprocess(lines);
+                        var filePreprocessed = ArgsPreprocess(paramFileLines);
 
                         // Add original results of ArgsPreprocess to the new preprocessed arguments
                         foreach (var cmdArg in preprocessed)
@@ -794,6 +780,70 @@ namespace PRISM
             }
 
             return Results;
+        }
+
+        /// <summary>
+        /// Reads a parameter file.
+        /// </summary>
+        /// <param name="paramFilePath">Parameter file path</param>
+        /// <param name="paramFileLines">Output: List of parameters read from the parameter file; each line will starts with a dash</param>
+        /// <param name="paramFileDirectory">Output: parameter file directory</param>
+        /// <returns>True if success, false if an error</returns>
+        private bool ReadParamFile(string paramFilePath, out List<string> paramFileLines, out DirectoryInfo paramFileDirectory)
+        {
+            var validParameterFilePath = false;
+
+            paramFileLines = new List<string>();
+            paramFileDirectory = null;
+
+            try
+            {
+                if (string.IsNullOrWhiteSpace(paramFilePath))
+                {
+                    Results.AddParseError(
+                        "Error: empty parameter file path; likely a programming bug");
+                    return false;
+                }
+
+                Results.ParamFilePath = paramFilePath;
+
+                var paramFile = new FileInfo(paramFilePath);
+
+                ParameterFilePath = paramFile.FullName;
+                validParameterFilePath = true;
+
+                if (!paramFile.Exists)
+                {
+                    Results.AddParseError(
+                        "Error: Specified parameter file was not found: " + paramFilePath);
+                    Results.AddParseError(
+                        "  ... Full path: " + paramFile.FullName);
+
+                    return false;
+                }
+
+                paramFileDirectory = paramFile.Directory;
+
+                // Read file into line-array
+                var lines = ReadParamFile(paramFile);
+                paramFileLines.AddRange(lines);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                if (!validParameterFilePath)
+                {
+                    Results.AddParseError(
+                        "Error: Invalid parameter file path: " + paramFilePath);
+                    Results.AddParseError("Exception: " + ex.Message);
+                }
+                else
+                {
+                    Results.AddParseError("Error: Exception while reading the parameter file: " + ex.Message);
+                }
+                return false;
+            }
         }
 
         /// <summary>
