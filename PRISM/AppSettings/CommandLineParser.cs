@@ -603,7 +603,7 @@ namespace PRISM
                     if (preprocessed.ContainsKey(createExampleParamFileArg) && validArgs.ContainsKey(createExampleParamFileArg.ToLower()) && validArgs[createExampleParamFileArg.ToLower()].IsBuiltInArg)
                     {
                         createExampleParamFile = true;
-                        exampleParamFilePath = preprocessed[createExampleParamFileArg].Last();
+                        exampleParamFilePath = preprocessed[createExampleParamFileArg].LastOrDefault();
                     }
                 }
 
