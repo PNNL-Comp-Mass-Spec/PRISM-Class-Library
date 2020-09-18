@@ -1119,7 +1119,7 @@ namespace PRISM
                 return serverSharePath;
 
             var serverShareBase = serverSharePath.Substring(0, slashIndex);
-            if (serverShareBase.ToLower() == @"\\picfs")
+            if (string.Equals(serverShareBase, @"\\picfs", StringComparison.OrdinalIgnoreCase))
             {
                 serverShareBase = @"\\picfs\projects\DMS";
             }
@@ -2613,7 +2613,7 @@ namespace PRISM
             if (fileName == null)
                 return false;
 
-            if (fileName.ToLower() == "_.swp" || fileName.StartsWith(".") && fileName.ToLower().EndsWith(".swp"))
+            if (string.Equals(fileName, "_.swp", StringComparison.OrdinalIgnoreCase) || fileName.StartsWith(".") && fileName.EndsWith(".swp", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -2818,12 +2818,12 @@ namespace PRISM
             // Switched from a2.emsl.pnl.gov to aurora.emsl.pnl.gov in June 2016
             // Switched from aurora.emsl.pnl.gov to adms.emsl.pnl.gov in September 2016
             // Switched from adms.emsl.pnl.gov to agate.emsl.pnl.gov in 2020
-            if (lockDirectorySource != null && lockDirectorySource.FullName.ToLower().StartsWith(@"\\agate.emsl.pnl.gov\"))
+            if (lockDirectorySource != null && lockDirectorySource.FullName.StartsWith(@"\\agate.emsl.pnl.gov\", StringComparison.OrdinalIgnoreCase))
             {
                 maxWaitTimeSource = Math.Min(maxWaitTimeSource, 30);
             }
 
-            if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.ToLower().StartsWith(@"\\agate.emsl.pnl.gov\"))
+            if (lockDirectoryTarget != null && lockDirectoryTarget.FullName.StartsWith(@"\\agate.emsl.pnl.gov\", StringComparison.OrdinalIgnoreCase))
             {
                 maxWaitTimeTarget = Math.Min(maxWaitTimeTarget, 30);
             }

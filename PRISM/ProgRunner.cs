@@ -299,32 +299,29 @@ namespace PRISM
         {
             get
             {
-                string functionReturnValue;
                 switch (State)
                 {
                     case States.NotMonitoring:
-                        functionReturnValue = "not monitoring";
-                        break;
+                        return "not monitoring";
+
                     case States.Monitoring:
-                        functionReturnValue = "monitoring";
-                        break;
+                        return "monitoring";
+
                     case States.Waiting:
-                        functionReturnValue = "waiting to restart";
-                        break;
+                        return "waiting to restart";
+
                     case States.CleaningUp:
-                        functionReturnValue = "cleaning up";
-                        break;
+                        return "cleaning up";
+
                     case States.Initializing:
-                        functionReturnValue = "initializing";
-                        break;
+                        return "initializing";
+
                     case States.StartingProcess:
-                        functionReturnValue = "starting";
-                        break;
+                        return "starting";
+
                     default:
-                        functionReturnValue = "???";
-                        break;
+                        return "???";
                 }
-                return functionReturnValue;
             }
         }
 
@@ -716,7 +713,7 @@ namespace PRISM
             ClearCachedConsoleOutput();
             ClearCachedConsoleError();
 
-            do
+            while (true)
             {
                 // Start the program as an external process
                 //
@@ -863,7 +860,7 @@ namespace PRISM
                     RaiseConditionalProgChangedEvent(this);
                     break;
                 }
-            } while (true);
+            }
         }
 
         /// <summary>
@@ -897,12 +894,7 @@ namespace PRISM
         /// <returns></returns>
         protected bool StartingOrMonitoring()
         {
-            if (State == States.Initializing || State == States.StartingProcess || State == States.Monitoring)
-            {
-                return true;
-            }
-
-            return false;
+            return State == States.Initializing || State == States.StartingProcess || State == States.Monitoring;
         }
 
         /// <summary>

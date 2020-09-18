@@ -422,7 +422,7 @@ namespace PRISM.FileProcessor
                 return currentTaskProgressAtEnd;
             }
 
-            return (float)(currentTaskProgressAtStart + (subTaskProgress / 100.0) * (currentTaskProgressAtEnd - currentTaskProgressAtStart));
+            return (float)(currentTaskProgressAtStart + subTaskProgress / 100.0 * (currentTaskProgressAtEnd - currentTaskProgressAtStart));
         }
 
         /// <summary>
@@ -1227,14 +1227,8 @@ namespace PRISM.FileProcessor
 
                         try
                         {
-                            if (mLogDataCache.ContainsKey(key))
-                            {
-                                mLogDataCache[key] = universalTime;
-                            }
-                            else
-                            {
-                                mLogDataCache.Add(key, universalTime);
-                            }
+                            // Add/update the time associated with the key
+                            mLogDataCache[key] = universalTime;
                         }
                         catch (Exception)
                         {

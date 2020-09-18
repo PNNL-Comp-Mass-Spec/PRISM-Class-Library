@@ -517,7 +517,7 @@ namespace PRISM
                         if (string.IsNullOrWhiteSpace(dataLine))
                             continue;
 
-                        if (dataLine.ToLower().StartsWith("processor"))
+                        if (dataLine.StartsWith("processor", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExtractID(reIdMatcher, dataLine, out var processorID))
                             {
@@ -533,7 +533,7 @@ namespace PRISM
                             continue;
                         }
 
-                        if (dataLine.ToLower().StartsWith("core id"))
+                        if (dataLine.StartsWith("core id", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExtractID(reIdMatcher, dataLine, out var coreID))
                             {
@@ -544,7 +544,7 @@ namespace PRISM
                             }
                         }
 
-                        if (dataLine.ToLower().StartsWith("physical id"))
+                        if (dataLine.StartsWith("physical id", StringComparison.OrdinalIgnoreCase))
                         {
                             if (ExtractID(reIdMatcher, dataLine, out var physicalID))
                             {

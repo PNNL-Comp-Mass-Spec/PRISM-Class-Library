@@ -20,7 +20,7 @@ namespace PRISM
         static SystemInfo()
         {
             var c = new OSVersionInfo();
-            if (c.GetOSVersion().ToLower().Contains("windows"))
+            if (c.GetOSVersion().IndexOf("windows", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 SystemInfoObject = new WindowsSystemInfo();
                 IsLinux = false;

@@ -188,41 +188,36 @@ namespace PRISM.FileProcessor
         /// <returns>Error message</returns>
         protected string GetBaseClassErrorMessage()
         {
-            string errorMessage;
-
             switch (ErrorCode)
             {
                 case ProcessDirectoriesErrorCodes.NoError:
-                    errorMessage = string.Empty;
-                    break;
+                    return string.Empty;
+
                 case ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath:
-                    errorMessage = "Invalid input directory path";
-                    break;
+                    return "Invalid input directory path";
+
                 case ProcessDirectoriesErrorCodes.InvalidOutputDirectoryPath:
-                    errorMessage = "Invalid output directory path";
-                    break;
+                    return "Invalid output directory path";
+
                 case ProcessDirectoriesErrorCodes.ParameterFileNotFound:
-                    errorMessage = "Parameter file not found";
-                    break;
+                    return "Parameter file not found";
+
                 case ProcessDirectoriesErrorCodes.InvalidParameterFile:
-                    errorMessage = "Invalid parameter file";
-                    break;
+                    return "Invalid parameter file";
+
                 case ProcessDirectoriesErrorCodes.FilePathError:
-                    errorMessage = "General file path error";
-                    break;
+                    return "General file path error";
+
                 case ProcessDirectoriesErrorCodes.LocalizedError:
-                    errorMessage = "Localized error";
-                    break;
+                    return "Localized error";
+
                 case ProcessDirectoriesErrorCodes.UnspecifiedError:
-                    errorMessage = "Unspecified error";
-                    break;
+                    return "Unspecified error";
+
                 default:
                     // This shouldn't happen
-                    errorMessage = "Unknown error state";
-                    break;
+                    return "Unknown error state";
             }
-
-            return errorMessage;
         }
 
         private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)
@@ -298,8 +293,8 @@ namespace PRISM.FileProcessor
                 // See if inputDirectoryPath contains a wildcard (* or ?)
                 if (!inputDirectoryPath.Contains("*") && !inputDirectoryPath.Contains("?"))
                 {
-                    success = ProcessDirectory(inputDirectoryPath, outputDirectoryAlternatePath, parameterFilePath, resetErrorCode);
-                    return success;
+                    var processDirectorySuccess = ProcessDirectory(inputDirectoryPath, outputDirectoryAlternatePath, parameterFilePath, resetErrorCode);
+                    return processDirectorySuccess;
                 }
 
                 var inputDirectory = GetInputDirectoryAndMatchSpec(inputDirectoryPath, out var directoryNameMatchPattern);

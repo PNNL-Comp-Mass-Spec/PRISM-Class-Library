@@ -91,11 +91,7 @@ namespace PRISM
         /// <returns>True if any of the parameters are not present in parameterList()</returns>
         public bool InvalidParametersPresent(IEnumerable<string> parameterList, bool caseSensitive)
         {
-            if (InvalidParameters(parameterList.ToList()).Count > 0)
-            {
-                return true;
-            }
-            return false;
+            return InvalidParameters(parameterList.ToList(), caseSensitive).Count > 0;
         }
 
         /// <summary>
@@ -106,11 +102,7 @@ namespace PRISM
         /// <returns></returns>
         public bool InvalidParametersPresent(List<string> validParameters, bool caseSensitive)
         {
-            if (InvalidParameters(validParameters, caseSensitive).Count > 0)
-            {
-                return true;
-            }
-            return false;
+            return InvalidParameters(validParameters, caseSensitive).Count > 0;
         }
 
         /// <summary>
@@ -319,7 +311,7 @@ namespace PRISM
 
                 for (var paramIndex = 1; paramIndex < paramList.Length; paramIndex++)
                 {
-                    if (paramList[paramIndex].Length <= 0)
+                    if (paramList[paramIndex].Length == 0)
                     {
                         continue;
                     }
@@ -402,12 +394,7 @@ namespace PRISM
                 Console.WriteLine();
             }
 
-            if (mSwitches.Count + mNonSwitchParameters.Count > 0)
-            {
-                return true;
-            }
-
-            return false;
+            return mSwitches.Count + mNonSwitchParameters.Count > 0;
         }
 
         /// <summary>

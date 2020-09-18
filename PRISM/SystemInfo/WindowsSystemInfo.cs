@@ -19,7 +19,7 @@ namespace PRISM
         public WindowsSystemInfo()
         {
             var c = new OSVersionInfo();
-            if (!c.GetOSVersion().ToLower().Contains("windows"))
+            if (c.GetOSVersion().IndexOf("windows", StringComparison.OrdinalIgnoreCase) < 0)
             {
                 throw new Exception("This class only functions on Windows platforms");
             }
@@ -783,7 +783,7 @@ namespace PRISM
 
         private void CacheWmiCmdLineData()
         {
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
             CachedWmiCmdLineData = new Dictionary<uint, string>();
 
             using (var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))

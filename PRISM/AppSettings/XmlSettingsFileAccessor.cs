@@ -383,7 +383,7 @@ namespace PRISM
             }
 
             valueNotPresent = false;
-            if (result.ToLower() == "true")
+            if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -503,12 +503,12 @@ namespace PRISM
                     return resultValue;
                 }
 
-                if (result.ToLower() == "true")
+                if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
 
-                if (result.ToLower() == "false")
+                if (string.Equals(result, "false", StringComparison.OrdinalIgnoreCase))
                 {
                     return 0;
                 }
@@ -551,12 +551,12 @@ namespace PRISM
                     return resultValue;
                 }
 
-                if (result.ToLower() == "true")
+                if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
 
-                if (result.ToLower() == "false")
+                if (string.Equals(result, "false", StringComparison.OrdinalIgnoreCase))
                 {
                     return 0;
                 }
@@ -599,12 +599,12 @@ namespace PRISM
                     return resultValue;
                 }
 
-                if (result.ToLower() == "true")
+                if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
 
-                if (result.ToLower() == "false")
+                if (string.Equals(result, "false", StringComparison.OrdinalIgnoreCase))
                 {
                     return 0;
                 }
@@ -647,12 +647,12 @@ namespace PRISM
                     return resultValue;
                 }
 
-                if (result.ToLower() == "true")
+                if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
 
-                if (result.ToLower() == "false")
+                if (string.Equals(result, "false", StringComparison.OrdinalIgnoreCase))
                 {
                     return 0;
                 }
@@ -695,12 +695,12 @@ namespace PRISM
                     return resultValue;
                 }
 
-                if (result.ToLower() == "true")
+                if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
 
-                if (result.ToLower() == "false")
+                if (string.Equals(result, "false", StringComparison.OrdinalIgnoreCase))
                 {
                     return 0;
                 }

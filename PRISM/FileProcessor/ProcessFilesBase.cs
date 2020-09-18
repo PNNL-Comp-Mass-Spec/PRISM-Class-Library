@@ -386,8 +386,8 @@ namespace PRISM.FileProcessor
                 // See if inputFilePath contains a wildcard (* or ?)
                 if (!inputFilePath.Contains("*") && !inputFilePath.Contains("?"))
                 {
-                    success = ProcessFile(inputFilePath, outputDirectoryPath, parameterFilePath, resetErrorCode);
-                    return success;
+                    var wildcardSuccess = ProcessFile(inputFilePath, outputDirectoryPath, parameterFilePath, resetErrorCode);
+                    return wildcardSuccess;
                 }
 
                 var inputDirectory = GetInputDirectoryAndMatchSpec(inputFilePath, out var fileNameMatchPattern);
