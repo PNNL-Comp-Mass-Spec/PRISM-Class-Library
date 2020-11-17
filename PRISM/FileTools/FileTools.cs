@@ -2581,7 +2581,7 @@ namespace PRISM
                     ProgRunner.SleepMilliseconds(sleepTimeMsec);
 
                     // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
-                    if (sleepTimeMsec < 5)
+                    if (sleepTimeMsec < 5000)
                     {
                         sleepTimeMsec = Convert.ToInt32(Math.Round(sleepTimeMsec * 1.5, 0));
                     }
