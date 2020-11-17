@@ -360,7 +360,7 @@ namespace PRISM.AppSettings
 
             try
             {
-                using (var paramFileReader = new StreamReader(new FileStream(ParamFilePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                using (var paramFileReader = new StreamReader(new FileStream(ParamFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
                     var lineNumber = 0;
                     while (!paramFileReader.EndOfStream)
