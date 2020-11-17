@@ -16,6 +16,8 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class FileTools : EventNotifier
     {
+        // Ignore Spelling: yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt, picfs, mbBacklog
+
         #region "Events"
 
         /// <summary>
@@ -93,12 +95,12 @@ namespace PRISM
         public delegate void LockQueueTimedOutEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
 
         /// <summary>
-        /// Event is raised when we are done waiting waiting for our turn in the lock file queue
+        /// Event is raised when we are done waiting for our turn in the lock file queue
         /// </summary>
         public event LockQueueWaitCompleteEventHandler LockQueueWaitComplete;
 
         /// <summary>
-        /// Event is raised when we are done waiting waiting for our turn in the lock file queue
+        /// Event is raised when we are done waiting for our turn in the lock file queue
         /// </summary>
         /// <param name="sourceFilePath"></param>
         /// <param name="targetFilePath"></param>
@@ -923,8 +925,8 @@ namespace PRISM
         /// <param name="filePath"></param>
         /// <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
         /// <remarks>
-        /// If the initial attempt fails, checks the readonly bit and tries again.
-        /// If not readonly, performs a garbage collection (minimum 500 msec between GC calls).</remarks>
+        /// If the initial attempt fails, checks the ReadOnly bit and tries again.
+        /// If not ReadOnly, performs a garbage collection (minimum 500 msec between GC calls).</remarks>
         private bool DeleteFileIgnoreErrors(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -944,7 +946,7 @@ namespace PRISM
 
             try
             {
-                // The file might be readonly; check for this then re-try the delete
+                // The file might be ReadOnly; check for this then re-try the delete
                 if (targetFile.IsReadOnly)
                 {
                     targetFile.IsReadOnly = false;

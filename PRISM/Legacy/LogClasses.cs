@@ -12,6 +12,8 @@ namespace PRISM
 {
 #pragma warning disable IDE1006 // Naming Styles
 
+    // Ignore Spelling: MM-dd-yyyy, hh:mm:ss, tt
+
     /// <summary>
     /// The type of log message.
     /// </summary>
@@ -162,7 +164,7 @@ namespace PRISM
         public bool ArchiveOldLogFiles { get; set; } = true;
 
         /// <summary>
-        /// Path to the current log file (readonly)
+        /// Path to the current log file (ReadOnly)
         /// </summary>
         public string CurrentLogFilePath { get; private set; } = string.Empty;
 
@@ -199,16 +201,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The base name of the the log file, e.g. UpdateManager or Logs\UpdateManager
+        /// The base name of the log file, e.g. UpdateManager or Logs\UpdateManager
         /// </summary>
         /// <remarks>
         /// The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt"
-        /// This property is readonly; define when instantiating the logger using the constructor
+        /// This property is ReadOnly; define when instantiating the logger using the constructor
         /// </remarks>
         public string LogFileBaseName { get; private set; }
 
         /// <summary>
-        /// The base name of the the log file, e.g. UpdateManager or Logs\UpdateManager
+        /// The base name of the log file, e.g. UpdateManager or Logs\UpdateManager
         /// </summary>
         /// <remarks>The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt"</remarks>
         [Obsolete("Use LogFileBaseName instead")]
@@ -261,7 +263,7 @@ namespace PRISM
         private void LogToFile(IEnumerable<clsLogEntry> messages)
         {
             // Don't log to file if no file name given
-            // This will be the case if logging to clsDBLogger and a filepath was not provided when the class was instantiated
+            // This will be the case if logging to clsDBLogger and a file path was not provided when the class was instantiated
             if (string.IsNullOrEmpty(LogFileBaseName))
             {
                 return;

@@ -11,6 +11,8 @@ namespace PRISMTest
     [TestFixture]
     class FileLoggingTests
     {
+        // Ignore Spelling: MM-dd-yyyy, hh:mm:ss, tt
+
         const string LOGFILE_BASENAME = "FileLoggingTester";
 
         [TestCase(@"C:\Temp", 5, 25)]

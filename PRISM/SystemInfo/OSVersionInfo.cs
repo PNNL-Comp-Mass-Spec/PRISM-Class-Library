@@ -13,6 +13,8 @@ namespace PRISM
     /// <remarks>For Windows and Linux, reports details about the OS version</remarks>
     public class OSVersionInfo : EventNotifier
     {
+        // Ignore Spelling: os-release, lsb-release, Redhat, Centos, Ubuntu, Debian, Gentoo, Mandriva, Slackware, Solaris, SuSE, Xbox
+
         /// <summary>
         /// Constructor
         /// </summary>

@@ -12,6 +12,8 @@ namespace PRISM
     /// </summary>
     public class HashUtilities
     {
+        // Ignore Spelling: "yyyy-MM-dd, hh:mm:ss tt hashtype, utc
+
         /// <summary>
         /// Default date/time format
         /// </summary>

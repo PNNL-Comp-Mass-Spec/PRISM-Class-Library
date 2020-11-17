@@ -13,6 +13,8 @@ namespace PRISM
     /// </summary>
     public class WindowsSystemInfo : EventNotifier, ISystemInfo
     {
+        // Ignore Spelling: ull, uint, typeof, ushort, tradeoff, struct, NumaNode
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -703,8 +705,9 @@ namespace PRISM
                         var item = ptr;
                         var readCount = 0;
                         //int size = Marshal.SizeOf(typeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX));
-                        //int len = (int)returnLength / size;
-                        //for (int i = 0; i < len; i++)
+                        //int length = (int)returnLength / size;
+                        //for (int i = 0; i < length; i++)
+
                         while (readCount < returnLength)
                         {
                             var type = (LOGICAL_PROCESSOR_RELATIONSHIP)Marshal.ReadInt32(item);
@@ -739,9 +742,9 @@ namespace PRISM
                     Marshal.FreeHGlobal(ptr);
                 }
             }
-            //foreach (var proc in buffer)
+            //for each (var process in buffer)
             //{
-            //    Console.WriteLine(proc.ProcRelationship.ToString());
+            //    Console.WriteLine(process.ProcRelationship.ToString());
             //}
 
             return buffer.Count;

@@ -14,6 +14,8 @@ namespace PRISM
     public class LinuxSystemInfo : EventNotifier, ISystemInfo
     {
         // Ignore Spelling: proc, cpuinfo, meminfo iowait, cpu, irq, utime, stime, ctime, mem, cmdline
+        // Ignore Spelling: A-Za-z, Threadpool, virtualized, softirq, softirqs, lscpu, sshd, usr, ubuntu
+
         #region "Constants and Enums"
 
         /// <summary>
