@@ -1398,14 +1398,15 @@ namespace PRISM
         /// <param name="sourceDirectoryPath">The source directory path.</param>
         /// <param name="targetDirectoryPath">The destination directory path.</param>
         /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath, bool recurse)
+        public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath, bool recurse, bool ignoreFileLocks = false)
         {
             const FileOverwriteMode fileOverwriteMode = FileOverwriteMode.OverWriteIfDateOrLengthDiffer;
             var fileNamesToSkip = new List<string>();
 
-            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, fileNamesToSkip);
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, fileNamesToSkip, ignoreFileLocks);
         }
 
         /// <summary>
@@ -1418,71 +1419,77 @@ namespace PRISM
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        /// <returns>True if success; false if an error</returns>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        public bool CopyDirectoryWithResume(
-            string sourceDirectoryPath, string targetDirectoryPath,
-            bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip)
-        {
-            const bool setAttribute = false;
-            const bool readOnly = false;
-
-            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
-                fileNamesToSkip, out _, out _, out _);
-        }
-
-        /// <summary>
-        /// Copies a source directory to the destination directory.
-        /// overWrite behavior is governed by fileOverwriteMode
-        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
-        /// </summary>
-        /// <param name="sourceDirectoryPath">The source directory path.</param>
-        /// <param name="targetDirectoryPath">The destination directory path.</param>
-        /// <param name="recurse">True to copy subdirectories</param>
-        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
-        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
-        /// <param name="fileCountResumed">Number of files resumed (output)</param>
-        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
-        /// <returns>True if success; false if an error</returns>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
-        public bool CopyDirectoryWithResume(
-            string sourceDirectoryPath, string targetDirectoryPath,
-            bool recurse, FileOverwriteMode fileOverwriteMode,
-            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
-        {
-            const bool setAttribute = false;
-            const bool readOnly = false;
-            var fileNamesToSkip = new List<string>();
-
-            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
-                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
-        }
-
-        /// <summary>
-        /// Copies a source directory to the destination directory.
-        /// overWrite behavior is governed by fileOverwriteMode
-        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
-        /// </summary>
-        /// <param name="sourceDirectoryPath">The source directory path.</param>
-        /// <param name="targetDirectoryPath">The destination directory path.</param>
-        /// <param name="recurse">True to copy subdirectories</param>
-        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
-        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
-        /// <param name="fileCountResumed">Number of files resumed (output)</param>
-        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(
             string sourceDirectoryPath, string targetDirectoryPath,
             bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip,
-            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
+            bool ignoreFileLocks = false)
         {
             const bool setAttribute = false;
             const bool readOnly = false;
 
             return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
-                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied);
+                fileNamesToSkip, out _, out _, out _, ignoreFileLocks);
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory.
+        /// overWrite behavior is governed by fileOverwriteMode
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
+        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
+        /// <param name="fileCountResumed">Number of files resumed (output)</param>
+        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(
+            string sourceDirectoryPath, string targetDirectoryPath,
+            bool recurse, FileOverwriteMode fileOverwriteMode,
+            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied,
+            bool ignoreFileLocks = false)
+        {
+            const bool setAttribute = false;
+            const bool readOnly = false;
+            var fileNamesToSkip = new List<string>();
+
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied, ignoreFileLocks);
+        }
+
+        /// <summary>
+        /// Copies a source directory to the destination directory.
+        /// overWrite behavior is governed by fileOverwriteMode
+        /// Copies large files in chunks and allows resuming copying a large file if interrupted.
+        /// </summary>
+        /// <param name="sourceDirectoryPath">The source directory path.</param>
+        /// <param name="targetDirectoryPath">The destination directory path.</param>
+        /// <param name="recurse">True to copy subdirectories</param>
+        /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
+        /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
+        /// <param name="fileCountSkipped">Number of files skipped (output)</param>
+        /// <param name="fileCountResumed">Number of files resumed (output)</param>
+        /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
+        /// <returns>True if success; false if an error</returns>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
+        public bool CopyDirectoryWithResume(
+            string sourceDirectoryPath, string targetDirectoryPath,
+            bool recurse, FileOverwriteMode fileOverwriteMode, List<string> fileNamesToSkip,
+            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied,
+            bool ignoreFileLocks = false)
+        {
+            const bool setAttribute = false;
+            const bool readOnly = false;
+
+            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+                fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied, ignoreFileLocks);
         }
 
         /// <summary>
@@ -1500,13 +1507,15 @@ namespace PRISM
         /// <param name="fileCountSkipped">Number of files skipped (output)</param>
         /// <param name="fileCountResumed">Number of files resumed (output)</param>
         /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
         /// <returns>True if success; false if an error</returns>
         /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         public bool CopyDirectoryWithResume(
             string sourceDirectoryPath, string targetDirectoryPath,
             bool recurse, FileOverwriteMode fileOverwriteMode,
             bool setAttribute, bool readOnly, List<string> fileNamesToSkip,
-            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied)
+            out int fileCountSkipped, out int fileCountResumed, out int fileCountNewlyCopied,
+            bool ignoreFileLocks = false)
         {
             var success = true;
 
@@ -1630,7 +1639,7 @@ namespace PRISM
 
                         try
                         {
-                            success = CopyFileWithResume(sourceFile, targetFilePath, out copyResumed);
+                            success = CopyFileWithResume(sourceFile, targetFilePath, out copyResumed, ignoreFileLocks);
                         }
                         catch (UnauthorizedAccessException)
                         {
@@ -1703,12 +1712,12 @@ namespace PRISM
         /// <param name="sourceFilePath"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="copyResumed"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
-        public bool CopyFileWithResume(string sourceFilePath, string targetFilePath, out bool copyResumed)
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
+        /// <returns>True if success; false if an error</returns>
+        public bool CopyFileWithResume(string sourceFilePath, string targetFilePath, out bool copyResumed, bool ignoreFileLocks = false)
         {
             var sourceFile = new FileInfo(sourceFilePath);
-            return CopyFileWithResume(sourceFile, targetFilePath, out copyResumed);
+            return CopyFileWithResume(sourceFile, targetFilePath, out copyResumed, ignoreFileLocks);
         }
 
         /// <summary>
@@ -1718,9 +1727,9 @@ namespace PRISM
         /// <param name="sourceFile"></param>
         /// <param name="targetFilePath"></param>
         /// <param name="copyResumed">Output parameter; true if copying was resumed</param>
+        /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
         /// <returns>True if success; false if an error</returns>
-        /// <remarks></remarks>
-        public bool CopyFileWithResume(FileInfo sourceFile, string targetFilePath, out bool copyResumed)
+        public bool CopyFileWithResume(FileInfo sourceFile, string targetFilePath, out bool copyResumed, bool ignoreFileLocks = false)
         {
             const string FILE_PART_TAG = ".#FilePart#";
             const string FILE_PART_INFO_TAG = ".#FilePartInfo#";
@@ -1851,9 +1860,11 @@ namespace PRISM
                     copyResumed = false;
                 }
 
-                // Now copy the file, appending data to swFilePart
+                var fileShareMode = ignoreFileLocks ? FileShare.ReadWrite : FileShare.Read;
+
+                // Now copy the file, appending data to filePartWriter
                 // Open the source and seek to fileOffsetStart if > 0
-                using (var reader = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var reader = new FileStream(sourceFile.FullName, FileMode.Open, FileAccess.Read, fileShareMode))
                 {
                     if (fileOffsetStart > 0)
                     {
