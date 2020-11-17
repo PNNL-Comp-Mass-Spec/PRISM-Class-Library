@@ -8,7 +8,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class ProgRunnerTests
+    internal class ProgRunnerTests
     {
         // Ignore Spelling: AppVeyor, alF
 

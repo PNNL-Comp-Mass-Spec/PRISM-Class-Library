@@ -5,7 +5,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class TestEvents
+    internal class TestEvents
     {
         [Test]
         public void TestMonitorEvents()

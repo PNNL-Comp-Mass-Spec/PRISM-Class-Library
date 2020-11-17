@@ -10,7 +10,7 @@ using PRISMDatabaseUtils.AppSettings;
 namespace PRISMTest
 {
     [TestFixture]
-    class MgrSettingsTests
+    internal class MgrSettingsTests
     {
         private static readonly SortedSet<string> mValidatedConnectionStrings = new SortedSet<string>();
 

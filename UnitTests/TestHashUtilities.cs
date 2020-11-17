@@ -5,7 +5,7 @@ using PRISM;
 
 namespace PRISMTest
 {
-    class TestHashUtilities
+    internal class TestHashUtilities
     {
         private const string HASH_TEST_TEMP_DIR_PATH = @"C:\Temp\HashTest";
 

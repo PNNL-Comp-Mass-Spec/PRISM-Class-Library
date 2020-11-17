@@ -5,7 +5,7 @@ using PRISM.DataUtils;
 namespace PRISMTest
 {
     [TestFixture]
-    class StringSimilarityTests
+    internal class StringSimilarityTests
     {
         [Test]
         [TestCase("Breadbox", "Redbox", 0.6666666, 0.6666666)]

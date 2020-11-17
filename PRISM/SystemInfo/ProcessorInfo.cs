@@ -1,7 +1,7 @@
 ﻿// ReSharper disable once CheckNamespace
 namespace PRISM
 {
-    class ProcessorCoreInfo
+    internal class ProcessorCoreInfo
     {
         /// <summary>
         /// Processor ID for this core

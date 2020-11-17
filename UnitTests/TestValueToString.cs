@@ -5,7 +5,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class TestValueToString
+    internal class TestValueToString
     {
         [Test]
         public void TestValueString()

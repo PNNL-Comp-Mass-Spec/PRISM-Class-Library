@@ -6,7 +6,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class TestOSVersionInfo
+    internal class TestOSVersionInfo
     {
         [Test]
         public void TestGetOSVersion()

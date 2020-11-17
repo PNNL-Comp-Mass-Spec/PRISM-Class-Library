@@ -3,7 +3,7 @@ using System.IO;
 
 namespace PRISMTest
 {
-    class TestFileCopyInfo
+    internal class TestFileCopyInfo
     {
         /// <summary>
         /// Source file

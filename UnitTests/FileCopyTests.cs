@@ -7,7 +7,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class FileCopyTests
+    internal class FileCopyTests
     {
         private FileTools mFileTools;
 

@@ -7,7 +7,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class TestPathUtils
+    internal class TestPathUtils
     {
         [TestCase("/proc/12343/stat", "/proc/12343/stat")]
         [TestCase(@"/proc/subdir\filename", "/proc/subdir/filename")]

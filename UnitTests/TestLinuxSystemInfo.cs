@@ -9,7 +9,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class TestLinuxSystemInfo
+    internal class TestLinuxSystemInfo
     {
         internal const bool SHOW_TRACE_MESSAGES = false;
 

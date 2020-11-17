@@ -5,7 +5,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class XMLSettingsFileTests
+    internal class XMLSettingsFileTests
     {
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "MasicExportOptions", "WriteExtendedStats", "True")]
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM\LTQ-FT_10ppm_2014-08-06.xml", "SICOptions", "SICTolerance", "10.0000")]

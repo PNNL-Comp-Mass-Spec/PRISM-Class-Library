@@ -5,7 +5,7 @@ using NUnit.Framework;
 namespace PRISMTest
 {
     [TestFixture]
-    class GZipTests
+    internal class GZipTests
     {
         [TestCase(@"C:\Windows\win.ini", false)]
         [TestCase(@"C:\Windows\win.ini", true)]

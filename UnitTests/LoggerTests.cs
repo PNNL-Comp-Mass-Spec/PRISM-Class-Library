@@ -13,7 +13,7 @@ namespace PRISMTest
     /// Those classes are obsolete, and thus this entire file is marked with a pragma to disable warnings regarding the use of obsolete classes
     /// </summary>
     [TestFixture]
-    class LoggerTests
+    internal class LoggerTests
     {
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", logMsgType.logNormal, 4, 500)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", logMsgType.logError, 2, 250)]

@@ -7,7 +7,7 @@ using PRISMWin;
 namespace PRISMTest
 {
     [TestFixture]
-    class DotNETVersionTest
+    internal class DotNETVersionTest
     {
 #if !(NETCOREAPP2_0)
         [Test]

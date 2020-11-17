@@ -9,11 +9,11 @@ using PRISM.Logging;
 namespace PRISMTest
 {
     [TestFixture]
-    class FileLoggingTests
+    internal class FileLoggingTests
     {
         // Ignore Spelling: MM-dd-yyyy, hh:mm:ss, tt
 
-        const string LOGFILE_BASENAME = "FileLoggingTester";
+        private const string LOGFILE_BASENAME = "FileLoggingTester";
 
         [TestCase(@"C:\Temp", 5, 25)]
         public void TestArchiveOldLogFiles(string logDirectory, int yearsToSimulate, int filesPerYear)

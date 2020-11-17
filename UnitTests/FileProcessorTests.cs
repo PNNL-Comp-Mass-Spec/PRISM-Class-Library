@@ -8,7 +8,7 @@ using PRISM.FileProcessor;
 namespace PRISMTest
 {
     [TestFixture]
-    class FileProcessorTests
+    internal class FileProcessorTests
     {
         /// <summary>
         /// Test ComputeIncrementalProgress that accepts a subTask progress value
@@ -171,7 +171,7 @@ namespace PRISMTest
     /// It looks for files in the given directory and subdirectories
     /// Matching file names are shown at the console
     /// </summary>
-    class SimpleFileFinder : ProcessFilesBase
+    internal class SimpleFileFinder : ProcessFilesBase
     {
         public override string GetErrorMessage()
         {
@@ -198,7 +198,7 @@ namespace PRISMTest
     /// Simple class that derives from ProcessFilesBase
     /// It looks for a file in the given directory and logs the file size and last write time to a log file
     /// </summary>
-    class SimpleFileStatsLogger : ProcessFilesBase
+    internal class SimpleFileStatsLogger : ProcessFilesBase
     {
         public string LogFileBaseName { get; set; }
 

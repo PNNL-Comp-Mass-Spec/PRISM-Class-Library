@@ -5,7 +5,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class MiscellaneousTests
+    internal class MiscellaneousTests
     {
         [TestCase("8/10/2017 2 am", false)]
         [TestCase("8/15/2017 2 am", false)]

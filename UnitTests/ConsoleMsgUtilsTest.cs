@@ -5,7 +5,7 @@ using PRISM;
 namespace PRISMTest
 {
     [TestFixture]
-    class ConsoleMsgUtilsTest
+    internal class ConsoleMsgUtilsTest
     {
         private const string TEXT_TO_WRAP1 =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque suscipit cursus nunc ut placerat. " +

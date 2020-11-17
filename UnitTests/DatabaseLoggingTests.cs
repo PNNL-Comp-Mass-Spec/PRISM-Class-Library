@@ -5,7 +5,7 @@ using PRISM.Logging;
 namespace PRISMTest
 {
     [TestFixture]
-    class DatabaseLoggingTests
+    internal class DatabaseLoggingTests
     {
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]

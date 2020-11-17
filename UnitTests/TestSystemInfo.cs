@@ -4,7 +4,7 @@ using PRISM;
 
 namespace PRISMTest
 {
-    class TestSystemInfo
+    internal class TestSystemInfo
     {
         private SystemInfo mSysInfo;
 

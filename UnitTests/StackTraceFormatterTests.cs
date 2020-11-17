@@ -6,7 +6,7 @@ using PRISM;
 
 namespace PRISMTest
 {
-    class StackTraceFormatterTests
+    internal class StackTraceFormatterTests
     {
         public enum ExceptionTypes
         {
@@ -178,7 +178,7 @@ namespace PRISMTest
         }
     }
 
-    class MyTestException : Exception
+    internal class MyTestException : Exception
     {
         public MyTestException(string message, Exception innerException)
             : base(message, innerException)
