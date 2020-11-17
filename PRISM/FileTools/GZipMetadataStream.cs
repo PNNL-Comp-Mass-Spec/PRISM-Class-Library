@@ -286,14 +286,14 @@ namespace PRISM
                 if (!flags.HasFlag(GzipFlags.FNAME) && !string.IsNullOrWhiteSpace(InternalFilename))
                 {
                     writeFileName = true;
-                    flags = flags | GzipFlags.FNAME;
+                    flags |= GzipFlags.FNAME;
                 }
 
                 var writeComment = false;
                 if (!flags.HasFlag(GzipFlags.FCOMMENT) && !string.IsNullOrWhiteSpace(InternalComment))
                 {
                     writeComment = true;
-                    flags = flags | GzipFlags.FCOMMENT;
+                    flags |= GzipFlags.FCOMMENT;
                 }
 
                 var addingHeaderCrc = true;
@@ -304,7 +304,7 @@ namespace PRISM
                         addingHeaderCrc = false;
                     }
 
-                    flags = flags | GzipFlags.FHCRC;
+                    flags |= GzipFlags.FHCRC;
                 }
                 modifiedBuffer.Add((byte)flags);
 

@@ -103,7 +103,7 @@ namespace PRISM
         /// </summary>
         /// <param name="message">Error message</param>
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
-        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <param name="writeToErrorStream">When true, also send the error to the standard error stream</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.Message</returns>
         public static string ShowErrorCustom(string message, bool includeSeparator = true, bool writeToErrorStream = true, int emptyLinesBeforeMessage = 1)
@@ -118,7 +118,7 @@ namespace PRISM
         /// <param name="message">Error message (do not include ex.Message)</param>
         /// <param name="ex">Exception (can be null)</param>
         /// <param name="includeSeparator">When true, add a separator line before and after the error</param>
-        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <param name="writeToErrorStream">When true, also send the error to the standard error stream</param>
         /// <returns>Error message, with the exception message appended, provided ex is not null and provided message does not end with ex.Message</returns>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         public static string ShowErrorCustom(
@@ -180,7 +180,7 @@ namespace PRISM
         /// </summary>
         /// <param name="title">Title text to be shown before the errors; can be null or blank</param>
         /// <param name="errorMessages">Error messages to show</param>
-        /// <param name="writeToErrorStream">When true, also send the error to the the standard error stream</param>
+        /// <param name="writeToErrorStream">When true, also send the error to the standard error stream</param>
         /// <param name="indentChars">Characters to add before each error message; defaults to 3 spaces</param>
         /// <returns>The first error message</returns>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>

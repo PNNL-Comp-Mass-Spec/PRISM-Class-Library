@@ -10,22 +10,13 @@ namespace PRISM
     /// <summary>
     /// Routines for calling an external zipping program like 7-zip.exe
     /// </summary>
-    /// <remarks>There are a routines to create an archive, extract files from an existing archive,
-    /// and to verify an existing archive.
+    /// <remarks>
+    /// There are routines to create an archive, extract files from an existing archive,
+    /// and verify an existing archive.
     /// </remarks>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ZipTools
     {
-        /// <summary>
-        /// Working directory
-        /// </summary>
-        private string m_WorkDir;
-
-        /// <summary>
-        /// Program used for zipping and unzipping files
-        /// </summary>
-        private string m_ZipProgramPath;
-
         /// <summary>
         /// Interval, in milliseconds, to sleep between checking the status of a zip or unzip task
         /// </summary>
@@ -39,11 +30,6 @@ namespace PRISM
 #pragma warning disable 618
         [Obsolete("Use m_Logger (typically a FileLogger)")]
         private ILogger m_EventLogger;
-#pragma warning restore 618
-
-        private bool m_CreateNoWindow;
-
-        private ProcessWindowStyle m_WindowStyle;
 
         /// <summary>
         /// Create a zip file.
@@ -53,11 +39,10 @@ namespace PRISM
         /// <param name="inputSpec">The files and/or directories to archive.</param>
         public bool MakeZipFile(string cmdOptions, string outputFile, string inputSpec)
         {
-
             // Verify input file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(ZipFilePath) || string.IsNullOrEmpty(WorkDir))
             {
-                var msg = "Zip program path and/or working path not specified";
+                const string msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
                 m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
@@ -70,13 +55,13 @@ namespace PRISM
             var zipper = new ProgRunner
             {
                 Arguments = "-Add " + cmdOptions + " \"" + outputFile + "\" \"" + inputSpec + "\"",
-                Program = m_ZipProgramPath,
-                WorkDir = m_WorkDir,
+                Program = ZipFilePath,
+                WorkDir = WorkDir,
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
                 Repeat = false,
                 RepeatHoldOffTime = 0,
-                CreateNoWindow = m_CreateNoWindow
+                CreateNoWindow = CreateNoWindow
             };
 
             // Start the zip program
@@ -97,9 +82,9 @@ namespace PRISM
         public bool UnzipFile(string cmdOptions, string zipFilePath, string outputDirectoryPath)
         {
             // Verify input file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(ZipFilePath) || string.IsNullOrEmpty(WorkDir))
             {
-                var msg = "Zip program path and/or working path not specified";
+                const string msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
                 m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
@@ -138,12 +123,12 @@ namespace PRISM
                 Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outputDirectoryPath + "\"",
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
-                Program = m_ZipProgramPath,
-                WorkDir = m_WorkDir,
+                Program = ZipFilePath,
+                WorkDir = WorkDir,
                 Repeat = false,
                 RepeatHoldOffTime = 0,
-                CreateNoWindow = m_CreateNoWindow,
-                WindowStyle = m_WindowStyle,
+                CreateNoWindow = CreateNoWindow,
+                WindowStyle = WindowStyle,
             };
 
             // Start the unzip program
@@ -158,38 +143,22 @@ namespace PRISM
         /// <summary>
         /// Defines whether a window is displayed when calling the zipping program.
         /// </summary>
-        public bool CreateNoWindow
-        {
-            get => m_CreateNoWindow;
-            set => m_CreateNoWindow = value;
-        }
+        public bool CreateNoWindow { get; set; }
 
         /// <summary>
         /// Window style to use when CreateNoWindow is False.
         /// </summary>
-        public ProcessWindowStyle WindowStyle
-        {
-            get => m_WindowStyle;
-            set => m_WindowStyle = value;
-        }
+        public ProcessWindowStyle WindowStyle { get; set; }
 
         /// <summary>
         /// The working directory for the zipping process.
         /// </summary>
-        public string WorkDir
-        {
-            get => m_WorkDir;
-            set => m_WorkDir = value;
-        }
+        public string WorkDir { get; set; }
 
         /// <summary>
         /// The path to the zipping program.
         /// </summary>
-        public string ZipFilePath
-        {
-            get => m_ZipProgramPath;
-            set => m_ZipProgramPath = value;
-        }
+        public string ZipFilePath { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the ZipTools class.
@@ -198,8 +167,8 @@ namespace PRISM
         /// <param name="zipFilePath">The path to the zipping program.</param>
         public ZipTools(string workDir, string zipFilePath)
         {
-            m_WorkDir = workDir;
-            m_ZipProgramPath = zipFilePath;
+            WorkDir = workDir;
+            ZipFilePath = zipFilePath;
 
             // Time in milliseconds
             m_WaitInterval = 2000;
@@ -227,9 +196,9 @@ namespace PRISM
             }
 
             // Verify Zip file and output path have been specified
-            if (string.IsNullOrEmpty(m_ZipProgramPath) || string.IsNullOrEmpty(m_WorkDir))
+            if (string.IsNullOrEmpty(ZipFilePath) || string.IsNullOrEmpty(WorkDir))
             {
-                var msg = "Zip program path and/or working path not specified";
+                const string msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
                 m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
@@ -242,15 +211,15 @@ namespace PRISM
             var zipper = new ProgRunner
             {
                 // ReSharper disable once StringLiteralTypo
-                Arguments = "-test -nofix" + " " + zipFilePath,
-                Program = m_ZipProgramPath,
-                WorkDir = m_WorkDir,
+                Arguments = "-test -nofix " + zipFilePath,
+                Program = ZipFilePath,
+                WorkDir = WorkDir,
                 MonitoringInterval = m_WaitInterval,
                 Name = "Zipper",
                 Repeat = false,
                 RepeatHoldOffTime = 0,
-                CreateNoWindow = m_CreateNoWindow,
-                WindowStyle = m_WindowStyle,
+                CreateNoWindow = CreateNoWindow,
+                WindowStyle = WindowStyle,
             };
 
             // Start the zip program

@@ -186,7 +186,7 @@ namespace PRISMWin
                     var versionName = (string)versionKey.GetValue("Version", "");
                     var versionSP = versionKey.GetValue("SP", "").ToString();
                     var versionInstall = versionKey.GetValue("Install", "").ToString();
-                    if (versionInstall == "")
+                    if (versionInstall?.Length == 0)
                     {
                         // No service pack install; store this version
                         StoreVersion(dotNETVersions, majorVersion, versionName);
@@ -217,7 +217,7 @@ namespace PRISMWin
                             subKeySP = subKey.GetValue("SP", "").ToString();
 
                         var subKeyInstall = subKey.GetValue("Install", "").ToString();
-                        if (subKeyInstall == "")
+                        if (subKeyInstall?.Length == 0)
                         {
                             // No service pack install; store this version
                             StoreVersion(dotNETVersions, majorVersion, subKeyVersionName);

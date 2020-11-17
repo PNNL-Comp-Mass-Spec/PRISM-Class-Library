@@ -23,7 +23,7 @@ namespace PRISM
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>IEnumerable of items that have been processed via <paramref name="processFunction"/></returns>
         public static IEnumerable<TResult> ParallelPreprocess<T, TResult>(this IEnumerable<T> sourceEnum, Func<T, TResult> processFunction,
-            int maxThreads = 1, int maxPreprocessed = -1, double checkIntervalSeconds = 1, CancellationToken cancellationToken = default(CancellationToken))
+            int maxThreads = 1, int maxPreprocessed = -1, double checkIntervalSeconds = 1, CancellationToken cancellationToken = default)
         {
             return new ParallelPreprocessor<T, TResult>(sourceEnum, processFunction, maxThreads, maxPreprocessed, checkIntervalSeconds, cancellationToken).ConsumeAll();
         }
@@ -145,6 +145,7 @@ namespace PRISM
             /// <param name="processFunction"></param>
             /// <param name="accessLock"></param>
             /// <param name="threadId">A 'threadID' for debugging purposes</param>
+            // ReSharper disable once UnusedParameter.Local
             private async void Producer(IEnumerator<T> sourceEnumerator, Func<T, TResult> processFunction, object accessLock, int threadId)
             {
                 try
@@ -196,7 +197,7 @@ namespace PRISM
             /// <param name="cancellationToken">Cancellation token</param>
             /// <returns>IEnumerable of items that have been processed via <paramref name="processFunction"/></returns>
             public ParallelPreprocessor(IEnumerable<T> source, Func<T, TResult> processFunction, int maxThreads, int maxPreprocessed = -1, double checkIntervalSeconds = 1,
-                CancellationToken cancellationToken = default(CancellationToken))
+                CancellationToken cancellationToken = default)
             {
                 cancelToken = cancellationToken;
                 if (maxPreprocessed < 1)

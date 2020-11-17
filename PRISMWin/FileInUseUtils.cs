@@ -104,11 +104,10 @@ namespace PRISMWin
         /// </remarks>
         public static List<Process> WhoIsLocking(string[] paths, bool checkProcessStartTime)
         {
-            uint handle;
-            string key = Guid.NewGuid().ToString();
-            List<Process> processes = new List<Process>();
+            var key = Guid.NewGuid().ToString();
+            var processes = new List<Process>();
 
-            int res = RmStartSession(out handle, 0, key);
+            var res = RmStartSession(out var handle, 0, key);
 
             if (res != 0)
                 throw new Exception("Could not begin restart session.  Unable to determine file locker.");
@@ -116,11 +115,10 @@ namespace PRISMWin
             try
             {
                 const int ERROR_MORE_DATA = 234;
-                uint pnProcInfoNeeded = 0,
-                     pnProcInfo = 0,
+                uint pnProcInfo = 0,
                      lpdwRebootReasons = RmRebootReasonNone;
 
-                string[] resources = paths; // Just checking on one resource.
+                var resources = paths; // Just checking on one resource.
 
                 res = RmRegisterResources(handle, (uint)resources.Length, resources, 0, null, 0, null);
 
@@ -130,12 +128,12 @@ namespace PRISMWin
                 //Note: there's a race condition here -- the first call to RmGetList() returns
                 //      the total number of process. However, when we call RmGetList() again to get
                 //      the actual processes this number may have increased.
-                res = RmGetList(handle, out pnProcInfoNeeded, ref pnProcInfo, null, ref lpdwRebootReasons);
+                res = RmGetList(handle, out var pnProcInfoNeeded, ref pnProcInfo, null, ref lpdwRebootReasons);
 
                 if (res == ERROR_MORE_DATA)
                 {
                     // Create an array to store the process results
-                    RM_PROCESS_INFO[] processInfo = new RM_PROCESS_INFO[pnProcInfoNeeded];
+                    var processInfo = new RM_PROCESS_INFO[pnProcInfoNeeded];
                     pnProcInfo = pnProcInfoNeeded;
 
                     // Get the list
@@ -146,7 +144,7 @@ namespace PRISMWin
                         processes = new List<Process>((int)pnProcInfo);
 
                         // Enumerate all of the results and add them to the list to be returned
-                        for (int i = 0; i < pnProcInfo; i++)
+                        for (var i = 0; i < pnProcInfo; i++)
                         {
                             try
                             {

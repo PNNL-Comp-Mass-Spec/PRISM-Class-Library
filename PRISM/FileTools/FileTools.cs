@@ -911,12 +911,7 @@ namespace PRISM
                 }
             }
 
-            if (errorCount == 0)
-            {
-                return true;
-            }
-
-            return false;
+            return errorCount == 0;
         }
 
         /// <summary>
@@ -1944,12 +1939,7 @@ namespace PRISM
         /// <returns>True if the times agree within 2 seconds</returns>
         public static bool NearlyEqualFileTimes(DateTime time1, DateTime time2)
         {
-            if (Math.Abs(time1.Subtract(time2).TotalSeconds) <= 2.05)
-            {
-                return true;
-            }
-
-            return false;
+            return Math.Abs(time1.Subtract(time2).TotalSeconds) <= 2.05;
         }
 
         private void OnStatusEvent(string message, string detailedMessage)
@@ -2600,17 +2590,14 @@ namespace PRISM
             if (fileName == null)
                 return false;
 
-            if (string.Equals(fileName, "_.swp", StringComparison.OrdinalIgnoreCase) || fileName.StartsWith(".") && fileName.EndsWith(".swp", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
+            return
+                string.Equals(fileName, "_.swp", StringComparison.OrdinalIgnoreCase) ||
+                fileName.StartsWith(".") && fileName.EndsWith(".swp", StringComparison.OrdinalIgnoreCase);
         }
 
         private void NotifyLockFilePaths(string lockFilePathSource, string lockFilePathTarget)
         {
-            var adminBypassBase = "To force the file copy and bypass the lock file queue";
+            const string adminBypassBase = "To force the file copy and bypass the lock file queue";
 
             string adminBypassMessage;
             if (!string.IsNullOrWhiteSpace(lockFilePathSource) && !string.IsNullOrWhiteSpace(lockFilePathTarget))
@@ -2651,7 +2638,7 @@ namespace PRISM
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
         public static bool ValidateFreeDiskSpace(string outputFilePath, double minimumFreeSpaceMB, long currentDiskFreeSpaceBytes, out string errorMessage)
         {
-            double outputFileExpectedSizeMB = 0;
+            const double outputFileExpectedSizeMB = 0;
 
             return ValidateFreeDiskSpace(outputFilePath, outputFileExpectedSizeMB, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage);
         }
@@ -2895,12 +2882,7 @@ namespace PRISM
 
         private bool WaitedTooLong(DateTime waitTimeStart, int maxLockfileWaitTimeMinutes)
         {
-            if (DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes < maxLockfileWaitTimeMinutes)
-            {
-                return false;
-            }
-
-            return true;
+            return DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes >= maxLockfileWaitTimeMinutes;
         }
 
         #endregion

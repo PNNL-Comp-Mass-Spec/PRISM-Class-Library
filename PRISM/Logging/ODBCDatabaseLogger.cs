@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
 // Note: Is available as of NETSTANDARD 2.1
 using System.Data.Odbc;
 #endif
@@ -27,7 +27,7 @@ namespace PRISM.Logging
         // ReSharper disable once UnusedMember.Local
         private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
 
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
         /// <summary>
         /// Tracks the number of successive dequeue failures
         /// </summary>
@@ -70,7 +70,7 @@ namespace PRISM.Logging
         /// </summary>
         public static string StoredProcedureName { get; private set; }
 
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
         private static string LogTypeParamName { get; set; }
 
         private static string MessageParamName { get; set; }
@@ -164,7 +164,7 @@ namespace PRISM.Logging
             ConnectionString = connectionString;
             StoredProcedureName = storedProcedure;
 
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
             LogTypeParamName = logTypeParamName;
             MessageParamName = messageParamName;
             PostedByParamName = postedByParamName;
@@ -301,7 +301,7 @@ namespace PRISM.Logging
 
         private static void LogQueuedMessages()
         {
-#if (NETSTANDARD2_0)
+#if NETSTANDARD2_0
                 if (NotifiedNotSupported)
                     return;
 
@@ -315,7 +315,7 @@ namespace PRISM.Logging
                 if (mMessageQueue.IsEmpty)
                     return;
 
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
                 ShowTrace(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
 
@@ -370,7 +370,7 @@ namespace PRISM.Logging
 
                         while (retryCount > 0)
                         {
-                            var returnValue = 0;
+                            const int returnValue = 0;
 
                             try
                             {

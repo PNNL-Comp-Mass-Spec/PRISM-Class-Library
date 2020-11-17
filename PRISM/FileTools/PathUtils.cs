@@ -246,7 +246,7 @@ namespace PRISM
 
             bool rootedLinuxPath;
             string[] pathParts;
-            if (directoryPath.StartsWith(@"/"))
+            if (directoryPath.StartsWith("/"))
             {
                 rootedLinuxPath = true;
                 pathParts = directoryPath.Substring(1).Split(sepChar);

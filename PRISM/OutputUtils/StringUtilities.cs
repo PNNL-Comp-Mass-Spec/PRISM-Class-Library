@@ -53,7 +53,7 @@ namespace PRISM
 
                 if (digitsAfterDecimal <= 1)
                 {
-                    var newFormatString = "0.0";
+                    const string newFormatString = "0.0";
                     mFormatStrings.TryAdd(digitsAfterDecimal, newFormatString);
                     return newFormatString;
                 }

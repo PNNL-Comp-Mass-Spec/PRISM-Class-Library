@@ -273,7 +273,6 @@ namespace PRISM
         /// <returns>Key name if found, or an empty string</returns>
         private string GetCachedKeyName(string sectionName, string keyName)
         {
-
             bool success;
 
             // Lookup the correct capitalization for sectionName (only truly important if mCaseSensitive = False)
@@ -397,12 +396,7 @@ namespace PRISM
             }
 
             valueNotPresent = false;
-            if (string.Equals(result, "true", StringComparison.OrdinalIgnoreCase))
-            {
-                return true;
-            }
-
-            return false;
+            return string.Equals(result, "true", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -761,7 +755,7 @@ namespace PRISM
             }
 
             var sectionNameInFile = GetCachedSectionName(sectionName);
-            if (sectionNameInFile.Length <= 0)
+            if (sectionNameInFile.Length == 0)
             {
                 return mXMLFileAccessor.SetXMLValue(sectionName, keyName, newValue);
             }

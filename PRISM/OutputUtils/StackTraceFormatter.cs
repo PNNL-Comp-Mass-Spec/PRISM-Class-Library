@@ -105,11 +105,11 @@ namespace PRISM
             }
 
             if (!includeInnerExceptionMessages || ex.InnerException == null)
-                return string.Join("", stackTraceLines);
+                return string.Concat(stackTraceLines);
 
             AppendInnerExceptions(ex, stackTraceLines, STACK_CHAIN_SEPARATOR);
 
-            return string.Join("", stackTraceLines);
+            return string.Concat(stackTraceLines);
         }
 
         /// <summary>

@@ -853,7 +853,9 @@ namespace PRISM.Logging
 
                     if (subDirYear == DateTime.Now.Year ||
                         subDirYear == DateTime.Now.Year - 1 && DateTime.Now < dateThresholdForZippingPreviousYearFiles)
+                    {
                         continue;
+                    }
 
                     // The directory is old enough; zip all of the files
 

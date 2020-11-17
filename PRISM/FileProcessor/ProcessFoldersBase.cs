@@ -117,7 +117,7 @@ namespace PRISM.FileProcessor
         /// Process a single directory
         /// </summary>
         /// <param name="inputFolderPath">Input directory path</param>
-        /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
+        /// <param name="outputFolderAlternatePath">Alternate directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="resetErrorCode">If true, reset the error code</param>
         /// <returns>True if success, otherwise false</returns>
@@ -138,7 +138,7 @@ namespace PRISM.FileProcessor
         /// Process directories and subdirectories
         /// </summary>
         /// <param name="inputFolderPath">Input directory path (supports wildcards)</param>
-        /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
+        /// <param name="outputFolderAlternatePath">Alternate directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="recurseFoldersMaxLevels">If 0 or negative, recurse infinitely</param>
         /// <remarks>Calls ProcessFolders for all matching directories in inputFolderPath</remarks>

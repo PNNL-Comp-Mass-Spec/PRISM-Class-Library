@@ -28,7 +28,7 @@ namespace PRISM.DataUtils
         /// <param name="removeNumbers">When true, remove digits from the text before comparing</param>
         /// <param name="removeSymbolsAndWhitespace">When true, remove symbols (anything not a letter or number) and whitespace from the text before comparing</param>
         /// <param name="caseSensitive">When true, require matching capitalization</param>
-        /// <returns>Similarity score, ranging from from 0.0 to 1.0 where 1.0 is a perfect match</returns>
+        /// <returns>Similarity score, ranging from 0.0 to 1.0 where 1.0 is a perfect match</returns>
         public static double CompareStrings(
             string text1,
             string text2,
