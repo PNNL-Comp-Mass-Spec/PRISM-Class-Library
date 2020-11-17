@@ -407,7 +407,7 @@ namespace PRISM
         /// Run a query against a SQL Server database, return the results as a list of strings
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="lstResults">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of list of strings)</param>
         /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
@@ -421,7 +421,7 @@ namespace PRISM
         /// </remarks>
         public bool GetQueryResults(
             string sqlQuery,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             string callingFunction,
             int retryCount = 3,
             int maxRowsToReturn = 0,
@@ -433,7 +433,7 @@ namespace PRISM
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
-            lstResults = new List<List<string>>();
+            results = new List<List<string>>();
 
             while (retryCount > 0)
             {
@@ -453,7 +453,7 @@ namespace PRISM
 
                             while (reader.Read())
                             {
-                                var lstCurrentRow = new List<string>();
+                                var currentRow = new List<string>();
 
                                 for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                                 {
@@ -461,17 +461,17 @@ namespace PRISM
 
                                     if (DBNull.Value.Equals(value))
                                     {
-                                        lstCurrentRow.Add(string.Empty);
+                                        currentRow.Add(string.Empty);
                                     }
                                     else
                                     {
-                                        lstCurrentRow.Add(value.ToString());
+                                        currentRow.Add(value.ToString());
                                     }
                                 }
 
-                                lstResults.Add(lstCurrentRow);
+                                results.Add(currentRow);
 
-                                if (maxRowsToReturn > 0 && lstResults.Count >= maxRowsToReturn)
+                                if (maxRowsToReturn > 0 && results.Count >= maxRowsToReturn)
                                 {
                                     break;
                                 }
@@ -534,7 +534,7 @@ namespace PRISM
 
                 try
                 {
-                    var cmd = new SqlCommand(SQL, m_DBCn);
+                    var cmd = new SqlCommand(SQL, m_DatabaseConnection);
                     affectedRows = cmd.ExecuteNonQuery();
                     return true;
                 }
@@ -546,7 +546,7 @@ namespace PRISM
                 }
                 finally
                 {
-                    m_DBCn.Close();
+                    m_DatabaseConnection.Close();
                 }
 
               */

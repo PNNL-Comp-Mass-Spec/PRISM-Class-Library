@@ -90,7 +90,7 @@ namespace PRISMDatabaseUtils
         /// Run a query against a SQL database, return the results as a list of strings
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="lstResults">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -105,7 +105,7 @@ namespace PRISMDatabaseUtils
         /// </remarks>
         bool GetQueryResults(
             string sqlQuery,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
@@ -160,7 +160,7 @@ namespace PRISMDatabaseUtils
         /// Run a query against a SQL database, return the results as a list of strings
         /// </summary>
         /// <param name="cmd">Query to run</param>
-        /// <param name="lstResults">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -174,7 +174,7 @@ namespace PRISMDatabaseUtils
         /// </remarks>
         bool GetQueryResults(
             DbCommand cmd,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
@@ -224,14 +224,14 @@ namespace PRISMDatabaseUtils
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="lstResults">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         int ExecuteSPData(
             DbCommand spCmd,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5);

@@ -121,7 +121,7 @@ namespace PRISM
         /// <param name="caseSensitive"></param>
         public List<string> InvalidParameters(List<string> validParameters, bool caseSensitive)
         {
-            var lstInvalidParameters = new List<string>();
+            var invalidParameters = new List<string>();
 
             try
             {
@@ -147,7 +147,7 @@ namespace PRISM
 
                     if (matchCount == 0)
                     {
-                        lstInvalidParameters.Add(item.Key);
+                        invalidParameters.Add(item.Key);
                     }
                 }
             }
@@ -156,7 +156,7 @@ namespace PRISM
                 throw new Exception("Error in InvalidParameters", ex);
             }
 
-            return lstInvalidParameters;
+            return invalidParameters;
         }
 
         /// <summary>

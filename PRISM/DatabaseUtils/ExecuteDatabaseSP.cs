@@ -149,14 +149,14 @@ namespace PRISM
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="lstResults">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         public int ExecuteSP(
             SqlCommand spCmd,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = DEFAULT_SP_RETRY_COUNT)
@@ -167,7 +167,7 @@ namespace PRISM
             string errorMessage;
             var startTime = DateTime.UtcNow;
 
-            lstResults = new List<List<string>>();
+            results = new List<List<string>>();
 
             if (retryCount < 1)
                 retryCount = 1;
@@ -197,7 +197,7 @@ namespace PRISM
 
                         while (reader.Read())
                         {
-                            var lstCurrentRow = new List<string>();
+                            var currentRow = new List<string>();
 
                             for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                             {
@@ -205,17 +205,17 @@ namespace PRISM
 
                                 if (DBNull.Value.Equals(value))
                                 {
-                                    lstCurrentRow.Add(string.Empty);
+                                    currentRow.Add(string.Empty);
                                 }
                                 else
                                 {
-                                    lstCurrentRow.Add(value.ToString());
+                                    currentRow.Add(value.ToString());
                                 }
                             }
 
-                            lstResults.Add(lstCurrentRow);
+                            results.Add(currentRow);
 
-                            if (maxRowsToReturn > 0 && lstResults.Count >= maxRowsToReturn)
+                            if (maxRowsToReturn > 0 && results.Count >= maxRowsToReturn)
                             {
                                 break;
                             }

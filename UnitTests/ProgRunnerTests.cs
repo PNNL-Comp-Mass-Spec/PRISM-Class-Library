@@ -66,11 +66,16 @@ namespace PRISMTest
             TestGarbageCollectionWork(iterations, gcEvents, dictionaryCount, dictionarySize);
         }
 
-        private void TestGarbageCollectionWork(int iterations, int gcEvents, int dictionaryCount, int dictionarySize)
+        /// <summary>
+        /// This method will create 2.5 million FileInfo objects (if iterations is 2500000) and store those in random locations in various dictionaries
+        /// It will remove half of the dictionaries garbageCollectionEvents times, calling GarbageCollectNow after each removal
+        /// </summary>
+        /// <param name="iterations"></param>
+        /// <param name="garbageCollectionEvents"></param>
+        /// <param name="dictionaryCount"></param>
+        /// <param name="dictionarySize"></param>
+        private void TestGarbageCollectionWork(int iterations, int garbageCollectionEvents, int dictionaryCount, int dictionarySize)
         {
-            // This method will create 2.5 million FileInfo objects (if iterations is 2500000) and store those in random locations in various dictionaries
-            // It will remove half of the dictionaries gcEvents times, calling GarbageCollectNow after each removal
-
             var dictionaries = new List<Dictionary<int, List<FileInfo>>>();
             var rand = new Random();
 
@@ -79,7 +84,7 @@ namespace PRISMTest
 
             var lastGC = DateTime.UtcNow;
 
-            var gcInterval = (int)Math.Floor(iterations / (double)gcEvents);
+            var gcInterval = (int)Math.Floor(iterations / (double)garbageCollectionEvents);
 
             for (var i = 0; i < iterations; i++)
             {
@@ -245,7 +250,7 @@ namespace PRISMTest
             progRunner.StartAndMonitorProgram();
 
             var cachedProcessID = 0;
-            var dtStartTime = DateTime.UtcNow;
+            var startTime = DateTime.UtcNow;
             var abortProcess = false;
 
             while (progRunner.State != ProgRunner.States.NotMonitoring)
@@ -275,7 +280,7 @@ namespace PRISMTest
 
                 if (maxRuntimeSeconds > 0)
                 {
-                    if (DateTime.UtcNow.Subtract(dtStartTime).TotalSeconds > maxRuntimeSeconds)
+                    if (DateTime.UtcNow.Subtract(startTime).TotalSeconds > maxRuntimeSeconds)
                     {
                         Console.WriteLine("Aborting ProcessID {0} since runtime has exceeded {1} seconds", cachedProcessID, maxRuntimeSeconds);
                         abortProcess = true;

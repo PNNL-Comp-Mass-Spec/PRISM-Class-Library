@@ -322,7 +322,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL Server database, return the results as a list of strings
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="lstResults">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -337,7 +337,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </remarks>
         public bool GetQueryResults(
             string sqlQuery,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
@@ -350,14 +350,14 @@ namespace PRISMDatabaseUtils.PostgreSQL
             }
 
             var cmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text, CommandTimeout = timeoutSeconds };
-            return GetQueryResults(cmd, out lstResults, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
+            return GetQueryResults(cmd, out results, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
         }
 
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings
         /// </summary>
         /// <param name="cmd">Query to run</param>
-        /// <param name="lstResults">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -371,21 +371,24 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </remarks>
         public bool GetQueryResults(
             DbCommand cmd,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod")
         {
-            var results = new List<List<string>>();
-            lstResults = results;
+            // Declare a local variable to append the results to
+            // This is required because we cannot use an out parameter in a lambda expression (the Action => block below)
+            var dbResults = new List<List<string>>();
+            results = dbResults;
+
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
                 using (var reader = x.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        var lstCurrentRow = new List<string>();
+                        var currentRow = new List<string>();
 
                         for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                         {
@@ -393,17 +396,17 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                             if (DBNull.Value.Equals(value))
                             {
-                                lstCurrentRow.Add(string.Empty);
+                                currentRow.Add(string.Empty);
                             }
                             else
                             {
-                                lstCurrentRow.Add(value.ToString());
+                                currentRow.Add(value.ToString());
                             }
                         }
 
-                        results.Add(lstCurrentRow);
+                        dbResults.Add(currentRow);
 
-                        if (maxRowsToReturn > 0 && results.Count >= maxRowsToReturn)
+                        if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
                         {
                             break;
                         }
@@ -850,20 +853,22 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="lstResults">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         public int ExecuteSPData(
             DbCommand spCmd,
-            out List<List<string>> lstResults,
+            out List<List<string>> results,
             int retryCount = 3,
             int maxRowsToReturn = 0,
             int retryDelaySeconds = 5)
         {
-            var results = new List<List<string>>();
-            lstResults = results;
+            // Declare a local variable to append the results to
+            // This is required because we cannot use an out parameter in a lambda expression (the Action => block below)
+            var dbResults = new List<List<string>>();
+            results = dbResults;
 
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
@@ -871,7 +876,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 {
                     while (reader.Read())
                     {
-                        var lstCurrentRow = new List<string>();
+                        var currentRow = new List<string>();
 
                         for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                         {
@@ -879,17 +884,17 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                             if (DBNull.Value.Equals(value))
                             {
-                                lstCurrentRow.Add(string.Empty);
+                                currentRow.Add(string.Empty);
                             }
                             else
                             {
-                                lstCurrentRow.Add(value.ToString());
+                                currentRow.Add(value.ToString());
                             }
                         }
 
-                        results.Add(lstCurrentRow);
+                        dbResults.Add(currentRow);
 
-                        if (maxRowsToReturn > 0 && results.Count >= maxRowsToReturn)
+                        if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
                         {
                             break;
                         }

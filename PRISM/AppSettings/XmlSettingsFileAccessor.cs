@@ -18,7 +18,7 @@ namespace PRISM
         /// XML file path
         /// </summary>
         /// <remarks>Call LoadSettings to initialize, even if simply saving settings</remarks>
-        public string XMLFilePath => m_XMLFilePath;
+        public string XMLFilePath => mXMLFilePath;
 
         /// <summary>
         /// Constructor
@@ -27,11 +27,10 @@ namespace PRISM
         public XmlSettingsFileAccessor()
         {
             mCaseSensitive = false;
-            dtSectionNames = new Dictionary<string, string>();
-
+            mSectionNames = new Dictionary<string, string>();
             {
                 mCachedSection.SectionName = string.Empty;
-                mCachedSection.dtKeys = new Dictionary<string, string>();
+                mCachedSection.Keys = new Dictionary<string, string>();
             }
         }
 
@@ -42,21 +41,24 @@ namespace PRISM
         private struct CachedSectionInfo
         {
             public string SectionName;
-            public Dictionary<string, string> dtKeys;
+            public Dictionary<string, string> Keys;
         }
 
-        // XML file reader
-        // Call LoadSettings to initialize, even if simply saving settings
-        private string m_XMLFilePath = string.Empty;
+        private string mXMLFilePath = string.Empty;
 
-        private XMLFileReader m_XMLFileAccessor;
+        /// <summary>
+        /// XML file reader
+        /// </summary>
+        private XMLFileReader mXMLFileAccessor;
 
         private bool mCaseSensitive;
 
-        // When mCaseSensitive = False, dtSectionNames stores mapping between lowercase section name and actual section name stored in file
-        // If section is present more than once in file, only grabs the last occurence of the section
-        // When mCaseSensitive = True, the mappings in dtSectionNames are effectively not used
-        private readonly Dictionary<string, string> dtSectionNames;
+        /// <summary>
+        /// When mCaseSensitive = False, SectionNames stores mapping between lowercase section name and actual section name stored in file
+        /// If section is present more than once in file, only grabs the last occurrence of the section
+        /// When mCaseSensitive = True, the mappings in SectionNames are effectively not used
+        /// </summary>
+        private readonly Dictionary<string, string> mSectionNames;
 
         private CachedSectionInfo mCachedSection;
 
@@ -66,7 +68,7 @@ namespace PRISM
         /// <return>The function returns a boolean that shows if the file was successfully loaded.</return>
         public bool LoadSettings()
         {
-            return LoadSettings(m_XMLFilePath, false);
+            return LoadSettings(mXMLFilePath, false);
         }
 
         /// <summary>
@@ -89,17 +91,17 @@ namespace PRISM
         {
             mCaseSensitive = isCaseSensitive;
 
-            m_XMLFilePath = XmlSettingsFilePath;
+            mXMLFilePath = XmlSettingsFilePath;
 
             // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles
             //       case sensitivity mapping internally
-            m_XMLFileAccessor = new XMLFileReader(m_XMLFilePath, true);
-            if (m_XMLFileAccessor == null)
+            mXMLFileAccessor = new XMLFileReader(mXMLFilePath, true);
+            if (mXMLFileAccessor == null)
             {
                 return false;
             }
 
-            if (m_XMLFileAccessor.Initialized)
+            if (mXMLFileAccessor.Initialized)
             {
                 CacheSectionNames();
                 return true;
@@ -112,24 +114,23 @@ namespace PRISM
         /// Parse an XML settings file
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
         [Obsolete("Use LoadSettings")]
         public bool ManualParseXmlOrIniFile(string filePath)
         {
-            m_XMLFilePath = filePath;
+            mXMLFilePath = filePath;
 
             // Note: Always set isCaseSensitive = True for XMLFileReader's constructor since this class handles
             //       case sensitivity mapping internally
-            m_XMLFileAccessor = new XMLFileReader(string.Empty, true);
+            mXMLFileAccessor = new XMLFileReader(string.Empty, true);
 
-            if (m_XMLFileAccessor == null)
+            if (mXMLFileAccessor == null)
             {
                 return false;
             }
 
-            if (m_XMLFileAccessor.ManualParseXmlOrIniFile(filePath))
+            if (mXMLFileAccessor.ManualParseXmlOrIniFile(filePath))
             {
-                if (m_XMLFileAccessor.Initialized)
+                if (mXMLFileAccessor.Initialized)
                 {
                     CacheSectionNames();
                     return true;
@@ -145,15 +146,15 @@ namespace PRISM
         /// <return>The function returns a boolean that shows if the file was successfully saved.</return>
         public bool SaveSettings()
         {
-            if (m_XMLFileAccessor == null)
+            if (mXMLFileAccessor == null)
             {
                 return false;
             }
 
-            if (m_XMLFileAccessor.Initialized)
+            if (mXMLFileAccessor.Initialized)
             {
-                m_XMLFileAccessor.OutputFilename = m_XMLFilePath;
-                m_XMLFileAccessor.Save();
+                mXMLFileAccessor.OutputFilename = mXMLFilePath;
+                mXMLFileAccessor.Save();
                 return true;
             }
 
@@ -167,7 +168,7 @@ namespace PRISM
         /// <return>The function returns a boolean that shows if the section is present.</return>
         public bool SectionPresent(string sectionName)
         {
-            var sections = m_XMLFileAccessor.AllSections;
+            var sections = mXMLFileAccessor.AllSections;
 
             foreach (var section in sections)
             {
@@ -195,7 +196,7 @@ namespace PRISM
             try
             {
                 // Grab the keys for sectionName
-                keys = m_XMLFileAccessor.AllKeysInSection(sectionNameInFile);
+                keys = mXMLFileAccessor.AllKeysInSection(sectionNameInFile);
             }
             catch
             {
@@ -211,7 +212,7 @@ namespace PRISM
             // Update mCachedSection with the key names for the given section
             {
                 mCachedSection.SectionName = sectionNameInFile;
-                mCachedSection.dtKeys.Clear();
+                mCachedSection.Keys.Clear();
 
                 foreach (var keyName in keys)
                 {
@@ -225,9 +226,9 @@ namespace PRISM
                         keyNameToStore = keyName.ToLower();
                     }
 
-                    if (!mCachedSection.dtKeys.ContainsKey(keyNameToStore))
+                    if (!mCachedSection.Keys.ContainsKey(keyNameToStore))
                     {
-                        mCachedSection.dtKeys.Add(keyNameToStore, keyName);
+                        mCachedSection.Keys.Add(keyNameToStore, keyName);
                     }
                 }
             }
@@ -241,10 +242,9 @@ namespace PRISM
         /// <remarks>This is done so that this class will know the correct capitalization for the section names</remarks>
         private void CacheSectionNames()
         {
+            var sections = mXMLFileAccessor.AllSections;
 
-            var sections = m_XMLFileAccessor.AllSections;
-
-            dtSectionNames.Clear();
+            mSectionNames.Clear();
 
             foreach (var section in sections)
             {
@@ -258,9 +258,9 @@ namespace PRISM
                     sectionNameToStore = section.ToLower();
                 }
 
-                if (!dtSectionNames.ContainsKey(sectionNameToStore))
+                if (!mSectionNames.ContainsKey(sectionNameToStore))
                 {
-                    dtSectionNames.Add(sectionNameToStore, section);
+                    mSectionNames.Add(sectionNameToStore, section);
                 }
             }
         }
@@ -295,9 +295,9 @@ namespace PRISM
             {
                 {
                     var keyNameToFind = SetNameCase(keyName);
-                    if (mCachedSection.dtKeys.ContainsKey(keyNameToFind))
+                    if (mCachedSection.Keys.ContainsKey(keyNameToFind))
                     {
-                        return mCachedSection.dtKeys[keyNameToFind];
+                        return mCachedSection.Keys[keyNameToFind];
                     }
 
                     return string.Empty;
@@ -315,9 +315,9 @@ namespace PRISM
         private string GetCachedSectionName(string sectionName)
         {
             var sectionNameToFind = SetNameCase(sectionName);
-            if (dtSectionNames.ContainsKey(sectionNameToFind))
+            if (mSectionNames.ContainsKey(sectionNameToFind))
             {
-                return dtSectionNames[sectionNameToFind];
+                return mSectionNames[sectionNameToFind];
             }
 
             return string.Empty;
@@ -350,7 +350,7 @@ namespace PRISM
 
             if (mCaseSensitive)
             {
-                result = m_XMLFileAccessor.GetXMLValue(sectionName, keyName);
+                result = mXMLFileAccessor.GetXMLValue(sectionName, keyName);
                 if (result != null)
                     valueFound = true;
             }
@@ -362,7 +362,7 @@ namespace PRISM
                     var keyNameInFile = GetCachedKeyName(sectionName, keyName);
                     if (keyNameInFile.Length > 0)
                     {
-                        result = m_XMLFileAccessor.GetXMLValue(sectionNameInFile, keyNameInFile);
+                        result = mXMLFileAccessor.GetXMLValue(sectionNameInFile, keyNameInFile);
                         if (result != null)
                             valueFound = true;
                     }
@@ -743,7 +743,7 @@ namespace PRISM
         /// <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
         public void SetXMLFilePath(string XmlSettingsFilePath)
         {
-            m_XMLFilePath = XmlSettingsFilePath;
+            mXMLFilePath = XmlSettingsFilePath;
         }
 
         /// <summary>
@@ -757,24 +757,24 @@ namespace PRISM
         {
             if (mCaseSensitive)
             {
-                return m_XMLFileAccessor.SetXMLValue(sectionName, keyName, newValue);
+                return mXMLFileAccessor.SetXMLValue(sectionName, keyName, newValue);
             }
 
             var sectionNameInFile = GetCachedSectionName(sectionName);
             if (sectionNameInFile.Length <= 0)
             {
-                return m_XMLFileAccessor.SetXMLValue(sectionName, keyName, newValue);
+                return mXMLFileAccessor.SetXMLValue(sectionName, keyName, newValue);
             }
 
             var keyNameInFile = GetCachedKeyName(sectionName, keyName);
             if (keyNameInFile.Length > 0)
             {
                 // Section and Key are present; update them
-                return m_XMLFileAccessor.SetXMLValue(sectionNameInFile, keyNameInFile, newValue);
+                return mXMLFileAccessor.SetXMLValue(sectionNameInFile, keyNameInFile, newValue);
             }
 
             // Section is present, but the Key isn't; add the key
-            return m_XMLFileAccessor.SetXMLValue(sectionNameInFile, keyName, newValue);
+            return mXMLFileAccessor.SetXMLValue(sectionNameInFile, keyName, newValue);
 
             // If we get here, either mCaseSensitive = True or the section and key weren't found
         }
@@ -861,17 +861,17 @@ namespace PRISM
         {
             if (mCaseSensitive)
             {
-                return m_XMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
+                return mXMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
             }
 
             var sectionName = GetCachedSectionName(sectionNameOld);
             if (sectionName.Length > 0)
             {
-                return m_XMLFileAccessor.SetXMLSection(sectionName, sectionNameNew);
+                return mXMLFileAccessor.SetXMLSection(sectionName, sectionNameNew);
             }
 
             // If we get here, either mCaseSensitive = True or the section wasn't found using GetCachedSectionName
-            return m_XMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
+            return mXMLFileAccessor.SetXMLSection(sectionNameOld, sectionNameNew);
         }
     }
 }

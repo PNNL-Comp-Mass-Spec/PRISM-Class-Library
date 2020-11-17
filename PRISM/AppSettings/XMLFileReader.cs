@@ -650,11 +650,11 @@ namespace PRISM
                     //     <item key="Setting1" value="ValueA" />
                     //   </section>
 
-                    using (var srInFile = new StreamReader(new FileStream(fileToFind.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                    using (var reader = new StreamReader(new FileStream(fileToFind.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                     {
-                        while (!srInFile.EndOfStream)
+                        while (!reader.EndOfStream)
                         {
-                            var s = srInFile.ReadLine();
+                            var s = reader.ReadLine();
 
                             // Try to manually parse this line
                             ParseLineManual(s, m_XmlDoc);

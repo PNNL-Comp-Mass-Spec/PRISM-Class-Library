@@ -283,7 +283,7 @@ namespace PRISM.AppSettings
                     return boolValue;
                 }
 
-                if (int.TryParse(kvSetting.Value, out var intValue) && intValue > 0)
+                if (int.TryParse(kvSetting.Value, out var parsedValue) && parsedValue > 0)
                 {
                     return true;
                 }

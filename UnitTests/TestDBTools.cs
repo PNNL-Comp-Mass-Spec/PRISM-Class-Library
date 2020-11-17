@@ -464,8 +464,8 @@ namespace PRISMTest
                     {
                         case SqlType.Int:
                         case SqlType.SmallInt:
-                            var intValue = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName, 0);
-                            dataLine.AppendFormat("{0,-15}", intValue);
+                            var integerValue = dbTools.GetColumnValue(resultRow, columnMapping, currentColumnName, 0);
+                            dataLine.AppendFormat("{0,-15}", integerValue);
                             break;
 
                         case SqlType.Date:
@@ -929,13 +929,13 @@ namespace PRISMTest
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
             Console.WriteLine("Connection string: " + connectionString);
 
-            dbTools.GetQueryResults(query, out var lstResults);
+            dbTools.GetQueryResults(query, out var results);
 
             var expectedValues = expectedValueList.Split(',');
 
-            Assert.AreEqual(lstResults.Count, expectedRowCount, "RowCount mismatch");
+            Assert.AreEqual(results.Count, expectedRowCount, "RowCount mismatch");
 
-            var firstRow = lstResults.First();
+            var firstRow = results.First();
             for (var colIndex = 0; colIndex < firstRow.Count; colIndex++)
             {
                 if (colIndex >= expectedValues.Length)
@@ -946,7 +946,7 @@ namespace PRISMTest
                     colIndex + 1, expectedValues[colIndex], firstRow[colIndex]);
             }
 
-            Console.WriteLine("Rows returned: " + lstResults.Count);
+            Console.WriteLine("Rows returned: " + results.Count);
         }
 
         [TestCase("Gigasax", "DMS5",
@@ -993,20 +993,20 @@ namespace PRISMTest
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
 
-            dbTools.GetQueryResults(query, out var lstResults);
+            dbTools.GetQueryResults(query, out var results);
 
             var expectedValues = expectedValueList.Split(',');
 
-            if (lstResults == null || lstResults.Count == 0 && expectedRowCount == 0)
+            if (results == null || results.Count == 0 && expectedRowCount == 0)
             {
                 if (expectedRowCount == 0)
                     Console.WriteLine("No results found; this was expected");
                 return;
             }
 
-            Assert.AreEqual(lstResults.Count, expectedRowCount, "RowCount mismatch");
+            Assert.AreEqual(results.Count, expectedRowCount, "RowCount mismatch");
 
-            var firstRow = lstResults.First();
+            var firstRow = results.First();
             for (var colIndex = 0; colIndex < firstRow.Count; colIndex++)
             {
                 if (colIndex >= expectedValues.Length)
@@ -1017,7 +1017,7 @@ namespace PRISMTest
                     colIndex + 1, expectedValues[colIndex], firstRow[colIndex]);
             }
 
-            Console.WriteLine("Rows returned: " + lstResults.Count);
+            Console.WriteLine("Rows returned: " + results.Count);
         }
 
         /// <summary>

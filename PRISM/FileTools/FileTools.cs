@@ -1266,27 +1266,27 @@ namespace PRISM
                 destDir.Create();
             }
 
-            // Populate dctFileNamesToSkip
-            var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
+            var sortedFileNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
             if (fileNamesToSkip != null)
             {
                 foreach (var fileName in fileNamesToSkip)
                 {
-                    dctFileNamesToSkip.Add(fileName, string.Empty);
+                    sortedFileNames.Add(fileName);
                 }
             }
 
             // Copy all the files of the current directory
             foreach (var childFile in sourceDir.GetFiles())
             {
-                // Look for both the file name and the full path in dctFileNamesToSkip
+                // Look for both the file name and the full path in sortedFileNames
                 // If either matches, do not copy the file
                 bool copyFile;
-                if (dctFileNamesToSkip.ContainsKey(childFile.Name))
+                if (sortedFileNames.Contains(childFile.Name))
                 {
                     copyFile = false;
                 }
-                else if (dctFileNamesToSkip.ContainsKey(childFile.FullName))
+                else if (sortedFileNames.Contains(childFile.FullName))
                 {
                     copyFile = false;
                 }
@@ -1546,14 +1546,13 @@ namespace PRISM
                     targetDirectory.Create();
                 }
 
-                // Populate dctFileNamesToSkip
-                var dctFileNamesToSkip = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+                // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
+                var sortedFileNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
                 if (fileNamesToSkip != null)
                 {
-                    // Copy the values from fileNamesToSkip to dctFileNamesToSkip so that we can perform case-insensitive searching
                     foreach (var item in fileNamesToSkip)
                     {
-                        dctFileNamesToSkip.Add(item, string.Empty);
+                        sortedFileNames.Add(item);
                     }
                 }
 
@@ -1561,14 +1560,14 @@ namespace PRISM
 
                 foreach (var sourceFile in sourceDirectory.GetFiles())
                 {
-                    // Look for both the file name and the full path in dctFileNamesToSkip
+                    // Look for both the file name and the full path in sortedFileNames
                     // If either matches, do not copy the file
                     bool copyFile;
-                    if (dctFileNamesToSkip.ContainsKey(sourceFile.Name))
+                    if (sortedFileNames.Contains(sourceFile.Name))
                     {
                         copyFile = false;
                     }
-                    else if (dctFileNamesToSkip.ContainsKey(sourceFile.FullName))
+                    else if (sortedFileNames.Contains(sourceFile.FullName))
                     {
                         copyFile = false;
                     }
@@ -1785,25 +1784,25 @@ namespace PRISM
 
                         using (var infoFileReader = new StreamReader(new FileStream(filePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                         {
-                            var lstSourceLines = new List<string>();
+                            var sourceLines = new List<string>();
 
                             while (!infoFileReader.EndOfStream)
                             {
-                                lstSourceLines.Add(infoFileReader.ReadLine());
+                                sourceLines.Add(infoFileReader.ReadLine());
                             }
 
-                            if (lstSourceLines.Count >= 3)
+                            if (sourceLines.Count >= 3)
                             {
                                 // The first line contains the source file path
                                 // The second contains the file length, in bytes
                                 // The third contains the file modification time (UTC)
 
-                                if (lstSourceLines[0] == sourceFile.FullName && lstSourceLines[1] == sourceFile.Length.ToString())
+                                if (sourceLines[0] == sourceFile.FullName && sourceLines[1] == sourceFile.Length.ToString())
                                 {
                                     // Name and size are the same
                                     // See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
 
-                                    if (DateTime.TryParse(lstSourceLines[2], out var cachedLastWriteTimeUTC))
+                                    if (DateTime.TryParse(sourceLines[2], out var cachedLastWriteTimeUTC))
                                     {
                                         if (NearlyEqualFileTimes(sourceFileLastWriteTimeUTC, cachedLastWriteTimeUTC))
                                         {
@@ -1871,7 +1870,7 @@ namespace PRISM
 
                     do
                     {
-                        // Read data in 1MB chunks and append to swFilePart
+                        // Read data in 1MB chunks and append to filePartWriter
                         bytesRead = reader.Read(buffer, 0, chunkSizeBytes);
                         filePartWriter.Write(buffer, 0, bytesRead);
                         bytesWritten += bytesRead;
@@ -2531,7 +2530,7 @@ namespace PRISM
                         return true;
                     }
 
-                    // Make sure the readonly bit is not set
+                    // Make sure the ReadOnly bit is not set
                     if (fileToDelete.IsReadOnly)
                     {
                         var attributes = fileToDelete.Attributes;
@@ -2807,19 +2806,19 @@ namespace PRISM
             while (true)
             {
                 // Refresh the lock files list by finding recent lock files with a timestamp less than lockFileTimestamp
-                var lstLockFileMBSource = FindLockFiles(lockDirectorySource, lockFileTimestamp);
-                var lstLockFileMBTarget = FindLockFiles(lockDirectoryTarget, lockFileTimestamp);
+                var lockFileMBSource = FindLockFiles(lockDirectorySource, lockFileTimestamp);
+                var lockFileMBTarget = FindLockFiles(lockDirectoryTarget, lockFileTimestamp);
 
                 var stopWaiting = false;
 
-                if (lstLockFileMBSource.Count <= 1 && lstLockFileMBTarget.Count <= 1)
+                if (lockFileMBSource.Count <= 1 && lockFileMBTarget.Count <= 1)
                 {
                     stopWaiting = true;
                 }
                 else
                 {
-                    mbBacklogSource = lstLockFileMBSource.Sum();
-                    mbBacklogTarget = lstLockFileMBTarget.Sum();
+                    mbBacklogSource = lockFileMBSource.Sum();
+                    mbBacklogTarget = lockFileMBTarget.Sum();
 
                     if (mbBacklogSource + sourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(waitTimeStart, maxWaitTimeSource))
                     {
@@ -2855,7 +2854,7 @@ namespace PRISM
 
                 // Server resources exceed the thresholds
                 // Sleep for 1 to 30 seconds, depending on mbBacklogSource and mbBacklogTarget
-                // We compute sleepTimeMsec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
+                // We compute sleepTimeSec using the assumption that data can be copied to/from the server at a rate of 200 MB/sec
                 // This is faster than reality, but helps minimize waiting too long between checking
 
                 var sleepTimeSec = Math.Max(mbBacklogSource, mbBacklogTarget) / 200.0;
@@ -2963,16 +2962,16 @@ namespace PRISM
             // If decompressedDirectoryPath or decompressedFileName are provided, override the default path/filename appropriately
             if (!string.IsNullOrWhiteSpace(decompressedDirectoryPath) || !string.IsNullOrWhiteSpace(decompressedFileName))
             {
-                // When combining dir with name, we will assure that name only contains a filename and not a path
+                // When combining directoryPath with name, we will assure that name only contains a filename and not a path
                 var fileNameOrPath = string.IsNullOrWhiteSpace(decompressedFileName) ? currentFilePathWithoutGz : decompressedFileName;
 
-                var dir = string.IsNullOrWhiteSpace(decompressedDirectoryPath) ? fileToDecompress.DirectoryName : decompressedDirectoryPath;
-                if (string.IsNullOrWhiteSpace(dir))
+                var directoryPath = string.IsNullOrWhiteSpace(decompressedDirectoryPath) ? fileToDecompress.DirectoryName : decompressedDirectoryPath;
+                if (string.IsNullOrWhiteSpace(directoryPath))
                 {
-                    dir = ".";
+                    directoryPath = ".";
                 }
 
-                decompressedFilePath = Path.Combine(dir, Path.GetFileName(fileNameOrPath));
+                decompressedFilePath = Path.Combine(directoryPath, Path.GetFileName(fileNameOrPath));
             }
             else
             {

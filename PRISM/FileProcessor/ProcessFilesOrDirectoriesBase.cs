@@ -1099,22 +1099,22 @@ namespace PRISM.FileProcessor
                 // Remove entries from mLogDataCache so that the list count is 90% of MAX_LOG_DATA_CACHE_SIZE
 
                 // First construct a list of dates that we can sort to determine the date/time threshold for removal
-                var lstDates = (from entry in mLogDataCache select entry.Value).ToList();
+                var dates = (from entry in mLogDataCache select entry.Value).ToList();
 
                 // Sort by date
-                lstDates.Sort();
+                dates.Sort();
 
                 var thresholdIndex = Convert.ToInt32(Math.Floor(mLogDataCache.Count - MAX_LOG_DATA_CACHE_SIZE * 0.9));
                 if (thresholdIndex < 0)
                     thresholdIndex = 0;
 
-                var threshold = lstDates[thresholdIndex];
+                var threshold = dates[thresholdIndex];
 
                 // Construct a list of keys to be removed
-                var lstKeys = (from entry in mLogDataCache where entry.Value <= threshold select entry.Key).ToList();
+                var keys = (from entry in mLogDataCache where entry.Value <= threshold select entry.Key).ToList();
 
                 // Remove each of the keys
-                foreach (var key in lstKeys)
+                foreach (var key in keys)
                 {
                     mLogDataCache.Remove(key);
                 }
@@ -1186,11 +1186,11 @@ namespace PRISM.FileProcessor
 
             try
             {
-                using (var srLogFile = new StreamReader(new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                using (var logFileReader = new StreamReader(new FileStream(logFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
-                    while (!srLogFile.EndOfStream)
+                    while (!logFileReader.EndOfStream)
                     {
-                        var lineIn = srLogFile.ReadLine();
+                        var lineIn = logFileReader.ReadLine();
                         if (string.IsNullOrWhiteSpace(lineIn))
                             continue;
 

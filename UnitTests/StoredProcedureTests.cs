@@ -54,12 +54,12 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults);
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var results);
 
             Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
-            foreach (var result in lstResults)
+            foreach (var result in results)
             {
                 Assert.GreaterOrEqual(result.Count, 5, "Result row has fewer than 5 columns");
 
@@ -82,7 +82,7 @@ namespace PRISMTest
                     break;
             }
 
-            Console.WriteLine("Rows returned: " + lstResults.Count);
+            Console.WriteLine("Rows returned: " + results.Count);
         }
 
         [TestCase("Pogo", "MTS_Master")]
@@ -118,12 +118,12 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults);
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var results);
 
             Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
-            foreach (var result in lstResults)
+            foreach (var result in results)
             {
                 Assert.GreaterOrEqual(result.Count, 9, "Result row has fewer than 9 columns");
 
@@ -160,7 +160,7 @@ namespace PRISMTest
                 }
             }
 
-            Console.WriteLine("Rows returned: " + lstResults.Count);
+            Console.WriteLine("Rows returned: " + results.Count);
         }
 
         /// <summary>
@@ -183,11 +183,11 @@ namespace PRISMTest
 
             Console.WriteLine("Querying function mc.GetManagerParameters in " + database + " as user " + user);
 
-            var success = dbTools.GetQueryResults(spCmd, out var lstResults, 1);
+            var success = dbTools.GetQueryResults(spCmd, out var results, 1);
 
             Assert.IsTrue(success, "GetQueryResults return false");
 
-            ExamineManagerParams(lstResults);
+            ExamineManagerParams(results);
         }
 
         /// <summary>
@@ -214,11 +214,11 @@ namespace PRISMTest
 
             Console.WriteLine("Querying function mc.GetManagerParameters in " + database + " as user " + user);
 
-            var success = dbTools.GetQueryResults(spCmd, out var lstResults, 1);
+            var success = dbTools.GetQueryResults(spCmd, out var results, 1);
 
             Assert.IsTrue(success, "GetQueryResults return false");
 
-            ExamineManagerParams(lstResults);
+            ExamineManagerParams(results);
         }
 
         [TestCase("ProteinSeqs", "Manager_Control")]
@@ -260,17 +260,17 @@ namespace PRISMTest
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            var returnCode = dbTools.ExecuteSPData(spCmd, out var lstResults, 0);
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var results, 0);
 
             Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
-            ExamineManagerParams(lstResults);
+            ExamineManagerParams(results);
         }
 
-        private void ExamineManagerParams(IReadOnlyCollection<List<string>> lstResults)
+        private void ExamineManagerParams(IReadOnlyCollection<List<string>> results)
         {
             var rowsDisplayed = 0;
-            foreach (var result in lstResults)
+            foreach (var result in results)
             {
                 Assert.GreaterOrEqual(result.Count, 12, "Result row has fewer than 12 columns");
 
@@ -310,7 +310,7 @@ namespace PRISMTest
                     break;
             }
 
-            Console.WriteLine("Rows returned: " + lstResults.Count);
+            Console.WriteLine("Rows returned: " + results.Count);
         }
 
         [TestCase("ProteinSeqs", "Manager_Control")]
@@ -478,9 +478,9 @@ namespace PRISMTest
 
             if (!skipProcedureCall)
             {
-                dbTools.ExecuteSPData(spCmd, out var lstResults);
+                dbTools.ExecuteSPData(spCmd, out var results);
                 var rowsDisplayed = 0;
-                foreach (var result in lstResults)
+                foreach (var result in results)
                 {
                     for (var colIndex = 0; colIndex < result.Count; colIndex++)
                     {

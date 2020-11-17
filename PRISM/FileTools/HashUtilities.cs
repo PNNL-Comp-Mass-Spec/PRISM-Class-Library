@@ -374,15 +374,15 @@ namespace PRISM
             string hashValue,
             out string warningMessage)
         {
-            var fiDataFile = new FileInfo(dataFilePath);
+            var dataFile = new FileInfo(dataFilePath);
 
-            if (!fiDataFile.Exists)
+            if (!dataFile.Exists)
             {
-                warningMessage = "Cannot create .hashcheck file; source file not found: " + fiDataFile.FullName;
+                warningMessage = "Cannot create .hashcheck file; source file not found: " + dataFile.FullName;
                 return string.Empty;
             }
 
-            var hashCheckFilePath = fiDataFile.FullName + HASHCHECK_FILE_SUFFIX;
+            var hashCheckFilePath = dataFile.FullName + HASHCHECK_FILE_SUFFIX;
             if (string.IsNullOrWhiteSpace(hashValue))
                 hashValue = string.Empty;
 
@@ -418,8 +418,8 @@ namespace PRISM
                 using (var writer = new StreamWriter(new FileStream(hashCheckFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
                     writer.WriteLine("# Hashcheck file created " + DateTime.Now.ToString(DATE_TIME_FORMAT));
-                    writer.WriteLine("size=" + fiDataFile.Length);
-                    writer.WriteLine("modification_date_utc=" + fiDataFile.LastWriteTimeUtc.ToString(DATE_TIME_FORMAT));
+                    writer.WriteLine("size=" + dataFile.Length);
+                    writer.WriteLine("modification_date_utc=" + dataFile.LastWriteTimeUtc.ToString(DATE_TIME_FORMAT));
                     writer.WriteLine("hash=" + hashValue);
                     writer.WriteLine("hashtype=" + hashTypeDescription);
                 }
