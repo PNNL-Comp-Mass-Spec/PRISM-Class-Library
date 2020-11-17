@@ -53,7 +53,6 @@ namespace PRISMTest
                     Assert.Ignore("Unknown OS Platform");
                     break;
             }
-
         }
 
         [Test]

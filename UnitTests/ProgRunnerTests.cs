@@ -171,7 +171,6 @@ namespace PRISMTest
 
             Console.WriteLine("{0} keys removed", keysRemoved);
             Console.WriteLine("{0} values removed", valuesRemoved);
-
         }
 
         /// <summary>

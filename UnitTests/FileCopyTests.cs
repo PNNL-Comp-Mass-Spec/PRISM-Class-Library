@@ -129,7 +129,6 @@ namespace PRISMTest
 
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
 
-
         }
 
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
@@ -316,7 +315,6 @@ namespace PRISMTest
             Console.WriteLine("Target drive has {0} free space to copy {1} file {2}; {3} free",
                 sufficientOrNot, FileTools.BytesToHumanReadable(minimumFreeSpaceMB * 1024 * 1024),
                 targetFilePath, FileTools.BytesToHumanReadable(currentDiskFreeSpaceBytes));
-
         }
 #endif
     }

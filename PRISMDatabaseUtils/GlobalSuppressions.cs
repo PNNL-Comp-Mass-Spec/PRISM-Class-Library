@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Performance", "RCS1197:Optimize StringBuilder.Append/AppendLine call.", Justification = "Allowed for readability", Scope = "module")]
 [assembly: SuppressMessage("Readability", "RCS1123:Add parentheses when necessary.", Justification = "Not required", Scope = "module")]
 [assembly: SuppressMessage("General", "RCS1118:Mark local variable as const.", Justification = "Acceptable design pattern", Scope = "module")]
-
 [assembly: SuppressMessage("Design", "RCS1224:Make method an extension method.", Justification = "Not necessary", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnIndex(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Int32},System.String)~System.Int32")]
 [assembly: SuppressMessage("Design", "RCS1224:Make method an extension method.", Justification = "Not necessary", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetColumnIndex(System.Collections.Generic.IReadOnlyDictionary{System.String,System.Int32},System.String,System.Boolean,System.Boolean)~System.Int32")]
 [assembly: SuppressMessage("Redundancy", "RCS1175:Unused this parameter.", Justification = "Included so the method can resolve as an extension method", Scope = "member", Target = "~M:PRISMDatabaseUtils.DatabaseUtilsExtensions.GetLong(PRISMDatabaseUtils.IDBTools,System.Object)~System.Int64")]
