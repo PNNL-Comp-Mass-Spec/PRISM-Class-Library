@@ -171,34 +171,12 @@ namespace PRISM
         /// <summary>
         /// Gets the product version associated with this application.
         /// </summary>
-        public string ExecutableVersion
-        {
-            get
-            {
-                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
-                if (m_programVersion == null)
-                {
-                    m_programVersion = FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
-                }
-                return m_programVersion;
-            }
-        }
+        public string ExecutableVersion => m_programVersion ?? (m_programVersion = FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString());
 
         /// <summary>
         /// Gets the name of the executable file that started the application.
         /// </summary>
-        public string ExecutableName
-        {
-            get
-            {
-                // ReSharper disable once ConvertIfStatementToNullCoalescingExpression
-                if (m_programName == null)
-                {
-                    m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
-                }
-                return m_programName;
-            }
-        }
+        public string ExecutableName => m_programName ?? (m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location));
 
         /// <summary>
         /// The base name of the log file, e.g. UpdateManager or Logs\UpdateManager
@@ -416,8 +394,6 @@ namespace PRISM
     [Obsolete("Use Logging.SQLServerDatabaseLogger or Logging.ODBCDatabaseLogger")]
     public class clsDBLogger : clsFileLogger
     {
-        // connection string
-        private string m_connection_str;
 
         /// <summary>
         /// List of database errors
@@ -443,7 +419,7 @@ namespace PRISM
         /// <remarks>Only logs to a local file if a file name is defined using LogFilePath</remarks>
         public clsDBLogger(string connectionStr)
         {
-            m_connection_str = connectionStr;
+            ConnectionString = connectionStr;
         }
 
         /// <summary>
@@ -453,7 +429,7 @@ namespace PRISM
         /// <param name="filePath">The name of the file to use for the log.</param>
         public clsDBLogger(string connectionStr, string filePath) : base(filePath)
         {
-            m_connection_str = connectionStr;
+            ConnectionString = connectionStr;
         }
 
         /// <summary>
@@ -465,18 +441,14 @@ namespace PRISM
         /// <remarks>The module name identifies the logging process; if not defined, will use MachineName:UserName</remarks>
         public clsDBLogger(string modName, string connectionStr, string filePath) : base(filePath)
         {
-            m_connection_str = connectionStr;
+            ConnectionString = connectionStr;
             m_moduleName = modName;
         }
 
         /// <summary>
         /// The connection string used to access the database.
         /// </summary>
-        public string ConnectionString
-        {
-            get => m_connection_str;
-            set => m_connection_str = value;
-        }
+        public string ConnectionString { get; set; }
 
         /// <summary>
         /// List of any database errors that occurred while posting the log entry to the database
@@ -600,7 +572,7 @@ namespace PRISM
                 m_error_list.Clear();
 
                 // Create the database connection
-                var cnStr = m_connection_str;
+                var cnStr = ConnectionString;
                 using (var dbCn = new SqlConnection(cnStr))
                 {
                     dbCn.InfoMessage += OnInfoMessage;
