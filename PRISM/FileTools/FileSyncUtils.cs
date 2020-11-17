@@ -451,7 +451,7 @@ namespace PRISM
                         // Compute the hash of the file
                         if (localHashInfo.HashType == HashUtilities.HashTypeConstants.Undefined)
                         {
-                            errorMessage = "Hashtype is undefined; cannot compute the file hash to compare to the .hashcheck file";
+                            errorMessage = "Hash type is undefined; cannot compute the file hash to compare to the .hashcheck file";
                             ConsoleMsgUtils.ShowWarning(errorMessage);
                             return false;
                         }

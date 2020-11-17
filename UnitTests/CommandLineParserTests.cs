@@ -1445,7 +1445,7 @@ namespace PRISMTest
         public void TestFileInfoPropertyWithParameterFile()
         {
             var remoteParamFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\ParamFileTests\ExampleParamFile.conf");
-            Assert.IsNotNull(remoteParamFile.DirectoryName, "Could not determine the parenter directory of the remote parameter file");
+            Assert.IsNotNull(remoteParamFile.DirectoryName, "Could not determine the parent directory of the remote parameter file");
 
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { "-ParamFile:" + remoteParamFile.FullName }, showHelpOnError, outputErrors);
