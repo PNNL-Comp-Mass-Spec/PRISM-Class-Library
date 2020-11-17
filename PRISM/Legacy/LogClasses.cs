@@ -340,35 +340,26 @@ namespace PRISM
         /// <summary>
         /// Converts enumerated error type to string for logging output.
         /// </summary>
-        /// <param name="MyErrType">The ILogger error type.</param>
-        protected string TypeToString(logMsgType MyErrType)
+        /// <param name="errorType">The ILogger error type.</param>
+        protected string TypeToString(logMsgType errorType)
         {
-            string functionReturnValue;
-            switch (MyErrType)
+            switch (errorType)
             {
                 case logMsgType.logNormal:
-                    functionReturnValue = "Normal";
-                    break;
+                    return "Normal";
                 case logMsgType.logError:
-                    functionReturnValue = "Error";
-                    break;
+                    return "Error";
                 case logMsgType.logWarning:
-                    functionReturnValue = "Warning";
-                    break;
+                    return "Warning";
                 case logMsgType.logDebug:
-                    functionReturnValue = "Debug";
-                    break;
+                    return "Debug";
                 case logMsgType.logNA:
-                    functionReturnValue = "na";
-                    break;
+                    return "na";
                 case logMsgType.logHealth:
-                    functionReturnValue = "Health";
-                    break;
+                    return "Health";
                 default:
-                    functionReturnValue = "??";
-                    break;
+                    return "??";
             }
-            return functionReturnValue;
         }
 
         private void UpdateCurrentLogFilePath()
