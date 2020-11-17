@@ -63,7 +63,6 @@ namespace PRISM
             /// <summary>
             /// Return a processed item one at a time, as they are requested and become available, until done.
             /// </summary>
-            /// <returns></returns>
             public IEnumerable<TResult> ConsumeAll()
             {
                 foreach (var item in buffer.GetConsumingEnumerable(cancelToken))

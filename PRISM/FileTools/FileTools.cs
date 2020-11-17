@@ -144,13 +144,11 @@ namespace PRISM
         /// <summary>
         /// Used by CopyFileWithResume and CopyDirectoryWithResume when copying a file byte-by-byte and supporting resuming the copy if interrupted
         /// </summary>
-        /// <remarks></remarks>
         public const int DEFAULT_CHUNK_SIZE_MB = 1;
 
         /// <summary>
         /// Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
         /// </summary>
-        /// <remarks></remarks>
         public const int DEFAULT_FLUSH_THRESHOLD_MB = 25;
 
         #endregion
@@ -266,7 +264,6 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         public FileTools() : this("Unknown-Manager", 1)
         {
         }
@@ -778,7 +775,6 @@ namespace PRISM
         /// <param name="targetFilePath"></param>
         /// <param name="managerName"></param>
         /// <returns>Full path to the lock file; empty string if an error or if lockDirectory is null</returns>
-        /// <remarks></remarks>
         public string CreateLockFile(DirectoryInfo lockDirectory, long lockFileTimestamp, FileInfo sourceFile, string targetFilePath, string managerName)
         {
             if (lockDirectory == null)
@@ -831,7 +827,6 @@ namespace PRISM
         /// </summary>
         /// <param name="directoryPath"></param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks></remarks>
         public bool DeleteDirectory(string directoryPath)
         {
             return DeleteDirectory(directoryPath, ignoreErrors: false);
@@ -843,7 +838,6 @@ namespace PRISM
         /// <param name="directoryPath"></param>
         /// <param name="ignoreErrors"></param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks></remarks>
         public bool DeleteDirectory(string directoryPath, bool ignoreErrors)
         {
             var targetDirectory = new DirectoryInfo(directoryPath);
@@ -1015,8 +1009,6 @@ namespace PRISM
         /// </summary>
         /// <param name="lockDirectory"></param>
         /// <param name="lockFileTimestamp"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         private List<int> FindLockFiles(DirectoryInfo lockDirectory, long lockFileTimestamp)
         {
             var lockFiles = new List<int>();
@@ -1063,8 +1055,6 @@ namespace PRISM
         /// <param name="lockFileTimestamp"></param>
         /// <param name="sourceFile"></param>
         /// <param name="managerName"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         private string GenerateLockFileName(long lockFileTimestamp, FileInfo sourceFile, string managerName)
         {
             if (string.IsNullOrWhiteSpace(managerName))
@@ -1097,7 +1087,6 @@ namespace PRISM
         /// <summary>
         /// Get the time stamp to be used when naming a lock file
         /// </summary>
-        /// <returns></returns>
         public long GetLockFileTimeStamp()
         {
             return (long)Math.Round(DateTime.UtcNow.Subtract(new DateTime(2010, 1, 1)).TotalMilliseconds, 0);
@@ -1107,7 +1096,6 @@ namespace PRISM
         /// Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
         /// </summary>
         /// <param name="serverSharePath"></param>
-        /// <returns></returns>
         /// <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
         public string GetServerShareBase(string serverSharePath)
         {
@@ -1355,7 +1343,6 @@ namespace PRISM
         /// <param name="sourceFile">Source FileInfo</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="readOnly">True to force the ReadOnly bit on, False to force it off</param>
-        /// <remarks></remarks>
         private void UpdateReadonlyAttribute(FileSystemInfo sourceFile, string targetFilePath, bool readOnly)
         {
             // Get the file attributes from the source file
@@ -1943,7 +1930,6 @@ namespace PRISM
         /// <param name="time1">First file time</param>
         /// <param name="time2">Second file time</param>
         /// <returns>True if the times agree within 2 seconds</returns>
-        /// <remarks></remarks>
         public static bool NearlyEqualFileTimes(DateTime time1, DateTime time2)
         {
             if (Math.Abs(time1.Subtract(time2).TotalSeconds) <= 2.05)
@@ -2067,7 +2053,6 @@ namespace PRISM
         /// <param name="sourceDirectoryPath"></param>
         /// <param name="targetDirectoryPath"></param>
         /// <param name="overwriteFiles"></param>
-        /// <returns></returns>
         public bool MoveDirectory(string sourceDirectoryPath, string targetDirectoryPath, bool overwriteFiles)
         {
             return MoveDirectory(sourceDirectoryPath, targetDirectoryPath, overwriteFiles, ManagerName);
@@ -2080,7 +2065,6 @@ namespace PRISM
         /// <param name="targetDirectoryPath"></param>
         /// <param name="overwriteFiles"></param>
         /// <param name="managerName"></param>
-        /// <returns></returns>
         public bool MoveDirectory(string sourceDirectoryPath, string targetDirectoryPath, bool overwriteFiles, string managerName)
         {
             bool success;
@@ -2138,7 +2122,6 @@ namespace PRISM
         /// </summary>
         /// <param name="targetFilePath">Full path to the file to backup</param>
         /// <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
-        /// <remarks></remarks>
         public static bool BackupFileBeforeCopy(string targetFilePath)
         {
             return BackupFileBeforeCopy(targetFilePath, DEFAULT_VERSION_COUNT_TO_KEEP);
@@ -2152,7 +2135,6 @@ namespace PRISM
         /// <param name="targetFilePath">Full path to the file to backup</param>
         /// <param name="versionCountToKeep">Maximum backup copies of the file to keep</param>
         /// <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
-        /// <remarks></remarks>
         public static bool BackupFileBeforeCopy(string targetFilePath, int versionCountToKeep)
         {
             var targetFile = new FileInfo(targetFilePath);
@@ -2215,7 +2197,6 @@ namespace PRISM
         /// For example, 165342 will return 161.5 KB
         /// </summary>
         /// <param name="bytes"></param>
-        /// <returns></returns>
         public static string BytesToHumanReadable(long bytes)
         {
             if (bytes < 2048)
@@ -2508,8 +2489,6 @@ namespace PRISM
         /// </summary>
         /// <param name="fileToDelete">File to delete</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public bool DeleteFileWithRetry(FileInfo fileToDelete, out string errorMessage)
         {
             return DeleteFileWithRetry(fileToDelete, 3, out errorMessage);
@@ -2521,8 +2500,6 @@ namespace PRISM
         /// <param name="fileToDelete">File to delete</param>
         /// <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public bool DeleteFileWithRetry(FileInfo fileToDelete, int retryCount, out string errorMessage)
         {
             var fileDeleted = false;
@@ -2605,8 +2582,6 @@ namespace PRISM
         /// Returns true if the file is _.swp or starts with a . and ends with .swp
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static bool IsVimSwapFile(string filePath)
         {
             var fileName = Path.GetFileName(filePath);
@@ -2662,7 +2637,6 @@ namespace PRISM
         /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
-        /// <remarks></remarks>
         public static bool ValidateFreeDiskSpace(string outputFilePath, double minimumFreeSpaceMB, long currentDiskFreeSpaceBytes, out string errorMessage)
         {
             double outputFileExpectedSizeMB = 0;
@@ -3080,7 +3054,6 @@ namespace PRISM
         /// <param name="fileToCompress"></param>
         /// <param name="compressedDirectoryPath"></param>
         /// <param name="compressedFileName"></param>
-        /// <returns></returns>
         private static string ConstructCompressedGZipFilePath(FileInfo fileToCompress, string compressedDirectoryPath, string compressedFileName)
         {
             if (string.IsNullOrWhiteSpace(compressedDirectoryPath) && string.IsNullOrWhiteSpace(compressedFileName))

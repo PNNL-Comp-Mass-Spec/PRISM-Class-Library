@@ -174,7 +174,6 @@ namespace PRISM
         /// </summary>
         /// <param name="versionFilePath"></param>
         /// <param name="osName">Operating system name (empty by default); if non-blank, the version returned is guaranteed to contain this text</param>
-        /// <returns></returns>
         public string GetFirstLineVersion(string versionFilePath, string osName = "")
         {
             var versionFile = new FileInfo(versionFilePath);
@@ -238,7 +237,6 @@ namespace PRISM
         /// Parse version information from an os-release file
         /// </summary>
         /// <param name="osReleaseFilePath"></param>
-        /// <returns></returns>
         public string GetOSReleaseVersion(string osReleaseFilePath)
         {
             var versionFile = new FileInfo(osReleaseFilePath);
@@ -301,7 +299,6 @@ namespace PRISM
         /// Parse version information from an Ubuntu lsb-release file
         /// </summary>
         /// <param name="lsbReleaseFilePath"></param>
-        /// <returns></returns>
         public string GetUbuntuVersion(string lsbReleaseFilePath)
         {
             var versionFile = new FileInfo(lsbReleaseFilePath);
@@ -363,7 +360,6 @@ namespace PRISM
         /// For old windows kernel
         /// </summary>
         /// <param name="osInfo"></param>
-        /// <returns></returns>
         private string GetWin32Version(OperatingSystem osInfo)
         {
             //Code to determine specific version of Windows 95,
@@ -391,7 +387,6 @@ namespace PRISM
         /// For NT kernel
         /// </summary>
         /// <param name="osInfo"></param>
-        /// <returns></returns>
         private string GetWinNTVersion(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows NT 3.51,
@@ -443,7 +438,6 @@ namespace PRISM
         /// where the contents are expected to be in the form KEY=Value
         /// </summary>
         /// <param name="reader"></param>
-        /// <returns></returns>
         private Dictionary<string, string> ReadReleaseFile(StreamReader reader)
         {
             var contents = new List<string>();
@@ -482,7 +476,6 @@ namespace PRISM
         /// Remove leading and trailing double quotes
         /// </summary>
         /// <param name="dataLine"></param>
-        /// <returns></returns>
         private string StripQuotes(string dataLine)
         {
             if (string.IsNullOrWhiteSpace(dataLine))

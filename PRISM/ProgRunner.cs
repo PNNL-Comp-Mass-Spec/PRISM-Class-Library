@@ -144,7 +144,6 @@ namespace PRISM
         /// Console output event delegate
         /// </summary>
         /// <param name="message"></param>
-        /// <remarks></remarks>
         public delegate void ConsoleOutputEventEventHandler(string message);
 
         /// <summary>
@@ -156,7 +155,6 @@ namespace PRISM
         /// Console error event delegate
         /// </summary>
         /// <param name="message"></param>
-        /// <remarks></remarks>
         public delegate void ConsoleErrorEventEventHandler(string message);
 
         #endregion
@@ -370,7 +368,6 @@ namespace PRISM
         /// <summary>
         /// Clears any console output text that is currently cached
         /// </summary>
-        /// <remarks></remarks>
         public void ClearCachedConsoleOutput()
         {
             if (m_CachedConsoleOutput == null)
@@ -386,7 +383,6 @@ namespace PRISM
         /// <summary>
         /// Clears any console error text that is currently cached
         /// </summary>
-        /// <remarks></remarks>
         public void ClearCachedConsoleError()
         {
             if (m_CachedConsoleError == null)
@@ -514,7 +510,6 @@ namespace PRISM
         /// <summary>
         /// Returns the full path to the console output file that will be created if WriteConsoleOutputToFile is true
         /// </summary>
-        /// <returns></returns>
         /// <remarks>Before calling this function, define WorkDir (working directory) and Program (full path to the .exe to run)</remarks>
         public string GetConsoleOutputFilePath()
         {
@@ -891,7 +886,6 @@ namespace PRISM
         /// <summary>
         /// Return True if the program is starting or running
         /// </summary>
-        /// <returns></returns>
         protected bool StartingOrMonitoring()
         {
             return State == States.Initializing || State == States.StartingProcess || State == States.Monitoring;

@@ -39,7 +39,6 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         public clsFileTools() : base("Unknown-Manager", 1)
         {
         }

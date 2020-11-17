@@ -16,7 +16,6 @@ namespace PRISM
         /// Convert a path to be Linux-compatible (backslash to forward slash
         /// </summary>
         /// <param name="pathSpec"></param>
-        /// <returns></returns>
         public static string AssureLinuxPath(string pathSpec)
         {
             return pathSpec.Replace('\\', '/');
@@ -26,7 +25,6 @@ namespace PRISM
         /// Convert a path to be Windows-compatible (forward slash to backslash
         /// </summary>
         /// <param name="pathSpec"></param>
-        /// <returns></returns>
         public static string AssureWindowsPath(string pathSpec)
         {
             return pathSpec.Replace('/', '\\');
@@ -37,7 +35,6 @@ namespace PRISM
         /// </summary>
         /// <param name="path1"></param>
         /// <param name="path2"></param>
-        /// <returns></returns>
         // ReSharper disable once UnusedMember.Global
         public static string CombinePathsLocalSepChar(string path1, string path2)
         {
@@ -49,7 +46,6 @@ namespace PRISM
         /// </summary>
         /// <param name="path1"></param>
         /// <param name="path2"></param>
-        /// <returns></returns>
         public static string CombineLinuxPaths(string path1, string path2)
         {
             return CombinePaths(path1, path2, '/');
@@ -60,7 +56,6 @@ namespace PRISM
         /// </summary>
         /// <param name="path1"></param>
         /// <param name="path2"></param>
-        /// <returns></returns>
         public static string CombineWindowsPaths(string path1, string path2)
         {
             return CombinePaths(path1, path2, '\\');
@@ -72,7 +67,6 @@ namespace PRISM
         /// <param name="path1"></param>
         /// <param name="path2"></param>
         /// <param name="directorySepChar"></param>
-        /// <returns></returns>
         public static string CombinePaths(string path1, string path2, char directorySepChar)
         {
             if (path1 == null || path2 == null)
@@ -193,7 +187,6 @@ namespace PRISM
         /// Replace * and ? characters in fileOrDirectoryPath with underscores
         /// </summary>
         /// <param name="fileOrDirectoryPath"></param>
-        /// <returns></returns>
         public static string GetCleanPath(string fileOrDirectoryPath)
         {
             return fileOrDirectoryPath.Replace("*", "_").Replace("?", "_");
@@ -284,7 +277,6 @@ namespace PRISM
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns>filePath as-is if no spaces, otherwise filePath surrounded by double quotes </returns>
-        /// <remarks></remarks>
         public static string PossiblyQuotePath(string filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -313,7 +305,6 @@ namespace PRISM
         /// </summary>
         /// <param name="existingFilePath"></param>
         /// <param name="newFileName"></param>
-        /// <returns></returns>
         public static string ReplaceFilenameInPath(string existingFilePath, string newFileName)
         {
             if (string.IsNullOrWhiteSpace(existingFilePath))

@@ -122,7 +122,6 @@ namespace PRISM
             /// <summary>
             /// ToString overload (show the error message)
             /// </summary>
-            /// <returns></returns>
             public override string ToString()
             {
                 return Message;
@@ -1079,7 +1078,6 @@ namespace PRISM
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <param name="targetType"></param>
-        /// <returns></returns>
         private object ConvertToType(object valueToConvert, Type targetType)
         {
             // Properly parse enums
@@ -1262,7 +1260,6 @@ namespace PRISM
         /// </summary>
         /// <param name="validArgs">Dictionary of valid arguments read from the template class; includes mDefaultHelpArgs, mDefaultParamFileArgs, and mDefaultCreateExampleParamFileArgs</param>
         /// <param name="suppliedArgs">Dictionary of user-supplied arguments; keys are argument names and values are the argument value (or values)</param>
-        /// <returns></returns>
         private bool HasUnknownArguments(Dictionary<string, ArgInfo> validArgs, Dictionary<string, List<string>> suppliedArgs)
         {
             var knownArgNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -1463,7 +1460,6 @@ namespace PRISM
         /// Field width for the left column (key names)
         /// If HideLongParamKeyNamesAtConsole is true, key names longer than this width - 2 will be hidden
         /// </param>
-        /// <returns></returns>
         private Dictionary<string, string> CreateHelpContents(int paramKeysWidth)
         {
             // This dictionary tracks the key name(s) and help text for each parameter
@@ -2229,7 +2225,6 @@ namespace PRISM
         /// <summary>
         /// ToString overload (show the first supported argument name)
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return ParamKeys[0];

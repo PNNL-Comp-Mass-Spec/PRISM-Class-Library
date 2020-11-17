@@ -37,7 +37,6 @@ namespace PRISMWin
         /// <param name="isError">Output: true if an error</param>
         /// <param name="valueIfError">Value to return if not an integer</param>
         /// <param name="informOnError">When true, show a MessageBox if an error</param>
-        /// <returns></returns>
         public static int ParseTextBoxValueInt(
             System.Windows.Forms.TextBox thisTextBox,
             string messageIfError,
@@ -72,7 +71,6 @@ namespace PRISMWin
         /// <param name="isError">Output: true if an error</param>
         /// <param name="valueIfError">Value to return if not a float</param>
         /// <param name="informOnError">When true, show a MessageBox if an error</param>
-        /// <returns></returns>
         public static float ParseTextBoxValueFloat(
             System.Windows.Forms.TextBox thisTextBox,
             string messageIfError,
@@ -107,7 +105,6 @@ namespace PRISMWin
         /// <param name="isError">Output: true if an error</param>
         /// <param name="valueIfError">Value to return if not a double</param>
         /// <param name="informOnError">When true, show a MessageBox if an error</param>
-        /// <returns></returns>
         public static double ParseTextBoxValueDbl(
             System.Windows.Forms.TextBox thisTextBox,
             string messageIfError,

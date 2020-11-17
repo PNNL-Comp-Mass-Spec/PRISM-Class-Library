@@ -133,7 +133,6 @@ namespace PRISM.AppSettings
         /// <param name="localSettings">Manager settings from the AppName.exe.config file or from Properties.Settings.Default</param>
         /// <param name="loadSettingsFromDB">When true, also load settings from the database</param>
         /// <returns>True if successful; False on error</returns>
-        /// <remarks></remarks>
         public bool LoadSettings(Dictionary<string, string> localSettings, bool loadSettingsFromDB)
         {
             ErrMsg = string.Empty;
@@ -654,7 +653,6 @@ namespace PRISM.AppSettings
         /// Show a message at the console, preceded with a timestamp
         /// </summary>
         /// <param name="message"></param>
-        /// <remarks></remarks>
         protected static void ShowTraceMessage(string message)
         {
             BaseLogger.ShowTraceMessage(message, false);
@@ -666,7 +664,6 @@ namespace PRISM.AppSettings
         /// <param name="mgrSettings">Manager settings</param>
         /// <param name="managerOrGroupName">Manager name or manager group name</param>
         /// <param name="skipExistingParameters">When true, skip existing parameters</param>
-        /// <returns></returns>
         private bool StoreParameters(
             IReadOnlyDictionary<string, string> mgrSettings,
             string managerOrGroupName,

@@ -38,7 +38,6 @@ namespace PRISM
         /// Constructor: Initializes a new instance of the DirectoryScanner class.
         /// </summary>
         /// <param name="dirs">A list of directory paths to scan</param>
-        /// <remarks></remarks>
         public DirectoryScanner(List<string> dirs)
         {
             mSearchDirs = dirs;

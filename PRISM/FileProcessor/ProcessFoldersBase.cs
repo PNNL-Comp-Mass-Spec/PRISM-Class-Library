@@ -129,7 +129,6 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="inputFolderPath"></param>
         /// <param name="recurseFoldersMaxLevels"></param>
-        /// <returns></returns>
         public bool ProcessAndRecurseFolders(string inputFolderPath, int recurseFoldersMaxLevels)
         {
             return ProcessAndRecurseFolders(inputFolderPath, string.Empty, string.Empty, recurseFoldersMaxLevels);
@@ -142,7 +141,6 @@ namespace PRISM.FileProcessor
         /// <param name="outputFolderAlternatePath">Alternate directory directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="recurseFoldersMaxLevels">If 0 or negative, recurse infinitely</param>
-        /// <returns></returns>
         /// <remarks>Calls ProcessFolders for all matching directories in inputFolderPath</remarks>
         public bool ProcessAndRecurseFolders(
             string inputFolderPath,

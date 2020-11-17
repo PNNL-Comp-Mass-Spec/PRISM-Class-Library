@@ -186,7 +186,6 @@ namespace PRISM.Logging
         ///   "SQL Native Client"             for SQL Server 2005
         ///   "SQL Server"                    for SQL Server 2000
         /// </param>
-        /// <returns></returns>
         // ReSharper disable once UnusedMember.Global
         public static string ConvertSqlServerConnectionStringToODBC(string sqlServerConnectionString, string odbcDriverName = "SQL Server Native Client 11.0")
         {

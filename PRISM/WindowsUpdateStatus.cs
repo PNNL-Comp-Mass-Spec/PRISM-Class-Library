@@ -15,7 +15,6 @@ namespace PRISM
         /// Checks whether Windows Updates are expected to occur close to the current time of day
         /// </summary>
         /// <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
-        /// <remarks></remarks>
         public static bool UpdatesArePending()
         {
             return UpdatesArePending(DateTime.Now, out _);
@@ -26,7 +25,6 @@ namespace PRISM
         /// </summary>
         /// <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
         /// <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
-        /// <remarks></remarks>
         public static bool UpdatesArePending(out string pendingWindowsUpdateMessage)
         {
             return UpdatesArePending(DateTime.Now, out pendingWindowsUpdateMessage);
@@ -38,7 +36,6 @@ namespace PRISM
         /// <param name="currentTime">Current time of day</param>
         /// <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
         /// <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
-        /// <remarks></remarks>
         public static bool UpdatesArePending(DateTime currentTime, out string pendingWindowsUpdateMessage)
         {
             // Previously, Windows 7 / Windows 8 processing machines installed updates around 3 am on the Thursday after the third Tuesday of the month
@@ -91,7 +88,6 @@ namespace PRISM
         /// Checks whether Windows Updates are expected to occur on Windows Server machines close to the current time of day
         /// </summary>
         /// <returns>True if Windows updates are likely pending on the Windows servers</returns>
-        /// <remarks></remarks>
         public static bool ServerUpdatesArePending()
         {
             return ServerUpdatesArePending(DateTime.Now, out _);
@@ -103,7 +99,6 @@ namespace PRISM
         /// <param name="currentTime">Current time of day</param>
         /// <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
         /// <returns>True if Windows updates are likely pending on the Windows servers</returns>
-        /// <remarks></remarks>
         public static bool ServerUpdatesArePending(DateTime currentTime, out string pendingWindowsUpdateMessage)
         {
             pendingWindowsUpdateMessage = "No pending update";
@@ -132,7 +127,6 @@ namespace PRISM
         /// </summary>
         /// <param name="currentTime"></param>
         /// <param name="occurrence">1 for the first Tuesday, 2 for the second, etc.</param>
-        /// <returns></returns>
         private static DateTime GetNthTuesdayInMonth(DateTime currentTime, int occurrence)
         {
             var candidateDate = new DateTime(currentTime.Year, currentTime.Month, 1);

@@ -55,7 +55,6 @@ namespace PRISM
         /// </summary>
         /// <param name="crc"></param>
         /// <param name="buf"></param>
-        /// <returns></returns>
         /// <example>
         /// uint crc = 0;
         ///
@@ -83,7 +82,6 @@ namespace PRISM
         /// Return the CRC32 of the enumerable byte buffer
         /// </summary>
         /// <param name="buf"></param>
-        /// <returns></returns>
         public static uint Crc(IEnumerable<byte> buf)
         {
             return UpdateCrc(0, buf);
@@ -93,7 +91,6 @@ namespace PRISM
         /// Return the CRC32 of the byte stream
         /// </summary>
         /// <param name="stream">Byte stream</param>
-        /// <returns></returns>
         public static uint Crc(Stream stream)
         {
             const int BUFFER_SIZE = 65536;

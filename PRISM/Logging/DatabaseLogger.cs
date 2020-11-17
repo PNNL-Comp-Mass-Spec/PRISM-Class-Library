@@ -144,7 +144,6 @@ namespace PRISM.Logging
         /// Convert log level to a string, optionally changing from all caps to initial caps
         /// </summary>
         /// <param name="logLevel"></param>
-        /// <returns></returns>
         protected static string LogLevelToString(LogLevels logLevel)
         {
             var logLevelText = logLevel.ToString();

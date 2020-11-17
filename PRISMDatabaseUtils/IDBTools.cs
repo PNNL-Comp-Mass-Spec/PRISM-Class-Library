@@ -229,7 +229,6 @@ namespace PRISMDatabaseUtils
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         int ExecuteSPData(
             DbCommand spCmd,
             out List<List<string>> lstResults,
@@ -245,7 +244,6 @@ namespace PRISMDatabaseUtils
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         int ExecuteSPDataTable(
             DbCommand spCmd,
             out DataTable results,
@@ -260,7 +258,6 @@ namespace PRISMDatabaseUtils
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         int ExecuteSPDataSet(
             DbCommand spCmd,
             out DataSet results,
@@ -274,7 +271,6 @@ namespace PRISMDatabaseUtils
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         int ExecuteSP(
             DbCommand spCmd,
             int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
@@ -300,7 +296,6 @@ namespace PRISMDatabaseUtils
         /// </summary>
         /// <param name="cmdText"></param>
         /// <param name="cmdType"></param>
-        /// <returns></returns>
         DbCommand CreateCommand(string cmdText, CommandType cmdType = CommandType.Text);
 
         /// <summary>

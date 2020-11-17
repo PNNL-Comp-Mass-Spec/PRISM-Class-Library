@@ -1027,7 +1027,6 @@ namespace PRISMTest
         /// <param name="database"></param>
         /// <param name="user"></param>
         /// <param name="password">password</param>
-        /// <returns></returns>
         /// <remarks>
         /// Instead of providing an explicit password, create a pgpass file
         /// Linux:   ~/.pgpass
@@ -1051,7 +1050,6 @@ namespace PRISMTest
         /// <param name="database"></param>
         /// <param name="user"></param>
         /// <param name="password"></param>
-        /// <returns></returns>
         public static string GetConnectionStringSqlServer(string server, string database, string user = "Integrated", string password = "")
         {
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))

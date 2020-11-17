@@ -33,7 +33,6 @@ namespace PRISMWin
         /// <summary>
         /// Number of cores on this computer
         /// </summary>
-        /// <remarks></remarks>
         private int mCachedCoreCount;
 
         /// <summary>
@@ -52,7 +51,6 @@ namespace PRISMWin
         /// <summary>
         /// The instance name of the most recent performance counter used by GetCoreUsageByProcessID
         /// </summary>
-        /// <remarks></remarks>
         private string mProcessIdInstanceName;
 
         private bool mPerformanceCountersInitialized;
@@ -74,7 +72,6 @@ namespace PRISMWin
         /// <summary>
         /// Clear any performance counters cached via a call to GetCoreUsage() or GetCoreUsageByProcessID()
         /// </summary>
-        /// <remarks></remarks>
         // ReSharper disable once UnusedMember.Global
         public void ClearCachedPerformanceCounters()
         {
@@ -84,7 +81,6 @@ namespace PRISMWin
         /// <summary>
         /// Clear the performance counter cached for the given Process ID
         /// </summary>
-        /// <remarks></remarks>
         public void ClearCachedPerformanceCounterForProcessID(int processId)
         {
             try
@@ -387,8 +383,6 @@ namespace PRISMWin
         /// <param name="processId">Process ID</param>
         /// <param name="instanceName">Output: instance name corresponding to processId</param>
         /// <param name="processCounterName">Performance counter to return</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public PerformanceCounter GetPerfCounterForProcessID(int processId, out string instanceName, string processCounterName = "% Processor Time")
         {
             instanceName = GetInstanceNameForProcessId(processId);

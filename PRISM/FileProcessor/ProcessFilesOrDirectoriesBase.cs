@@ -213,7 +213,6 @@ namespace PRISM.FileProcessor
         /// Keys in this dictionary are the log type and message (separated by an underscore)
         /// Values are the most recent time the message was logged
         /// </summary>
-        /// <remarks></remarks>
         private readonly Dictionary<string, DateTime> mLogDataCache;
 
         private MessageTypeConstants mProgressMessageType = MessageTypeConstants.Normal;
@@ -329,7 +328,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         protected ProcessFilesOrDirectoriesBase()
         {
             // Keys in this dictionary are the log type and message (separated by an underscore)
@@ -409,7 +407,6 @@ namespace PRISM.FileProcessor
         /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
         /// <param name="subTaskProgress">Progress of the current task (value between 0 and 100)</param>
         /// <returns>Overall progress (value between 0 and 100)</returns>
-        /// <remarks></remarks>
         public static float ComputeIncrementalProgress(float currentTaskProgressAtStart, float currentTaskProgressAtEnd, float subTaskProgress)
         {
             if (subTaskProgress < 0)
@@ -434,7 +431,6 @@ namespace PRISM.FileProcessor
         /// <param name="currentTaskItemsProcessed">Number of items processed so far during this task</param>
         /// <param name="currentTaskTotalItems">Total number of items to process during this task</param>
         /// <returns>Overall progress (value between 0 and 100)</returns>
-        /// <remarks></remarks>
         public static float ComputeIncrementalProgress(
             float currentTaskProgressAtStart, float currentTaskProgressAtEnd,
             int currentTaskItemsProcessed, int currentTaskTotalItems)
@@ -611,7 +607,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Perform garbage collection
         /// </summary>
-        /// <remarks></remarks>
         public static void GarbageCollectNow()
         {
             const int maxWaitTimeMSec = 1000;
@@ -622,7 +617,6 @@ namespace PRISM.FileProcessor
         /// Perform garbage collection
         /// </summary>
         /// <param name="maxWaitTimeMSec"></param>
-        /// <remarks></remarks>
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {
             const int THREAD_SLEEP_TIME_MSEC = 100;
@@ -666,7 +660,6 @@ namespace PRISM.FileProcessor
         /// Returns the full path to the directory into which this application should read/write settings file information
         /// </summary>
         /// <param name="appName"></param>
-        /// <returns></returns>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
         public static string GetAppDataDirectoryPath(string appName)
         {
@@ -697,8 +690,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Returns the full path to the directory that contains the currently executing .Exe or .Dll
         /// </summary>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static string GetAppDirectoryPath()
         {
             // Could use Application.StartupPath, but .GetExecutingAssembly is better
@@ -709,7 +700,6 @@ namespace PRISM.FileProcessor
         /// Returns the full path to the executing .Exe or .Dll
         /// </summary>
         /// <returns>File path</returns>
-        /// <remarks></remarks>
         public static string GetAppPath()
         {
             return GetEntryOrExecutingAssembly().Location;
@@ -719,8 +709,6 @@ namespace PRISM.FileProcessor
         /// Returns the .NET assembly version followed by the program date
         /// </summary>
         /// <param name="programDate"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static string GetAppVersion(string programDate)
         {
             return GetEntryOrExecutingAssembly().GetName().Version + " (" + programDate + ")";
@@ -730,7 +718,6 @@ namespace PRISM.FileProcessor
         /// Append the timestamp for the given date to mLogFileBasePath
         /// </summary>
         /// <param name="date"></param>
-        /// <returns></returns>
         private string GetDateBasedLogFilePath(DateTime date)
         {
             if (string.IsNullOrWhiteSpace(mLogFileBasePath))
@@ -744,7 +731,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Returns the entry assembly, if it is unavailable, returns the executing assembly
         /// </summary>
-        /// <returns></returns>
         public static Assembly GetEntryOrExecutingAssembly()
         {
             return Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
@@ -753,13 +739,11 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Get the current error message
         /// </summary>
-        /// <returns></returns>
         public abstract string GetErrorMessage();
 
         /// <summary>
         /// Gets the version for the entry assembly, if available
         /// </summary>
-        /// <returns></returns>
         private string GetVersionForExecutingAssembly()
         {
             string version;
@@ -781,7 +765,6 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="applicationName"></param>
         /// <param name="settingsFileName"></param>
-        /// <returns></returns>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</remarks>
         public static string GetSettingsFilePathLocal(string applicationName, string settingsFileName)
         {

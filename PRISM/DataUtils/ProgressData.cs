@@ -315,7 +315,6 @@ namespace PRISM
         /// Update percent, and return object. For single-lining a progress update and report with <see cref="IProgress{T}.Report"/>
         /// </summary>
         /// <param name="pct"></param>
-        /// <returns></returns>
         [Obsolete("Use Report() instead, with ProgressObj set.")]
         public ProgressData UpdatePercent(double pct)
         {
@@ -326,7 +325,6 @@ namespace PRISM
         /// <summary>
         /// Check function to limit output frequency, when outputting to console.
         /// </summary>
-        /// <returns></returns>
         public bool ShouldUpdate()
         {
             var update = false;

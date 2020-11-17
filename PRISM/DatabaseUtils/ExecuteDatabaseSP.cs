@@ -108,7 +108,6 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         public ExecuteDatabaseSP(string connectionString)
         {
             m_ConnStr = connectionString;
@@ -117,7 +116,6 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         public ExecuteDatabaseSP(string connectionString, int timeoutSeconds)
         {
             m_ConnStr = connectionString;
@@ -156,7 +154,6 @@ namespace PRISM
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSP(
             SqlCommand spCmd,
             out List<List<string>> lstResults,
@@ -306,7 +303,6 @@ namespace PRISM
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSP(SqlCommand spCmd)
         {
             return ExecuteSP(spCmd, DEFAULT_SP_RETRY_COUNT);
@@ -318,7 +314,6 @@ namespace PRISM
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount)
         {
             return ExecuteSP(spCmd, maxRetryCount, DEFAULT_SP_RETRY_DELAY_SEC);
@@ -331,7 +326,6 @@ namespace PRISM
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, int retryDelaySeconds)
         {
             return ExecuteSP(spCmd, maxRetryCount, out _, retryDelaySeconds);

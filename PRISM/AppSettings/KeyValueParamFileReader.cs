@@ -200,7 +200,6 @@ namespace PRISM.AppSettings
         /// <param name="paramFileEntries"></param>
         /// <param name="paramName"></param>
         /// <param name="valueIfMissing"></param>
-        /// <returns></returns>
         public static string GetParameterValue(List<KeyValuePair<string, string>> paramFileEntries, string paramName, string valueIfMissing = "")
         {
             foreach (var paramEntry in paramFileEntries.Where(paramEntry => paramEntry.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase)))
@@ -270,7 +269,6 @@ namespace PRISM.AppSettings
         /// <param name="paramFileEntries"></param>
         /// <param name="paramName"></param>
         /// <param name="caseSensitiveParamName">When true, require a case-sensitive match to the parameter names in paramFileEntries</param>
-        /// <returns></returns>
         public bool ParamIsEnabled(List<KeyValuePair<string, string>> paramFileEntries, string paramName, bool caseSensitiveParamName = false)
         {
             var stringComp = caseSensitiveParamName ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;

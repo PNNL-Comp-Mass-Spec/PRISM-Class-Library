@@ -14,7 +14,6 @@ namespace PRISM.DataUtils
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultValue">Boolean value to return if value is empty or cannot be converted</param>
-        /// <returns></returns>
         /// <remarks>Returns false if unable to convert</remarks>
         public static bool CBoolSafe(string value, bool defaultValue = false)
         {
@@ -36,8 +35,6 @@ namespace PRISM.DataUtils
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultValue">Double to return if value is not numeric</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static double CDoubleSafe(string value, double defaultValue)
         {
             try
@@ -58,8 +55,6 @@ namespace PRISM.DataUtils
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultValue">Float to return if value is not numeric</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static float CFloatSafe(string value, float defaultValue)
         {
             try
@@ -80,8 +75,6 @@ namespace PRISM.DataUtils
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultValue">Integer to return if value is not numeric</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static int CIntSafe(string value, int defaultValue)
         {
             try
@@ -102,8 +95,6 @@ namespace PRISM.DataUtils
         /// </summary>
         /// <param name="value"></param>
         /// <param name="defaultValue">Short to return if value is not numeric</param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public static short CShortSafe(string value, short defaultValue)
         {
             try
@@ -146,7 +137,6 @@ namespace PRISM.DataUtils
         /// True if success.
         /// False if columnIndex is less than 0, columnIndex is out of range for dataColumns[]
         /// </returns>
-        /// <remarks></remarks>
         public static bool TryGetValue(string[] dataColumns, int columnIndex, out string value)
         {
             if (columnIndex >= 0 && columnIndex < dataColumns.Length)
@@ -172,7 +162,6 @@ namespace PRISM.DataUtils
         /// False if columnIndex is less than 0, columnIndex is out of range for dataColumns[],
         /// or the text cannot be converted to an integer.
         /// </returns>
-        /// <remarks></remarks>
         public static bool TryGetValueInt(string[] dataColumns, int columnIndex, out int value)
         {
             if (columnIndex >= 0 && columnIndex < dataColumns.Length)
@@ -198,7 +187,6 @@ namespace PRISM.DataUtils
         /// False if columnIndex is less than 0, columnIndex is out of range for dataColumns[],
         /// or the text cannot be converted to an float.
         /// </returns>
-        /// <remarks></remarks>
         public static bool TryGetValueFloat(string[] dataColumns, int columnIndex, out float value)
         {
             if (columnIndex >= 0 && columnIndex < dataColumns.Length)

@@ -148,7 +148,6 @@ namespace PRISM.Logging
         /// <summary>
         /// The log message and log type, separated by a comma
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return Message + ", " + LogLevel;

@@ -719,7 +719,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         private int ExecuteSPData(
             DbCommand spCmd,
             Action<SqlCommand> readMethod,
@@ -851,7 +850,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSPData(
             DbCommand spCmd,
             out List<List<string>> lstResults,
@@ -905,7 +903,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSPDataTable(
             DbCommand spCmd,
             out DataTable results,
@@ -933,7 +930,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSPDataSet(
             DbCommand spCmd,
             out DataSet results,
@@ -960,7 +956,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSP(
             DbCommand spCmd,
             int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
@@ -1214,7 +1209,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Convert from enum SqlType to System.Data.SqlDbType
         /// </summary>
         /// <param name="sqlType"></param>
-        /// <returns></returns>
         private SqlDbType ConvertSqlType(SqlType sqlType)
         {
             switch (sqlType)

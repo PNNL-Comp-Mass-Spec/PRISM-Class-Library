@@ -153,7 +153,6 @@ namespace PRISM
         /// <summary>
         /// Returns process name and process ID
         /// </summary>
-        /// <returns></returns>
         public override string ToString()
         {
             return string.Format("{0}, ID {1}", ProcessName, ProcessID);
@@ -162,7 +161,6 @@ namespace PRISM
         /// <summary>
         /// Returns process name, process ID, exe path, exe name, arguments, and the full command line
         /// </summary>
-        /// <returns></returns>
         // ReSharper disable once UnusedMember.Global
         public string ToStringVerbose()
         {

@@ -17,7 +17,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         protected ProcessFilesBase()
         {
             mFileDate = "March 18, 2020";
@@ -299,7 +298,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Get the default file extensions to parse
         /// </summary>
-        /// <returns></returns>
         public virtual IList<string> GetDefaultExtensionsToParse()
         {
             return new List<string> { ".*" };
@@ -495,7 +493,6 @@ namespace PRISM.FileProcessor
         /// <param name="outputDirectoryPath">Output directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <returns>True if success, false if an error</returns>
-        /// <returns></returns>
         public bool ProcessFilesAndRecurseDirectories(
             string inputFilePathOrDirectory, string outputDirectoryPath = "", string parameterFilePath = "")
         {
@@ -542,7 +539,6 @@ namespace PRISM.FileProcessor
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="extensionsToParse">List of file extensions to parse</param>
         /// <returns>True if success, false if an error</returns>
-        /// <returns></returns>
         public bool ProcessFilesAndRecurseDirectories(
             string inputFilePathOrDirectory, string outputDirectoryPath,
             string parameterFilePath, IList<string> extensionsToParse)

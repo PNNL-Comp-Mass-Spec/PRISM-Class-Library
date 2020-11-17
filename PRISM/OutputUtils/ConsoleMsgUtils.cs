@@ -57,7 +57,6 @@ namespace PRISM
         /// Display an error message at the console with color ErrorFontColor (defaults to red)
         /// </summary>
         /// <param name="message"></param>
-        /// <returns></returns>
         public static string ShowError(string message)
         {
             return ShowErrorCustom(message);

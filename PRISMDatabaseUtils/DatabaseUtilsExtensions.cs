@@ -77,7 +77,6 @@ namespace PRISMDatabaseUtils
         /// <param name="dbTools">Reference to dbTools so this can resolve as an extension method</param>
         /// <param name="dbValue">Value from database</param>
         /// <returns>If dbValue is DBNull, returns "", otherwise returns the string representation of dbValue</returns>
-        /// <remarks></remarks>
         public static string GetString(this IDBTools dbTools, object dbValue)
         {
             if (ReferenceEquals(dbValue, DBNull.Value))

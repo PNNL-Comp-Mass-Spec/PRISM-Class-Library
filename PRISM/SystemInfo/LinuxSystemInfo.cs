@@ -1067,7 +1067,6 @@ namespace PRISM
         /// </summary>
         /// <param name="lookupCommandLineInfo">Ignored on Linux, but required due to this class implementing ISystemInfo</param>
         /// <returns>Dictionary where keys are process ID and values are ProcessInfo</returns>
-        /// <remarks></remarks>
         public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
         {
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeProcesses).TotalSeconds > 15;

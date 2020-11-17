@@ -16,7 +16,6 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <remarks></remarks>
         protected ProcessDirectoriesBase()
         {
             mFileDate = "March 18, 2020";
@@ -393,7 +392,6 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="inputDirectoryPath"></param>
         /// <param name="maxLevelsToRecurse"></param>
-        /// <returns></returns>
         public bool ProcessAndRecurseDirectories(string inputDirectoryPath, int maxLevelsToRecurse)
         {
             return ProcessAndRecurseDirectories(inputDirectoryPath, string.Empty, string.Empty, maxLevelsToRecurse);
@@ -410,7 +408,6 @@ namespace PRISM.FileProcessor
         /// When 1, only process the current directory
         /// When 2, process the current directory and files in its subdirectories
         /// </param>
-        /// <returns></returns>
         /// <remarks>Calls ProcessDirectories for all matching directories in inputDirectoryPath</remarks>
         public bool ProcessAndRecurseDirectories(
             string inputDirectoryPath,

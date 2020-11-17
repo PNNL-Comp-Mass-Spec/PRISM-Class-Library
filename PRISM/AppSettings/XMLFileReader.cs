@@ -628,8 +628,6 @@ namespace PRISM
         /// Manually read a XML or .INI settings file line-by-line, extracting out any settings in the expected format
         /// </summary>
         /// <param name="filePath"></param>
-        /// <returns></returns>
-        /// <remarks></remarks>
         public bool ManualParseXmlOrIniFile(string filePath)
         {
             // Create a new, blank XML document

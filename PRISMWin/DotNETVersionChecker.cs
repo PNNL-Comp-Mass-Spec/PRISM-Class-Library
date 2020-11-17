@@ -38,7 +38,6 @@ namespace PRISMWin
         /// Determine the human-readable version of .NET
         /// </summary>
         /// <param name="releaseKey"></param>
-        /// <returns></returns>
         private string CheckFor45DotVersion(int releaseKey)
         {
             // Checking the version using >= will enable forward compatibility,
@@ -138,7 +137,6 @@ namespace PRISMWin
         /// <summary>
         /// Get all installed versions of .NET
         /// </summary>
-        /// <returns></returns>
         public Dictionary<int, List<string>> GetInstalledDotNETVersions()
         {
             return GetInstalledDotNETVersions(false);
@@ -147,7 +145,6 @@ namespace PRISMWin
         /// <summary>
         /// Get all installed versions of .NET
         /// </summary>
-        /// <returns></returns>
         private Dictionary<int, List<string>> GetInstalledDotNETVersions(bool findingLegacyVersions)
         {
             // Keys in dotNETVersions are major versions (2, 3, or 4)
@@ -324,7 +321,6 @@ namespace PRISMWin
         /// Look for the version integer in versionKeyName
         /// </summary>
         /// <param name="versionKeyName"></param>
-        /// <returns></returns>
         private int GetMajorVersion(string versionKeyName)
         {
             // This RegEx is used to find the first integer in a string

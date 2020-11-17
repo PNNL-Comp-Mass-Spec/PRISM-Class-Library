@@ -13,7 +13,6 @@ namespace PRISM
     /// See the descriptions for functions GetExceptionStackTrace and
     /// GetExceptionStackTraceMultiLine for example text
     /// </summary>
-    /// <remarks></remarks>
     public class StackTraceFormatter
     {
         /// <summary>
@@ -164,7 +163,6 @@ namespace PRISM
         ///   clsCodeTest.InnerTestException
         ///    in clsCodeTest.vb:line 86
         /// </returns>
-        /// <remarks></remarks>
         public static IEnumerable<string> GetExceptionStackTraceData(Exception ex, bool includeMethodParams = false)
         {
             return GetExceptionStackTraceData(ex.StackTrace, includeMethodParams);
@@ -182,7 +180,6 @@ namespace PRISM
         ///   clsCodeTest.InnerTestException
         ///    in clsCodeTest.vb:line 86
         /// </returns>
-        /// <remarks></remarks>
         public static IEnumerable<string> GetExceptionStackTraceData(string stackTraceText, bool includeMethodParams = false)
         {
             const string CODE_LINE_PREFIX = ":line ";

@@ -73,7 +73,6 @@ namespace PRISM.DataUtils
         /// </summary>
         /// <param name="matcher"></param>
         /// <param name="text"></param>
-        /// <returns></returns>
         private static string CombineAllMatches(Regex matcher, string text)
         {
             var filteredText = new StringBuilder();

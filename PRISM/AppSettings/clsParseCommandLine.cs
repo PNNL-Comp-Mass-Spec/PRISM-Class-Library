@@ -99,7 +99,6 @@ namespace PRISM
         /// </summary>
         /// <param name="validParameters"></param>
         /// <param name="caseSensitive"></param>
-        /// <returns></returns>
         public bool InvalidParametersPresent(List<string> validParameters, bool caseSensitive)
         {
             return InvalidParameters(validParameters, caseSensitive).Count > 0;
@@ -109,7 +108,6 @@ namespace PRISM
         /// Retrieve a list of the user-provided parameters that are not in validParameters
         /// </summary>
         /// <param name="validParameters"></param>
-        /// <returns></returns>
         public List<string> InvalidParameters(List<string> validParameters)
         {
             const bool caseSensitive = false;
@@ -121,7 +119,6 @@ namespace PRISM
         /// </summary>
         /// <param name="validParameters"></param>
         /// <param name="caseSensitive"></param>
-        /// <returns></returns>
         public List<string> InvalidParameters(List<string> validParameters, bool caseSensitive)
         {
             var lstInvalidParameters = new List<string>();

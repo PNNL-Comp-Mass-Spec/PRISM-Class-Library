@@ -683,7 +683,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         private int ExecuteSPData(
             DbCommand spCmd,
             Action<NpgsqlCommand> readMethod,
@@ -856,7 +855,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSPData(
             DbCommand spCmd,
             out List<List<string>> lstResults,
@@ -910,7 +908,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSPDataTable(
             DbCommand spCmd,
             out DataTable results,
@@ -938,7 +935,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSPDataSet(
             DbCommand spCmd,
             out DataSet results,
@@ -965,7 +961,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks></remarks>
         public int ExecuteSP(DbCommand spCmd, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
             return ExecuteSP(spCmd, out _, maxRetryCount, retryDelaySeconds);
@@ -1244,7 +1239,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Convert from enum SqlType to NpgsqlDbTypes.NpgsqlDbType
         /// </summary>
         /// <param name="sqlType"></param>
-        /// <returns></returns>
         private NpgsqlDbType ConvertSqlType(SqlType sqlType)
         {
             switch (sqlType)

@@ -55,7 +55,6 @@ namespace PRISMDatabaseUtils
         /// Checks elements in the connection string to determine which database engine it refers to.
         /// </summary>
         /// <param name="connectionString">Database connection string</param>
-        /// <returns></returns>
         public static DbServerTypes GetServerTypeFromConnectionString(string connectionString)
         {
             // Example SQL Server connection string:
@@ -141,7 +140,6 @@ namespace PRISMDatabaseUtils
         /// <param name="connectionString">Database connection string</param>
         /// <param name="timeoutSeconds">Query timeout, in seconds</param>
         /// <param name="debugMode">When true, show queries and procedure calls using OnDebugEvent</param>
-        /// <returns></returns>
         public static IDBTools GetDBTools(
             string connectionString,
             int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC,
@@ -170,7 +168,6 @@ namespace PRISMDatabaseUtils
         /// <param name="connectionString">Database connection string</param>
         /// <param name="timeoutSeconds">Query timeout, in seconds</param>
         /// <param name="debugMode">When true, show queries and procedure calls using OnDebugEvent</param>
-        /// <returns></returns>
         public static IDBTools GetDBTools(
             DbServerTypes serverType,
             string connectionString,
@@ -195,7 +192,6 @@ namespace PRISMDatabaseUtils
         /// Get the preferred SQL type for a .NET type
         /// </summary>
         /// <param name="type"></param>
-        /// <returns></returns>
         public static SqlType GetPreferredSqlTypeForType(Type type)
         {
             if (type == typeof(int))

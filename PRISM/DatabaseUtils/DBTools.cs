@@ -77,7 +77,6 @@ namespace PRISM
         /// </summary>
         /// <param name="dbValue">Value from database</param>
         /// <returns>If dbValue is DBNull, returns "", otherwise returns the string representation of dbValue</returns>
-        /// <remarks></remarks>
         public static string GetString(object dbValue)
         {
             if (ReferenceEquals(dbValue, DBNull.Value))
