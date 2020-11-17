@@ -141,7 +141,7 @@ namespace PRISM
                     else
                     {
                         matchCount = (from validItem in validParameters
-                                      where string.Equals(validItem, itemKey, StringComparison.CurrentCultureIgnoreCase)
+                                      where string.Equals(validItem, itemKey, StringComparison.OrdinalIgnoreCase)
                                       select validItem).Count();
                     }
 
@@ -286,7 +286,7 @@ namespace PRISM
                 }
 
                 if (commandLine.IndexOf(switchStartChar + "?", StringComparison.Ordinal) > 0 ||
-                    commandLine.ToLower().IndexOf(switchStartChar + "help", StringComparison.CurrentCultureIgnoreCase) > 0)
+                    commandLine.ToLower().IndexOf(switchStartChar + "help", StringComparison.OrdinalIgnoreCase) > 0)
                 {
                     NeedToShowHelp = true;
                     return false;
@@ -532,7 +532,7 @@ namespace PRISM
                 }
 
                 var result = (from item in mSwitches
-                              where string.Equals(item.Key, paramName, StringComparison.CurrentCultureIgnoreCase)
+                              where string.Equals(item.Key, paramName, StringComparison.OrdinalIgnoreCase)
                               select item).ToList();
 
                 if (result.Count > 0)
