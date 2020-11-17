@@ -10,7 +10,7 @@ namespace PRISM
     /// <remarks>
     /// From https://stackoverflow.com/a/39534444/1179467
     /// </remarks>
-    internal class NativeIODirectoryTools
+    internal static class NativeIODirectoryTools
     {
         public static void Delete(string path, bool recursive)
         {

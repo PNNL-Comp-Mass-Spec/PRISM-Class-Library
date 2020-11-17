@@ -9,7 +9,7 @@ namespace PRISM
     /// Windows servers have Windows updates applied around 3 am or 10 am on the first Sunday after the second Tuesday of the month
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class WindowsUpdateStatus
+    public static class WindowsUpdateStatus
     {
         /// <summary>
         /// Checks whether Windows Updates are expected to occur close to the current time of day

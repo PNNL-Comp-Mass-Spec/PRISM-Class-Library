@@ -10,7 +10,7 @@ namespace PRISM
     /// <summary>
     /// Methods for computing checksum hashes for files
     /// </summary>
-    public class HashUtilities
+    public static class HashUtilities
     {
         // Ignore Spelling: "yyyy-MM-dd, hh:mm:ss tt hashtype, utc
 

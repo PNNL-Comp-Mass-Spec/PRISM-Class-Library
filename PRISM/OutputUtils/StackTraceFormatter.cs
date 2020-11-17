@@ -13,7 +13,7 @@ namespace PRISM
     /// See the descriptions for functions GetExceptionStackTrace and
     /// GetExceptionStackTraceMultiLine for example text
     /// </summary>
-    public class StackTraceFormatter
+    public static class StackTraceFormatter
     {
         /// <summary>
         /// Stack trace label string

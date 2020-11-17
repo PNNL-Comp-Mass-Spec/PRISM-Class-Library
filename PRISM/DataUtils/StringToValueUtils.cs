@@ -7,7 +7,7 @@ namespace PRISM.DataUtils
     /// Utilities for parsing values from strings
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class StringToValueUtils
+    public static class StringToValueUtils
     {
         /// <summary>
         /// Converts a string value of True or False to a boolean equivalent

@@ -9,7 +9,7 @@ namespace PRISM.DatabaseUtils
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
-    public class DataTableUtils
+    public static class DataTableUtils
     {
         /// <summary>
         /// Append a column of the given type to the DataTable

@@ -11,7 +11,7 @@ namespace PRISM
     /// <remarks>
     /// From https://stackoverflow.com/a/39534444/1179467
     /// </remarks>
-    internal class NativeIOFileTools
+    internal static class NativeIOFileTools
     {
         public const int MAX_PATH = 260;
 

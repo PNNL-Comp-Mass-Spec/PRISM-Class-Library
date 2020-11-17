@@ -8,7 +8,7 @@ namespace PRISMWin
     /// Methods for reading or validating data in a TextBox
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class TextBoxUtils
+    public static class TextBoxUtils
     {
         /// <summary>
         /// Tries to convert the string to a double
