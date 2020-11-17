@@ -2610,7 +2610,7 @@ namespace PRISM
 
         private void NotifyLockFilePaths(string lockFilePathSource, string lockFilePathTarget)
         {
-            var adminBypassBase = "To force the file copy and bypass the lockfile queue";
+            var adminBypassBase = "To force the file copy and bypass the lock file queue";
 
             string adminBypassMessage;
             if (!string.IsNullOrWhiteSpace(lockFilePathSource) && !string.IsNullOrWhiteSpace(lockFilePathTarget))
