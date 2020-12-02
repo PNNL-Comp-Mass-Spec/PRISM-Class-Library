@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
 
+// ReSharper disable UnusedMember.Global
+
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
@@ -282,13 +284,11 @@ namespace PRISM
         /// by calling AddParamFileKey after instantiating the CommandLineParser class
         /// </para>
         /// </remarks>
-        // ReSharper disable once UnusedMember.Global
         public string ParameterFilePath { get; private set; }
 
         /// <summary>
         /// Get or set the characters allowed at the beginning of an argument specifier
         /// </summary>
-        // ReSharper disable once UnusedMember.Global
         public IEnumerable<char> ParamFlagCharacters
         {
             get => paramChars;
@@ -305,7 +305,6 @@ namespace PRISM
         /// <summary>
         /// Get or set the characters allowed as separators between an argument specifier and argument value
         /// </summary>
-        // ReSharper disable once UnusedMember.Global
         public IEnumerable<char> ParamSeparatorCharacters
         {
             get => separatorChars;
@@ -375,7 +374,6 @@ namespace PRISM
         /// Add additional param keys that can be used to specify a parameter file argument, for example "Conf"
         /// </summary>
         /// <param name="paramKey"></param>
-        // ReSharper disable once UnusedMember.Global
         public void AddParamFileKey(string paramKey)
         {
             if (string.IsNullOrWhiteSpace(paramKey))
@@ -399,7 +397,6 @@ namespace PRISM
         /// </summary>
         /// <param name="paramFilePath">Path for the parameter file</param>
         /// <returns>True if the write was successful</returns>
-        // ReSharper disable once UnusedMember.Global
         public bool CreateParamFile(string paramFilePath)
         {
             if (string.IsNullOrWhiteSpace(paramFilePath))
@@ -417,7 +414,6 @@ namespace PRISM
         /// <param name="options"></param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>True on success, false if argument parse failed</returns>
-        // ReSharper disable once UnusedMember.Global
         public static bool ParseArgs(string[] args, T options, string versionInfo = "")
         {
             var entryAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
@@ -447,7 +443,6 @@ namespace PRISM
         /// <param name="args"></param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>Parser results</returns>
-        // ReSharper disable once UnusedMember.Global
         public static ParserResults ParseArgs(string[] args, string versionInfo)
         {
             var entryAssemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
@@ -1340,7 +1335,6 @@ namespace PRISM
         /// <param name="versionInfo">Executable version info</param>
         /// <param name="paramKeysWidth">Field width for the left column (key names); minimum 10</param>
         /// <param name="helpDescriptionWidth">Field width for the right column (parameter descriptions); minimum 20</param>
-        // ReSharper disable once UnusedMember.Global
         public static void ShowHelp(string entryAssemblyName = "", string versionInfo = "", int paramKeysWidth = 18, int helpDescriptionWidth = 56)
         {
             var parser = new CommandLineParser<T>(entryAssemblyName, versionInfo);
@@ -1459,7 +1453,6 @@ namespace PRISM
         /// </summary>
         /// <param name="propertyName">Property to update (case-sensitive)</param>
         /// <param name="helpText">New help text</param>
-        // ReSharper disable once UnusedMember.Global
         public void UpdatePropertyHelpText(string propertyName, string helpText)
         {
             foreach (var property in GetPropertiesAttributes())
@@ -1477,7 +1470,6 @@ namespace PRISM
         /// <param name="propertyName">Property to update (case-sensitive)</param>
         /// <param name="textToFind">Text to find</param>
         /// <param name="replacementText">Text to use for a replacement</param>
-        // ReSharper disable once UnusedMember.Global
         public void UpdatePropertyHelpText(string propertyName, string textToFind, string replacementText)
         {
             foreach (var property in GetPropertiesAttributes())
