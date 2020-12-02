@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using PRISM;
+using PRISM.FileProcessor;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -1062,7 +1063,7 @@ namespace PRISMTest
         public void TestParamFileOutputConsole(string parameterFileName)
         {
             var parser = new CommandLineParser<OkayKey2>();
-            var args = new List<string> {"-CreateParamFile"};
+            var args = new List<string> { "-CreateParamFile" };
             if (!string.IsNullOrWhiteSpace(parameterFileName))
             {
                 args.Add(parameterFileName);
@@ -1112,6 +1113,89 @@ namespace PRISMTest
             Assert.AreEqual(smooth2Override, results3.Smooth2);
             Assert.AreEqual(okayNameOverride, results3.OkayName);
             Assert.AreEqual(results.Verbose, results3.Verbose);
+        }
+
+        [Test]
+        public void TestUpdateExistingOptionsUsingParamFile()
+        {
+            var paramFile = new FileInfo("ExampleSparseParams.txt");
+
+            using (var writer = new StreamWriter(new FileStream(paramFile.FullName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
+            {
+                writer.WriteLine("Smooth=6");
+                writer.WriteLine("Verbose=No");
+
+                // Note that the following option is backed by a boolean property
+                // The parser supports true, false, 1, 0, yes, or no for the value
+                writer.WriteLine("ExtraSpecialProcessing=Yes");
+            }
+
+            var options = new OkayKey2
+            {
+                Smooth = 5,
+                Smooth2 = 10,
+                OkayName = "A Real Value!",
+                Verbose = "Yes",
+                ExtraSpecialProcessingOption = false
+            };
+
+            Console.WriteLine();
+            Console.WriteLine("Class values before reading the parameter file");
+            options.ShowProcessingOptions();
+
+            Assert.AreEqual("Yes", options.Verbose);
+            Assert.AreEqual(5, options.Smooth);
+            Assert.AreEqual(10, options.Smooth2);
+            Assert.AreEqual(false, options.ExtraSpecialProcessingOption);
+
+            var args = new List<string>
+            {
+                "-ParamFile",
+                paramFile.FullName
+            };
+
+            var success = CommandLineParser<OkayKey2>.ParseArgs(args.ToArray(), options);
+
+            Assert.IsTrue(success, "Call to static instance of ParseArgs failed");
+
+            Console.WriteLine();
+            Console.WriteLine("Class values after reading the parameter file");
+            options.ShowProcessingOptions();
+
+            Assert.AreEqual("No", options.Verbose);
+            Assert.AreEqual(6, options.Smooth);
+            Assert.AreEqual(10, options.Smooth2);
+            Assert.AreEqual(true, options.ExtraSpecialProcessingOption);
+
+            options.Smooth = 18;
+            options.Smooth2 = 28;
+            options.ExtraSpecialProcessingOption = false;
+
+            Console.WriteLine();
+            Console.WriteLine("Class values after manually changing Smooth and Smooth2");
+            options.ShowProcessingOptions();
+
+            Assert.AreEqual("No", options.Verbose);
+            Assert.AreEqual(18, options.Smooth);
+            Assert.AreEqual(28, options.Smooth2);
+            Assert.AreEqual(false, options.ExtraSpecialProcessingOption);
+
+            var parser = new CommandLineParser<OkayKey2>(options, "PRISMTest");
+            var result = parser.ParseArgs(args.ToArray());
+            var parsedOptions = result.ParsedResults;
+
+            Console.WriteLine();
+            Console.WriteLine("Class values after re-reading the parameter file");
+            parsedOptions.ShowProcessingOptions();
+
+            Assert.AreEqual("No", parsedOptions.Verbose);
+            Assert.AreEqual(6, parsedOptions.Smooth);
+            Assert.AreEqual(28, parsedOptions.Smooth2);
+            Assert.AreEqual(true, options.ExtraSpecialProcessingOption);
+
+            Console.WriteLine();
+            Console.WriteLine("Class description of parsed results:");
+            Console.WriteLine(result);
         }
 
         [Test]
