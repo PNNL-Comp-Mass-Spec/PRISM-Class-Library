@@ -374,6 +374,7 @@ namespace PRISM
         /// Add additional param keys that can be used to specify a parameter file argument, for example "Conf"
         /// </summary>
         /// <param name="paramKey"></param>
+        /// <remarks>The default argument name for parameter files is /ParamFile or -ParamFile</remarks>
         public void AddParamFileKey(string paramKey)
         {
             if (string.IsNullOrWhiteSpace(paramKey))
