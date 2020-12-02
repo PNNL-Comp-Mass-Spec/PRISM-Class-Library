@@ -342,13 +342,23 @@ namespace PRISM
         /// </summary>
         /// <param name="entryAsmName">Name of the executing assembly</param>
         /// <param name="versionInfo">Executable version info</param>
-        public CommandLineParser(string entryAsmName = "", string versionInfo = "")
+        public CommandLineParser(string entryAsmName = "", string versionInfo = "") : this(new T(), entryAsmName, versionInfo)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="options">Existing parsed options</param>
+        /// <param name="entryAsmName">Name of the executing assembly</param>
+        /// <param name="versionInfo">Executable version info</param>
+        public CommandLineParser(T options, string entryAsmName = "", string versionInfo = "")
         {
             EntryAssemblyName = entryAsmName ?? string.Empty;
             ExeVersionInfo = versionInfo ?? string.Empty;
             ParameterFilePath = string.Empty;
 
-            Results = new ParserResults(new T());
+            Results = new ParserResults(options);
             propertiesAndAttributes = null;
             validArguments = null;
 
