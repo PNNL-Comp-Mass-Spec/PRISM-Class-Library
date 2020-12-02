@@ -667,7 +667,7 @@ namespace PRISM
                         Results.Failed();
                     }
 
-                    if (!specified || value.Count == 0)
+                    if (!specified)
                     {
                         continue;
                     }
