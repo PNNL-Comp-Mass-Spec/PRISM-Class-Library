@@ -339,6 +339,16 @@ namespace PRISMTest
 
             [Option("gnat", HelpText = "I'm a supported argument, but I don't get advertised.", Hidden = true)]
             public int NoSeeUm { get; set; }
+
+            public void ShowProcessingOptions()
+            {
+                Console.WriteLine("{0,-30} {1}", "OkayName:", OkayName);
+                Console.WriteLine("{0,-30} {1}", "Verbose:", Verbose);
+                Console.WriteLine("{0,-30} {1}", "Smooth:", Smooth);
+                Console.WriteLine("{0,-30} {1}", "Smooth2:", Smooth2);
+                Console.WriteLine("{0,-30} {1}", "ExtraSpecialProcessingOption:", ExtraSpecialProcessingOption);
+                Console.WriteLine("{0,-30} {1}", "NoSeeUm:", NoSeeUm);
+            }
         }
 
         [Test]
