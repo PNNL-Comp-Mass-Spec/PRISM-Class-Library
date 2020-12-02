@@ -405,37 +405,37 @@ namespace PRISMTest
                 Console.WriteLine("{0,-15} {1}", "IntArray[" + i + "]:", options.IntArray[i]);
             }
 
-            Assert.AreEqual(11, options.IntMinOnly);
-            Assert.AreEqual(5, options.IntMaxOnly);
-            Assert.AreEqual(2, options.IntMinMax);
-            Assert.AreEqual(15, options.DblMinOnly);
-            Assert.AreEqual(5.5, options.DblMaxOnly);
-            Assert.AreEqual(2.4, options.DblMinMax);
-            Assert.AreEqual(@"C:\Users\User", options.LowerChar);
-            Assert.AreEqual(@"C:\Users\User2\", options.UpperChar);
-            Assert.AreEqual("TestAb1", options.Ab1);
-            Assert.AreEqual("TestAb2", options.Ab2);
-            Assert.AreEqual("TestAb3", options.Ab3);
-            Assert.AreEqual("TestAb4", options.Ab4);
-            Assert.AreEqual(true, options.BoolCheck1);
-            Assert.AreEqual(false, options.BoolCheck2);
-            Assert.AreEqual(true, options.BoolCheck3);
-            Assert.AreEqual("MyInputFile.txt", options.InputFilePath);
-            Assert.AreEqual("RandomlyPlacedOutputFile.txt", options.OutputFilePath);
-            Assert.AreEqual(true, options.NumericArg);
-            Assert.AreEqual("This string should be used", options.Overrides);
-            Assert.AreEqual(3, options.StringArray.Length);
-            Assert.AreEqual("value1", options.StringArray[0]);
-            Assert.AreEqual("value2", options.StringArray[1]);
-            Assert.AreEqual("value3", options.StringArray[2]);
-            Assert.AreEqual(5, options.IntArray.Length);
-            Assert.AreEqual(0, options.IntArray[0]);
-            Assert.AreEqual(1, options.IntArray[1]);
-            Assert.AreEqual(2, options.IntArray[2]);
-            Assert.AreEqual(3, options.IntArray[3]);
-            Assert.AreEqual(4, options.IntArray[4]);
-            Assert.AreEqual(1, options.DblArray.Length);
-            Assert.AreEqual(1.0, options.DblArray[0]);
+            Assert.AreEqual(11, options.IntMinOnly, "Unexpected value for IntMinOnly");
+            Assert.AreEqual(5, options.IntMaxOnly, "Unexpected value for IntMaxOnly");
+            Assert.AreEqual(2, options.IntMinMax, "Unexpected value for IntMinMax");
+            Assert.AreEqual(15, options.DblMinOnly, "Unexpected value for DblMinOnly");
+            Assert.AreEqual(5.5, options.DblMaxOnly, "Unexpected value for DblMaxOnly");
+            Assert.AreEqual(2.4, options.DblMinMax, "Unexpected value for DblMinMax");
+            Assert.AreEqual(@"C:\Users\User", options.LowerChar, "Unexpected value for LowerChar");
+            Assert.AreEqual(@"C:\Users\User2\", options.UpperChar, "Unexpected value for UpperChar");
+            Assert.AreEqual("TestAb1", options.Ab1, "Unexpected value for Ab1");
+            Assert.AreEqual("TestAb2", options.Ab2, "Unexpected value for Ab2");
+            Assert.AreEqual("TestAb3", options.Ab3, "Unexpected value for Ab3");
+            Assert.AreEqual("TestAb4", options.Ab4, "Unexpected value for Ab4");
+            Assert.AreEqual(true, options.BoolCheck1, "Unexpected value for BoolCheck1");
+            Assert.AreEqual(false, options.BoolCheck2, "Unexpected value for BoolCheck2");
+            Assert.AreEqual(true, options.BoolCheck3, "Unexpected value for BoolCheck3");
+            Assert.AreEqual("MyInputFile.txt", options.InputFilePath, "Unexpected value for InputFilePath");
+            Assert.AreEqual("RandomlyPlacedOutputFile.txt", options.OutputFilePath, "Unexpected value for OutputFilePath");
+            Assert.AreEqual(true, options.NumericArg, "Unexpected value for NumericArg");
+            Assert.AreEqual("This string should be used", options.Overrides, "Unexpected value for Overrides");
+            Assert.AreEqual(3, options.StringArray.Length, "Unexpected value for StringArray.Length");
+            Assert.AreEqual("value1", options.StringArray[0], "Unexpected value for StringArray[0]");
+            Assert.AreEqual("value2", options.StringArray[1], "Unexpected value for StringArray[1]");
+            Assert.AreEqual("value3", options.StringArray[2], "Unexpected value for StringArray[2]");
+            Assert.AreEqual(5, options.IntArray.Length, "Unexpected value for IntArray.Length");
+            Assert.AreEqual(0, options.IntArray[0], "Unexpected value for IntArray[0]");
+            Assert.AreEqual(1, options.IntArray[1], "Unexpected value for IntArray[1]");
+            Assert.AreEqual(2, options.IntArray[2], "Unexpected value for IntArray[2]");
+            Assert.AreEqual(3, options.IntArray[3], "Unexpected value for IntArray[3]");
+            Assert.AreEqual(4, options.IntArray[4], "Unexpected value for IntArray[4]");
+            Assert.AreEqual(1, options.DblArray.Length, "Unexpected value for DblArray.Length");
+            Assert.AreEqual(1.0, options.DblArray[0], "Unexpected value for DblArray[0]");
         }
 
         [Test]
