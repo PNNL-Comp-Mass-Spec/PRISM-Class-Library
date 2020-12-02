@@ -644,14 +644,27 @@ namespace PRISM
                         AppendArgumentValues(value, preprocessed[positionalArgName]);
                     }
 
-                    if (prop.Value.Required && (!specified || value.Count == 0))
+                    var currentValue = prop.Key.GetValue(Results.ParsedResults);
+
+                    bool currentValueIsDefault;
+                    if (prop.Key.PropertyType == typeof(string))
+                    {
+                        currentValueIsDefault = string.IsNullOrEmpty((string)currentValue);
+                    }
+                    else
+                    {
+                        var defaultValue = GetDefaultValue(prop.Key.PropertyType);
+                        currentValueIsDefault = currentValue.Equals(defaultValue);
+                    }
+
+                    if (prop.Value.Required && currentValueIsDefault && (!specified || value.Count == 0))
                     {
                         var message = string.Format("Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]);
                         Results.AddParseError(message, true);
                         Results.Failed();
                     }
 
-                    if (!specified)
+                    if (!specified || value.Count == 0)
                     {
                         continue;
                     }
@@ -1253,6 +1266,16 @@ namespace PRISM
             }
 
             return processed;
+        }
+
+        private object GetDefaultValue(Type t)
+        {
+            if (t.IsValueType)
+            {
+                return Activator.CreateInstance(t);
+            }
+
+            return null;
         }
 
         /// <summary>
