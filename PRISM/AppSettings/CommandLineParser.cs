@@ -654,7 +654,10 @@ namespace PRISM
                     else
                     {
                         var defaultValue = GetDefaultValue(prop.Key.PropertyType);
-                        currentValueIsDefault = currentValue.Equals(defaultValue);
+                        if (defaultValue == null)
+                            currentValueIsDefault = currentValue != null;
+                        else
+                            currentValueIsDefault = currentValue?.Equals(defaultValue) != false;
                     }
 
                     if (prop.Value.Required && currentValueIsDefault && (!specified || value.Count == 0))
