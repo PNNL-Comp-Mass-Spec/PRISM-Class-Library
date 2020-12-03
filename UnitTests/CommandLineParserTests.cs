@@ -660,7 +660,7 @@ namespace PRISMTest
         {
             var args = new[]
             {
-                "-minMaxDbl", "-15",
+                "-MinMaxDbl", "-15",
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
@@ -673,7 +673,7 @@ namespace PRISMTest
 
             Assert.IsTrue(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("minmaxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
-                "Error message does not contain \"minMaxDbl\" and \"is less than minimum\"");
+                "Error message does not contain \"MinMaxDbl\" and \"is less than minimum\"");
 
             Console.WriteLine("\nThis error message was expected");
         }
