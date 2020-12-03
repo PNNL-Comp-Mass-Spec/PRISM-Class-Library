@@ -1097,6 +1097,9 @@ namespace PRISMTest
             var paramFileName = "exampleParams.txt";
             var paramFile = new FileInfo(paramFileName);
 
+            Console.WriteLine("Creating parameter file " + paramFile.FullName);
+            Console.WriteLine();
+
             parser.CreateParamFile(paramFile.FullName);
 
             using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
