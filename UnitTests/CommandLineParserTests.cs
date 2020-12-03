@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using PRISM;
-using PRISM.FileProcessor;
 
+// ReSharper disable StringLiteralTypo
 // ReSharper disable UnusedMember.Local
+// ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Local
+
 namespace PRISMTest
 {
     [TestFixture]
-    [SuppressMessage("ReSharper", "StringLiteralTypo")]
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class CommandLineParserTests
     {
-        // Ignore Spelling: tda, arg, args, badname
+        // ReSharper disable CommentTypo
+
+        // Ignore Spelling: tda, arg, args, badname, minint, maxint, minmaxint, mindbl, maxdbl, minmaxdbl
+        // Ignore Spelling: minintbad, maxintbad, mindblbad, maxdblbad, minmaxInt, minmaxDbl
+
+        // ReSharper restore CommentTypo
 
         private const bool showHelpOnError = false;
         private const bool outputErrors = false;
@@ -339,6 +343,7 @@ namespace PRISMTest
             public bool ExtraSpecialProcessingOption { get; set; }
 
             [Option("gnat", HelpText = "I'm a supported argument, but I don't get advertised.", Hidden = true)]
+            // ReSharper disable once MemberCanBePrivate.Local
             public int NoSeeUm { get; set; }
 
             public void ShowProcessingOptions()
@@ -1227,6 +1232,10 @@ namespace PRISMTest
 
         private class ArgsVariety
         {
+            // ReSharper disable once CommentTypo
+            // Note that two of these public properties use lowercase minmax to let us confirm
+            // that arguments with a different casing (/MinMaxInt or /MinMaxDbl) successfully match the properties
+
             [Option("minInt", Min = 10)]
             public int IntMinOnly { get; set; }
 
