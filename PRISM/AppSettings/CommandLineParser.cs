@@ -928,6 +928,7 @@ namespace PRISM
         private bool WriteParamFile(string paramFilePath)
         {
             var isFile = !string.IsNullOrWhiteSpace(paramFilePath);
+
             try
             {
                 var lines = GetParamFileContents();
@@ -982,12 +983,13 @@ namespace PRISM
                 // # When true, log messages to a file
 
                 // Parameter comments after the first comment will be preceded by a newline
+                // (\n on Linux and \r\n on Windows)
 
                 var paramComment = string.Format(
                     "{0}# {1}{2}",
-                    commentsProcessed == 0 ? string.Empty : "\n",
+                    commentsProcessed == 0 ? string.Empty : Environment.NewLine,
                     prop.Value.Required ? "Required: " : string.Empty,
-                    prop.Value.HelpText.Replace("\n", "\n# "));
+                    prop.Value.HelpText.Replace("\r\n", "\n").Replace("\n", Environment.NewLine + "# "));
 
                 lines.Add(paramComment);
 
