@@ -994,8 +994,7 @@ namespace PRISM
                 var key = prop.Value.ParamKeys[0];
                 if (prop.Key.PropertyType.IsArray)
                 {
-                    var values = (Array)prop.Key.GetValue(Results.ParsedResults);
-                    foreach (var value in values)
+                    foreach (var value in (Array)prop.Key.GetValue(Results.ParsedResults))
                     {
                         lines.Add(string.Format("{0}={1}", key, value));
                     }
