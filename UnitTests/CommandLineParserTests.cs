@@ -322,10 +322,13 @@ namespace PRISMTest
             public string OkayName { get; set; }
 
             [Option("Verbose", "Wordy", "Detailed",
-                HelpText = "Use this switch to include verbose output, in homage to which this help text includes lorem ipsum dolor sit amet, " +
-                           "elit phasellus, penatibus sed eget quis suspendisse. Quam suspendisse accumsan in vestibulum, ante donec dolor nibh, " +
-                           "mauris sodales, orci mollis et convallis felis porta. Felis eu, metus sed, a quam nulla commodo nulla sit, diam sed morbi " +
-                           "ut euismod et, diam vestibulum cursus. Dolor sit scelerisque tellus, wisi nec, mauris etiam potenti laoreet non, " +
+                HelpText = "Use this switch to include verbose output, in homage to which this help text includes\n" +
+                           "lorem ipsum dolor sit amet, elit phasellus, penatibus sed eget quis suspendisse.\n" +
+                           "Quam suspendisse accumsan in vestibulum, ante donec dolor nibh, " +
+                           "mauris sodales, orci mollis et convallis felis porta.\n" +
+                           "Felis eu, metus sed, a quam nulla commodo nulla sit, diam sed morbi " +
+                           "ut euismod et, diam vestibulum cursus.\n" +
+                           "Dolor sit scelerisque tellus, wisi nec, mauris etiam potenti laoreet non, " +
                            "leo aliquam nonummy. Pulvinar tortor, leo rutrum blandit velit, quis lacus.")]
             public string Verbose { get; set; }
 
