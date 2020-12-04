@@ -16,31 +16,31 @@ namespace PRISMTest
 
         private static readonly SortedSet<string> mValidatedConnectionStrings = new SortedSet<string>();
 
-        private readonly Dictionary<string, string> testProgSingleConfig = new Dictionary<string, string>()
+        private readonly Dictionary<string, string> testProgSingleConfig = new Dictionary<string, string>
         {
-            { "MgrActive_Local", "False" },
-            { "MgrCnfgDbConnectStr", "Data Source=mgrCtrlDbServer;Initial Catalog=manager_control;Integrated Security=SSPI" },
-            { "MgrName", "Pub-xx-y" },
-            { "UsingDefaults", "True" },
-            { "DefaultDMSConnString", "Data Source=dmsDbServer;Initial Catalog=DMS5;Integrated Security=SSPI" },
+            {"MgrActive_Local", "False"},
+            {"MgrCnfgDbConnectStr", "Data Source=mgrCtrlDbServer;Initial Catalog=manager_control;Integrated Security=SSPI"},
+            {"MgrName", "Pub-xx-y"},
+            {"UsingDefaults", "True"},
+            {"DefaultDMSConnString", "Data Source=dmsDbServer;Initial Catalog=DMS5;Integrated Security=SSPI"}
         };
 
-        private readonly Dictionary<string, string> testProgMultiConfig = new Dictionary<string, string>()
+        private readonly Dictionary<string, string> testProgMultiConfig = new Dictionary<string, string>
         {
             { "MgrActive_Local", "True" },
             { "MgrCnfgDbConnectStr", "Data Source=proteinseqs;Initial Catalog=manager_control;Integrated Security=SSPI" },
             { "MgrName", "PrismTest" },
             { "UsingDefaults", "False" },
-            { "DefaultDMSConnString", "Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI" },
+            { "DefaultDMSConnString", "Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI" }
         };
 
-        private readonly Dictionary<string, string> testProg2MultiConfig = new Dictionary<string, string>()
+        private readonly Dictionary<string, string> testProg2MultiConfig = new Dictionary<string, string>
         {
             { "MgrActive_Local", "True" },
             { "MgrCnfgDbConnectStr", "Data Source=proteinseqs;Initial Catalog=manager_control;Integrated Security=SSPI" },
             { "MgrName", "PrismTest" },
             { "UsingDefaults", "False" },
-            { "DefaultDMSConnString", "Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI" },
+            { "DefaultDMSConnString", "Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI" }
         };
 
         [Test]
@@ -55,7 +55,7 @@ namespace PRISMTest
             Assert.IsTrue(configFile.Exists);
             Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
 
-            var configFilePaths = new List<string>()
+            var configFilePaths = new List<string>
             {
                 configFile.FullName
             };
@@ -152,7 +152,7 @@ namespace PRISMTest
         private void TestLoadManagerConfigDB(string connectionString)
         {
             var mgrSettings = new MgrSettingsDB();
-            var testSettings = new Dictionary<string, string>()
+            var testSettings = new Dictionary<string, string>
             {
                 { MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, connectionString },
                 { MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, "True" },
@@ -173,7 +173,7 @@ namespace PRISMTest
                 mValidatedConnectionStrings.Add(connectionString);
             }
 
-            var expectedSettings = new Dictionary<string, string>()
+            var expectedSettings = new Dictionary<string, string>
             {
                 { "workdir", @"\\gigasax\DMS_InstSourceDirScans" },
                 { "bionetuser", "ftms" },
