@@ -1094,7 +1094,7 @@ namespace PRISMTest
             var args = new List<string> { "-CreateParamFile" };
             if (!string.IsNullOrWhiteSpace(parameterFileName))
             {
-                args.Add(parameterFileName);
+                args.Add(new FileInfo(parameterFileName).FullName);
             }
 
             var result = parser.ParseArgs(args.ToArray());
@@ -1157,6 +1157,8 @@ namespace PRISMTest
 
             var paramFile = new FileInfo(parameterFileName);
 
+            Console.WriteLine("Creating file " + paramFile.FullName);
+            Console.WriteLine();
 
             using (var writer = new StreamWriter(new FileStream(paramFile.FullName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
             {
