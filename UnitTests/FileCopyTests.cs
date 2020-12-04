@@ -190,7 +190,7 @@ namespace PRISMTest
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
         }
 
-#if !(NETCOREAPP2_0)
+#if !NETCOREAPP2_0
         [TestCase(@"C:\Temp")]
         [TestCase(@"C:\Temp\")]
         public void GetDriveFreeSpaceForDirectoryLocal(string directoryPath)

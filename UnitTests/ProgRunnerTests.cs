@@ -12,7 +12,7 @@ namespace PRISMTest
     {
         // Ignore Spelling: AppVeyor, alF
 
-#if !(NETCOREAPP2_0)
+#if !NETCOREAPP2_0
         private const string UTILITIES_DIRECTORY = @"\\proto-2\unitTest_Files\PRISM\Utilities";
 
         /// <summary>
