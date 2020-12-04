@@ -349,6 +349,23 @@ namespace PRISMTest
             // ReSharper disable once MemberCanBePrivate.Local
             public int NoSeeUm { get; set; }
 
+            /// <summary>
+            /// When true, recurse subdirectories
+            /// </summary>
+            /// <remarks>
+            /// This will be auto-set to true if MaxLevelsToRecurse is defined in the parameter file
+            /// </remarks>
+            public bool RecurseDirectories { get; set; }
+
+            /// <summary>
+            /// Process files in subdirectories
+            /// </summary>
+            [Option("MaxLevelsToRecurse", "S", ArgExistsProperty = nameof(RecurseDirectories),
+                HelpShowsDefault = false, SecondaryArg = true,
+                HelpText = "Number of levels of subdirectories to examine when finding files\n" +
+                           "(0 means to recurse infinitely)")]
+            public int MaxLevelsToRecurse { get; set; }
+
             public void ShowProcessingOptions()
             {
                 Console.WriteLine("{0,-30} {1}", "OkayName:", OkayName);
@@ -357,6 +374,9 @@ namespace PRISMTest
                 Console.WriteLine("{0,-30} {1}", "Smooth2:", Smooth2);
                 Console.WriteLine("{0,-30} {1}", "ExtraSpecialProcessingOption:", ExtraSpecialProcessingOption);
                 Console.WriteLine("{0,-30} {1}", "NoSeeUm:", NoSeeUm);
+
+                Console.WriteLine("{0,-30} {1}", "RecurseDirectories:", RecurseDirectories);
+                Console.WriteLine("{0,-30} {1}", "MaxLevelsToRecurse:", RecurseDirectories ? MaxLevelsToRecurse.ToString() : "n/a");
             }
         }
 
