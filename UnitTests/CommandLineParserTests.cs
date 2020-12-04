@@ -1147,14 +1147,26 @@ namespace PRISMTest
         }
 
         [Test]
-        public void TestUpdateExistingOptionsUsingParamFile()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TestUpdateExistingOptionsUsingParamFile(bool includeSecondaryArgs)
         {
-            var paramFile = new FileInfo("ExampleSparseParams.txt");
+            const int LEVELS_TO_RECURSE = 2;
+
+            var parameterFileName = includeSecondaryArgs ? "ExampleSparseParams2.txt" : "ExampleSparseParams.txt";
+
+            var paramFile = new FileInfo(parameterFileName);
+
 
             using (var writer = new StreamWriter(new FileStream(paramFile.FullName, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
             {
                 writer.WriteLine("Smooth=6");
                 writer.WriteLine("Verbose=No");
+
+                if (includeSecondaryArgs)
+                {
+                    writer.WriteLine("MaxLevelsToRecurse={0}", LEVELS_TO_RECURSE);
+                }
 
                 // Note that the following option is backed by a boolean property
                 // The parser supports true, false, 1, 0, yes, or no for the value
@@ -1198,18 +1210,30 @@ namespace PRISMTest
             Assert.AreEqual(10, options.Smooth2);
             Assert.AreEqual(true, options.ExtraSpecialProcessingOption);
 
+            if (options.RecurseDirectories)
+            {
+                Assert.AreEqual(LEVELS_TO_RECURSE, options.MaxLevelsToRecurse);
+            }
+
             options.Smooth = 18;
             options.Smooth2 = 28;
             options.ExtraSpecialProcessingOption = false;
+            options.RecurseDirectories = false;
 
             Console.WriteLine();
-            Console.WriteLine("Class values after manually changing Smooth and Smooth2");
+            Console.WriteLine("Class values after manually changing Smooth, Smooth2, and RecurseDirectories");
             options.ShowProcessingOptions();
 
             Assert.AreEqual("No", options.Verbose);
             Assert.AreEqual(18, options.Smooth);
             Assert.AreEqual(28, options.Smooth2);
             Assert.AreEqual(false, options.ExtraSpecialProcessingOption);
+            Assert.AreEqual(false, options.RecurseDirectories);
+
+            if (options.RecurseDirectories)
+            {
+                Assert.AreEqual(LEVELS_TO_RECURSE, options.MaxLevelsToRecurse);
+            }
 
             var parser = new CommandLineParser<OkayKey2>(options, "PRISMTest");
             var result = parser.ParseArgs(args.ToArray());
@@ -1223,6 +1247,12 @@ namespace PRISMTest
             Assert.AreEqual(6, parsedOptions.Smooth);
             Assert.AreEqual(28, parsedOptions.Smooth2);
             Assert.AreEqual(true, options.ExtraSpecialProcessingOption);
+            Assert.AreEqual(includeSecondaryArgs, options.RecurseDirectories);
+
+            if (options.RecurseDirectories)
+            {
+                Assert.AreEqual(LEVELS_TO_RECURSE, options.MaxLevelsToRecurse);
+            }
 
             Console.WriteLine();
             Console.WriteLine("Class description of parsed results:");
