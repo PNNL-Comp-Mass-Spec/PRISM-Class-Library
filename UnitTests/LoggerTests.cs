@@ -15,6 +15,8 @@ namespace PRISMTest
     [TestFixture]
     internal class LoggerTests
     {
+        // Ignore Spelling: pragma, MM-dd-yyyy, hh:mm:ss
+
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", logMsgType.logNormal, 4, 500)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log error", logMsgType.logError, 2, 250)]
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", logMsgType.logNormal, 20, 50)]

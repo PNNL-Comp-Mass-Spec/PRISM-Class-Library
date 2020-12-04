@@ -7,6 +7,8 @@ namespace PRISMTest
     [TestFixture]
     internal class StringSimilarityTests
     {
+        // Ignore Spelling: Redbox, Csharp, abc, valco, frac, arwen
+
         [Test]
         [TestCase("Breadbox", "Redbox", 0.6666666, 0.6666666)]
         [TestCase("CSharp", "Csharp", 1, 1)]

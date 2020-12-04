@@ -10,6 +10,8 @@ namespace PRISMTest
     [TestFixture]
     public class TestWindowsSystemInfo
     {
+        // Ignore Spelling: PInv
+
         [Test]
         public void TestGetTotalMemory()
         {

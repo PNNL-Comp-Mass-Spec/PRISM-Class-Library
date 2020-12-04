@@ -6,11 +6,17 @@ using System.Threading;
 using NUnit.Framework;
 using PRISM;
 
+// ReSharper disable CommentTypo
+// ReSharper disable StringLiteralTypo
+
 namespace PRISMTest
 {
     [TestFixture]
     internal class TestLinuxSystemInfo
     {
+        // Ignore Spelling: lsb, redhat, ubuntu, noarch, Zapus, os, proc, Solaris, cygwin, cpuinfo, cpu, cpuload, cpuloadtest
+        // Ignore Spelling: args, cmdline, meminfo
+
         internal const bool SHOW_TRACE_MESSAGES = false;
 
         [TestCase(@"LinuxTestFiles\Centos6\etc", "lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]

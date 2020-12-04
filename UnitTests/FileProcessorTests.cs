@@ -10,6 +10,8 @@ namespace PRISMTest
     [TestFixture]
     internal class FileProcessorTests
     {
+        // Ignore Spelling: yyyy-MM-dd, msvcp
+
         /// <summary>
         /// Test ComputeIncrementalProgress that accepts a subTask progress value
         /// </summary>

@@ -11,6 +11,8 @@ namespace PRISMTest
     [TestFixture]
     public class ParallelPreprocessingTests
     {
+        // Ignore Spelling: async
+
         [Test]
         public void TestPreprocessing()
         {

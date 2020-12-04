@@ -12,6 +12,8 @@ namespace PRISMTest
     [TestFixture]
     internal class MgrSettingsTests
     {
+        // Ignore Spelling: Ctrl, Seqs, dmsreader
+
         private static readonly SortedSet<string> mValidatedConnectionStrings = new SortedSet<string>();
 
         private readonly Dictionary<string, string> testProgSingleConfig = new Dictionary<string, string>()

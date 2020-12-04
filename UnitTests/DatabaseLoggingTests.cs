@@ -7,6 +7,8 @@ namespace PRISMTest
     [TestFixture]
     internal class DatabaseLoggingTests
     {
+        // Ignore Spelling: yyyy-MM-dd, hh:mm:ss
+
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
         public void TestDBLoggerIntegrated(string server, string database)

@@ -4,11 +4,15 @@ using System.IO;
 using NUnit.Framework;
 using PRISM;
 
+// ReSharper disable StringLiteralTypo
+
 namespace PRISMTest
 {
     [TestFixture]
     internal class TestPathUtils
     {
+        // Ignore Spelling: proc, subdir, AppVeyor, Ubuntu, cpuinfo, meminfo, Xymon
+
         [TestCase("/proc/12343/stat", "/proc/12343/stat")]
         [TestCase(@"/proc/subdir\filename", "/proc/subdir/filename")]
         [TestCase(@"/proc\subdir\filename.txt", "/proc/subdir/filename.txt")]

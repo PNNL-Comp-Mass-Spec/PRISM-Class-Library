@@ -8,6 +8,8 @@ namespace PRISMTest
     [TestFixture]
     internal class TestOSVersionInfo
     {
+        // Ignore Spelling: Xbox
+
         [Test]
         public void TestGetOSVersion()
         {

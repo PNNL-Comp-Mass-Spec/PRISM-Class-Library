@@ -9,6 +9,8 @@ namespace PRISMTest
     [TestFixture]
     internal class FileCopyTests
     {
+        // Ignore Spelling: Fasta, trembl, contam
+
         private FileTools mFileTools;
 
         [OneTimeSetUp]
@@ -234,7 +236,7 @@ namespace PRISMTest
             Console.WriteLine("{0,-25} {1}", "Drive Capacity", FileTools.BytesToHumanReadable(totalDriveCapacityBytes));
         }
 
-        [TestCase(@"C:\Temp\Testfile.txt", false)]
+        [TestCase(@"C:\Temp\TestFile.txt", false)]
         public void GetDriveFreeSpaceForFileLocal(string targetFilePath, bool reportFreeSpaceAvailableToUser)
         {
             GetDriveFreeSpaceForFile(targetFilePath, reportFreeSpaceAvailableToUser);
@@ -271,7 +273,7 @@ namespace PRISMTest
                 directoryPath, FileTools.BytesToHumanReadable(freeSpaceBytes), reportFreeSpaceAvailableToUser);
         }
 
-        [TestCase(@"C:\Temp\Testfile.txt", 0)]
+        [TestCase(@"C:\Temp\TestFile.txt", 0)]
         [TestCase(@"C:\Temp\TestHugeFile.raw", 100000)]
         [TestCase(@"C:\Temp\TestHugeFile.raw", 1000000)]
         [TestCase(@"C:\Temp\TestHugeFile.raw", 10000000)]
