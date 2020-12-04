@@ -967,9 +967,9 @@ namespace PRISM
         {
             var lines = new List<string>();
             var commentsProcessed = 0;
+            var secondaryArguments = 0;
 
             var props = GetPropertiesAttributes();
-
             foreach (var prop in props.OrderByDescending(x => x.Value.Required))
             {
                 if (prop.Value.Hidden)
@@ -993,23 +993,42 @@ namespace PRISM
 
                 lines.Add(paramComment);
 
+                string prefix;
+                if (prop.Value.SecondaryArg)
+                {
+                    // Comment out secondary arguments
+                    prefix = "# ";
+                    secondaryArguments++;
+                }
+                else
+                {
+                    prefix = string.Empty;
+                }
+
                 var key = prop.Value.ParamKeys[0];
                 if (prop.Key.PropertyType.IsArray)
                 {
                     foreach (var value in (Array)prop.Key.GetValue(Results.ParsedResults))
                     {
-                        lines.Add(string.Format("{0}={1}", key, value));
+                        lines.Add(string.Format("{0}{1}={2}", prefix, key, value));
                     }
                 }
                 else
                 {
                     var value = prop.Key.GetValue(Results.ParsedResults);
-                    lines.Add(string.Format("{0}={1}", key, value));
+                    lines.Add(string.Format("{0}{1}={2}", prefix, key, value));
                 }
 
                 commentsProcessed++;
             }
 
+            if (secondaryArguments > 0)
+            {
+                lines.Add(string.Format(
+                    "{0}{1}{0}{2}", Environment.NewLine,
+                    "# Secondary arguments are shown above with their default value, but commented out using #",
+                    "# Enable and customize them by removing # from the start of the Key=Value line"));
+            }
             return lines;
         }
 
@@ -2205,6 +2224,11 @@ namespace PRISM
         /// If <see cref="ArgExistsProperty"/> is specified, and refers to a valid boolean property, this will be set to that property.
         /// </summary>
         internal PropertyInfo ArgExistsPropertyInfo { get; set; }
+
+        /// <summary>
+        /// When true, this is a secondary (not primary) argument and will be commented out in example parameter files created by CreateParamFile
+        /// </summary>
+        public bool SecondaryArg { get; set; }
 
         /// <summary>
         /// Constructor supporting any number of param keys.
