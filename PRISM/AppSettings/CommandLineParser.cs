@@ -1572,19 +1572,10 @@ namespace PRISM
 
                 // Look for long key names that will be hidden
                 var keyNamesToHide = new SortedSet<string>();
-                foreach (var key in prop.Value.ParamKeys)
-                {
-                    if (key.Length > paramKeysWidth - 2 && HideLongParamKeyNamesAtConsole)
-                    {
-                        // Do not show this parameter key name since it is long
-                        keyNamesToHide.Add(key);
-                    }
-                }
 
-                if (keyNamesToHide.Count > 0 && keyNamesToHide.Count == prop.Value.ParamKeys.Length)
+                if (HideLongParamKeyNamesAtConsole)
                 {
-                    // All of the key names are long; only show the first one
-                    keyNamesToHide.Remove(keyNamesToHide.First());
+                    GetLongKeyNamesToHide(paramKeysWidth, prop, keyNamesToHide);
                 }
 
                 // Create the list of parameter keys
@@ -1763,6 +1754,34 @@ namespace PRISM
             }
 
             return contents;
+        }
+
+        private static void GetLongKeyNamesToHide(int paramKeysWidth, KeyValuePair<PropertyInfo, OptionAttribute> prop, ISet<string> keyNamesToHide)
+        {
+            var shortestLongName = string.Empty;
+
+            foreach (var key in prop.Value.ParamKeys)
+            {
+                if (key.Length <= paramKeysWidth - 2)
+                    continue;
+
+                // Do not show this parameter key name since it is long
+                keyNamesToHide.Add(key);
+                if (shortestLongName.Length == 0)
+                {
+                    shortestLongName = key;
+                }
+                else if (key.Length < shortestLongName.Length)
+                {
+                    shortestLongName = key;
+                }
+            }
+
+            if (keyNamesToHide.Count > 0 && keyNamesToHide.Count == prop.Value.ParamKeys.Length)
+            {
+                // All of the key names are long; show the shortest one
+                keyNamesToHide.Remove(shortestLongName);
+            }
         }
 
         /// <summary>
