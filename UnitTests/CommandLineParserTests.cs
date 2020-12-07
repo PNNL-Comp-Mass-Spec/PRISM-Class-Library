@@ -1038,6 +1038,8 @@ namespace PRISMTest
         [TestCase(30, 0, false)]
         [TestCase(30, 40, false)]
         [TestCase(0, 0, true)]
+        [TestCase(14, 0, true)]
+        [TestCase(16, 0, true)]
         [TestCase(18, 0, true)]
         [TestCase(19, 0, true)]
         [TestCase(20, 0, true)]
