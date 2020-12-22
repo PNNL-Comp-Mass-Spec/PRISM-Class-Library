@@ -547,8 +547,10 @@ namespace PRISM
 
                 var paramFileLoaded = false;
                 DirectoryInfo paramFileDirectory = null;
+                var filePreprocessedArgs = new Dictionary<string, List<string>>();
 
-                // Check for a parameter file, and merge preprocessed arguments
+                // Check for a parameter file, and load any arguments from it (or them)
+                // Don't automatically merge with the command-line arguments
                 foreach (var paramFileArg in paramFileArgs)
                 {
                     // Make sure the param file arg is not defined in the template class
@@ -581,23 +583,24 @@ namespace PRISM
                         // Call ArgsPreprocess on the line array
                         var filePreprocessed = ArgsPreprocess(paramFileLines);
 
-                        // Add original results of ArgsPreprocess to the new preprocessed arguments
-                        foreach (var cmdArg in preprocessed)
-                        {
-                            if (filePreprocessed.TryGetValue(cmdArg.Key, out var paramValues))
-                            {
-                                // Always append the argument values to the end, so that command-line arguments will overwrite param file arguments
-                                // The one exception is for array parameters, where the command-line arguments will add to the param file arguments
-                                paramValues.AddRange(cmdArg.Value);
-                            }
-                            else
-                            {
-                                filePreprocessed.Add(cmdArg.Key, cmdArg.Value);
-                            }
-                        }
+                        // TODO: This is code that could be used to merge multiple param files together.
+                        //// Add original results of ArgsPreprocess to the new preprocessed arguments
+                        //foreach (var cmdArg in filePreprocessedArgs)
+                        //{
+                        //    if (filePreprocessed.TryGetValue(cmdArg.Key, out var paramValues))
+                        //    {
+                        //        // Always append the argument values to the end, so that command-line arguments will overwrite param file arguments
+                        //        // The one exception is for array parameters, where the command-line arguments will add to the param file arguments
+                        //        paramValues.AddRange(cmdArg.Value);
+                        //    }
+                        //    else
+                        //    {
+                        //        filePreprocessed.Add(cmdArg.Key, cmdArg.Value);
+                        //    }
+                        //}
 
                         // Use the merged preprocessed arguments
-                        preprocessed = filePreprocessed;
+                        filePreprocessedArgs = filePreprocessed;
                     }
                 }
 
@@ -618,13 +621,35 @@ namespace PRISM
                     var keyGiven = string.Empty;
                     var value = new List<string>();
 
+                    // Load the param file arguments first - for non-array arguments, later values in the list override earlier values
+                    // Find any param file arguments that match this property
+                    foreach (var key in prop.Value.ParamKeys)
+                    {
+                        if (filePreprocessedArgs.ContainsKey(key))
+                        {
+                            keyGiven = key;
+                            specified = true;
+
+                            // Add in other values provided by argument keys that belong to this property
+                            AppendArgumentValues(value, filePreprocessedArgs[key]);
+                        }
+                    }
+
                     // Find any arguments that match this property
                     foreach (var key in prop.Value.ParamKeys)
                     {
+                        var isSwitch = prop.Key.PropertyType == typeof(bool);
                         if (preprocessed.ContainsKey(key))
                         {
                             keyGiven = key;
                             specified = true;
+
+                            if (isSwitch && preprocessed[key].Count == 0)
+                            {
+                                // Switch arguments from the command line: force value override by removing any value(s) read from the param file(s)
+                                // This fixes an issue with switch arguments not reading properly when a value is provided in the param file, unless a value is provided on the command line.
+                                value.Clear();
+                            }
 
                             // Add in other values provided by argument keys that belong to this property
                             AppendArgumentValues(value, preprocessed[key]);

@@ -1119,6 +1119,7 @@ namespace PRISMTest
             results.Smooth2 = 10;
             results.OkayName = "A Real Value!";
             results.Verbose = "Concise";
+            results.ExtraSpecialProcessingOption = false;
 
             var paramFileName = "exampleParams.txt";
             var paramFile = new FileInfo(paramFileName);
@@ -1145,11 +1146,12 @@ namespace PRISMTest
             var smooth2Override = 15;
             var okayNameOverride = "A Different Value?";
             var results3 = parser3.ParseArgs(
-                new[] { "-smooth2", smooth2Override.ToString(), "-okay/name", okayNameOverride, "-ParamFile", paramFileName }).ParsedResults;
+                new[] { "-smooth2", smooth2Override.ToString(), "-okay/name", okayNameOverride, "-ESP", "-ParamFile", paramFileName }).ParsedResults;
             Assert.AreEqual(results.Smooth, results3.Smooth);
             Assert.AreEqual(smooth2Override, results3.Smooth2);
             Assert.AreEqual(okayNameOverride, results3.OkayName);
             Assert.AreEqual(results.Verbose, results3.Verbose);
+            Assert.AreEqual(true, results3.ExtraSpecialProcessingOption);
         }
 
         [Test]
