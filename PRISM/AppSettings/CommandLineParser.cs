@@ -615,6 +615,8 @@ namespace PRISM
                     }
                 }
 
+                // Iterate over the list of properties with "OptionAttribute".
+                // NOTE: This automatically silently ignores any unknown arguments from the command line or parameter file.
                 foreach (var prop in props)
                 {
                     var specified = false;
@@ -1290,7 +1292,8 @@ namespace PRISM
                     // if argument is case-sensitive, make sure it matches an argument
                     if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
                     {
-                        Results.AddParseError(string.Format("Error: Arg " + key + "does not match valid argument"));
+                        // Return an error if there is a case-sensitive argument, and we only matched to it when comparing case-insensitive
+                        Results.AddParseError("Error: Arg {0} does not match valid argument", key);
                         return null;
                     }
 
