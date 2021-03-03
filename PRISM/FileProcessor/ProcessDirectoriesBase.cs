@@ -13,12 +13,14 @@ namespace PRISM.FileProcessor
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessDirectoriesBase : ProcessFilesOrDirectoriesBase
     {
+        // Ignore Spelling: bool, enum, enums, wildcard, wildcards
+
         /// <summary>
         /// Constructor
         /// </summary>
         protected ProcessDirectoriesBase()
         {
-            mFileDate = "March 18, 2020";
+            mFileDate = "March 3, 2021";
             ErrorCode = ProcessDirectoriesErrorCodes.NoError;
         }
 
@@ -147,11 +149,17 @@ namespace PRISM.FileProcessor
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(inputDirectoryPath))
+                {
+                    NotifyInvalidInputDirectory();
+                    return false;
+                }
+
                 var inputDirectory = new DirectoryInfo(inputDirectoryPath);
 
                 if (!inputDirectory.Exists)
                 {
-                    NotifyInvalidInputDirectory();
+                    NotifyInputDirectoryNotFound(inputDirectoryPath);
                     return false;
                 }
 
@@ -243,6 +251,12 @@ namespace PRISM.FileProcessor
             directoryNameMatchPattern = Path.GetFileName(inputDirectoryPathSpec);
 
             return inputDirectory;
+        }
+
+        private void NotifyInputDirectoryNotFound(string directoryPath)
+        {
+            ShowErrorMessage("Input directory not found: " + directoryPath);
+            ErrorCode = ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath;
         }
 
         private void NotifyInvalidInputDirectory()
