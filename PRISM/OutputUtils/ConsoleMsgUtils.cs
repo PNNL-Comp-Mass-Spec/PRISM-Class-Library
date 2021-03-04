@@ -425,5 +425,43 @@ namespace PRISM
                 // Ignore errors here
             }
         }
+
+        /// <summary>
+        /// Pause the program for the specified number of milliseconds, displaying a period at a set interval while paused
+        /// </summary>
+        /// <param name="millisecondsToPause">Milliseconds to pause; default 5 seconds</param>
+        /// <param name="millisecondsBetweenDots">Seconds between each period; default 1 second</param>
+        public static void PauseAtConsole(int millisecondsToPause = 5000, int millisecondsBetweenDots = 1000)
+        {
+            int totalIterations;
+
+            Console.WriteLine();
+            Console.Write("Continuing in " + (millisecondsToPause / 1000.0).ToString("0") + " seconds ");
+
+            try
+            {
+                if (millisecondsBetweenDots == 0)
+                    millisecondsBetweenDots = millisecondsToPause;
+
+                totalIterations = (int)Math.Round(millisecondsToPause / (double)millisecondsBetweenDots, 0);
+            }
+            catch
+            {
+                // Ignore errors here
+                totalIterations = 1;
+            }
+
+            var iteration = 0;
+            do
+            {
+                Console.Write('.');
+
+                ProgRunner.SleepMilliseconds(millisecondsBetweenDots);
+
+                iteration++;
+            } while (iteration < totalIterations);
+
+            Console.WriteLine();
+        }
     }
 }

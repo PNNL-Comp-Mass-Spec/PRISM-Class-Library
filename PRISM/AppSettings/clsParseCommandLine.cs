@@ -255,7 +255,7 @@ namespace PRISM
                     ConsoleMsgUtils.ShowWarning("Exception: " + ex.Message);
                     ConsoleMsgUtils.ShowWarning("------------------------------------------------------------------------------");
 
-                    PauseAtConsole();
+                    ConsoleMsgUtils.PauseAtConsole();
 
                     NeedToShowHelp = true;
                     return false;
@@ -399,37 +399,10 @@ namespace PRISM
         /// </summary>
         /// <param name="millisecondsToPause">Milliseconds to pause; default 5 seconds</param>
         /// <param name="millisecondsBetweenDots">Seconds between each period; default 1 second</param>
+        [Obsolete("Use ConsoleMsgUtils.PauseAtConsole(...) instead.", false)]
         public static void PauseAtConsole(int millisecondsToPause = 5000, int millisecondsBetweenDots = 1000)
         {
-            int totalIterations;
-
-            Console.WriteLine();
-            Console.Write("Continuing in " + (millisecondsToPause / 1000.0).ToString("0") + " seconds ");
-
-            try
-            {
-                if (millisecondsBetweenDots == 0)
-                    millisecondsBetweenDots = millisecondsToPause;
-
-                totalIterations = (int)Math.Round(millisecondsToPause / (double)millisecondsBetweenDots, 0);
-            }
-            catch
-            {
-                // Ignore errors here
-                totalIterations = 1;
-            }
-
-            var iteration = 0;
-            do
-            {
-                Console.Write('.');
-
-                ProgRunner.SleepMilliseconds(millisecondsBetweenDots);
-
-                iteration++;
-            } while (iteration < totalIterations);
-
-            Console.WriteLine();
+            ConsoleMsgUtils.PauseAtConsole(millisecondsToPause, millisecondsBetweenDots);
         }
 
         /// <summary>
