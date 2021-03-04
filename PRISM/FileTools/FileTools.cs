@@ -448,10 +448,7 @@ namespace PRISM
                 throw new DirectoryNotFoundException("Unable to determine the parent directory for " + destPath);
             }
 
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
+            CreateDirectoryIfNotExists(directoryPath);
 
             if (backupDestFileBeforeCopy)
             {
@@ -822,6 +819,29 @@ namespace PRISM
             }
 
             return lockFilePath;
+        }
+
+        /// <summary>
+        /// Attempts to create a directory only if it doesn't exist. Parent Directory must exist
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        public void CreateDirectoryIfNotExists(string directoryPath)
+        {
+            // Possible future change: add another version that handles nested, non-existing directories
+            if (directoryPath.Length < NativeIODirectoryTools.MAX_DIR_PATH)
+            {
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+            }
+            else
+            {
+                if (!NativeIODirectoryTools.Exists(directoryPath))
+                {
+                    NativeIODirectoryTools.CreateDirectory(directoryPath);
+                }
+            }
         }
 
         /// <summary>
@@ -1241,6 +1261,7 @@ namespace PRISM
         private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
             IReadOnlyCollection<string> fileNamesToSkip, string managerName)
         {
+            // Paths > 248 characters are okay for DirectoryInfo with .NET >= 4.6.2
             var sourceDir = new DirectoryInfo(sourcePath);
             var destDir = new DirectoryInfo(destPath);
 
@@ -1258,7 +1279,15 @@ namespace PRISM
 
             if (!destDir.Exists)
             {
-                destDir.Create();
+                if (destPath.Length < NativeIODirectoryTools.MAX_DIR_PATH)
+                {
+                    // Issue: Throws an exception if the directory path > 248 characters
+                    destDir.Create();
+                }
+                else
+                {
+                    NativeIODirectoryTools.CreateDirectory(destPath);
+                }
             }
 
             // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
@@ -1547,6 +1576,7 @@ namespace PRISM
                 // Create the target directory if necessary
                 if (!targetDirectory.Exists)
                 {
+                    // TODO: Potential issues with path length > 248 characters
                     targetDirectory.Create();
                 }
 

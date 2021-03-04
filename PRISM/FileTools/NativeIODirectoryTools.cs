@@ -12,6 +12,33 @@ namespace PRISM
     /// </remarks>
     internal static class NativeIODirectoryTools
     {
+        public const int MAX_DIR_PATH = 248;
+
+        public static bool Exists(string path)
+        {
+            if (path.Length < MAX_DIR_PATH)
+            {
+                return Directory.Exists(path);
+            }
+
+            var result = NativeIOMethods.GetFileAttributesW(NativeIOFileTools.GetWin32LongPath(path));
+            return result > 0;
+        }
+
+        public static void CreateDirectory(string path)
+        {
+            if (path.Length < MAX_DIR_PATH)
+            {
+                Directory.CreateDirectory(path);
+            }
+            else
+            {
+                var ok = NativeIOMethods.CreateDirectory(NativeIOFileTools.GetWin32LongPath(path), IntPtr.Zero);
+                if (!ok)
+                    NativeIOFileTools.ThrowWin32Exception();
+            }
+        }
+
         public static void Delete(string path, bool recursive)
         {
             if (path.Length < NativeIOFileTools.MAX_PATH && !recursive)

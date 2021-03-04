@@ -15,6 +15,17 @@ namespace PRISM
     {
         public const int MAX_PATH = 260;
 
+        public static bool Exists(string path)
+        {
+            if (path.Length < MAX_PATH)
+            {
+                return File.Exists(path);
+            }
+
+            var result = NativeIOMethods.GetFileAttributesW(GetWin32LongPath(path));
+            return result > 0;
+        }
+
         public static void Copy(string sourcePath, string destPath, bool overwrite)
         {
             if (sourcePath.Length < MAX_PATH && destPath.Length < MAX_PATH)
