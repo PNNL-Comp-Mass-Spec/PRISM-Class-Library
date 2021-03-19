@@ -58,36 +58,36 @@ namespace PRISM
                 }
                 else
                 {
-                    DeleteDirectories(new[] { NativeIOFileTools.GetWin32LongPath(path) });
+                    DeleteDirectories(new List<string> { NativeIOFileTools.GetWin32LongPath(path) });
                 }
             }
         }
 
-        private static void DeleteDirectories(string[] directories)
+        private static void DeleteDirectories(IEnumerable<string> directoryPaths)
         {
-            foreach (var directory in directories)
+            foreach (var path in directoryPaths)
             {
-                var files = GetFiles(directory, null, SearchOption.TopDirectoryOnly);
+                var files = GetFiles(path, null, SearchOption.TopDirectoryOnly);
                 foreach (var file in files)
                 {
                     NativeIOFileTools.Delete(file);
                 }
 
-                directories = GetDirectories(directory, null, SearchOption.TopDirectoryOnly);
-                DeleteDirectories(directories);
+                var matchingDirectories = GetDirectories(path, null, SearchOption.TopDirectoryOnly);
+                DeleteDirectories(matchingDirectories);
 
-                var ok = NativeIOMethods.RemoveDirectory(NativeIOFileTools.GetWin32LongPath(directory));
+                var ok = NativeIOMethods.RemoveDirectory(NativeIOFileTools.GetWin32LongPath(path));
                 if (!ok)
                     NativeIOFileTools.ThrowWin32Exception();
             }
         }
 
-        public static string[] GetDirectories(string path, string searchPattern, SearchOption searchOption)
+        public static List<string> GetDirectories(string path, string searchPattern, SearchOption searchOption)
         {
             searchPattern = searchPattern ?? "*";
             var dirs = new List<string>();
             InternalGetDirectories(path, searchPattern, searchOption, ref dirs);
-            return dirs.ToArray();
+            return dirs;
         }
 
         private static void InternalGetDirectories(string path, string searchPattern, SearchOption searchOption, ref List<string> dirs)
