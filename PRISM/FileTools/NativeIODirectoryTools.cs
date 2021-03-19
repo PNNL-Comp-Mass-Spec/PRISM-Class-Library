@@ -12,11 +12,14 @@ namespace PRISM
     /// </remarks>
     internal static class NativeIODirectoryTools
     {
-        public const int MAX_DIR_PATH = 248;
+        /// <summary>
+        /// Directory path length threshold at which we should switch to NativeIO calls
+        /// </summary>
+        public const int DIRECTORY_PATH_LENGTH_THRESHOLD = 248;
 
         public static bool Exists(string path)
         {
-            if (path.Length < MAX_DIR_PATH)
+            if (path.Length < DIRECTORY_PATH_LENGTH_THRESHOLD)
             {
                 return Directory.Exists(path);
             }
@@ -27,7 +30,7 @@ namespace PRISM
 
         public static void CreateDirectory(string path)
         {
-            if (path.Length < MAX_DIR_PATH)
+            if (path.Length < DIRECTORY_PATH_LENGTH_THRESHOLD)
             {
                 Directory.CreateDirectory(path);
             }
@@ -41,7 +44,7 @@ namespace PRISM
 
         public static void Delete(string path, bool recursive)
         {
-            if (path.Length < NativeIOFileTools.MAX_PATH && !recursive)
+            if (path.Length < NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !recursive)
             {
                 Directory.Delete(path, false);
             }

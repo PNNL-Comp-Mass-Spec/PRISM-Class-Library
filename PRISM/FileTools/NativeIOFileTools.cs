@@ -13,11 +13,14 @@ namespace PRISM
     /// </remarks>
     internal static class NativeIOFileTools
     {
-        public const int MAX_PATH = 260;
+        /// <summary>
+        /// File path length threshold at which we should switch to NativeIO calls
+        /// </summary>
+        public const int FILE_PATH_LENGTH_THRESHOLD = 260;
 
         public static bool Exists(string path)
         {
-            if (path.Length < MAX_PATH)
+            if (path.Length < FILE_PATH_LENGTH_THRESHOLD)
             {
                 return File.Exists(path);
             }
@@ -28,7 +31,7 @@ namespace PRISM
 
         public static void Copy(string sourcePath, string destPath, bool overwrite)
         {
-            if (sourcePath.Length < MAX_PATH && destPath.Length < MAX_PATH)
+            if (sourcePath.Length < FILE_PATH_LENGTH_THRESHOLD && destPath.Length < FILE_PATH_LENGTH_THRESHOLD)
             {
                 File.Copy(sourcePath, destPath, overwrite);
             }
@@ -42,7 +45,7 @@ namespace PRISM
 
         public static void Delete(string filePath)
         {
-            if (filePath.Length < MAX_PATH)
+            if (filePath.Length < FILE_PATH_LENGTH_THRESHOLD)
             {
                 File.Delete(filePath);
             }
