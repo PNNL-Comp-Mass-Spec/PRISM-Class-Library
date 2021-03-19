@@ -3,21 +3,30 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
+// ReSharper disable UnusedMember.Global
+
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>
     /// Methods for copying and deleting files with path lengths of 260 characters or longer
+    /// These only work on Windows
     /// </summary>
     /// <remarks>
     /// From https://stackoverflow.com/a/39534444/1179467
     /// </remarks>
-    internal static class NativeIOFileTools
+    public static class NativeIOFileTools
     {
         /// <summary>
         /// File path length threshold at which we should switch to NativeIO calls
         /// </summary>
         public const int FILE_PATH_LENGTH_THRESHOLD = 260;
 
+        /// <summary>
+        /// Check whether the file exists
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>True if the file exists, otherwise false</returns>
         public static bool Exists(string path)
         {
             if (path.Length < FILE_PATH_LENGTH_THRESHOLD)
@@ -29,6 +38,12 @@ namespace PRISM
             return result > 0;
         }
 
+        /// <summary>
+        /// Copy the file
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="destPath"></param>
+        /// <param name="overwrite"></param>
         public static void Copy(string sourcePath, string destPath, bool overwrite)
         {
             if (sourcePath.Length < FILE_PATH_LENGTH_THRESHOLD && destPath.Length < FILE_PATH_LENGTH_THRESHOLD)
@@ -43,6 +58,10 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Delete the file
+        /// </summary>
+        /// <param name="filePath"></param>
         public static void Delete(string filePath)
         {
             if (filePath.Length < FILE_PATH_LENGTH_THRESHOLD)
@@ -57,6 +76,10 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Format the path as a Win32 long path
+        /// </summary>
+        /// <param name="path"></param>
         public static string GetWin32LongPath(string path)
         {
             if (path.StartsWith(@"\\?\"))
@@ -85,6 +108,10 @@ namespace PRISM
             return newPath.TrimEnd('.');
         }
 
+        /// <summary>
+        /// Remove Win32 long path characters
+        /// </summary>
+        /// <param name="path"></param>
         public static string GetCleanPath(string path)
         {
             if (path.StartsWith(@"\\?\UNC\"))
@@ -96,8 +123,9 @@ namespace PRISM
             return path;
         }
 
+
         [DebuggerStepThrough]
-        public static void ThrowWin32Exception()
+        internal static void ThrowWin32Exception()
         {
             var code = Marshal.GetLastWin32Error();
             if (code != 0)

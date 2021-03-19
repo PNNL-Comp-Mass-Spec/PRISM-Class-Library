@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using System.IO;
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>
     /// Methods for copying and deleting directories with path lengths of 260 characters or longer
+    /// These only work on Windows
     /// </summary>
     /// <remarks>
     /// From https://stackoverflow.com/a/39534444/1179467
     /// </remarks>
-    internal static class NativeIODirectoryTools
+    public static class NativeIODirectoryTools
     {
         /// <summary>
         /// Directory path length threshold at which we should switch to NativeIO calls
         /// </summary>
         public const int DIRECTORY_PATH_LENGTH_THRESHOLD = 248;
 
+        /// <summary>
+        /// Check whether the directory exists
+        /// </summary>
+        /// <param name="path"></param>
         public static bool Exists(string path)
         {
             if (path.Length < DIRECTORY_PATH_LENGTH_THRESHOLD)
@@ -28,6 +34,10 @@ namespace PRISM
             return result > 0;
         }
 
+        /// <summary>
+        /// Create a directory, optionally having a long path
+        /// </summary>
+        /// <param name="path"></param>
         public static void CreateDirectory(string path)
         {
             if (path.Length < DIRECTORY_PATH_LENGTH_THRESHOLD)
@@ -42,6 +52,11 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Delete a directory, optionally having a long path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="recursive"></param>
         public static void Delete(string path, bool recursive)
         {
             if (path.Length < NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !recursive)
@@ -82,6 +97,13 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Find directories that match a search pattern
+        /// </summary>
+        /// <param name="path">Path to the directory to examine</param>
+        /// <param name="searchPattern">Search pattern; use null or * to find all subdirectories</param>
+        /// <param name="searchOption">Whether to search the current directory only, or also search below all subdirectories</param>
+        /// <returns>List of paths</returns>
         public static List<string> GetDirectories(string path, string searchPattern, SearchOption searchOption)
         {
             searchPattern = searchPattern ?? "*";
@@ -127,6 +149,13 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Find files that match a search pattern
+        /// </summary>
+        /// <param name="path">Path to the directory to examine</param>
+        /// <param name="searchPattern">Search pattern; use null or * to find all subdirectories</param>
+        /// <param name="searchOption">Whether to search the current directory only, or also search below all subdirectories</param>
+        /// <returns>List of paths</returns>
         public static string[] GetFiles(string path, string searchPattern, SearchOption searchOption)
         {
             searchPattern = searchPattern ?? "*";

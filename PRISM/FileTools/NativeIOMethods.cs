@@ -6,6 +6,7 @@ namespace PRISM
 {
     /// <summary>
     /// Methods for working with files and directories with path lengths of 260 characters or longer
+    /// These only work on Windows
     /// </summary>
     /// <remarks>
     /// From https://stackoverflow.com/a/39534444/1179467
