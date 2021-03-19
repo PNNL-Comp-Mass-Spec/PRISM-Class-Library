@@ -27,7 +27,7 @@ namespace PRISMWin
             }
         }
 
-#if !(NETSTANDARD2_0)
+#if !NETSTANDARD2_0
 
         /// <summary>
         /// Look for a integer value in a TextBox

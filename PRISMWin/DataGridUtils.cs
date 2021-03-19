@@ -7,7 +7,7 @@ namespace PRISMWin
     /// Methods for appending columns to a DataGrid table style
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class DataGridUtils
+    public static class DataGridUtils
     {
         /// <summary>
         /// Append a column to a DataGrid table style

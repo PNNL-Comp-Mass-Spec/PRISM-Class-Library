@@ -130,7 +130,6 @@ namespace PRISMTest
             }
 
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
-
         }
 
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]

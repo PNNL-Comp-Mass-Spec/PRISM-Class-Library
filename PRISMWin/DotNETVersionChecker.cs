@@ -258,7 +258,7 @@ namespace PRISMWin
 
                 // Find the newest version in dotNETVersions
                 var newestMajorVersion = (from item in dotNETVersions orderby item.Key select item.Value).Last();
-                if (newestMajorVersion.Count <= 0)
+                if (newestMajorVersion.Count == 0)
                 {
                     return UNKNOWN_VERSION;
                 }

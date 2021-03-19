@@ -385,7 +385,6 @@ namespace PRISM
     [Obsolete("Use Logging.SQLServerDatabaseLogger or Logging.ODBCDatabaseLogger")]
     public class clsDBLogger : clsFileLogger
     {
-
         /// <summary>
         /// List of database errors
         /// </summary>
