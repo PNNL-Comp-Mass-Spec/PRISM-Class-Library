@@ -487,7 +487,9 @@ namespace PRISM
             }
             catch (Exception)
             {
-                if (!SystemInfo.IsLinux && (sourcePath.Length >= NativeIOFileTools.MAX_PATH || destPath.Length >= NativeIOFileTools.MAX_PATH))
+                if (!SystemInfo.IsLinux &&
+                    (sourcePath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD ||
+                     destPath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD))
                 {
                     NativeIOFileTools.Copy(sourcePath, destPath, overwrite);
                 }
@@ -828,7 +830,7 @@ namespace PRISM
         public void CreateDirectoryIfNotExists(string directoryPath)
         {
             // Possible future change: add another version that handles nested, non-existing directories
-            if (directoryPath.Length < NativeIODirectoryTools.MAX_DIR_PATH)
+            if (directoryPath.Length < NativeIODirectoryTools.DIRECTORY_PATH_LENGTH_THRESHOLD)
             {
                 if (!Directory.Exists(directoryPath))
                 {
@@ -1010,7 +1012,7 @@ namespace PRISM
             }
             catch (Exception)
             {
-                if (!SystemInfo.IsLinux && targetFile.FullName.Length >= NativeIOFileTools.MAX_PATH)
+                if (!SystemInfo.IsLinux && targetFile.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD)
                 {
                     NativeIOFileTools.Delete(targetFile.FullName);
                 }
@@ -1279,7 +1281,7 @@ namespace PRISM
 
             if (!destDir.Exists)
             {
-                if (destPath.Length < NativeIODirectoryTools.MAX_DIR_PATH)
+                if (destPath.Length < NativeIODirectoryTools.DIRECTORY_PATH_LENGTH_THRESHOLD)
                 {
                     // Issue: Throws an exception if the directory path > 248 characters
                     destDir.Create();
@@ -1672,7 +1674,8 @@ namespace PRISM
                         }
                         catch (Exception)
                         {
-                            if (sourceFile.FullName.Length >= NativeIOFileTools.MAX_PATH || targetFilePath.Length >= NativeIOFileTools.MAX_PATH)
+                            if (sourceFile.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD ||
+                                targetFilePath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD)
                             {
                                 // The source or target path is too long
                                 // Try a normal file copy instead
