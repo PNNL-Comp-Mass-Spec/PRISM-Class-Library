@@ -5,11 +5,6 @@ namespace PRISMWin
 #pragma warning disable CS1591  // Missing XML comments
 #pragma warning disable IDE1006 // Naming Styles
 
-    [Obsolete("Use the DiskInfo class")]
-    public class clsDiskInfo : DiskInfo
-    {
-    }
-
     [Obsolete("Use the DotNETVersionChecker class")]
     public class clsDotNETVersionChecker : DotNETVersionChecker
     {
