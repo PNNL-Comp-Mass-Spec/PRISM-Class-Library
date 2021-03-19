@@ -123,6 +123,39 @@ namespace PRISM
             return path;
         }
 
+        /// <summary>
+        /// Get the size of a file, in bytes
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns>File size, in bytes</returns>
+        public static long GetFileLength(string filePath)
+        {
+            if (filePath.Length < FILE_PATH_LENGTH_THRESHOLD)
+            {
+                var fileInfo = new FileInfo(filePath);
+                return fileInfo.Length;
+            }
+
+            return InternalGetFileSize(filePath, out _);
+        }
+
+        private static long InternalGetFileSize(string filePath, out NativeIOMethods.WIN32_FIND_DATA findData)
+        {
+            long size = 0;
+            var INVALID_HANDLE_VALUE = new IntPtr(-1);
+
+            var findHandle = NativeIOMethods.FindFirstFile(@"\\?\" + filePath, out findData);
+
+            if (findHandle != INVALID_HANDLE_VALUE)
+            {
+                if ((findData.dwFileAttributes & FileAttributes.Directory) == 0)
+                {
+                    size = (long)findData.nFileSizeLow + (long)findData.nFileSizeHigh * 4294967296;
+                }
+            }
+
+            return size;
+        }
 
         [DebuggerStepThrough]
         internal static void ThrowWin32Exception()
