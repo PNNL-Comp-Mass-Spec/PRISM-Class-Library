@@ -957,6 +957,27 @@ namespace PRISM
     public class XMLFileReaderNotInitializedException : Exception
     {
         /// <summary>
+        /// Constructor
+        /// </summary>
+        public XMLFileReaderNotInitializedException() : base()
+        {
+        }
+
+        /// <summary>
+        /// Constructor that takes a messages
+        /// </summary>
+        public XMLFileReaderNotInitializedException(string message) : base(message)
+        {
+        }
+
+        /// <summary>
+        /// Constructor that takes a message and inner exception
+        /// </summary>
+        public XMLFileReaderNotInitializedException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        /// <summary>
         /// Returns a message describing this exception
         /// </summary>
         public override string Message { get; } = "The XMLFileReader instance has not been properly initialized.";
