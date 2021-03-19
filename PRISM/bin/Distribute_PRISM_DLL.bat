@@ -25,8 +25,8 @@ xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Programs\DMS_EMa
 rem The Analysis Manager now gets PRISM.dll from NuGet
 rem xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Common" /Y /D
 rem xcopy net462\PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Common" /Y /D
-xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\AM_Shared\bin\Debug" /Y /D
-xcopy net462\PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\AM_Shared\bin\Debug" /Y /D
+xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Shared\bin\Debug" /Y /D
+xcopy net462\PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Shared\bin\Debug" /Y /D
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\bin" /Y /D
 xcopy net462\PRISM.pdb "F:\My Documents\Projects\DataMining\DMS_Managers\Analysis_Manager\AM_Program\bin" /Y /D
 
