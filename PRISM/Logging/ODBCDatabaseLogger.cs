@@ -2,10 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-#if !NETSTANDARD2_0
-// Note: Is available as of NETSTANDARD 2.1
 using System.Data.Odbc;
-#endif
 using System.Threading;
 
 namespace PRISM.Logging
@@ -27,12 +24,10 @@ namespace PRISM.Logging
         // ReSharper disable once UnusedMember.Local
         private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
 
-#if !NETSTANDARD2_0
         /// <summary>
         /// Tracks the number of successive dequeue failures
         /// </summary>
         private static int mFailedDequeueEvents;
-#endif
 
         /// <summary>
         /// Module name
@@ -70,7 +65,6 @@ namespace PRISM.Logging
         /// </summary>
         public static string StoredProcedureName { get; private set; }
 
-#if !NETSTANDARD2_0
         private static string LogTypeParamName { get; set; }
 
         private static string MessageParamName { get; set; }
@@ -82,9 +76,6 @@ namespace PRISM.Logging
         private static int MessageParamSize { get; set; }
 
         private static int PostedByParamSize { get; set; }
-#else
-        private static bool NotifiedNotSupported{ get; set; }
-#endif
 
         #endregion
 
@@ -164,7 +155,6 @@ namespace PRISM.Logging
             ConnectionString = connectionString;
             StoredProcedureName = storedProcedure;
 
-#if !NETSTANDARD2_0
             LogTypeParamName = logTypeParamName;
             MessageParamName = messageParamName;
             PostedByParamName = postedByParamName;
@@ -172,7 +162,6 @@ namespace PRISM.Logging
             LogTypeParamSize = logTypeParamSize;
             MessageParamSize = messageParamSize;
             PostedByParamSize = postedByParamSize;
-#endif
         }
 
         /// <summary>
@@ -301,21 +290,11 @@ namespace PRISM.Logging
 
         private static void LogQueuedMessages()
         {
-#if NETSTANDARD2_0
-                if (NotifiedNotSupported)
-                    return;
-
-                ConsoleMsgUtils.ShowWarning("Database logging via ODBC is not supported under .NET Standard 2.x");
-                NotifiedNotSupported = true;
-
-#endif
-
             try
             {
                 if (mMessageQueue.IsEmpty)
                     return;
 
-#if !NETSTANDARD2_0
                 ShowTrace(string.Format("ODBCDatabaseLogger connecting to {0}", ConnectionString));
                 var messagesWritten = 0;
 
@@ -407,7 +386,6 @@ namespace PRISM.Logging
                 }
 
                 ShowTrace(string.Format("ODBCDatabaseLogger connection closed; wrote {0} messages", messagesWritten));
-#endif
             }
             catch (Exception ex)
             {

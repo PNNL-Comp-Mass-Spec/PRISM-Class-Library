@@ -356,7 +356,6 @@ namespace PRISM
             }
         }
 
-#if !NETSTANDARD2_0
         /// <summary>
         /// The function gets a disconnected DataSet as specified by the SQL statement.
         /// </summary>
@@ -364,7 +363,7 @@ namespace PRISM
         /// <param name="DS">A DataSet.</param>
         /// <param name="rowCount">A row counter.</param>
         /// <return>Returns a disconnected DataSet as specified by the SQL statement.</return>
-        [Obsolete("Use GetQueryResults since support for DataSet objects is dropped in .NET Standard")]
+        [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
             var retryCount = 3;
@@ -401,7 +400,6 @@ namespace PRISM
 
             return false;
         }
-#endif
 
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings

@@ -786,9 +786,10 @@ namespace PRISM
 
         private void CacheWmiCmdLineData()
         {
-#if !NETSTANDARD2_0
             CachedWmiCmdLineData = new Dictionary<uint, string>();
 
+#pragma warning disable CA1416 // Validate platform compatibility
+            // Note: Platform compatibility check is done outside of this class.
             using (var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))
             {
                 // Store the results in a dictionary
@@ -801,7 +802,7 @@ namespace PRISM
                     CachedWmiCmdLineData.Add(processId, cmdLine);
                 }
             }
-#endif
+#pragma warning restore CA1416 // Validate platform compatibility
         }
 
         private void DumpCachedWmiCmdLineData()
@@ -821,15 +822,12 @@ namespace PRISM
         {
             argumentList = new List<string>();
 
-#if (NETSTANDARD2_0)
-            exePath = string.Empty;
-            return string.Empty;
-#else
-
             string cmdLine = null;
 
             if (CachedWmiCmdLineData == null)
             {
+#pragma warning disable CA1416 // Validate platform compatibility
+                // Note: Platform compatibility check is done outside of this class.
                 using (var searcher = new System.Management.ManagementObjectSearcher(
                     string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id)))
                 {
@@ -841,6 +839,7 @@ namespace PRISM
                         cmdLine = matchEnum.Current["CommandLine"]?.ToString();
                     }
                 }
+#pragma warning restore CA1416 // Validate platform compatibility
             }
             else
             {
@@ -941,7 +940,6 @@ namespace PRISM
             }
 
             return cmdLine;
-#endif
         }
 
         /// <summary>
