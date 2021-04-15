@@ -27,8 +27,6 @@ namespace PRISMWin
             }
         }
 
-#if !NETSTANDARD2_0
-
         /// <summary>
         /// Look for a integer value in a TextBox
         /// </summary>
@@ -130,8 +128,6 @@ namespace PRISMWin
                 return valueIfError;
             }
         }
-
-#endif
 
         /// <summary>
         /// Detects when the user uses the control key while typing in a TextBox

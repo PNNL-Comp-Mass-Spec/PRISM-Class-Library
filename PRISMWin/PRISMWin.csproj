@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net472</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;net50-windows</TargetFrameworks>
     <RootNamespace>PRISMWin</RootNamespace>
     <AssemblyName>PRISMWin</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -17,27 +17,25 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</PackageProjectUrl>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <DefineConstants>NETSTANDARD2_0</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Properties\**" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <Reference Include="System.Management" />
+  <ItemGroup Condition="'$(TargetFramework)'=='net5.0'">
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
-    <Reference Include="System.Windows.Forms" />
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net48'">
     <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
 </Project>

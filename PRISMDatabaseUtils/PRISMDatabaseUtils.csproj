@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net472;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
     <RootNamespace>PRISMDatabaseUtils</RootNamespace>
     <AssemblyName>PRISMDatabaseUtils</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -32,12 +32,12 @@
     <PackageReference Include="Npgsql" Version="5.0.4" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netstandard2.1' OR '$(TargetFramework)'=='net5.0'">
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net48'">
     <Reference Include="System" Version="4.0.0" />
   </ItemGroup>
 

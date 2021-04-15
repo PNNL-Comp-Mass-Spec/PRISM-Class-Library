@@ -639,8 +639,12 @@ namespace PRISM.FileProcessor
                     Thread.Sleep(THREAD_SLEEP_TIME_MSEC);
                     totalThreadWaitTimeMsec += THREAD_SLEEP_TIME_MSEC;
                 }
+
+#if NETFRAMEWORK
+                // Thread.Abort() Throws a "PlatformNotSupportedException" on all .NET Standard/.NET Core platforms; warning as of .NET 5.0
                 if (gcThread.IsAlive)
                     gcThread.Abort();
+#endif
             }
             catch (Exception)
             {
