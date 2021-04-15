@@ -474,7 +474,7 @@ namespace PRISM.FileProcessor
                     // LogDirectoryPath will get updated below if mLogFilePath is defined and Rooted
                     if (!string.IsNullOrWhiteSpace(mOutputDirectoryPath))
                     {
-                        LogDirectoryPath = string.Copy(mOutputDirectoryPath);
+                        LogDirectoryPath = mOutputDirectoryPath;
                     }
                 }
 
@@ -901,7 +901,7 @@ namespace PRISM.FileProcessor
             else
             {
                 mLastReportTime = DateTime.UtcNow;
-                mLastMessage = string.Copy(message);
+                mLastMessage = message;
 
                 switch (messageType)
                 {
@@ -1262,7 +1262,7 @@ namespace PRISM.FileProcessor
         {
             var descriptionChanged = !string.Equals(progressStepDescription, ProgressStepDescription);
 
-            ProgressStepDescription = string.Copy(progressStepDescription);
+            ProgressStepDescription = progressStepDescription;
             if (percentComplete < 0)
             {
                 percentComplete = 0;

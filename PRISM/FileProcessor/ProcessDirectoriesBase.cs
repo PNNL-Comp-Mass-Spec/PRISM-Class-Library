@@ -300,7 +300,7 @@ namespace PRISM.FileProcessor
                 if (!string.IsNullOrWhiteSpace(outputDirectoryAlternatePath))
                 {
                     // Update the cached output directory path
-                    mOutputDirectoryPath = string.Copy(outputDirectoryAlternatePath);
+                    mOutputDirectoryPath = outputDirectoryAlternatePath;
                 }
 
                 // See if inputDirectoryPath contains a wildcard (* or ?)
@@ -527,7 +527,7 @@ namespace PRISM.FileProcessor
                 if (!string.IsNullOrWhiteSpace(outputDirectoryAlternatePath))
                 {
                     outputDirectoryAlternatePath = Path.Combine(outputDirectoryAlternatePath, inputDirectory.Name);
-                    outputDirectoryPathToUse = string.Copy(outputDirectoryAlternatePath);
+                    outputDirectoryPathToUse = outputDirectoryAlternatePath;
                 }
                 else
                 {

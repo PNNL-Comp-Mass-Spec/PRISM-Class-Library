@@ -532,7 +532,7 @@ namespace PRISM.Logging
             else
             {
                 if (Path.HasExtension(BaseLogFileName))
-                    newLogFilePath = string.Copy(BaseLogFileName);
+                    newLogFilePath = BaseLogFileName;
                 else
                     newLogFilePath = BaseLogFileName + LOG_FILE_EXTENSION;
             }
@@ -727,7 +727,7 @@ namespace PRISM.Logging
                     pendingRenames.Add(nextFileSuffix, new KeyValuePair<FileInfo, string>(new FileInfo(filePathToCheck), nextLogFilePath));
 
                     nextFileSuffix++;
-                    filePathToCheck = string.Copy(nextLogFilePath);
+                    filePathToCheck = nextLogFilePath;
                 }
 
                 if (pendingRenames.Count == 0)

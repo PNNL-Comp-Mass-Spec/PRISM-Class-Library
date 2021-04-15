@@ -921,7 +921,7 @@ namespace PRISM
                     }
                 }
 
-                var cleanedArguments = string.Copy(arguments);
+                var cleanedArguments = arguments;
 
                 var argumentMatch = mQuotedStringMatcher.Match(arguments);
                 while (argumentMatch.Success)

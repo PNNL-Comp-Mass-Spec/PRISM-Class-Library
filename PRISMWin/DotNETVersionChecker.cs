@@ -298,7 +298,7 @@ namespace PRISMWin
 
                     if (updateNewest)
                     {
-                        newestVersion = string.Copy(installedVersion);
+                        newestVersion = installedVersion;
                         newestMajor = major;
                         newestMinor = minor;
                         newestBuild = build;

@@ -1114,7 +1114,7 @@ namespace PRISM
                     // ReSharper disable once StringLiteralTypo
                     if (exePath.StartsWith("sshd:"))
                     {
-                        processName = string.Copy(exePath);
+                        processName = exePath;
                     }
                     else
                     {
