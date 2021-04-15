@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472<!--;netcoreapp2.0--></TargetFrameworks>
+    <TargetFrameworks>net472<!--;net5.0-windows--></TargetFrameworks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -14,7 +14,7 @@
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows'">
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
 
@@ -27,7 +27,7 @@
     <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net5.0-windows'">
     <ProjectReference Include="..\PRISMWin\PRISMWin.csproj" />
   </ItemGroup>
 

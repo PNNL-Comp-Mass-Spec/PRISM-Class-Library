@@ -156,7 +156,7 @@ namespace PRISMTest
             {
                 { MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, connectionString },
                 { MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, "True" },
-                { MgrSettings.MGR_PARAM_MGR_NAME, "Proto-5_InstDirScan" },
+                { MgrSettings.MGR_PARAM_MGR_NAME, "Proto-4_InstDirScan" },
                 { MgrSettings.MGR_PARAM_USING_DEFAULTS, "False" },
             };
 

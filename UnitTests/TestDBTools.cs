@@ -723,7 +723,8 @@ namespace PRISMTest
         {
             var columnNamesByIdentifier = GetShapeTableColumnNamesByIdentifier();
 
-            var columnIdentifierList = columnNamesByIdentifier.Keys;
+            // Get a copy of the existing items; without ToList() this test does not behave properly
+            var columnIdentifierList = columnNamesByIdentifier.Keys.ToList();
 
             columnNamesByIdentifier.Remove(TestTableColumnNames.Color);
             columnNamesByIdentifier.Remove(TestTableColumnNames.Perimeter);
