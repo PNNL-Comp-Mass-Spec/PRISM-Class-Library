@@ -28,7 +28,7 @@
     <Compile Remove="Properties\**" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net5.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net50-windows'">
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
     <PackageReference Include="System.Management" Version="5.0.0" />
   </ItemGroup>
