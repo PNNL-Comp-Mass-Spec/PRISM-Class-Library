@@ -743,7 +743,7 @@ namespace PRISM
         /// </summary>
         protected void LogFromQueue(object o)
         {
-            if (m_queue.Count == 0)
+            if (m_queue.IsEmpty)
                 return;
 
             var messages = new List<clsLogEntry>();
@@ -755,7 +755,7 @@ namespace PRISM
                     messages.Add(le);
                 }
             }
-            while (m_queue.Count != 0);
+            while (!m_queue.IsEmpty);
 
             m_logger.PostEntries(messages);
         }
