@@ -174,10 +174,14 @@ namespace PRISMWin
                         }
                     }
                     else
+                    {
                         throw new Exception("Could not list processes locking resource.");
+                    }
                 }
                 else if (res != 0)
+                {
                     throw new Exception("Could not list processes locking resource. Failed to get size of result.");
+                }
             }
             finally
             {
