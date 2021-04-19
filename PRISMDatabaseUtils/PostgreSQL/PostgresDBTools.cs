@@ -260,27 +260,25 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 {
                     try
                     {
-                        using (var dbConnection = new NpgsqlConnection(ConnectStr))
+                        using var dbConnection = new NpgsqlConnection(ConnectStr);
+
+                        dbConnection.Notice += OnNotice;
+                        dbConnection.Open();
+
+                        if (DebugMessagesEnabled)
                         {
-                            dbConnection.Notice += OnNotice;
-                            dbConnection.Open();
-
-                            if (DebugMessagesEnabled)
-                            {
-                                OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
-                            }
-
-                            // PostgresSQL requires a transaction when calling stored procedures that return result sets
-                            // Without the transaction, the cursor is closed before we can read any data.
-                            using (var transaction = dbConnection.BeginTransaction())
-                            {
-                                sqlCmd.Connection = dbConnection;
-
-                                queryResult = sqlCmd.ExecuteScalar();
-
-                                transaction.Commit();
-                            }
+                            OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
                         }
+
+                        // PostgresSQL requires a transaction when calling stored procedures that return result sets
+                        // Without the transaction, the cursor is closed before we can read any data.
+                        using var transaction = dbConnection.BeginTransaction();
+
+                        sqlCmd.Connection = dbConnection;
+
+                        queryResult = sqlCmd.ExecuteScalar();
+
+                        transaction.Commit();
 
                         return true;
                     }
@@ -384,32 +382,31 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var reader = x.ExecuteReader())
+                using var reader = x.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    while (reader.Read())
+                    var currentRow = new List<string>();
+
+                    for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                     {
-                        var currentRow = new List<string>();
+                        var value = reader.GetValue(columnIndex);
 
-                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
+                        if (DBNull.Value.Equals(value))
                         {
-                            var value = reader.GetValue(columnIndex);
-
-                            if (DBNull.Value.Equals(value))
-                            {
-                                currentRow.Add(string.Empty);
-                            }
-                            else
-                            {
-                                currentRow.Add(value.ToString());
-                            }
+                            currentRow.Add(string.Empty);
                         }
-
-                        dbResults.Add(currentRow);
-
-                        if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
+                        else
                         {
-                            break;
+                            currentRow.Add(value.ToString());
                         }
+                    }
+
+                    dbResults.Add(currentRow);
+
+                    if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
+                    {
+                        break;
                     }
                 }
             });
@@ -472,10 +469,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             queryResults = results;
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var da = new NpgsqlDataAdapter(x))
-                {
-                    da.Fill(results);
-                }
+                using var da = new NpgsqlDataAdapter(x);
+                da.Fill(results);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -536,10 +531,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             queryResults = results;
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var da = new NpgsqlDataAdapter(x))
-                {
-                    da.Fill(results);
-                }
+                using var da = new NpgsqlDataAdapter(x);
+                da.Fill(results);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -594,27 +587,25 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 {
                     try
                     {
-                        using (var dbConnection = new NpgsqlConnection(ConnectStr))
+                        using var dbConnection = new NpgsqlConnection(ConnectStr);
+
+                        dbConnection.Notice += OnNotice;
+                        dbConnection.Open();
+
+                        if (DebugMessagesEnabled)
                         {
-                            dbConnection.Notice += OnNotice;
-                            dbConnection.Open();
-
-                            if (DebugMessagesEnabled)
-                            {
-                                OnDebugEvent("GetQueryResults: " + cmd.CommandText);
-                            }
-
-                            // PostgresSQL requires a transaction when calling stored procedures that return result sets
-                            // Without the transaction, the cursor is closed before we can read any data.
-                            using (var transaction = dbConnection.BeginTransaction())
-                            {
-                                sqlCmd.Connection = dbConnection;
-
-                                readMethod(sqlCmd);
-
-                                transaction.Commit();
-                            }
+                            OnDebugEvent("GetQueryResults: " + cmd.CommandText);
                         }
+
+                        // PostgresSQL requires a transaction when calling stored procedures that return result sets
+                        // Without the transaction, the cursor is closed before we can read any data.
+                        using var transaction = dbConnection.BeginTransaction();
+
+                        sqlCmd.Connection = dbConnection;
+
+                        readMethod(sqlCmd);
+
+                        transaction.Commit();
 
                         return true;
                     }
@@ -742,46 +733,44 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                             // PostgresSQL requires a transaction when calling stored procedures that return result sets
                             // Without the transaction, the cursor is closed before we can read any data.
-                            using (var transaction = dbConnection.BeginTransaction())
-                            {
-                                sqlCmd.Connection = dbConnection;
+                            using var transaction = dbConnection.BeginTransaction();
 
-                                // Multiple cursors not supported
-                                var cursorName = "";
-                                using (var reader = sqlCmd.ExecuteReader())
+                            sqlCmd.Connection = dbConnection;
+
+                            // Multiple cursors not supported
+                            var cursorName = "";
+                            using (var reader = sqlCmd.ExecuteReader())
+                            {
+                                while (reader.Read())
                                 {
-                                    while (reader.Read())
+                                    // Really only expecting a single row; extract all ref cursors.
+                                    foreach (var column in reader.GetColumnSchema().Where(x => x.NpgsqlDbType == NpgsqlDbType.Refcursor))
                                     {
-                                        // Really only expecting a single row; extract all ref cursors.
-                                        foreach (var column in reader.GetColumnSchema().Where(x => x.NpgsqlDbType == NpgsqlDbType.Refcursor))
+                                        var name = reader[column.ColumnName].CastDBVal<string>();
+                                        if (string.IsNullOrWhiteSpace(cursorName))
                                         {
-                                            var name = reader[column.ColumnName].CastDBVal<string>();
-                                            if (string.IsNullOrWhiteSpace(cursorName))
-                                            {
-                                                cursorName = name;
-                                            }
-                                            else
-                                            {
-                                                OnWarningEvent($"Reading of multiple RefCursors not supported; ignoring RefCursor {name}.");
-                                                // Log error: Multiple cursors not supported
-                                            }
+                                            cursorName = name;
+                                        }
+                                        else
+                                        {
+                                            OnWarningEvent($"Reading of multiple RefCursors not supported; ignoring RefCursor {name}.");
+                                            // Log error: Multiple cursors not supported
                                         }
                                     }
                                 }
-
-                                if (!string.IsNullOrEmpty(cursorName))
-                                {
-                                    // We got a cursor; read it and populate the output object
-                                    using (var cmd = new NpgsqlCommand($"FETCH ALL FROM {cursorName}", dbConnection))
-                                    {
-                                        readMethod(cmd);
-                                    }
-                                }
-
-                                resultCode = GetReturnCode(sqlCmd.Parameters);
-
-                                transaction.Commit();
                             }
+
+                            if (!string.IsNullOrEmpty(cursorName))
+                            {
+                                // We got a cursor; read it and populate the output object
+                                using var cmd = new NpgsqlCommand($"FETCH ALL FROM {cursorName}", dbConnection);
+
+                                readMethod(cmd);
+                            }
+
+                            resultCode = GetReturnCode(sqlCmd.Parameters);
+
+                            transaction.Commit();
                         }
 
                         success = true;
@@ -872,32 +861,31 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var reader = x.ExecuteReader())
+                using var reader = x.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    while (reader.Read())
+                    var currentRow = new List<string>();
+
+                    for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                     {
-                        var currentRow = new List<string>();
+                        var value = reader.GetValue(columnIndex);
 
-                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
+                        if (DBNull.Value.Equals(value))
                         {
-                            var value = reader.GetValue(columnIndex);
-
-                            if (DBNull.Value.Equals(value))
-                            {
-                                currentRow.Add(string.Empty);
-                            }
-                            else
-                            {
-                                currentRow.Add(value.ToString());
-                            }
+                            currentRow.Add(string.Empty);
                         }
-
-                        dbResults.Add(currentRow);
-
-                        if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
+                        else
                         {
-                            break;
+                            currentRow.Add(value.ToString());
                         }
+                    }
+
+                    dbResults.Add(currentRow);
+
+                    if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
+                    {
+                        break;
                     }
                 }
             });
@@ -923,10 +911,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             results = queryResults;
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var da = new NpgsqlDataAdapter(x))
-                {
-                    da.Fill(queryResults);
-                }
+                using var da = new NpgsqlDataAdapter(x);
+                da.Fill(queryResults);
             });
 
             return ExecuteSPData(spCmd, readMethod, retryCount, retryDelaySeconds);
@@ -950,10 +936,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             results = queryResults;
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
-                using (var da = new NpgsqlDataAdapter(x))
-                {
-                    da.Fill(queryResults);
-                }
+                using var da = new NpgsqlDataAdapter(x);
+                da.Fill(queryResults);
             });
 
             return ExecuteSPData(spCmd, readMethod, retryCount, retryDelaySeconds);

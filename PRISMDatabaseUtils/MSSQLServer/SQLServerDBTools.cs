@@ -184,16 +184,15 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 try
                 {
-                    using (var dbConnection = new SqlConnection(ConnectStr))
-                    {
-                        dbConnection.InfoMessage += OnInfoMessage;
+                    using var dbConnection = new SqlConnection(ConnectStr);
 
-                        // Get the DataSet
-                        var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
-                        DS = new DataSet();
-                        rowCount = adapter.Fill(DS);
-                        return true;
-                    }
+                    dbConnection.InfoMessage += OnInfoMessage;
+
+                    // Get the DataSet
+                    var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
+                    DS = new DataSet();
+                    rowCount = adapter.Fill(DS);
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -292,20 +291,19 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 {
                     try
                     {
-                        using (var dbConnection = new SqlConnection(ConnectStr))
+                        using var dbConnection = new SqlConnection(ConnectStr);
+
+                        dbConnection.InfoMessage += OnInfoMessage;
+                        dbConnection.Open();
+
+                        sqlCmd.Connection = dbConnection;
+
+                        if (DebugMessagesEnabled)
                         {
-                            dbConnection.InfoMessage += OnInfoMessage;
-                            dbConnection.Open();
-
-                            sqlCmd.Connection = dbConnection;
-
-                            if (DebugMessagesEnabled)
-                            {
-                                OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
-                            }
-
-                            queryResult = sqlCmd.ExecuteScalar();
+                            OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
                         }
+
+                        queryResult = sqlCmd.ExecuteScalar();
 
                         return true;
                     }
@@ -409,37 +407,36 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
             var readMethod = new Action<SqlCommand>(x =>
             {
-                using (var reader = x.ExecuteReader())
+                using var reader = x.ExecuteReader();
+
+                if (!reader.HasRows)
                 {
-                    if (!reader.HasRows)
+                    return;
+                }
+
+                while (reader.Read())
+                {
+                    var currentRow = new List<string>();
+
+                    for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                     {
-                        return;
+                        var value = reader.GetValue(columnIndex);
+
+                        if (DBNull.Value.Equals(value))
+                        {
+                            currentRow.Add(string.Empty);
+                        }
+                        else
+                        {
+                            currentRow.Add(value.ToString());
+                        }
                     }
 
-                    while (reader.Read())
+                    dbResults.Add(currentRow);
+
+                    if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
                     {
-                        var currentRow = new List<string>();
-
-                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
-                        {
-                            var value = reader.GetValue(columnIndex);
-
-                            if (DBNull.Value.Equals(value))
-                            {
-                                currentRow.Add(string.Empty);
-                            }
-                            else
-                            {
-                                currentRow.Add(value.ToString());
-                            }
-                        }
-
-                        dbResults.Add(currentRow);
-
-                        if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
-                        {
-                            break;
-                        }
+                        break;
                     }
                 }
             });
@@ -502,10 +499,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             queryResults = results;
             var readMethod = new Action<SqlCommand>(x =>
             {
-                using (var da = new SqlDataAdapter(x))
-                {
-                    da.Fill(results);
-                }
+                using var da = new SqlDataAdapter(x);
+                da.Fill(results);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -566,10 +561,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             queryResults = results;
             var readMethod = new Action<SqlCommand>(x =>
             {
-                using (var da = new SqlDataAdapter(x))
-                {
-                    da.Fill(results);
-                }
+                using var da = new SqlDataAdapter(x);
+                da.Fill(results);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -624,20 +617,19 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 {
                     try
                     {
-                        using (var dbConnection = new SqlConnection(ConnectStr))
+                        using var dbConnection = new SqlConnection(ConnectStr);
+
+                        dbConnection.InfoMessage += OnInfoMessage;
+                        dbConnection.Open();
+
+                        sqlCmd.Connection = dbConnection;
+
+                        if (DebugMessagesEnabled)
                         {
-                            dbConnection.InfoMessage += OnInfoMessage;
-                            dbConnection.Open();
-
-                            sqlCmd.Connection = dbConnection;
-
-                            if (DebugMessagesEnabled)
-                            {
-                                OnDebugEvent("GetQueryResults: " + sqlCmd.CommandText);
-                            }
-
-                            readMethod(sqlCmd);
+                            OnDebugEvent("GetQueryResults: " + sqlCmd.CommandText);
                         }
+
+                        readMethod(sqlCmd);
 
                         return true;
                     }
@@ -867,32 +859,31 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
             var readMethod = new Action<SqlCommand>(_ =>
             {
-                using (var reader = spCmd.ExecuteReader())
+                using var reader = spCmd.ExecuteReader();
+
+                while (reader.Read())
                 {
-                    while (reader.Read())
+                    var currentRow = new List<string>();
+
+                    for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                     {
-                        var currentRow = new List<string>();
+                        var value = reader.GetValue(columnIndex);
 
-                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
+                        if (DBNull.Value.Equals(value))
                         {
-                            var value = reader.GetValue(columnIndex);
-
-                            if (DBNull.Value.Equals(value))
-                            {
-                                currentRow.Add(string.Empty);
-                            }
-                            else
-                            {
-                                currentRow.Add(value.ToString());
-                            }
+                            currentRow.Add(string.Empty);
                         }
-
-                        dbResults.Add(currentRow);
-
-                        if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
+                        else
                         {
-                            break;
+                            currentRow.Add(value.ToString());
                         }
+                    }
+
+                    dbResults.Add(currentRow);
+
+                    if (maxRowsToReturn > 0 && dbResults.Count >= maxRowsToReturn)
+                    {
+                        break;
                     }
                 }
             });
@@ -918,10 +909,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             results = queryResults;
             var readMethod = new Action<SqlCommand>(x =>
             {
-                using (var da = new SqlDataAdapter(x))
-                {
-                    da.Fill(queryResults);
-                }
+                using var da = new SqlDataAdapter(x);
+                da.Fill(queryResults);
             });
 
             return ExecuteSPData(spCmd, readMethod, retryCount, retryDelaySeconds);
@@ -945,10 +934,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             results = queryResults;
             var readMethod = new Action<SqlCommand>(x =>
             {
-                using (var da = new SqlDataAdapter(x))
-                {
-                    da.Fill(queryResults);
-                }
+                using var da = new SqlDataAdapter(x);
+                da.Fill(queryResults);
             });
 
             return ExecuteSPData(spCmd, readMethod, retryCount, retryDelaySeconds);

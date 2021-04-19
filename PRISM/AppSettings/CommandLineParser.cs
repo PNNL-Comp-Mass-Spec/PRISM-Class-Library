@@ -914,32 +914,31 @@ namespace PRISM
             {
                 var commentChars = new[] { '#', ';' };
 
-                using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                using var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+                while (!reader.EndOfStream)
                 {
-                    while (!reader.EndOfStream)
+                    var line = reader.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line))
                     {
-                        var line = reader.ReadLine();
-                        if (string.IsNullOrWhiteSpace(line))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        var trimmedLine = line.Trim();
-                        if (trimmedLine.IndexOfAny(commentChars) == 0)
-                        {
-                            // Comment line; skip it
-                            continue;
-                        }
+                    var trimmedLine = line.Trim();
+                    if (trimmedLine.IndexOfAny(commentChars) == 0)
+                    {
+                        // Comment line; skip it
+                        continue;
+                    }
 
-                        // Add '-' at the beginning of the list so that the arguments are properly recognized
-                        if (trimmedLine.StartsWith("-"))
-                        {
-                            lines.Add(trimmedLine);
-                        }
-                        else
-                        {
-                            lines.Add("-" + trimmedLine);
-                        }
+                    // Add '-' at the beginning of the list so that the arguments are properly recognized
+                    if (trimmedLine.StartsWith("-"))
+                    {
+                        lines.Add(trimmedLine);
+                    }
+                    else
+                    {
+                        lines.Add("-" + trimmedLine);
                     }
                 }
             }

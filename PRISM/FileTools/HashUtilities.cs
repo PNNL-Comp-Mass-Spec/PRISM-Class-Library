@@ -128,11 +128,9 @@ namespace PRISM
             string hashValue;
 
             // Open file (as read-only)
-            using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                // Hash contents of this stream
-                hashValue = ComputeCRC32Hash(reader);
-            }
+            using Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            // Hash contents of this stream
+            hashValue = ComputeCRC32Hash(reader);
 
             return hashValue;
         }
@@ -158,11 +156,9 @@ namespace PRISM
             string hashValue;
 
             // Open file (as read-only)
-            using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                // Hash contents of this stream
-                hashValue = ComputeMD5Hash(reader, out base64MD5);
-            }
+            using Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            // Hash contents of this stream
+            hashValue = ComputeMD5Hash(reader, out base64MD5);
 
             return hashValue;
         }
@@ -232,11 +228,9 @@ namespace PRISM
             string hashValue;
 
             // open file (as read-only)
-            using (Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-                // Hash contents of this stream
-                hashValue = ComputeSha1Hash(reader);
-            }
+            using Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            // Hash contents of this stream
+            hashValue = ComputeSha1Hash(reader);
 
             return hashValue;
         }

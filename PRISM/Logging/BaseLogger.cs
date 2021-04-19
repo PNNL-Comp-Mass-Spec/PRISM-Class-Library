@@ -181,10 +181,8 @@ namespace PRISM.Logging
                 var localLogFile = new FileInfo(localLogFilePath);
                 localLogFilePath = localLogFile.FullName;
 
-                using (var localLogWriter = new StreamWriter(new FileStream(localLogFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
-                {
-                    localLogWriter.WriteLine(logMessage.GetFormattedMessage(TimestampFormat));
-                }
+                using var localLogWriter = new StreamWriter(new FileStream(localLogFile.FullName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
+                localLogWriter.WriteLine(logMessage.GetFormattedMessage(TimestampFormat));
             }
             catch (Exception ex)
             {

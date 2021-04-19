@@ -414,13 +414,12 @@ namespace PRISMWin
 
                 foreach (var instanceName in perfCounterInstances)
                 {
-                    using (var counterInstance = new PerformanceCounter("Process", "ID Process", instanceName, true))
+                    using var counterInstance = new PerformanceCounter("Process", "ID Process", instanceName, true);
+
+                    var instanceProcessID = Convert.ToInt32(counterInstance.RawValue);
+                    if (instanceProcessID == processId)
                     {
-                        var instanceProcessID = Convert.ToInt32(counterInstance.RawValue);
-                        if (instanceProcessID == processId)
-                        {
-                            return instanceName;
-                        }
+                        return instanceName;
                     }
                 }
             }

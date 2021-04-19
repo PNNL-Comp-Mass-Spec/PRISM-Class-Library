@@ -176,10 +176,9 @@ namespace PRISM
                 return string.IsNullOrWhiteSpace(osName) ? string.Empty : osName;
             }
 
-            using (var reader = new StreamReader(new FileStream(versionFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-            {
-                return GetFirstLineVersion(reader, osName);
-            }
+            using var reader = new StreamReader(new FileStream(versionFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+            return GetFirstLineVersion(reader, osName);
         }
 
         private string GetFirstLineVersion(StreamReader reader, string osName)

@@ -650,19 +650,18 @@ namespace PRISM
                     //     <item key="Setting1" value="ValueA" />
                     //   </section>
 
-                    using (var reader = new StreamReader(new FileStream(fileToFind.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                    using var reader = new StreamReader(new FileStream(fileToFind.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+                    while (!reader.EndOfStream)
                     {
-                        while (!reader.EndOfStream)
-                        {
-                            var s = reader.ReadLine();
+                        var s = reader.ReadLine();
 
-                            // Try to manually parse this line
-                            ParseLineManual(s, m_XmlDoc);
-                        }
-
-                        XmlFilePath = filePath;
-                        Initialized = true;
+                        // Try to manually parse this line
+                        ParseLineManual(s, m_XmlDoc);
                     }
+
+                    XmlFilePath = filePath;
+                    Initialized = true;
                 }
                 else
                 {
@@ -894,10 +893,8 @@ namespace PRISM
                     outputFile.Delete();
                 }
 
-                using (var settingsFile = new FileStream(OutputFilename, FileMode.Create, FileAccess.Write))
-                {
-                    m_XmlDoc.Save(settingsFile);
-                }
+                using var settingsFile = new FileStream(OutputFilename, FileMode.Create, FileAccess.Write);
+                m_XmlDoc.Save(settingsFile);
             }
             else
             {
@@ -941,10 +938,8 @@ namespace PRISM
                     IndentChars = "   "
                 };
 
-                using (var xw = XmlWriter.Create(new StringWriter(sb), settings))
-                {
-                    m_XmlDoc.WriteContentTo(xw);
-                }
+                using var xw = XmlWriter.Create(new StringWriter(sb), settings);
+                m_XmlDoc.WriteContentTo(xw);
 
                 return sb.ToString();
             }

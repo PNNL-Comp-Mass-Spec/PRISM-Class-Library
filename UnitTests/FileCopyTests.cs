@@ -37,13 +37,12 @@ namespace PRISMTest
                     {
                         var testFilePath = Path.Combine(sourceDirectory.FullName, "TestFile" + i + ".txt");
 
-                        using (var testFile = new StreamWriter(new FileStream(testFilePath, FileMode.Create, FileAccess.Write)))
+                        using var testFile = new StreamWriter(new FileStream(testFilePath, FileMode.Create, FileAccess.Write));
+
+                        testFile.WriteLine("X\tY");
+                        for (var j = 1; j <= 10000 * i; j++)
                         {
-                            testFile.WriteLine("X\tY");
-                            for (var j = 1; j <= 10000 * i; j++)
-                            {
-                                testFile.WriteLine("{0}\t{1}", j, rand.Next(0, 1000));
-                            }
+                            testFile.WriteLine("{0}\t{1}", j, rand.Next(0, 1000));
                         }
                     }
                 }

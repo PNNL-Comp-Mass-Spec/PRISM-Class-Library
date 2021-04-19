@@ -153,71 +153,70 @@ namespace PRISM
                 OnDebugEvent("Opening " + cpuStatFile.FullName);
             }
 
-            using (var reader = new StreamReader(new FileStream(cpuStatFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            using var reader = new StreamReader(new FileStream(cpuStatFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+            if (reader.EndOfStream)
+                return 0;
+
+            var dataLine = reader.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(dataLine))
             {
-                if (reader.EndOfStream)
-                    return 0;
-
-                var dataLine = reader.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(dataLine))
-                {
-                    return 0;
-                }
-
-                // Example data line:
-                // cpu  37404353 50864 14997555 18383015477 7107004 462 218065 0 0
-
-                // Fields are:
-                //  user       Running normal processes executing in user mode
-                //  nice       Running user processes with low priority
-                //  system     Running system processes
-                //  idle       Idle time
-                //  iowait     Waiting for I/O to complete
-                //  irq        Servicing interrupts
-                //  softirq    Servicing softirqs
-                //  steal      Time spent in other operating systems when running in a virtualized environment
-                //  guest      Time spent running a virtual CPU for guest operating systems (included in user)
-                //  guest_nice Time spent running a virtual CPU with low priority for guest operating systems (included in nice)
-
-                // Sum all of the numbers following cpu
-                var fields = dataLine.Split(' ');
-                if (fields.Length < 2)
-                    return 0;
-
-                long totalJiffies = 0;
-
-                for (var i = 1; i < fields.Length; i++)
-                {
-                    if (i > 8)
-                    {
-                        // Do not include the "guest" columns
-                        // This is mentioned at https://stackoverflow.com/questions/23367857/1179467/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux/
-                        break;
-                    }
-
-                    if (long.TryParse(fields[i], out var clockTimeJiffies))
-                    {
-                        totalJiffies += clockTimeJiffies;
-                    }
-                }
-
-                var match = mCpuIdleTimeMatcher.Match(dataLine);
-                if (match.Success)
-                {
-                    idleTime = long.Parse(match.Groups["Idle"].Value) + long.Parse(match.Groups["IOWait"].Value);
-                }
-                else
-                {
-                    var match2 = mCpuIdleTimeMatcherNoIOWait.Match(dataLine);
-                    if (match2.Success)
-                    {
-                        idleTime = long.Parse(match2.Groups["Idle"].Value);
-                    }
-                }
-
-                return totalJiffies;
+                return 0;
             }
+
+            // Example data line:
+            // cpu  37404353 50864 14997555 18383015477 7107004 462 218065 0 0
+
+            // Fields are:
+            //  user       Running normal processes executing in user mode
+            //  nice       Running user processes with low priority
+            //  system     Running system processes
+            //  idle       Idle time
+            //  iowait     Waiting for I/O to complete
+            //  irq        Servicing interrupts
+            //  softirq    Servicing softirqs
+            //  steal      Time spent in other operating systems when running in a virtualized environment
+            //  guest      Time spent running a virtual CPU for guest operating systems (included in user)
+            //  guest_nice Time spent running a virtual CPU with low priority for guest operating systems (included in nice)
+
+            // Sum all of the numbers following cpu
+            var fields = dataLine.Split(' ');
+            if (fields.Length < 2)
+                return 0;
+
+            long totalJiffies = 0;
+
+            for (var i = 1; i < fields.Length; i++)
+            {
+                if (i > 8)
+                {
+                    // Do not include the "guest" columns
+                    // This is mentioned at https://stackoverflow.com/questions/23367857/1179467/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux/
+                    break;
+                }
+
+                if (long.TryParse(fields[i], out var clockTimeJiffies))
+                {
+                    totalJiffies += clockTimeJiffies;
+                }
+            }
+
+            var match = mCpuIdleTimeMatcher.Match(dataLine);
+            if (match.Success)
+            {
+                idleTime = long.Parse(match.Groups["Idle"].Value) + long.Parse(match.Groups["IOWait"].Value);
+            }
+            else
+            {
+                var match2 = mCpuIdleTimeMatcherNoIOWait.Match(dataLine);
+                if (match2.Success)
+                {
+                    idleTime = long.Parse(match2.Groups["Idle"].Value);
+                }
+            }
+
+            return totalJiffies;
         }
 
         private void ConditionalLogError(string message, Exception ex = null)
@@ -435,32 +434,31 @@ namespace PRISM
                     OnDebugEvent("Opening " + cmdLineFile.FullName);
                 }
 
-                using (var reader = new StreamReader(new FileStream(cmdLineFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                using var reader = new StreamReader(new FileStream(cmdLineFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+                if (reader.EndOfStream)
+                    return false;
+
+                var dataLine = reader.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(dataLine))
+                    return false;
+
+                // Split dataLine on the null terminator
+                var fields = dataLine.Split('\0');
+
+                if (fields.Length == 0)
+                    return false;
+
+                for (var i = 0; i < fields.Length; i++)
                 {
-                    if (reader.EndOfStream)
-                        return false;
-
-                    var dataLine = reader.ReadLine();
-
-                    if (string.IsNullOrWhiteSpace(dataLine))
-                        return false;
-
-                    // Split dataLine on the null terminator
-                    var fields = dataLine.Split('\0');
-
-                    if (fields.Length == 0)
-                        return false;
-
-                    for (var i = 0; i < fields.Length; i++)
-                    {
-                        if (i == 0)
-                            exePath = fields[i];
-                        else if (!string.IsNullOrWhiteSpace(fields[i]))
-                            argumentList.Add(fields[i]);
-                    }
-
-                    return true;
+                    if (i == 0)
+                        exePath = fields[i];
+                    else if (!string.IsNullOrWhiteSpace(fields[i]))
+                        argumentList.Add(fields[i]);
                 }
+
+                return true;
             }
             catch
             {

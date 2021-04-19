@@ -360,25 +360,24 @@ namespace PRISM.AppSettings
 
             try
             {
-                using (var paramFileReader = new StreamReader(new FileStream(ParamFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                using var paramFileReader = new StreamReader(new FileStream(ParamFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+                var lineNumber = 0;
+                while (!paramFileReader.EndOfStream)
                 {
-                    var lineNumber = 0;
-                    while (!paramFileReader.EndOfStream)
+                    var dataLine = paramFileReader.ReadLine();
+                    lineNumber++;
+
+                    var paramFileLine = new KeyValueParamFileLine(lineNumber, dataLine);
+
+                    var kvSetting = GetKeyValueSetting(dataLine, removeComments);
+
+                    if (!string.IsNullOrWhiteSpace(kvSetting.Key))
                     {
-                        var dataLine = paramFileReader.ReadLine();
-                        lineNumber++;
-
-                        var paramFileLine = new KeyValueParamFileLine(lineNumber, dataLine);
-
-                        var kvSetting = GetKeyValueSetting(dataLine, removeComments);
-
-                        if (!string.IsNullOrWhiteSpace(kvSetting.Key))
-                        {
-                            paramFileLine.StoreParameter(kvSetting);
-                        }
-
-                        paramFileLines.Add(paramFileLine);
+                        paramFileLine.StoreParameter(kvSetting);
                     }
+
+                    paramFileLines.Add(paramFileLine);
                 }
 
                 return true;

@@ -443,17 +443,16 @@ namespace PRISM
 
                 if (parameterIndex < mSwitches.Count)
                 {
-                    using (var iEnum = mSwitches.GetEnumerator())
-                    {
-                        for (var switchIndex = 0; iEnum.MoveNext(); switchIndex++)
-                        {
-                            if (switchIndex != parameterIndex)
-                                continue;
+                    using var iEnum = mSwitches.GetEnumerator();
 
-                            paramName = iEnum.Current.Key;
-                            paramValue = iEnum.Current.Value;
-                            return true;
-                        }
+                    for (var switchIndex = 0; iEnum.MoveNext(); switchIndex++)
+                    {
+                        if (switchIndex != parameterIndex)
+                            continue;
+
+                        paramName = iEnum.Current.Key;
+                        paramValue = iEnum.Current.Value;
+                        return true;
                     }
                 }
                 else

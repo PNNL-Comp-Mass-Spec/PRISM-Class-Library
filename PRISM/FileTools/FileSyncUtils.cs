@@ -238,10 +238,8 @@ namespace PRISM
 
             try
             {
-                using (var writer = new StreamWriter(new FileStream(lastUsedFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
-                {
-                    writer.WriteLine(DateTime.UtcNow.ToString(HashUtilities.DATE_TIME_FORMAT));
-                }
+                using var writer = new StreamWriter(new FileStream(lastUsedFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+                writer.WriteLine(DateTime.UtcNow.ToString(HashUtilities.DATE_TIME_FORMAT));
             }
             catch (IOException)
             {

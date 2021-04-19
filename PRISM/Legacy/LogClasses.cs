@@ -252,23 +252,22 @@ namespace PRISM
 
             try
             {
-                using (var writer = new StreamWriter(new FileStream(CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)))
+                using var writer = new StreamWriter(new FileStream(CurrentLogFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
+
+                foreach (var item in messages)
                 {
-                    foreach (var item in messages)
+                    var formattedLogMessage = string.Format("{0}, {1}, {2}",
+                        DateTime.Now.ToString(DATE_TIME_FORMAT), item.Message, TypeToString(item.EntryType));
+
+                    writer.WriteLine(formattedLogMessage);
+
+                    if (item.EntryType == logMsgType.logError)
                     {
-                        var formattedLogMessage = string.Format("{0}, {1}, {2}",
-                            DateTime.Now.ToString(DATE_TIME_FORMAT), item.Message, TypeToString(item.EntryType));
-
-                        writer.WriteLine(formattedLogMessage);
-
-                        if (item.EntryType == logMsgType.logError)
-                        {
-                            MostRecentErrorMessage = formattedLogMessage;
-                        }
-                        else
-                        {
-                            MostRecentLogMessage = formattedLogMessage;
-                        }
+                        MostRecentErrorMessage = formattedLogMessage;
+                    }
+                    else
+                    {
+                        MostRecentLogMessage = formattedLogMessage;
                     }
                 }
             }
@@ -555,26 +554,25 @@ namespace PRISM
                 m_error_list.Clear();
 
                 // Create the database connection
-                var cnStr = ConnectionString;
-                using (var dbCn = new SqlConnection(cnStr))
+
+                using var dbCn = new SqlConnection(ConnectionString);
+
+                dbCn.InfoMessage += OnInfoMessage;
+                dbCn.Open();
+
+                // Create the command object
+                var sc = new SqlCommand("PostLogEntry", dbCn)
                 {
-                    dbCn.InfoMessage += OnInfoMessage;
-                    dbCn.Open();
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                    // Create the command object
-                    var sc = new SqlCommand("PostLogEntry", dbCn)
-                    {
-                        CommandType = CommandType.StoredProcedure
-                    };
+                sc.Parameters.Add("@Return", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
+                sc.Parameters.Add("@type", SqlDbType.VarChar, 50).Value = type;
+                sc.Parameters.Add("@message", SqlDbType.VarChar, 500).Value = message;
+                sc.Parameters.Add("@postedBy", SqlDbType.VarChar, 50).Value = ModuleName;
 
-                    sc.Parameters.Add("@Return", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
-                    sc.Parameters.Add("@type", SqlDbType.VarChar, 50).Value = type;
-                    sc.Parameters.Add("@message", SqlDbType.VarChar, 500).Value = message;
-                    sc.Parameters.Add("@postedBy", SqlDbType.VarChar, 50).Value = ModuleName;
-
-                    // Execute the stored procedure
-                    sc.ExecuteNonQuery();
-                }
+                // Execute the stored procedure
+                sc.ExecuteNonQuery();
             }
             catch (Exception ex)
             {

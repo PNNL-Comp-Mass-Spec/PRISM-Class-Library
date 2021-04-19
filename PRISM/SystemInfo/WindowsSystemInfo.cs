@@ -790,18 +790,18 @@ namespace PRISM
 
 #pragma warning disable CA1416 // Validate platform compatibility
             // Note: Platform compatibility check is done outside of this class.
-            using (var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))
-            {
-                // Store the results in a dictionary
-                var matchEnum = searcher.Get().GetEnumerator();
+            using var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process");
 
-                while (matchEnum.MoveNext())
-                {
-                    var processId = (uint)matchEnum.Current["ProcessId"];
-                    var cmdLine = matchEnum.Current["CommandLine"]?.ToString();
-                    CachedWmiCmdLineData.Add(processId, cmdLine);
-                }
+            // Store the results in a dictionary
+            var matchEnum = searcher.Get().GetEnumerator();
+
+            while (matchEnum.MoveNext())
+            {
+                var processId = (uint)matchEnum.Current["ProcessId"];
+                var cmdLine = matchEnum.Current["CommandLine"]?.ToString();
+                CachedWmiCmdLineData.Add(processId, cmdLine);
             }
+
 #pragma warning restore CA1416 // Validate platform compatibility
         }
 
@@ -828,17 +828,17 @@ namespace PRISM
             {
 #pragma warning disable CA1416 // Validate platform compatibility
                 // Note: Platform compatibility check is done outside of this class.
-                using (var searcher = new System.Management.ManagementObjectSearcher(
-                    string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id)))
-                {
-                    var matchEnum = searcher.Get().GetEnumerator();
+                using var searcher = new System.Management.ManagementObjectSearcher(
+                    string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id));
 
-                    // Move to the 1st item.
-                    if (matchEnum.MoveNext())
-                    {
-                        cmdLine = matchEnum.Current["CommandLine"]?.ToString();
-                    }
+                var matchEnum = searcher.Get().GetEnumerator();
+
+                // Move to the 1st item.
+                if (matchEnum.MoveNext())
+                {
+                    cmdLine = matchEnum.Current["CommandLine"]?.ToString();
                 }
+
 #pragma warning restore CA1416 // Validate platform compatibility
             }
             else

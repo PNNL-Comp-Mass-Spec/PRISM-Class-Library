@@ -1819,35 +1819,34 @@ namespace PRISM
                         // Open the file and read the file length and file modification time
                         // If they match sourceFile then set resumeCopy to true and update fileOffsetStart
 
-                        using (var infoFileReader = new StreamReader(new FileStream(filePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+                        using var infoFileReader = new StreamReader(new FileStream(filePartInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+
+                        var sourceLines = new List<string>();
+
+                        while (!infoFileReader.EndOfStream)
                         {
-                            var sourceLines = new List<string>();
+                            sourceLines.Add(infoFileReader.ReadLine());
+                        }
 
-                            while (!infoFileReader.EndOfStream)
+                        if (sourceLines.Count >= 3)
+                        {
+                            // The first line contains the source file path
+                            // The second contains the file length, in bytes
+                            // The third contains the file modification time (UTC)
+
+                            if (sourceLines[0] == sourceFile.FullName && sourceLines[1] == sourceFile.Length.ToString())
                             {
-                                sourceLines.Add(infoFileReader.ReadLine());
-                            }
+                                // Name and size are the same
+                                // See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
 
-                            if (sourceLines.Count >= 3)
-                            {
-                                // The first line contains the source file path
-                                // The second contains the file length, in bytes
-                                // The third contains the file modification time (UTC)
-
-                                if (sourceLines[0] == sourceFile.FullName && sourceLines[1] == sourceFile.Length.ToString())
+                                if (DateTime.TryParse(sourceLines[2], out var cachedLastWriteTimeUTC))
                                 {
-                                    // Name and size are the same
-                                    // See if the timestamps agree within 2 seconds (need to allow for this in case we're comparing NTFS and FAT32)
-
-                                    if (DateTime.TryParse(sourceLines[2], out var cachedLastWriteTimeUTC))
+                                    if (NearlyEqualFileTimes(sourceFileLastWriteTimeUTC, cachedLastWriteTimeUTC))
                                     {
-                                        if (NearlyEqualFileTimes(sourceFileLastWriteTimeUTC, cachedLastWriteTimeUTC))
-                                        {
-                                            // Source file is unchanged; safe to resume
+                                        // Source file is unchanged; safe to resume
 
-                                            fileOffsetStart = filePart.Length;
-                                            resumeCopy = true;
-                                        }
+                                        fileOffsetStart = filePart.Length;
+                                        resumeCopy = true;
                                     }
                                 }
                             }
@@ -2963,13 +2962,12 @@ namespace PRISM
             }
 
             // GZipMetadataStream wraps the file stream to add the metadata at the right time during the file write
-            using (var decompressedFileStream = fileToCompress.OpenRead())
-            using (var compressedFileStream = File.Create(compressedFilePath))
-            using (var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc))
-            using (var compressionStream = new GZipStream(metadataAdder, CompressionMode.Compress))
-            {
-                decompressedFileStream.CopyTo(compressionStream);
-            }
+            using var decompressedFileStream = fileToCompress.OpenRead();
+            using var compressedFileStream = File.Create(compressedFilePath);
+            using var metadataAdder = new GZipMetadataStream(compressedFileStream, fileToCompress.LastWriteTime, storedFileName, comment, addHeaderCrc);
+            using var compressionStream = new GZipStream(metadataAdder, CompressionMode.Compress);
+
+            decompressedFileStream.CopyTo(compressionStream);
 
             // Since metadata in the .gz file includes the last write time of the compressed file, do not change the last write time of the .gz file
         }
@@ -3062,11 +3060,10 @@ namespace PRISM
 
                 decompressedFilePath = Path.Combine(dir, Path.GetFileName(fileNameOrPath));
 
-                using (var decompressedFileStream = File.Create(decompressedFilePath))
-                using (var decompressionStream = new GZipStream(gzipMetadataStream, CompressionMode.Decompress))
-                {
-                    decompressionStream.CopyTo(decompressedFileStream);
-                }
+                using var decompressedFileStream = File.Create(decompressedFilePath);
+                using var decompressionStream = new GZipStream(gzipMetadataStream, CompressionMode.Decompress);
+
+                decompressionStream.CopyTo(decompressedFileStream);
             }
 
             // Update the modification time of the decompressed file to match the time from the metadata

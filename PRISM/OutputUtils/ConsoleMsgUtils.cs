@@ -415,10 +415,8 @@ namespace PRISM
         {
             try
             {
-                using (var errorStreamWriter = new StreamWriter(Console.OpenStandardError()))
-                {
-                    errorStreamWriter.WriteLine(errorMessage);
-                }
+                using var errorStreamWriter = new StreamWriter(Console.OpenStandardError());
+                errorStreamWriter.WriteLine(errorMessage);
             }
             catch
             {

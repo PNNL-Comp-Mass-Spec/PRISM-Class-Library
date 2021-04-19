@@ -373,16 +373,15 @@ namespace PRISM
             {
                 try
                 {
-                    using (var dbConnection = new SqlConnection(ConnectStr))
-                    {
-                        dbConnection.InfoMessage += OnInfoMessage;
+                    using var dbConnection = new SqlConnection(ConnectStr);
 
-                        // Get the DataSet
-                        var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
-                        DS = new DataSet();
-                        rowCount = adapter.Fill(DS);
-                        return true;
-                    }
+                    dbConnection.InfoMessage += OnInfoMessage;
+
+                    // Get the DataSet
+                    var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
+                    DS = new DataSet();
+                    rowCount = adapter.Fill(DS);
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -437,43 +436,42 @@ namespace PRISM
             {
                 try
                 {
-                    using (var dbConnection = new SqlConnection(ConnectStr))
+                    using var dbConnection = new SqlConnection(ConnectStr);
+
+                    dbConnection.InfoMessage += OnInfoMessage;
+
+                    using var cmd = new SqlCommand(sqlQuery, dbConnection)
                     {
-                        dbConnection.InfoMessage += OnInfoMessage;
+                        CommandTimeout = TimeoutSeconds
+                    };
 
-                        using (var cmd = new SqlCommand(sqlQuery, dbConnection))
+                    dbConnection.Open();
+
+                    var reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        var currentRow = new List<string>();
+
+                        for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                         {
-                            cmd.CommandTimeout = TimeoutSeconds;
+                            var value = reader.GetValue(columnIndex);
 
-                            dbConnection.Open();
-
-                            var reader = cmd.ExecuteReader();
-
-                            while (reader.Read())
+                            if (DBNull.Value.Equals(value))
                             {
-                                var currentRow = new List<string>();
-
-                                for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
-                                {
-                                    var value = reader.GetValue(columnIndex);
-
-                                    if (DBNull.Value.Equals(value))
-                                    {
-                                        currentRow.Add(string.Empty);
-                                    }
-                                    else
-                                    {
-                                        currentRow.Add(value.ToString());
-                                    }
-                                }
-
-                                results.Add(currentRow);
-
-                                if (maxRowsToReturn > 0 && results.Count >= maxRowsToReturn)
-                                {
-                                    break;
-                                }
+                                currentRow.Add(string.Empty);
                             }
+                            else
+                            {
+                                currentRow.Add(value.ToString());
+                            }
+                        }
+
+                        results.Add(currentRow);
+
+                        if (maxRowsToReturn > 0 && results.Count >= maxRowsToReturn)
+                        {
+                            break;
                         }
                     }
 
