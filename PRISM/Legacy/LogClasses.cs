@@ -757,16 +757,14 @@ namespace PRISM
 
             var messages = new List<clsLogEntry>();
 
-            while (true)
+            do
             {
                 if (m_queue.TryDequeue(out var le))
                 {
                     messages.Add(le);
                 }
-
-                if (m_queue.Count == 0)
-                    break;
             }
+            while (m_queue.Count != 0);
 
             m_logger.PostEntries(messages);
         }

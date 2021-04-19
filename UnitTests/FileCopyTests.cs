@@ -309,7 +309,7 @@ namespace PRISMTest
                 Assert.Fail("GetDiskFreeSpace reported false for " + targetFilePath + ": " + errorMessage);
             }
 
-            var safeToCopy = FileTools.ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out errorMessage);
+            var safeToCopy = FileTools.ValidateFreeDiskSpace(targetFilePath, minimumFreeSpaceMB, currentDiskFreeSpaceBytes, out _);
 
             var sufficientOrNot = safeToCopy ? "sufficient" : "insufficient";
 

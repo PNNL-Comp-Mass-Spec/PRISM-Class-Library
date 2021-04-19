@@ -163,12 +163,11 @@ namespace PRISMTest
 
             // Delay 1 second to allow threads to finish up
             var startTime = DateTime.UtcNow;
-            while (true)
+            do
             {
                 Thread.Sleep(250);
-                if (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds >= 1000)
-                    break;
             }
+            while (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds < 1000);
 
             Console.WriteLine("Core usage: {0:F2}", coreUsage);
 
@@ -224,12 +223,11 @@ namespace PRISMTest
 
             // Delay 1 second to allow threads to finish up
             var startTime = DateTime.UtcNow;
-            while (true)
+            do
             {
                 Thread.Sleep(250);
-                if (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds >= 1000)
-                    break;
             }
+            while (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds < 1000);
 
             Console.WriteLine("Core usage: {0:F2}", coreUsage);
             Console.WriteLine("Total CPU usage: {0:F1}%", cpuUsageTotal);
@@ -376,12 +374,11 @@ namespace PRISMTest
 
             // Delay 1 second to allow threads to finish up
             var startTime = DateTime.UtcNow;
-            while (true)
+            do
             {
                 Thread.Sleep(250);
-                if (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds >= 1000)
-                    break;
             }
+            while (DateTime.UtcNow.Subtract(startTime).TotalMilliseconds < 1000);
 
             Console.WriteLine("Overall CPU usage: {0:F1}%", cpuUsageTotal);
 
