@@ -48,7 +48,7 @@ namespace PRISM
             /// <summary>
             /// List of thread to monitor the producers and determine when they are done, to properly mark the target block as completed.
             /// </summary>
-            private readonly List<Thread> producerThreads = new List<Thread>();
+            private readonly List<Thread> producerThreads = new();
 
             /// <summary>
             /// Count of threads that have exited

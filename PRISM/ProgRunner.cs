@@ -83,7 +83,7 @@ namespace PRISM
         /// <summary>
         /// Used to start and monitor the external program
         /// </summary>
-        private readonly Process m_Process = new Process();
+        private readonly Process m_Process = new();
 
         /// <summary>
         /// Thread cancellation token

@@ -44,12 +44,12 @@ namespace PRISMDatabaseUtils
         private static bool mConnectionStringKeywordMapInitialized;
 
         private static readonly Regex mDbServerTypeMatcher = new
-            Regex(@"DbServerType\s*=(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+(@"DbServerType\s*=(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Map between RegEx matchers and the server type for each RegEx
         /// </summary>
-        private static readonly List<KeyValuePair<Regex, DbServerTypes>> mConnectionStringKeywordMap = new List<KeyValuePair<Regex, DbServerTypes>>();
+        private static readonly List<KeyValuePair<Regex, DbServerTypes>> mConnectionStringKeywordMap = new();
 
         /// <summary>
         /// Checks elements in the connection string to determine which database engine it refers to.

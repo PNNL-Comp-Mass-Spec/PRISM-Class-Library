@@ -388,7 +388,7 @@ namespace PRISM
         /// <summary>
         /// List of database errors
         /// </summary>
-        private readonly List<string> m_error_list = new List<string>();
+        private readonly List<string> m_error_list = new();
 
         /// <summary>
         /// Module name

@@ -16,7 +16,7 @@ namespace PRISMDatabaseUtils
         // Ignore Spelling: datetimeoffset, timestamptz, uuid, uniqueidentifier, sql, json
         // ReSharper restore CommentTypo
 
-        private static readonly Regex mIntegerMatcher = new Regex(@"\d+", RegexOptions.Compiled);
+        private static readonly Regex mIntegerMatcher = new(@"\d+", RegexOptions.Compiled);
 
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type

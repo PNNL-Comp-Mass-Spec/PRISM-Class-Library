@@ -14,9 +14,9 @@ namespace PRISMTest
     {
         // Ignore Spelling: Ctrl, Seqs, dmsreader
 
-        private static readonly SortedSet<string> mValidatedConnectionStrings = new SortedSet<string>();
+        private static readonly SortedSet<string> mValidatedConnectionStrings = new();
 
-        private readonly Dictionary<string, string> testProgSingleConfig = new Dictionary<string, string>
+        private readonly Dictionary<string, string> testProgSingleConfig = new()
         {
             {"MgrActive_Local", "False"},
             {"MgrCnfgDbConnectStr", "Data Source=mgrCtrlDbServer;Initial Catalog=manager_control;Integrated Security=SSPI"},
@@ -25,7 +25,7 @@ namespace PRISMTest
             {"DefaultDMSConnString", "Data Source=dmsDbServer;Initial Catalog=DMS5;Integrated Security=SSPI"}
         };
 
-        private readonly Dictionary<string, string> testProgMultiConfig = new Dictionary<string, string>
+        private readonly Dictionary<string, string> testProgMultiConfig = new()
         {
             { "MgrActive_Local", "True" },
             { "MgrCnfgDbConnectStr", "Data Source=proteinseqs;Initial Catalog=manager_control;Integrated Security=SSPI" },
@@ -34,7 +34,7 @@ namespace PRISMTest
             { "DefaultDMSConnString", "Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI" }
         };
 
-        private readonly Dictionary<string, string> testProg2MultiConfig = new Dictionary<string, string>
+        private readonly Dictionary<string, string> testProg2MultiConfig = new()
         {
             { "MgrActive_Local", "True" },
             { "MgrCnfgDbConnectStr", "Data Source=proteinseqs;Initial Catalog=manager_control;Integrated Security=SSPI" },

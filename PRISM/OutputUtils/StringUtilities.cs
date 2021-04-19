@@ -15,7 +15,7 @@ namespace PRISM
     {
         private const string SCIENTIFIC_NOTATION_CLEANUP_REGEX = "0+E";
 
-        private static readonly Regex m_scientificNotationTrim = new Regex(SCIENTIFIC_NOTATION_CLEANUP_REGEX, RegexOptions.Compiled);
+        private static readonly Regex m_scientificNotationTrim = new(SCIENTIFIC_NOTATION_CLEANUP_REGEX, RegexOptions.Compiled);
 
         /// <summary>
         /// Dictionary that tracks the format string used for each digitsOfPrecision value
@@ -24,7 +24,7 @@ namespace PRISM
         /// Keys are the number of digits of precision
         /// Values are strings like "0.0", "0.0#", "0.0##", etc.
         /// </remarks>
-        private static readonly ConcurrentDictionary<int, string> mFormatStrings = new ConcurrentDictionary<int, string>();
+        private static readonly ConcurrentDictionary<int, string> mFormatStrings = new();
 
         /// <summary>
         /// Dictionary that tracks the format string used for each digitsOfPrecision value displayed with scientific notation
@@ -35,7 +35,7 @@ namespace PRISM
         ///   "true"  if the format string is of the form 0.00E+000
         /// Values are strings like "0.0E+00", "0.0#E+00", "0.0##E+00", "0.0#E+000", or "0.0##E+000"
         /// </remarks>
-        private static readonly ConcurrentDictionary<string, string> mFormatStringsScientific = new ConcurrentDictionary<string, string>();
+        private static readonly ConcurrentDictionary<string, string> mFormatStringsScientific = new();
 
         /// <summary>
         /// Get the format string for the given number of digits after the decimal

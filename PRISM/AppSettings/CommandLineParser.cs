@@ -163,7 +163,7 @@ namespace PRISM
             /// <summary>
             /// Modifiable list of parsing errors
             /// </summary>
-            private readonly List<ParseErrorInfo> mParseErrors = new List<ParseErrorInfo>();
+            private readonly List<ParseErrorInfo> mParseErrors = new();
 
             /// <summary>
             /// Constructor
@@ -231,7 +231,7 @@ namespace PRISM
         private char[] separatorChars = mDefaultSeparatorChars;
         private Dictionary<string, ArgInfo> validArguments;
         private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes;
-        private readonly List<string> paramFileArgs = new List<string>(mDefaultParamFileArgs);
+        private readonly List<string> paramFileArgs = new(mDefaultParamFileArgs);
 
         #region Properties
 

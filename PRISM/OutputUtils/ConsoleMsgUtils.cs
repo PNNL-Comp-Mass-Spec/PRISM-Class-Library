@@ -19,7 +19,7 @@ namespace PRISM
 
         private static bool mAutoCheckedDebugFontColor;
 
-        private static readonly Regex mLeadingWhitespaceMatcher = new Regex("^ +");
+        private static readonly Regex mLeadingWhitespaceMatcher = new("^ +");
 
         /// <summary>
         /// Debug message font color

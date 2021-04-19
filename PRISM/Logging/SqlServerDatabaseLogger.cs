@@ -15,12 +15,12 @@ namespace PRISM.Logging
     {
         #region "Member variables"
 
-        private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new ConcurrentQueue<LogMessage>();
+        private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
-        private static readonly object mMessageQueueLock = new object();
+        private static readonly object mMessageQueueLock = new();
 
         // ReSharper disable once UnusedMember.Local
-        private static readonly Timer mQueueLogger = new Timer(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
+        private static readonly Timer mQueueLogger = new(LogMessagesCallback, null, 500, LOG_INTERVAL_MILLISECONDS);
 
         /// <summary>
         /// Tracks the number of successive dequeue failures

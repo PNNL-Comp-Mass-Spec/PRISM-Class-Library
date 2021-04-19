@@ -25,7 +25,7 @@ namespace PRISM
         /// <summary>
         /// Cached list of section names
         /// </summary>
-        private List<string> m_SectionNames = new List<string>();
+        private List<string> m_SectionNames = new();
 
         private string m_SaveFilename;
 

@@ -14,11 +14,11 @@ namespace PRISM.DataUtils
     /// </summary>
     public static class StringSimilarityTool
     {
-        private static readonly Regex mAlphaNumericMatcher = new Regex("[a-z0-9]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex mAlphaNumericMatcher = new("[a-z0-9]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static readonly Regex mLetterMatcher = new Regex("[a-z]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex mLetterMatcher = new("[a-z]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static readonly Regex mLetterWhitespaceMatcher = new Regex("[a-z \t\r\n]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex mLetterWhitespaceMatcher = new("[a-z \t\r\n]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Compares two strings based on letter pair matches

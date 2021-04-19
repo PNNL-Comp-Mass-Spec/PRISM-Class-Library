@@ -44,7 +44,7 @@ namespace PRISMWin
         /// Maps processId to a PerformanceCounter instance
         /// </summary>
         /// <remarks>The KeyValuePair tracks the performance counter instance name (could be empty string) and the PerformanceCounter instance</remarks>
-        private readonly ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>> mCachedPerfCounters = new ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>>();
+        private readonly ConcurrentDictionary<int, KeyValuePair<string, PerformanceCounter>> mCachedPerfCounters = new();
 
         private readonly bool mLimitLoggingByTimeOfDay;
 

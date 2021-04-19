@@ -42,7 +42,7 @@ namespace PRISM.Logging
         /// <summary>
         /// File Logger
         /// </summary>
-        private static readonly FileLogger mFileLogger = new FileLogger();
+        private static readonly FileLogger mFileLogger = new();
 
         /// <summary>
         /// Database logger

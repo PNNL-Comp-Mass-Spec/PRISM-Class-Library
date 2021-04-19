@@ -32,9 +32,9 @@ namespace PRISM
         /// </summary>
         public const char DEFAULT_SWITCH_PARAM_CHAR = ':';
 
-        private readonly Dictionary<string, string> mSwitches = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> mSwitches = new();
 
-        private readonly List<string> mNonSwitchParameters = new List<string>();
+        private readonly List<string> mNonSwitchParameters = new();
 
         /// <summary>
         /// If true, we need to show the syntax to the user due to a switch error, invalid switch, or the presence of /? or /help
