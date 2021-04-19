@@ -189,7 +189,15 @@ namespace PRISM
         /// <param name="fileOrDirectoryPath"></param>
         public static string GetCleanPath(string fileOrDirectoryPath)
         {
-            return fileOrDirectoryPath.Replace("*", "_").Replace("?", "_");
+            if (!fileOrDirectoryPath.StartsWith(NativeIOFileTools.WIN32_LONG_PATH_PREFIX))
+            {
+                return fileOrDirectoryPath.Replace("*", "_").Replace("?", "_");
+            }
+
+            // This is a Win32 long path
+            var cleanPath = fileOrDirectoryPath.Substring(4).Replace("*", "_").Replace("?", "_");
+
+            return NativeIOFileTools.WIN32_LONG_PATH_PREFIX + cleanPath;
         }
 
         /// <summary>
