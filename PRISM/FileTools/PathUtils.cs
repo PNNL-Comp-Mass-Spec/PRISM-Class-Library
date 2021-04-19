@@ -114,8 +114,17 @@ namespace PRISM
         public static List<FileInfo> FindFilesWildcard(string pathSpec, bool recurse = false)
         {
             var cleanPath = GetCleanPath(pathSpec);
+            FileInfo cleanFileInfo;
 
-            var cleanFileInfo = new FileInfo(cleanPath);
+            if (cleanPath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+            {
+                cleanFileInfo = new FileInfo(NativeIOFileTools.GetWin32LongPath(cleanPath));
+            }
+            else
+            {
+                cleanFileInfo = new FileInfo(cleanPath);
+            }
+
             string directoryPath;
             if (cleanFileInfo.Directory?.Exists == true && cleanFileInfo.DirectoryName != null)
             {
@@ -155,7 +164,17 @@ namespace PRISM
                 {
                     foreach (var subdirectory in directory.GetDirectories())
                     {
-                        var additionalFiles = FindFilesWildcard(subdirectory, fileMask, true);
+                        DirectoryInfo subdirectoryToUse;
+                        if (subdirectory.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+                        {
+                            subdirectoryToUse = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(subdirectory.FullName));
+                        }
+                        else
+                        {
+                            subdirectoryToUse = subdirectory;
+                        }
+
+                        var additionalFiles = FindFilesWildcard(subdirectoryToUse, fileMask, true);
 
                         matchedFiles.AddRange(additionalFiles);
                     }
@@ -165,6 +184,7 @@ namespace PRISM
             }
             catch (UnauthorizedAccessException)
             {
+                // Access denied
                 return new List<FileInfo>();
             }
         }
