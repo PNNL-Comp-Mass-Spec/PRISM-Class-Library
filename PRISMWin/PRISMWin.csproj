@@ -18,6 +18,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</PackageProjectUrl>
     <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
