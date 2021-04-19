@@ -23,6 +23,11 @@ namespace PRISM
         public const int FILE_PATH_LENGTH_THRESHOLD = 260;
 
         /// <summary>
+        /// Prefix that indicates a Win32 Long Path
+        /// </summary>
+        public const string WIN32_LONG_PATH_PREFIX = @"\\?\";
+
+        /// <summary>
         /// Check whether the file exists
         /// </summary>
         /// <param name="path"></param>
@@ -82,7 +87,7 @@ namespace PRISM
         /// <param name="path"></param>
         public static string GetWin32LongPath(string path)
         {
-            if (path.StartsWith(@"\\?\"))
+            if (path.StartsWith(WIN32_LONG_PATH_PREFIX))
                 return path;
 
             var newPath = path;
@@ -92,7 +97,7 @@ namespace PRISM
             }
             else if (newPath.Contains(":"))
             {
-                newPath = @"\\?\" + newPath;
+                newPath = WIN32_LONG_PATH_PREFIX + newPath;
             }
             else
             {
@@ -103,7 +108,7 @@ namespace PRISM
                     newPath = newPath.Replace("\\.\\", "\\");
                 }
 
-                newPath = @"\\?\" + newPath;
+                newPath = WIN32_LONG_PATH_PREFIX + newPath;
             }
             return newPath.TrimEnd('.');
         }
@@ -117,7 +122,7 @@ namespace PRISM
             if (path.StartsWith(@"\\?\UNC\"))
                 return @"\\" + path.Substring(8);
 
-            if (path.StartsWith(@"\\?\"))
+            if (path.StartsWith(WIN32_LONG_PATH_PREFIX))
                 return path.Substring(4);
 
             return path;
@@ -144,7 +149,7 @@ namespace PRISM
             long size = 0;
             var INVALID_HANDLE_VALUE = new IntPtr(-1);
 
-            var findHandle = NativeIOMethods.FindFirstFile(@"\\?\" + filePath, out findData);
+            var findHandle = NativeIOMethods.FindFirstFile(WIN32_LONG_PATH_PREFIX + filePath, out findData);
 
             if (findHandle != INVALID_HANDLE_VALUE)
             {
