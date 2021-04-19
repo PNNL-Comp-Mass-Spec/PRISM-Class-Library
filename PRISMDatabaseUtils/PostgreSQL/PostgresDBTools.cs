@@ -236,7 +236,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 callingFunction = "UnknownCaller";
             }
 
-            if (!(cmd is NpgsqlCommand sqlCmd))
+            if (cmd is not NpgsqlCommand sqlCmd)
             {
                 if (cmd == null)
                 {
@@ -570,7 +570,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 callingFunction = "UnknownCaller";
             }
 
-            if (!(cmd is NpgsqlCommand sqlCmd))
+            if (cmd is not NpgsqlCommand sqlCmd)
             {
                 if (cmd == null)
                 {
@@ -692,7 +692,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             int retryCount,
             int retryDelaySeconds)
         {
-            if (!(spCmd is NpgsqlCommand sqlCmd))
+            if (spCmd is not NpgsqlCommand sqlCmd)
             {
                 if (spCmd == null)
                 {
@@ -982,7 +982,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <remarks>No logging is performed by this procedure</remarks>
         public int ExecuteSP(DbCommand spCmd, out string errorMessage, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
-            if (!(spCmd is NpgsqlCommand sqlCmd))
+            if (spCmd is not NpgsqlCommand sqlCmd)
             {
                 if (spCmd == null)
                 {
@@ -1181,7 +1181,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             object value,
             ParameterDirection direction = ParameterDirection.Input)
         {
-            if (!(command is NpgsqlCommand npgCmd))
+            if (command is not NpgsqlCommand npgCmd)
             {
                 throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
@@ -1219,7 +1219,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             T value = default,
             ParameterDirection direction = ParameterDirection.Input)
         {
-            if (!(command is NpgsqlCommand npgCmd))
+            if (command is not NpgsqlCommand npgCmd)
             {
                 throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }

@@ -273,7 +273,7 @@ namespace PRISMDatabaseUtils
                 return columnIndex;
             }
 
-            if (!(columnIdentifier is string columnName))
+            if (columnIdentifier is not string columnName)
             {
                 return -1;
             }

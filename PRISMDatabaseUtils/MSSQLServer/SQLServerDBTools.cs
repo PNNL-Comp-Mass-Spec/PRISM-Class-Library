@@ -268,7 +268,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 callingFunction = "UnknownCaller";
             }
 
-            if (!(cmd is SqlCommand sqlCmd))
+            if (cmd is not SqlCommand sqlCmd)
             {
                 if (cmd == null)
                 {
@@ -600,7 +600,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 callingFunction = "UnknownCaller";
             }
 
-            if (!(cmd is SqlCommand sqlCmd))
+            if (cmd is not SqlCommand sqlCmd)
             {
                 if (cmd == null)
                 {
@@ -728,7 +728,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             int retryCount,
             int retryDelaySeconds)
         {
-            if (!(spCmd is SqlCommand sqlCmd))
+            if (spCmd is not SqlCommand sqlCmd)
             {
                 if (spCmd == null)
                 {
@@ -984,7 +984,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
             int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
-            if (!(spCmd is SqlCommand sqlCmd))
+            if (spCmd is not SqlCommand sqlCmd)
             {
                 if (spCmd == null)
                 {
@@ -1179,7 +1179,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             object value,
             ParameterDirection direction = ParameterDirection.Input)
         {
-            if (!(command is SqlCommand sqlCmd))
+            if (command is not SqlCommand sqlCmd)
             {
                 throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
