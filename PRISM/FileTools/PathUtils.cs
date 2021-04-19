@@ -160,7 +160,7 @@ namespace PRISM
             {
                 var matchedFiles = directory.GetFiles(fileMask).ToList();
 
-                if (!recurse) 
+                if (!recurse)
                     return matchedFiles;
 
                 foreach (var subdirectory in directory.GetDirectories())
