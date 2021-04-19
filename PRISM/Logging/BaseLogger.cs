@@ -14,24 +14,10 @@ namespace PRISM.Logging
         public enum LogLevels
         {
             /// <summary>
-            /// Debug message
+            /// Disables all logging
             /// </summary>
-            DEBUG = 5,
-
-            /// <summary>
-            /// Informational message
-            /// </summary>
-            INFO = 4,
-
-            /// <summary>
-            /// Warning message
-            /// </summary>
-            WARN = 3,
-
-            /// <summary>
-            /// Error message
-            /// </summary>
-            ERROR = 2,
+            // ReSharper disable once UnusedMember.Global
+            NOLOGGING = 0,
 
             /// <summary>
             /// Fatal error message
@@ -39,10 +25,24 @@ namespace PRISM.Logging
             FATAL = 1,
 
             /// <summary>
-            /// Disables all logging
+            /// Error message
             /// </summary>
-            // ReSharper disable once UnusedMember.Global
-            NOLOGGING = 0
+            ERROR = 2,
+
+            /// <summary>
+            /// Warning message
+            /// </summary>
+            WARN = 3,
+
+            /// <summary>
+            /// Informational message
+            /// </summary>
+            INFO = 4,
+
+            /// <summary>
+            /// Debug message
+            /// </summary>
+            DEBUG = 5
         }
 
         /// <summary>
