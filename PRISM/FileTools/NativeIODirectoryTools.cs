@@ -106,7 +106,7 @@ namespace PRISM
         /// <returns>List of paths</returns>
         public static List<string> GetDirectories(string path, string searchPattern, SearchOption searchOption)
         {
-            searchPattern = searchPattern ?? "*";
+            searchPattern ??= "*";
             var dirs = new List<string>();
             InternalGetDirectories(path, searchPattern, searchOption, ref dirs);
             return dirs;
@@ -158,7 +158,7 @@ namespace PRISM
         /// <returns>List of paths</returns>
         public static string[] GetFiles(string path, string searchPattern, SearchOption searchOption)
         {
-            searchPattern = searchPattern ?? "*";
+            searchPattern ??= "*";
 
             var files = new List<string>();
             var dirs = new List<string> { path };

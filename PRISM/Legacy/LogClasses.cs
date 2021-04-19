@@ -171,12 +171,12 @@ namespace PRISM
         /// <summary>
         /// Gets the product version associated with this application.
         /// </summary>
-        public string ExecutableVersion => m_programVersion ?? (m_programVersion = FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString());
+        public string ExecutableVersion => m_programVersion ??= FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
         /// Gets the name of the executable file that started the application.
         /// </summary>
-        public string ExecutableName => m_programName ?? (m_programName = Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location));
+        public string ExecutableName => m_programName ??= Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
 
         /// <summary>
         /// The base name of the log file, e.g. UpdateManager or Logs\UpdateManager
