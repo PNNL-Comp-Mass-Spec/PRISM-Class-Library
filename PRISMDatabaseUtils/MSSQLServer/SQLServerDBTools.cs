@@ -1216,76 +1216,30 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="sqlType"></param>
         private SqlDbType ConvertSqlType(SqlType sqlType)
         {
-            switch (sqlType)
+            return sqlType switch
             {
-                case SqlType.Bit:
-                    return SqlDbType.Bit;
-
-                case SqlType.Boolean:
-                case SqlType.TinyInt:
-                    return SqlDbType.TinyInt;
-
-                case SqlType.SmallInt:
-                    return SqlDbType.SmallInt;
-
-                case SqlType.Int:
-                    return SqlDbType.Int;
-
-                case SqlType.BigInt:
-                    return SqlDbType.BigInt;
-
-                case SqlType.Real:
-                    return SqlDbType.Real;
-
-                case SqlType.Float:
-                    return SqlDbType.Float;
-
-                case SqlType.Decimal:
-                    // Includes Numeric
-                    return SqlDbType.Decimal;
-
-                case SqlType.Money:
-                    return SqlDbType.Money;
-
-                case SqlType.Char:
-                    return SqlDbType.Char;
-
-                case SqlType.VarChar:
-                    return SqlDbType.VarChar;
-
-                case SqlType.Text:
-                case SqlType.Citext:
-                case SqlType.Name:
-                    return SqlDbType.Text;
-
-                case SqlType.Date:
-                    return SqlDbType.Date;
-
-                case SqlType.Time:
-                    return SqlDbType.Time;
-
-                case SqlType.DateTime:
-                    // Includes Timestamp
-                    return SqlDbType.DateTime;
-
-                case SqlType.TimestampTz:
-                    return SqlDbType.DateTimeOffset;
-
-                case SqlType.UUID:
-                    return SqlDbType.UniqueIdentifier;
-
-                case SqlType.XML:
-                    return SqlDbType.Xml;
-
-                case SqlType.Interval:
-                    throw new NotSupportedException($"SQL Server does not support the {sqlType} type");
-
-                case SqlType.JSON:
-                    throw new NotSupportedException($"SQL Server does not support the {sqlType} type");
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(sqlType), sqlType, $"Conversion for SqlType {sqlType} is not defined");
-            }
+                SqlType.Bit => SqlDbType.Bit,
+                SqlType.Boolean or SqlType.TinyInt => SqlDbType.TinyInt,
+                SqlType.SmallInt => SqlDbType.SmallInt,
+                SqlType.Int => SqlDbType.Int,
+                SqlType.BigInt => SqlDbType.BigInt,
+                SqlType.Real => SqlDbType.Real,
+                SqlType.Float => SqlDbType.Float,
+                SqlType.Decimal => SqlDbType.Decimal,       // Includes Numeric
+                SqlType.Money => SqlDbType.Money,
+                SqlType.Char => SqlDbType.Char,
+                SqlType.VarChar => SqlDbType.VarChar,
+                SqlType.Text or SqlType.Citext or SqlType.Name => SqlDbType.Text,
+                SqlType.Date => SqlDbType.Date,
+                SqlType.Time => SqlDbType.Time,
+                SqlType.DateTime => SqlDbType.DateTime,     // Includes Timestamp
+                SqlType.TimestampTz => SqlDbType.DateTimeOffset,
+                SqlType.UUID => SqlDbType.UniqueIdentifier,
+                SqlType.XML => SqlDbType.Xml,
+                SqlType.Interval => throw new NotSupportedException($"SQL Server does not support the {sqlType} type"),
+                SqlType.JSON => throw new NotSupportedException($"SQL Server does not support the {sqlType} type"),
+                _ => throw new ArgumentOutOfRangeException(nameof(sqlType), sqlType, $"Conversion for SqlType {sqlType} is not defined"),
+            };
         }
 
         /// <summary>

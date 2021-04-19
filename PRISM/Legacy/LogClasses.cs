@@ -343,23 +343,16 @@ namespace PRISM
         /// <param name="errorType">The ILogger error type.</param>
         protected string TypeToString(logMsgType errorType)
         {
-            switch (errorType)
+            return errorType switch
             {
-                case logMsgType.logNormal:
-                    return "Normal";
-                case logMsgType.logError:
-                    return "Error";
-                case logMsgType.logWarning:
-                    return "Warning";
-                case logMsgType.logDebug:
-                    return "Debug";
-                case logMsgType.logNA:
-                    return "na";
-                case logMsgType.logHealth:
-                    return "Health";
-                default:
-                    return "??";
-            }
+                logMsgType.logNormal => "Normal",
+                logMsgType.logError => "Error",
+                logMsgType.logWarning => "Warning",
+                logMsgType.logDebug => "Debug",
+                logMsgType.logNA => "na",
+                logMsgType.logHealth => "Health",
+                _ => "??",
+            };
         }
 
         private void UpdateCurrentLogFilePath()

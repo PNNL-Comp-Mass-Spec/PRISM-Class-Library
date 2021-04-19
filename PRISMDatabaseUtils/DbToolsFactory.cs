@@ -150,15 +150,11 @@ namespace PRISMDatabaseUtils
             // Remove "DbServerType=...;" if present
             var standardConnectionString = mDbServerTypeMatcher.Replace(connectionString, string.Empty);
 
-            switch (serverType)
+            return serverType switch
             {
-                case DbServerTypes.PostgreSQL:
-                    return new PostgresDBTools(standardConnectionString, timeoutSeconds, debugMode);
-
-                default:
-                    // Includes DbServerTypes.MSSQLServer
-                    return new SQLServerDBTools(standardConnectionString, timeoutSeconds, debugMode);
-            }
+                DbServerTypes.PostgreSQL => new PostgresDBTools(standardConnectionString, timeoutSeconds, debugMode),
+                _ => new SQLServerDBTools(standardConnectionString, timeoutSeconds, debugMode)      // Includes DbServerTypes.MSSQLServer
+            };
         }
 
         /// <summary>
@@ -174,18 +170,12 @@ namespace PRISMDatabaseUtils
             int timeoutSeconds = DbUtilsConstants.DEFAULT_SP_TIMEOUT_SEC,
             bool debugMode = false)
         {
-            switch (serverType)
+            return serverType switch
             {
-                case DbServerTypes.Undefined:
-                    return GetDBTools(connectionString, timeoutSeconds, debugMode);
-
-                case DbServerTypes.PostgreSQL:
-                    return new PostgresDBTools(connectionString, timeoutSeconds, debugMode);
-
-                default:
-                    // Includes DbServerTypes.MSSQLServer
-                    return new SQLServerDBTools(connectionString, timeoutSeconds, debugMode);
-            }
+                DbServerTypes.Undefined => GetDBTools(connectionString, timeoutSeconds, debugMode),
+                DbServerTypes.PostgreSQL => new PostgresDBTools(connectionString, timeoutSeconds, debugMode),
+                _ => new SQLServerDBTools(connectionString, timeoutSeconds, debugMode)
+            };
         }
 
         /// <summary>

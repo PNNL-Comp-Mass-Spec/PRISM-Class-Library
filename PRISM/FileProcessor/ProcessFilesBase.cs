@@ -263,36 +263,18 @@ namespace PRISM.FileProcessor
         /// <returns>Error message</returns>
         protected string GetBaseClassErrorMessage()
         {
-            switch (ErrorCode)
+            return ErrorCode switch
             {
-                case ProcessFilesErrorCodes.NoError:
-                    return string.Empty;
-
-                case ProcessFilesErrorCodes.InvalidInputFilePath:
-                    return "Invalid input file path";
-
-                case ProcessFilesErrorCodes.InvalidOutputDirectoryPath:
-                    return "Invalid output directory path";
-
-                case ProcessFilesErrorCodes.ParameterFileNotFound:
-                    return "Parameter file not found";
-
-                case ProcessFilesErrorCodes.InvalidParameterFile:
-                    return "Invalid parameter file";
-
-                case ProcessFilesErrorCodes.FilePathError:
-                    return "General file path error";
-
-                case ProcessFilesErrorCodes.LocalizedError:
-                    return "Localized error";
-
-                case ProcessFilesErrorCodes.UnspecifiedError:
-                    return "Unspecified error";
-
-                default:
-                    // This shouldn't happen
-                    return "Unknown error state";
-            }
+                ProcessFilesErrorCodes.NoError => string.Empty,
+                ProcessFilesErrorCodes.InvalidInputFilePath => "Invalid input file path",
+                ProcessFilesErrorCodes.InvalidOutputDirectoryPath => "Invalid output directory path",
+                ProcessFilesErrorCodes.ParameterFileNotFound => "Parameter file not found",
+                ProcessFilesErrorCodes.InvalidParameterFile => "Invalid parameter file",
+                ProcessFilesErrorCodes.FilePathError => "General file path error",
+                ProcessFilesErrorCodes.LocalizedError => "Localized error",
+                ProcessFilesErrorCodes.UnspecifiedError => "Unspecified error",
+                _ => "Unknown error state",     // This shouldn't happen
+            };
         }
 
         /// <summary>

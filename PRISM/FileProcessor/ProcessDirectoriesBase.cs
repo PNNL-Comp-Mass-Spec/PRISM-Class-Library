@@ -195,36 +195,18 @@ namespace PRISM.FileProcessor
         /// <returns>Error message</returns>
         protected string GetBaseClassErrorMessage()
         {
-            switch (ErrorCode)
+            return ErrorCode switch
             {
-                case ProcessDirectoriesErrorCodes.NoError:
-                    return string.Empty;
-
-                case ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath:
-                    return "Invalid input directory path";
-
-                case ProcessDirectoriesErrorCodes.InvalidOutputDirectoryPath:
-                    return "Invalid output directory path";
-
-                case ProcessDirectoriesErrorCodes.ParameterFileNotFound:
-                    return "Parameter file not found";
-
-                case ProcessDirectoriesErrorCodes.InvalidParameterFile:
-                    return "Invalid parameter file";
-
-                case ProcessDirectoriesErrorCodes.FilePathError:
-                    return "General file path error";
-
-                case ProcessDirectoriesErrorCodes.LocalizedError:
-                    return "Localized error";
-
-                case ProcessDirectoriesErrorCodes.UnspecifiedError:
-                    return "Unspecified error";
-
-                default:
-                    // This shouldn't happen
-                    return "Unknown error state";
-            }
+                ProcessDirectoriesErrorCodes.NoError => string.Empty,
+                ProcessDirectoriesErrorCodes.InvalidInputDirectoryPath => "Invalid input directory path",
+                ProcessDirectoriesErrorCodes.InvalidOutputDirectoryPath => "Invalid output directory path",
+                ProcessDirectoriesErrorCodes.ParameterFileNotFound => "Parameter file not found",
+                ProcessDirectoriesErrorCodes.InvalidParameterFile => "Invalid parameter file",
+                ProcessDirectoriesErrorCodes.FilePathError => "General file path error",
+                ProcessDirectoriesErrorCodes.LocalizedError => "Localized error",
+                ProcessDirectoriesErrorCodes.UnspecifiedError => "Unspecified error",
+                _ => "Unknown error state",// This shouldn't happen
+            };
         }
 
         private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)

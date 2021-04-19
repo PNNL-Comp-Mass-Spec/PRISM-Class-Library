@@ -297,29 +297,16 @@ namespace PRISM
         {
             get
             {
-                switch (State)
+                return State switch
                 {
-                    case States.NotMonitoring:
-                        return "not monitoring";
-
-                    case States.Monitoring:
-                        return "monitoring";
-
-                    case States.Waiting:
-                        return "waiting to restart";
-
-                    case States.CleaningUp:
-                        return "cleaning up";
-
-                    case States.Initializing:
-                        return "initializing";
-
-                    case States.StartingProcess:
-                        return "starting";
-
-                    default:
-                        return "???";
-                }
+                    States.NotMonitoring => "not monitoring",
+                    States.Monitoring => "monitoring",
+                    States.Waiting => "waiting to restart",
+                    States.CleaningUp => "cleaning up",
+                    States.Initializing => "initializing",
+                    States.StartingProcess => "starting",
+                    _ => "???",
+                };
             }
         }
 

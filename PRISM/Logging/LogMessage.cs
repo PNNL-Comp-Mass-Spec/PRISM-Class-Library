@@ -130,19 +130,14 @@ namespace PRISM.Logging
 
         private string GetTimestampFormatString(TimestampFormatMode timestampFormat)
         {
-            switch (timestampFormat)
+            return timestampFormat switch
             {
-                case TimestampFormatMode.MonthDayYear24hr:
-                    return DATE_TIME_FORMAT_MONTH_DAY_YEAR_24H;
-                case TimestampFormatMode.MonthDayYear12hr:
-                    return DATE_TIME_FORMAT_MONTH_DAY_YEAR_12H;
-                case TimestampFormatMode.YearMonthDay24hr:
-                    return DATE_TIME_FORMAT_YEAR_MONTH_DAY_24H;
-                case TimestampFormatMode.YearMonthDay12hr:
-                    return DATE_TIME_FORMAT_YEAR_MONTH_DAY_12H;
-                default:
-                    return GetTimestampFormatString(DEFAULT_TIMESTAMP_FORMAT);
-            }
+                TimestampFormatMode.MonthDayYear24hr => DATE_TIME_FORMAT_MONTH_DAY_YEAR_24H,
+                TimestampFormatMode.MonthDayYear12hr => DATE_TIME_FORMAT_MONTH_DAY_YEAR_12H,
+                TimestampFormatMode.YearMonthDay24hr => DATE_TIME_FORMAT_YEAR_MONTH_DAY_24H,
+                TimestampFormatMode.YearMonthDay12hr => DATE_TIME_FORMAT_YEAR_MONTH_DAY_12H,
+                _ => GetTimestampFormatString(DEFAULT_TIMESTAMP_FORMAT),
+            };
         }
 
         /// <summary>

@@ -1295,36 +1295,26 @@ namespace PRISM.FileProcessor
 
         private static MessageTypeConstants ConvertLogLevelToMessageType(LogLevel level)
         {
-            switch (level)
+            return level switch
             {
-                case LogLevel.Debug:
-                    return MessageTypeConstants.Debug;
-                case LogLevel.Normal:
-                    return MessageTypeConstants.Normal;
-                case LogLevel.Warning:
-                    return MessageTypeConstants.Warning;
-                case LogLevel.Error:
-                    return MessageTypeConstants.ErrorMsg;
-                default:
-                    return MessageTypeConstants.Normal;
-            }
+                LogLevel.Debug => MessageTypeConstants.Debug,
+                LogLevel.Normal => MessageTypeConstants.Normal,
+                LogLevel.Warning => MessageTypeConstants.Warning,
+                LogLevel.Error => MessageTypeConstants.ErrorMsg,
+                _ => MessageTypeConstants.Normal,
+            };
         }
 
         private static LogLevel ConvertMessageTypeToLogLevel(MessageTypeConstants messageType)
         {
-            switch (messageType)
+            return messageType switch
             {
-                case MessageTypeConstants.Debug:
-                    return LogLevel.Debug;
-                case MessageTypeConstants.Normal:
-                    return LogLevel.Normal;
-                case MessageTypeConstants.Warning:
-                    return LogLevel.Warning;
-                case MessageTypeConstants.ErrorMsg:
-                    return LogLevel.Error;
-                default:
-                    return LogLevel.Normal;
-            }
+                MessageTypeConstants.Debug => LogLevel.Debug,
+                MessageTypeConstants.Normal => LogLevel.Normal,
+                MessageTypeConstants.Warning => LogLevel.Warning,
+                MessageTypeConstants.ErrorMsg => LogLevel.Error,
+                _ => LogLevel.Normal,
+            };
         }
 
         private void WriteToLogFile(string message, MessageTypeConstants messageType, int duplicateHoldoffHours)
@@ -1335,27 +1325,14 @@ namespace PRISM.FileProcessor
                 return;
             }
 
-            string messageTypeName;
-
-            switch (messageType)
+            var messageTypeName = messageType switch
             {
-                case MessageTypeConstants.Normal:
-                    messageTypeName = "Normal";
-                    break;
-                case MessageTypeConstants.ErrorMsg:
-                    messageTypeName = "Error";
-                    break;
-                case MessageTypeConstants.Warning:
-                    messageTypeName = "Warning";
-                    break;
-                case MessageTypeConstants.Debug:
-                    messageTypeName = "Debug";
-                    break;
-                default:
-                    messageTypeName = "Unknown";
-                    break;
-            }
-
+                MessageTypeConstants.Normal => "Normal",
+                MessageTypeConstants.ErrorMsg => "Error",
+                MessageTypeConstants.Warning => "Warning",
+                MessageTypeConstants.Debug => "Debug",
+                _ => "Unknown",
+            };
             var writeToLog = true;
 
             var logKey = messageTypeName + "_" + message;

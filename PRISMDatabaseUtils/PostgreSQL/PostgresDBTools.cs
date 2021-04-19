@@ -1246,80 +1246,32 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="sqlType"></param>
         private NpgsqlDbType ConvertSqlType(SqlType sqlType)
         {
-            switch (sqlType)
+            return sqlType switch
             {
-                case SqlType.Bit:
-                    return NpgsqlDbType.Bit;
-
-                case SqlType.Boolean:
-                    return NpgsqlDbType.Boolean;
-
-                case SqlType.TinyInt:
-                case SqlType.SmallInt:
-                    return NpgsqlDbType.Smallint;
-
-                case SqlType.Int:
-                    return NpgsqlDbType.Integer;
-
-                case SqlType.BigInt:
-                    return NpgsqlDbType.Bigint;
-
-                case SqlType.Real:
-                    return NpgsqlDbType.Real;
-
-                case SqlType.Float:
-                    return NpgsqlDbType.Double;
-
-                case SqlType.Decimal:
-                    // Includes Numeric
-                    return NpgsqlDbType.Numeric;
-
-                case SqlType.Money:
-                    return NpgsqlDbType.Money;
-
-                case SqlType.Char:
-                    return NpgsqlDbType.Char;
-
-                case SqlType.VarChar:
-                    return NpgsqlDbType.Varchar;
-
-                case SqlType.Text:
-                    return NpgsqlDbType.Text;
-
-                case SqlType.Citext:
-                    return NpgsqlDbType.Citext;
-
-                case SqlType.Name:
-                    return NpgsqlDbType.Name;
-
-                case SqlType.Date:
-                    return NpgsqlDbType.Date;
-
-                case SqlType.Time:
-                    return NpgsqlDbType.Time;
-
-                case SqlType.Timestamp:
-                    // Includes DateTime;
-                    return NpgsqlDbType.Timestamp;
-
-                case SqlType.TimestampTz:
-                    return NpgsqlDbType.TimestampTz;
-
-                case SqlType.UUID:
-                    return NpgsqlDbType.Uuid;
-
-                case SqlType.XML:
-                    return NpgsqlDbType.Xml;
-
-                case SqlType.Interval:
-                    return NpgsqlDbType.Interval;
-
-                case SqlType.JSON:
-                    return NpgsqlDbType.Json;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(sqlType), sqlType, $"Conversion for SqlType {sqlType} is not defined");
-            }
+                SqlType.Bit => NpgsqlDbType.Bit,
+                SqlType.Boolean => NpgsqlDbType.Boolean,
+                SqlType.TinyInt or SqlType.SmallInt => NpgsqlDbType.Smallint,
+                SqlType.Int => NpgsqlDbType.Integer,
+                SqlType.BigInt => NpgsqlDbType.Bigint,
+                SqlType.Real => NpgsqlDbType.Real,
+                SqlType.Float => NpgsqlDbType.Double,
+                SqlType.Decimal => NpgsqlDbType.Numeric,        // Includes Numeric
+                SqlType.Money => NpgsqlDbType.Money,
+                SqlType.Char => NpgsqlDbType.Char,
+                SqlType.VarChar => NpgsqlDbType.Varchar,
+                SqlType.Text => NpgsqlDbType.Text,
+                SqlType.Citext => NpgsqlDbType.Citext,
+                SqlType.Name => NpgsqlDbType.Name,
+                SqlType.Date => NpgsqlDbType.Date,
+                SqlType.Time => NpgsqlDbType.Time,
+                SqlType.Timestamp => NpgsqlDbType.Timestamp,    // Includes DateTime;
+                SqlType.TimestampTz => NpgsqlDbType.TimestampTz,
+                SqlType.UUID => NpgsqlDbType.Uuid,
+                SqlType.XML => NpgsqlDbType.Xml,
+                SqlType.Interval => NpgsqlDbType.Interval,
+                SqlType.JSON => NpgsqlDbType.Json,
+                _ => throw new ArgumentOutOfRangeException(nameof(sqlType), sqlType, $"Conversion for SqlType {sqlType} is not defined"),
+            };
         }
 
         /// <summary>

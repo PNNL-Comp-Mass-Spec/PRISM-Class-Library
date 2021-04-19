@@ -40,27 +40,19 @@ namespace PRISM
 
             OnDebugEvent("OS Platform: " + osInfo.Platform);
 
-            switch (osInfo.Platform)
+            return osInfo.Platform switch
             {
                 // For old Windows kernel
-                case PlatformID.Win32Windows:
-                    return GetWin32Version(osInfo);
+                PlatformID.Win32Windows => GetWin32Version(osInfo),
                 // For NT kernel
-                case PlatformID.Win32NT:
-                    return GetWinNTVersion(osInfo);
-                case PlatformID.Win32S:
-                    return "Win32S";
-                case PlatformID.WinCE:
-                    return "WinCE";
-                case PlatformID.Unix:
-                    return GetLinuxVersion();
-                case PlatformID.Xbox:
-                    return "Xbox";
-                case PlatformID.MacOSX:
-                    return "MacOSX";
-                default:
-                    return GetGenericOSVersion();
-            }
+                PlatformID.Win32NT => GetWinNTVersion(osInfo),
+                PlatformID.Win32S => "Win32S",
+                PlatformID.WinCE => "WinCE",
+                PlatformID.Unix => GetLinuxVersion(),
+                PlatformID.Xbox => "Xbox",
+                PlatformID.MacOSX => "MacOSX",
+                _ => GetGenericOSVersion(),
+            };
         }
 
         /// <summary>
@@ -364,25 +356,19 @@ namespace PRISM
         /// <param name="osInfo"></param>
         private string GetWin32Version(OperatingSystem osInfo)
         {
-            //Code to determine specific version of Windows 95,
-            //Windows 98, Windows 98 Second Edition, or Windows Me.
-            switch (osInfo.Version.Minor)
+            // Code to determine specific version of Windows 95,
+            // Windows 98, Windows 98 Second Edition, or Windows Me.
+            return osInfo.Version.Minor switch
             {
-                case 0:
-                    return "Windows 95";
-                case 10:
-                    switch (osInfo.Version.Revision.ToString())
-                    {
-                        case "2222A":
-                            return "Windows 98 Second Edition";
-                        default:
-                            return "Windows 98";
-                    }
-                case 90:
-                    return "Windows Me";
-                default:
-                    return GetGenericOSVersion();
-            }
+                0 => "Windows 95",
+                10 => osInfo.Version.Revision.ToString() switch
+                {
+                    "2222A" => "Windows 98 Second Edition",
+                    _ => "Windows 98",
+                },
+                90 => "Windows Me",
+                _ => GetGenericOSVersion(),
+            };
         }
 
         /// <summary>

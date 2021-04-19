@@ -386,32 +386,15 @@ namespace PRISM
             if (string.IsNullOrWhiteSpace(hashValue))
                 hashValue = string.Empty;
 
-            string hashTypeDescription;
-            switch (hashType)
+            var hashTypeDescription = hashType switch
             {
-                case HashTypeConstants.Undefined:
-                    hashTypeDescription = UNDEFINED_HASH;
-                    break;
-
-                case HashTypeConstants.CRC32:
-                    hashTypeDescription = CRC32_HASH;
-                    break;
-
-                case HashTypeConstants.MD5:
-                    hashTypeDescription = MD5_HASH;
-                    break;
-
-                case HashTypeConstants.MD5Base64:
-                    hashTypeDescription = MD5_BASE64_HASH;
-                    break;
-
-                case HashTypeConstants.SHA1:
-                    hashTypeDescription = SHA1_HASH;
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type");
-            }
+                HashTypeConstants.Undefined => UNDEFINED_HASH,
+                HashTypeConstants.CRC32 => CRC32_HASH,
+                HashTypeConstants.MD5 => MD5_HASH,
+                HashTypeConstants.MD5Base64 => MD5_BASE64_HASH,
+                HashTypeConstants.SHA1 => SHA1_HASH,
+                _ => throw new ArgumentOutOfRangeException(nameof(hashType), "Unknown hash type"),
+            };
 
             try
             {
@@ -478,28 +461,14 @@ namespace PRISM
                             break;
                         case "hashtype":
 
-                            switch (dataColumns[1].ToLower())
+                            hashInfo.HashType = dataColumns[1].ToLower() switch
                             {
-                                case CRC32_HASH:
-                                    hashInfo.HashType = HashTypeConstants.CRC32;
-                                    break;
-
-                                case MD5_HASH:
-                                    hashInfo.HashType = HashTypeConstants.MD5;
-                                    break;
-
-                                case MD5_BASE64_HASH:
-                                    hashInfo.HashType = HashTypeConstants.MD5Base64;
-                                    break;
-
-                                case SHA1_HASH:
-                                    hashInfo.HashType = HashTypeConstants.SHA1;
-                                    break;
-
-                                default:
-                                    hashInfo.HashType = HashTypeConstants.Undefined;
-                                    break;
-                            }
+                                CRC32_HASH => HashTypeConstants.CRC32,
+                                MD5_HASH => HashTypeConstants.MD5,
+                                MD5_BASE64_HASH => HashTypeConstants.MD5Base64,
+                                SHA1_HASH => HashTypeConstants.SHA1,
+                                _ => HashTypeConstants.Undefined,
+                            };
                             break;
                     }
                 }
@@ -508,29 +477,14 @@ namespace PRISM
             if (hashInfo.HashType != HashTypeConstants.Undefined)
                 return hashInfo;
 
-            switch (hashInfo.HashValue.Length)
+            hashInfo.HashType = hashInfo.HashValue.Length switch
             {
-                case 8:
-                    hashInfo.HashType = HashTypeConstants.CRC32;
-                    break;
-
-                case 24:
-                    hashInfo.HashType = HashTypeConstants.MD5Base64;
-                    break;
-
-                case 32:
-                    hashInfo.HashType = HashTypeConstants.MD5;
-                    break;
-
-                case 40:
-                    hashInfo.HashType = HashTypeConstants.SHA1;
-                    break;
-
-                default:
-                    hashInfo.HashType = assumedHashType;
-                    break;
-            }
-
+                8 => HashTypeConstants.CRC32,
+                24 => HashTypeConstants.MD5Base64,
+                32 => HashTypeConstants.MD5,
+                40 => HashTypeConstants.SHA1,
+                _ => assumedHashType,
+            };
             return hashInfo;
         }
     }
