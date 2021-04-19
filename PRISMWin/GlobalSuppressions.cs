@@ -7,3 +7,4 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Design", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Ignore errors here", Scope = "member", Target = "~M:PRISMWin.ProcessStats.GetCPUUtilization~System.Single")]
 [assembly: SuppressMessage("Design", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Ignore errors here", Scope = "member", Target = "~M:PRISMWin.ProcessStats.ClearCachedPerformanceCounterForProcessID(System.Int32)")]
+[assembly: SuppressMessage("Usage", "RCS1236:Use exception filter.", Justification = "Leave as-is for readability", Scope = "member", Target = "~M:PRISMWin.ProcessStats.GetCoreUsageForPerfCounter(System.Diagnostics.PerformanceCounter,System.Int32)~System.Single")]
