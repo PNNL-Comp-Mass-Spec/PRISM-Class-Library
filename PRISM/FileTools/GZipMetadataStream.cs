@@ -16,6 +16,7 @@ namespace PRISM
         {
             // ReSharper disable UnusedMember.Local
             // ReSharper disable IdentifierTypo
+            None = 0,
             FTEXT = 0x1,
             FHCRC = 0x2,
             FEXTRA = 0x4,
