@@ -132,7 +132,16 @@ namespace PRISMTest
 
         private void TestFindFilesWildcardWork(string directoryPath, string fileMask, string expectedFileNames, bool recurse, int expectedFileCount = 0)
         {
-            var directory = new DirectoryInfo(directoryPath);
+            DirectoryInfo directory;
+
+            if (directoryPath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+            {
+                directory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directoryPath));
+            }
+            else
+            {
+                directory = new DirectoryInfo(directoryPath);
+            }
 
             // Combine the directory path and the file mask
             var pathSpec = Path.Combine(directory.FullName, fileMask);
@@ -184,7 +193,7 @@ namespace PRISMTest
             foreach (var expectedFile in expectedFileList)
             {
                 if (!foundFileNames.Contains(expectedFile.Trim()))
-                    Assert.Fail("Did not an expected file in {0}: {1}", directoryPath, expectedFile);
+                    Assert.Fail("Did not find an expected file in {0}: {1}", directoryPath, expectedFile);
             }
 
             if (expectedFileCount > 0)
