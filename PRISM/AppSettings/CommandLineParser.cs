@@ -914,7 +914,7 @@ namespace PRISM
         /// List of parameters read from the parameter file
         /// Each line will starts with a dash
         /// </returns>
-        private List<string> ReadParamFile(FileSystemInfo paramFile)
+        private IEnumerable<string> ReadParamFile(FileSystemInfo paramFile)
         {
             var lines = new List<string>();
             if (!paramFile.Exists)
