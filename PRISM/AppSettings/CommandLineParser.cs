@@ -1172,25 +1172,26 @@ namespace PRISM
                 return result;
             }
 
-            // Support using '0', '1', 'y', 'yes', 'n', 'no' with booleans
-            if (targetType == typeof(bool))
+            if (targetType != typeof(bool))
             {
-                var valueLCase = valueToConvert.ToString().ToLowerInvariant();
-                if (int.TryParse(valueLCase, out var boolResult))
-                {
-                    return boolResult != 0;
-                }
-                if (valueLCase.Equals("n") || valueLCase.Equals("no"))
-                {
-                    return false;
-                }
-                if (valueLCase.Equals("y") || valueLCase.Equals("yes"))
-                {
-                    return true;
-                }
+                return Convert.ChangeType(valueToConvert, targetType);
             }
 
-            return Convert.ChangeType(valueToConvert, targetType);
+            // Support using '0', '1', 'y', 'yes', 'n', 'no' with booleans
+            var valueLCase = valueToConvert.ToString().ToLowerInvariant();
+            if (int.TryParse(valueLCase, out var boolResult))
+            {
+                return boolResult != 0;
+            }
+
+            return valueLCase switch
+            {
+                "n" => false,
+                "no" => false,
+                "y" => true,
+                "yes" => true,
+                _ => Convert.ChangeType(valueToConvert, targetType)
+            };
         }
 
         private void AppendArgumentValue(ICollection<string> existingArgumentValues, string newArgumentValue)
