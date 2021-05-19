@@ -1724,8 +1724,7 @@ namespace PRISM
                     }
 
                     // List the valid enum values
-                    var enumValues = Enum.GetValues(prop.Key.PropertyType);
-                    foreach (var val in enumValues)
+                    foreach (var val in Enum.GetValues(prop.Key.PropertyType))
                     {
                         var enumVal = (Enum)Convert.ChangeType(val, prop.Key.PropertyType);
                         var valName = enumVal.ToString();
