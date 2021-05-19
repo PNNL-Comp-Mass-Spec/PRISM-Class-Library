@@ -503,7 +503,7 @@ namespace PRISM
             try
             {
                 // Parse the arguments into a dictionary
-                var preprocessed = ArgsPreprocess(args);
+                var preprocessed = ArgsPreprocess(args, false);
                 if (preprocessed == null)
                 {
                     // Preprocessing failed, tell the user why
@@ -586,7 +586,7 @@ namespace PRISM
                     paramFileLoaded = true;
 
                     // Call ArgsPreprocess on the options loaded from the parameter file
-                    var filePreprocessed = ArgsPreprocess(paramFileLines);
+                    var filePreprocessed = ArgsPreprocess(paramFileLines, true);
 
                     // TODO: This is code that could be used to merge multiple param files together.
                     //// Add original results of ArgsPreprocess to the new preprocessed arguments
@@ -1220,11 +1220,15 @@ namespace PRISM
         /// Parse the arguments to a dictionary
         /// </summary>
         /// <param name="args"></param>
+        /// <param name="parsingParamFileArgs">Set this to true if the arguments were loaded from a parameter file</param>
         /// <returns>
         /// Dictionary where keys are argument names and values are the setting for the argument
         /// Values are a list in case the parameter is specified more than once
         /// </returns>
-        private Dictionary<string, List<string>> ArgsPreprocess(IReadOnlyList<string> args)
+        /// <remarks>
+        /// Arguments loaded from a parameter file will each start with a dash, followed by the argument name, then an equals sign, then the value
+        /// </remarks>
+        private Dictionary<string, List<string>> ArgsPreprocess(IReadOnlyList<string> args, bool parsingParamFileArgs)
         {
             var validArgs = GetValidArgs();
             if (validArgs == null)
@@ -1246,7 +1250,7 @@ namespace PRISM
                     continue;
                 }
 
-                if (!paramChars.Contains(args[i][0]))
+                if (!parsingParamFileArgs && !paramChars.Contains(args[i][0]))
                 {
                     // Positional argument
                     positionArgumentNumber++;
@@ -1267,7 +1271,8 @@ namespace PRISM
                 var key = args[i].TrimStart(paramChars);
                 var value = string.Empty;
                 var nextArgIsNumber = false;
-                if (paramChars.Contains('-') && i + 1 < args.Count && args[i + 1].StartsWith("-"))
+
+                if (!parsingParamFileArgs && paramChars.Contains('-') && i + 1 < args.Count && args[i + 1].StartsWith("-"))
                 {
                     // Try converting to most forgiving number format
                     nextArgIsNumber = double.TryParse(args[i + 1], out _);
@@ -1290,7 +1295,7 @@ namespace PRISM
                     key = key.Substring(0, separatorIndex);
                 }
 
-                if (!containedSeparator && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
+                if (!containedSeparator && !parsingParamFileArgs  && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
                 {
                     value = args[i + 1];
                     i++;
