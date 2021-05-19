@@ -231,7 +231,7 @@ namespace PRISM
                     return valueText;
                 }
 
-                // Look for numbers in scientific notation with a series of zeroes before the E
+                // Look for numbers in scientific notation with a series of zeros before the E
                 if (!m_scientificNotationTrim.IsMatch(valueText))
                 {
                     return valueText;

@@ -11,7 +11,7 @@ using JetBrains.Annotations;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
-    // Ignore Spelling: dd, dir, args, asm, typeof, arg, Preprocess, nameof, Conf
+    // Ignore Spelling: arg, args, asm, bool, Conf, dd, dir, foreach, nameof, Preprocess, templated, typeof
 
     /// <summary>
     /// <para>
@@ -549,7 +549,7 @@ namespace PRISM
                 DirectoryInfo paramFileDirectory = null;
                 var filePreprocessedArgs = new Dictionary<string, List<string>>();
 
-                // Check for a parameter file, and load any arguments from it (or them)
+                // Check for a parameter file, and load any arguments from it
                 // Don't automatically merge with the command-line arguments
                 foreach (var paramFileArg in paramFileArgs)
                 {
@@ -731,7 +731,7 @@ namespace PRISM
                     object lastVal = value.Last();
                     try
                     {
-                        // parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
+                        // Parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
                         object castValue;
                         if (prop.Key.PropertyType.IsArray)
                         {
@@ -1321,7 +1321,10 @@ namespace PRISM
                     }
                 }
 
-                // The last duplicate option gets priority
+                // Keep track of each of the values defined for an argument (if listed multiple times on the command line or in a parameter file)
+                // If the argument's property is an array, all of the arguments are kept
+                // If the argument's property is not an array, the last duplicate option gets priority (see "var lastVal = value.Last()" in ParseArgs)
+
                 if (!processed.ContainsKey(key))
                 {
                     processed.Add(key, new List<string>());
