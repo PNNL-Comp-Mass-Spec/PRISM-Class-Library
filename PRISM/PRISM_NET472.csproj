@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <IntermediateOutputPath>$(SolutionDir)\obj\NET472\$(Configuration)\</IntermediateOutputPath>
     <TargetFrameworkProfile />
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
