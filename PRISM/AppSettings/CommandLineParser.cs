@@ -554,54 +554,58 @@ namespace PRISM
                 foreach (var paramFileArg in paramFileArgs)
                 {
                     // Make sure the param file arg is not defined in the template class
-                    if (preprocessed.ContainsKey(paramFileArg) && validArgs.ContainsKey(paramFileArg.ToLower()) && validArgs[paramFileArg.ToLower()].IsBuiltInArg)
+                    if (!preprocessed.ContainsKey(paramFileArg) ||
+                        !validArgs.ContainsKey(paramFileArg.ToLower()) ||
+                        !validArgs[paramFileArg.ToLower()].IsBuiltInArg)
                     {
-                        if (paramFileLoaded)
-                        {
-                            // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
-                            Results.AddParseError("Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
-                            if (outputErrors)
-                            {
-                                Results.OutputErrors();
-                            }
-                            Results.Failed();
-                            return Results;
-                        }
-
-                        if (!ReadParamFile(preprocessed[paramFileArg].LastOrDefault(), out var paramFileLines, out paramFileDirectory))
-                        {
-                            if (outputErrors)
-                            {
-                                Results.OutputErrors();
-                            }
-                            Results.Failed();
-                            return Results;
-                        }
-
-                        paramFileLoaded = true;
-
-                        // Call ArgsPreprocess on the line array
-                        var filePreprocessed = ArgsPreprocess(paramFileLines);
-
-                        // TODO: This is code that could be used to merge multiple param files together.
-                        //// Add original results of ArgsPreprocess to the new preprocessed arguments
-                        //foreach (var cmdArg in filePreprocessedArgs)
-                        //{
-                        //    if (filePreprocessed.TryGetValue(cmdArg.Key, out var paramValues))
-                        //    {
-                        //        // Always append the argument values to the end, so that command-line arguments will overwrite param file arguments
-                        //        // The one exception is for array parameters, where the command-line arguments will add to the param file arguments
-                        //        paramValues.AddRange(cmdArg.Value);
-                        //    }
-                        //    else
-                        //    {
-                        //        filePreprocessed.Add(cmdArg.Key, cmdArg.Value);
-                        //    }
-                        //}
-
-                        // Use the merged preprocessed arguments
-                        filePreprocessedArgs = filePreprocessed;
+                        continue;
                     }
+
+                    if (paramFileLoaded)
+                    {
+                        // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
+                        Results.AddParseError("Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
+                        if (outputErrors)
+                        {
+                            Results.OutputErrors();
+                        }
+                        Results.Failed();
+                        return Results;
+                    }
+
+                    if (!ReadParamFile(preprocessed[paramFileArg].LastOrDefault(), out var paramFileLines, out paramFileDirectory))
+                    {
+                        if (outputErrors)
+                        {
+                            Results.OutputErrors();
+                        }
+                        Results.Failed();
+                        return Results;
+                    }
+
+                    paramFileLoaded = true;
+
+                    // Call ArgsPreprocess on the options loaded from the parameter file
+                    var filePreprocessed = ArgsPreprocess(paramFileLines);
+
+                    // TODO: This is code that could be used to merge multiple param files together.
+                    //// Add original results of ArgsPreprocess to the new preprocessed arguments
+                    //foreach (var cmdArg in filePreprocessedArgs)
+                    //{
+                    //    if (filePreprocessed.TryGetValue(cmdArg.Key, out var paramValues))
+                    //    {
+                    //        // Always append the argument values to the end, so that command-line arguments will overwrite param file arguments
+                    //        // The one exception is for array parameters, where the command-line arguments will add to the param file arguments
+                    //        paramValues.AddRange(cmdArg.Value);
+                    //    }
+                    //    else
+                    //    {
+                    //        filePreprocessed.Add(cmdArg.Key, cmdArg.Value);
+                    //    }
+                    //}
+
+                    // Use the merged preprocessed arguments
+                    filePreprocessedArgs = filePreprocessed;
                 }
 
                 // Determine if we need to write an example parameter file
@@ -627,35 +631,39 @@ namespace PRISM
                     // Find any param file arguments that match this property
                     foreach (var key in prop.Value.ParamKeys)
                     {
-                        if (filePreprocessedArgs.ContainsKey(key))
+                        if (!filePreprocessedArgs.ContainsKey(key))
                         {
-                            keyGiven = key;
-                            specified = true;
-
-                            // Add in other values provided by argument keys that belong to this property
-                            AppendArgumentValues(value, filePreprocessedArgs[key]);
+                            continue;
                         }
+
+                        keyGiven = key;
+                        specified = true;
+
+                        // Add in other values provided by argument keys that belong to this property
+                        AppendArgumentValues(value, filePreprocessedArgs[key]);
                     }
 
                     // Find any arguments that match this property
                     foreach (var key in prop.Value.ParamKeys)
                     {
                         var isSwitch = prop.Key.PropertyType == typeof(bool);
-                        if (preprocessed.ContainsKey(key))
+                        if (!preprocessed.ContainsKey(key))
                         {
-                            keyGiven = key;
-                            specified = true;
-
-                            if (isSwitch && preprocessed[key].Count == 0)
-                            {
-                                // Switch arguments from the command line: force value override by removing any value(s) read from the param file(s)
-                                // This fixes an issue with switch arguments not reading properly when a value is provided in the param file, unless a value is provided on the command line.
-                                value.Clear();
-                            }
-
-                            // Add in other values provided by argument keys that belong to this property
-                            AppendArgumentValues(value, preprocessed[key]);
+                            continue;
                         }
+
+                        keyGiven = key;
+                        specified = true;
+
+                        if (isSwitch && preprocessed[key].Count == 0)
+                        {
+                            // Switch arguments from the command line: force value override by removing any value(s) read from the param file(s)
+                            // This fixes an issue with switch arguments not reading properly when a value is provided in the param file, unless a value is provided on the command line.
+                            value.Clear();
+                        }
+
+                        // Add in other values provided by argument keys that belong to this property
+                        AppendArgumentValues(value, preprocessed[key]);
                     }
 
                     var positionalArgName = GetPositionalArgName(prop.Value.ArgPosition);
@@ -695,7 +703,7 @@ namespace PRISM
                         continue;
                     }
 
-                    // switch handling - no value specified
+                    // Switch handling - no value specified
                     if (prop.Key.PropertyType == typeof(bool) && (value.Count == 0 || string.IsNullOrWhiteSpace(value.Last())))
                     {
                         prop.Key.SetValue(Results.ParsedResults, true);
@@ -772,18 +780,20 @@ namespace PRISM
                         Results.Failed();
                     }
 
-                    if (Results.Success && prop.Value.IsInputFilePath)
+                    if (!Results.Success || !prop.Value.IsInputFilePath)
                     {
-                        // Assure that the path is not surrounded by single quotes or by double quotes
-                        VerifyPathNotQuoted(prop);
+                        continue;
+                    }
 
-                        if (paramFileLoaded)
-                        {
-                            // The current property specifies a file path
-                            // Auto-update it if the file is not located in the current working directory
-                            // Only do this if this path was read from a parameter file (and if it's not rooted)
-                            VerifyFileOrDirectoryPath(prop, paramFileDirectory);
-                        }
+                    // Assure that the path is not surrounded by single quotes or by double quotes
+                    VerifyPathNotQuoted(prop);
+
+                    if (paramFileLoaded)
+                    {
+                        // The current property specifies a file path
+                        // Auto-update it if the file is not located in the current working directory
+                        // Only do this if this path was read from a parameter file (and if it's not rooted)
+                        VerifyFileOrDirectoryPath(prop, paramFileDirectory);
                     }
                 }
             }
@@ -815,16 +825,18 @@ namespace PRISM
                 return Results;
             }
 
-            if (!Results.Success)
+            if (Results.Success)
             {
-                if (onErrorOutputHelp)
-                {
-                    PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
-                }
-                else if (outputErrors)
-                {
-                    Results.OutputErrors();
-                }
+                return Results;
+            }
+
+            if (onErrorOutputHelp)
+            {
+                PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
+            }
+            else if (outputErrors)
+            {
+                Results.OutputErrors();
             }
 
             return Results;
@@ -872,7 +884,7 @@ namespace PRISM
 
                 paramFileDirectory = paramFile.Directory;
 
-                // Read file into line-array
+                // Read parameter file into List
                 var lines = ReadParamFile(paramFile);
                 paramFileLines.AddRange(lines);
 
@@ -1096,6 +1108,7 @@ namespace PRISM
                         Results.Failed();
                     }
                 }
+
                 if (parseData.Max != null)
                 {
                     // HACK: prevent allowed conversions from say, double to int; change the value to a string because Convert.ChangeType cannot do 2-step conversions (like string->double->int)
@@ -1457,6 +1470,7 @@ namespace PRISM
                     {
                         key = keyOverflow[i];
                     }
+
                     if (i < textOverflow.Count)
                     {
                         if (textOverflow[i].StartsWith(" (Default:"))
@@ -1549,6 +1563,7 @@ namespace PRISM
 
             var props = GetPropertiesAttributes();
             var validArgs = GetValidArgs();
+
             if (validArgs == null)
             {
                 contents.Add("ERROR!!!", "Cannot determine arguments. Fix errors in code!");
@@ -1560,17 +1575,17 @@ namespace PRISM
             // Add the default help string
             foreach (var helpArg in mDefaultHelpArgs)
             {
-                if (validArgs.ContainsKey(helpArg.ToLower()))
+                if (!validArgs.ContainsKey(helpArg.ToLower()) || !validArgs[helpArg.ToLower()].IsBuiltInArg)
                 {
-                    if (validArgs[helpArg.ToLower()].IsBuiltInArg)
-                    {
-                        if (!string.IsNullOrWhiteSpace(helpArgString))
-                        {
-                            helpArgString += ", ";
-                        }
-                        helpArgString += paramChars[0] + helpArg;
-                    }
+                    continue;
                 }
+
+                if (!string.IsNullOrWhiteSpace(helpArgString))
+                {
+                    helpArgString += ", ";
+                }
+
+                helpArgString += paramChars[0] + helpArg;
             }
 
             if (!string.IsNullOrWhiteSpace(helpArgString))
@@ -1592,6 +1607,7 @@ namespace PRISM
                 {
                     defaultValue = defaultValueObj.ToString();
                 }
+
                 if (string.IsNullOrWhiteSpace(defaultValue))
                 {
                     defaultValue = $"\"{defaultValue}\"";
@@ -1618,6 +1634,7 @@ namespace PRISM
                             "Critical error in CommandLineParser.CreateHelpContents: duplicateKeyCheck.ContainsKey(key): " + key);
                         return contents;
                     }
+
                     duplicateKeyCheck.Add(key, prop.Key);
 
                     if (keyNamesToHide.Contains(key))
@@ -1649,6 +1666,7 @@ namespace PRISM
 
                 // Create the help text
                 var helpText = string.Empty;
+
                 if (prop.Value.Required)
                 {
                     helpText += "Required. ";
@@ -1673,11 +1691,14 @@ namespace PRISM
                         {
                             defaultValue += $"\a(or\a{Convert.ChangeType(defaultValueObj, Enum.GetUnderlyingType(prop.Key.PropertyType))})";
                         }
+
                         helpText += $" (Default:\a{defaultValue}";
+
                         if (prop.Value.Min != null)
                         {
                             helpText += $", Min:\a{prop.Value.Min}";
                         }
+
                         if (prop.Value.Max != null)
                         {
                             helpText += $", Max:\a{prop.Value.Max}";
@@ -1705,6 +1726,7 @@ namespace PRISM
                         var valValue = Convert.ChangeType(enumVal, Enum.GetUnderlyingType(prop.Key.PropertyType));
                         var desc = enumVal.GetDescriptionAttribute(prop.Key.PropertyType);
                         helpText += $"\n  {valValue} or '{valName}'";
+
                         if (desc?.IsDefaultAttribute() == false && !string.IsNullOrWhiteSpace(desc.Description))
                         {
                             helpText += $": {desc.Description}";
@@ -1713,6 +1735,7 @@ namespace PRISM
                 }
 
                 var delimitedKeyNames = string.Join(", ", keys);
+
                 if (contents.ContainsKey(delimitedKeyNames))
                 {
                     // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
@@ -1730,17 +1753,17 @@ namespace PRISM
             // Add the default param file string
             foreach (var paramFileArg in paramFileArgs)
             {
-                if (validArgs.ContainsKey(paramFileArg.ToLower()))
+                if (!validArgs.ContainsKey(paramFileArg.ToLower()) || !validArgs[paramFileArg.ToLower()].IsBuiltInArg)
                 {
-                    if (validArgs[paramFileArg.ToLower()].IsBuiltInArg)
-                    {
-                        if (!string.IsNullOrWhiteSpace(paramFileArgString))
-                        {
-                            paramFileArgString += ", ";
-                        }
-                        paramFileArgString += paramChars[0] + paramFileArg;
-                    }
+                    continue;
                 }
+
+                if (!string.IsNullOrWhiteSpace(paramFileArgString))
+                {
+                    paramFileArgString += ", ";
+                }
+
+                paramFileArgString += paramChars[0] + paramFileArg;
             }
 
             if (!string.IsNullOrWhiteSpace(paramFileArgString))
@@ -1756,17 +1779,17 @@ namespace PRISM
             // Add the default param file string
             foreach (var createParamFileArg in mDefaultCreateExampleParamFileArgs)
             {
-                if (validArgs.ContainsKey(createParamFileArg.ToLower()))
+                if (!validArgs.ContainsKey(createParamFileArg.ToLower()) || !validArgs[createParamFileArg.ToLower()].IsBuiltInArg)
                 {
-                    if (validArgs[createParamFileArg.ToLower()].IsBuiltInArg)
-                    {
-                        if (!string.IsNullOrWhiteSpace(createParamFileArgString))
-                        {
-                            createParamFileArgString += ", ";
-                        }
-                        createParamFileArgString += paramChars[0] + createParamFileArg;
-                    }
+                    continue;
                 }
+
+                if (!string.IsNullOrWhiteSpace(createParamFileArgString))
+                {
+                    createParamFileArgString += ", ";
+                }
+
+                createParamFileArgString += paramChars[0] + createParamFileArg;
             }
 
             if (!string.IsNullOrWhiteSpace(createParamFileArgString))
@@ -1794,6 +1817,7 @@ namespace PRISM
 
                 // Do not show this parameter key name since it is long
                 keyNamesToHide.Add(key);
+
                 if (shortestLongName.Length == 0)
                 {
                     shortestLongName = key;
@@ -1928,86 +1952,100 @@ namespace PRISM
 
                     foreach (var invalidChar in separatorChars)
                     {
-                        if (key.Contains(invalidChar.ToString()))
+                        if (!key.Contains(invalidChar.ToString()))
                         {
-                            // ERROR: Parameter separator character in parameter!
-                            Results.AddParseError(
-                                @"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'",
-                                key, typeof(T).Name, invalidChar);
-                            return null;
+                            continue;
                         }
+
+                        // ERROR: Parameter separator character in parameter!
+                        Results.AddParseError(
+                            @"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'",
+                            key, typeof(T).Name, invalidChar);
+                        return null;
                     }
 
                     info.AllArgNormalCase.Add(key);
                 }
 
                 var argPosition = prop.Value.ArgPosition;
-                if (argPosition > 0)
+                if (argPosition <= 0)
                 {
-                    var info = new ArgInfo();
-                    var argName = GetPositionalArgName(argPosition);
-
-                    if (validArgs.ContainsKey(argName))
-                    {
-                        // ERROR: Duplicate position specified
-                        Results.AddParseError(
-                            @"Error: Multiple properties in class {0} specify ArgPosition {1}; conflict involves ""{2}""",
-                            typeof(T).Name, argPosition, prop.Key.Name);
-                        return null;
-                    }
-
-                    validArgs.Add(argName, info);
-                    info.ArgNormalCase = argName;
-                    info.AllArgNormalCase.Add(argName);
+                    continue;
                 }
+
+                var positionalArgInfo = new ArgInfo();
+                var argName = GetPositionalArgName(argPosition);
+
+                if (validArgs.ContainsKey(argName))
+                {
+                    // ERROR: Duplicate position specified
+                    Results.AddParseError(
+                        @"Error: Multiple properties in class {0} specify ArgPosition {1}; conflict involves ""{2}""",
+                        typeof(T).Name, argPosition, prop.Key.Name);
+
+                    return null;
+                }
+
+                validArgs.Add(argName, positionalArgInfo);
+                positionalArgInfo.ArgNormalCase = argName;
+                positionalArgInfo.AllArgNormalCase.Add(argName);
             }
 
             foreach (var helpArg in mDefaultHelpArgs)
             {
-                if (!validArgs.ContainsKey(helpArg.ToLower()))
+                if (validArgs.ContainsKey(helpArg.ToLower()))
                 {
-                    var info = new ArgInfo
-                    {
-                        ArgNormalCase = helpArg,
-                        CanBeSwitch = true,
-                        IsBuiltInArg = true,
-                    };
-                    info.AllArgNormalCase.Add(helpArg);
-
-                    validArgs.Add(helpArg, info);
+                    continue;
                 }
+
+                var info = new ArgInfo
+                {
+                    ArgNormalCase = helpArg,
+                    CanBeSwitch = true,
+                    IsBuiltInArg = true,
+                };
+
+                info.AllArgNormalCase.Add(helpArg);
+
+                validArgs.Add(helpArg, info);
             }
 
             foreach (var paramFileArg in paramFileArgs)
             {
-                if (!validArgs.ContainsKey(paramFileArg.ToLower()))
+                if (validArgs.ContainsKey(paramFileArg.ToLower()))
                 {
-                    var info = new ArgInfo
-                    {
-                        ArgNormalCase = paramFileArg,
-                        CanBeSwitch = false,
-                        IsBuiltInArg = true,
-                    };
-                    info.AllArgNormalCase.Add(paramFileArg);
-
-                    validArgs.Add(paramFileArg.ToLower(), info);
+                    continue;
                 }
+
+                var info = new ArgInfo
+                {
+                    ArgNormalCase = paramFileArg,
+                    CanBeSwitch = false,
+                    IsBuiltInArg = true,
+                };
+
+                info.AllArgNormalCase.Add(paramFileArg);
+
+                validArgs.Add(paramFileArg.ToLower(), info);
             }
 
             foreach (var createParamArg in mDefaultCreateExampleParamFileArgs)
             {
-                if (!validArgs.ContainsKey(createParamArg.ToLower()))
+                if (validArgs.ContainsKey(createParamArg.ToLower()))
                 {
-                    var info = new ArgInfo
-                    {
-                        ArgNormalCase = createParamArg,
-                        CanBeSwitch = true,
-                        IsBuiltInArg = true,
-                    };
-                    info.AllArgNormalCase.Add(createParamArg);
-
-                    validArgs.Add(createParamArg.ToLower(), info);
+                    continue;
                 }
+
+                var info = new ArgInfo
+                {
+                    ArgNormalCase = createParamArg,
+                    CanBeSwitch = true,
+                    IsBuiltInArg = true,
+                };
+
+                info.AllArgNormalCase.Add(createParamArg);
+
+                validArgs.Add(createParamArg.ToLower(), info);
             }
 
             validArguments = validArgs;
@@ -2042,6 +2080,7 @@ namespace PRISM
 
                 var alternatePath = Path.Combine(paramFileDirectory.FullName, fileToFind.Name);
                 var alternateInputFile = new FileInfo(alternatePath);
+
                 if (alternateInputFile.Exists)
                 {
                     prop.Key.SetValue(Results.ParsedResults, alternateInputFile.FullName);
@@ -2158,6 +2197,7 @@ namespace PRISM
 
                 var attribute = property.GetCustomAttributes(typeof(OptionAttribute), true);
                 var attributeList = attribute.ToArray();
+
                 if (attributeList.Length == 0)
                 {
                     continue;
