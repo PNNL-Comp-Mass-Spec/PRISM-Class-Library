@@ -728,7 +728,7 @@ namespace PRISM
                         value.Add(string.Empty);
                     }
 
-                    object lastVal = value.Last();
+                    var lastVal = value.Last();
                     try
                     {
                         // Parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
