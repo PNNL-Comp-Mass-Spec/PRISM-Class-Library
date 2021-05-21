@@ -1155,6 +1155,88 @@ namespace PRISMTest
         }
 
         [Test]
+        public void TestParamFileRoundTripDuplicate()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            var results = parser.Results.ParsedResults;
+            results.Smooth = 5;
+            results.Smooth2 = 10;
+            results.OkayName = "A Real Value!";
+            results.Verbose = "Concise";
+            results.ExtraSpecialProcessingOption = false;
+
+            var paramFileName = "exampleParams.txt";
+            var paramFile = new FileInfo(paramFileName);
+
+            parser.CreateParamFile(paramFile.FullName);
+
+            var parser2 = new CommandLineParser<OkayKey2>();
+            var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
+            Assert.AreEqual(results.Smooth, results2.Smooth);
+            Assert.AreEqual(results.Smooth2, results2.Smooth2);
+            Assert.AreEqual(results.OkayName, results2.OkayName);
+            Assert.AreEqual(results.Verbose, results2.Verbose);
+
+            // "Duplicate parameter" parsing error with duplicated, non-array parameter
+            File.AppendAllText(paramFile.FullName, "\nOkay/Name=Duplicated\n");
+            var parser3 = new CommandLineParser<OkayKey2>();
+            var results3 = parser3.ParseArgs(new[] { "-ParamFile", paramFile.FullName });
+            Assert.AreEqual(false, results3.Success);
+            Assert.LessOrEqual(1, results3.ParseErrors.Count);
+
+            foreach (var error in results3.ParseErrors)
+            {
+                Console.WriteLine(error.Message);
+            }
+
+            Assert.AreEqual(true, results3.ParseErrors.Any(x => x.Message.Contains("Duplicated parameter")));
+        }
+
+        [Test]
+        public void TestParamFileRoundTripDuplicateNotParsed()
+        {
+            var parser = new CommandLineParser<OkayKey2>();
+            var results = parser.Results.ParsedResults;
+            results.Smooth = 5;
+            results.Smooth2 = 10;
+            results.OkayName = "A Real Value!";
+            results.Verbose = "Concise";
+            results.ExtraSpecialProcessingOption = false;
+
+            var paramFileName = "exampleParams.txt";
+            var paramFile = new FileInfo(paramFileName);
+
+            Console.WriteLine("Creating parameter file " + paramFile.FullName);
+            Console.WriteLine();
+
+            parser.CreateParamFile(paramFile.FullName);
+
+            using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                var contents = reader.ReadToEnd();
+                Console.WriteLine(contents);
+            }
+
+            var parser2 = new CommandLineParser<OkayKey2>();
+            var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
+            Assert.AreEqual(results.Smooth, results2.Smooth);
+            Assert.AreEqual(results.Smooth2, results2.Smooth2);
+            Assert.AreEqual(results.OkayName, results2.OkayName);
+            Assert.AreEqual(results.Verbose, results2.Verbose);
+
+            // Add a couple arguments that do not match any of the argument names. These must be ignored by the duplicate-check code
+            File.AppendAllText(paramFile.FullName, "\nOkayName=Duplicated\n");
+            File.AppendAllText(paramFile.FullName, "\nOkayName=Duplicated\n");
+            var parser3 = new CommandLineParser<OkayKey2>();
+            var results3 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
+            Assert.AreEqual(true, parser3.Results.Success);
+            Assert.AreEqual(results.Smooth, results3.Smooth);
+            Assert.AreEqual(results.Smooth2, results3.Smooth2);
+            Assert.AreEqual(results.OkayName, results3.OkayName);
+            Assert.AreEqual(results.Verbose, results3.Verbose);
+        }
+
+        [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void TestUpdateExistingOptionsUsingParamFile(bool includeSecondaryArgs)

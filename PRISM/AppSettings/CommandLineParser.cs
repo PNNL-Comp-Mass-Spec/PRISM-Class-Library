@@ -588,6 +588,35 @@ namespace PRISM
                     // Call ArgsPreprocess on the options loaded from the parameter file
                     var filePreprocessed = ArgsPreprocess(paramFileLines, true);
 
+                    // Check and possibly error on duplicate parameters in the parameter file
+                    foreach (var prop in props)
+                    {
+                        // TODO: Also need to check these against "ValidArgs", for param name case sensitivity
+                        // find all matching arguments, including synonyms
+                        var entries = filePreprocessed.Where(x => prop.Value.ParamKeys.Any(k => k.Equals(x.Key))).ToList();
+
+                        // if multiple values and not an array, report an error
+                        if (!prop.Key.PropertyType.IsArray && entries.Sum(x => x.Value.Count) > 1)
+                        {
+                            // Report error
+                            if (entries.Count > 1)
+                            {
+                                Results.AddParseError("Error: Duplicated parameter '{1}' in parameter file '{0}'", preprocessed[paramFileArg].LastOrDefault(), string.Join("','", entries.Select(x => x.Key)));
+                            }
+                            else
+                            {
+                                Results.AddParseError("Error: Duplicated parameter '{1}' in parameter file '{0}'", preprocessed[paramFileArg].LastOrDefault(), entries[0].Key);
+                            }
+
+                            Results.Failed();
+                        }
+                    }
+
+                    if (!Results.Success)
+                    {
+                        return Results;
+                    }
+
                     // TODO: This is code that could be used to merge multiple param files together.
                     //// Add original results of ArgsPreprocess to the new preprocessed arguments
                     //foreach (var cmdArg in filePreprocessedArgs)
