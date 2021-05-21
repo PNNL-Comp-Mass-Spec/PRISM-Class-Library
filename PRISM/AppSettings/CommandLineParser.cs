@@ -1027,9 +1027,12 @@ namespace PRISM
                     "{0}# {1}{2}",
                     commentsProcessed == 0 ? string.Empty : Environment.NewLine,
                     prop.Value.Required ? "Required: " : string.Empty,
-                    prop.Value.HelpText.Replace("\r\n", "\n").Replace("\n", Environment.NewLine + "# "));
+                    prop.Value.HelpText?.Replace("\r\n", "\n").Replace("\n", Environment.NewLine + "# ") ?? "");
 
-                lines.Add(paramComment);
+                if (paramComment.Trim().Length > 1)
+                {
+                    lines.Add(paramComment);
+                }
 
                 string prefix;
                 if (prop.Value.SecondaryArg)
