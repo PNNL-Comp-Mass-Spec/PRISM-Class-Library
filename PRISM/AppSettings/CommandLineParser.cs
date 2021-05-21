@@ -1049,9 +1049,17 @@ namespace PRISM
                 var key = prop.Value.ParamKeys[0];
                 if (prop.Key.PropertyType.IsArray)
                 {
-                    foreach (var value in (Array)prop.Key.GetValue(Results.ParsedResults))
+                    var obj = prop.Key.GetValue(Results.ParsedResults);
+                    if (obj == null)
                     {
-                        lines.Add(string.Format("{0}{1}={2}", prefix, key, value));
+                        lines.Add(string.Format("{0}{1}={2}", prefix, key, ""));
+                    }
+                    else
+                    {
+                        foreach (var value in (Array)obj)
+                        {
+                            lines.Add(string.Format("{0}{1}={2}", prefix, key, value));
+                        }
                     }
                 }
                 else
