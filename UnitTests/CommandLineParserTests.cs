@@ -1237,6 +1237,43 @@ namespace PRISMTest
         }
 
         [Test]
+        public void TestParamFileRoundTripDuplicateArray()
+        {
+            var parser = new CommandLineParser<ArgsArray>();
+            var results = parser.Results.ParsedResults;
+            results.IntMinOnly = 15;
+            results.DblMinOnly = 25;
+            results.LowerChar = "Something";
+            results.BoolCheck = true;
+            results.StringArray = new string[] {"S1", "S2" , "S3" , "S4" , "S5"};
+            results.IntArray = new int[] {1, 2, 3, 4, 5};
+
+            var paramFileName = "exampleParams.txt";
+            var paramFile = new FileInfo(paramFileName);
+
+            Console.WriteLine("Creating parameter file " + paramFile.FullName);
+            Console.WriteLine();
+
+            parser.CreateParamFile(paramFile.FullName);
+
+            using (var reader = new StreamReader(new FileStream(paramFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            {
+                var contents = reader.ReadToEnd();
+                Console.WriteLine(contents);
+            }
+
+            // No "duplicate parameter" error when parsing a parameter file with array entries.
+            var parser2 = new CommandLineParser<ArgsArray>();
+            var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
+            Assert.AreEqual(results.IntMinOnly, results2.IntMinOnly);
+            Assert.AreEqual(results.DblMinOnly, results2.DblMinOnly);
+            Assert.AreEqual(results.LowerChar, results2.LowerChar);
+            Assert.AreEqual(results.BoolCheck, results2.BoolCheck);
+            Assert.That(results.StringArray.SequenceEqual(results2.StringArray), "StringArray SequenceEqual");
+            Assert.That(results.IntArray.SequenceEqual(results2.IntArray), "IntArray SequenceEqual");
+        }
+
+        [Test]
         [TestCase(false)]
         [TestCase(true)]
         public void TestUpdateExistingOptionsUsingParamFile(bool includeSecondaryArgs)
@@ -1452,6 +1489,49 @@ namespace PRISMTest
 
             [Option("over")]
             public string Overrides { get; set; }
+
+            [Option("strArray")]
+            public string[] StringArray { get; set; }
+
+            [Option("intArray")]
+            public int[] IntArray { get; set; }
+
+            [Option("dblArray")]
+            public double[] DblArray { get; set; }
+        }
+
+        private class ArgsArray
+        {
+            // ReSharper disable once CommentTypo
+            // Note that two of these public properties use lowercase minmax to let us confirm
+            // that arguments with a different casing (/MinMaxInt or /MinMaxDbl) successfully match the properties
+
+            [Option("minInt", Min = 10)]
+            public int IntMinOnly { get; set; }
+
+            [Option("maxInt", Max = 10)]
+            public int IntMaxOnly { get; set; }
+
+            [Option("minmaxInt", Min = -5, Max = 5)]
+            public int IntMinMax { get; set; }
+
+            [Option("minDbl", Min = 10)]
+            public double DblMinOnly { get; set; }
+
+            [Option("maxDbl", Max = 10)]
+            public double DblMaxOnly { get; set; }
+
+            [Option("minmaxDbl", Min = -5, Max = 5)]
+            public double DblMinMax { get; set; }
+
+            [Option("g")]
+            public string LowerChar { get; set; }
+
+            [Option("G")]
+            public string UpperChar { get; set; }
+
+            [Option("b1")]
+            public bool BoolCheck { get; set; }
 
             [Option("strArray")]
             public string[] StringArray { get; set; }

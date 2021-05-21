@@ -588,6 +588,7 @@ namespace PRISM
                     // Call ArgsPreprocess on the options loaded from the parameter file
                     var filePreprocessed = ArgsPreprocess(paramFileLines, true);
 
+                    var emptyArrayArgs = new List<string>();
                     // Check and possibly error on duplicate parameters in the parameter file
                     foreach (var prop in props)
                     {
@@ -610,6 +611,15 @@ namespace PRISM
 
                             Results.Failed();
                         }
+                        else if (prop.Key.PropertyType.IsArray && entries.TrueForAll(x => x.Value.Count == 0 || x.Value.TrueForAll(y => string.IsNullOrWhiteSpace(y))))
+                        {
+                            emptyArrayArgs.AddRange(entries.Select(x => x.Key));
+                        }
+                    }
+
+                    foreach (var arg in emptyArrayArgs)
+                    {
+                        filePreprocessed.Remove(arg);
                     }
 
                     if (!Results.Success)
