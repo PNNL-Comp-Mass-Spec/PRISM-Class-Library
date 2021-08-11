@@ -486,7 +486,7 @@ namespace PRISM
         /// <param name="messages">The messages to post.</param>
         public override void PostEntries(List<clsLogEntry> messages)
         {
-            if(!string.IsNullOrWhiteSpace(LogFileBaseName))
+            if (!string.IsNullOrWhiteSpace(LogFileBaseName))
             {
                 base.PostEntries(messages);
             }

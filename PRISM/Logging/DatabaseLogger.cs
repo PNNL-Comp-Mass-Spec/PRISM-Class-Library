@@ -107,7 +107,6 @@ namespace PRISM.Logging
         {
             get
             {
-
 #if !NET462
             // System.Runtime.InteropServices.RuntimeInformation is not available with .NET 4.6.2
             if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))

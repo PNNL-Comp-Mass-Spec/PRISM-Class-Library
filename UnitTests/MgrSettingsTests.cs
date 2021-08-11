@@ -22,11 +22,11 @@ namespace PRISMTest
 
         private readonly Dictionary<string, string> testProgSingleConfig = new()
         {
-            {"MgrActive_Local", "False"},
-            {"MgrCnfgDbConnectStr", "Data Source=mgrCtrlDbServer;Initial Catalog=manager_control;Integrated Security=SSPI"},
-            {"MgrName", "Pub-xx-y"},
-            {"UsingDefaults", "True"},
-            {"DefaultDMSConnString", "Data Source=dmsDbServer;Initial Catalog=DMS5;Integrated Security=SSPI"}
+            { "MgrActive_Local", "False" },
+            { "MgrCnfgDbConnectStr", "Data Source=mgrCtrlDbServer;Initial Catalog=manager_control;Integrated Security=SSPI" },
+            { "MgrName", "Pub-xx-y" },
+            { "UsingDefaults", "True" },
+            { "DefaultDMSConnString", "Data Source=dmsDbServer;Initial Catalog=DMS5;Integrated Security=SSPI" }
         };
 
         private readonly Dictionary<string, string> testProgMultiConfig = new()
