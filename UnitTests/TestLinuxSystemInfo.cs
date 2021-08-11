@@ -150,8 +150,8 @@ namespace PRISMTest
 
             var filesToCopy = new List<TestFileCopyInfo>
             {
-                new TestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
-                new TestFileCopyInfo(sourceStatFile2, targetStatFile)
+                new(sourceCpuStatFile2, targetCpuStatFile),
+                new(sourceStatFile2, targetStatFile)
             };
 
             // Start a timer to replace the stat file in 2 seconds
@@ -210,8 +210,8 @@ namespace PRISMTest
 
             var filesToCopy = new List<TestFileCopyInfo>
             {
-                new TestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
-                new TestFileCopyInfo(sourceStatFile2, targetStatFile)
+                new(sourceCpuStatFile2, targetCpuStatFile),
+                new(sourceStatFile2, targetStatFile)
             };
 
             // Start a timer to replace the stat file in 2 seconds
@@ -362,7 +362,7 @@ namespace PRISMTest
 
             var filesToCopy = new List<TestFileCopyInfo>
             {
-                new TestFileCopyInfo(sourceCpuStatFile2, targetCpuStatFile),
+                new(sourceCpuStatFile2, targetCpuStatFile),
             };
 
             // Start a timer to replace the stat file in 2 seconds

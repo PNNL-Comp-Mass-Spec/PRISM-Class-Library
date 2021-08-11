@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -97,7 +98,7 @@ namespace PRISM.DataUtils
         private static IEnumerable<string> LetterPairs(string text)
         {
             if (text.Length < 1)
-                return new string[0];
+                return Array.Empty<string>();
 
             if (text.Length == 1)
             {

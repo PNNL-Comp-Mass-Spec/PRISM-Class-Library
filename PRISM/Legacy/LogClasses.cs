@@ -304,8 +304,9 @@ namespace PRISM
         /// </param>
         public virtual void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
-            var messages = new List<clsLogEntry>{
-                new clsLogEntry(message, entryType, localOnly)
+            var messages = new List<clsLogEntry>
+            {
+                new(message, entryType, localOnly)
             };
 
             LogToFile(messages);
@@ -330,7 +331,7 @@ namespace PRISM
             }
 
             var messages = new List<clsLogEntry>{
-                new clsLogEntry(message + ": " + ex.Message, logMsgType.logError, localOnly)
+                new(message + ": " + ex.Message, logMsgType.logError, localOnly)
             };
 
             LogToFile(messages);
