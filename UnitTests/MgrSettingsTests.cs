@@ -156,7 +156,7 @@ namespace PRISMTest
         private void TestLoadManagerConfigDB(string connectionString)
         {
             var mgrSettings = new MgrSettingsDB();
-            var testSettings = new Dictionary<string, string>
+            var testSettings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, connectionString },
                 { MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, "True" },
@@ -177,13 +177,13 @@ namespace PRISMTest
                 mValidatedConnectionStrings.Add(connectionString);
             }
 
-            var expectedSettings = new Dictionary<string, string>
+            var expectedSettings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
-                { "workdir", @"\\gigasax\DMS_InstSourceDirScans" },
-                { "bionetuser", "ftms" },
-                { "configfilename", "DMS_InstDirScanner.exe.config" },
-                { "localmgrpath", @"C:\DMS_Programs" },
-                { "programfoldername", "InstDirScanner" },
+                { "WorkDir", @"\\gigasax\DMS_InstSourceDirScans" },
+                { "BionetUser", "ftms" },
+                { "ConfigFileName", "DMS_InstDirScanner.exe.config" },
+                { "LocalMgrPath", @"C:\DMS_Programs" },
+                { "ProgramFolderName", "InstDirScanner" },
                 { "MessageQueueTopicMgrStatus", "Manager.InstDirScan" },
             };
 
