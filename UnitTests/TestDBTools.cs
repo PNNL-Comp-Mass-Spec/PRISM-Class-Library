@@ -758,6 +758,17 @@ namespace PRISMTest
             TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
         }
 
+        /// <summary>
+        /// Test connecting to a Postgres database using integrated authentication
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
+        /// <param name="rowCountToRetrieve"></param>
+        /// <param name="iterations"></param>
+        /// <remarks>
+        /// If the Postgres instance on the target server is not integrated with LDAP, the following exception occurs:
+        /// LDAP authentication failed for user "d3l243"
+        /// </remarks>
         [TestCase("prismweb2", "dmsdev2", 5, 2)]
         [Category("DatabaseIntegrated")]
         public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations)
