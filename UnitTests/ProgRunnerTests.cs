@@ -312,22 +312,21 @@ namespace PRISMTest
                 consoleOutputFile.MoveTo(newFilePath);
 
                 // Open the file and assure that the first line contains the .exe name
-                using (var reader = new StreamReader(new FileStream(newFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
-                {
-                    if (reader.EndOfStream)
-                    {
-                        Assert.Fail("The ConsoleOutput file is empty: " + newFilePath);
-                    }
-                    var dataLine = reader.ReadLine();
-                    if (string.IsNullOrWhiteSpace(dataLine))
-                    {
-                        Assert.Fail("The first line of the ConsoleOutput file is empty: " + newFilePath);
-                    }
+                using var reader = new StreamReader(new FileStream(newFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
 
-                    if (!dataLine.ToLower().Contains(exeName))
-                    {
-                        Assert.Fail("The first line of the ConsoleOutput file does not contain " + exeName + ": " + newFilePath);
-                    }
+                if (reader.EndOfStream)
+                {
+                    Assert.Fail("The ConsoleOutput file is empty: " + newFilePath);
+                }
+                var dataLine = reader.ReadLine();
+                if (string.IsNullOrWhiteSpace(dataLine))
+                {
+                    Assert.Fail("The first line of the ConsoleOutput file is empty: " + newFilePath);
+                }
+
+                if (!dataLine.ToLower().Contains(exeName))
+                {
+                    Assert.Fail("The first line of the ConsoleOutput file does not contain " + exeName + ": " + newFilePath);
                 }
             }
 

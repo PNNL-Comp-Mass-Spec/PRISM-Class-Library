@@ -36,13 +36,12 @@ namespace PRISMTest
 
             var rand = new Random(314);
 
-            using (var testFile = new StreamWriter(new FileStream(hashTestFile.FullName, FileMode.Create, FileAccess.Write)))
+            using var testFile = new StreamWriter(new FileStream(hashTestFile.FullName, FileMode.Create, FileAccess.Write));
+
+            testFile.WriteLine("X\tY");
+            for (var i = 1; i <= 10000 * i; i++)
             {
-                testFile.WriteLine("X\tY");
-                for (var i = 1; i <= 10000 * i; i++)
-                {
-                    testFile.WriteLine("{0}\t{1}", i, rand.Next(0, 1000));
-                }
+                testFile.WriteLine("{0}\t{1}", i, rand.Next(0, 1000));
             }
         }
 

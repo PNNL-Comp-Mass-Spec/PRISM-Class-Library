@@ -123,17 +123,17 @@ namespace PRISMWin
             // }
 
 #pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only.
-            using (var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, ""))
-            {
-                var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
+            using var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "");
 
-                var releaseValue = v4FullKey?.GetValue("Release");
-                if (releaseValue != null)
-                {
-                    var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
-                    return latestVersion;
-                }
+            var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
+
+            var releaseValue = v4FullKey?.GetValue("Release");
+            if (releaseValue != null)
+            {
+                var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
+                return latestVersion;
             }
+
 #pragma warning restore CA1416 // Validate platform compatibility
 
             return string.Empty;
@@ -172,76 +172,76 @@ namespace PRISMWin
 
             // Opens the registry key for the .NET Framework entry.
 #pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only.
-            using (var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").
-                OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\"))
+            using var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\");
+
+            if (ndpKey == null)
+                return dotNETVersions;
+
+            foreach (var versionKeyName in ndpKey.GetSubKeyNames())
             {
-                if (ndpKey == null)
-                    return dotNETVersions;
+                if (!versionKeyName.StartsWith("v"))
+                    continue;
 
-                foreach (var versionKeyName in ndpKey.GetSubKeyNames())
+                var versionKey = ndpKey.OpenSubKey(versionKeyName);
+                if (versionKey == null)
+                    continue;
+
+                var majorVersion = GetMajorVersion(versionKeyName);
+
+                var versionName = (string)versionKey.GetValue("Version", "");
+                var versionSP = versionKey.GetValue("SP", "").ToString();
+                var versionInstall = versionKey.GetValue("Install", "").ToString();
+
+                if (versionInstall.Length == 0)
                 {
-                    if (!versionKeyName.StartsWith("v"))
+                    // No service pack install; store this version
+                    StoreVersion(dotNETVersions, majorVersion, versionName);
+                }
+                else
+                {
+                    if (versionSP != "" && versionInstall == "1")
+                    {
+                        StoreVersion(dotNETVersions, majorVersion, versionName + "  SP" + versionSP);
+                    }
+                }
+
+                if (versionName != "")
+                {
+                    continue;
+                }
+
+                foreach (var subKeyName in versionKey.GetSubKeyNames())
+                {
+                    var subKey = versionKey.OpenSubKey(subKeyName);
+                    if (subKey == null)
                         continue;
 
-                    var versionKey = ndpKey.OpenSubKey(versionKeyName);
-                    if (versionKey == null)
-                        continue;
+                    var subKeyVersionName = (string)subKey.GetValue("Version", "");
+                    var subKeySP = "";
 
-                    var majorVersion = GetMajorVersion(versionKeyName);
+                    if (subKeyVersionName != "")
+                        subKeySP = subKey.GetValue("SP", "").ToString();
 
-                    var versionName = (string)versionKey.GetValue("Version", "");
-                    var versionSP = versionKey.GetValue("SP", "").ToString();
-                    var versionInstall = versionKey.GetValue("Install", "").ToString();
-                    if (versionInstall?.Length == 0)
+                    var subKeyInstall = subKey.GetValue("Install", "").ToString();
+                    if (subKeyInstall?.Length == 0)
                     {
                         // No service pack install; store this version
-                        StoreVersion(dotNETVersions, majorVersion, versionName);
+                        StoreVersion(dotNETVersions, majorVersion, subKeyVersionName);
                     }
                     else
                     {
-                        if (versionSP != "" && versionInstall == "1")
+                        if (subKeySP != "" && subKeyInstall == "1")
                         {
-                            StoreVersion(dotNETVersions, majorVersion, versionName + "  SP" + versionSP);
+                            StoreVersion(dotNETVersions, majorVersion, subKeyName + "  " + subKeyVersionName + "  SP" + subKeySP);
                         }
-                    }
-
-                    if (versionName != "")
-                    {
-                        continue;
-                    }
-
-                    foreach (var subKeyName in versionKey.GetSubKeyNames())
-                    {
-                        var subKey = versionKey.OpenSubKey(subKeyName);
-                        if (subKey == null)
-                            continue;
-
-                        var subKeyVersionName = (string)subKey.GetValue("Version", "");
-                        var subKeySP = "";
-
-                        if (subKeyVersionName != "")
-                            subKeySP = subKey.GetValue("SP", "").ToString();
-
-                        var subKeyInstall = subKey.GetValue("Install", "").ToString();
-                        if (subKeyInstall?.Length == 0)
+                        else if (subKeyInstall == "1")
                         {
-                            // No service pack install; store this version
-                            StoreVersion(dotNETVersions, majorVersion, subKeyVersionName);
-                        }
-                        else
-                        {
-                            if (subKeySP != "" && subKeyInstall == "1")
-                            {
-                                StoreVersion(dotNETVersions, majorVersion, subKeyName + "  " + subKeyVersionName + "  SP" + subKeySP);
-                            }
-                            else if (subKeyInstall == "1")
-                            {
-                                StoreVersion(dotNETVersions, majorVersion, subKeyName + "  " + subKeyVersionName);
-                            }
+                            StoreVersion(dotNETVersions, majorVersion, subKeyName + "  " + subKeyVersionName);
                         }
                     }
                 }
             }
+
 #pragma warning restore CA1416 // Validate platform compatibility
 
             return dotNETVersions;

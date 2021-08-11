@@ -97,14 +97,13 @@ namespace PRISMTest
                     Assert.Fail("Expected .zip file not found: " + zipFileToCheck.FullName);
                 }
 
-                using (var archive = ZipFile.OpenRead(zipFileToCheck.FullName))
-                {
-                    var fileCountInZip = archive.Entries.Count;
+                using var archive = ZipFile.OpenRead(zipFileToCheck.FullName);
 
-                    Assert.GreaterOrEqual(fileCountInZip, filesPerYear, "Zip file {0} has fewer than {1} files", zipFileToCheck.FullName, filesPerYear);
+                var fileCountInZip = archive.Entries.Count;
 
-                    Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
-                }
+                Assert.GreaterOrEqual(fileCountInZip, filesPerYear, "Zip file {0} has fewer than {1} files", zipFileToCheck.FullName, filesPerYear);
+
+                Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
             }
 
             FileLogger.FlushPendingMessages();
