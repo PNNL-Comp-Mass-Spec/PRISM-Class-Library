@@ -49,54 +49,21 @@ namespace PRISMWin
             // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
             // Also see https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/versions-and-dependencies
 
-            if (releaseKey > 528049)
+            return releaseKey switch
             {
-                return "Later than 4.8 (build " + releaseKey + ")";
-            }
-            if (releaseKey >= 528040)
-            {
-                return "4.8";
-            }
-            if (releaseKey >= 461808)
-            {
-                return "4.7.2";
-            }
-            if (releaseKey >= 461308)
-            {
-                return "4.7.1";
-            }
-            if (releaseKey >= 460798)
-            {
-                return "4.7";
-            }
-            if (releaseKey >= 394802)
-            {
-                return "4.6.2";
-            }
-            if (releaseKey >= 394254)
-            {
-                return "4.6.1";
-            }
-            if (releaseKey >= 393295)
-            {
-                return "4.6";
-            }
-            if (releaseKey >= 379893)
-            {
-                return "4.5.2";
-            }
-            if (releaseKey >= 378675)
-            {
-                return "4.5.1";
-            }
-            if (releaseKey >= 378389)
-            {
-                return "4.5";
-            }
-
-            // This line should never execute. A non-null release key should mean
-            // that 4.5 or later is installed.
-            return EARLIER_THAN_45;
+                > 528049 => "Later than 4.8 (build " + releaseKey + ")",
+                >= 528040 => "4.8",
+                >= 461808 => "4.7.2",
+                >= 461308 => "4.7.1",
+                >= 460798 => "4.7",
+                >= 394802 => "4.6.2",
+                >= 394254 => "4.6.1",
+                >= 393295 => "4.6",
+                >= 379893 => "4.5.2",
+                >= 378675 => "4.5.1",
+                >= 378389 => "4.5",
+                _ => EARLIER_THAN_45
+            };
         }
 
         private string GetDotNetVersion45OrLater()
