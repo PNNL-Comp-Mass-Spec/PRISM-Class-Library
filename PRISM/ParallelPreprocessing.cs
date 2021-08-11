@@ -10,6 +10,8 @@ namespace PRISM
     /// </summary>
     public static class ParallelPreprocessing
     {
+        // Ignore Spelling: pre
+
         /// <summary>
         /// Performs pre-processing using parallelization. Up to <paramref name="maxThreads"/> threads will be used to process data prior to it being requested by (and simultaneous with) the enumerable consumer. Backed by a producer-consumer queue pattern
         /// </summary>

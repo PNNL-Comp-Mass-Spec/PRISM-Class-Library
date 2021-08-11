@@ -16,7 +16,7 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class FileTools : EventNotifier
     {
-        // Ignore Spelling: yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt, picfs, mbBacklog
+        // Ignore Spelling: gzip, gzipped, mbBacklog, picfs, yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt
 
         #region "Events"
 

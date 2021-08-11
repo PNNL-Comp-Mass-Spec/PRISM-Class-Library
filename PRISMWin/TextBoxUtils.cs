@@ -10,6 +10,8 @@ namespace PRISMWin
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class TextBoxUtils
     {
+        // Ignore Spelling: arg, Ctrl, Keypress
+
         /// <summary>
         /// Tries to convert the string to a double
         /// </summary>

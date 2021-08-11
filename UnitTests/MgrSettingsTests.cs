@@ -12,7 +12,11 @@ namespace PRISMTest
     [TestFixture]
     internal class MgrSettingsTests
     {
-        // Ignore Spelling: Ctrl, Seqs, dmsreader
+        // ReSharper disable CommentTypo
+
+        // Ignore Spelling: Ctrl, dms, dmsreader, ftms, postgresql, proteinseqs, Seqs
+
+        // ReSharper restore CommentTypo
 
         private static readonly SortedSet<string> mValidatedConnectionStrings = new();
 

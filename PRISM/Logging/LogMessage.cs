@@ -7,6 +7,8 @@ namespace PRISM.Logging
     /// </summary>
     public class LogMessage
     {
+        // Ignore Spelling: dd, MM, yyyy, HH:mm:ss, hh:mm:ss tt
+
         /// <summary>
         /// Default timestamp format mode
         /// </summary>

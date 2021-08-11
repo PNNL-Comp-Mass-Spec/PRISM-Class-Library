@@ -12,7 +12,7 @@ namespace PRISMTest
     [TestFixture]
     public class StoredProcedureTests
     {
-        // Ignore Spelling: dmsdev, dmswebuser, mtuser, workdir, PostgreSQL, ProteinSeqs
+        // Ignore Spelling: dms, dmsdev, dmswebuser, mtuser, Postgres, PostgreSQL, ProteinSeqs, workdir
 
         private const string DMS_WEB_USER = "dmswebuser";
 

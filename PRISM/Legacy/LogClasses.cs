@@ -12,7 +12,7 @@ namespace PRISM
 {
 #pragma warning disable IDE1006 // Naming Styles
 
-    // Ignore Spelling: MM-dd-yyyy, hh:mm:ss, tt
+    // Ignore Spelling: na, MM-dd-yyyy, hh:mm:ss, tt
 
     /// <summary>
     /// The type of log message.

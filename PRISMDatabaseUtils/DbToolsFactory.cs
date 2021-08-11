@@ -36,7 +36,7 @@ namespace PRISMDatabaseUtils
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DbToolsFactory
     {
-        // Ignore Spelling: PostgreSQL, Username, Sql
+        // Ignore Spelling: pgpass, Postgres, PostgreSQL, Sql, Username
 
         /// <summary>
         /// Set to true once mConnectionStringKeywordMap has been initialized

@@ -9,7 +9,7 @@ namespace PRISMTest
     [TestFixture]
     internal class FileCopyTests
     {
-        // Ignore Spelling: Fasta, trembl, contam
+        // Ignore Spelling: contam, Fasta, \\protoapps, trembl
 
         private FileTools mFileTools;
 

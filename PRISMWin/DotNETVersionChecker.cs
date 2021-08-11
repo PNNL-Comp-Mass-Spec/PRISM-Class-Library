@@ -11,6 +11,9 @@ namespace PRISMWin
     /// </summary>
     public class DotNETVersionChecker
     {
+        // ReSharper disable once CommentTypo
+        // Ignore Spelling: hklm
+
         #region "Constants"
 
         private const string EARLIER_THAN_45 = "Earlier than 4.5";
@@ -42,7 +45,7 @@ namespace PRISMWin
         {
             // Checking the version using >= will enable forward compatibility,
             // however you should always compile your code on newer versions of
-            // the framework to ensure your app works the same.
+            // the framework to ensure your application works the same.
             // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
             // Also see https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/versions-and-dependencies
 

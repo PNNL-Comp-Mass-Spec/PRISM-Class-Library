@@ -9,11 +9,11 @@ using System.Text.RegularExpressions;
 namespace PRISM
 {
     /// <summary>
-    /// System information for Windows, pulled via P/Invoke
+    /// System information for Windows; obtained via P/Invoke
     /// </summary>
     public class WindowsSystemInfo : EventNotifier, ISystemInfo
     {
-        // Ignore Spelling: ull, uint, typeof, ushort, tradeoff, struct, NumaNode
+        // Ignore Spelling: hyperthreading, NumaNode, struct, tradeoff, typeof, uint, ull, ushort
 
         /// <summary>
         /// Constructor

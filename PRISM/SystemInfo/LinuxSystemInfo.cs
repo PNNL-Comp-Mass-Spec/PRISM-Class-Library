@@ -13,8 +13,13 @@ namespace PRISM
     /// </summary>
     public class LinuxSystemInfo : EventNotifier, ISystemInfo
     {
-        // Ignore Spelling: proc, cpuinfo, meminfo iowait, cpu, irq, utime, stime, ctime, mem, cmdline
-        // Ignore Spelling: A-Za-z, Threadpool, virtualized, softirq, softirqs, lscpu, sshd, usr, ubuntu
+        // ReSharper disable CommentTypo
+
+        // Ignore Spelling: A-Za-z, cmdline, cpu, cpuinfo, ctime, hyperthreading,  iowait, irq, lscpu, mem, meminfo,
+        // Ignore Spelling: pid, ppid, proc, sid, softirq, softirqs, sshd, stime, Threadpool, ubuntu, usr, utime, virtualized
+        // Ignore Spelling: kb, mb, gb, tb, pb
+
+        // ReSharper restore CommentTypo
 
         #region "Constants and Enums"
 

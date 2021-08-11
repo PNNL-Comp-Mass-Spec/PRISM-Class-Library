@@ -66,8 +66,8 @@ namespace PRISMWin
         /// <param name="columnWidth"></param>
         /// <param name="isReadOnly"></param>
         /// <param name="sourceIsTrueFalse">
-        /// True if the source data represents true and false using a bool.
-        /// False if the source data represents true and false using 1 and 0.
+        /// True if the source data represents true and false using boolean values
+        /// False if the source data represents true and false using 1 and 0
         /// </param>
         public static void AppendBoolColumnToTableStyle(
             System.Windows.Forms.DataGridTableStyle tableStyle,
