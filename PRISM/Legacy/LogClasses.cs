@@ -7,6 +7,8 @@ using System.IO;
 using System.Threading;
 using PRISM.Logging;
 
+// ReSharper disable UnusedMember.Global
+
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {

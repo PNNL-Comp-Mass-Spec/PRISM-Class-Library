@@ -158,6 +158,7 @@ namespace PRISMWin
         /// <param name="processId">Process ID for the program</param>
         /// <returns>Number of cores in use; 0 if the process is terminated.  Exception is thrown if a problem</returns>
         /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
+        // ReSharper disable once UnusedMember.Global
         public float GetCoreUsageByProcessID(int processId)
         {
             return GetCoreUsageByProcessID(processId, ref mProcessIdInstanceName);

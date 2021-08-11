@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISM
 {
     /// <summary>

@@ -2698,7 +2698,9 @@ namespace PRISM
             long currentDiskFreeSpaceBytes,
             out string errorMessage)
         {
+            // ReSharper disable once IdentifierTypo
             const int DEFAULT_DATASET_STORAGE_MIN_FREE_SPACE_MB = 150;
+
             errorMessage = string.Empty;
 
             try

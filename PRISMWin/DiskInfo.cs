@@ -2,6 +2,8 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMWin
 {
     /// <summary>

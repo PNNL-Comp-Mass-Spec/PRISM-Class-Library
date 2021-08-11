@@ -7,6 +7,8 @@ using Npgsql;
 using PRISMDatabaseUtils.MSSQLServer;
 using PRISMDatabaseUtils.PostgreSQL;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMDatabaseUtils
 {
     /// <summary>
@@ -202,6 +204,7 @@ namespace PRISMDatabaseUtils
             if (type == typeof(DateTime))
                 return SqlType.DateTime;
 
+            // ReSharper disable once ConvertIfStatementToReturnStatement
             if (type == typeof(string))
                 return SqlType.VarChar;
 
