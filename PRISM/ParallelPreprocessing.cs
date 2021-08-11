@@ -55,7 +55,7 @@ namespace PRISM
             /// <summary>
             /// Count of threads that have exited
             /// </summary>
-            private int threadsDone = 0;
+            private int threadsDone;
 
             /// <summary>
             /// Cancellation token to support early cancellation
