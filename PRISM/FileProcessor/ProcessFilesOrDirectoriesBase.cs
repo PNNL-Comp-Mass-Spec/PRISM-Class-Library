@@ -463,10 +463,7 @@ namespace PRISM.FileProcessor
         {
             try
             {
-                if (LogDirectoryPath == null)
-                {
-                    LogDirectoryPath = string.Empty;
-                }
+                LogDirectoryPath ??= string.Empty;
 
                 if (string.IsNullOrWhiteSpace(LogDirectoryPath))
                 {

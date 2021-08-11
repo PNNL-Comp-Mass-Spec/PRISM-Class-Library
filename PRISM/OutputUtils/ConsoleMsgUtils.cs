@@ -205,8 +205,7 @@ namespace PRISM
 
             foreach (var item in errorMessages)
             {
-                if (firstError == null)
-                    firstError = item;
+                firstError ??= item;
 
                 ShowError(indentChars + item, false, writeToErrorStream);
             }
