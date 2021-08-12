@@ -85,20 +85,7 @@ namespace PRISM.Logging
         /// <summary>
         /// The module name identifies the logging process
         /// </summary>
-        public static string MachineName
-        {
-            get
-            {
-                var host = System.Net.Dns.GetHostName();
-
-                if (host.Contains("."))
-                {
-                    host = host.Substring(0, host.IndexOf('.'));
-                }
-
-                return host;
-            }
-        }
+        public static string MachineName => System.Net.Dns.GetHostName();
 
         /// <summary>
         /// The user name running this program

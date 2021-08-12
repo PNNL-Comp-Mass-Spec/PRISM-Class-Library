@@ -68,7 +68,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Manager name
         /// </summary>
-        public string ManagerName => GetParam(MGR_PARAM_MGR_NAME, Environment.MachineName + "_Undefined-Manager");
+        public string ManagerName => GetParam(MGR_PARAM_MGR_NAME, System.Net.Dns.GetHostName() + "_Undefined-Manager");
 
         /// <summary>
         /// This will be true after the manager settings have been successfully loaded from the manager control database
@@ -207,12 +207,12 @@ namespace PRISM.AppSettings
             {
                 if (mgrName.Contains("$ComputerName$"))
                 {
-                    mgrSettingsFromFile[MGR_PARAM_MGR_NAME] = mgrName.Replace("$ComputerName$", Environment.MachineName);
+                    mgrSettingsFromFile[MGR_PARAM_MGR_NAME] = mgrName.Replace("$ComputerName$", System.Net.Dns.GetHostName());
                 }
             }
             else
             {
-                mgrSettingsFromFile.Add(MGR_PARAM_MGR_NAME, Environment.MachineName + "_Undefined-Manager");
+                mgrSettingsFromFile.Add(MGR_PARAM_MGR_NAME, System.Net.Dns.GetHostName() + "_Undefined-Manager");
             }
 
             return mgrSettingsFromFile;
