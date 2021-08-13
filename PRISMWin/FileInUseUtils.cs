@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace PRISMWin
 {
     /// <summary>
-    /// Utility functions that will return the processes using a file; Requires Windows Vista or newer.
+    /// Utility methods that will return the processes using a file
     /// </summary>
     /// <remarks>https://stackoverflow.com/questions/1304/how-to-check-for-file-lock</remarks>
     /// <remarks>https://blogs.msdn.microsoft.com/oldnewthing/20120217-00/?p=8283</remarks>
@@ -93,9 +93,9 @@ namespace PRISMWin
                                     ref uint lpdwRebootReasons);
 
         /// <summary>
-        /// Find out what process(es) have a lock on the specified file.
+        /// Find out what process(es) have a lock on the specified file
         /// </summary>
-        /// <param name="paths">Full Path(s) of the file(s).</param>
+        /// <param name="paths">Full Path(s) of the file(s)</param>
         /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
         /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
@@ -118,16 +118,16 @@ namespace PRISMWin
                 uint pnProcInfo = 0,
                      lpdwRebootReasons = RmRebootReasonNone;
 
-                var resources = paths; // Just checking on one resource.
+                var resources = paths; // Just checking on one resource
 
                 res = RmRegisterResources(handle, (uint)resources.Length, resources, 0, null, 0, null);
 
                 if (res != 0)
                     throw new Exception("Could not register resource.");
 
-                //Note: there's a race condition here -- the first call to RmGetList() returns
-                //      the total number of process. However, when we call RmGetList() again to get
-                //      the actual processes this number may have increased.
+                // Note: there's a race condition here
+                //  The first call to RmGetList() returns the total number of process.
+                //  However, when we call RmGetList() again to get the actual processes this number may have increased.
                 res = RmGetList(handle, out var pnProcInfoNeeded, ref pnProcInfo, null, ref lpdwRebootReasons);
 
                 if (res == ERROR_MORE_DATA)
@@ -153,14 +153,14 @@ namespace PRISMWin
                                 if (checkProcessStartTime)
                                 {
                                     // Check the process start time to ensure this is the same process
-                                    // There is minor possibility that the process id that was returned has been recycled.
+                                    // There is minor possibility that the process id that was returned has been recycled
                                     try
                                     {
                                         add = process.StartTime <= processInfo[i].Process.ProcessStartTime;
                                     }
                                     catch
                                     {
-                                        // Possibility of win32 exception, particularly 'access denied'. Assume it is the same process.
+                                        // Possibility of win32 exception, particularly 'access denied'. Assume it is the same process
                                     }
                                 }
 
@@ -192,9 +192,9 @@ namespace PRISMWin
         }
 
         /// <summary>
-        /// Find out what process(es) have a lock on the specified file.
+        /// Find out what process(es) have a lock on the specified file
         /// </summary>
-        /// <param name="path">Full Path of the file.</param>
+        /// <param name="path">Full Path of the file</param>
         /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
         /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
@@ -207,9 +207,9 @@ namespace PRISMWin
         }
 
         /// <summary>
-        /// Find out what process(es) have a lock on the specified file.
+        /// Find out what process(es) have a lock on the specified file
         /// </summary>
-        /// <param name="paths">Full Path(s) of the file(s).</param>
+        /// <param name="paths">Full Path(s) of the file(s)</param>
         /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
         /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
@@ -221,9 +221,9 @@ namespace PRISMWin
         }
 
         /// <summary>
-        /// Find out what process(es) have a lock on files in the specified directory.
+        /// Find out what process(es) have a lock on files in the specified directory
         /// </summary>
-        /// <param name="path">Full Path of the directory.</param>
+        /// <param name="path">Full Path of the directory</param>
         /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
         /// <returns>Processes locking files in the directory</returns>
         public static List<Process> WhoIsLockingDirectory(string path, bool checkProcessStartTime = false)

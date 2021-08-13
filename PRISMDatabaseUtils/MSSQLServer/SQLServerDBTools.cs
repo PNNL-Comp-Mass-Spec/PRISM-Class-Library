@@ -32,7 +32,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         #region "Properties"
 
         /// <summary>
-        /// Database connection string.
+        /// Database connection string
         /// </summary>
         public string ConnectStr
         {
@@ -77,12 +77,12 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// The name of the server to which the connection string connects.
+        /// The name of the server to which the connection string connects
         /// </summary>
         public string ServerName { get; private set; }
 
         /// <summary>
-        /// The name of the database to which the connection string connects.
+        /// The name of the database to which the connection string connects
         /// </summary>
         public string DatabaseName { get; private set; }
 
@@ -112,7 +112,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// This method is an event handler for InfoMessage event.
+        /// This method is an event handler for InfoMessage event
         /// </summary>
         /// <remarks>
         /// The errors and warnings sent from the SQL server are caught here
@@ -168,13 +168,13 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// The function gets a disconnected DataSet as specified by the SQL statement.
+        /// Get a disconnected dataset as specified by the SQL statement
         /// </summary>
-        /// <param name="sqlQuery">A SQL string.</param>
-        /// <param name="DS">A DataSet.</param>
-        /// <param name="rowCount">A row counter.</param>
-        /// <return>Returns a disconnected DataSet as specified by the SQL statement.</return>
-        [Obsolete("Use GetQueryResults since support for DataSet objects is unavailable in .NET Standard 1.0; Use GetQueryResultsDataset.", true)]
+        /// <param name="sqlQuery">A SQL string</param>
+        /// <param name="DS">A dataset</param>
+        /// <param name="rowCount">A row counter</param>
+        /// <return>Returns a disconnected dataset as specified by the SQL statement</return>
+        [Obsolete("Use GetQueryResults since support for dataset objects is unavailable in .NET Standard 1.0; Use GetQueryResultsDataset.", true)]
         public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
             var retryCount = 3;
@@ -188,7 +188,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                     dbConnection.InfoMessage += OnInfoMessage;
 
-                    // Get the DataSet
+                    // Get the dataset
                     var adapter = new SqlDataAdapter(sqlQuery, dbConnection);
                     DS = new DataSet();
                     rowCount = adapter.Fill(DS);
@@ -219,7 +219,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -249,7 +249,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -350,7 +350,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -384,7 +384,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -452,7 +452,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -482,7 +482,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -514,7 +514,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -544,7 +544,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -572,10 +572,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Run a query against a SQL database, return the results via <paramref name="readMethod"/>
         /// </summary>
         /// <param name="cmd">Query to run</param>
-        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
+        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -666,11 +666,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// The function updates a database table as specified in the SQL statement.
+        /// Update a database table as specified in the SQL statement
         /// </summary>
-        /// <param name="SQL">A SQL string.</param>
-        /// <param name="affectedRows">Affected Rows to be updated.</param>
-        /// <return>Returns Boolean showing if the database was updated.</return>
+        /// <param name="SQL">A SQL string</param>
+        /// <param name="affectedRows">Affected Rows to be updated</param>
+        /// <return>Returns Boolean showing if the database was updated</return>
         [Obsolete("Functionality of this method has been disabled for safety; an exception will be raised if it is called")]
         public bool UpdateDatabase(string SQL, out int affectedRows)
         {
@@ -710,7 +710,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
+        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>

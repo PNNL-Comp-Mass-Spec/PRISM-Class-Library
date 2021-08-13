@@ -183,7 +183,7 @@ namespace PRISM.Logging
         /// </summary>
         /// <param name="statusMessage">Status message</param>
         /// <param name="writeToLog">True to write to the log file; false to only display at console</param>
-        /// <remarks>The message is shown in dark gray in the console.</remarks>
+        /// <remarks>The message is shown in dark gray in the console</remarks>
         public static void LogDebug(string statusMessage, bool writeToLog = true)
         {
             ConsoleMsgUtils.ShowDebug(statusMessage);

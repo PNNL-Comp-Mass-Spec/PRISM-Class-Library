@@ -59,7 +59,7 @@ namespace PRISMDatabaseUtils
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
-        /// <param name="valueIfNull">The value to return if the value is null or DBNull.</param>
+        /// <param name="valueIfNull">The value to return if the value is null or DBNull</param>
         public static T CastDBVal<T>(this object value, T valueIfNull)
         {
             if (value == null || value == DBNull.Value)

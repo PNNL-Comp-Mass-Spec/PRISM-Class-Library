@@ -885,7 +885,7 @@ namespace PRISM.FileProcessor
             if (maxLevelsToRecurse > 0 && recursionLevel > maxLevelsToRecurse)
                 return true;
 
-            // Call this function for each of the subdirectories of inputDirectory
+            // Call this method for each of the subdirectories of inputDirectory
             foreach (var subdirectory in inputDirectory.GetDirectories())
             {
                 var success = RecurseDirectoriesWork(subdirectory.FullName, fileNameMatch, outputDirectoryNameOrPath,
@@ -911,8 +911,8 @@ namespace PRISM.FileProcessor
             ErrorCode = newErrorCode;
         }
 
-        // The following functions should be placed in any derived class
-        // Cannot define as abstract since it contains a customized enumerated type (eDerivedClassErrorCodes) in the function declaration
+        // The following methods should be placed in any derived class
+        // Cannot define as abstract since it contains a customized enumerated type (eDerivedClassErrorCodes) in the method declaration
 
         // private void SetLocalErrorCode(eDerivedClassErrorCodes newErrorCode)
         // {

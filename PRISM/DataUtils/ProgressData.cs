@@ -223,7 +223,7 @@ namespace PRISM
         /// <summary>
         /// Change to a new range block
         /// </summary>
-        /// <param name="newMaxPercentage">New max percent for range, must be greater than current max percent.</param>
+        /// <param name="newMaxPercentage">New max percent for range, must be greater than current max percent</param>
         /// <param name="newStatus">Updated status string, null for no update</param>
         /// <remarks>Will set IsPartialRange to true</remarks>
         /// <remarks>If current max percent is 100, the new max percent can be any value between 0 and 100</remarks>
@@ -325,7 +325,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Check function to limit output frequency, when outputting to console.
+        /// This method is used to limit output frequency, when outputting to console
         /// </summary>
         public bool ShouldUpdate()
         {

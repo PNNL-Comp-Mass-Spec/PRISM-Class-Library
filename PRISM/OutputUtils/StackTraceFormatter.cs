@@ -10,8 +10,8 @@ namespace PRISM
 {
     /// <summary>
     /// This class produces an easier-to read stack trace for an exception
-    /// See the descriptions for functions GetExceptionStackTrace and
-    /// GetExceptionStackTraceMultiLine for example text
+    /// See the descriptions for methods <see cref="GetExceptionStackTrace"/> and
+    /// <see cref="GetExceptionStackTraceMultiLine"/> for example text
     /// </summary>
     public static class StackTraceFormatter
     {
@@ -28,7 +28,7 @@ namespace PRISM
         public const string STACK_CHAIN_SEPARATOR = "-:-";
 
         /// <summary>
-        /// Prefix added before the final file is listed in the stacktrace
+        /// Prefix added before the final file is listed in the stack trace
         /// </summary>
         public const string FINAL_FILE_PREFIX = " in ";
 
@@ -52,7 +52,7 @@ namespace PRISM
         /// <returns>
         /// String of the form:
         /// Stack trace:
-        ///     TestApp.exe: Bool InnerMethod(string, int ByRef)
+        ///     TestApp.exe: Bool InnerMethod(string, int out)
         ///     TestApp.exe: Void TestMethod()
         ///     TestApp.exe: Int32 Main()
         /// </returns>
@@ -116,7 +116,7 @@ namespace PRISM
 
         /// <summary>
         /// Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
-        /// with one line for each function in the call tree
+        /// with one line for each method in the call tree
         /// </summary>
         /// <param name="ex">Exception</param>
         /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
@@ -159,7 +159,7 @@ namespace PRISM
         /// <param name="ex">Exception</param>
         /// <param name="includeMethodParams">When true, also include the parameters of each method</param>
         /// <returns>
-        /// List of function names; for example:
+        /// List of method names; for example:
         ///   clsCodeTest.Test
         ///   clsCodeTest.TestException
         ///   clsCodeTest.InnerTestException
@@ -176,7 +176,7 @@ namespace PRISM
         /// <param name="stackTraceText">Exception.StackTrace data</param>
         /// <param name="includeMethodParams">When true, also include the parameters of each method</param>
         /// <returns>
-        /// List of function names; for example:
+        /// List of method names; for example:
         ///   clsCodeTest.Test
         ///   clsCodeTest.TestException
         ///   clsCodeTest.InnerTestException

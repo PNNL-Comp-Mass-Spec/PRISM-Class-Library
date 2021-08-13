@@ -172,7 +172,7 @@ namespace PRISM.Logging
         // ReSharper disable once UnusedMember.Global
         public static string ConvertSqlServerConnectionStringToODBC(string sqlServerConnectionString, string odbcDriverName = "SQL Server Native Client 11.0")
         {
-            // Example connection strings available online at:
+            // Example connection strings:
             // https://www.connectionstrings.com/sql-server/
 
             // Integrated authentication:

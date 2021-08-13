@@ -63,19 +63,19 @@ namespace PRISM
         private CachedSectionInfo mCachedSection;
 
         /// <summary>
-        /// Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
+        /// Loads the settings for the defined Xml Settings File; assumes names are not case sensitive
         /// </summary>
-        /// <return>The function returns a boolean that shows if the file was successfully loaded.</return>
+        /// <returns>True if successfully loaded, otherwise false</returns>
         public bool LoadSettings()
         {
             return LoadSettings(mXMLFilePath, false);
         }
 
         /// <summary>
-        /// Loads the settings for the defined Xml Settings File.  Assumes names are not case sensitive
+        /// Loads the settings for the defined Xml Settings File; assumes names are not case sensitive
         /// </summary>
-        /// <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
-        /// <return>The function returns a boolean that shows if the file was successfully loaded.</return>
+        /// <param name="XmlSettingsFilePath">The path to the XML settings file</param>
+        /// <returns>True if successfully loaded, otherwise false</returns>
         public bool LoadSettings(string XmlSettingsFilePath)
         {
             return LoadSettings(XmlSettingsFilePath, false);
@@ -84,8 +84,8 @@ namespace PRISM
         /// <summary>
         /// Loads the settings for the defined Xml Settings File
         /// </summary>
-        /// <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
-        /// <param name="isCaseSensitive">Case sensitive names if True. Non-case sensitive if false.</param>
+        /// <param name="XmlSettingsFilePath">The path to the XML settings file</param>
+        /// <param name="isCaseSensitive">Case sensitive names if True. Non-case sensitive if false</param>
         /// <remarks>If case sensitive names are in place, all section and key names must be lowercase</remarks>
         public bool LoadSettings(string XmlSettingsFilePath, bool isCaseSensitive)
         {
@@ -141,9 +141,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Saves the settings for the defined Xml Settings File.  Note that you must call LoadSettings to initialize the class prior to setting any values.
+        /// Saves the settings for the defined Xml Settings File
         /// </summary>
-        /// <return>The function returns a boolean that shows if the file was successfully saved.</return>
+        /// <remarks>You must call LoadSettings to initialize the class prior to setting any values</remarks>
+        /// <returns>True if successfully saved, otherwise false</returns>
         public bool SaveSettings()
         {
             if (mXMLFileAccessor == null)
@@ -162,10 +163,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Checks if a section is present in the settings file.
+        /// Checks if a section is present in the settings file
         /// </summary>
-        /// <param name="sectionName">The name of the section to look for.</param>
-        /// <return>The function returns a boolean that shows if the section is present.</return>
+        /// <param name="sectionName">The name of the section to look for</param>
+        /// <returns>True if the section is present</returns>
         public bool SectionPresent(string sectionName)
         {
             var sections = mXMLFileAccessor.AllSections;
@@ -335,13 +336,13 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the value of the given parameter in section "sectionName"
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns the name of the "value" attribute as a string.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <returns>The string tracked by the "value" attribute</returns>
         public string GetParam(string sectionName, string keyName, string valueIfMissing, out bool valueNotPresent)
         {
             var result = string.Empty;
@@ -379,13 +380,13 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the boolean value of the given parameter in section "sectionName"
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>The function returns boolean True if the "value" attribute is "true".  Otherwise, returns boolean False.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <returns>True if the "value" attribute is "true"; Otherwise, returns boolean False</returns>
         public bool GetParam(string sectionName, string keyName, bool valueIfMissing, out bool valueNotPresent)
         {
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
@@ -460,7 +461,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Get the value for a given parameter in a given section
+        /// Get the string value for a given parameter in a given section
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Parameter name</param>
@@ -472,7 +473,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Get the value for a given parameter in a given section
+        /// Get the boolean value for a given parameter in a given section
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Parameter name</param>
@@ -484,16 +485,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the numeric value for a given parameter in a given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>
-        /// The function returns the name of the "value" attribute as a short.
-        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
-        /// </return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
+        /// <returns>
+        /// The numeric value of the "value" attribute as a short
+        /// </returns>
         public short GetParam(string sectionName, string keyName, short valueIfMissing, out bool valueNotPresent)
         {
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
@@ -532,16 +533,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the numeric value for a given parameter in a given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>
-        /// The function returns the name of the "value" attribute as an integer.
-        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
-        /// </return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
+        /// <returns>
+        /// The numeric value of the "value" attribute as an integer
+        /// </returns>
         public int GetParam(string sectionName, string keyName, int valueIfMissing, out bool valueNotPresent)
         {
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
@@ -580,16 +581,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the numeric value for a given parameter in a given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>
-        /// The function returns the name of the "value" attribute as a long.
-        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
-        /// </return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
+        /// <returns>
+        /// The numeric value of the "value" attribute as a long
+        /// </returns>
         public long GetParam(string sectionName, string keyName, long valueIfMissing, out bool valueNotPresent)
         {
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(), out var notFound);
@@ -628,16 +629,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the numeric value for a given parameter in a given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>
-        /// The function returns the name of the "value" attribute as a float.
-        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
-        /// </return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
+        /// <returns>
+        /// The numeric value of the "value" attribute as a float
+        /// </returns>
         public float GetParam(string sectionName, string keyName, float valueIfMissing, out bool valueNotPresent)
         {
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out var notFound);
@@ -676,16 +677,16 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets the name of the "value" attribute in section "sectionName".
+        /// Get the numeric value for a given parameter in a given section
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing.</param>
-        /// <param name="valueNotPresent">Set to True if "sectionName" or "keyName" is missing.  Returned ByRef.</param>
-        /// <return>
-        /// The function returns the name of the "value" attribute as a double.
-        /// If "value" is "true" returns -1.  If "value" is "false" returns 0.
-        /// </return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
+        /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
+        /// <returns>
+        /// The numeric value of the "value" attribute as a double
+        /// </returns>
         public double GetParam(string sectionName, string keyName, double valueIfMissing, out bool valueNotPresent)
         {
             var result = GetParam(sectionName, keyName, valueIfMissing.ToString(CultureInfo.InvariantCulture), out var notFound);
@@ -724,7 +725,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Legacy function name; calls SetXMLFilePath
+        /// Legacy method name; calls SetXMLFilePath
         /// </summary>
         public void SetIniFilePath(string XmlSettingsFilePath)
         {
@@ -732,21 +733,21 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function sets the path to the Xml Settings File.
+        /// Sets the path to the Xml Settings File
         /// </summary>
-        /// <param name="XmlSettingsFilePath">The path to the XML settings file.</param>
+        /// <param name="XmlSettingsFilePath">The path to the XML settings file</param>
         public void SetXMLFilePath(string XmlSettingsFilePath)
         {
             mXMLFilePath = XmlSettingsFilePath;
         }
 
         /// <summary>
-        /// The function sets a new String value for the "value" attribute.
+        /// Sets a new string value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, string newValue)
         {
             if (mCaseSensitive)
@@ -774,83 +775,83 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function sets a new Boolean value for the "value" attribute.
+        /// Sets a new boolean value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, bool newValue)
         {
             return SetParam(sectionName, keyName, Convert.ToString(newValue));
         }
 
         /// <summary>
-        /// The function sets a new Short value for the "value" attribute.
+        /// Sets a new short value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, short newValue)
         {
             return SetParam(sectionName, keyName, Convert.ToString(newValue));
         }
 
         /// <summary>
-        /// The function sets a new Integer value for the "value" attribute.
+        /// Sets a new integer value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, int newValue)
         {
             return SetParam(sectionName, keyName, Convert.ToString(newValue));
         }
 
         /// <summary>
-        /// The function sets a new Long value for the "value" attribute.
+        /// Sets a new Long value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, long newValue)
         {
             return SetParam(sectionName, keyName, Convert.ToString(newValue));
         }
 
         /// <summary>
-        /// The function sets a new Single value for the "value" attribute.
+        /// Sets a new float value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, float newValue)
         {
             return SetParam(sectionName, keyName, Convert.ToString(newValue, CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// The function sets a new Double value for the "value" attribute.
+        /// Sets a new double value for the "value" attribute
         /// </summary>
-        /// <param name="sectionName">The name of the section.</param>
-        /// <param name="keyName">The name of the key.</param>
-        /// <param name="newValue">The new value for the "value".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionName">The name of the section</param>
+        /// <param name="keyName">The name of the key</param>
+        /// <param name="newValue">The new value for the "value"</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool SetParam(string sectionName, string keyName, double newValue)
         {
             return SetParam(sectionName, keyName, Convert.ToString(newValue, CultureInfo.InvariantCulture));
         }
 
         /// <summary>
-        /// The function renames a section.
+        /// Rename a section
         /// </summary>
-        /// <param name="sectionNameOld">The name of the old XML section name.</param>
-        /// <param name="sectionNameNew">The new name for the XML section.</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="sectionNameOld">The name of the old XML section name</param>
+        /// <param name="sectionNameNew">The new name for the XML section</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool RenameSection(string sectionNameOld, string sectionNameNew)
         {
             if (mCaseSensitive)

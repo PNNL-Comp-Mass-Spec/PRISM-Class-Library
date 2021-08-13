@@ -19,8 +19,8 @@ namespace PRISM
         /// <summary>
         /// Event is raised whenever a matching file is found.
         /// </summary>
-        /// <remarks>This event is most useful for implementing a progress indicator.</remarks>
-        /// <param name="fileName">The found file's full path.</param>
+        /// <remarks>This event is most useful for implementing a progress indicator</remarks>
+        /// <param name="fileName">The found file's full path</param>
         public delegate void FoundFileEventHandler(string fileName);
         private readonly List<string> mSearchDirs;
 
@@ -29,7 +29,7 @@ namespace PRISM
         /// <summary>
         /// Constructor: Initializes a new instance of the DirectoryScanner class.
         /// </summary>
-        /// <param name="dirs">An array of directory paths to scan.</param>
+        /// <param name="dirs">An array of directory paths to scan</param>
         public DirectoryScanner(IEnumerable<string> dirs) : this(dirs.ToList())
         {
         }
@@ -47,7 +47,7 @@ namespace PRISM
         /// <summary>
         /// Performs a recursive search of a directory tree looking for file names that match a set of regular expressions.
         /// </summary>
-        /// <param name="searchPatterns">An array of regular expressions to use in the search.</param>
+        /// <param name="searchPatterns">An array of regular expressions to use in the search</param>
         /// <returns>A list of the file paths found; empty list if no matches</returns>
         // ReSharper disable once UnusedMember.Global
         public List<string> PerformScan(params string[] searchPatterns)

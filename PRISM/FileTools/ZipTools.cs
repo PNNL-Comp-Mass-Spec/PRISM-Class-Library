@@ -12,7 +12,7 @@ namespace PRISM
     /// </summary>
     /// <remarks>
     /// There are routines to create an archive, extract files from an existing archive,
-    /// and verify an existing archive.
+    /// and verify an existing archive
     /// </remarks>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ZipTools
@@ -35,11 +35,11 @@ namespace PRISM
         private ILogger mEventLogger;
 
         /// <summary>
-        /// Create a zip file.
+        /// Create a zip file
         /// </summary>
-        /// <param name="cmdOptions">The zip program command line arguments.</param>
-        /// <param name="outputFile">The file path of the output zip file.</param>
-        /// <param name="inputSpec">The files and/or directories to archive.</param>
+        /// <param name="cmdOptions">The zip program command line arguments</param>
+        /// <param name="outputFile">The file path of the output zip file</param>
+        /// <param name="inputSpec">The files and/or directories to archive</param>
         public bool MakeZipFile(string cmdOptions, string outputFile, string inputSpec)
         {
             // Verify input file and output path have been specified
@@ -77,11 +77,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Extract files from a zip file.
+        /// Extract files from a zip file
         /// </summary>
-        /// <param name="cmdOptions">The zip program command line arguments.</param>
-        /// <param name="zipFilePath">The file path of the zip file from which to extract files.</param>
-        /// <param name="outputDirectoryPath">The path where you want to put the extracted files.</param>
+        /// <param name="cmdOptions">The zip program command line arguments</param>
+        /// <param name="zipFilePath">The file path of the zip file from which to extract files</param>
+        /// <param name="outputDirectoryPath">The path where you want to put the extracted files</param>
         public bool UnzipFile(string cmdOptions, string zipFilePath, string outputDirectoryPath)
         {
             // Verify input file and output path have been specified
@@ -144,30 +144,30 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Defines whether a window is displayed when calling the zipping program.
+        /// Defines whether a window is displayed when calling the zipping program
         /// </summary>
         public bool CreateNoWindow { get; set; }
 
         /// <summary>
-        /// Window style to use when CreateNoWindow is False.
+        /// Window style to use when CreateNoWindow is False
         /// </summary>
         public ProcessWindowStyle WindowStyle { get; set; }
 
         /// <summary>
-        /// The working directory for the zipping process.
+        /// The working directory for the zipping process
         /// </summary>
         public string WorkDir { get; set; }
 
         /// <summary>
-        /// The path to the zipping program.
+        /// The path to the zipping program
         /// </summary>
         public string ZipFilePath { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the ZipTools class.
+        /// Initializes a new instance of the ZipTools class
         /// </summary>
-        /// <param name="workDir">The working directory for the zipping process.</param>
-        /// <param name="zipFilePath">The path to the zipping program.</param>
+        /// <param name="workDir">The working directory for the zipping process</param>
+        /// <param name="zipFilePath">The path to the zipping program</param>
         public ZipTools(string workDir, string zipFilePath)
         {
             WorkDir = workDir;
@@ -181,9 +181,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Verifies the integrity of a zip file.
+        /// Verifies the integrity of a zip file
         /// </summary>
-        /// <param name="zipFilePath">The file path of the zip file to verify.</param>
+        /// <param name="zipFilePath">The file path of the zip file to verify</param>
         public bool VerifyZippedFile(string zipFilePath)
         {
             // Verify test file exists
@@ -278,12 +278,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets or Sets notify on event.
+        /// Gets or Sets notify on event
         /// </summary>
         public bool NotifyOnEvent { get; set; }
 
         /// <summary>
-        /// Gets or Sets notify on exception.
+        /// Gets or Sets notify on exception
         /// </summary>
         public bool NotifyOnException { get; set; }
     }

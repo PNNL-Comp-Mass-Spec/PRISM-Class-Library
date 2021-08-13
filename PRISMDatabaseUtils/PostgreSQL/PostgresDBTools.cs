@@ -188,7 +188,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -218,7 +218,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -325,7 +325,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -359,7 +359,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -422,7 +422,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -452,7 +452,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -484,7 +484,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -514,7 +514,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -542,10 +542,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results via <paramref name="readMethod"/>
         /// </summary>
         /// <param name="cmd">Query to run</param>
-        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
+        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -673,7 +673,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action.</param>
+        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>

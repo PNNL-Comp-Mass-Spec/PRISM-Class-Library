@@ -17,25 +17,25 @@ namespace PRISM
     // Ignore Spelling: na, MM-dd-yyyy, hh:mm:ss, tt
 
     /// <summary>
-    /// The type of log message.
+    /// The type of log message
     /// </summary>
     [Obsolete("Use Logging.FileLogger, Logging.SQLServerDatabaseLogger, or Logging.ODBCDatabaseLogger")]
     public enum logMsgType
     {
         /// <summary>
-        /// The message is informational.
+        /// The message is informational
         /// </summary>
         logNormal = 0,
         /// <summary>
-        /// The message represents an error.
+        /// The message represents an error
         /// </summary>
         logError = 1,
         /// <summary>
-        /// The message represents a warning.
+        /// The message represents a warning
         /// </summary>
         logWarning = 2,
         /// <summary>
-        /// The message is only for debugging purposes.
+        /// The message is only for debugging purposes
         /// </summary>
         logDebug = 3,
         /// <summary>
@@ -43,13 +43,13 @@ namespace PRISM
         /// </summary>
         logNA = 4,
         /// <summary>
-        /// The message is an indicator of (in)correct operation.
+        /// The message is an indicator of (in)correct operation
         /// </summary>
         logHealth = 5
     }
 
     /// <summary>
-    /// Defines the logging interface.
+    /// Defines the logging interface
     /// </summary>
     [Obsolete("Use Logging.FileLogger, Logging.SQLServerDatabaseLogger, or Logging.ODBCDatabaseLogger")]
     public interface ILogger
@@ -70,24 +70,24 @@ namespace PRISM
         string MostRecentErrorMessage { get; }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="messages">The messages to post.</param>
+        /// <param name="messages">The messages to post</param>
         void PostEntries(List<clsLogEntry> messages);
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="entryType">The ILogger error type.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="entryType">The ILogger error type</param>
         /// <param name="localOnly">If true, only post the message to the local log file, not the database; only used by clsDBLogger</param>
         void PostEntry(string message, logMsgType entryType, bool localOnly);
 
         /// <summary>
-        /// Posts an error to the log.
+        /// Posts an error to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="e">The exception associated with the error.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="e">The exception associated with the error</param>
         /// <param name="localOnly">
         /// Only used by clsDBLogger
         /// When true, only post the message to the local log file
@@ -97,10 +97,10 @@ namespace PRISM
     }
 
     /// <summary>
-    /// Provides logging to a local file.
+    /// Provides logging to a local file
     /// </summary>
     /// <remarks>
-    /// The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt".
+    /// The actual log file name changes daily and is of the form "filePath_mm-dd-yyyy.txt"
     /// </remarks>
     [Obsolete("Use Logging.FileLogger")]
     public class clsFileLogger : ILogger
@@ -133,7 +133,7 @@ namespace PRISM
         private DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
         /// <summary>
-        /// Initializes a new instance of the clsFileLogger class.
+        /// Initializes a new instance of the clsFileLogger class
         /// </summary>
         /// <remarks>This constructor (without a file path) is required because clsDBLogger inherits clsFileLogger</remarks>
         public clsFileLogger()
@@ -141,7 +141,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Initializes a new instance of the clsFileLogger class which logs to the specified file.
+        /// Initializes a new instance of the clsFileLogger class which logs to the specified file
         /// </summary>
         /// <param name="logFileBaseName">The name of the file to use for the log (either a filename like UpdateManager, or a relative path, like Logs\UpdateManager</param>
         /// <remarks>
@@ -166,12 +166,12 @@ namespace PRISM
         public string CurrentLogFilePath { get; private set; } = string.Empty;
 
         /// <summary>
-        /// Gets the product version associated with this application.
+        /// Gets the product version associated with this application
         /// </summary>
         public string ExecutableVersion => mProgramVersion ??= FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
-        /// Gets the name of the executable file that started the application.
+        /// Gets the name of the executable file that started the application
         /// </summary>
         public string ExecutableName => mProgramName ??= Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
 
@@ -232,9 +232,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Writes a message to the log file.
+        /// Writes a message to the log file
         /// </summary>
-        /// <param name="messages">List of messages to post.</param>
+        /// <param name="messages">List of messages to post</param>
         private void LogToFile(IEnumerable<clsLogEntry> messages)
         {
             // Don't log to file if no file name given
@@ -281,19 +281,19 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="messages">The messages to post.</param>
+        /// <param name="messages">The messages to post</param>
         public virtual void PostEntries(List<clsLogEntry> messages)
         {
             LogToFile(messages);
         }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="entryType">The ILogger error type.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="entryType">The ILogger error type</param>
         /// <param name="localOnly">
         /// Only used by clsDBLogger
         /// When true, only post the message to the local log file
@@ -310,10 +310,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Posts an error to the log.
+        /// Posts an error to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="ex">The exception associated with the error.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="ex">The exception associated with the error</param>
         /// <param name="localOnly">
         /// Only used by clsDBLogger
         /// When true, only post the message to the local log file
@@ -335,9 +335,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts enumerated error type to string for logging output.
+        /// Converts enumerated error type to string for logging output
         /// </summary>
-        /// <param name="errorType">The ILogger error type.</param>
+        /// <param name="errorType">The ILogger error type</param>
         protected string TypeToString(logMsgType errorType)
         {
             return errorType switch
@@ -367,7 +367,7 @@ namespace PRISM
     }
 
     /// <summary>
-    /// Provides logging to a database and local file.
+    /// Provides logging to a database and local file
     /// </summary>
     /// <remarks>The module name identifies the logging process; if not defined, will use MachineName:UserName</remarks>
     [Obsolete("Use Logging.SQLServerDatabaseLogger or Logging.ODBCDatabaseLogger")]
@@ -384,7 +384,7 @@ namespace PRISM
         protected string mModuleName;
 
         /// <summary>
-        /// Initializes a new instance of the clsDBLogger class.
+        /// Initializes a new instance of the clsDBLogger class
         /// </summary>
         public clsDBLogger()
         {
@@ -393,7 +393,7 @@ namespace PRISM
         /// <summary>
         /// Initializes a new instance of the clsDBLogger class which logs to the specified database
         /// </summary>
-        /// <param name="connectionStr">The connection string used to access the database.</param>
+        /// <param name="connectionStr">The connection string used to access the database</param>
         /// <remarks>Only logs to a local file if a file name is defined using LogFilePath</remarks>
         public clsDBLogger(string connectionStr)
         {
@@ -401,21 +401,21 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Initializes a new instance of the clsDBLogger class which logs to the specified database and file.
+        /// Initializes a new instance of the clsDBLogger class which logs to the specified database and file
         /// </summary>
-        /// <param name="connectionStr">The connection string used to access the database.</param>
-        /// <param name="filePath">The name of the file to use for the log.</param>
+        /// <param name="connectionStr">The connection string used to access the database</param>
+        /// <param name="filePath">The name of the file to use for the log</param>
         public clsDBLogger(string connectionStr, string filePath) : base(filePath)
         {
             ConnectionString = connectionStr;
         }
 
         /// <summary>
-        /// Initializes a new instance of the clsDBLogger class which logs to the specified database and file.
+        /// Initializes a new instance of the clsDBLogger class which logs to the specified database and file
         /// </summary>
-        /// <param name="modName">The string used to identify the posting process.</param>
-        /// <param name="connectionStr">The connection string used to access the database.</param>
-        /// <param name="filePath">The name of the file to use for the log.</param>
+        /// <param name="modName">The string used to identify the posting process</param>
+        /// <param name="connectionStr">The connection string used to access the database</param>
+        /// <param name="filePath">The name of the file to use for the log</param>
         /// <remarks>The module name identifies the logging process; if not defined, will use MachineName:UserName</remarks>
         public clsDBLogger(string modName, string connectionStr, string filePath) : base(filePath)
         {
@@ -424,7 +424,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The connection string used to access the database.
+        /// The connection string used to access the database
         /// </summary>
         public string ConnectionString { get; set; }
 
@@ -434,12 +434,12 @@ namespace PRISM
         public IReadOnlyList<string> DBErrors => mErrorList;
 
         /// <summary>
-        /// The module name identifies the logging process.
+        /// The module name identifies the logging process
         /// </summary>
         public string MachineName => DatabaseLogger.MachineName;
 
         /// <summary>
-        /// Construct the string MachineName:UserName.
+        /// Construct the string MachineName:UserName
         /// </summary>
         private string ConstructModuleName()
         {
@@ -448,10 +448,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The module name identifies the logging process.
+        /// The module name identifies the logging process
         /// </summary>
-        /// <remarks>If the module name is not specified, it is filled in as
-        /// MachineName:UserName.</remarks>
+        /// <remarks>If the module name is not specified, it is filled in as MachineName:UserName</remarks>
         public string ModuleName
         {
             get
@@ -466,19 +465,19 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Writes a message to the log table.
+        /// Writes a message to the log table
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="entryType">The ILogger error type.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="entryType">The ILogger error type</param>
         protected virtual void LogToDB(string message, logMsgType entryType)
         {
             PostLogEntry(TypeToString(entryType), message);
         }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="messages">The messages to post.</param>
+        /// <param name="messages">The messages to post</param>
         public override void PostEntries(List<clsLogEntry> messages)
         {
             if (!string.IsNullOrWhiteSpace(LogFileBaseName))
@@ -496,12 +495,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="entryType">The ILogger error type.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="entryType">The ILogger error type</param>
         /// <param name="localOnly">
-        /// When true, only post the message to the local log file
+        /// When true, only post the message to the local log file;
         /// When false, log to the local log file and the database
         /// </param>
         public override void PostEntry(string message, logMsgType entryType, bool localOnly)
@@ -518,12 +517,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Posts an error to the log.
+        /// Posts an error to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="ex">The exception associated with the error.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="ex">The exception associated with the error</param>
         /// <param name="localOnly">
-        /// When true, only post the message to the local log file
+        /// When true, only post the message to the local log file;
         /// When false, log to the local log file and the database
         /// </param>
         public override void PostError(string message, Exception ex, bool localOnly)
@@ -539,10 +538,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Writes a message to the log table via the stored procedure.
+        /// Writes a message to the log table via the stored procedure
         /// </summary>
-        /// <param name="type">The ILogger error type.</param>
-        /// <param name="message">The message to post.</param>
+        /// <param name="type">The ILogger error type</param>
+        /// <param name="message">The message to post</param>
         private void PostLogEntry(string type, string message)
         {
             try
@@ -577,9 +576,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Event handler for InfoMessage event.
+        /// Event handler for InfoMessage event
         /// </summary>
-        /// <remarks>Errors and warnings sent from the SQL Server database engine are caught here.</remarks>
+        /// <remarks>Errors and warnings sent from the SQL Server database engine are caught here</remarks>
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args)
         {
             foreach (SqlError err in args.Errors)
@@ -639,13 +638,18 @@ namespace PRISM
     }
 
     /// <summary>
-    /// Wraps a queuing mechanism around any object that implements ILogger interface.
+    /// Wraps a queuing mechanism around any object that implements ILogger interface
     /// </summary>
-    /// <remarks>The posting member functions of this class put the log entry
-    /// onto the end of an internal queue and return very quickly to the caller.
+    /// <remarks>
+    /// <para>
+    /// The posting member methods of this class put the log entry
+    /// onto the end of an internal queue and return very quickly to the caller
+    /// </para>
+    /// <para>
     /// A separate thread within the class is used to perform the actual output of
     /// the log entries using the logging object that is specified
-    /// in the constructor for this class.
+    /// in the constructor for this class
+    /// </para>
     /// </remarks>
     [Obsolete("Use Logging.FileLogger, Logging.SQLServerDatabaseLogger, or Logging.ODBCDatabaseLogger")]
     public class clsQueLogger : ILogger
@@ -714,9 +718,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Constructor: Initializes a new instance of the clsQueLogger class which logs to the ILogger.
+        /// Constructor: Initializes a new instance of the clsQueLogger class which logs to the ILogger
         /// </summary>
-        /// <param name="logger">The target logger object.</param>
+        /// <param name="logger">The target logger object</param>
         public clsQueLogger(ILogger logger)
         {
             // Remember my logging object
@@ -730,7 +734,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Pull all entries from the queue and output them to the log streams.
+        /// Pull all entries from the queue and output them to the log streams
         /// </summary>
         protected void LogFromQueue(object o)
         {
@@ -752,9 +756,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="messages">The messages to post.</param>
+        /// <param name="messages">The messages to post</param>
         public virtual void PostEntries(List<clsLogEntry> messages)
         {
             foreach (var item in messages)
@@ -764,10 +768,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Writes a message to the log.
+        /// Writes a message to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="entryType">The ILogger error type.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="entryType">The ILogger error type</param>
         /// <param name="localOnly">
         /// Only used by clsDBLogger
         /// When true, only post the message to the local log file
@@ -780,10 +784,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Posts a message to the log.
+        /// Posts a message to the log
         /// </summary>
-        /// <param name="message">The message to post.</param>
-        /// <param name="ex">The exception associated with the error.</param>
+        /// <param name="message">The message to post</param>
+        /// <param name="ex">The exception associated with the error</param>
         /// <param name="localOnly">
         /// Only used by clsDBLogger
         /// When true, only post the message to the local log file

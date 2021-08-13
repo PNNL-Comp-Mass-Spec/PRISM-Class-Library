@@ -6,16 +6,21 @@ using System.Runtime.InteropServices;
 namespace PRISM
 {
     /// <summary>
-    /// Connects to a file share using a password and user name.
+    /// Connects to a file share using a password and user name
     /// </summary>
     /// <remarks>
+    /// <para>
     /// The default behavior when connecting to SMB/CIFS file shares is for
-    /// the system to supply the user name and password used to log on to the local machine.
+    /// the system to supply the user name and password used to log on to the local machine
+    /// </para>
+    /// <para>
     /// This class allows you to connect to SMB/CIFS file shares when the use of
-    /// SSPI isn't available and/or when you don't wish to use the default behavior.
+    /// SSPI isn't available and/or when you don't wish to use the default behavior
+    /// </para>
+    /// <para>
     /// It's quite comparable to the "Connect using a different user name." option in the Map Network Drive
-    /// utility in Windows.  Much of this code came from Microsoft Knowledge Base Article - 173011.  It was
-    /// then modified to fit our needs.
+    /// utility in Windows. Much of this code came from Microsoft Knowledge Base Article - 173011.
+    /// </para>
     /// </remarks>
     // ReSharper disable once UnusedMember.Global
     public class ShareConnector
@@ -61,7 +66,7 @@ namespace PRISM
 #pragma warning restore 1591
 
         /// <summary>
-        /// This structure is used to group a bunch of member variables.
+        /// This structure is used to group a bunch of member variables
         /// </summary>
         private struct NetResourceInfo
         {
@@ -127,7 +132,7 @@ namespace PRISM
         private string mShareName = string.Empty;
 
         /// <summary>
-        /// This version of the constructor requires you to specify the share name by setting the <see cref="Share">Share</see> property.
+        /// This version of the constructor requires you to specify the share name by setting the <see cref="Share">Share</see> property
         /// </summary>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
@@ -138,9 +143,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// This version of the constructor allows you to specify the share name as an argument.
+        /// This version of the constructor allows you to specify the share name as an argument
         /// </summary>
-        /// <param name="shareName">The name of the file share to which you will connect.</param>
+        /// <param name="shareName">The name of the file share to which you will connect</param>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
         /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ///
@@ -151,7 +156,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// This routine is called by each of the constructors to make the actual assignments in a consistent fashion.
+        /// This routine is called by each of the constructors to make the actual assignments in a consistent fashion
         /// </summary>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
@@ -167,7 +172,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Sets the name of the file share to which you will connect.
+        /// Sets the name of the file share to which you will connect
         /// </summary>
         public string Share
         {
@@ -181,9 +186,9 @@ namespace PRISM
 
         /// <summary>
         /// Connects to specified share using account/password specified through the constructor and
-        /// the file share name passed as an argument.
+        /// the file share name passed as an argument
         /// </summary>
-        /// <param name="shareName">The name of the file share to which you will connect.</param>
+        /// <param name="shareName">The name of the file share to which you will connect</param>
         // ReSharper disable once UnusedMember.Global
         public bool Connect(string shareName)
         {
@@ -193,8 +198,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Connects to specified share using account/password specified through the constructor.
-        /// Requires you to have specified the share name by setting the <see cref="Share">Share</see> property.
+        /// Connects to specified share using account/password specified through the constructor
+        /// <remarks>
+        /// Requires you to have specified the share name by setting the <see cref="Share">Share</see> property
+        /// </remarks>
         /// </summary>
         // ReSharper disable once UnusedMember.Global
         public bool Connect()
@@ -225,9 +232,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Connects to specified share using account/password specified previously.
-        /// This is the function that actually does the connection based on the setup
-        /// from the Connect function.
+        /// Connects to specified share using account/password specified previously
         /// </summary>
         private bool RealConnect()
         {
@@ -244,7 +249,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Disconnects the files share.
+        /// Disconnects the file share
         /// </summary>
         // ReSharper disable once UnusedMember.Global
         public bool Disconnect()
@@ -262,7 +267,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets the error message returned by the Connect and Disconnect functions.
+        /// Gets the error message returned by the Connect and Disconnect methods
         /// </summary>
         public string ErrorMessage { get; private set; } = string.Empty;
     }

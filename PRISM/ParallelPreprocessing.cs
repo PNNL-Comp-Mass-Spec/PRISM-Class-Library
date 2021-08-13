@@ -20,7 +20,7 @@ namespace PRISM
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
         /// <param name="sourceEnum">source enumerable; preferably something like a list of file that need to be loaded</param>
-        /// <param name="processFunction">Transform function from <paramref name="sourceEnum"/> to return type; should involve heavy processing (if x => x, you may see a performance penalty)</param>
+        /// <param name="processFunction">Method to transform from <paramref name="sourceEnum"/> to return type; should involve heavy processing (if x => x, you may see a performance penalty)</param>
         /// <param name="maxThreads">Max number of <paramref name="sourceEnum"/> items to process simultaneously</param>
         /// <param name="maxPreprocessed">Max number of items to allow being preprocessed or completed-but-not-consumed at any time; defaults to <paramref name="maxThreads"/></param>
         /// <param name="checkIntervalSeconds">How often to check for completion of the preprocessing</param>
@@ -107,7 +107,7 @@ namespace PRISM
             private Timer threadMonitor;
 
             /// <summary>
-            /// Timer callback function: check on the producer threads, if they are no longer alive, then mark the target block as complete
+            /// Timer callback method: check on the producer threads, if they are no longer alive, then mark the target block as complete
             /// </summary>
             /// <param name="sender"></param>
             private void ThreadMonitorCheck(object sender)
@@ -143,7 +143,7 @@ namespace PRISM
             }
 
             /// <summary>
-            /// Producer function: process the source enumerable in parallel, with limits and checks
+            /// Producer method: process the source enumerable in parallel, with limits and checks
             /// </summary>
             /// <param name="sourceEnumerator"></param>
             /// <param name="processFunction"></param>
@@ -176,7 +176,7 @@ namespace PRISM
                             item = sourceEnumerator.Current;
                         }
 
-                        // Run the process function on the item from the enumerator
+                        // Run the method on the item from the enumerator
                         var processed = processFunction(item);
 
                         // Attempt to add an item to the target block; this will wait if we've hit the upper bound limit of the target block
@@ -194,7 +194,7 @@ namespace PRISM
             /// Performs pre-processing using parallelization. Up to <paramref name="maxThreads"/> threads will be used to process data prior to it being requested by (and simultaneous with) the enumerable consumer.
             /// </summary>
             /// <param name="source">source enumerable; preferably something like a list of file that need to be loaded</param>
-            /// <param name="processFunction">Transform function from <paramref name="source"/> to return type; should involve heavy processing (if x => x, you may see a performance penalty)</param>
+            /// <param name="processFunction">Method to transform from <paramref name="source"/> to return type; should involve heavy processing (if x => x, you may see a performance penalty)</param>
             /// <param name="maxThreads">Max number of <paramref name="source"/> items to process simultaneously</param>
             /// <param name="maxPreprocessed">Max number of items to allow being preprocessed or completed-but-not-consumed at any time; defaults to <paramref name="maxThreads"/></param>
             /// <param name="checkIntervalSeconds">How often to check for completion of the preprocessing</param>

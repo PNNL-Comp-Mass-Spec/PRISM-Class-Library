@@ -63,10 +63,10 @@ namespace PRISM
             public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
             public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
             public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-            public uint nFileSizeHigh; //changed all to uint, otherwise you run into unexpected overflow
-            public uint nFileSizeLow;  //|
-            public uint dwReserved0;   //|
-            public uint dwReserved1;   //v
+            public uint nFileSizeHigh;  // Use unsigned integers to avoid unexpected overflow
+            public uint nFileSizeLow;
+            public uint dwReserved0;
+            public uint dwReserved1;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_PATH)]
             public string cFileName;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = MAX_ALTERNATE)]

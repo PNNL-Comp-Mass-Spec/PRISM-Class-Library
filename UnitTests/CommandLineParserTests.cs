@@ -826,7 +826,7 @@ namespace PRISMTest
         /// <param name="parseErrorExpected"></param>
         /// <remarks>
         /// Test cases using On and Off will produce an error.
-        /// This is expected since the CommandLineParser does not support On or Off for bool args.
+        /// This is expected since the CommandLineParser does not support On or Off for boolean args.
         /// </remarks>
         [Test]
         [TestCase(0, "True", true)]

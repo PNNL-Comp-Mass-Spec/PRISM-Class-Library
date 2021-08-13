@@ -23,7 +23,7 @@ namespace PRISM
             var c = new OSVersionInfo();
             if (c.GetOSVersion().IndexOf("windows", StringComparison.OrdinalIgnoreCase) < 0)
             {
-                throw new Exception("This class only functions on Windows platforms");
+                throw new Exception("This class only works on Windows platforms");
             }
 
             pData = new WindowsSystemInfoInternal();

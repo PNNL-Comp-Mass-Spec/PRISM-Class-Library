@@ -149,8 +149,10 @@ namespace PRISM
         /// Also, values less than "1 / scientificNotationThreshold" will be converted to scientific notation
         /// Thus, if this threshold is 1000000, numbers larger than 1000000 or smaller than 0.000001 will be in scientific notation
         /// </param>
+        /// <remarks>
+        /// This method differs from DblToString in that here digitsOfPrecision is the total digits while DblToString focuses on the number of digits after the decimal point
+        /// </remarks>
         /// <returns>Number as text</returns>
-        /// <remarks>This function differs from DblToString in that here digitsOfPrecision is the total digits while DblToString focuses on the number of digits after the decimal point</remarks>
         public static string ValueToString(
             double value,
             byte digitsOfPrecision,

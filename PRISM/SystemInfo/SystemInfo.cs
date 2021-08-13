@@ -6,7 +6,7 @@ namespace PRISM
     /// <summary>
     /// Class for streamlined access to system processor and memory information
     /// </summary>
-    /// <remarks>Supports both Windows and Linux (uses OSVersionInfo to determine the OS at runtime)</remarks>
+    /// <remarks>Supports both Windows and Linux (uses <see cref="OSVersionInfo"/> to determine the OS at runtime)</remarks>
     public class SystemInfo
     {
         // Ignore Spelling: hyperthreading

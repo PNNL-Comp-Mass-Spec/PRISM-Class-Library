@@ -483,7 +483,9 @@ namespace PRISM
         /// <summary>
         /// Returns the full path to the console output file that will be created if WriteConsoleOutputToFile is true
         /// </summary>
-        /// <remarks>Before calling this function, define WorkDir (working directory) and Program (full path to the .exe to run)</remarks>
+        /// <remarks>
+        /// Before calling this method, define WorkDir (working directory) and Program (full path to the .exe to run)
+        /// </remarks>
         public string GetConsoleOutputFilePath()
         {
             string consoleOutputFileName;

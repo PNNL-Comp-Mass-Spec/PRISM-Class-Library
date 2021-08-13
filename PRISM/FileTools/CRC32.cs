@@ -53,7 +53,7 @@ namespace PRISM
         /// <summary>
         /// Update a running crc using the enumerable byte buffer
         /// The crc should be initialized to zero.
-        /// Pre- and post-conditioning (one's complement) is performed within this function so it shouldn't be done by the caller.
+        /// Pre- and post-conditioning (one's complement) is performed within this method so it shouldn't be done by the caller.
         /// </summary>
         /// <param name="crc"></param>
         /// <param name="buf"></param>

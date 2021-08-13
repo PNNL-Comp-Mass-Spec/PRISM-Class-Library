@@ -53,7 +53,7 @@ namespace PRISMDatabaseUtils
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -75,7 +75,7 @@ namespace PRISMDatabaseUtils
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -97,7 +97,7 @@ namespace PRISMDatabaseUtils
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -122,7 +122,7 @@ namespace PRISMDatabaseUtils
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -144,7 +144,7 @@ namespace PRISMDatabaseUtils
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -166,7 +166,7 @@ namespace PRISMDatabaseUtils
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -189,7 +189,7 @@ namespace PRISMDatabaseUtils
         /// <param name="queryResults">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -209,7 +209,7 @@ namespace PRISMDatabaseUtils
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class

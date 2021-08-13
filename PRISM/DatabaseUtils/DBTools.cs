@@ -28,7 +28,7 @@ namespace PRISM
         private int mTimeoutSeconds;
 
         /// <summary>
-        /// Database connection string.
+        /// Database connection string
         /// </summary>
         public string ConnectStr { get; set; }
 
@@ -320,7 +320,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// This method is an event handler for InfoMessage event.
+        /// This method is an event handler for InfoMessage event
         /// </summary>
         /// <remarks>
         /// The errors and warnings sent from the SQL server are caught here
@@ -345,12 +345,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function gets a disconnected DataSet as specified by the SQL statement.
+        /// This method gets a disconnected DataSet as specified by the SQL statement
         /// </summary>
-        /// <param name="sqlQuery">A SQL string.</param>
-        /// <param name="DS">A DataSet.</param>
-        /// <param name="rowCount">A row counter.</param>
-        /// <return>Returns a disconnected DataSet as specified by the SQL statement.</return>
+        /// <param name="sqlQuery">A SQL string</param>
+        /// <param name="DS">A DataSet</param>
+        /// <param name="rowCount">A row counter</param>
+        /// <returns>Returns a disconnected DataSet as specified by the SQL statement</returns>
         [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
@@ -393,7 +393,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
-        /// <param name="callingFunction">Name of the calling function (for logging purposes)</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -495,11 +495,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The function updates a database table as specified in the SQL statement.
+        /// This method updates a database table as specified in the SQL statement
         /// </summary>
-        /// <param name="SQL">A SQL string.</param>
-        /// <param name="affectedRows">Affected Rows to be updated.</param>
-        /// <return>Returns Boolean showing if the database was updated.</return>
+        /// <param name="SQL">A SQL string</param>
+        /// <param name="affectedRows">Affected Rows to be updated</param>
+        /// <returns>Returns Boolean showing if the database was updated</returns>
         [Obsolete("Functionality of this method has been disabled for safety; an exception will be raised if it is called")]
         public bool UpdateDatabase(string SQL, out int affectedRows)
         {

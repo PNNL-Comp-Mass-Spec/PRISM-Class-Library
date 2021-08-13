@@ -72,9 +72,9 @@ namespace PRISMWin
             // However, that can give odd behavior with 32-bit code on 64-bit Windows
             // This workaround seems to work, but .OpenRemoteBaseKey() works even better
             //
-            // using (var hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            // using (var localMachineHive = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             // {
-            //    var softwareKey = hklm.OpenSubKey("SOFTWARE");
+            //    var softwareKey = localMachineHive.OpenSubKey("SOFTWARE");
             //    var microsoftKey = softwareKey.OpenSubKey("Microsoft");
             //    var netFrameworkKey = microsoftKey.OpenSubKey("NET Framework Setup");
             //    var ndpKey = netFrameworkKey.OpenSubKey("NDP");

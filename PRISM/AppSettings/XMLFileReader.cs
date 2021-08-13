@@ -109,7 +109,7 @@ namespace PRISM
         /// <summary>
         /// Get the last section in mSectionNames
         /// </summary>
-        /// <return>The last section as System.Xml.XmlElement.</return>
+        /// <return>The last section as System.Xml.XmlElement</return>
         private XmlElement GetLastSection()
         {
             if (mSectionNames.Count == 0)
@@ -283,8 +283,8 @@ namespace PRISM
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
-        /// <param name="newValue">The new value for the "key".</param>
-        /// <return>The function returns a boolean that shows if the change was done.</return>
+        /// <param name="newValue">The new value for the "key"</param>
+        /// <return>True if successful, otherwise false</return>
         [Obsolete("Unused: this class is used to read XML files, not update them")]
         private bool SetXmlKey(string sectionName, string keyName, string newValue)
         {
@@ -319,7 +319,7 @@ namespace PRISM
         /// Get the comments for a section name
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        ///<return>String collection with comments</return>
+        ///<return>List of comments</return>
         public IEnumerable<string> GetXmlSectionComments(string sectionName)
         {
             if (!Initialized)
@@ -353,8 +353,8 @@ namespace PRISM
         /// Set the comments for a section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <param name="comments">A string collection.</param>
-        /// <return>The function returns a Boolean that shows if the change was done.</return>
+        /// <param name="comments">List of comments</param>
+        /// <return>True if successful, otherwise false</return>
         [Obsolete("Unused: this class is used to read XML files, not update them")]
         private bool SetXMLComments(string sectionName, IEnumerable<string> comments)
         {
@@ -420,9 +420,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The method gets the sections.
+        /// Retrieve the section names
         /// </summary>
-        /// <return>A string collection of sections.</return>
+        /// <return>List of section names</return>
         public List<string> AllSections
         {
             get
@@ -436,11 +436,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// The method gets a collection of items for a section name.
+        /// Gets a list of items of the given type, in the given section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <param name="itemType">Item type.</param>
-        /// <return>The function returns a string collection of items in a section.</return>
+        /// <param name="itemType">Item type</param>
+        /// <return>List of items</return>
         private List<string> GetItemsInSection(string sectionName, XMLItemTypeEnum itemType)
         {
             var items = new List<string>();
@@ -477,10 +477,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets a collection of keys in a section.
+        /// Gets a list of keys in a section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>The function returns a string collection of all the keys in a section.</return>
+        /// <return>List key names</return>
         public List<string> AllKeysInSection(string sectionName)
         {
             if (!Initialized)
@@ -490,10 +490,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets a collection of values in a section.
+        /// Gets a list of values in a section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>A string collection of all the values in a section.</return>
+        /// <return>List of values</return>
         public List<string> AllValuesInSection(string sectionName)
         {
             if (!Initialized)
@@ -503,10 +503,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets a collection of items in a section.
+        /// Gets a list of items in a section (as key=value pairs)
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>A string collection of all the items in a section.</return>
+        /// <return>List of items</return>
         public List<string> AllItemsInSection(string sectionName)
         {
             if (!Initialized)
@@ -516,12 +516,12 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Gets a custom attribute name.
+        /// Gets the value of the given attribute for the given section and key
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
         /// <param name="attributeName">Attribute name</param>
-        /// <return>The function returns a string.</return>
+        /// <return>Attribute value, as a string</return>
         public string GetCustomIniAttribute(string sectionName, string keyName, string attributeName)
         {
             if (!Initialized)
@@ -547,7 +547,7 @@ namespace PRISM
         /// <param name="keyName">Key name</param>
         /// <param name="attributeName">Attribute name</param>
         /// <param name="attributeValue">Value for the attribute</param>
-        /// <return>The function returns a Boolean.</return>
+        /// <return>True if successful, otherwise false</return>
         public bool SetCustomIniAttribute(string sectionName, string keyName, string attributeName, string attributeValue)
         {
             if (!Initialized)
@@ -920,9 +920,9 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts an XML document to a string.
+        /// Converts an XML document to a string
         /// </summary>
-        /// <return>The XML document formatted as a string.</return>
+        /// <return>The XML document formatted as a string</return>
         public string XML
         {
             get
