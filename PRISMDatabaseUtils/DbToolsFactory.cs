@@ -76,22 +76,40 @@ namespace PRISMDatabaseUtils
             {
                 case DbServerTypes.MSSQLServer:
                     {
-                        var builder = new SqlConnectionStringBuilder(connectionString)
+                        try
                         {
-                            ApplicationName = applicationName
-                        };
+                            var builder = new SqlConnectionStringBuilder(connectionString)
+                            {
+                                ApplicationName = applicationName
+                            };
 
-                        return builder.ConnectionString;
+                            return builder.ConnectionString;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(string.Format(
+                                "Invalid connection string: [{0}]; SqlConnectionStringBuilder reports {1}",
+                                connectionString, ex.Message), ex);
+                        }
                     }
 
                 case DbServerTypes.PostgreSQL:
                     {
-                        var builder = new NpgsqlConnectionStringBuilder(connectionString)
+                        try
                         {
-                            ApplicationName = applicationName
-                        };
+                            var builder = new NpgsqlConnectionStringBuilder(connectionString)
+                            {
+                                ApplicationName = applicationName
+                            };
 
-                        return builder.ConnectionString;
+                            return builder.ConnectionString;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception(string.Format(
+                                "Invalid connection string: [{0}]; NpgsqlConnectionStringBuilder reports {1}",
+                                connectionString, ex.Message), ex);
+                        }
                     }
 
                 default:
