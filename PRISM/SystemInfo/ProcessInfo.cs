@@ -12,6 +12,8 @@ namespace PRISM
     /// </summary>
     public class ProcessInfo
     {
+        // Ignore Spelling: Arg
+
         /// <summary>
         /// Command line arguments as a single string
         /// </summary>

@@ -18,6 +18,8 @@ namespace PRISM.Logging
     /// </remarks>
     public class FileLogger : BaseLogger
     {
+        // Ignore Spelling: mm-dd-yyyy, prepended, Wildcards
+
         /// <summary>
         /// Default number of old log files to keep when AppendDateToBaseFileName is false
         /// </summary>

@@ -8,6 +8,8 @@ namespace PRISM
     /// </summary>
     public interface ISystemInfo
     {
+        // Ignore Spelling: hyperthreading
+
         /// <summary>
         /// Report the number of cores on this system
         /// </summary>

@@ -11,6 +11,8 @@ namespace PRISM.FileProcessor
     [Obsolete("Use ProcessDirectoriesBase instead")]
     public abstract class ProcessFoldersBase : ProcessDirectoriesBase
     {
+        // Ignore Spelling: wildcards
+
         /// <summary>
         /// Error code enums
         /// </summary>

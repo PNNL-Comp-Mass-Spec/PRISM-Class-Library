@@ -11,6 +11,8 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class WindowsUpdateStatus
     {
+        // Ignore Spelling: hh:mm:ss tt
+
         /// <summary>
         /// Checks whether Windows Updates are expected to occur close to the current time of day
         /// </summary>

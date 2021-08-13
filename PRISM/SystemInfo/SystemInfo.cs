@@ -9,6 +9,8 @@ namespace PRISM
     /// <remarks>Supports both Windows and Linux (uses OSVersionInfo to determine the OS at runtime)</remarks>
     public class SystemInfo
     {
+        // Ignore Spelling: hyperthreading
+
         /// <summary>
         /// True if this is a Linux system
         /// </summary>

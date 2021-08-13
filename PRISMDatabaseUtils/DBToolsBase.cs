@@ -12,8 +12,11 @@ namespace PRISMDatabaseUtils
     public abstract class DBToolsBase : EventNotifier
     {
         // ReSharper disable CommentTypo
+
+        // Ignore Spelling: Postgres
         // Ignore Spelling: smallint, tinyint, bigint, bool, nchar, nvarchar, citext, ntext, datetime
-        // Ignore Spelling: datetimeoffset, timestamptz, uuid, uniqueidentifier, sql, json
+        // Ignore Spelling: datetimeoffset, timestamptz, uuid, uniqueidentifier, sql, json, varchar
+
         // ReSharper restore CommentTypo
 
         private static readonly Regex mIntegerMatcher = new(@"\d+", RegexOptions.Compiled);

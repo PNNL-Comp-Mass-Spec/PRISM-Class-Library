@@ -15,6 +15,8 @@ namespace PRISM.Logging
     // ReSharper disable once UnusedMember.Global
     public sealed class ODBCDatabaseLogger : DatabaseLogger
     {
+        // Ignore Spelling: Pwd, uid
+
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
         private static readonly object mMessageQueueLock = new();

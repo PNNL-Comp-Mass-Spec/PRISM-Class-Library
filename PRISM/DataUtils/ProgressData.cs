@@ -11,6 +11,8 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgressData
     {
+        // Ignore Spelling: multithreading
+
         /// <summary>
         /// Status string - for reporting textual information about the current task
         /// </summary>

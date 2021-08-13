@@ -15,8 +15,9 @@ namespace PRISM
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: A-Za-z, cmdline, cpu, cpuinfo, ctime, hyperthreading,  iowait, irq, lscpu, mem, meminfo,
-        // Ignore Spelling: pid, ppid, proc, sid, softirq, softirqs, sshd, stime, Threadpool, ubuntu, usr, utime, virtualized
+        // Ignore Spelling: A-Za-z, cmdline, cpu, cpuinfo, cstime, ctime, cutime, hyperthreading,  iowait, irq, lscpu
+        // Ignore Spelling: mem, meminfo, numthreads, pgrp, pid, ppid, proc, rss, sid, softirq, softirqs, sshd, stime
+        // Ignore Spelling: tcomm, Threadpool, ubuntu, usr, utime, virtualized, vsize, Wakekill
         // Ignore Spelling: kb, mb, gb, tb, pb
 
         // ReSharper restore CommentTypo

@@ -7,6 +7,9 @@ namespace PRISMTest
     [TestFixture]
     public class PathTests
     {
+        // ReSharper disable once CommentTypo
+        // Ignore Spelling: Dat, Progr, dm
+
         // ReSharper disable StringLiteralTypo
         [TestCase(@"C:\temp", 10, @"C:\temp")]
         [TestCase(@"C:\temp", 20, @"C:\temp")]

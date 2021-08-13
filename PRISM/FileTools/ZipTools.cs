@@ -17,6 +17,9 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ZipTools
     {
+        // ReSharper disable once CommentTypo
+        // Ignore Spelling: nofix
+
         /// <summary>
         /// Interval, in milliseconds, to sleep between checking the status of a zip or unzip task
         /// </summary>

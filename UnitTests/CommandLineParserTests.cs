@@ -18,7 +18,7 @@ namespace PRISMTest
         // ReSharper disable CommentTypo
 
         // Ignore Spelling: tda, arg, args, badname, minint, maxint, minmaxint, mindbl, maxdbl, minmaxdbl
-        // Ignore Spelling: minintbad, maxintbad, mindblbad, maxdblbad, minmaxInt, minmaxDbl
+        // Ignore Spelling: minintbad, maxintbad, mindblbad, maxdblbad, minmaxInt, minmaxDbl, minmax, wildcards
 
         // ReSharper restore CommentTypo
 

@@ -15,6 +15,8 @@ namespace PRISM
     /// </summary>
     public static class StackTraceFormatter
     {
+        // Ignore Spelling: bool, multiline
+
         /// <summary>
         /// Stack trace label string
         /// </summary>

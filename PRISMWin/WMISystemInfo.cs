@@ -8,6 +8,8 @@ namespace PRISMWin
     /// </summary>
     public class WMISystemInfo
     {
+        // Ignore Spelling: hyperthreading
+
         private static int cachedCoreCount;
 
         private static int cachedPhysicalProcessorCount;

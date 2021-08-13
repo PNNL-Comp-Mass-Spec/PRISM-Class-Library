@@ -15,6 +15,9 @@ namespace PRISM.DataUtils
     /// </summary>
     public static class StringSimilarityTool
     {
+        // ReSharper disable once CommentTypo
+        // Ignore Spelling: Tokenize, Voie
+
         private static readonly Regex mAlphaNumericMatcher = new("[a-z0-9]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private static readonly Regex mLetterMatcher = new("[a-z]+", RegexOptions.Compiled | RegexOptions.IgnoreCase);
