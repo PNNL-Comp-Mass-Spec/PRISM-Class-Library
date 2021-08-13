@@ -12,8 +12,6 @@ namespace PRISM
     /// </summary>
     public class ProcessInfo
     {
-        #region "Properties"
-
         /// <summary>
         /// Command line arguments as a single string
         /// </summary>
@@ -52,8 +50,6 @@ namespace PRISM
         /// On Linux will be equivalent to ExeName
         /// </remarks>
         public string ProcessName { get; }
-
-        #endregion
 
         /// <summary>
         /// Constructor that takes process ID only

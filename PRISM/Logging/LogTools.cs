@@ -19,8 +19,6 @@ namespace PRISM.Logging
     {
         // Ignore Spelling: mm-dd-yyyy
 
-        #region "Enums"
-
         /// <summary>
         /// Log types
         /// </summary>
@@ -37,10 +35,6 @@ namespace PRISM.Logging
             LogDb
         }
 
-        #endregion
-
-        #region "Class variables"
-
         /// <summary>
         /// File Logger
         /// </summary>
@@ -50,10 +44,6 @@ namespace PRISM.Logging
         /// Database logger
         /// </summary>
         private static readonly DatabaseLogger mDbLogger = new SQLServerDatabaseLogger();
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// File path for the current log file used by the FileLogger
@@ -91,10 +81,6 @@ namespace PRISM.Logging
         /// Working directory path
         /// </summary>
         public static string WorkDirPath { get; set; }
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Update the log file's base name (or relative path)
@@ -428,10 +414,6 @@ namespace PRISM.Logging
             myLogger?.LogMessage(logLevel, message, ex);
         }
 
-        #endregion
-
-        #region "Events"
-
         /// <summary>
         /// Delegate for event MessageLogged
         /// </summary>
@@ -441,7 +423,5 @@ namespace PRISM.Logging
         /// This event is raised when a message is logged
         /// </summary>
         public static event MessageLoggedEventHandler MessageLogged;
-
-        #endregion
     }
 }

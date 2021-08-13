@@ -132,8 +132,7 @@ namespace PRISM
         /// </summary>
         private readonly Regex mQuotedStringMatcher;
 
-        #region Memory P/Invoke
-
+        // Memory P/Invoke
         // https://www.pinvoke.net/default.aspx/kernel32/GlobalMemoryStatusEx.html
 
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -216,9 +215,7 @@ namespace PRISM
 
         private static float totalMemoryMBCached;
 
-        #endregion
-
-        #region Processor Info P/Invoke
+        // Processor Info P/Invoke
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, EntryPoint = "GetLogicalProcessorInformationEx", SetLastError = true)]
@@ -771,8 +768,6 @@ namespace PRISM
         private static int processorPackageCount;
         private static int numaNodeCount;
         private static bool loadedProcessorInformation;
-
-        #endregion
 
         /// <summary>
         /// Constructor

@@ -11,8 +11,6 @@ namespace PRISM.FileProcessor
     [Obsolete("Use ProcessDirectoriesBase instead")]
     public abstract class ProcessFoldersBase : ProcessDirectoriesBase
     {
-        #region "Constants and Enums"
-
         /// <summary>
         /// Error code enums
         /// </summary>
@@ -59,8 +57,6 @@ namespace PRISM.FileProcessor
             /// </summary>
             UnspecifiedError = -1
         }
-
-        #endregion
 
         /// <summary>
         /// Make sure inputFolderPath points to a valid directory and validate the output directory (defining it if null or empty)

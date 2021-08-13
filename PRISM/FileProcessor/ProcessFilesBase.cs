@@ -25,8 +25,6 @@ namespace PRISM.FileProcessor
             ErrorCode = ProcessFilesErrorCodes.NoError;
         }
 
-        #region "Constants and Enums"
-
         /// <summary>
         /// Error code enums
         /// </summary>
@@ -132,10 +130,6 @@ namespace PRISM.FileProcessor
         //    UnspecifiedError = -1
         //}
 
-        #endregion
-
-        #region "Class wide Variables"
-
         // Copy the following to any derived classes
         //
         //private eDerivedClassErrorCodes mLocalErrorCode;
@@ -147,10 +141,6 @@ namespace PRISM.FileProcessor
         //        return mLocalErrorCode;
         //    }
         //}
-
-        #endregion
-
-        #region "Interface Functions"
 
         /// <summary>
         /// Error code reflecting processing outcome
@@ -166,8 +156,6 @@ namespace PRISM.FileProcessor
         /// Number of files that could not be processed when using ProcessFilesAndRecurseDirectories or ProcessFilesWildcard
         /// </summary>
         public int FileProcessErrors { get; private set; }
-
-        #endregion
 
         /// <summary>
         /// Cleanup file/directory paths

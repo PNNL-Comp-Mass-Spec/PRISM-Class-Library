@@ -5,8 +5,6 @@
     /// </summary>
     public interface IEventNotifier
     {
-        #region "Events and Delegates"
-
         /// <summary>
         /// Debug event
         /// </summary>
@@ -31,10 +29,6 @@
         /// Warning event
         /// </summary>
         event EventNotifier.WarningEventEventHandler WarningEvent;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// Number of empty lines to write to the console before displaying a debug message
@@ -90,7 +84,5 @@
         /// </summary>
         /// <remarks>Defaults to true. Silence individual event types using the SkipConsoleWrite properties</remarks>
         bool WriteToConsoleIfNoListener { get; set; }
-
-        #endregion
     }
 }

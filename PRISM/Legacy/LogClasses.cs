@@ -48,8 +48,6 @@ namespace PRISM
         logHealth = 5
     }
 
-    #region "Logger Interface"
-
     /// <summary>
     /// Defines the logging interface.
     /// </summary>
@@ -98,9 +96,6 @@ namespace PRISM
         void PostError(string message, Exception e, bool localOnly);
     }
 
-    #endregion
-
-    #region "File Logger Class"
     /// <summary>
     /// Provides logging to a local file.
     /// </summary>
@@ -370,9 +365,7 @@ namespace PRISM
             }
         }
     }
-    #endregion
 
-    #region "Database Logger Class"
     /// <summary>
     /// Provides logging to a database and local file.
     /// </summary>
@@ -603,9 +596,6 @@ namespace PRISM
             }
         }
     }
-    #endregion
-
-    #region "Log Entry Class"
 
     /// <summary>
     /// A class to hold a log entry
@@ -647,9 +637,7 @@ namespace PRISM
             LocalOnly = localOnly;
         }
     }
-    #endregion
 
-    #region "Queue Logger Class"
     /// <summary>
     /// Wraps a queuing mechanism around any object that implements ILogger interface.
     /// </summary>
@@ -809,7 +797,4 @@ namespace PRISM
     }
 
 #pragma warning restore IDE1006 // Naming Styles
-
-    #endregion
-
 }

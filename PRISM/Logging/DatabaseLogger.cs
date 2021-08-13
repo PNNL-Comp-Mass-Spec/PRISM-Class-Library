@@ -8,8 +8,6 @@ namespace PRISM.Logging
     /// </summary>
     public abstract class DatabaseLogger : BaseLogger
     {
-        #region "Constants"
-
         /// <summary>
         /// Interval, in milliseconds, between flushing log messages to the database
         /// </summary>
@@ -20,18 +18,10 @@ namespace PRISM.Logging
         /// </summary>
         protected const int TIMEOUT_SECONDS = 15;
 
-        #endregion
-
-        #region "Member variables"
-
         /// <summary>
         /// Messages will be sent to the database if they are this value or lower
         /// </summary>
         private LogLevels mLogThresholdLevel;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// When true, also send any messages to the file logger
@@ -105,8 +95,6 @@ namespace PRISM.Logging
             }
         }
 
-        #endregion
-
         /// <summary>
         /// Update the database connection info
         /// </summary>
@@ -172,8 +160,6 @@ namespace PRISM.Logging
             IsInfoEnabled = mLogThresholdLevel >= LogLevels.INFO;
             IsWarnEnabled = mLogThresholdLevel >= LogLevels.WARN;
         }
-
-        #region "Message logging methods"
 
         /// <summary>
         /// Log a debug message
@@ -262,8 +248,5 @@ namespace PRISM.Logging
         /// </summary>
         /// <param name="logMessage"></param>
         public abstract void WriteLog(LogMessage logMessage);
-
-        #endregion
-
     }
 }

@@ -62,8 +62,6 @@ namespace PRISM.Logging
         /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
         private static string mProgramVersion;
 
-        #region "Properties"
-
         /// <summary>
         /// Gets the product version associated with this application
         /// </summary>
@@ -89,8 +87,6 @@ namespace PRISM.Logging
         /// When true, show additional debug messages at the console
         /// </summary>
         public static bool TraceMode { get; set; }
-
-        #endregion
 
         /// <summary>
         /// Compare message log level to the log threshold level
@@ -257,8 +253,6 @@ namespace PRISM.Logging
             ConsoleMsgUtils.ShowDebugCustom(string.Format("{0}: {1}", timeStamp, message), indentChars, emptyLinesBeforeMessage);
         }
 
-        #region "Methods to be defined in derived classes"
-
         /// <summary>
         /// Log a debug message (provided the log threshold is LogLevels.DEBUG)
         /// </summary>
@@ -293,7 +287,5 @@ namespace PRISM.Logging
         /// <param name="message">Log message</param>
         /// <param name="ex">Optional exception; can be null</param>
         public abstract void Warn(string message, Exception ex = null);
-
-        #endregion
     }
 }

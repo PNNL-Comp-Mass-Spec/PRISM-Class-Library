@@ -15,8 +15,6 @@ namespace PRISM
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgRunner : EventNotifier
     {
-        #region "Constants and Enums"
-
         /// <summary>
         /// Default monitoring interval, in milliseconds
         /// </summary>
@@ -57,9 +55,6 @@ namespace PRISM
             /// </summary>
             StartingProcess
         }
-        #endregion
-
-        #region "Class wide Variables"
 
         /// <summary>
         /// Log class
@@ -119,10 +114,6 @@ namespace PRISM
         /// </summary>
         private StringBuilder mCachedConsoleError;
 
-        #endregion
-
-        #region "Events"
-
         /// <summary>
         /// This event is raised at regular intervals while monitoring the program
         /// </summary>
@@ -156,10 +147,6 @@ namespace PRISM
         /// </summary>
         /// <param name="message"></param>
         public delegate void ConsoleErrorEventEventHandler(string message);
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// Arguments supplied to external program when it is run
@@ -328,10 +315,6 @@ namespace PRISM
         /// </summary>
         /// <remarks>If this is true, no window will be shown, even if CreateNoWindow=False</remarks>
         public bool WriteConsoleOutputToFile { get; set; }
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Constructor
@@ -960,7 +943,5 @@ namespace PRISM
                 throw ex;
             }
         }
-
-        #endregion
     }
 }

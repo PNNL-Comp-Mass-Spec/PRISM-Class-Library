@@ -11,8 +11,6 @@ namespace PRISM
     /// </summary>
     public abstract class EventNotifier : IEventNotifier
     {
-        #region "Events and Delegates"
-
         /// <summary>
         /// Debug event
         /// </summary>
@@ -69,10 +67,6 @@ namespace PRISM
         /// </summary>
         /// <param name="message">Warning message</param>
         public delegate void WarningEventEventHandler(string message);
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// Number of empty lines to write to the console before displaying a debug message
@@ -157,10 +151,6 @@ namespace PRISM
         protected bool HasEventListenerWarningEvent => WarningEvent != null;
 
         // ReSharper restore UnusedMember.Global
-
-        #endregion
-
-        #region "Event Handlers"
 
         /// <summary>
         /// Report a debug message
@@ -248,8 +238,6 @@ namespace PRISM
 
             WarningEvent?.Invoke(message);
         }
-
-        #endregion
 
         /// <summary>
         /// Use this method to chain events between classes

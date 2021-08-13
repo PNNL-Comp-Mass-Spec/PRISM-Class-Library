@@ -17,25 +17,15 @@ namespace PRISM
     {
         // Ignore Spelling: cmd, Sql
 
-        #region "Constants"
-
         /// <summary>
         /// Default timeout length, in seconds, when waiting for a query to finish running
         /// </summary>
         public const int DEFAULT_SP_TIMEOUT_SEC = 30;
 
-        #endregion
-
-        #region "Member Variables"
-
         /// <summary>
         /// Timeout length, in seconds, when waiting for a query to finish running
         /// </summary>
         private int mTimeoutSeconds;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// Database connection string.
@@ -59,8 +49,6 @@ namespace PRISM
                 mTimeoutSeconds = value;
             }
         }
-
-        #endregion
 
         /// <summary>
         /// Constructor

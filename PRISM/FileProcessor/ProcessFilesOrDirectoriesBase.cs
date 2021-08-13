@@ -20,8 +20,6 @@ namespace PRISM.FileProcessor
     {
         // Ignore Spelling: username, yyyy-MM-dd, hh:mm:ss tt
 
-        #region "Constants and Enums"
-
         private const string LOG_FILE_EXTENSION = ".txt";
 
         private const string LOG_FILE_SUFFIX = "_log";
@@ -132,10 +130,6 @@ namespace PRISM.FileProcessor
             Error = 3,
         }
 
-        #endregion
-
-        #region "Class wide Variables"
-
         /// <summary>
         /// File date (program date)
         /// </summary>
@@ -216,10 +210,6 @@ namespace PRISM.FileProcessor
         private readonly Dictionary<string, DateTime> mLogDataCache;
 
         private MessageTypeConstants mProgressMessageType = MessageTypeConstants.Normal;
-
-        #endregion
-
-        #region "Interface Functions"
 
         /// <summary>
         /// True if processing should be aborted
@@ -322,8 +312,6 @@ namespace PRISM.FileProcessor
             get => ConvertMessageTypeToLogLevel(mProgressMessageType);
             set => mProgressMessageType = ConvertLogLevelToMessageType(value);
         }
-
-        #endregion
 
         /// <summary>
         /// Constructor

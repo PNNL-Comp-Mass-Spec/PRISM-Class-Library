@@ -18,8 +18,6 @@ namespace PRISM
     {
         // Ignore Spelling: gzip, gzipped, mbBacklog, picfs, yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt
 
-        #region "Events"
-
         /// <summary>
         /// File copy starting event
         /// </summary>
@@ -107,10 +105,6 @@ namespace PRISM
         /// <param name="waitTimeMinutes"></param>
         public delegate void LockQueueWaitCompleteEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
 
-        #endregion
-
-        #region "Constants and class members"
-
         private const int MAX_LOCKFILE_WAIT_TIME_MINUTES = 180;
 
         /// <summary>
@@ -139,10 +133,6 @@ namespace PRISM
 
         private readonly Regex mParseLockFileName;
 
-        #endregion
-
-        #region "Public constants"
-
         /// <summary>
         /// Used by CopyFileWithResume and CopyDirectoryWithResume when copying a file byte-by-byte and supporting resuming the copy if interrupted
         /// </summary>
@@ -152,10 +142,6 @@ namespace PRISM
         /// Used by CopyFileWithResume; defines how often the data is flushed out to disk; must be larger than the ChunkSize
         /// </summary>
         public const int DEFAULT_FLUSH_THRESHOLD_MB = 25;
-
-        #endregion
-
-        #region "Enums"
 
         /// <summary>
         /// File overwrite options
@@ -203,9 +189,6 @@ namespace PRISM
             /// </summary>
             BufferedCopyResume = 3
         }
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// Copy chunk size, in MB
@@ -259,10 +242,6 @@ namespace PRISM
         /// </summary>
         public string ManagerName { get; set; }
 
-        #endregion
-
-        #region "Constructors"
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -284,9 +263,6 @@ namespace PRISM
 
             mParseLockFileName = new Regex(@"^(?<QueueTime>\d+)_(?<FileSizeMB>\d+)_", RegexOptions.Compiled);
         }
-        #endregion
-
-        #region "CheckTerminator Methods"
 
         /// <summary>
         /// Modifies input directory path string depending on optional settings.
@@ -368,10 +344,6 @@ namespace PRISM
 
             return directoryPath;
         }
-
-        #endregion
-
-        #region "CopyFile Method"
 
         /// <summary>
         /// Copies a source file to the destination file. Does not allow overwriting.
@@ -499,10 +471,6 @@ namespace PRISM
                 }
             }
         }
-
-        #endregion
-
-        #region "Lock File Copying Methods"
 
         /// <summary>
         /// Copy the source file to the target path; do not overwrite existing files
@@ -1133,10 +1101,6 @@ namespace PRISM
             return serverShareBase;
         }
 
-        #endregion
-
-        #region "CopyDirectory Method"
-
         /// <summary>
         /// Copies a source directory to the destination directory. Does not allow overwriting.
         /// </summary>
@@ -1393,10 +1357,6 @@ namespace PRISM
                 File.SetAttributes(targetFilePath, fa);
             }
         }
-
-        #endregion
-
-        #region "CopyDirectoryWithResume Method"
 
         /// <summary>
         /// Copies a source directory to the destination directory.
@@ -2017,9 +1977,6 @@ namespace PRISM
             }
         }
 
-        #endregion
-
-        #region "GetDirectorySize Method"
         /// <summary>
         /// Get the directory size.
         /// </summary>
@@ -2077,9 +2034,6 @@ namespace PRISM
 
             return directorySize;
         }
-        #endregion
-
-        #region "MoveDirectory Method"
 
         /// <summary>
         /// Move a directory
@@ -2143,10 +2097,6 @@ namespace PRISM
 
             return true;
         }
-
-        #endregion
-
-        #region "Utility Methods"
 
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
@@ -2919,10 +2869,6 @@ namespace PRISM
             return DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes >= maxLockfileWaitTimeMinutes;
         }
 
-        #endregion
-
-        #region "GZip Compression"
-
         /// <summary>
         /// Compress a file using the built-in GZipStream (stores minimal GZip metadata)
         /// </summary>
@@ -3095,7 +3041,5 @@ namespace PRISM
 
             return Path.Combine(dir, name);
         }
-
-        #endregion
     }
 }

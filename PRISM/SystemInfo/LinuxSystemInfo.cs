@@ -21,8 +21,6 @@ namespace PRISM
 
         // ReSharper restore CommentTypo
 
-        #region "Constants and Enums"
-
         /// <summary>
         /// Path to proc virtual file system
         /// </summary>
@@ -37,10 +35,6 @@ namespace PRISM
         /// name of meminfo file
         /// </summary>
         public const string MEMINFO_FILE = "meminfo";
-
-        #endregion
-
-        #region "Class wide Variables"
 
         private int mCoreCountCached;
         private int mProcessorPackageCountCached;
@@ -67,18 +61,10 @@ namespace PRISM
         private readonly Regex mStatLineMatcher;
         private readonly Regex mStatLineMatcherNoCommand;
 
-        #endregion
-
-        #region "Properties"
-
         /// <summary>
         /// When true, additional debug messages are reported using DebugEvent
         /// </summary>
         public bool TraceEnabled { get; set; }
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Constructor
@@ -1219,8 +1205,5 @@ namespace PRISM
             var osVersionInfo = new OSVersionInfo();
             return osVersionInfo.GetLinuxVersion();
         }
-
-        #endregion
-
     }
 }

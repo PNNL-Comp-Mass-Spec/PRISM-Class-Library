@@ -15,8 +15,6 @@ namespace PRISM
     {
         //Ignore Spelling: spCmd, Namespace
 
-        #region "Constants"
-
         /// <summary>
         /// Return value indicating everything is OK
         /// </summary>
@@ -47,20 +45,12 @@ namespace PRISM
         /// </summary>
         public const int DEFAULT_SP_TIMEOUT_SEC = 30;
 
-        #endregion
-
-        #region "Module variables"
-
         private string mConnectionString;
 
         /// <summary>
         /// Timeout length, in seconds, when waiting for a stored procedure to finish executing
         /// </summary>
         private int mTimeoutSeconds = DEFAULT_SP_TIMEOUT_SEC;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// Database connection string
@@ -100,10 +90,6 @@ namespace PRISM
                 mTimeoutSeconds = value;
             }
         }
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Constructor
@@ -463,7 +449,5 @@ namespace PRISM
 
             return resultCode;
         }
-
-        #endregion
     }
 }

@@ -18,8 +18,6 @@ namespace PRISM.Logging
     /// </remarks>
     public class FileLogger : BaseLogger
     {
-        #region "Constants"
-
         /// <summary>
         /// Default number of old log files to keep when AppendDateToBaseFileName is false
         /// </summary>
@@ -56,10 +54,6 @@ namespace PRISM.Logging
         /// </summary>
         private const int OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS = 90;
 
-        #endregion
-
-        #region "Static variables"
-
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
         private static readonly object mMessageQueueLock = new();
@@ -81,18 +75,10 @@ namespace PRISM.Logging
         /// <remarks>Log files are only renamed if a log message is actually logged</remarks>
         private static bool mNeedToRollLogFiles;
 
-        #endregion
-
-        #region "Member variables"
-
         /// <summary>
         /// Messages will be written to the log file if they are this value or lower
         /// </summary>
         private LogLevels mLogThresholdLevel;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
@@ -188,8 +174,6 @@ namespace PRISM.Logging
         /// When true, ArchiveOldLogFilesNow will also zip subdirectories with old log files
         /// </summary>
         public static bool ZipOldLogDirectories { get; set; } = true;
-
-        #endregion
 
         /// <summary>
         /// Default constructor
@@ -949,8 +933,6 @@ namespace PRISM.Logging
             return zipWarnings;
         }
 
-        #region "Message logging methods"
-
         /// <summary>
         /// Log a debug message
         /// (provided the log threshold is LogLevels.DEBUG; see this.LogLevel)
@@ -1041,8 +1023,6 @@ namespace PRISM.Logging
         {
             mMessageQueue.Enqueue(logMessage);
         }
-
-        #endregion
 
         /// <summary>
         /// Class is disposing; write out any queued messages

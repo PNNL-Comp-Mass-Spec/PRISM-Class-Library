@@ -135,8 +135,6 @@ namespace PRISM
         /// </summary>
         public class ParserResults
         {
-            #region Properties
-
             /// <summary>
             /// Parsing status - false if parsing failed
             /// </summary>
@@ -157,8 +155,6 @@ namespace PRISM
             /// Target object, populated with the parsed arguments when the parsing completes
             /// </summary>
             public T ParsedResults { get; }
-
-            #endregion
 
             /// <summary>
             /// Modifiable list of parsing errors
@@ -232,8 +228,6 @@ namespace PRISM
         private Dictionary<string, ArgInfo> validArguments;
         private Dictionary<PropertyInfo, OptionAttribute> propertiesAndAttributes;
         private readonly List<string> paramFileArgs = new(mDefaultParamFileArgs);
-
-        #region Properties
 
         /// <summary>
         /// Developer contact info
@@ -333,8 +327,6 @@ namespace PRISM
         /// Usage examples to display to the user at the end of the help text
         /// </summary>
         public List<string> UsageExamples { get; }
-
-        #endregion
 
         /// <summary>
         /// Constructor

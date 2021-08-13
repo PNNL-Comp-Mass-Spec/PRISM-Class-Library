@@ -15,8 +15,6 @@ namespace PRISM.Logging
     // ReSharper disable once UnusedMember.Global
     public sealed class ODBCDatabaseLogger : DatabaseLogger
     {
-        #region "Member variables"
-
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
         private static readonly object mMessageQueueLock = new();
@@ -33,10 +31,6 @@ namespace PRISM.Logging
         /// Module name
         /// </summary>
         private static string mModuleName;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// ODBC style connection string
@@ -76,8 +70,6 @@ namespace PRISM.Logging
         private static int MessageParamSize { get; set; }
 
         private static int PostedByParamSize { get; set; }
-
-        #endregion
 
         /// <summary>
         /// Constructor when the connection info is unknown
@@ -419,8 +411,6 @@ namespace PRISM.Logging
             }
         }
 
-        #region "Message logging methods"
-
         /// <summary>
         /// Log a message (regardless of this.LogLevel)
         /// </summary>
@@ -432,8 +422,6 @@ namespace PRISM.Logging
             if (EchoMessagesToFileLogger)
                 FileLogger.WriteLog(logMessage);
         }
-
-        #endregion
 
         /// <summary>
         /// Class is disposing; write out any queued messages

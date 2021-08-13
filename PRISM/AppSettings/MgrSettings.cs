@@ -22,8 +22,6 @@ namespace PRISM.AppSettings
     /// </remarks>
     public class MgrSettings : EventNotifier
     {
-        #region "Constants"
-
         /// <summary>
         /// Status message for when the manager is deactivated locally
         /// </summary>
@@ -56,10 +54,6 @@ namespace PRISM.AppSettings
         /// </summary>
         public const string MGR_PARAM_USING_DEFAULTS = "UsingDefaults";
 
-        #endregion
-
-        #region "Properties"
-
         /// <summary>
         /// Error message
         /// </summary>
@@ -85,18 +79,10 @@ namespace PRISM.AppSettings
         /// </summary>
         public bool TraceMode { get; set; }
 
-        #endregion
-
-        #region "Events"
-
         /// <summary>
         /// Important error event (only raised if ParamsLoadedFromDB is false)
         /// </summary>
         public ErrorEventEventHandler CriticalErrorEvent;
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Constructor
@@ -785,10 +771,6 @@ namespace PRISM.AppSettings
             MgrParams[itemKey] = itemValue;
         }
 
-        #endregion
-
-        #region "Event Handlers"
-
         /// <summary>
         /// Report an important error
         /// </summary>
@@ -830,7 +812,5 @@ namespace PRISM.AppSettings
         {
             OnErrorEvent(errorMessage, ex);
         }
-
-        #endregion
     }
 }
