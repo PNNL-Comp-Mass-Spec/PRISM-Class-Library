@@ -94,6 +94,7 @@
     <Compile Include="DataUtils\StringSimilarityTool.cs" />
     <Compile Include="OutputUtils\StringUtilities.cs" />
     <Compile Include="DataUtils\ProgressData.cs" />
+    <Compile Include="ParallelPreprocessing.cs" />
     <Compile Include="ProgRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SystemInfo\ISystemInfo.cs" />

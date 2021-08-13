@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>false</Deterministic>
+    <LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -48,6 +49,7 @@
     <Compile Include="DBToolsBase.cs" />
     <Compile Include="DbToolsFactory.cs" />
     <Compile Include="DBUtilsConstants.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDBTools.cs" />
     <Compile Include="MSSQLServer\SQLServerDBTools.cs" />
     <Compile Include="PostgreSQL\PostgresDBTools.cs" />

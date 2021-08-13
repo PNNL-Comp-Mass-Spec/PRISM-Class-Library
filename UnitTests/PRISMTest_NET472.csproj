@@ -12,6 +12,7 @@
     <FileAlignment>512</FileAlignment>
     <IntermediateOutputPath>$(SolutionDir)\obj\NET472\$(Configuration)\</IntermediateOutputPath>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -34,11 +35,13 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandLineParserTests.cs" />
+    <Compile Include="ConnectionStringTests.cs" />
     <Compile Include="ConsoleMsgUtilsTest.cs" />
     <Compile Include="DatabaseLoggingTests.cs" />
     <Compile Include="DotNETVersionTest.cs" />
@@ -46,11 +49,14 @@
     <Compile Include="FileLoggingTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="FileRefs.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GZipTests.cs" />
     <Compile Include="KeyValueParamFileReaderTests.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="MgrSettingsTests.cs" />
     <Compile Include="MiscellaneousTests.cs" />
+    <Compile Include="NativeIOTests.cs" />
+    <Compile Include="ParallelPreprocessingTests.cs" />
     <Compile Include="PathTests.cs" />
     <Compile Include="ProgRunnerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +66,7 @@
     <Compile Include="TestDBTools.cs" />
     <Compile Include="TestEvents.cs" />
     <Compile Include="TestFileCopyInfo.cs" />
+    <Compile Include="TestHashUtilities.cs" />
     <Compile Include="TestLinuxSystemInfo.cs" />
     <Compile Include="TestOSVersionInfo.cs" />
     <Compile Include="TestPathUtils.cs" />

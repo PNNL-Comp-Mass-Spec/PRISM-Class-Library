@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IntermediateOutputPath>$(SolutionDir)\obj\NET472\$(Configuration)\</IntermediateOutputPath>
+    <LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -47,6 +48,8 @@
     <Compile Include="DataGridUtils.cs" />
     <Compile Include="DiskInfo.cs" />
     <Compile Include="DotNETVersionChecker.cs" />
+    <Compile Include="FileInUseUtils.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="LegacyClassWrappers.cs" />
     <Compile Include="ProcessStats.cs" />
     <Compile Include="TextBoxUtils.cs" />
