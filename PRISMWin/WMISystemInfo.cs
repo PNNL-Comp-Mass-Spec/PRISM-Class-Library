@@ -95,12 +95,6 @@ namespace PRISMWin
         {
             double memoryFreeKB = 0;
 
-            // var osVersion = Environment.OSVersion.Version;
-            // if (osVersion < new Version(6, 0)) // Older than Vista
-            // {
-            //    // For pre-Vista: "SELECT * FROM Win32_LogicalMemoryConfiguration", and a different property (unknown name)
-            // }
-
             foreach (var item in new System.Management.ManagementObjectSearcher("SELECT * FROM CIM_OperatingSystem").Get())
             {
                 memoryFreeKB += double.Parse(item["FreePhysicalMemory"].ToString());
