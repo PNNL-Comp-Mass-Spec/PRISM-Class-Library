@@ -24,6 +24,7 @@ namespace PRISMTest
         [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax", "PRISMTest", "Data Source=gigasax;Application Name=PRISMTest")]
         [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5", "", "Data Source=gigasax;Initial Catalog=dms5")]
         [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5", "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Application Name=PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=DMS_Data_Package;Integrated Security=SSPI;", "DataPackageArchive_WE43320", "Data Source=gigasax;Initial Catalog=DMS_Data_Package;Integrated Security=True;Application Name=DataPackageArchive_WE43320")]
         [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey;Database=dms", "", "Host=prismdb1;Username=d3l243;Password=SecretKey;Database=dms")]
         [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey;Database=dms", "PRISMTest", "Host=prismdb1;Username=d3l243;Password=SecretKey;Database=dms;Application Name=PRISMTest")]
         [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey", "", "Host=prismdb1;Username=d3l243;Password=SecretKey")]
@@ -73,6 +74,55 @@ namespace PRISMTest
             TestAddApplicationName(
                 serverType, connectionString, applicationName, expectedResult,
                 testConnectionString, secondsToStayConnected, sqlQuery);
+        }
+
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax", "")]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax", "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5", "")]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5", "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=DMS_Data_Package;Integrated Security=SSPI;", "DataPackageArchive_WE43320")]
+        [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey;Database=dms", "")]
+        [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey;Database=dms", "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey", "")]
+        [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey", "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb1;Username=d3l243;Password=SecretKey;", "PRISMTest")]
+        public void TestAddApplicationNameInvalid(
+            DbServerTypes serverType,
+            string connectionString,
+            string applicationName)
+        {
+            bool exceptionCaught;
+            string updatedConnectionString;
+
+            try
+            {
+                // Note: intentionally sending the application name to the connection string argument, since this should lead to an exception
+                updatedConnectionString = DbToolsFactory.AddApplicationNameToConnectionString(applicationName, connectionString);
+
+                exceptionCaught = false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(PRISM.StackTraceFormatter.GetExceptionStackTraceMultiLine(ex));
+                Console.WriteLine();
+
+                updatedConnectionString = "Error: " + ex.Message;
+                exceptionCaught = true;
+            }
+
+            Console.WriteLine("{0}: {1}", serverType, updatedConnectionString);
+
+            if (!string.IsNullOrWhiteSpace(applicationName) && !exceptionCaught)
+            {
+                Console.WriteLine();
+                Assert.Fail("AddApplicationNameToConnectionString should have thrown an exception, but it did not");
+            }
+
+            if (string.IsNullOrWhiteSpace(applicationName) && exceptionCaught)
+            {
+                Console.WriteLine();
+                Assert.Fail("AddApplicationNameToConnectionString raised an exception; this was unexpected");
+            }
         }
 
         [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True")]
