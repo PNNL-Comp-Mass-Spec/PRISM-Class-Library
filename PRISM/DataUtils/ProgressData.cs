@@ -6,7 +6,7 @@ namespace PRISM
 {
     /// <summary>
     /// Add functionality to progress reporting using <see cref="IProgress{T}"/>,
-    /// including facilitating child process progress as a subset of overall progress.
+    /// including facilitating child process progress as a subset of overall progress
     /// </summary>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgressData
@@ -24,14 +24,14 @@ namespace PRISM
         public string StatusInternal { get; set; }
 
         /// <summary>
-        /// Referenced <see cref="IProgress{T}"/> object, that all updates are pushed out to.
+        /// Referenced <see cref="IProgress{T}"/> object, that all updates are pushed out to
         /// </summary>
         public IProgress<ProgressData> ProgressObj { get; set; }
 
         /// <summary>
         /// When true, anything that will cause progress to go backwards will cause an exception;
-        /// otherwise, such changes are silently handled to prevent backwards progress.
-        /// Should not be true in general release code.
+        /// otherwise, such changes are silently handled to prevent backwards progress
+        /// Should not be true in general release code
         /// </summary>
         public bool ThrowExceptionOnBackwardsProgress
         {
@@ -99,9 +99,11 @@ namespace PRISM
         }
 
         /// <summary>
-        /// If the progress reporting will be blocked into ranges
-        /// Setting this to "true" will reset MinPercentage and MaxPercentage to 0.
+        /// Controls whether the progress reporting will be grouped into ranges
         /// </summary>
+        /// <remarks>
+        /// Setting this to "true" will reset MinPercentage and MaxPercentage to 0
+        /// </remarks>
         public bool IsPartialRange
         {
             get => _isPartialRange;
@@ -180,7 +182,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Track if a partial range (not 0-100%) has been set previously. This should never be set to false outside of object construction.
+        /// Track if a partial range (not 0-100%) has been set previously. This should never be set to false outside of object construction
         /// </summary>
         private bool HasUsedPartialRange
         {
@@ -195,7 +197,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Backing variable for HasUsedPartialRange. ONLY USE INSIDE OF HasUsedPartialRange GETTER/SETTER.
+        /// Backing variable for HasUsedPartialRange. ONLY USE INSIDE OF HasUsedPartialRange GETTER/SETTER
         /// </summary>
         private bool _hasUsedPartialRangeWithAReallyLongAndNastyNameSoThatNoOneEverWantsToUseUtBesidesWhereItIsSupposedToBeUsed;
 
@@ -237,6 +239,7 @@ namespace PRISM
                 }
 
                 _minPercentage = _percent;
+
                 // Set the current max range to zero, so that the call to CheckSetMinMaxRange works as we need it to.
                 // Only do it when the max percentage is 100+, to allow potential removal then re-add of percent stepping.
                 if (_maxPercentage >= 100.0)

@@ -7,8 +7,10 @@
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This enum used instead of System.Data.DbType to allow the commonly-used names with understandable behavior, instead of just Int32/String/etc.
+    /// This enum is used instead of System.Data.DbType to allow for use of commonly-used database types with understandable behavior, instead of just Int32/String/etc.
     /// This also allows us to differentiate between Time, Date, and DateTime.
+    /// </para>
+    /// <para>
     /// If you need to access a data type not listed here, use this design pattern:
     /// </para>
     /// <para>

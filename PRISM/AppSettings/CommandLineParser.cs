@@ -16,12 +16,12 @@ namespace PRISM
     /// <summary>
     /// <para>
     /// Class for keeping parameters flags and properties for command line arguments tied together,
-    /// supporting properties of primitive types (and arrays of primitive types).
+    /// supporting properties of primitive types (and arrays of primitive types)
     /// </para>
     /// <para>
     /// Supports parameter flags similar to /d -dd --dir, with case sensitivity when needed,
     /// with the separator between parameter flag and parameter as ' ', ':', or '=',
-    /// and also supports using a parameter flag as a switch (if the associated property is a bool).
+    /// and also supports using a parameter flag as a switch (if the associated property is a bool)
     /// </para>
     /// <para>
     /// If an argument is supplied multiple times, it only keeps the last one supplied.
@@ -181,7 +181,7 @@ namespace PRISM
             }
 
             /// <summary>
-            /// Add a Parsing error to the parsing error list.
+            /// Add a Parsing error to the parsing error list
             /// </summary>
             /// <param name="message">Error message</param>
             /// <param name="isMissingRequiredParameter">True if this is a missing required parameter</param>
@@ -192,7 +192,7 @@ namespace PRISM
             }
 
             /// <summary>
-            /// Add a Parsing error to the parsing error list.
+            /// Add a Parsing error to the parsing error list
             /// </summary>
             /// <param name="format"></param>
             /// <param name="args"></param>
@@ -401,7 +401,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Parse the arguments into <paramref name="options"/>, returning a bool. Entry assembly name is retrieved via reflection.
+        /// Parse the arguments into <paramref name="options"/>, returning a bool. Entry assembly name is retrieved via reflection
         /// </summary>
         /// <param name="args"></param>
         /// <param name="options"></param>
@@ -414,7 +414,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Parse the arguments into <paramref name="options"/>, returning a bool.
+        /// Parse the arguments into <paramref name="options"/>, returning a bool
         /// </summary>
         /// <param name="args"></param>
         /// <param name="options"></param>
@@ -431,7 +431,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>. Entry assembly name is retrieved via reflection.
+        /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>. Entry assembly name is retrieved via reflection
         /// </summary>
         /// <param name="args"></param>
         /// <param name="versionInfo">Executable version info</param>
@@ -443,7 +443,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>.
+        /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>
         /// </summary>
         /// <param name="args"></param>
         /// <param name="entryAssemblyName">Name of the executable</param>
@@ -619,7 +619,8 @@ namespace PRISM
                         return Results;
                     }
 
-                    // TODO: This is code that could be used to merge multiple param files together.
+                    // TODO: This is code that could be used to merge multiple param files together
+
                     //// Add original results of ArgsPreprocess to the new preprocessed arguments
                     //foreach (var cmdArg in filePreprocessedArgs)
                     //{
@@ -688,7 +689,7 @@ namespace PRISM
 
                         if (isSwitch && preprocessed[key].Count == 0)
                         {
-                            // Switch arguments from the command line: force value override by removing any value(s) read from the param file(s)
+                            // Switch arguments from the command line: force value override by removing any value(s) read from the param file(s).
                             // This fixes an issue with switch arguments not reading properly when a value is provided in the param file, unless a value is provided on the command line.
                             value.Clear();
                         }
@@ -874,7 +875,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Reads a parameter file.
+        /// Reads a parameter file
         /// </summary>
         /// <param name="paramFilePath">Parameter file path</param>
         /// <param name="paramFileLines">Output: List of parameters read from the parameter file; each line will starts with a dash</param>
@@ -938,7 +939,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Reads a parameter file.
+        /// Reads a parameter file
         /// </summary>
         /// <param name="paramFile">Parameter file</param>
         /// <returns>
@@ -1678,7 +1679,7 @@ namespace PRISM
                 {
                     if (duplicateKeyCheck.ContainsKey(key))
                     {
-                        // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
+                        // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer
                         contents.Clear();
 
                         ConsoleMsgUtils.ShowWarning(
@@ -1703,7 +1704,7 @@ namespace PRISM
 
                     if (duplicateKeyCheck.ContainsKey(key))
                     {
-                        // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
+                        // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer
                         contents.Clear();
 
                         ConsoleMsgUtils.ShowWarning(
@@ -1788,7 +1789,7 @@ namespace PRISM
 
                 if (contents.ContainsKey(delimitedKeyNames))
                 {
-                    // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer.
+                    // Critical error - make sure the user focuses on the error, because it's a big one, and must be fixed by the developer
                     contents.Clear();
 
                     ConsoleMsgUtils.ShowWarning(
@@ -2307,8 +2308,9 @@ namespace PRISM
         public int ArgPosition { get; set; }
 
         /// <summary>
-        /// If the help screen should show the default value for an argument (value pulled from the default constructor); Defaults to true.
+        /// If the help screen should show the default value for an argument (value pulled from the default constructor)
         /// </summary>
+        /// <remarks>Defaults to true</remarks>
         public bool HelpShowsDefault { get; set; }
 
         /// <summary>
@@ -2329,8 +2331,9 @@ namespace PRISM
         public object Max { get; set; }
 
         /// <summary>
-        /// If the property is an enum, enum values are listed by default. Set this to 'true' to not list the enum values.
+        /// If the property is an enum, enum values are listed by default
         /// </summary>
+        /// <remarks>Set this to 'true' to not list the enum values</remarks>
         public bool DoNotListEnumValues { get; set; }
 
         /// <summary>
@@ -2343,11 +2346,17 @@ namespace PRISM
         /// Set to 'true' for properties that specify an input file path (or input directory path)
         /// </summary>
         /// <remarks>
+        /// <para>
         /// If the path stored in this parameter is surrounded by double quotes or by single quotes, those quotes will be auto-removed
+        /// </para>
+        /// <para>
         /// Furthermore, if a parameter file is specified (using -ParamFile:Options.conf), the command line parser
-        /// will process IsInputFilePath properties to look for files (or directories) in the working directory.
+        /// will process IsInputFilePath properties to look for files (or directories) in the working directory
+        /// </para>
+        /// <para>
         /// If the file (or directory) is not found, the parser will also look for the file (or directory) in the directory with the parameter file,
-        /// and if the item is found there, the path stored in the property will be updated.
+        /// and if the item is found there, the path stored in the property will be updated
+        /// </para>
         /// </remarks>
         public bool IsInputFilePath { get; set; }
 
@@ -2357,7 +2366,7 @@ namespace PRISM
         public string ArgExistsProperty { get; set; }
 
         /// <summary>
-        /// If <see cref="ArgExistsProperty"/> is specified, and refers to a valid boolean property, this will be set to that property.
+        /// If <see cref="ArgExistsProperty"/> is specified, and refers to a valid boolean property, this will be set to that property
         /// </summary>
         internal PropertyInfo ArgExistsPropertyInfo { get; set; }
 
@@ -2367,7 +2376,7 @@ namespace PRISM
         public bool SecondaryArg { get; set; }
 
         /// <summary>
-        /// Constructor supporting any number of param keys.
+        /// Constructor supporting any number of param keys
         /// </summary>
         /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
         /// <remarks>Not CLS compliant</remarks>

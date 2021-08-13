@@ -15,17 +15,17 @@ namespace PRISM
         // Ignore Spelling: crc, pre, uint
 
         /// <summary>
-        /// Table of CRCs of all 8-bit messages.
+        /// Table of CRCs of all 8-bit messages
         /// </summary>
         private static readonly uint[] crcTable = new uint[256];
 
         /// <summary>
-        /// Flag: has the table been computed? Initially false.
+        /// Set to true once the crcTable has been populated
         /// </summary>
         private static bool crcTableComputed;
 
         /// <summary>
-        /// Make the table for a fast CRC.
+        /// Populate crcTable, which will allow for quickly computing CRC values
         /// </summary>
         private static void MakeCrcTable()
         {
@@ -51,12 +51,14 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Update a running crc using the enumerable byte buffer
-        /// The crc should be initialized to zero.
-        /// Pre- and post-conditioning (one's complement) is performed within this method so it shouldn't be done by the caller.
+        /// Update a running CRC using the enumerable byte buffer;
+        /// the crc should be initialized to zero.
         /// </summary>
         /// <param name="crc"></param>
         /// <param name="buf"></param>
+        /// <remarks>
+        /// Pre- and post-conditioning (one's complement) is performed within this method so it shouldn't be done by the caller
+        /// <remarks>
         /// <example>
         /// uint crc = 0;
         ///

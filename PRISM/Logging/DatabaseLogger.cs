@@ -120,7 +120,7 @@ namespace PRISM.Logging
             int postedByParamSize = 128);
 
         /// <summary>
-        /// Construct the string MachineName:UserName.
+        /// Construct the string MachineName:UserName
         /// </summary>
         protected static string GetDefaultModuleName()
         {

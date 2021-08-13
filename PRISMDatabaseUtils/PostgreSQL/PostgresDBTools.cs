@@ -34,7 +34,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         #region "Properties"
 
         /// <summary>
-        /// Database connection string.
+        /// Database connection string
         /// </summary>
         public string ConnectStr
         {
@@ -79,12 +79,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// The name of the server to which the connection string connects.
+        /// The name of the server to which the connection string connects
         /// </summary>
         public string ServerName { get; private set; }
 
         /// <summary>
-        /// The name of the database to which the connection string connects.
+        /// The name of the database to which the connection string connects
         /// </summary>
         public string DatabaseName { get; private set; }
 
@@ -270,7 +270,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
                         }
 
-                        // PostgresSQL requires a transaction when calling stored procedures that return result sets
+                        // PostgresSQL requires a transaction when calling stored procedures that return result sets.
                         // Without the transaction, the cursor is closed before we can read any data.
                         using var transaction = dbConnection.BeginTransaction();
 
@@ -597,7 +597,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             OnDebugEvent("GetQueryResults: " + cmd.CommandText);
                         }
 
-                        // PostgresSQL requires a transaction when calling stored procedures that return result sets
+                        // PostgresSQL requires a transaction when calling stored procedures that return result sets.
                         // Without the transaction, the cursor is closed before we can read any data.
                         using var transaction = dbConnection.BeginTransaction();
 
@@ -731,7 +731,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 OnDebugEvent("ExecuteSPData: " + sqlCmd.CommandText);
                             }
 
-                            // PostgresSQL requires a transaction when calling stored procedures that return result sets
+                            // PostgresSQL requires a transaction when calling stored procedures that return result sets.
                             // Without the transaction, the cursor is closed before we can read any data.
                             using var transaction = dbConnection.BeginTransaction();
 
@@ -743,7 +743,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             {
                                 while (reader.Read())
                                 {
-                                    // Really only expecting a single row; extract all ref cursors.
+                                    // Really only expecting a single row; extract all ref cursors
                                     foreach (var column in reader.GetColumnSchema().Where(x => x.NpgsqlDbType == NpgsqlDbType.Refcursor))
                                     {
                                         var name = reader[column.ColumnName].CastDBVal<string>();

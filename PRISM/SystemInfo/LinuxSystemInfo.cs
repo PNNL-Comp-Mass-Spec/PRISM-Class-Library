@@ -236,8 +236,8 @@ namespace PRISM
         /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// For multi-threaded applications, the task directory below the ProcessID directory will have
-        /// separate ProcessID directories for each thread.  Those directories could be parsed to determine
-        /// the processing time for each thread.  However, the stat file in the base ProcessID directory
+        /// separate ProcessID directories for each thread. Those directories could be parsed to determine
+        /// the processing time for each thread. However, the stat file in the base ProcessID directory
         /// has the combined processing time for all threads, so parsing of individual thread stat times
         /// is not necessary to determine overall processing time.
         /// </remarks>

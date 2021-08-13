@@ -19,7 +19,7 @@ namespace PRISM
     /// </para>
     /// <para>
     /// It's quite comparable to the "Connect using a different user name." option in the Map Network Drive
-    /// utility in Windows. Much of this code came from Microsoft Knowledge Base Article - 173011.
+    /// utility in Windows. Much of this code came from Microsoft Knowledge Base Article - 173011
     /// </para>
     /// </remarks>
     // ReSharper disable once UnusedMember.Global

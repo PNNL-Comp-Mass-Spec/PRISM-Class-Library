@@ -49,7 +49,7 @@ namespace PRISMWin
             }
 
             // Try to get the number of physical cores in the system - requires System.Management.dll and a WMI query, but the performance penalty for
-            // using the number of logical processors in a hyper-threaded system is significant, and worse than the penalty for using fewer than all physical cores.
+            // using the number of logical processors in a hyper-threaded system is significant, and worse than the penalty for using fewer than all physical cores
             var numPhysicalCores = 0;
             numPhysicalProcessors = 0;
 
@@ -63,7 +63,7 @@ namespace PRISMWin
             }
             catch (Exception)
             {
-                // Use the logical processor count, divided by 2 to avoid the greater performance penalty of over-threading.
+                // Use the logical processor count, divided by 2 to avoid the greater performance penalty of over-threading
                 numPhysicalCores = (int)(Math.Ceiling(Environment.ProcessorCount / 2.0));
             }
 

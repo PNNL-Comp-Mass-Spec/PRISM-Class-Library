@@ -95,11 +95,15 @@ namespace PRISM
         public string InternalComment { get; private set; }
 
         /// <summary>
-        /// Date modified stored in the gzip metadata.
+        /// Date modified stored in the gzip metadata
         /// </summary>
         /// <remarks>
+        /// <para>
         /// 'DateTime.MinValue' or 'DateTime(1970, 1, 1, 0, 0, 0)' mean 'not set'
-        /// 'DateTime.MinValue' is always returned for 'not set' when reading.
+        /// </para>
+        /// <para>
+        /// 'DateTime.MinValue' is always returned for 'not set' when reading
+        /// </para>
         /// </remarks>
         public DateTime InternalLastModified { get; private set; }
 
@@ -119,7 +123,7 @@ namespace PRISM
         public bool HeaderCorrupted { get; }
 
         /// <summary>
-        /// (Read gzip only) True if the gzip headers were read. If false, it usually means BaseStream.CanSeek is false.
+        /// (Read gzip only) True if the gzip headers were read. If false, it usually means BaseStream.CanSeek is false
         /// </summary>
         public bool HeaderRead { get; private set; }
 
@@ -153,7 +157,7 @@ namespace PRISM
         {
             if (!CanSeek)
             {
-                // Can't seek, so don't read metadata, because it will cause the GZipStream to fail.
+                // Can't seek, so don't read metadata, because it will cause the GZipStream to fail
                 HeaderRead = false;
                 return false;
             }

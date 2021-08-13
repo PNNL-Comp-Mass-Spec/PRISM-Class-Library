@@ -359,7 +359,7 @@ namespace PRISM
         private string GetWin32Version(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows 95,
-            // Windows 98, Windows 98 Second Edition, or Windows Me.
+            // Windows 98, Windows 98 Second Edition, or Windows Me
             return osInfo.Version.Minor switch
             {
                 0 => "Windows 95",
@@ -380,7 +380,7 @@ namespace PRISM
         private string GetWinNTVersion(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows NT 3.51,
-            // Windows NT 4.0, Windows 2000, or Windows XP.
+            // Windows NT 4.0, Windows 2000, or Windows XP
             switch (osInfo.Version.Major)
             {
                 case 3:

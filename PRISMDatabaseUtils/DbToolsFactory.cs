@@ -327,7 +327,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Checks elements in the connection string to determine which database engine it refers to.
+        /// Checks elements in the connection string to determine which database engine it refers to
         /// </summary>
         /// <param name="connectionString">Database connection string</param>
         public static DbServerTypes GetServerTypeFromConnectionString(string connectionString)

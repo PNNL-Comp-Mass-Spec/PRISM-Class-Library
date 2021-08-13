@@ -47,7 +47,8 @@ namespace PRISMWin
         {
             // Checking the version using >= will enable forward compatibility,
             // however you should always compile your code on newer versions of
-            // the framework to ensure your application works the same.
+            // the framework to ensure your application works the same
+
             // For more information see https://msdn.microsoft.com/en-us/library/hh925568(v=vs.110).aspx
             // Also see https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/versions-and-dependencies
 
@@ -91,7 +92,7 @@ namespace PRISMWin
             //    }
             // }
 
-#pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only.
+#pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only
             using var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "");
 
             var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
@@ -139,8 +140,8 @@ namespace PRISMWin
                 }
             }
 
-            // Opens the registry key for the .NET Framework entry.
-#pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only.
+            // Opens the registry key for the .NET Framework entry
+#pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only
             using var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\");
 
             if (ndpKey == null)

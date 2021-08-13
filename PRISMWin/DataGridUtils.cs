@@ -9,7 +9,7 @@ namespace PRISMWin
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DataGridUtils
     {
-        // Note: System.Windows.Forms.DataGrid is deprecated/gone in .NET 5.0, in favor of System.Windows.Forms.DataGridView.
+        // Note: System.Windows.Forms.DataGrid is deprecated/gone in .NET 5.0, in favor of System.Windows.Forms.DataGridView
 #if NETFRAMEWORK
         /// <summary>
         /// Append a column to a DataGrid table style

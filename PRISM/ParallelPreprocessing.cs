@@ -33,7 +33,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Implementation details for the extension method; implements a producer-consumer pattern with 1 consumer and x producers.
+        /// Implementation details for the extension method; implements a producer-consumer pattern with 1 consumer and x producers
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="TResult"></typeparam>
@@ -50,7 +50,7 @@ namespace PRISM
             private readonly SemaphoreSlim preprocessedLimiter;
 
             /// <summary>
-            /// List of thread to monitor the producers and determine when they are done, to properly mark the target block as completed.
+            /// List of thread to monitor the producers and determine when they are done, to properly mark the target block as completed
             /// </summary>
             private readonly List<Thread> producerThreads = new();
 
@@ -65,7 +65,7 @@ namespace PRISM
             private readonly CancellationToken cancelToken;
 
             /// <summary>
-            /// Return a processed item one at a time, as they are requested and become available, until done.
+            /// Return a processed item one at a time, as they are requested and become available, until done
             /// </summary>
             public IEnumerable<TResult> ConsumeAll()
             {
@@ -118,7 +118,7 @@ namespace PRISM
                 {
                     if (thread.IsAlive)
                     {
-                        // if any thread is still alive, we're not yet done.
+                        // If any thread is still alive, we're not yet done
                         done = false;
                         break;
                     }
@@ -191,7 +191,7 @@ namespace PRISM
             }
 
             /// <summary>
-            /// Performs pre-processing using parallelization. Up to <paramref name="maxThreads"/> threads will be used to process data prior to it being requested by (and simultaneous with) the enumerable consumer.
+            /// Performs pre-processing using parallelization. Up to <paramref name="maxThreads"/> threads will be used to process data prior to it being requested by (and simultaneous with) the enumerable consumer
             /// </summary>
             /// <param name="source">source enumerable; preferably something like a list of file that need to be loaded</param>
             /// <param name="processFunction">Method to transform from <paramref name="source"/> to return type; should involve heavy processing (if x => x, you may see a performance penalty)</param>

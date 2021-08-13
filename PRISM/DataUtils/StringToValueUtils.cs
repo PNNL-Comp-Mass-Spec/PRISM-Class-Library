@@ -134,8 +134,7 @@ namespace PRISM.DataUtils
         /// <param name="columnIndex">Column index</param>
         /// <param name="value">Output: string in the given column; empty string if columnIndex is out of range</param>
         /// <returns>
-        /// True if success.
-        /// False if columnIndex is less than 0, columnIndex is out of range for dataColumns[]
+        /// True if success; False if columnIndex is less than 0 or columnIndex is out of range for the dataColumns array
         /// </returns>
         public static bool TryGetValue(string[] dataColumns, int columnIndex, out string value)
         {
@@ -158,9 +157,8 @@ namespace PRISM.DataUtils
         /// <param name="columnIndex">Column index</param>
         /// <param name="value">Output: integer in the given column; 0 if columnIndex is out of range or cannot be converted to an integer</param>
         /// <returns>
-        /// True if success.
-        /// False if columnIndex is less than 0, columnIndex is out of range for dataColumns[],
-        /// or the text cannot be converted to an integer.
+        /// True if success; False if columnIndex is less than 0, columnIndex is out of range for the dataColumns array,
+        /// or the text cannot be converted to an integer
         /// </returns>
         public static bool TryGetValueInt(string[] dataColumns, int columnIndex, out int value)
         {
@@ -183,9 +181,8 @@ namespace PRISM.DataUtils
         /// <param name="columnIndex">Column index</param>
         /// <param name="value">Output: float in the given column; 0 if columnIndex is out of range or cannot be converted to a float</param>
         /// <returns>
-        /// True if success.
-        /// False if columnIndex is less than 0, columnIndex is out of range for dataColumns[],
-        /// or the text cannot be converted to an float.
+        /// True if success; False if columnIndex is less than 0, columnIndex is out of range for the dataColumns array,
+        /// or the text cannot be converted to a float
         /// </returns>
         public static bool TryGetValueFloat(string[] dataColumns, int columnIndex, out float value)
         {

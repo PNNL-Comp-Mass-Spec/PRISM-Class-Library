@@ -825,8 +825,8 @@ namespace PRISMTest
         /// <param name="expectedParseResult"></param>
         /// <param name="parseErrorExpected"></param>
         /// <remarks>
-        /// Test cases using On and Off will produce an error.
-        /// This is expected since the CommandLineParser does not support On or Off for boolean args.
+        /// Test cases using On and Off will produce an error;
+        /// this is expected since the CommandLineParser does not support On or Off for boolean args
         /// </remarks>
         [Test]
         [TestCase(0, "True", true)]
@@ -1262,7 +1262,7 @@ namespace PRISMTest
                 Console.WriteLine(contents);
             }
 
-            // No "duplicate parameter" error when parsing a parameter file with array entries.
+            // No "duplicate parameter" error when parsing a parameter file with array entries
             var parser2 = new CommandLineParser<ArgsArray>();
             var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
             Assert.AreEqual(results.IntMinOnly, results2.IntMinOnly);

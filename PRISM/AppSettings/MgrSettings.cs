@@ -13,12 +13,16 @@ using PRISM.Logging;
 namespace PRISM.AppSettings
 {
     /// <summary>
-    /// Class for loading, storing and accessing manager parameters.
+    /// Class for loading, storing and accessing manager parameters
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Loads initial settings from the local config file (AppName.exe.config)
+    /// </para>
+    /// <para>
     /// If MgrActive_Local is true, loads additional manager settings
-    /// from the manager control database (when using a derived class).
+    /// from the manager control database (when using a derived class)
+    /// </para>
     /// </remarks>
     public class MgrSettings : EventNotifier
     {

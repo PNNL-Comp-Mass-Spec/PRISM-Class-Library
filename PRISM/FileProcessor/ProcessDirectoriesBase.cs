@@ -7,9 +7,11 @@ namespace PRISM.FileProcessor
 {
     /// <summary>
     /// This class can be used as a base class for classes that process a directory or directories
-    /// Note that this class contains simple error codes that can be set from any derived classes.
-    /// The derived classes can also set their own local error codes
     /// </summary>
+    /// <remarks>
+    /// This class contains simple error codes that can be set from any derived classes;
+    /// the derived classes can also set their own local error codes
+    /// </remarks>
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessDirectoriesBase : ProcessFilesOrDirectoriesBase
     {

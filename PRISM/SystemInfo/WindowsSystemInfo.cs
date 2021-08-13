@@ -126,8 +126,11 @@ namespace PRISM
     }
 
     /// <summary>
-    /// Internal implementation of WindowsSystemInfo. Internal to avoid big errors when trying to instantiate.
+    /// Internal implementation of WindowsSystemInfo
     /// </summary>
+    /// <remarks>
+    /// Internal to avoid big errors when trying to instantiate
+    /// </remarks>
     internal class WindowsSystemInfoInternal : EventNotifier, ISystemInfo
     {
         /// <summary>
@@ -157,63 +160,75 @@ namespace PRISM
         private struct MEMORYSTATUSEX
         {
             /// <summary>
-            /// Size of the structure, in bytes. You must set this member before calling GlobalMemoryStatusEx.
+            /// Size of the structure, in bytes
             /// </summary>
+            /// <remarks>
+            /// You must set this value before calling GlobalMemoryStatusEx
+            /// </remarks>
             public uint dwLength;
 
             // ReSharper disable MemberCanBePrivate.Local
             // ReSharper disable FieldCanBeMadeReadOnly.Local
 
             /// <summary>
-            /// Number between 0 and 100 that specifies the approximate percentage of physical memory that is in use (0 indicates no memory use and 100 indicates full memory use).
+            /// Number between 0 and 100 that specifies the approximate percentage of physical memory that is in use
             /// </summary>
+            /// <remarks>
+            /// 0 indicates no memory use; 100 indicates full memory use
+            /// </remarks>
             public uint dwMemoryLoad;
 
             /// <summary>
-            /// Total size of physical memory, in bytes.
+            /// Total size of physical memory, in bytes
             /// </summary>
             public ulong ullTotalPhys;
 
             /// <summary>
-            /// Size of physical memory available, in bytes.
+            /// Size of physical memory available, in bytes
             /// </summary>
             public ulong ullAvailPhys;
 
             /// <summary>
-            /// Size of the committed memory limit, in bytes. This is physical memory plus the size of the page file, minus a small overhead.
+            /// Size of the committed memory limit, in bytes
             /// </summary>
+            /// <remarks>
+            /// This is physical memory plus the size of the page file, minus a small overhead
+            /// </remarks>
             public ulong ullTotalPageFile;
 
             /// <summary>
-            /// Size of available memory to commit, in bytes. The limit is ullTotalPageFile.
+            /// Size of available memory to commit, in bytes
             /// </summary>
+            /// <remarks>
+            /// The limit is <see cref="ullTotalPageFile"/>
+            /// </remarks>
             public ulong ullAvailPageFile;
 
             /// <summary>
-            /// Total size of the user mode portion of the virtual address space of the calling process, in bytes.
+            /// Total size of the user mode portion of the virtual address space of the calling process, in bytes
             /// </summary>
             public ulong ullTotalVirtual;
 
             /// <summary>
-            /// Size of unreserved and uncommitted memory in the user mode portion of the virtual address space of the calling process, in bytes.
+            /// Size of unreserved and uncommitted memory in the user mode portion of the virtual address space of the calling process, in bytes
             /// </summary>
             public ulong ullAvailVirtual;
 
             /// <summary>
-            /// Size of unreserved and uncommitted memory in the extended portion of the virtual address space of the calling process, in bytes.
+            /// Size of unreserved and uncommitted memory in the extended portion of the virtual address space of the calling process, in bytes
             /// </summary>
             public ulong ullAvailExtendedVirtual;
 
             // ReSharper restore FieldCanBeMadeReadOnly.Local
             // ReSharper restore MemberCanBePrivate.Local
 
-            ///// <summary>
-            ///// Initializes a new instance of the <see cref="T:MEMORYSTATUSEX"/> class.
-            ///// </summary>
-            //public MEMORYSTATUSEX()
-            //{
-            //    this.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
-            //}
+            // /// <summary>
+            // /// Initializes a new instance of the <see cref="T:MEMORYSTATUSEX"/> class.
+            // /// </summary>
+            // public MEMORYSTATUSEX()
+            // {
+            //     this.dwLength = (uint)Marshal.SizeOf(typeof(MEMORYSTATUSEX));
+            // }
         }
 
         private static float totalMemoryMBCached;
@@ -225,24 +240,26 @@ namespace PRISM
         private static extern bool GetLogicalProcessorInformationEx(LOGICAL_PROCESSOR_RELATIONSHIP RelationshipType, IntPtr buffer, ref uint returnedLength);
 
         /// <summary>
-        /// Possible relationships between logical processors.
-        /// See https://msdn.microsoft.com/en-us/library/windows/desktop/dd405488(v=vs.85).aspx
-        /// See https://msdn.microsoft.com/en-us/library/windows/desktop/ms684197(v=vs.85).aspx
+        /// Possible relationships between logical processors
         /// </summary>
+        /// <remarks>
+        /// See https://msdn.microsoft.com/en-us/library/windows/desktop/dd405488(v=vs.85).aspx
+        /// and https://msdn.microsoft.com/en-us/library/windows/desktop/ms684197(v=vs.85).aspx
+        /// </remarks>
         private enum LOGICAL_PROCESSOR_RELATIONSHIP
         {
             /// <summary>
-            /// The specified logical processors share a single processor core.
+            /// The specified logical processors share a single processor core
             /// </summary>
             RelationProcessorCore = 0,
 
             /// <summary>
-            /// The specified logical processors are part of the same NUMA node.
+            /// The specified logical processors are part of the same NUMA node
             /// </summary>
             RelationNumaNode = 1,
 
             /// <summary>
-            /// The specified logical processors share a cache.
+            /// The specified logical processors share a cache
             /// </summary>
             RelationCache = 2,
 
@@ -250,17 +267,17 @@ namespace PRISM
             /// The specified logical processors share a physical package
             /// (a single package socketed or soldered onto a motherboard may
             /// contain multiple processor cores or threads, each of which is
-            /// treated as a separate processor by the operating system).
+            /// treated as a separate processor by the operating system)
             /// </summary>
             RelationProcessorPackage = 3,
 
             /// <summary>
-            /// The specified logical processors share a single processor group.
+            /// The specified logical processors share a single processor group
             /// </summary>
             RelationGroup = 4,
 
             /// <summary>
-            /// On input, retrieves information about all possible relationship types. This value is not used on output.
+            /// On input, retrieves information about all possible relationship types. This value is not used on output
             /// </summary>
             // ReSharper disable once UnusedMember.Local
             RelationAll = 0xfff
@@ -273,9 +290,11 @@ namespace PRISM
         private struct GROUP_AFFINITY
         {
             /// <summary>
-            /// A bitmap that specifies the affinity for zero or more processors within the specified group.
-            /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
+            /// A bitmap that specifies the affinity for zero or more processors within the specified group
             /// </summary>
+            /// <remarks>
+            /// Platform-specific: needs to be 32 for 32-bit systems and 64 for 64-bit systems
+            /// </remarks>
             // ReSharper disable once UnusedMember.Local
             public UInt64 Mask => (UInt64)MaskPtr.ToInt64();
 
@@ -286,12 +305,12 @@ namespace PRISM
             public IntPtr MaskPtr;
 
             /// <summary>
-            /// The processor group number.
+            /// The processor group number
             /// </summary>
             public ushort Group;
 
             /// <summary>
-            /// This member is reserved. Array of size 3
+            /// This field is reserved; array of size 3
             /// </summary>
             //[MarshalAs(UnmanagedType.SafeArray)]
             //public ushort[] Reserved;
@@ -306,20 +325,36 @@ namespace PRISM
         private struct PROCESSOR_RELATIONSHIP
         {
             /// <summary>
-            /// If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore, this member is LTP_PC_SMT if the core has more than one logical processor, or 0 if the core has one logical processor.
-            /// If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorPackage, this member is always 0.
+            /// <para>
+            /// If the Relationship field of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore,
+            /// this field is LTP_PC_SMT if the core has more than one logical processor, or 0 if the core has one logical processor
+            /// </para>
+            /// <para>
+            /// If the Relationship field of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorPackage,
+            /// this field is always 0
+            /// </para>
             /// </summary>
             public byte Flags;
 
             /// <summary>
-            /// If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore, EfficiencyClass specifies the intrinsic tradeoff between performance and power for the applicable core. A core with a higher value for the efficiency class has intrinsically greater performance and less efficiency than a core with a lower value for the efficiency class. EfficiencyClass is only nonzero on systems with a heterogeneous set of cores.
-            /// If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorPackage, EfficiencyClass is always 0.
-            /// The minimum operating system version that supports this member is Windows 10.
+            /// <para>
+            /// If the Relationship field of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore,
+            /// EfficiencyClass specifies the intrinsic tradeoff between performance and power for the applicable core.
+            /// A core with a higher value for the efficiency class has intrinsically greater performance and less efficiency than a core with a lower value for the efficiency class.
+            /// EfficiencyClass is only nonzero on systems with a heterogeneous set of cores.
+            /// </para>
+            /// <para>
+            /// If the Relationship field of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorPackage,
+            /// EfficiencyClass is always 0
+            /// </para>
             /// </summary>
+            /// <remarks>
+            /// The minimum operating system version that supports this field is Windows 10
+            /// </remarks>
             public byte EfficiencyClass;
 
             /// <summary>
-            /// This member is reserved. Array of size 21
+            /// This field is reserved; array of size 21
             /// </summary>
             //[MarshalAs(UnmanagedType.SafeArray)]
             //public byte[] Reserved;
@@ -329,13 +364,21 @@ namespace PRISM
             //public byte Reserved20;
 
             /// <summary>
-            /// This member specifies the number of entries in the GroupMask array. For more information, see Remarks.
+            /// This field specifies the number of entries in the GroupMask array
             /// </summary>
             public ushort GroupCount;
 
             /// <summary>
-            /// An array of GROUP_AFFINITY structures. The GroupCount member specifies the number of structures in the array. Each structure in the array specifies a group number and processor affinity within the group.
+            /// An array of GROUP_AFFINITY structures
             /// </summary>
+            /// <remarks>
+            /// <para>
+            /// The <see cref="GroupCount"/> field specifies the number of structures in this array
+            /// </para>
+            /// <para>
+            /// Each structure in the array specifies a group number and processor affinity within the group
+            /// </para>
+            /// </remarks>
             // ReSharper disable once UnusedMember.Local
             public GROUP_AFFINITY[] GroupMask
             {
@@ -365,12 +408,12 @@ namespace PRISM
         private struct NUMA_NODE_RELATIONSHIP
         {
             /// <summary>
-            /// The number of the NUMA node.
+            /// The number of the NUMA node
             /// </summary>
             public uint NodeNumber;
 
             /// <summary>
-            /// This member is reserved. Array of size 20
+            /// This field is reserved; array of size 20
             /// </summary>
             //public byte[] Reserved;
             public UInt64 Reserved0_7;
@@ -378,7 +421,7 @@ namespace PRISM
             public UInt32 Reserved16_19;
 
             /// <summary>
-            /// A GROUP_AFFINITY structure that specifies a group number and processor affinity within the group.
+            /// A GROUP_AFFINITY structure that specifies a group number and processor affinity within the group
             /// </summary>
             public GROUP_AFFINITY GroupMask;
         }
@@ -386,22 +429,22 @@ namespace PRISM
         private enum PROCESSOR_CACHE_TYPE
         {
             /// <summary>
-            /// The cache is unified.
+            /// The cache is unified
             /// </summary>
             CacheUnified = 0,
 
             /// <summary>
-            /// The cache is for processor instructions.
+            /// The cache is for processor instructions
             /// </summary>
             CacheInstruction = 1,
 
             /// <summary>
-            /// The cache is for data.
+            /// The cache is for data
             /// </summary>
             CacheData = 2,
 
             /// <summary>
-            /// The cache is for traces.
+            /// The cache is for traces
             /// </summary>
             CacheTrace = 3
         }
@@ -412,32 +455,38 @@ namespace PRISM
         private struct CACHE_RELATIONSHIP
         {
             /// <summary>
-            /// The cache level. This member can be one of the following values: 1 for L1, 2 for L2, 3 for L3.
+            /// The cache level
             /// </summary>
+            /// <remarks>
+            /// Allowed values: 1 for L1, 2 for L2, 3 for L3
+            /// </remarks>
             public byte Level;
 
             /// <summary>
-            /// The cache associativity. If this member is CACHE_FULLY_ASSOCIATIVE (0xFF), the cache is fully associative.
+            /// The cache associativity
             /// </summary>
+            /// <remarks>
+            /// If the value is CACHE_FULLY_ASSOCIATIVE (0xFF), the cache is fully associative
+            /// </remarks>
             public byte Associativity;
 
             /// <summary>
-            /// The cache line size, in bytes.
+            /// The cache line size, in bytes
             /// </summary>
             public ushort LineSize;
 
             /// <summary>
-            /// The cache size, in bytes.
+            /// The cache size, in bytes
             /// </summary>
             public uint CacheSize;
 
             /// <summary>
-            /// The cache type. This member is a PROCESSOR_CACHE_TYPE value.
+            /// The cache type
             /// </summary>
             public PROCESSOR_CACHE_TYPE Type;
 
             /// <summary>
-            /// This member is reserved. Array of size 20
+            /// This field is reserved; array of size 20
             /// </summary>
             //public byte[] Reserved;
             public UInt64 Reserved0_7;
@@ -445,7 +494,7 @@ namespace PRISM
             public UInt32 Reserved16_19;
 
             /// <summary>
-            /// A GROUP_AFFINITY structure that specifies a group number and processor affinity within the group.
+            /// A GROUP_AFFINITY structure that specifies a group number and processor affinity within the group
             /// </summary>
             public GROUP_AFFINITY GroupMask;
         }
@@ -456,17 +505,17 @@ namespace PRISM
         private struct PROCESSOR_GROUP_INFO
         {
             /// <summary>
-            /// The maximum number of processors in the group.
+            /// The maximum number of processors in the group
             /// </summary>
             public byte MaximumProcessorCount;
 
             /// <summary>
-            /// The number of active processors in the group.
+            /// The number of active processors in the group
             /// </summary>
             public byte ActiveProcessorCount;
 
             /// <summary>
-            /// This member is reserved. Array of size 38
+            /// This field is reserved; array of size 38
             /// </summary>
             //public byte[] Reserved;
             public UInt64 Reserved0_7;
@@ -477,9 +526,11 @@ namespace PRISM
             public UInt16 Reserved36_37;
 
             /// <summary>
-            /// A bitmap that specifies the affinity for zero or more active processors within the group.
-            /// Platform-specific, needs to be 32 bits for 32-bit systems and 64 bits for 64-bit systems
+            /// A bitmap that specifies the affinity for zero or more active processors within the group
             /// </summary>
+            /// <remarks>
+            /// Platform-specific: needs to be 32 for 32-bit systems and 64 for 64-bit systems
+            /// </remarks>
             // ReSharper disable once UnusedMember.Local
             public UInt64 ActiveProcessorMask => (UInt64)ActiveProcessorMaskPtr.ToInt64();
 
@@ -496,17 +547,20 @@ namespace PRISM
         private struct GROUP_RELATIONSHIP
         {
             /// <summary>
-            /// The maximum number of processor groups on the system.
+            /// The maximum number of processor groups on the system
             /// </summary>
             public ushort MaximumGroupCount;
 
             /// <summary>
-            /// The number of active groups on the system. This member indicates the number of PROCESSOR_GROUP_INFO structures in the GroupInfo array.
+            /// The number of active groups on the system
             /// </summary>
+            /// <remarks>
+            /// This field indicates the number of PROCESSOR_GROUP_INFO structures in the <see cref="GroupInfo"/> array
+            /// </remarks>
             public ushort ActiveGroupCount;
 
             /// <summary>
-            /// This member is reserved. Array of size 20
+            /// This field is reserved; array of size 20
             /// </summary>
             //public byte[] Reserved;
             public UInt64 Reserved0_7;
@@ -514,8 +568,11 @@ namespace PRISM
             public UInt32 Reserved16_19;
 
             /// <summary>
-            /// An array of PROCESSOR_GROUP_INFO structures. Each structure represents the number and affinity of processors in an active group on the system.
+            /// An array of PROCESSOR_GROUP_INFO structures
             /// </summary>
+            /// <remarks>
+            /// Each structure represents the number and affinity of processors in an active group on the system
+            /// </remarks>
             //[MarshalAs(UnmanagedType.LPArray)]
             // ReSharper disable once UnusedMember.Local
             public PROCESSOR_GROUP_INFO[] GroupInfo
@@ -544,26 +601,38 @@ namespace PRISM
         private struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_UNION
         {
             /// <summary>
-            /// A PROCESSOR_RELATIONSHIP structure that describes processor affinity. This structure contains valid data only if the Relationship member is RelationProcessorCore or RelationProcessorPackage.
+            /// A PROCESSOR_RELATIONSHIP structure that describes processor affinity
             /// </summary>
+            /// <remarks>
+            /// This structure contains valid data only if the Relationship field is RelationProcessorCore or RelationProcessorPackage
+            /// </remarks>
             [FieldOffset(0)]
             public PROCESSOR_RELATIONSHIP Processor;
 
             /// <summary>
-            /// A NUMA_NODE_RELATIONSHIP structure that describes a NUMA node. This structure contains valid data only if the Relationship member is RelationNumaNode.
+            /// A NUMA_NODE_RELATIONSHIP structure that describes a NUMA node
             /// </summary>
+            /// <remarks>
+            /// This structure contains valid data only if the Relationship field is RelationNumaNode
+            /// </remarks>
             [FieldOffset(0)]
             public NUMA_NODE_RELATIONSHIP NumaNode;
 
             /// <summary>
-            /// A CACHE_RELATIONSHIP structure that describes cache attributes. This structure contains valid data only if the Relationship member is RelationCache.
+            /// A CACHE_RELATIONSHIP structure that describes cache attributes
             /// </summary>
+            /// <remarks>
+            /// This structure contains valid data only if the Relationship field is RelationCache
+            /// </remarks>
             [FieldOffset(0)]
             public CACHE_RELATIONSHIP Cache;
 
             /// <summary>
-            /// A GROUP_RELATIONSHIP structure that contains information about the processor groups. This structure contains valid data only if the Relationship member is RelationGroup.
+            /// A GROUP_RELATIONSHIP structure that contains information about the processor groups
             /// </summary>
+            /// <remarks>
+            /// This structure contains valid data only if the Relationship field is RelationGroup
+            /// </remarks>
             [FieldOffset(0)]
             public GROUP_RELATIONSHIP Group;
         }
@@ -572,7 +641,7 @@ namespace PRISM
         private struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
-            /// The type of relationship between the logical processors.
+            /// The type of relationship between the logical processors
             /// </summary>
             public LOGICAL_PROCESSOR_RELATIONSHIP Relationship;
 
@@ -582,7 +651,7 @@ namespace PRISM
             public uint Size;
 
             /// <summary>
-            /// Details - contents depend on Relationship
+            /// Details: contents depend on Relationship
             /// </summary>
             public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_UNION ProcessorInformation;
         }*/
@@ -590,7 +659,7 @@ namespace PRISM
         private interface ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
-            /// The type of relationship between the logical processors.
+            /// The type of relationship between the logical processors
             /// </summary>
             LOGICAL_PROCESSOR_RELATIONSHIP ProcRelationship { get; }
 
@@ -606,7 +675,7 @@ namespace PRISM
         private struct SLPI_PROCESSOR_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
-            /// The type of relationship between the logical processors.
+            /// The type of relationship between the logical processors
             /// </summary>
             public LOGICAL_PROCESSOR_RELATIONSHIP Relationship;
 
@@ -628,7 +697,7 @@ namespace PRISM
         private struct SLPI_NUMA_NODE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
-            /// The type of relationship between the logical processors.
+            /// The type of relationship between the logical processors
             /// </summary>
             public LOGICAL_PROCESSOR_RELATIONSHIP Relationship;
 
@@ -650,7 +719,7 @@ namespace PRISM
         private struct SLPI_CACHE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
-            /// The type of relationship between the logical processors.
+            /// The type of relationship between the logical processors
             /// </summary>
             public LOGICAL_PROCESSOR_RELATIONSHIP Relationship;
 
@@ -672,7 +741,7 @@ namespace PRISM
         private struct SLPI_GROUP_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
             /// <summary>
-            /// The type of relationship between the logical processors.
+            /// The type of relationship between the logical processors
             /// </summary>
             public LOGICAL_PROCESSOR_RELATIONSHIP Relationship;
 
@@ -787,7 +856,7 @@ namespace PRISM
             CachedWmiCmdLineData = new Dictionary<uint, string>();
 
 #pragma warning disable CA1416 // Validate platform compatibility
-            // Note: Platform compatibility check is done outside of this class.
+            // Note: Platform compatibility check is done outside of this class
             using var searcher = new System.Management.ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process");
 
             // Store the results in a dictionary
@@ -825,13 +894,13 @@ namespace PRISM
             if (CachedWmiCmdLineData == null)
             {
 #pragma warning disable CA1416 // Validate platform compatibility
-                // Note: Platform compatibility check is done outside of this class.
+                // Note: Platform compatibility check is done outside of this class
                 using var searcher = new System.Management.ManagementObjectSearcher(
                     string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id));
 
                 var matchEnum = searcher.Get().GetEnumerator();
 
-                // Move to the 1st item.
+                // Move to the 1st item
                 if (matchEnum.MoveNext())
                 {
                     cmdLine = matchEnum.Current["CommandLine"]?.ToString();
@@ -847,10 +916,10 @@ namespace PRISM
             if (cmdLine == null)
             {
                 // Not having found a command line implies 1 of 2 exceptions, which the WMI query masked:
-                // 1) An "Access denied" exception due to lack of privileges.
-                // 2) A "Cannot process request because the process (<pid>) has exited." exception, meaning the process has terminated
+                // 1) An "Access denied" exception due to lack of privileges
+                // 2) A "Cannot process request because the process (<pid>) has exited" exception, meaning the process has terminated
 
-                // Force the exception to be raised by trying to access process.MainModule.
+                // Force the exception to be raised by trying to access process.MainModule
                 var dummy = process.MainModule;
 
                 exePath = string.Empty;
@@ -1044,7 +1113,7 @@ namespace PRISM
                     var oldExePath = exePath;
 
                     // MainModule.FileName provides a nicer path format; try to access it
-                    // This can throw an exception, but that's expected when examining processes that are elevated or belong to other users.
+                    // This can throw an exception, but that's expected when examining processes that are elevated or belong to other users
                     exePath = item.MainModule.FileName;
                     cmdLine = cmdLine.Replace(oldExePath, exePath);
 

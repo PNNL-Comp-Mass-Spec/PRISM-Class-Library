@@ -16,7 +16,7 @@ namespace PRISMDatabaseUtils
         // Ignore Spelling: Postgres, varchar
 
         /// <summary>
-        /// Database connection string.
+        /// Database connection string
         /// </summary>
         string ConnectStr { get; set; }
 
@@ -36,12 +36,12 @@ namespace PRISMDatabaseUtils
         int TimeoutSeconds { get; set; }
 
         /// <summary>
-        /// The name of the server to which the connection string connects.
+        /// The name of the server to which the connection string connects
         /// </summary>
         string ServerName { get; }
 
         /// <summary>
-        /// The name of the database to which the connection string connects.
+        /// The name of the database to which the connection string connects
         /// </summary>
         string DatabaseName { get; }
 
@@ -376,7 +376,7 @@ namespace PRISMDatabaseUtils
             ParameterDirection direction = ParameterDirection.Input);
 
         /// <summary>
-        /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives.
+        /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives
         /// </summary>
         /// <param name="command"></param>
         /// <param name="name">Parameter name</param>
