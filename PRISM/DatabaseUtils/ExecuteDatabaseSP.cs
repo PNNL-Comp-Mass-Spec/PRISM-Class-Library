@@ -51,7 +51,7 @@ namespace PRISM
 
         #region "Module variables"
 
-        private string m_ConnStr;
+        private string mConnectionString;
 
         /// <summary>
         /// Timeout length, in seconds, when waiting for a stored procedure to finish executing
@@ -68,14 +68,14 @@ namespace PRISM
         // ReSharper disable once IdentifierTypo
         public string DBconnectionString
         {
-            get => m_ConnStr;
+            get => mConnectionString;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new Exception("Connection string cannot be empty");
                 }
-                m_ConnStr = value;
+                mConnectionString = value;
             }
         }
 
@@ -110,7 +110,7 @@ namespace PRISM
         /// </summary>
         public ExecuteDatabaseSP(string connectionString)
         {
-            m_ConnStr = connectionString;
+            mConnectionString = connectionString;
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace PRISM
         /// </summary>
         public ExecuteDatabaseSP(string connectionString, int timeoutSeconds)
         {
-            m_ConnStr = connectionString;
+            mConnectionString = connectionString;
             mTimeoutSeconds = timeoutSeconds;
         }
 
@@ -184,7 +184,7 @@ namespace PRISM
 
                 try
                 {
-                    using (var dbConnection = new SqlConnection(m_ConnStr))
+                    using (var dbConnection = new SqlConnection(mConnectionString))
                     {
                         dbConnection.InfoMessage += OnInfoMessage;
 
@@ -380,7 +380,7 @@ namespace PRISM
                 deadlockOccurred = false;
                 try
                 {
-                    using (var dbConnection = new SqlConnection(m_ConnStr))
+                    using (var dbConnection = new SqlConnection(mConnectionString))
                     {
                         dbConnection.Open();
 

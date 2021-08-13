@@ -20,14 +20,14 @@ namespace PRISM
             GetKeysAndValues = 2
         }
 
-        private readonly XmlDocument m_XmlDoc;
+        private readonly XmlDocument mXmlDoc;
 
         /// <summary>
         /// Cached list of section names
         /// </summary>
-        private List<string> m_SectionNames = new();
+        private List<string> mSectionNames = new();
 
-        private string m_SaveFilename;
+        private string mSaveFilename;
 
         private readonly bool NotifyOnException;
 
@@ -42,7 +42,7 @@ namespace PRISM
             NotifyOnException = notifyOnException;
 
             CaseSensitive = isCaseSensitive;
-            m_XmlDoc = new XmlDocument();
+            mXmlDoc = new XmlDocument();
 
             if (string.IsNullOrWhiteSpace(xmlFilename))
             {
@@ -54,7 +54,7 @@ namespace PRISM
             {
                 using (var settingsFile = new FileStream(xmlFilename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    m_XmlDoc.Load(settingsFile);
+                    mXmlDoc.Load(settingsFile);
                 }
                 UpdateSections();
                 XmlFilePath = xmlFilename;
@@ -103,21 +103,21 @@ namespace PRISM
         /// </summary>
         private XmlElement GetRoot()
         {
-            return m_XmlDoc.DocumentElement;
+            return mXmlDoc.DocumentElement;
         }
 
         /// <summary>
-        /// Get the last section in m_SectionNames
+        /// Get the last section in mSectionNames
         /// </summary>
         /// <return>The last section as System.Xml.XmlElement.</return>
         private XmlElement GetLastSection()
         {
-            if (m_SectionNames.Count == 0)
+            if (mSectionNames.Count == 0)
             {
                 return GetRoot();
             }
 
-            return GetSection(m_SectionNames[m_SectionNames.Count - 1]);
+            return GetSection(mSectionNames[mSectionNames.Count - 1]);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace PRISM
             if (!string.IsNullOrWhiteSpace(sectionName))
             {
                 sectionName = SetNameCase(sectionName);
-                return (XmlElement)m_XmlDoc.SelectSingleNode("//section[@name='" + sectionName + "']");
+                return (XmlElement)mXmlDoc.SelectSingleNode("//section[@name='" + sectionName + "']");
             }
             return null;
         }
@@ -235,7 +235,7 @@ namespace PRISM
             if (!string.IsNullOrWhiteSpace(keyName) && newValue != null)
             {
                 // construct a new item (blank values are OK)
-                item = m_XmlDoc.CreateElement("item");
+                item = mXmlDoc.CreateElement("item");
                 item.SetAttribute("key", SetNameCase(keyName));
                 item.SetAttribute("value", newValue);
                 section.AppendChild(item);
@@ -330,7 +330,7 @@ namespace PRISM
 
             if (sectionName == null)
             {
-                target = m_XmlDoc.DocumentElement;
+                target = mXmlDoc.DocumentElement;
             }
             else
             {
@@ -365,7 +365,7 @@ namespace PRISM
 
             if (sectionName == null)
             {
-                targetSection = m_XmlDoc.DocumentElement;
+                targetSection = mXmlDoc.DocumentElement;
             }
             else
             {
@@ -385,7 +385,7 @@ namespace PRISM
 
                 foreach (var s in comments)
                 {
-                    var comment = m_XmlDoc.CreateElement("comment");
+                    var comment = mXmlDoc.CreateElement("comment");
                     comment.InnerText = s;
                     var lastComment = (XmlElement)targetSection.SelectSingleNode("comment[last()]");
                     if (lastComment == null)
@@ -407,14 +407,14 @@ namespace PRISM
         /// </summary>
         private void UpdateSections()
         {
-            m_SectionNames = new List<string>();
-            var sectionNodes = m_XmlDoc.SelectNodes("sections/section");
+            mSectionNames = new List<string>();
+            var sectionNodes = mXmlDoc.SelectNodes("sections/section");
 
             if (sectionNodes != null)
             {
                 foreach (XmlElement item in sectionNodes)
                 {
-                    m_SectionNames.Add(item.GetAttribute("name"));
+                    mSectionNames.Add(item.GetAttribute("name"));
                 }
             }
         }
@@ -431,7 +431,7 @@ namespace PRISM
                 {
                     throw new XMLFileReaderNotInitializedException();
                 }
-                return m_SectionNames;
+                return mSectionNames;
             }
         }
 
@@ -600,16 +600,16 @@ namespace PRISM
             sectionName = SetNameCase(sectionName);
             try
             {
-                var newSection = m_XmlDoc.CreateElement("section");
+                var newSection = mXmlDoc.CreateElement("section");
 
-                var nameAttribute = m_XmlDoc.CreateAttribute("name");
+                var nameAttribute = mXmlDoc.CreateAttribute("name");
                 nameAttribute.Value = SetNameCase(sectionName);
                 newSection.Attributes.SetNamedItem(nameAttribute);
 
-                if (m_XmlDoc.DocumentElement != null)
+                if (mXmlDoc.DocumentElement != null)
                 {
-                    m_XmlDoc.DocumentElement.AppendChild(newSection);
-                    m_SectionNames.Add(nameAttribute.Value);
+                    mXmlDoc.DocumentElement.AppendChild(newSection);
+                    mSectionNames.Add(nameAttribute.Value);
                     return true;
                 }
             }
@@ -631,7 +631,7 @@ namespace PRISM
         public bool ManualParseXmlOrIniFile(string filePath)
         {
             // Create a new, blank XML document
-            m_XmlDoc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><sections></sections>");
+            mXmlDoc.LoadXml("<?xml version=\"1.0\" encoding=\"UTF-8\"?><sections></sections>");
 
             try
             {
@@ -657,7 +657,7 @@ namespace PRISM
                         var s = reader.ReadLine();
 
                         // Try to manually parse this line
-                        ParseLineManual(s, m_XmlDoc);
+                        ParseLineManual(s, mXmlDoc);
                     }
 
                     XmlFilePath = filePath;
@@ -669,7 +669,7 @@ namespace PRISM
                     XmlFilePath = filePath;
                     using (var settingsFile = new FileStream(XmlFilePath, FileMode.Create, FileAccess.Write))
                     {
-                        m_XmlDoc.Save(settingsFile);
+                        mXmlDoc.Save(settingsFile);
                     }
                     Initialized = true;
                 }
@@ -846,7 +846,7 @@ namespace PRISM
             {
                 if (!Initialized)
                     throw new XMLFileReaderNotInitializedException();
-                return m_SaveFilename;
+                return mSaveFilename;
             }
             set
             {
@@ -863,7 +863,7 @@ namespace PRISM
                 }
                 else
                 {
-                    m_SaveFilename = value;
+                    mSaveFilename = value;
                 }
             }
         }
@@ -876,7 +876,7 @@ namespace PRISM
             if (!Initialized)
                 throw new XMLFileReaderNotInitializedException();
 
-            if (OutputFilename != null && m_XmlDoc != null)
+            if (OutputFilename != null && mXmlDoc != null)
             {
                 var outputFile = new FileInfo(OutputFilename);
                 if (outputFile.Directory?.Exists == false)
@@ -894,7 +894,7 @@ namespace PRISM
                 }
 
                 using var settingsFile = new FileStream(OutputFilename, FileMode.Create, FileAccess.Write);
-                m_XmlDoc.Save(settingsFile);
+                mXmlDoc.Save(settingsFile);
             }
             else
             {
@@ -915,7 +915,7 @@ namespace PRISM
                 if (!Initialized)
                     throw new XMLFileReaderNotInitializedException();
 
-                return m_XmlDoc;
+                return mXmlDoc;
             }
         }
 
@@ -939,7 +939,7 @@ namespace PRISM
                 };
 
                 using var xw = XmlWriter.Create(new StringWriter(sb), settings);
-                m_XmlDoc.WriteContentTo(xw);
+                mXmlDoc.WriteContentTo(xw);
 
                 return sb.ToString();
             }

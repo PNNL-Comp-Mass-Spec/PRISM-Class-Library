@@ -20,16 +20,16 @@ namespace PRISM
         /// <summary>
         /// Interval, in milliseconds, to sleep between checking the status of a zip or unzip task
         /// </summary>
-        private readonly int m_WaitInterval;
+        private readonly int mWaitInterval;
 
         /// <summary>
         /// Logging class
         /// </summary>
-        private BaseLogger m_Logger;
+        private BaseLogger mLogger;
 
 #pragma warning disable 618
-        [Obsolete("Use m_Logger (typically a FileLogger)")]
-        private ILogger m_EventLogger;
+        [Obsolete("Use mLogger (typically a FileLogger)")]
+        private ILogger mEventLogger;
 
         /// <summary>
         /// Create a zip file.
@@ -44,9 +44,9 @@ namespace PRISM
             {
                 const string msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
-                m_Logger?.Error(msg);
+                mLogger?.Error(msg);
 
                 return false;
             }
@@ -57,7 +57,7 @@ namespace PRISM
                 Arguments = "-Add " + cmdOptions + " \"" + outputFile + "\" \"" + inputSpec + "\"",
                 Program = ZipFilePath,
                 WorkDir = WorkDir,
-                MonitoringInterval = m_WaitInterval,
+                MonitoringInterval = mWaitInterval,
                 Name = "Zipper",
                 Repeat = false,
                 RepeatHoldOffTime = 0,
@@ -86,9 +86,9 @@ namespace PRISM
             {
                 const string msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
-                m_Logger?.Error(msg);
+                mLogger?.Error(msg);
 
                 return false;
             }
@@ -98,9 +98,9 @@ namespace PRISM
             {
                 var msg = "Input file not found: " + zipFilePath;
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
-                m_Logger?.Error(msg);
+                mLogger?.Error(msg);
 
                 return false;
             }
@@ -110,9 +110,9 @@ namespace PRISM
             {
                 var msg = "Output directory " + outputDirectoryPath + " does not exist";
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
-                m_Logger?.Error(msg);
+                mLogger?.Error(msg);
 
                 return false;
             }
@@ -121,7 +121,7 @@ namespace PRISM
             var zipper = new ProgRunner
             {
                 Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outputDirectoryPath + "\"",
-                MonitoringInterval = m_WaitInterval,
+                MonitoringInterval = mWaitInterval,
                 Name = "Zipper",
                 Program = ZipFilePath,
                 WorkDir = WorkDir,
@@ -171,7 +171,7 @@ namespace PRISM
             ZipFilePath = zipFilePath;
 
             // Time in milliseconds
-            m_WaitInterval = 2000;
+            mWaitInterval = 2000;
 
             NotifyOnEvent = true;
             NotifyOnException = true;
@@ -188,9 +188,9 @@ namespace PRISM
             {
                 var msg = "Zip file not found; cannot verify: " + zipFilePath;
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
-                m_Logger?.Error(msg);
+                mLogger?.Error(msg);
 
                 return false;
             }
@@ -200,9 +200,9 @@ namespace PRISM
             {
                 const string msg = "Zip program path and/or working path not specified";
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logError, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logError, true);
 #pragma warning restore 618
-                m_Logger?.Error(msg);
+                mLogger?.Error(msg);
 
                 return false;
             }
@@ -214,7 +214,7 @@ namespace PRISM
                 Arguments = "-test -nofix " + zipFilePath,
                 Program = ZipFilePath,
                 WorkDir = WorkDir,
-                MonitoringInterval = m_WaitInterval,
+                MonitoringInterval = mWaitInterval,
                 Name = "Zipper",
                 Repeat = false,
                 RepeatHoldOffTime = 0,
@@ -235,13 +235,13 @@ namespace PRISM
         {
             while (zipper.State != ProgRunner.States.NotMonitoring)
             {
-                var msg = "Waiting for zipper program; sleeping for " + m_WaitInterval + " milliseconds";
+                var msg = "Waiting for zipper program; sleeping for " + mWaitInterval + " milliseconds";
 #pragma warning disable 618
-                m_EventLogger?.PostEntry(msg, logMsgType.logHealth, true);
+                mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
 #pragma warning restore 618
-                m_Logger?.Debug(msg);
+                mLogger?.Debug(msg);
 
-                ProgRunner.SleepMilliseconds(m_WaitInterval);
+                ProgRunner.SleepMilliseconds(mWaitInterval);
             }
 
             // Check for valid return value after completion
@@ -250,9 +250,9 @@ namespace PRISM
 
             var errorMsg = "Zipper program exited with code: " + zipper.ExitCode;
 #pragma warning disable 618
-            m_EventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
+            mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
 #pragma warning restore 618
-            m_Logger?.Error(errorMsg);
+            mLogger?.Error(errorMsg);
 
             return false;
         }
@@ -262,7 +262,7 @@ namespace PRISM
         /// </summary>
         public void RegisterEventLogger(BaseLogger logger)
         {
-            m_Logger = logger;
+            mLogger = logger;
         }
 
         /// <summary>
@@ -271,7 +271,7 @@ namespace PRISM
         [Obsolete("Use RegisterEventLogger that takes a BaseLogger (typically a FileLogger)")]
         public void RegisterEventLogger(ILogger logger)
         {
-            m_EventLogger = logger;
+            mEventLogger = logger;
         }
 
         /// <summary>

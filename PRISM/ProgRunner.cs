@@ -83,41 +83,41 @@ namespace PRISM
         /// <summary>
         /// Used to start and monitor the external program
         /// </summary>
-        private readonly Process m_Process = new();
+        private readonly Process mProcess = new();
 
         /// <summary>
         /// Thread cancellation token
         /// </summary>
-        private CancellationTokenSource m_CancellationToken;
+        private CancellationTokenSource mCancellationToken;
 
         /// <summary>
         /// Flag that tells internal thread to quit monitoring external program and exit
         /// </summary>
-        private bool m_doCleanup;
+        private bool mDoCleanup;
 
         /// <summary>
-        /// The interval, in milliseconds, for monitoring the thread to wake up and check m_doCleanup
+        /// The interval, in milliseconds, for monitoring the thread to wake up and check mDoCleanup
         /// </summary>
         /// <remarks>Default is 5000 msec</remarks>
-        private int m_monitorInterval;
+        private int mMonitorInterval;
 
         /// <summary>
         /// Exit code returned by completed process
         /// </summary>
         /// <remarks>Initially set to -123454321</remarks>
-        private int m_ExitCode;
+        private int mExitCode;
 
-        private StreamWriter m_ConsoleOutputStreamWriter;
+        private StreamWriter mConsoleOutputStreamWriter;
 
         /// <summary>
         /// Caches the text written to the Console by the external program
         /// </summary>
-        private StringBuilder m_CachedConsoleOutput;
+        private StringBuilder mCachedConsoleOutput;
 
         /// <summary>
         /// Caches the text written to the Error buffer by the external program
         /// </summary>
-        private StringBuilder m_CachedConsoleError;
+        private StringBuilder mCachedConsoleError;
 
         #endregion
 
@@ -126,7 +126,7 @@ namespace PRISM
         /// <summary>
         /// This event is raised at regular intervals while monitoring the program
         /// </summary>
-        /// <remarks>Raised every m_monitorInterval milliseconds</remarks>
+        /// <remarks>Raised every mMonitorInterval milliseconds</remarks>
         public event ProgChangedEventHandler ProgChanged;
 
         /// <summary>
@@ -173,12 +173,12 @@ namespace PRISM
         {
             get
             {
-                if (m_CachedConsoleOutput == null)
+                if (mCachedConsoleOutput == null)
                 {
                     return string.Empty;
                 }
 
-                return m_CachedConsoleOutput.ToString();
+                return mCachedConsoleOutput.ToString();
             }
         }
 
@@ -189,12 +189,12 @@ namespace PRISM
         {
             get
             {
-                if (m_CachedConsoleError == null)
+                if (mCachedConsoleError == null)
                 {
                     return string.Empty;
                 }
 
-                return m_CachedConsoleError.ToString();
+                return mCachedConsoleError.ToString();
             }
         }
 
@@ -232,7 +232,7 @@ namespace PRISM
         /// <summary>
         /// Exit code when process completes
         /// </summary>
-        public int ExitCode => m_ExitCode;
+        public int ExitCode => mExitCode;
 
         /// <summary>
         /// How often (milliseconds) internal monitoring thread checks status of external program
@@ -240,12 +240,12 @@ namespace PRISM
         /// <remarks>Minimum allowed value is 100 milliseconds</remarks>
         public int MonitoringInterval
         {
-            get => m_monitorInterval;
+            get => mMonitorInterval;
             set
             {
                 if (value < MINIMUM_MONITOR_INTERVAL_MSEC)
                     value = MINIMUM_MONITOR_INTERVAL_MSEC;
-                m_monitorInterval = value;
+                mMonitorInterval = value;
             }
         }
 
@@ -340,9 +340,9 @@ namespace PRISM
         {
             WorkDir = string.Empty;
             CreateNoWindow = false;
-            m_ExitCode = -123454321;
+            mExitCode = -123454321;
             // Unreasonable value
-            m_monitorInterval = DEFAULT_MONITOR_INTERVAL_MSEC;
+            mMonitorInterval = DEFAULT_MONITOR_INTERVAL_MSEC;
             NotifyOnEvent = true;
             NotifyOnException = true;
             CacheStandardOutput = false;
@@ -357,13 +357,13 @@ namespace PRISM
         /// </summary>
         public void ClearCachedConsoleOutput()
         {
-            if (m_CachedConsoleOutput == null)
+            if (mCachedConsoleOutput == null)
             {
-                m_CachedConsoleOutput = new StringBuilder();
+                mCachedConsoleOutput = new StringBuilder();
             }
             else
             {
-                m_CachedConsoleOutput.Clear();
+                mCachedConsoleOutput.Clear();
             }
         }
 
@@ -372,18 +372,18 @@ namespace PRISM
         /// </summary>
         public void ClearCachedConsoleError()
         {
-            if (m_CachedConsoleError == null)
+            if (mCachedConsoleError == null)
             {
-                m_CachedConsoleError = new StringBuilder();
+                mCachedConsoleError = new StringBuilder();
             }
             else
             {
-                m_CachedConsoleError.Clear();
+                mCachedConsoleError.Clear();
             }
         }
 
         /// <summary>
-        /// Asynchronously handles the error stream from m_Process
+        /// Asynchronously handles the error stream from mProcess
         /// </summary>
         private void ConsoleErrorHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
@@ -396,12 +396,12 @@ namespace PRISM
 
                 ConsoleErrorEvent?.Invoke(outLine.Data);
 
-                m_CachedConsoleError?.Append(outLine.Data);
+                mCachedConsoleError?.Append(outLine.Data);
             }
         }
 
         /// <summary>
-        /// Asynchronously handles the console output from m_Process
+        /// Asynchronously handles the console output from mProcess
         /// </summary>
         private void ConsoleOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
@@ -418,15 +418,15 @@ namespace PRISM
             if (CacheStandardOutput)
             {
                 // Add the text to the collected output
-                m_CachedConsoleOutput.AppendLine(outLine.Data);
+                mCachedConsoleOutput.AppendLine(outLine.Data);
             }
 
-            if (WriteConsoleOutputToFile && m_ConsoleOutputStreamWriter != null)
+            if (WriteConsoleOutputToFile && mConsoleOutputStreamWriter != null)
             {
                 // Write the standard output to the console output file
                 try
                 {
-                    m_ConsoleOutputStreamWriter.WriteLine(outLine.Data);
+                    mConsoleOutputStreamWriter.WriteLine(outLine.Data);
                 }
                 catch (Exception)
                 {
@@ -616,44 +616,44 @@ namespace PRISM
             bool standardOutputRedirected;
 
             // Set up parameters for external process
-            m_Process.StartInfo.FileName = Program;
-            m_Process.StartInfo.WorkingDirectory = WorkDir;
-            m_Process.StartInfo.Arguments = Arguments;
-            m_Process.StartInfo.CreateNoWindow = CreateNoWindow;
+            mProcess.StartInfo.FileName = Program;
+            mProcess.StartInfo.WorkingDirectory = WorkDir;
+            mProcess.StartInfo.Arguments = Arguments;
+            mProcess.StartInfo.CreateNoWindow = CreateNoWindow;
 
-            if (m_Process.StartInfo.CreateNoWindow)
+            if (mProcess.StartInfo.CreateNoWindow)
             {
-                m_Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                mProcess.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             }
             else
             {
-                m_Process.StartInfo.WindowStyle = WindowStyle;
+                mProcess.StartInfo.WindowStyle = WindowStyle;
             }
 
-            if (m_Process.StartInfo.CreateNoWindow || CacheStandardOutput || WriteConsoleOutputToFile)
+            if (mProcess.StartInfo.CreateNoWindow || CacheStandardOutput || WriteConsoleOutputToFile)
             {
-                m_Process.StartInfo.UseShellExecute = false;
-                m_Process.StartInfo.RedirectStandardOutput = true;
-                m_Process.StartInfo.RedirectStandardError = true;
+                mProcess.StartInfo.UseShellExecute = false;
+                mProcess.StartInfo.RedirectStandardOutput = true;
+                mProcess.StartInfo.RedirectStandardError = true;
                 standardOutputRedirected = true;
             }
             else
             {
-                m_Process.StartInfo.UseShellExecute = true;
-                m_Process.StartInfo.RedirectStandardOutput = false;
+                mProcess.StartInfo.UseShellExecute = true;
+                mProcess.StartInfo.RedirectStandardOutput = false;
                 standardOutputRedirected = false;
             }
 
-            if (!File.Exists(m_Process.StartInfo.FileName))
+            if (!File.Exists(mProcess.StartInfo.FileName))
             {
-                ThrowConditionalException(new Exception("Process filename " + m_Process.StartInfo.FileName + " not found."), "ProgRunner m_ProgName was not set correctly.");
+                ThrowConditionalException(new Exception("Process filename " + mProcess.StartInfo.FileName + " not found."), "ProgRunner property Program was not set correctly.");
                 State = States.NotMonitoring;
                 return;
             }
 
-            if (!Directory.Exists(m_Process.StartInfo.WorkingDirectory))
+            if (!Directory.Exists(mProcess.StartInfo.WorkingDirectory))
             {
-                ThrowConditionalException(new Exception("Process working directory " + m_Process.StartInfo.WorkingDirectory + " not found."), "ProgRunner m_WorkDir was not set correctly.");
+                ThrowConditionalException(new Exception("Process working directory " + mProcess.StartInfo.WorkingDirectory + " not found."), "ProgRunner property WorkDir was not set correctly.");
                 State = States.NotMonitoring;
                 return;
             }
@@ -661,8 +661,8 @@ namespace PRISM
             if (standardOutputRedirected)
             {
                 // Add event handlers to asynchronously read the console output and error stream
-                m_Process.OutputDataReceived += ConsoleOutputHandler;
-                m_Process.ErrorDataReceived += ConsoleErrorHandler;
+                mProcess.OutputDataReceived += ConsoleOutputHandler;
+                mProcess.ErrorDataReceived += ConsoleErrorHandler;
 
                 if (WriteConsoleOutputToFile)
                 {
@@ -670,20 +670,20 @@ namespace PRISM
                     {
                         if (string.IsNullOrEmpty(ConsoleOutputFilePath))
                         {
-                            // Need to auto-define m_ConsoleOutputFilePath
+                            // Need to auto-define mConsoleOutputFilePath
                             ConsoleOutputFilePath = GetConsoleOutputFilePath();
                         }
 
                         var consoleOutStream = new FileStream(ConsoleOutputFilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
-                        m_ConsoleOutputStreamWriter = new StreamWriter(consoleOutStream)
+                        mConsoleOutputStreamWriter = new StreamWriter(consoleOutStream)
                         {
                             AutoFlush = true
                         };
 
                         if (ConsoleOutputFileIncludesCommandLine)
                         {
-                            m_ConsoleOutputStreamWriter.WriteLine(Path.GetFileName(Program) + " " + Arguments.Trim());
-                            m_ConsoleOutputStreamWriter.WriteLine(new string('-', 80));
+                            mConsoleOutputStreamWriter.WriteLine(Path.GetFileName(Program) + " " + Arguments.Trim());
+                            mConsoleOutputStreamWriter.WriteLine(new string('-', 80));
                         }
                     }
                     catch (Exception ex)
@@ -705,16 +705,16 @@ namespace PRISM
                 try
                 {
                     State = States.StartingProcess;
-                    m_Process.Start();
+                    mProcess.Start();
                 }
                 catch (Exception ex)
                 {
                     var errorMsg = "Problem starting process. Parameters: " +
-                              Path.Combine(m_Process.StartInfo.WorkingDirectory, m_Process.StartInfo.FileName) + " " +
-                              m_Process.StartInfo.Arguments;
+                              Path.Combine(mProcess.StartInfo.WorkingDirectory, mProcess.StartInfo.FileName) + " " +
+                              mProcess.StartInfo.Arguments;
 
                     ThrowConditionalException(ex, errorMsg);
-                    m_ExitCode = -1234567;
+                    mExitCode = -1234567;
                     State = States.NotMonitoring;
                     return;
                 }
@@ -722,7 +722,7 @@ namespace PRISM
                 try
                 {
                     State = States.Monitoring;
-                    PID = m_Process.Id;
+                    PID = mProcess.Id;
                 }
                 catch (Exception)
                 {
@@ -736,8 +736,8 @@ namespace PRISM
                     {
                         // Initiate asynchronously reading the console output and error streams
 
-                        m_Process.BeginOutputReadLine();
-                        m_Process.BeginErrorReadLine();
+                        mProcess.BeginOutputReadLine();
+                        mProcess.BeginErrorReadLine();
                     }
                     catch (Exception)
                     {
@@ -751,23 +751,23 @@ namespace PRISM
                 // Wait for program to exit (loop on interval)
                 //
                 // We wait until the external process exits or
-                // the class is instructed to stop monitoring the process (m_doCleanup = true)
+                // the class is instructed to stop monitoring the process (mDoCleanup = true)
                 //
 
-                while (!m_doCleanup)
+                while (!mDoCleanup)
                 {
-                    if (m_monitorInterval < MINIMUM_MONITOR_INTERVAL_MSEC)
-                        m_monitorInterval = MINIMUM_MONITOR_INTERVAL_MSEC;
+                    if (mMonitorInterval < MINIMUM_MONITOR_INTERVAL_MSEC)
+                        mMonitorInterval = MINIMUM_MONITOR_INTERVAL_MSEC;
 
                     try
                     {
-                        m_Process.WaitForExit(m_monitorInterval);
-                        if (m_Process.HasExited)
+                        mProcess.WaitForExit(mMonitorInterval);
+                        if (mProcess.HasExited)
                             break;
 
                         if (token.IsCancellationRequested)
                         {
-                            m_Process.Kill();
+                            mProcess.Kill();
                         }
                     }
                     catch (Exception)
@@ -783,49 +783,49 @@ namespace PRISM
 
                 try
                 {
-                    m_ExitCode = m_Process.ExitCode;
+                    mExitCode = mProcess.ExitCode;
                 }
                 catch (Exception)
                 {
                     // Exception looking up ExitCode; most likely the process has exited
-                    m_ExitCode = 0;
+                    mExitCode = 0;
                 }
 
                 try
                 {
-                    m_Process.Dispose();
+                    mProcess.Dispose();
                 }
                 catch (Exception)
                 {
                     // Exception closing the process; ignore
                 }
 
-                var msg = "Process " + Name + " terminated with exit code " + m_ExitCode;
+                var msg = "Process " + Name + " terminated with exit code " + mExitCode;
 #pragma warning disable 618
                 mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
 #pragma warning restore 618
                 mLogger?.Debug(msg);
 
-                if (m_CachedConsoleError?.Length > 0)
+                if (mCachedConsoleError?.Length > 0)
                 {
-                    var errorMsg = "Cached error text for process " + Name + ": " + m_CachedConsoleError;
+                    var errorMsg = "Cached error text for process " + Name + ": " + mCachedConsoleError;
 #pragma warning disable 618
                     mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
 #pragma warning restore 618
                     mLogger?.Error(errorMsg);
                 }
 
-                if (m_ConsoleOutputStreamWriter != null)
+                if (mConsoleOutputStreamWriter != null)
                 {
-                    // Give the other threads time to write any additional info to m_ConsoleOutputStreamWriter
+                    // Give the other threads time to write any additional info to mConsoleOutputStreamWriter
                     GarbageCollectNow();
-                    m_ConsoleOutputStreamWriter.Flush();
-                    m_ConsoleOutputStreamWriter.Dispose();
+                    mConsoleOutputStreamWriter.Flush();
+                    mConsoleOutputStreamWriter.Dispose();
                 }
 
                 // Decide whether or not to repeat starting
                 // the external process again, or quit
-                if (Repeat && !m_doCleanup)
+                if (Repeat && !mDoCleanup)
                 {
                     // Repeat starting the process
                     // after waiting for minimum hold off time interval
@@ -857,15 +857,15 @@ namespace PRISM
                 return;
 
             State = States.Initializing;
-            m_doCleanup = false;
+            mDoCleanup = false;
 
-            m_CancellationToken = new CancellationTokenSource();
+            mCancellationToken = new CancellationTokenSource();
 
             // Arrange to start the program as an external process
             // and monitor it in a separate internal thread
             try
             {
-                ThreadPool.QueueUserWorkItem(StartProcess, m_CancellationToken.Token);
+                ThreadPool.QueueUserWorkItem(StartProcess, mCancellationToken.Token);
             }
             catch (Exception ex)
             {
@@ -891,10 +891,10 @@ namespace PRISM
             {
                 try
                 {
-                    // m_Process.Kill();
-                    m_CancellationToken?.Cancel();
+                    // mProcess.Kill();
+                    mCancellationToken?.Cancel();
                     SleepMilliseconds(500);
-                    m_CancellationToken?.Dispose();
+                    mCancellationToken?.Dispose();
                 }
                 catch (System.ComponentModel.Win32Exception ex)
                 {
@@ -919,8 +919,8 @@ namespace PRISM
             {
                 try
                 {
-                    if (m_Process?.HasExited == false)
-                        m_Process.Kill();
+                    if (mProcess?.HasExited == false)
+                        mProcess.Kill();
                 }
                 catch (Exception ex)
                 {
@@ -931,7 +931,7 @@ namespace PRISM
             if (StartingOrMonitoring() || State == States.Waiting)
             {
                 State = States.CleaningUp;
-                m_doCleanup = true;
+                mDoCleanup = true;
                 State = States.NotMonitoring;
             }
         }

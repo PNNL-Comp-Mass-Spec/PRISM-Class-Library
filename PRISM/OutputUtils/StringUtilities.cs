@@ -15,7 +15,7 @@ namespace PRISM
     {
         private const string SCIENTIFIC_NOTATION_CLEANUP_REGEX = "0+E";
 
-        private static readonly Regex m_scientificNotationTrim = new(SCIENTIFIC_NOTATION_CLEANUP_REGEX, RegexOptions.Compiled);
+        private static readonly Regex mScientificNotationTrim = new(SCIENTIFIC_NOTATION_CLEANUP_REGEX, RegexOptions.Compiled);
 
         /// <summary>
         /// Dictionary that tracks the format string used for each digitsOfPrecision value
@@ -232,7 +232,7 @@ namespace PRISM
                 }
 
                 // Look for numbers in scientific notation with a series of zeros before the E
-                if (!m_scientificNotationTrim.IsMatch(valueText))
+                if (!mScientificNotationTrim.IsMatch(valueText))
                 {
                     return valueText;
                 }
@@ -240,7 +240,7 @@ namespace PRISM
                 // Match found, for example 1.5000E-43
                 // Change it to instead be  1.5E-43
 
-                var updatedValue = m_scientificNotationTrim.Replace(valueText, "E");
+                var updatedValue = mScientificNotationTrim.Replace(valueText, "E");
 
                 // The number may now look like 1.E+43
                 // If it does, re-insert a zero after the decimal point

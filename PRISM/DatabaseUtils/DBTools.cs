@@ -530,7 +530,7 @@ namespace PRISM
 
                 try
                 {
-                    var cmd = new SqlCommand(SQL, m_DatabaseConnection);
+                    var cmd = new SqlCommand(SQL, mDatabaseConnection);
                     affectedRows = cmd.ExecuteNonQuery();
                     return true;
                 }
@@ -542,7 +542,7 @@ namespace PRISM
                 }
                 finally
                 {
-                    m_DatabaseConnection.Close();
+                    mDatabaseConnection.Close();
                 }
 
               */

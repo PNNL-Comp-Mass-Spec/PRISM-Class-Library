@@ -54,13 +54,13 @@ namespace PRISM.Logging
         /// Program name
         /// </summary>
         /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
-        private static string m_programName;
+        private static string mProgramName;
 
         /// <summary>
         /// Program version
         /// </summary>
         /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
-        private static string m_programVersion;
+        private static string mProgramVersion;
 
         #region "Properties"
 
@@ -68,12 +68,12 @@ namespace PRISM.Logging
         /// Gets the product version associated with this application
         /// </summary>
         // ReSharper disable once UnusedMember.Global
-        public static string ExecutableVersion => m_programVersion ??= FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+        public static string ExecutableVersion => mProgramVersion ??= FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
         /// Gets the name of the executable file that started the application
         /// </summary>
-        public static string ExecutableName => m_programName ??= Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
+        public static string ExecutableName => mProgramName ??= Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
 
         /// <summary>
         /// Most recent error message

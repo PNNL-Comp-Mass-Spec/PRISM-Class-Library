@@ -127,15 +127,15 @@ namespace PRISM
         /// Program name
         /// </summary>
         /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
-        private string m_programName;
+        private string mProgramName;
 
         /// <summary>
         /// Program version
         /// </summary>
         /// <remarks>Auto-determined using Assembly.GetEntryAssembly</remarks>
-        private string m_programVersion;
+        private string mProgramVersion;
 
-        private DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
+        private DateTime mLastCheckOldLogs = DateTime.UtcNow.AddDays(-2);
 
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class.
@@ -173,12 +173,12 @@ namespace PRISM
         /// <summary>
         /// Gets the product version associated with this application.
         /// </summary>
-        public string ExecutableVersion => m_programVersion ??= FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+        public string ExecutableVersion => mProgramVersion ??= FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
         /// Gets the name of the executable file that started the application.
         /// </summary>
-        public string ExecutableName => m_programName ??= Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
+        public string ExecutableName => mProgramName ??= Path.GetFileName(FileProcessor.ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().Location);
 
         /// <summary>
         /// The base name of the log file, e.g. UpdateManager or Logs\UpdateManager
@@ -278,10 +278,10 @@ namespace PRISM
                 // Ignore errors here
             }
 
-            if (!ArchiveOldLogFiles || DateTime.UtcNow.Subtract(m_LastCheckOldLogs).TotalHours < 24)
+            if (!ArchiveOldLogFiles || DateTime.UtcNow.Subtract(mLastCheckOldLogs).TotalHours < 24)
                 return;
 
-            m_LastCheckOldLogs = DateTime.UtcNow;
+            mLastCheckOldLogs = DateTime.UtcNow;
             ArchiveOldLogs();
         }
 
@@ -365,7 +365,7 @@ namespace PRISM
             }
             else
             {
-                // Define log file name by appending the current date to m_logFileBaseName
+                // Define log file name by appending the current date to LogFileBaseName
                 CurrentLogFilePath = LogFileBaseName + "_" + DateTime.Now.ToString(FILENAME_DATE_STAMP) + LOG_FILE_EXTENSION;
             }
         }
@@ -383,12 +383,12 @@ namespace PRISM
         /// <summary>
         /// List of database errors
         /// </summary>
-        private readonly List<string> m_error_list = new();
+        private readonly List<string> mErrorList = new();
 
         /// <summary>
         /// Module name
         /// </summary>
-        protected string m_moduleName;
+        protected string mModuleName;
 
         /// <summary>
         /// Initializes a new instance of the clsDBLogger class.
@@ -427,7 +427,7 @@ namespace PRISM
         public clsDBLogger(string modName, string connectionStr, string filePath) : base(filePath)
         {
             ConnectionString = connectionStr;
-            m_moduleName = modName;
+            mModuleName = modName;
         }
 
         /// <summary>
@@ -438,7 +438,7 @@ namespace PRISM
         /// <summary>
         /// List of any database errors that occurred while posting the log entry to the database
         /// </summary>
-        public IReadOnlyList<string> DBErrors => m_error_list;
+        public IReadOnlyList<string> DBErrors => mErrorList;
 
         /// <summary>
         /// The module name identifies the logging process.
@@ -463,13 +463,13 @@ namespace PRISM
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(m_moduleName))
+                if (string.IsNullOrWhiteSpace(mModuleName))
                 {
-                    m_moduleName = ConstructModuleName();
+                    mModuleName = ConstructModuleName();
                 }
-                return m_moduleName;
+                return mModuleName;
             }
-            set => m_moduleName = value;
+            set => mModuleName = value;
         }
 
         /// <summary>
@@ -554,7 +554,7 @@ namespace PRISM
         {
             try
             {
-                m_error_list.Clear();
+                mErrorList.Clear();
 
                 // Create the database connection
 
@@ -599,7 +599,7 @@ namespace PRISM
                         ", LineNumber: " + err.LineNumber +
                         ", Procedure:" + err.Procedure +
                         ", Server: " + err.Server;
-                m_error_list.Add(s);
+                mErrorList.Add(s);
             }
         }
     }
@@ -665,17 +665,17 @@ namespace PRISM
         /// <summary>
         /// queue to hold entries to be output
         /// </summary>
-        protected ConcurrentQueue<clsLogEntry> m_queue;
+        protected ConcurrentQueue<clsLogEntry> mQueue;
 
         /// <summary>
         /// Internal thread for outputting entries from queue
         /// </summary>
-        protected Timer m_ThreadTimer;
+        protected Timer mThreadTimer;
 
         /// <summary>
         /// logger object to use for outputting entries from queue
         /// </summary>
-        protected ILogger m_logger;
+        protected ILogger mLogger;
 
         /// <summary>
         /// Path to the current log file
@@ -684,12 +684,12 @@ namespace PRISM
         {
             get
             {
-                if (m_logger == null)
+                if (mLogger == null)
                 {
                     return string.Empty;
                 }
 
-                return m_logger.CurrentLogFilePath;
+                return mLogger.CurrentLogFilePath;
             }
         }
 
@@ -700,12 +700,12 @@ namespace PRISM
         {
             get
             {
-                if (m_logger == null)
+                if (mLogger == null)
                 {
                     return string.Empty;
                 }
 
-                return m_logger.MostRecentLogMessage;
+                return mLogger.MostRecentLogMessage;
             }
         }
 
@@ -716,12 +716,12 @@ namespace PRISM
         {
             get
             {
-                if (m_logger == null)
+                if (mLogger == null)
                 {
                     return string.Empty;
                 }
 
-                return m_logger.MostRecentErrorMessage;
+                return mLogger.MostRecentErrorMessage;
             }
         }
 
@@ -732,13 +732,13 @@ namespace PRISM
         public clsQueLogger(ILogger logger)
         {
             // Remember my logging object
-            m_logger = logger;
+            mLogger = logger;
 
             // Create a thread safe queue for log entries
-            m_queue = new ConcurrentQueue<clsLogEntry>();
+            mQueue = new ConcurrentQueue<clsLogEntry>();
 
             // Log every 1 second
-            m_ThreadTimer = new Timer(LogFromQueue, this, 0, 1000);
+            mThreadTimer = new Timer(LogFromQueue, this, 0, 1000);
         }
 
         /// <summary>
@@ -746,21 +746,21 @@ namespace PRISM
         /// </summary>
         protected void LogFromQueue(object o)
         {
-            if (m_queue.IsEmpty)
+            if (mQueue.IsEmpty)
                 return;
 
             var messages = new List<clsLogEntry>();
 
             do
             {
-                if (m_queue.TryDequeue(out var le))
+                if (mQueue.TryDequeue(out var le))
                 {
                     messages.Add(le);
                 }
             }
-            while (!m_queue.IsEmpty);
+            while (!mQueue.IsEmpty);
 
-            m_logger.PostEntries(messages);
+            mLogger.PostEntries(messages);
         }
 
         /// <summary>
@@ -771,7 +771,7 @@ namespace PRISM
         {
             foreach (var item in messages)
             {
-                m_queue.Enqueue(item);
+                mQueue.Enqueue(item);
             }
         }
 
@@ -788,7 +788,7 @@ namespace PRISM
         public void PostEntry(string message, logMsgType entryType, bool localOnly)
         {
             var le = new clsLogEntry(message, entryType, localOnly);
-            m_queue.Enqueue(le);
+            mQueue.Enqueue(le);
         }
 
         /// <summary>
@@ -804,7 +804,7 @@ namespace PRISM
         public void PostError(string message, Exception ex, bool localOnly)
         {
             var le = new clsLogEntry(message + ": " + ex.Message, logMsgType.logError, localOnly);
-            m_queue.Enqueue(le);
+            mQueue.Enqueue(le);
         }
     }
 
