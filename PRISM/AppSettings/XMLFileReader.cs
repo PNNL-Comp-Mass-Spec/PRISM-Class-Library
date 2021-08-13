@@ -25,7 +25,7 @@ namespace PRISM
         /// <summary>
         /// Cached list of section names
         /// </summary>
-        private List<string> mSectionNames = new();
+        private readonly List<string> mSectionNames = new();
 
         private string mSaveFilename;
 
@@ -407,7 +407,7 @@ namespace PRISM
         /// </summary>
         private void UpdateSections()
         {
-            mSectionNames = new List<string>();
+            mSectionNames.Clear();
             var sectionNodes = mXmlDoc.SelectNodes("sections/section");
 
             if (sectionNodes != null)
