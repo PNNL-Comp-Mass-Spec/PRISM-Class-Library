@@ -5,6 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
+// ReSharper disable UnusedMember.Global
+// ReSharper disable UnusedMember.Local
+
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {

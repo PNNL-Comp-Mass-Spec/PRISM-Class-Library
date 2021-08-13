@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISM.Logging
 {
     /// <summary>

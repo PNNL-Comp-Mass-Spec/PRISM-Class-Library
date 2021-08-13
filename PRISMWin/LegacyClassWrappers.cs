@@ -1,5 +1,7 @@
 ﻿using System;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMWin
 {
 #pragma warning disable CS1591  // Missing XML comments

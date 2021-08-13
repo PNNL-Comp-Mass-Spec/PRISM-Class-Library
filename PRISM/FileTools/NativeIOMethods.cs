@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISM
 {
     /// <summary>

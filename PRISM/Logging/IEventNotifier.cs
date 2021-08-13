@@ -1,5 +1,7 @@
 ﻿namespace PRISM.Logging
 {
+    // ReSharper disable UnusedMemberInSuper.Global
+
     /// <summary>
     /// Interface for IEventNotifier; primary use is for interfaces whose implementations should inherit from EventNotifier
     /// </summary>

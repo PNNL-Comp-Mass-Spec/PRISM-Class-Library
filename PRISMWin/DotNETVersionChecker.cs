@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMWin
 {
     /// <summary>

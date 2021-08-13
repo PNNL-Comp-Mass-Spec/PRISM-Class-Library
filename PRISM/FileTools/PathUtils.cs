@@ -191,6 +191,8 @@ namespace PRISM
             }
         }
 
+        // ReSharper disable once CommentTypo
+
         /// <summary>
         /// Check a filename against a file mask (like * or *.txt or MSGF*)
         /// </summary>

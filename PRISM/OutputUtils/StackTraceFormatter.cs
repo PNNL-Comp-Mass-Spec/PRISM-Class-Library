@@ -39,6 +39,7 @@ namespace PRISM
         /// String of the form:
         /// Stack trace: TestApp.exe.InnerMethod-:-TestApp.exe.TestMethod-:-TestApp.exe.Main
         /// </returns>
+        // ReSharper disable once UnusedMember.Global
         public static string GetCurrentStackTrace()
         {
             var parentMethods = GetStackTraceMethods(includeParamTypes: false);
