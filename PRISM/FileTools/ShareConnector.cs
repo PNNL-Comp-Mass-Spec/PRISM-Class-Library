@@ -9,10 +9,10 @@ namespace PRISM
     /// Connects to a file share using a password and user name.
     /// </summary>
     /// <remarks>
-    /// The default behaviour when connecting to SMB/CIFS file shares is for
-    /// the system to supply the user name and password used to logon to the local machine.
+    /// The default behavior when connecting to SMB/CIFS file shares is for
+    /// the system to supply the user name and password used to log on to the local machine.
     /// This class allows you to connect to SMB/CIFS file shares when the use of
-    /// SSPI isn't available and/or when you don't wish to use the default behaviour.
+    /// SSPI isn't available and/or when you don't wish to use the default behavior.
     /// It's quite comparable to the "Connect using a different user name." option in the Map Network Drive
     /// utility in Windows.  Much of this code came from Microsoft Knowledge Base Article - 173011.  It was
     /// then modified to fit our needs.
@@ -20,6 +20,8 @@ namespace PRISM
     // ReSharper disable once UnusedMember.Global
     public class ShareConnector
     {
+        // Ignore Spelling: const, username
+
 #pragma warning disable 1591
         // ReSharper disable UnusedMember.Global
 
