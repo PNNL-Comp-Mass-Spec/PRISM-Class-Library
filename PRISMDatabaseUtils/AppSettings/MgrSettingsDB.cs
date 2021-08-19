@@ -20,6 +20,7 @@ namespace PRISMDatabaseUtils.AppSettings
         /// Load manager settings from the database
         /// </summary>
         /// <param name="managerName">Manager name or manager group name</param>
+        /// <param name="managerNameForConnectionString">Manager name to include in the database connection string</param>
         /// <param name="mgrSettingsFromDB">Output: manager settings</param>
         /// <param name="logConnectionErrors">When true, log connection errors</param>
         /// <param name="returnErrorIfNoParameters">When true, return an error if no parameters defined</param>
@@ -27,6 +28,7 @@ namespace PRISMDatabaseUtils.AppSettings
         /// <returns>True if successful, otherwise false</returns>
         protected override bool LoadMgrSettingsFromDBWork(
             string managerName,
+            string managerNameForConnectionString,
             out Dictionary<string, string> mgrSettingsFromDB,
             bool logConnectionErrors,
             bool returnErrorIfNoParameters,
@@ -43,12 +45,17 @@ namespace PRISMDatabaseUtils.AppSettings
                 return false;
             }
 
-            ShowTrace("LoadMgrSettingsFromDBWork using [" + dbConnectionString + "] for manager " + managerName);
+            if (string.IsNullOrWhiteSpace(managerNameForConnectionString))
+                managerNameForConnectionString = managerName;
+
+            var connectionStringToUse = DbToolsFactory.AddApplicationNameToConnectionString(dbConnectionString, managerNameForConnectionString);
+
+            ShowTrace(string.Format("LoadMgrSettingsFromDBWork using {0} for manager {1}", connectionStringToUse, managerName));
 
             var sqlQuery = "SELECT ParameterName, ParameterValue FROM V_Mgr_Params WHERE ManagerName = '" + managerName + "'";
 
             // Query the database
-            var dbTools = DbToolsFactory.GetDBTools(dbConnectionString);
+            var dbTools = DbToolsFactory.GetDBTools(connectionStringToUse);
 
             if (logConnectionErrors)
             {
@@ -62,7 +69,7 @@ namespace PRISMDatabaseUtils.AppSettings
                 // Log the message to the DB if the monthly Windows updates are not pending
                 var criticalError = !WindowsUpdateStatus.ServerUpdatesArePending();
 
-                ErrMsg = "MgrSettings.LoadMgrSettingsFromDB; Excessive failures attempting to retrieve manager settings from database for manager " + managerName;
+                ErrMsg = "MgrSettings.LoadMgrSettingsFromDBWork; Excessive failures attempting to retrieve manager settings from database for manager " + managerName;
                 if (logConnectionErrors)
                     ReportError(ErrMsg, criticalError);
 
@@ -73,8 +80,8 @@ namespace PRISMDatabaseUtils.AppSettings
             if (queryResults.Count < 1 && returnErrorIfNoParameters)
             {
                 // Wrong number of rows returned
-                ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDB; Manager '{0}' is not defined in the manager control database; using {1}",
-                                       managerName, dbConnectionString);
+                ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork; Manager '{0}' is not defined in the manager control database; using {1}",
+                                       managerName, connectionStringToUse);
                 ReportError(ErrMsg);
                 return false;
             }

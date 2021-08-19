@@ -411,7 +411,11 @@ namespace PRISM.AppSettings
                 return false;
             }
 
-            var success = LoadMgrSettingsFromDBWork(managerName, out var mgrSettingsFromDB, logConnectionErrors, true, retryCount);
+            var success = LoadMgrSettingsFromDBWork(
+                managerName, managerName,
+                out var mgrSettingsFromDB,
+                logConnectionErrors, true, retryCount);
+
             if (!success)
             {
                 return false;
@@ -424,7 +428,10 @@ namespace PRISM.AppSettings
             while (success && !string.IsNullOrEmpty(mgrSettingsGroup))
             {
                 // This manager has group-based settings defined; load them now
-                success = LoadMgrSettingsFromDBWork(mgrSettingsGroup, out var mgrGroupSettingsFromDB, logConnectionErrors, false, retryCount);
+                success = LoadMgrSettingsFromDBWork(
+                    mgrSettingsGroup, managerName,
+                    out var mgrGroupSettingsFromDB,
+                    logConnectionErrors, false, retryCount);
 
                 if (success)
                 {
@@ -440,6 +447,7 @@ namespace PRISM.AppSettings
         /// Load manager settings from the database
         /// </summary>
         /// <param name="managerName">Manager name or manager group name</param>
+        /// <param name="managerNameForConnectionString">Manager name to include in the database connection string</param>
         /// <param name="mgrSettingsFromDB">Output: manager settings</param>
         /// <param name="logConnectionErrors">When true, log connection errors</param>
         /// <param name="returnErrorIfNoParameters">When true, return an error if no parameters defined</param>
@@ -447,6 +455,7 @@ namespace PRISM.AppSettings
         /// <returns>True if successful, otherwise false</returns>
         protected virtual bool LoadMgrSettingsFromDBWork(
             string managerName,
+            string managerNameForConnectionString,
             out Dictionary<string, string> mgrSettingsFromDB,
             bool logConnectionErrors,
             bool returnErrorIfNoParameters,
