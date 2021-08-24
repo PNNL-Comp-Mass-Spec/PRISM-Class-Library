@@ -173,7 +173,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <param name="sqlQuery">A SQL string</param>
         /// <param name="DS">A dataset</param>
         /// <param name="rowCount">A row counter</param>
-        /// <return>Returns a disconnected dataset as specified by the SQL statement</return>
+        /// <returns>Returns a disconnected dataset as specified by the SQL statement</returns>
         [Obsolete("Use GetQueryResults since support for dataset objects is unavailable in .NET Standard 1.0; Use GetQueryResultsDataset.", true)]
         public bool GetDiscDataSet(string sqlQuery, ref DataSet DS, ref int rowCount)
         {
@@ -670,7 +670,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// </summary>
         /// <param name="SQL">A SQL string</param>
         /// <param name="affectedRows">Affected Rows to be updated</param>
-        /// <return>Returns Boolean showing if the database was updated</return>
+        /// <returns>Returns Boolean showing if the database was updated</returns>
         [Obsolete("Functionality of this method has been disabled for safety; an exception will be raised if it is called")]
         public bool UpdateDatabase(string SQL, out int affectedRows)
         {

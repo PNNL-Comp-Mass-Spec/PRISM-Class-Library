@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -87,7 +87,7 @@ namespace PRISM
         /// Adjust the case of a setting name
         /// </summary>
         /// <param name="aName">Setting name</param>
-        /// <return>Returns the name as-is if CaseSensitive is true; otherwise, changes the name to lowercase</return>
+        /// <returns>Returns the name as-is if CaseSensitive is true; otherwise, changes the name to lowercase</returns>
         private string SetNameCase(string aName)
         {
             if (CaseSensitive)
@@ -109,7 +109,7 @@ namespace PRISM
         /// <summary>
         /// Get the last section in mSectionNames
         /// </summary>
-        /// <return>The last section as System.Xml.XmlElement</return>
+        /// <returns>The last section as System.Xml.XmlElement</returns>
         private XmlElement GetLastSection()
         {
             if (mSectionNames.Count == 0)
@@ -124,7 +124,7 @@ namespace PRISM
         /// Get a section by name
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>The section as an XmlElement if found, otherwise null</return>
+        /// <returns>The section as an XmlElement if found, otherwise null</returns>
         private XmlElement GetSection(string sectionName)
         {
             if (!string.IsNullOrWhiteSpace(sectionName))
@@ -140,7 +140,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Setting name</param>
-        /// <return>XML element, or null if no match</return>
+        /// <returns>XML element, or null if no match</returns>
         private XmlElement GetItem(string sectionName, string keyName)
         {
             if (!string.IsNullOrWhiteSpace(keyName))
@@ -160,7 +160,7 @@ namespace PRISM
         /// </summary>
         /// <param name="oldSection">The name of the section to copy</param>
         /// <param name="newSection">The new section name</param>
-        /// <return>True if success, false if the old section was not found or if newSection is an empty string</return>
+        /// <returns>True if success, false if the old section was not found or if newSection is an empty string</returns>
         public bool SetXMLSection(string oldSection, string newSection)
         {
             if (!Initialized)
@@ -185,7 +185,7 @@ namespace PRISM
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
         /// <param name="newValue">Value for the key</param>
-        /// <return>True if success, false </return>
+        /// <returns>True if success, false </returns>
         public bool SetXMLValue(string sectionName, string keyName, string newValue)
         {
             if (!Initialized)
@@ -248,7 +248,7 @@ namespace PRISM
         /// Delete a section by name
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>True if success, false if the section was not found</return>
+        /// <returns>True if success, false if the section was not found</returns>
         private bool DeleteSection(string sectionName)
         {
             var section = GetSection(sectionName);
@@ -266,7 +266,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
-        /// <return>True if success, false if the section and/or key was not found</return>
+        /// <returns>True if success, false if the section and/or key was not found</returns>
         private bool DeleteItem(string sectionName, string keyName)
         {
             var item = GetItem(sectionName, keyName);
@@ -284,7 +284,7 @@ namespace PRISM
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
         /// <param name="newValue">The new value for the "key"</param>
-        /// <return>True if successful, otherwise false</return>
+        /// <returns>True if successful, otherwise false</returns>
         [Obsolete("Unused: this class is used to read XML files, not update them")]
         private bool SetXmlKey(string sectionName, string keyName, string newValue)
         {
@@ -305,7 +305,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
-        ///<return>The string in the "value" attribute of the key</return>
+        ///<returns>The string in the "value" attribute of the key</returns>
         public string GetXMLValue(string sectionName, string keyName)
         {
             if (!Initialized)
@@ -319,7 +319,7 @@ namespace PRISM
         /// Get the comments for a section name
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        ///<return>List of comments</return>
+        ///<returns>List of comments</returns>
         public IEnumerable<string> GetXmlSectionComments(string sectionName)
         {
             if (!Initialized)
@@ -354,7 +354,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="comments">List of comments</param>
-        /// <return>True if successful, otherwise false</return>
+        /// <returns>True if successful, otherwise false</returns>
         [Obsolete("Unused: this class is used to read XML files, not update them")]
         private bool SetXMLComments(string sectionName, IEnumerable<string> comments)
         {
@@ -422,7 +422,7 @@ namespace PRISM
         /// <summary>
         /// Retrieve the section names
         /// </summary>
-        /// <return>List of section names</return>
+        /// <returns>List of section names</returns>
         public List<string> AllSections
         {
             get
@@ -440,7 +440,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sectionName">Section name</param>
         /// <param name="itemType">Item type</param>
-        /// <return>List of items</return>
+        /// <returns>List of items</returns>
         private List<string> GetItemsInSection(string sectionName, XMLItemTypeEnum itemType)
         {
             var items = new List<string>();
@@ -480,7 +480,7 @@ namespace PRISM
         /// Gets a list of keys in a section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>List key names</return>
+        /// <returns>List key names</returns>
         public List<string> AllKeysInSection(string sectionName)
         {
             if (!Initialized)
@@ -493,7 +493,7 @@ namespace PRISM
         /// Gets a list of values in a section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>List of values</return>
+        /// <returns>List of values</returns>
         public List<string> AllValuesInSection(string sectionName)
         {
             if (!Initialized)
@@ -506,7 +506,7 @@ namespace PRISM
         /// Gets a list of items in a section (as key=value pairs)
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>List of items</return>
+        /// <returns>List of items</returns>
         public List<string> AllItemsInSection(string sectionName)
         {
             if (!Initialized)
@@ -521,7 +521,7 @@ namespace PRISM
         /// <param name="sectionName">Section name</param>
         /// <param name="keyName">Key name</param>
         /// <param name="attributeName">Attribute name</param>
-        /// <return>Attribute value, as a string</return>
+        /// <returns>Attribute value, as a string</returns>
         public string GetCustomIniAttribute(string sectionName, string keyName, string attributeName)
         {
             if (!Initialized)
@@ -547,7 +547,7 @@ namespace PRISM
         /// <param name="keyName">Key name</param>
         /// <param name="attributeName">Attribute name</param>
         /// <param name="attributeValue">Value for the attribute</param>
-        /// <return>True if successful, otherwise false</return>
+        /// <returns>True if successful, otherwise false</returns>
         public bool SetCustomIniAttribute(string sectionName, string keyName, string attributeName, string attributeValue)
         {
             if (!Initialized)
@@ -591,7 +591,7 @@ namespace PRISM
         /// Creates a section
         /// </summary>
         /// <param name="sectionName">Section name</param>
-        /// <return>True if successful, false if sectionName is empty or an error occurs</return>
+        /// <returns>True if successful, false if sectionName is empty or an error occurs</returns>
         private bool CreateSection(string sectionName)
         {
             if (string.IsNullOrWhiteSpace(sectionName))
@@ -922,7 +922,7 @@ namespace PRISM
         /// <summary>
         /// Converts an XML document to a string
         /// </summary>
-        /// <return>The XML document formatted as a string</return>
+        /// <returns>The XML document formatted as a string</returns>
         public string XML
         {
             get
