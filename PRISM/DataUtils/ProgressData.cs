@@ -225,10 +225,10 @@ namespace PRISM
         /// <summary>
         /// Change to a new range block
         /// </summary>
-        /// <param name="newMaxPercentage">New max percent for range, must be greater than current max percent</param>
-        /// <param name="newStatus">Updated status string, null for no update</param>
         /// <remarks>Will set IsPartialRange to true</remarks>
         /// <remarks>If current max percent is 100, the new max percent can be any value between 0 and 100</remarks>
+        /// <param name="newMaxPercentage">New max percent for range, must be greater than current max percent</param>
+        /// <param name="newStatus">Updated status string, null for no update</param>
         public void StepRange(double newMaxPercentage, string newStatus = null)
         {
             if (!IsPartialRange)

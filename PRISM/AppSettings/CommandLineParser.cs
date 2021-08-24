@@ -365,8 +365,8 @@ namespace PRISM
         /// <summary>
         /// Add additional param keys that can be used to specify a parameter file argument, for example "Conf"
         /// </summary>
-        /// <param name="paramKey"></param>
         /// <remarks>The default argument name for parameter files is /ParamFile or -ParamFile</remarks>
+        /// <param name="paramKey"></param>
         public void AddParamFileKey(string paramKey)
         {
             if (string.IsNullOrWhiteSpace(paramKey))
@@ -458,10 +458,6 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments, returning the parsing results
         /// </summary>
-        /// <param name="args">Command line arguments</param>
-        /// <param name="onErrorOutputHelp">When an error occurs, display the error and output the help</param>
-        /// <param name="outputErrors">When an error occurs, output the error</param>
-        /// <returns>Parser results</returns>
         /// <remarks>
         /// The command line arguments in the args array can be provided in various forms, including:
         /// -i InputFile.txt
@@ -471,6 +467,10 @@ namespace PRISM
         /// -d
         /// --dir
         /// </remarks>
+        /// <param name="args">Command line arguments</param>
+        /// <param name="onErrorOutputHelp">When an error occurs, display the error and output the help</param>
+        /// <param name="outputErrors">When an error occurs, output the error</param>
+        /// <returns>Parser results</returns>
         public ParserResults ParseArgs(string[] args, bool onErrorOutputHelp = true, bool outputErrors = true)
         {
             if (args.Length == 0)
@@ -1262,15 +1262,15 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments to a dictionary
         /// </summary>
+        /// <remarks>
+        /// Arguments loaded from a parameter file will each start with a dash, followed by the argument name, then an equals sign, then the value
+        /// </remarks>
         /// <param name="args"></param>
         /// <param name="parsingParamFileArgs">Set this to true if the arguments were loaded from a parameter file</param>
         /// <returns>
         /// Dictionary where keys are argument names and values are the setting for the argument
         /// Values are a list in case the parameter is specified more than once
         /// </returns>
-        /// <remarks>
-        /// Arguments loaded from a parameter file will each start with a dash, followed by the argument name, then an equals sign, then the value
-        /// </remarks>
         private Dictionary<string, List<string>> ArgsPreprocess(IReadOnlyList<string> args, bool parsingParamFileArgs)
         {
             var validArgs = GetValidArgs();
@@ -1889,10 +1889,10 @@ namespace PRISM
         /// <summary>
         /// Wraps the words in textToWrap to the set width (where possible)
         /// </summary>
+        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
         /// <param name="textToWrap">Text to wrap</param>
         /// <param name="wrapWidth">Max length per line</param>
         /// <returns>Wrapped paragraph</returns>
-        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
         public static string WrapParagraph(string textToWrap, int wrapWidth = 80)
         {
             return ConsoleMsgUtils.WrapParagraph(textToWrap, wrapWidth);
@@ -1901,10 +1901,10 @@ namespace PRISM
         /// <summary>
         /// Wraps the words in textToWrap to the set width (where possible)
         /// </summary>
+        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
         /// <param name="textToWrap">Text to wrap</param>
         /// <param name="wrapWidth">Max length per line</param>
         /// <returns>Wrapped paragraph as a list of strings</returns>
-        /// <remarks>Use the 'alert' character ('\a') to create a non-breaking space</remarks>
         public static List<string> WrapParagraphAsList(string textToWrap, int wrapWidth)
         {
             return ConsoleMsgUtils.WrapParagraphAsList(textToWrap, wrapWidth);
@@ -1913,8 +1913,8 @@ namespace PRISM
         /// <summary>
         /// Get the arguments that are valid for the class, dealing with argument name collision and invalid characters as needed
         /// </summary>
-        /// <returns>Dictionary where key is argument name, and value is Argument Info</returns>
         /// <remarks>Position arguments are tracked via special flags: ##1##, ##2##, etc.</remarks>
+        /// <returns>Dictionary where key is argument name, and value is Argument Info</returns>
         private Dictionary<string, ArgInfo> GetValidArgs()
         {
             if (validArguments != null)
@@ -2378,8 +2378,8 @@ namespace PRISM
         /// <summary>
         /// Constructor supporting any number of param keys
         /// </summary>
-        /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
         /// <remarks>Not CLS compliant</remarks>
+        /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
         public OptionAttribute(params string[] paramKeys)
         {
             // Check for null and remove blank entries
@@ -2403,8 +2403,8 @@ namespace PRISM
         /// <summary>
         /// Constructor, taking a single paramKey or a multiple param keys separated by a '|'
         /// </summary>
-        /// <param name="paramKey">Must supply at least one key for the argument, and it must be distinct within the class; multiple keys can be specified, separated by a '|'</param>
         /// <remarks>CLS compliant</remarks>
+        /// <param name="paramKey">Must supply at least one key for the argument, and it must be distinct within the class; multiple keys can be specified, separated by a '|'</param>
         public OptionAttribute(string paramKey) : this(paramKey?.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
         {
         }
@@ -2412,11 +2412,11 @@ namespace PRISM
         /// <summary>
         /// Constructor supporting up to 4 param keys
         /// </summary>
+        /// <remarks>CLS compliant</remarks>
         /// <param name="paramKey1"></param>
         /// <param name="paramKey2"></param>
         /// <param name="paramKey3"></param>
         /// <param name="paramKey4"></param>
-        /// <remarks>CLS compliant</remarks>
         public OptionAttribute(string paramKey1, string paramKey2, string paramKey3 = "", string paramKey4 = "") : this(new[] { paramKey1, paramKey2, paramKey3, paramKey4 })
         {
         }

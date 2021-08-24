@@ -134,10 +134,10 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message to the local, generic log file
         /// </summary>
+        /// <remarks>Used to log errors and warnings when the standard log file (or database) cannot be written to</remarks>
         /// <param name="logLevel"></param>
         /// <param name="message"></param>
         /// <param name="localLogFilePath"></param>
-        /// <remarks>Used to log errors and warnings when the standard log file (or database) cannot be written to</remarks>
         protected static void LogLocalMessage(LogLevels logLevel, string message, string localLogFilePath = "FileLoggerErrors.txt")
         {
             var logMessage = new LogMessage(logLevel, message);
@@ -147,9 +147,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message to the local, generic log file
         /// </summary>
+        /// <remarks>Used to log errors and warnings when the standard log file (or database) cannot be written to</remarks>
         /// <param name="logMessage"></param>
         /// <param name="localLogFilePath"></param>
-        /// <remarks>Used to log errors and warnings when the standard log file (or database) cannot be written to</remarks>
         protected static void LogLocalMessage(LogMessage logMessage, string localLogFilePath = "FileLoggerErrors.txt")
         {
             switch (logMessage.LogLevel)
@@ -241,11 +241,11 @@ namespace PRISM.Logging
         /// <summary>
         /// Show a trace message at the console, optionally including date
         /// </summary>
+        /// <remarks>Not dependent on TraceMode</remarks>
         /// <param name="message">Message to show</param>
         /// <param name="includeDate">When true, include the date in the prefix; when false, only prefix with time</param>
         /// <param name="indentChars">Characters to use to indent the message</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
-        /// <remarks>Not dependent on TraceMode</remarks>
         public static void ShowTraceMessage(string message, bool includeDate, string indentChars = "  ", int emptyLinesBeforeMessage = 1)
         {
             var timeStamp = string.Format(includeDate ? "{0:yyyy-MM-dd hh:mm:ss.fff tt}" : "{0:hh:mm:ss.fff tt}", DateTime.Now);

@@ -329,8 +329,8 @@ namespace PRISMTest
         /// <summary>
         /// Copy files from a source location to a target location
         /// </summary>
-        /// <param name="state">List of TestFileCopyInfo</param>
         /// <remarks>The state parameter is an object because this method is a callback for a timer</remarks>
+        /// <param name="state">List of TestFileCopyInfo</param>
         private void ReplaceFiles(object state)
         {
             if (state is not List<TestFileCopyInfo> filesToCopy)

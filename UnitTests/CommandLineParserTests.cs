@@ -820,14 +820,14 @@ namespace PRISMTest
         /// <summary>
         /// Test setting the value of a boolean parameter using true, false, 1, 0, yes, or no
         /// </summary>
-        /// <param name="testCaseIndex"></param>
-        /// <param name="verboseFlagValue"></param>
-        /// <param name="expectedParseResult"></param>
-        /// <param name="parseErrorExpected"></param>
         /// <remarks>
         /// Test cases using On and Off will produce an error;
         /// this is expected since the CommandLineParser does not support On or Off for boolean args
         /// </remarks>
+        /// <param name="testCaseIndex"></param>
+        /// <param name="verboseFlagValue"></param>
+        /// <param name="expectedParseResult"></param>
+        /// <param name="parseErrorExpected"></param>
         [Test]
         [TestCase(0, "True", true)]
         [TestCase(1, "False", false)]

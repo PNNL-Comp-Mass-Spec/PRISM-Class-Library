@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -70,11 +70,11 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="limitLoggingByTimeOfDay">When true, only log errors between 12 am and 12:30 am</param>
         /// <remarks>
         /// To view debug events raised by this class, either subscribe to event DebugEvent
         /// or set SkipConsoleWriteIfNoDebugListener to false
         /// </remarks>
+        /// <param name="limitLoggingByTimeOfDay">When true, only log errors between 12 am and 12:30 am</param>
         public LinuxSystemInfo(bool limitLoggingByTimeOfDay = false)
         {
             mCoreCountCached = 0;
@@ -230,10 +230,6 @@ namespace PRISM
         /// <summary>
         /// Parse utime and stime from a stat file for a given process
         /// </summary>
-        /// <param name="statFile"></param>
-        /// <param name="utime">Amount of time that the process has been scheduled in user mode, in jiffies</param>
-        /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
-        /// <returns>True if success, false if an error</returns>
         /// <remarks>
         /// For multi-threaded applications, the task directory below the ProcessID directory will have
         /// separate ProcessID directories for each thread. Those directories could be parsed to determine
@@ -241,6 +237,10 @@ namespace PRISM
         /// has the combined processing time for all threads, so parsing of individual thread stat times
         /// is not necessary to determine overall processing time.
         /// </remarks>
+        /// <param name="statFile"></param>
+        /// <param name="utime">Amount of time that the process has been scheduled in user mode, in jiffies</param>
+        /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
+        /// <returns>True if success, false if an error</returns>
         private bool ExtractCPUTimes(FileSystemInfo statFile, out long utime, out long stime)
         {
             if (TraceEnabled)
@@ -462,11 +462,11 @@ namespace PRISM
         /// <summary>
         /// Report the number of cores on this system
         /// </summary>
-        /// <returns>The number of cores on this computer</returns>
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
         /// The computed core count is cached to avoid needing to re-parse /proc/cpuinfo repeatedly
         /// </remarks>
+        /// <returns>The number of cores on this computer</returns>
         public int GetCoreCount()
         {
             if (mCoreCountCached > 0)
@@ -604,10 +604,10 @@ namespace PRISM
         /// <summary>
         /// Report the number of logical cores on this system
         /// </summary>
-        /// <returns>The number of logical cores on this computer</returns>
         /// <remarks>
         /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if Hyperthreading is enabled
         /// </remarks>
+        /// <returns>The number of logical cores on this computer</returns>
         public int GetLogicalCoreCount()
         {
             return Environment.ProcessorCount;
@@ -645,6 +645,10 @@ namespace PRISM
         /// Reports the number of cores in use by the given process
         /// This method takes at least 1000 msec to execute
         /// </summary>
+        /// <remarks>
+        /// Core count is typically an integer, but can be a fractional number if not using a core 100%
+        /// If multiple processes are running with the given name, returns the total core usage for all of them
+        /// </remarks>
         /// <param name="processName">
         /// Process name, for example mono (full matches only; partial matches are ignored)
         /// Can either be just a program name like mono, or the full path to the program (e.g. /usr/local/bin/mono)</param>
@@ -652,10 +656,6 @@ namespace PRISM
         /// <param name="processIDs">Output: list of matching process IDs</param>
         /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
         /// <returns>Number of cores in use; -1 if process not found or if a problem</returns>
-        /// <remarks>
-        /// Core count is typically an integer, but can be a fractional number if not using a core 100%
-        /// If multiple processes are running with the given name, returns the total core usage for all of them
-        /// </remarks>
         public float GetCoreUsageByProcessName(string processName, string argumentText, out List<int> processIDs, float samplingTimeSeconds = 1)
         {
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreUseByProcessID).TotalSeconds > 15;
@@ -721,11 +721,11 @@ namespace PRISM
         /// <summary>
         /// Determine the core usage for a given process
         /// </summary>
+        /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
         /// <param name="processID"></param>
         /// <param name="cpuUsageTotal">Output: Total CPU usage (value between 0 and 100)</param>
         /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
         /// <returns>Core usage, or 0 if process not found</returns>
-        /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
         public float GetCoreUsageByProcessID(int processID, out float cpuUsageTotal, float samplingTimeSeconds = 1)
         {
             return GetCoreUsageByProcessID(new List<int> { processID }, out cpuUsageTotal, samplingTimeSeconds);
@@ -734,11 +734,11 @@ namespace PRISM
         /// <summary>
         /// Determine the total core usage for a list of Process IDs
         /// </summary>
+        /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
         /// <param name="processIDs">List of Process IDs to examine</param>
         /// <param name="cpuUsageTotal">Output: Total CPU usage (value between 0 and 100)</param>
         /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
         /// <returns>Core usage, or 0 if process not found</returns>
-        /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
         public float GetCoreUsageByProcessID(List<int> processIDs, out float cpuUsageTotal, float samplingTimeSeconds = 1)
         {
             // Use approach described at
@@ -892,12 +892,12 @@ namespace PRISM
         /// <summary>
         /// Returns the CPU usage
         /// </summary>
-        /// <returns>Value between 0 and 100</returns>
         /// <remarks>
         /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
         /// This is CPU usage for all running applications, not just this application
         /// For CPU usage of a single application use GetCoreUsageByProcessID()
         /// </remarks>
+        /// <returns>Value between 0 and 100</returns>
         public float GetCPUUtilization(float samplingTimeSeconds = 1)
         {
             try

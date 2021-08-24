@@ -98,6 +98,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Update the database connection info
         /// </summary>
+        /// <remarks>Will append today's date to the base name</remarks>
         /// <param name="moduleName">Program name to be sent to the PostedBy field when contacting the database</param>
         /// <param name="connectionString">ODBC-style connection string</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
@@ -107,7 +108,6 @@ namespace PRISM.Logging
         /// <param name="logTypeParamSize">LogType parameter size</param>
         /// <param name="messageParamSize">Message parameter size</param>
         /// <param name="postedByParamSize">Log source parameter size</param>
-        /// <remarks>Will append today's date to the base name</remarks>
         public abstract void ChangeConnectionInfo(
             string moduleName,
             string connectionString,

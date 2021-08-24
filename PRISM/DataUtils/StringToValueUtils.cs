@@ -12,9 +12,9 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Converts a string value of True or False to a boolean equivalent
         /// </summary>
+        /// <remarks>Returns false if unable to convert</remarks>
         /// <param name="value"></param>
         /// <param name="defaultValue">Boolean value to return if value is empty or cannot be converted</param>
-        /// <remarks>Returns false if unable to convert</remarks>
         public static bool CBoolSafe(string value, bool defaultValue = false)
         {
             try

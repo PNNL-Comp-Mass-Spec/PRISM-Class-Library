@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -143,11 +143,11 @@ namespace PRISM
         /// <summary>
         /// Initializes a new instance of the clsFileLogger class which logs to the specified file
         /// </summary>
-        /// <param name="logFileBaseName">The name of the file to use for the log (either a filename like UpdateManager, or a relative path, like Logs\UpdateManager</param>
         /// <remarks>
         /// The actual log file name changes daily and is of the form "FilePath_mm-dd-yyyy.txt"
         /// logFileBaseName is allowed to be blank (e.g. if using clsDBLogger and there is no need for a local log file)
         /// </remarks>
+        /// <param name="logFileBaseName">The name of the file to use for the log (either a filename like UpdateManager, or a relative path, like Logs\UpdateManager</param>
         public clsFileLogger(string logFileBaseName)
         {
             LogFileBaseName = string.IsNullOrWhiteSpace(logFileBaseName) ? string.Empty : logFileBaseName;
@@ -393,8 +393,8 @@ namespace PRISM
         /// <summary>
         /// Initializes a new instance of the clsDBLogger class which logs to the specified database
         /// </summary>
-        /// <param name="connectionStr">The connection string used to access the database</param>
         /// <remarks>Only logs to a local file if a file name is defined using LogFilePath</remarks>
+        /// <param name="connectionStr">The connection string used to access the database</param>
         public clsDBLogger(string connectionStr)
         {
             ConnectionString = connectionStr;
@@ -413,10 +413,10 @@ namespace PRISM
         /// <summary>
         /// Initializes a new instance of the clsDBLogger class which logs to the specified database and file
         /// </summary>
+        /// <remarks>The module name identifies the logging process; if not defined, will use MachineName:UserName</remarks>
         /// <param name="modName">The string used to identify the posting process</param>
         /// <param name="connectionStr">The connection string used to access the database</param>
         /// <param name="filePath">The name of the file to use for the log</param>
-        /// <remarks>The module name identifies the logging process; if not defined, will use MachineName:UserName</remarks>
         public clsDBLogger(string modName, string connectionStr, string filePath) : base(filePath)
         {
             ConnectionString = connectionStr;

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -79,9 +79,9 @@ namespace PRISM
         /// Converts an database field value to a float (single), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         /// <param name="dbValue">Value from database</param>
         /// <returns>If dbValue is DBNull, returns 0.0, otherwise returns the string representation of dbValue</returns>
-        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         public static float GetFloat(object dbValue)
         {
             if (ReferenceEquals(dbValue, DBNull.Value))
@@ -96,9 +96,9 @@ namespace PRISM
         /// Converts an database field value to a double, checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         /// <param name="dbValue">Value from database</param>
         /// <returns>If dbValue is DBNull, returns 0.0, otherwise returns the string representation of dbValue</returns>
-        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         public static double GetDouble(object dbValue)
         {
             if (ReferenceEquals(dbValue, DBNull.Value))
@@ -113,9 +113,9 @@ namespace PRISM
         /// Converts an database field value to an integer (Int32), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         /// <param name="dbValue">Value from database</param>
         /// <returns>If dbValue is DBNull, returns 0, otherwise returns the string representation of dbValue</returns>
-        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         public static int GetInteger(object dbValue)
         {
             if (ReferenceEquals(dbValue, DBNull.Value))
@@ -130,9 +130,9 @@ namespace PRISM
         /// Converts an database field value to a long integer (Int64), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
+        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         /// <param name="dbValue">Value from database</param>
         /// <returns>If dbValue is DBNull, returns 0, otherwise returns the string representation of dbValue</returns>
-        /// <remarks>An exception will be thrown if the value is not numeric</remarks>
         public static long GetLong(object dbValue)
         {
             if (ReferenceEquals(dbValue, DBNull.Value))
@@ -146,9 +146,9 @@ namespace PRISM
         /// <summary>
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
+        /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         /// <param name="columns"></param>
         /// <returns>Mapping from column name to column index</returns>
-        /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
         {
@@ -165,11 +165,11 @@ namespace PRISM
         /// <summary>
         /// Get the string value for the specified column
         /// </summary>
+        /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty</remarks>
         /// <param name="resultRow">Row of results, as returned by GetQueryResults</param>
         /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
         /// <param name="columnName">Column Name</param>
         /// <returns>String value</returns>
-        /// <remarks>The returned value could be null, but note that GetQueryResults converts all Null strings to string.Empty</remarks>
         [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public string GetColumnValue(
             IReadOnlyList<string> resultRow,
@@ -391,6 +391,12 @@ namespace PRISM
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// Null values are converted to empty strings
+        /// Numbers are converted to their string equivalent
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
@@ -398,12 +404,6 @@ namespace PRISM
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// Null values are converted to empty strings
-        /// Numbers are converted to their string equivalent
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         public bool GetQueryResults(
             string sqlQuery,
             out List<List<string>> results,

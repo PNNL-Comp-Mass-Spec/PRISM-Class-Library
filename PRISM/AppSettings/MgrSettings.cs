@@ -264,11 +264,11 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Extract the value for the given setting from the given config files
         /// </summary>
+        /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
         /// <param name="configFilePaths">List of config files to check (in order)</param>
         /// <param name="settingName">Setting to find</param>
         /// <param name="settingValue">Output: the setting, if found</param>
         /// <returns>True if found, otherwise false</returns>
-        /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
         public bool GetXmlConfigFileSetting(IReadOnlyList<string> configFilePaths, string settingName, out string settingValue)
         {
             // Supported config file format:
@@ -323,12 +323,12 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Extract the value for the given setting from the given config file
         /// </summary>
+        /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
         /// <param name="configFilePath">Config file path</param>
         /// <param name="settingName">Setting to find</param>
         /// <param name="configFileExists">Output: true if the file exists</param>
         /// <param name="settingValue">Output: the setting, if found</param>
         /// <returns>True if found, otherwise false</returns>
-        /// <remarks>Uses a simple text reader in case the file has malformed XML</remarks>
         private bool GetXmlConfigFileSetting(string configFilePath, string settingName, out bool configFileExists, out string settingValue)
         {
             configFileExists = false;
@@ -397,8 +397,8 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Gets manager config settings from manager control DB (Manager_Control)
         /// </summary>
-        /// <returns>True if success, otherwise false</returns>
         /// <remarks>Performs retries if necessary</remarks>
+        /// <returns>True if success, otherwise false</returns>
         public bool LoadMgrSettingsFromDB(bool logConnectionErrors = true, int retryCount = 3)
         {
             var managerName = GetParam(MGR_PARAM_MGR_NAME, string.Empty);
@@ -470,9 +470,9 @@ namespace PRISM.AppSettings
         /// If the file path ends with ".exe.config", other files with similar names are also read afterward
         /// (matching RegEx "AppName\.exe\..+config$")
         /// </summary>
+        /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
         /// <param name="configFilePath">Path to config file</param>
         /// <returns>Dictionary of settings as key/value pairs; null on error</returns>
-        /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
         public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath)
         {
             var configFile = new FileInfo(configFilePath);
@@ -502,10 +502,10 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Read settings from file AppName.exe.config
         /// </summary>
+        /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
         /// <param name="configFilePath">Path to config file</param>
         /// <param name="existingSettings">Existing settings dictionary; new settings will add to the existing, and overwrite any that match</param>
         /// <returns>Dictionary of settings as key/value pairs; null on error</returns>
-        /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
         public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath, Dictionary<string, string> existingSettings)
         {
             XmlDocument configDoc;

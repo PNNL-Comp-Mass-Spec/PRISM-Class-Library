@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -131,10 +131,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Make sure inputDirectoryPath points to a valid directory and validate the output directory (defining it if null or empty)
         /// </summary>
+        /// <remarks>Create outputDirectoryPath if it does not exist</remarks>
         /// <param name="inputDirectoryPath"></param>
         /// <param name="outputDirectoryPath"></param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>Create outputDirectoryPath if it does not exist</remarks>
         protected bool CleanupDirectoryPaths(ref string inputDirectoryPath, ref string outputDirectoryPath)
         {
             try
@@ -386,6 +386,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
+        /// <remarks>Calls ProcessDirectories for all matching directories in inputDirectoryPath</remarks>
         /// <param name="inputDirectoryPath">Input directory path (supports wildcards)</param>
         /// <param name="outputDirectoryAlternatePath">Alternate directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
@@ -394,7 +395,6 @@ namespace PRISM.FileProcessor
         /// When 1, only process the current directory
         /// When 2, process the current directory and files in its subdirectories
         /// </param>
-        /// <remarks>Calls ProcessDirectories for all matching directories in inputDirectoryPath</remarks>
         public bool ProcessAndRecurseDirectories(
             string inputDirectoryPath,
             string outputDirectoryAlternatePath = "",

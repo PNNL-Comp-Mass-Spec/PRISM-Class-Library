@@ -22,8 +22,8 @@ namespace PRISM
         /// <summary>
         /// Constructor that takes a manager name
         /// </summary>
-        /// <param name="managerName"></param>
         /// <remarks>Will instantiate a new instance of clsFileTools</remarks>
+        /// <param name="managerName"></param>
         public FileSyncUtils(string managerName)
         {
             mFileTools = new FileTools(managerName, 1);
@@ -294,6 +294,10 @@ namespace PRISM
         /// <summary>
         /// Validate that the hash value of a local file matches the expected hash info, creating the .hashcheck file if missing
         /// </summary>
+        /// <remarks>
+        /// Will create the .hashcheck file if missing
+        /// Will also update the .lastused file for the local file
+        /// </remarks>
         /// <param name="localFilePath">Local file path</param>
         /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
         /// <param name="errorMessage">Output: error message</param>
@@ -303,10 +307,6 @@ namespace PRISM
         /// Set to 0 to check the hash on every call to this method
         /// </param>
         /// <returns>True if the file is valid, otherwise false</returns>
-        /// <remarks>
-        /// Will create the .hashcheck file if missing
-        /// Will also update the .lastused file for the local file
-        /// </remarks>
         // ReSharper disable once UnusedMember.Global
         public static bool ValidateFileVsHashcheck(
             string localFilePath, string hashCheckFilePath,
@@ -328,6 +328,10 @@ namespace PRISM
         /// <summary>
         /// Validate that the hash value of a local file matches the expected hash info, creating the .hashcheck file if missing
         /// </summary>
+        /// <remarks>
+        /// Will create the .hashcheck file if missing
+        /// Will also update the .lastused file for the local file
+        /// </remarks>
         /// <param name="localFilePath">Local file path</param>
         /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
         /// <param name="errorMessage">Output: error message</param>
@@ -340,10 +344,6 @@ namespace PRISM
         /// Set to 0 to check the hash on every call to this method
         /// </param>
         /// <returns>True if the file is valid, otherwise false</returns>
-        /// <remarks>
-        /// Will create the .hashcheck file if missing
-        /// Will also update the .lastused file for the local file
-        /// </remarks>
         public static bool ValidateFileVsHashcheck(
             string localFilePath, string hashCheckFilePath,
             out string errorMessage,
@@ -483,6 +483,7 @@ namespace PRISM
         /// Looks for a .hashcheck file for the specified data file; returns false if not found
         /// If found, compares the stored values to the actual values (size, modification_date_utc, and hash)
         /// </summary>
+        /// <remarks>The .hashcheck file has the same name as the data file, but with ".hashcheck" appended</remarks>
         /// <param name="localFilePath">Data file to check</param>
         /// <param name="hashCheckFilePath">Hashcheck file for the given data file (auto-defined if blank)</param>
         /// <param name="errorMessage">Output: error message</param>
@@ -491,7 +492,6 @@ namespace PRISM
         /// <param name="checkSize">If true, compare the actual file size to that in the hashcheck file</param>
         /// <param name="assumedHashType">Hash type to assume if the .hashcheck file does not have a hashtype entry</param>
         /// <returns>True if the hashcheck file exists and the actual file matches the expected values; false if a mismatch, if .hashcheck is missing, or if a problem</returns>
-        /// <remarks>The .hashcheck file has the same name as the data file, but with ".hashcheck" appended</remarks>
         // ReSharper disable once UnusedMember.Global
         public static bool ValidateFileVsHashcheck(
             string localFilePath, string hashCheckFilePath, out string errorMessage,

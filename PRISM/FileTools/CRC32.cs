@@ -54,8 +54,6 @@ namespace PRISM
         /// Update a running CRC using the enumerable byte buffer;
         /// the crc should be initialized to zero.
         /// </summary>
-        /// <param name="crc"></param>
-        /// <param name="buf"></param>
         /// <remarks>
         /// Pre- and post-conditioning (one's complement) is performed within this method so it shouldn't be done by the caller
         /// <remarks>
@@ -68,6 +66,8 @@ namespace PRISM
         /// }
         /// if (crc != originalCrc) error();
         /// </example>
+        /// <param name="crc"></param>
+        /// <param name="buf"></param>
         public static uint UpdateCrc(uint crc, IEnumerable<byte> buf)
         {
             var c = crc ^ 0xffffffff;

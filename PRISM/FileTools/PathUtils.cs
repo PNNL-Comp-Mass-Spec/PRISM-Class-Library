@@ -109,10 +109,10 @@ namespace PRISM
         /// <summary>
         /// Find all files that match the given file name pattern, optionally recursing
         /// </summary>
+        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         /// <param name="pathSpec">Directory/file search specification, e.g. C:\Windows\*.ini</param>
         /// <param name="recurse">True to recurse</param>
         /// <returns>List of FileInfo objects (empty list if the directory does not exist)</returns>
-        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         public static List<FileInfo> FindFilesWildcard(string pathSpec, bool recurse = false)
         {
             var cleanPath = GetCleanPath(pathSpec);
@@ -148,11 +148,11 @@ namespace PRISM
         /// <summary>
         /// Find all files that match the given file name pattern in the given directory, optionally recursing
         /// </summary>
+        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         /// <param name="directory">Directory to search</param>
         /// <param name="fileMask">Filename mask to find, e.g. *.txt</param>
         /// <param name="recurse">True to recurse</param>
         /// <returns>List of FileInfo objects (empty list if the directory does not exist)</returns>
-        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
         public static List<FileInfo> FindFilesWildcard(DirectoryInfo directory, string fileMask, bool recurse = false)
         {
             if (directory?.Exists != true)
@@ -196,10 +196,10 @@ namespace PRISM
         /// <summary>
         /// Check a filename against a file mask (like * or *.txt or MSGF*)
         /// </summary>
+        /// <remarks>From https://stackoverflow.com/a/725352/1179467/ how-to-determine-if-a-file-matches-a-file-mask</remarks>
         /// <param name="fileName"></param>
         /// <param name="fileMask"></param>
         /// <returns>True if a match, otherwise false</returns>
-        /// <remarks>From https://stackoverflow.com/a/725352/1179467/ how-to-determine-if-a-file-matches-a-file-mask</remarks>
         public static bool FitsMask(string fileName, string fileMask)
         {
             var convertedMask = "^" + Regex.Escape(fileMask).Replace(@"\*", ".*").Replace(@"\?", ".") + "$";
@@ -228,10 +228,10 @@ namespace PRISM
         /// Return the parent directory of directoryPath
         /// Supports both Windows paths and Linux paths
         /// </summary>
+        /// <remarks>Returns \ or / if the path is rooted and the parent is a path</remarks>
         /// <param name="directoryPath">Directory path to examine</param>
         /// <param name="directoryName">Name of the directory in directoryPath but without the parent path</param>
         /// <returns>Parent directory path, or an empty string if no parent</returns>
-        /// <remarks>Returns \ or / if the path is rooted and the parent is a path</remarks>
         public static string GetParentDirectoryPath(string directoryPath, out string directoryName)
         {
             if (directoryPath.Contains(Path.DirectorySeparatorChar) && Path.IsPathRooted(directoryPath))

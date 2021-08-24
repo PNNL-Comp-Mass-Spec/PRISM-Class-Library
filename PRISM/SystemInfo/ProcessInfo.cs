@@ -70,11 +70,11 @@ namespace PRISM
         /// <summary>
         /// Constructor that takes process ID and the process name
         /// </summary>
-        /// <param name="processId"></param>
-        /// <param name="processName">Command line</param>
         /// <remarks>
         /// Assumes that the executable path is everything before the first space and arguments are everything after the first space
         /// </remarks>
+        /// <param name="processId"></param>
+        /// <param name="processName">Command line</param>
         public ProcessInfo(int processId, string processName)
         {
             Arguments = string.Empty;

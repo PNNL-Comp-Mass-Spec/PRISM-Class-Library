@@ -21,10 +21,10 @@ namespace PRISMWin
         /// <summary>
         /// Report the number of cores on this system
         /// </summary>
-        /// <returns>The number of cores on this computer</returns>
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
         /// </remarks>
+        /// <returns>The number of cores on this computer</returns>
         // ReSharper disable once UnusedMember.Global
         public int GetCoreCount()
         {
@@ -34,12 +34,12 @@ namespace PRISMWin
         /// <summary>
         /// Report the number of cores on this system
         /// </summary>
-        /// <param name="numPhysicalProcessors">Output: Number of physical processors</param>
-        /// <returns>The number of cores on this computer</returns>
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 8-core chips will report 16 cores, even if Hyperthreading is enabled
         /// Uses WMI and can thus take a few seconds on the first call; subsequent calls will return cached counts
         /// </remarks>
+        /// <param name="numPhysicalProcessors">Output: Number of physical processors</param>
+        /// <returns>The number of cores on this computer</returns>
         public int GetCoreCount(out int numPhysicalProcessors)
         {
             if (cachedCoreCount > 0)
@@ -76,10 +76,10 @@ namespace PRISMWin
         /// <summary>
         /// Report the number of logical cores on this system
         /// </summary>
-        /// <returns>The number of logical cores on this computer</returns>
         /// <remarks>
         /// Will be affected by hyperthreading, so a computer with two 8-core chips will report 32 cores if Hyperthreading is enabled
         /// </remarks>
+        /// <returns>The number of logical cores on this computer</returns>
         // ReSharper disable once UnusedMember.Global
         public int GetLogicalCoreCount()
         {
@@ -89,8 +89,8 @@ namespace PRISMWin
         /// <summary>
         /// Determine the free system memory, in MB
         /// </summary>
-        /// <returns>Free memory, or -1 if an error</returns>
         /// <remarks>Uses WMI and can thus take a few seconds</remarks>
+        /// <returns>Free memory, or -1 if an error</returns>
         public float GetFreeMemoryMB()
         {
             double memoryFreeKB = 0;
@@ -106,10 +106,10 @@ namespace PRISMWin
         /// <summary>
         /// Determine the total system memory, in MB
         /// </summary>
-        /// <returns>Total memory, or -1 if an error</returns>
         /// <remarks>
         /// Uses WMI and can thus take a few seconds on the first call; subsequent calls will return a cached total
         /// </remarks>
+        /// <returns>Total memory, or -1 if an error</returns>
         public float GetTotalMemoryMB()
         {
             if (cachedTotalMemoryMB > 0)

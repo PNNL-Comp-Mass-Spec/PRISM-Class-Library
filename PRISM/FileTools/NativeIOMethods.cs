@@ -113,7 +113,6 @@ namespace PRISM
         /// </summary>
         /// <param name="lpPathName"></param>
         /// <param name="lpSecurityAttributes">Use "IntPtr.Zero" for NULL (default) security attributes</param>
-        /// <returns></returns>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool CreateDirectory(string lpPathName, IntPtr lpSecurityAttributes);
 

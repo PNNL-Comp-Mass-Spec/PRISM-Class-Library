@@ -442,11 +442,11 @@ namespace PRISM.FileProcessor
         /// according to data in <see cref="mLogFilePath"/>,
         /// <see cref="mLogFileUsesDateStamp"/>, and <see cref="LogDirectoryPath"/>
         /// </summary>
-        /// <param name="logFileBaseName">Base name for the log file (ignored if mLogFilePath is defined)</param>
         /// <remarks>
         /// If mLogFilePath is empty and logFileBaseName is empty, will use the name of the entry or executing assembly
         /// This method is private; Use protected method UpdateAutoDefinedLogFilePath to update the auto-defined log file path
         /// </remarks>
+        /// <param name="logFileBaseName">Base name for the log file (ignored if mLogFilePath is defined)</param>
         private void ConfigureLogFilePath(string logFileBaseName = "")
         {
             try
@@ -546,10 +546,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Verifies that the specified .XML settings file exists in the user's local settings directory
         /// </summary>
+        /// <remarks>Will return True if the master settings file does not exist</remarks>
         /// <param name="applicationName">Application name</param>
         /// <param name="settingsFileName">Settings file name</param>
         /// <returns>True if the file already exists or was created, false if an error</returns>
-        /// <remarks>Will return True if the master settings file does not exist</remarks>
         public static bool CreateSettingsFileIfMissing(string applicationName, string settingsFileName)
         {
             var settingsFilePathLocal = GetSettingsFilePathLocal(applicationName, settingsFileName);
@@ -560,9 +560,9 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Verifies that the specified .XML settings file exists in the user's local settings directory
         /// </summary>
+        /// <remarks>Will return True if the master settings file does not exist</remarks>
         /// <param name="settingsFilePathLocal">Full path to the local settings file, for example C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</param>
         /// <returns>True if the file already exists or was created, false if an error</returns>
-        /// <remarks>Will return True if the master settings file does not exist</remarks>
         public static bool CreateSettingsFileIfMissing(string settingsFilePathLocal)
         {
             if (string.IsNullOrWhiteSpace(settingsFilePathLocal))
@@ -648,8 +648,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Returns the full path to the directory into which this application should read/write settings file information
         /// </summary>
-        /// <param name="appName"></param>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
+        /// <param name="appName"></param>
         public static string GetAppDataDirectoryPath(string appName)
         {
             string appDataDirectory;
@@ -752,9 +752,9 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Returns the full path to this application's local settings file
         /// </summary>
+        /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</remarks>
         /// <param name="applicationName"></param>
         /// <param name="settingsFileName"></param>
-        /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</remarks>
         public static string GetSettingsFilePathLocal(string applicationName, string settingsFileName)
         {
             return Path.Combine(GetAppDataDirectoryPath(applicationName), settingsFileName);
@@ -833,6 +833,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Log a message then raise a Status, Warning, or Error event
         /// </summary>
+        /// <remarks>
+        /// Note that CleanupPaths() will update mOutputDirectoryPath, which is used here if mLogDirectoryPath is blank
+        /// Thus, be sure to call CleanupPaths (or update mLogDirectoryPath) before the first call to LogMessage
+        /// </remarks>
         /// <param name="message">Message</param>
         /// <param name="messageType">Message type</param>
         /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
@@ -841,10 +845,6 @@ namespace PRISM.FileProcessor
         /// This is only applicable if WriteToConsoleIfNoListener is true and the event has no listeners
         /// </param>
         /// <param name="ex">If logging an exception, the exception object</param>
-        /// <remarks>
-        /// Note that CleanupPaths() will update mOutputDirectoryPath, which is used here if mLogDirectoryPath is blank
-        /// Thus, be sure to call CleanupPaths (or update mLogDirectoryPath) before the first call to LogMessage
-        /// </remarks>
         protected void LogMessage(
             string message,
             MessageTypeConstants messageType = MessageTypeConstants.Normal,

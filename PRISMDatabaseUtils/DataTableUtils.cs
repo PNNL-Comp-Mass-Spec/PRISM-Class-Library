@@ -40,9 +40,9 @@ namespace PRISMDatabaseUtils
         /// Use this method to add a column with the same identifier and name
         /// Assumes case-insensitive column names
         /// </summary>
+        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         /// <param name="columnNamesByIdentifier"></param>
         /// <param name="columnIdentifier"></param>
-        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         public static void AddColumnIdentifier(
             Dictionary<string, SortedSet<string>> columnNamesByIdentifier,
             string columnIdentifier)
@@ -55,10 +55,10 @@ namespace PRISMDatabaseUtils
         /// Assumes case-insensitive column names
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         /// <param name="columnNamesByIdentifier"></param>
         /// <param name="columnIdentifier"></param>
         /// <param name="columnNames">Comma separated list of column names</param>
-        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         public static void AddColumnNamesForIdentifier<T>(
             Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
             T columnIdentifier,
@@ -71,11 +71,11 @@ namespace PRISMDatabaseUtils
         /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         /// <param name="columnNamesByIdentifier"></param>
         /// <param name="columnIdentifier"></param>
         /// <param name="caseSensitiveColumnNames"></param>
         /// <param name="columnNames"></param>
-        /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         public static void AddColumnNamesForIdentifier<T>(
             Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
             T columnIdentifier,
@@ -310,10 +310,10 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
+        /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         /// <param name="columnNames"></param>
         /// <param name="caseSensitiveColumnNames"></param>
         /// <returns>Mapping from column name to column index</returns>
-        /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columnNames, bool caseSensitiveColumnNames = true)
         {
             StringComparer stringComparer;
@@ -605,10 +605,10 @@ namespace PRISMDatabaseUtils
         /// When T is an enum, the sort order will be by the integer value of each enum
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
         /// <param name="columnNamesByIdentifier">Column names, by identifier</param>
         /// <param name="columnDelimiter">Column delimiter, by default a tab</param>
         /// <returns>Delimited list of column names</returns>
-        /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
         public static string GetExpectedHeaderLine<T>(
             IReadOnlyDictionary<T, SortedSet<string>> columnNamesByIdentifier,
             string columnDelimiter = "\t")
@@ -622,11 +622,11 @@ namespace PRISMDatabaseUtils
         /// Return a string of the expected column names in a header line for a tab-delimited text file
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
+        /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
         /// <param name="columnNamesByIdentifier">Column names, by identifier</param>
         /// <param name="columnIdentifierList">Ordered list of column identifiers (typically a string or an enum)</param>
         /// <param name="columnDelimiter">Column delimiter, by default a tab</param>
         /// <returns>Delimited list of column names</returns>
-        /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
         public static string GetExpectedHeaderLine<T>(
             IReadOnlyDictionary<T, SortedSet<string>> columnNamesByIdentifier,
             IEnumerable<T> columnIdentifierList,

@@ -30,13 +30,13 @@ namespace PRISM
         /// Determine the operating system version
         /// For Windows and Linux, reports details about the OS version
         /// </summary>
-        /// <returns>Human-readable description of the OS version</returns>
         /// <remarks>
         /// For this to work properly on Windows 10, you must add an app.manifest file
         /// and uncomment the versions of Windows listed below
         /// compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1"
         /// See https://stackoverflow.com/a/36158739/1179467
         /// </remarks>
+        /// <returns>Human-readable description of the OS version</returns>
         public string GetOSVersion()
         {
             var osInfo = Environment.OSVersion;
@@ -61,11 +61,11 @@ namespace PRISM
         /// <summary>
         /// Determine the version of Linux that we're running
         /// </summary>
-        /// <returns>String describing the OS version</returns>
         /// <remarks>
         /// If run on Windows, will look for files in the \etc directory on the current drive
         /// If that directory does not exist, will return "Unknown Windows OS"
         /// </remarks>
+        /// <returns>String describing the OS version</returns>
         public string GetLinuxVersion()
         {
             var versionFiles = new Dictionary<string, string>

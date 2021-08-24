@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -173,11 +173,11 @@ namespace PRISM
         /// <summary>
         /// Parse the parameters and switches at the command line; uses / for the switch character and : for the switch parameter character
         /// </summary>
-        /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         /// <remarks>
         /// If /? or /help is found, returns False and sets mShowHelp to True
         /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
+        /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         public bool ParseCommandLine()
         {
             return ParseCommandLine(DEFAULT_SWITCH_CHAR, DEFAULT_SWITCH_PARAM_CHAR);
@@ -186,11 +186,11 @@ namespace PRISM
         /// <summary>
         /// Parse the parameters and switches at the command line; uses : for the switch parameter character
         /// </summary>
-        /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         /// <remarks>
         /// If /? or /help is found, returns False and sets mShowHelp to True
         /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
+        /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         public bool ParseCommandLine(char switchStartChar)
         {
             return ParseCommandLine(switchStartChar, DEFAULT_SWITCH_PARAM_CHAR);
@@ -199,13 +199,13 @@ namespace PRISM
         /// <summary>
         /// Parse the parameters and switches at the command line
         /// </summary>
-        /// <param name="switchStartChar"></param>
-        /// <param name="switchParameterChar"></param>
-        /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         /// <remarks>
         /// If /? or /help is found, returns False and sets mShowHelp to True
         /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
+        /// <param name="switchStartChar"></param>
+        /// <param name="switchParameterChar"></param>
+        /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         public bool ParseCommandLine(char switchStartChar, char switchParameterChar)
         {
             mSwitches.Clear();

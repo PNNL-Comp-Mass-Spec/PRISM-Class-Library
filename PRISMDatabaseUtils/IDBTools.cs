@@ -48,6 +48,10 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the scalar result
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
@@ -55,10 +59,6 @@ namespace PRISMDatabaseUtils
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryScalar(
             string sqlQuery,
             out object queryResult,
@@ -71,16 +71,16 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the scalar result
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryScalar(
             DbCommand cmd,
             out object queryResult,
@@ -91,6 +91,12 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the results as a list of strings
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// Null values are converted to empty strings
+        /// Numbers are converted to their string equivalent
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
@@ -99,12 +105,6 @@ namespace PRISMDatabaseUtils
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// Null values are converted to empty strings
-        /// Numbers are converted to their string equivalent
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryResults(
             string sqlQuery,
             out List<List<string>> results,
@@ -117,6 +117,10 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
@@ -124,10 +128,6 @@ namespace PRISMDatabaseUtils
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryResultsDataTable(
             string sqlQuery,
             out DataTable queryResults,
@@ -139,6 +139,10 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the results as a DataSet object
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
@@ -146,10 +150,6 @@ namespace PRISMDatabaseUtils
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryResultsDataSet(
             string sqlQuery,
             out DataSet queryResults,
@@ -161,6 +161,12 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the results as a list of strings
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// Null values are converted to empty strings
+        /// Numbers are converted to their string equivalent
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
@@ -168,12 +174,6 @@ namespace PRISMDatabaseUtils
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// Null values are converted to empty strings
-        /// Numbers are converted to their string equivalent
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryResults(
             DbCommand cmd,
             out List<List<string>> results,
@@ -185,16 +185,16 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (list of list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryResultsDataTable(
             DbCommand cmd,
             out DataTable queryResults,
@@ -205,16 +205,16 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Run a query against a SQL database, return the results as a DataSet object
         /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the query up to 3 times
+        /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
-        /// </remarks>
         bool GetQueryResultsDataSet(
             DbCommand cmd,
             out DataSet queryResults,
@@ -281,12 +281,12 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Method for executing a db stored procedure when a data table is not returned
         /// </summary>
+        /// <remarks>No logging is performed by this procedure</remarks>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="errorMessage">Error message (output)</param>
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks>No logging is performed by this procedure</remarks>
         int ExecuteSP(
             DbCommand spCmd,
             out string errorMessage,
@@ -303,14 +303,14 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// </remarks>
         /// <param name="command"></param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
-        /// <remarks>
-        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
-        /// </remarks>
         DbParameter AddParameter(
             DbCommand command,
             string name,
@@ -320,16 +320,16 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
+        /// </remarks>
         /// <param name="command"></param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
-        /// <remarks>
-        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
-        /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
-        /// </remarks>
         DbParameter AddParameter(
             DbCommand command,
             string name,
@@ -340,16 +340,16 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
+        /// </remarks>
         /// <param name="command"></param>
         /// <param name="name">Parameter name</param>
         /// <param name="dataTypeName">Database data type name</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
-        /// <remarks>
-        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
-        /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
-        /// </remarks>
         DbParameter AddParameter(
             DbCommand command,
             string name,

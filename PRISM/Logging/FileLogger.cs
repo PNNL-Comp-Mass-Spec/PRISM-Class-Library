@@ -191,6 +191,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Constructor that takes base log file name and appendDateToBaseName
         /// </summary>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
         /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
@@ -199,7 +200,6 @@ namespace PRISM.Logging
         /// <param name="maxRolledLogFiles">
         /// Maximum number of old log files to keep (Ignored if appendDateToBaseName is True)
         /// </param>
-        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public FileLogger(
             string baseName,
             bool appendDateToBaseName = true,
@@ -210,6 +210,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Constructor that takes base log file name and log level
         /// </summary>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="logLevel">Log threshold level</param>
         /// <param name="appendDateToBaseName">
@@ -219,7 +220,6 @@ namespace PRISM.Logging
         /// <param name="maxRolledLogFiles">
         /// Maximum number of old log files to keep (Ignored if appendDateToBaseName is True)
         /// </param>
-        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public FileLogger(
             string baseName,
             LogLevels logLevel,
@@ -276,6 +276,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
+        /// <remarks>
+        /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named *_??-??-????.txt
+        /// </remarks>
         /// <param name="logDirectory">Path to the directory with log files</param>
         /// <param name="logFileMatchSpec">Wildcards to use to find date-based log files, for example ??-??-????</param>
         /// <param name="logFileExtension">Log file extension, for example .txt</param>
@@ -286,9 +289,6 @@ namespace PRISM.Logging
         /// For an example, see constant LOG_FILE_DATE_REGEX
         /// </param>
         /// <returns>List of warning messages</returns>
-        /// <remarks>
-        /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named *_??-??-????.txt
-        /// </remarks>
         public static IEnumerable<string> ArchiveOldLogs(
             DirectoryInfo logDirectory,
             string logFileMatchSpec,
@@ -415,13 +415,13 @@ namespace PRISM.Logging
         /// <summary>
         /// Update the log file's base name (or relative path)
         /// </summary>
-        /// <param name="baseName">Base log file name (or relative path)</param>
         /// <remarks>
         /// If AppendDateToBaseFileName is true, will append today's date to the base name
         /// If baseName is a relative file path (aka is not rooted), the entry assembly's path will be prepended to baseName
         /// If baseName is null or empty, the log file name will be named DefaultLogFileName
         /// </remarks>
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
+        /// <param name="baseName">Base log file name (or relative path)</param>
         public static void ChangeLogFileBaseName(string baseName)
         {
             ChangeLogFileBaseName(baseName, AppendDateToBaseFileName);
@@ -431,6 +431,7 @@ namespace PRISM.Logging
         /// Update the log file's base name (or relative path)
         /// However, if appendDateToBaseName is false, baseName is the full path to the log file
         /// </summary>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
         /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
@@ -440,7 +441,6 @@ namespace PRISM.Logging
         /// When true, if baseName is a relative file path (aka is not rooted), the entry assembly's path will be prepended to baseName
         /// When false, if baseName is a relative file path, the log file will be created in a subdirectory relative to the working directory
         /// </param>
-        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName, bool relativeToEntryAssembly = true)
         {
             ShowStackTraceOnEnter("ChangeLogFileBaseName");

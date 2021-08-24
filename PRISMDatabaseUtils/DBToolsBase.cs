@@ -24,14 +24,14 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
+        /// <remarks>
+        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
+        /// </remarks>
         /// <param name="command"></param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
-        /// <remarks>
-        /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
-        /// </remarks>
         public abstract DbParameter AddParameter(
             DbCommand command,
             string name,
@@ -384,9 +384,9 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Determine the return code to report after calling a stored procedure or function
         /// </summary>
+        /// <remarks>Looks for a parameter named _returnCode or with Direction == ParameterDirection.ReturnValue</remarks>
         /// <param name="cmdParameters"></param>
         /// <returns>Numeric return code</returns>
-        /// <remarks>Looks for a parameter named _returnCode or with Direction == ParameterDirection.ReturnValue</remarks>
         protected int GetReturnCode(DbParameterCollection cmdParameters)
         {
             foreach (DbParameter parameter in cmdParameters)

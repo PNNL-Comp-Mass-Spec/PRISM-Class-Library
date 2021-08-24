@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -76,13 +76,13 @@ namespace PRISM
         /// <summary>
         /// Parses the StackTrace text of the given exception to return a compact description of the current stack
         /// </summary>
+        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         /// <param name="ex">Exception</param>
         /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
         /// <returns>
         /// String of the form:
         /// Stack trace: clsCodeTest.Test-:-clsCodeTest.TestException-:-clsCodeTest.InnerTestException in clsCodeTest.vb:line 86
         /// </returns>
-        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         public static string GetExceptionStackTrace(Exception ex, bool includeInnerExceptionMessages = true)
         {
             var stackTraceData = GetExceptionStackTraceData(ex).ToList();
@@ -119,6 +119,7 @@ namespace PRISM
         /// Parses the StackTrace text of the given exception to return a cleaned up description of the current stack,
         /// with one line for each method in the call tree
         /// </summary>
+        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         /// <param name="ex">Exception</param>
         /// <param name="includeInnerExceptionMessages">When true, also append details of any inner exceptions</param>
         /// <param name="includeMethodParams">When true, also include the parameters of each method</param>
@@ -129,7 +130,6 @@ namespace PRISM
         ///   clsCodeTest.InnerTestException
         ///    in clsCodeTest.vb:line 86
         /// </returns>
-        /// <remarks>Useful for removing the full file paths included in the default stack trace</remarks>
         public static string GetExceptionStackTraceMultiLine(
             Exception ex,
             bool includeInnerExceptionMessages = true,

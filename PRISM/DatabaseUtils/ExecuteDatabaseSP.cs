@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -111,9 +111,9 @@ namespace PRISM
         /// <summary>
         /// Event handler for InfoMessage event
         /// </summary>
+        /// <remarks>Errors and warnings from SQL Server are caught here</remarks>
         /// <param name="sender"></param>
         /// <param name="args"></param>
-        /// <remarks>Errors and warnings from SQL Server are caught here</remarks>
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args)
         {
             foreach (SqlError err in args.Errors)
@@ -320,11 +320,11 @@ namespace PRISM
         /// <summary>
         /// Method for executing a db stored procedure when a data table is not returned
         /// </summary>
+        /// <remarks>No logging is performed by this procedure</remarks>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="errorMessage">Error message (output)</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks>No logging is performed by this procedure</remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, out string errorMessage)
         {
             return ExecuteSP(spCmd, maxRetryCount, out errorMessage, DEFAULT_SP_RETRY_DELAY_SEC);
@@ -333,12 +333,12 @@ namespace PRISM
         /// <summary>
         /// Method for executing a db stored procedure when a data table is not returned
         /// </summary>
+        /// <remarks>No logging is performed by this procedure</remarks>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="errorMessage">Error message (output)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        /// <remarks>No logging is performed by this procedure</remarks>
         public int ExecuteSP(SqlCommand spCmd, int maxRetryCount, out string errorMessage, int retryDelaySeconds)
         {
             // If this value is in the error message, an exception occurred before resultCode was set

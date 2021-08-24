@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 // ReSharper disable UnusedMember.Global
 
@@ -66,10 +66,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Make sure inputFolderPath points to a valid directory and validate the output directory (defining it if null or empty)
         /// </summary>
+        /// <remarks>Create outputFolderPath if it does not exist</remarks>
         /// <param name="inputFolderPath"></param>
         /// <param name="outputFolderPath"></param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>Create outputFolderPath if it does not exist</remarks>
         protected bool CleanupFolderPaths(ref string inputFolderPath, ref string outputFolderPath)
         {
             return base.CleanupDirectoryPaths(ref inputFolderPath, ref outputFolderPath);
@@ -138,11 +138,11 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
+        /// <remarks>Calls ProcessFolders for all matching directories in inputFolderPath</remarks>
         /// <param name="inputFolderPath">Input directory path (supports wildcards)</param>
         /// <param name="outputFolderAlternatePath">Alternate directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
         /// <param name="recurseFoldersMaxLevels">If 0 or negative, recurse infinitely</param>
-        /// <remarks>Calls ProcessFolders for all matching directories in inputFolderPath</remarks>
         public bool ProcessAndRecurseFolders(
             string inputFolderPath,
             string outputFolderAlternatePath = "",

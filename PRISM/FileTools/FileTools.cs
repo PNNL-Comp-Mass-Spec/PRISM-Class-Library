@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -315,10 +315,10 @@ namespace PRISM
         /// <summary>
         /// Modifies input directory path string depending on addTerm
         /// </summary>
+        /// <remarks>addTerm=True forces the path to end with specified termChar while addTerm=False will remove termChar from the end if present</remarks>
         /// <param name="directoryPath">The input directory path</param>
         /// <param name="addTerm">Specifies whether the directory path should end with the specified directory separation character</param>
         /// <param name="termChar">The specified directory separation character</param>
-        /// <remarks>addTerm=True forces the path to end with specified termChar while addTerm=False will remove termChar from the end if present</remarks>
         /// <returns>The modified directory path</returns>
         private static string CheckTerminatorEX(string directoryPath, bool addTerm, char termChar)
         {
@@ -396,11 +396,6 @@ namespace PRISM
         /// <summary>
         /// Copies a source file to the destination file; allows overwriting
         /// </summary>
-        /// <param name="sourcePath">The source file path</param>
-        /// <param name="destPath">The destination file path</param>
-        /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false</param>
-        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
-        /// <param name="versionCountToKeep">Number of backup copies to keep</param>
         /// <remarks>
         /// <para>
         /// This method is unique in that it allows you to specify a destination path where
@@ -415,6 +410,11 @@ namespace PRISM
         /// Usage: CopyFile("C:\Misc\Bob.txt", "D:\MiscBackup\Bob.txt")
         /// </para>
         /// </remarks>
+        /// <param name="sourcePath">The source file path</param>
+        /// <param name="destPath">The destination file path</param>
+        /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false</param>
+        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
+        /// <param name="versionCountToKeep">Number of backup copies to keep</param>
         private void CopyFileEx(string sourcePath, string destPath, bool overWrite,
             bool backupDestFileBeforeCopy, int versionCountToKeep = DEFAULT_VERSION_COUNT_TO_KEEP)
         {
@@ -480,10 +480,10 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path; do not overwrite existing files
         /// </summary>
+        /// <remarks>If the file exists, will not copy the file but will still return true</remarks>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="overWrite">True to overwrite existing files</param>
-        /// <remarks>If the file exists, will not copy the file but will still return true</remarks>
         /// <returns>True if success, false if an error</returns>
         public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, bool overWrite)
         {
@@ -493,11 +493,11 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="managerName">Manager name (included in the lock file name)</param>
         /// <param name="overWrite">True to overWrite existing files</param>
-        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <returns>True if success, false if an error</returns>
         public bool CopyFileUsingLocks(string sourceFilePath, string targetFilePath, string managerName = "", bool overWrite = false)
         {
@@ -510,10 +510,10 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="overWrite">True to overWrite existing files</param>
-        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <returns>True if success, false if an error</returns>
         public bool CopyFileUsingLocks(FileInfo sourceFile, string targetFilePath, bool overWrite)
         {
@@ -523,11 +523,11 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="managerName">Manager name (included in the lock file name)</param>
         /// <param name="overWrite">True to overWrite existing files</param>
-        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <returns>True if success, false if an error</returns>
         public bool CopyFileUsingLocks(FileInfo sourceFile, string targetFilePath, string managerName = "", bool overWrite = false)
         {
@@ -594,8 +594,8 @@ namespace PRISM
         /// <summary>
         /// Given a file path, return the lock file directory if it exists
         /// </summary>
-        /// <param name="dataFile"></param>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
+        /// <param name="dataFile"></param>
         /// <returns>Lock directory path if it exists</returns>
         [Obsolete("Use GetLockDirectory")]
         public string GetLockFolder(FileInfo dataFile)
@@ -606,8 +606,8 @@ namespace PRISM
         /// <summary>
         /// Given a file path, return the lock file directory if it exists
         /// </summary>
-        /// <param name="dataFile"></param>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
+        /// <param name="dataFile"></param>
         /// <returns>Lock directory path if it exists</returns>
         public string GetLockDirectory(FileInfo dataFile)
         {
@@ -624,8 +624,8 @@ namespace PRISM
         /// <summary>
         /// Given a file path, return the lock file directory path (does not verify that it exists)
         /// </summary>
-        /// <param name="dataFile"></param>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
+        /// <param name="dataFile"></param>
         /// <returns>Lock directory path</returns>
         private string GetLockDirectoryPath(FileInfo dataFile)
         {
@@ -644,13 +644,13 @@ namespace PRISM
         /// <summary>
         /// Copy the source file to the target path
         /// </summary>
+        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <param name="lockDirectoryPathSource">Path to the lock directory for the source file; can be an empty string</param>
         /// <param name="lockDirectoryPathTarget">Path to the lock directory for the target file; can be an empty string</param>
         /// <param name="sourceFile">Source file object</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="managerName">Manager name (included in the lock file name)</param>
         /// <param name="overWrite">True to overWrite existing files</param>
-        /// <remarks>If the file exists yet overWrite is false, will not copy the file but will still return true</remarks>
         /// <returns>True if success, false if an error</returns>
         public bool CopyFileUsingLocks(
             string lockDirectoryPathSource, string lockDirectoryPathTarget,
@@ -862,8 +862,8 @@ namespace PRISM
         /// <summary>
         /// Deletes the specified directory and all subdirectories; does not delete the target directory
         /// </summary>
-        /// <param name="directoryPath"></param>
         /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
+        /// <param name="directoryPath"></param>
         /// <returns>True if success, false if an error</returns>
         public bool DeleteDirectoryFiles(string directoryPath)
         {
@@ -873,9 +873,9 @@ namespace PRISM
         /// <summary>
         /// Deletes the specified directory and all subdirectories
         /// </summary>
+        /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
         /// <param name="directoryPath"></param>
         /// <param name="deleteDirectoryIfEmpty">Set to True to delete the directory, if it is empty</param>
-        /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
         /// <returns>True if success, false if an error</returns>
         public bool DeleteDirectoryFiles(string directoryPath, bool deleteDirectoryIfEmpty)
         {
@@ -912,7 +912,6 @@ namespace PRISM
         /// <summary>
         /// Delete the specified file
         /// </summary>
-        /// <param name="filePath"></param>
         /// <remarks>
         /// <para>
         /// If the initial attempt fails, checks the ReadOnly bit and tries again
@@ -921,6 +920,7 @@ namespace PRISM
         /// If not ReadOnly, performs a garbage collection (minimum 500 msec between GC calls)
         /// </para>
         /// </remarks>
+        /// <param name="filePath"></param>
         /// <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
         private bool DeleteFileIgnoreErrors(string filePath)
         {
@@ -1092,8 +1092,8 @@ namespace PRISM
         /// <summary>
         /// Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
         /// </summary>
-        /// <param name="serverSharePath"></param>
         /// <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
+        /// <param name="serverSharePath"></param>
         public string GetServerShareBase(string serverSharePath)
         {
             if (!serverSharePath.StartsWith(@"\\"))
@@ -1226,6 +1226,7 @@ namespace PRISM
         /// <summary>
         /// Copies a source directory to the destination directory; allows overwriting
         /// </summary>
+        /// <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourcePath">The source directory path</param>
         /// <param name="destPath">The destination directory path</param>
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false</param>
@@ -1233,7 +1234,6 @@ namespace PRISM
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         /// <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
-        /// <remarks>Usage: CopyDirectory("C:\Misc", "D:\MiscBackup")</remarks>
         private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
             IReadOnlyCollection<string> fileNamesToSkip, string managerName)
         {
@@ -1373,9 +1373,9 @@ namespace PRISM
         /// Overwrites existing files if they differ in modification time or size.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourceDirectoryPath">The source directory path</param>
         /// <param name="targetDirectoryPath">The destination directory path</param>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <returns>True if success; false if an error</returns>
         public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath)
         {
@@ -1391,11 +1391,11 @@ namespace PRISM
         /// Overwrites existing files if they differ in modification time or size.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourceDirectoryPath">The source directory path</param>
         /// <param name="targetDirectoryPath">The destination directory path</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <returns>True if success; false if an error</returns>
         public bool CopyDirectoryWithResume(string sourceDirectoryPath, string targetDirectoryPath, bool recurse, bool ignoreFileLocks = false)
         {
@@ -1410,13 +1410,13 @@ namespace PRISM
         /// OverWrite behavior is governed by fileOverwriteMode.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourceDirectoryPath">The source directory path</param>
         /// <param name="targetDirectoryPath">The destination directory path</param>
         /// <param name="recurse">True to copy subdirectories</param>
         /// <param name="fileOverwriteMode">Behavior when a file already exists at the destination</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <returns>True if success; false if an error</returns>
         public bool CopyDirectoryWithResume(
             string sourceDirectoryPath, string targetDirectoryPath,
@@ -1435,6 +1435,7 @@ namespace PRISM
         /// OverWrite behavior is governed by fileOverwriteMode.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourceDirectoryPath">The source directory path</param>
         /// <param name="targetDirectoryPath">The destination directory path</param>
         /// <param name="recurse">True to copy subdirectories</param>
@@ -1443,7 +1444,6 @@ namespace PRISM
         /// <param name="fileCountResumed">Number of files resumed (output)</param>
         /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <returns>True if success; false if an error</returns>
         public bool CopyDirectoryWithResume(
             string sourceDirectoryPath, string targetDirectoryPath,
@@ -1464,6 +1464,7 @@ namespace PRISM
         /// OverWrite behavior is governed by fileOverwriteMode.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourceDirectoryPath">The source directory path</param>
         /// <param name="targetDirectoryPath">The destination directory path</param>
         /// <param name="recurse">True to copy subdirectories</param>
@@ -1473,7 +1474,6 @@ namespace PRISM
         /// <param name="fileCountResumed">Number of files resumed (output)</param>
         /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <returns>True if success; false if an error</returns>
         public bool CopyDirectoryWithResume(
             string sourceDirectoryPath, string targetDirectoryPath,
@@ -1493,6 +1493,7 @@ namespace PRISM
         /// OverWrite behavior is governed by fileOverwriteMode.
         /// Copies large files in chunks and allows resuming copying a large file if interrupted.
         /// </summary>
+        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <param name="sourceDirectoryPath">The source directory path</param>
         /// <param name="targetDirectoryPath">The destination directory path</param>
         /// <param name="recurse">True to copy subdirectories</param>
@@ -1504,7 +1505,6 @@ namespace PRISM
         /// <param name="fileCountResumed">Number of files resumed (output)</param>
         /// <param name="fileCountNewlyCopied">Number of files newly copied (output)</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
-        /// <remarks>Usage: CopyDirectoryWithResume("C:\Misc", "D:\MiscBackup")</remarks>
         /// <returns>True if success; false if an error</returns>
         public bool CopyDirectoryWithResume(
             string sourceDirectoryPath, string targetDirectoryPath,
@@ -2637,6 +2637,7 @@ namespace PRISM
         /// <summary>
         /// Confirms that the drive for the target output file has a minimum amount of free disk space
         /// </summary>
+        /// <remarks>If currentDiskFreeSpaceBytes is negative, this method always returns true (provided the target directory exists)</remarks>
         /// <param name="outputFilePath">Path to output file; defines the drive or server share for which we will determine the disk space</param>
         /// <param name="outputFileExpectedSizeMB">Expected size of the output file</param>
         /// <param name="minimumFreeSpaceMB">
@@ -2648,7 +2649,6 @@ namespace PRISM
         /// Determine on Windows using DiskInfo.GetDiskFreeSpace in PRISMWin.dll
         /// </param>
         /// <param name="errorMessage">Output message if there is not enough free space (or if the path is invalid)</param>
-        /// <remarks>If currentDiskFreeSpaceBytes is negative, this method always returns true (provided the target directory exists)</remarks>
         /// <returns>True if more than minimumFreeSpaceMB is available; otherwise false</returns>
         public static bool ValidateFreeDiskSpace(
             string outputFilePath,

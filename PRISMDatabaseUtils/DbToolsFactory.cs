@@ -128,6 +128,7 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get a connection string for the given database and server, using the specified username
         /// </summary>
+        /// <remarks>See method ValidatePgPass in class MgrSettingsDB for info on pgpass files</remarks>
         /// <param name="serverType"></param>
         /// <param name="serverName"></param>
         /// <param name="databaseName"></param>
@@ -139,7 +140,6 @@ namespace PRISMDatabaseUtils
         /// <para>If null, auto-determine based on server type and whether userName is defined</para>
         /// <para>If password is not an empty string, useIntegratedSecurity will be set to false by this method</para>
         /// </param>
-        /// <remarks>See method ValidatePgPass in class MgrSettingsDB for info on pgpass files</remarks>
         /// <returns>Connection string</returns>
         public static string GetConnectionString(
             DbServerTypes serverType,

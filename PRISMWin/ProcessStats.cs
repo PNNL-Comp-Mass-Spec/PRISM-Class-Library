@@ -119,10 +119,10 @@ namespace PRISMWin
         /// <summary>
         /// Returns the number of cores
         /// </summary>
-        /// <returns>The number of cores on this computer</returns>
         /// <remarks>
         /// Should not be affected by hyperthreading, so a computer with two 4-core chips will report 8 cores, even if Hyperthreading is enabled
         /// </remarks>
+        /// <returns>The number of cores on this computer</returns>
         public int GetCoreCount()
         {
             try
@@ -155,9 +155,9 @@ namespace PRISMWin
         /// Reports the number of cores in use by the given process
         /// This method takes at least 1000 msec to execute
         /// </summary>
+        /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         /// <param name="processId">Process ID for the program</param>
         /// <returns>Number of cores in use; 0 if the process is terminated.  Exception is thrown if a problem</returns>
-        /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         // ReSharper disable once UnusedMember.Global
         public float GetCoreUsageByProcessID(int processId)
         {
@@ -168,10 +168,10 @@ namespace PRISMWin
         /// Reports the number of cores in use by the given process
         /// This method takes at least 1000 msec to execute
         /// </summary>
+        /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         /// <param name="processId">Process ID for the program</param>
         /// <param name="processIdInstanceName">Expected instance name for the given processId; ignored if empty string. Updated to actual instance name if a new performance counter is created</param>
         /// <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
-        /// <remarks>Core count is typically an integer, but can be a fractional number if not using a core 100%</remarks>
         public float GetCoreUsageByProcessID(int processId, ref string processIdInstanceName)
         {
             try
@@ -254,13 +254,13 @@ namespace PRISMWin
         /// <summary>
         /// Sample the given performance counter to determine the CPU usage
         /// </summary>
-        /// <param name="perfCounter">Performance counter instance</param>
-        /// <param name="maxAttempts">Number of attempts</param>
-        /// <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
         /// <remarks>
         /// The first time perfCounter.NextSample() is called a Permissions exception is sometimes thrown
         /// Set maxAttempts to 2 or higher to gracefully handle this
         /// </remarks>
+        /// <param name="perfCounter">Performance counter instance</param>
+        /// <param name="maxAttempts">Number of attempts</param>
+        /// <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
         private float GetCoreUsageForPerfCounter(PerformanceCounter perfCounter, int maxAttempts)
         {
             if (maxAttempts < 1)
@@ -303,12 +303,12 @@ namespace PRISMWin
         /// Reports the number of cores in use by the given process
         /// This method takes at least 1000 msec to execute
         /// </summary>
-        /// <param name="processName">Process name, for example chrome (do not include .exe)</param>
-        /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
         /// <remarks>
         /// Core count is typically an integer, but can be a fractional number if not using a core 100%
         /// If multiple processes are running with the given name, returns the total core usage for all of them
         /// </remarks>
+        /// <param name="processName">Process name, for example chrome (do not include .exe)</param>
+        /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
         // ReSharper disable once UnusedMember.Global
         public float GetCoreUsageByProcessName(string processName)
         {
@@ -319,13 +319,13 @@ namespace PRISMWin
         /// Reports the number of cores in use by the given process
         /// This method takes at least 1000 msec to execute
         /// </summary>
-        /// <param name="processName">Process name, for example chrome (do not include .exe)</param>
-        /// <param name="processIDs">List of ProcessIDs matching the given process name</param>
-        /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
         /// <remarks>
         /// Core count is typically an integer, but can be a fractional number if not using a core 100%
         /// If multiple processes are running with the given name, returns the total core usage for all of them
         /// </remarks>
+        /// <param name="processName">Process name, for example chrome (do not include .exe)</param>
+        /// <param name="processIDs">List of ProcessIDs matching the given process name</param>
+        /// <returns>Number of cores in use; -1 if process not found; exception is thrown if a problem</returns>
         public float GetCoreUsageByProcessName(string processName, out List<int> processIDs)
         {
             processIDs = new List<int>();
@@ -353,11 +353,11 @@ namespace PRISMWin
         /// <summary>
         /// Returns the CPU usage
         /// </summary>
-        /// <returns>Value between 0 and 100</returns>
         /// <remarks>
         /// This is CPU usage for all running applications, not just this application
         /// For CPU usage of a single application use GetCoreUsageByProcessID()
         /// </remarks>
+        /// <returns>Value between 0 and 100</returns>
         // ReSharper disable once UnusedMember.Global
         public float GetCPUUtilization()
         {
@@ -400,9 +400,9 @@ namespace PRISMWin
         /// <summary>
         /// Get the specific Windows instance name for a program
         /// </summary>
+        /// <remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
         /// <param name="processId">Process ID</param>
         /// <returns>Instance name if found, otherwise an empty string</returns>
-        /// <remarks>If multiple programs named Chrome.exe are running, the first is Chrome.exe, the second is Chrome.exe#1, etc.</remarks>
         public string GetInstanceNameForProcessId(int processId)
         {
             try

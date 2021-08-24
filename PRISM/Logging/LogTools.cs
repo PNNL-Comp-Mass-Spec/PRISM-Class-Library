@@ -86,12 +86,12 @@ namespace PRISM.Logging
         /// Update the log file's base name (or relative path)
         /// However, if appendDateToBaseName is false, baseName is the full path to the log file
         /// </summary>
+        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
         /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// </param>
-        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName)
         {
             FileLogger.ChangeLogFileBaseName(baseName, appendDateToBaseName);
@@ -181,9 +181,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Show a status message at the console and optionally include in the log file, tagging it as a debug message
         /// </summary>
+        /// <remarks>The message is shown in dark gray in the console</remarks>
         /// <param name="statusMessage">Status message</param>
         /// <param name="writeToLog">True to write to the log file; false to only display at console</param>
-        /// <remarks>The message is shown in dark gray in the console</remarks>
         public static void LogDebug(string statusMessage, bool writeToLog = true)
         {
             ConsoleMsgUtils.ShowDebug(statusMessage);
@@ -204,10 +204,10 @@ namespace PRISM.Logging
         /// <summary>
         /// Log an error message and exception
         /// </summary>
+        /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
         /// <param name="errorMessage">Error message (do not include ex.message)</param>
         /// <param name="ex">Exception to log (allowed to be nothing)</param>
         /// <param name="logToDatabase">When true, log to the database (and to the file)</param>
-        /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
         public static void LogError(string errorMessage, Exception ex = null, bool logToDatabase = false)
         {
             var formattedError = ConsoleMsgUtils.ShowError(errorMessage, ex);
@@ -226,10 +226,10 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a fatal error message and exception
         /// </summary>
+        /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
         /// <param name="errorMessage">Error message (do not include ex.message)</param>
         /// <param name="ex">Exception to log (allowed to be nothing)</param>
         /// <param name="logToDatabase">When true, log to the database (and to the file)</param>
-        /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
         public static void LogFatalError(string errorMessage, Exception ex = null, bool logToDatabase = false)
         {
             var formattedError = ConsoleMsgUtils.ShowError(errorMessage, ex);
@@ -365,11 +365,11 @@ namespace PRISM.Logging
         /// <summary>
         /// Write a message and possibly an exception to the logging system
         /// </summary>
+        /// <remarks>Log message will not be written if logLevel is LogLevel or higher)</remarks>
         /// <param name="loggerType">Type of logger to use</param>
         /// <param name="logLevel">Level of log reporting</param>
         /// <param name="message">Message to be logged</param>
         /// <param name="ex">Exception to be logged; null if no exception</param>
-        /// <remarks>Log message will not be written if logLevel is LogLevel or higher)</remarks>
         private static void WriteLogWork(LoggerTypes loggerType, BaseLogger.LogLevels logLevel, string message, Exception ex)
         {
             if (OfflineMode && loggerType == LoggerTypes.LogDb)

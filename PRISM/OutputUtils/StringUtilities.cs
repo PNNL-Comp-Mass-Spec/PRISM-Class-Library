@@ -119,9 +119,9 @@ namespace PRISM
         /// <summary>
         /// Convert value to a string with 5 total digits of precision
         /// </summary>
+        /// <remarks>Numbers larger than 1000000 or smaller than 0.000001 will be in scientific notation</remarks>
         /// <param name="value">Number to convert to text</param>
         /// <returns>Number as text</returns>
-        /// <remarks>Numbers larger than 1000000 or smaller than 0.000001 will be in scientific notation</remarks>
         public static string ValueToString(double value)
         {
             return ValueToString(value, 5, 1000000);
@@ -130,10 +130,10 @@ namespace PRISM
         /// <summary>
         /// Convert value to a string with the specified total digits of precision
         /// </summary>
+        /// <remarks>Numbers larger than 1000000 or smaller than 0.000001 will be in scientific notation</remarks>
         /// <param name="value">Number to convert to text</param>
         /// <param name="digitsOfPrecision">Total digits of precision (before and after the decimal point)</param>
         /// <returns>Number as text</returns>
-        /// <remarks>Numbers larger than 1000000 or smaller than 0.000001 will be in scientific notation</remarks>
         public static string ValueToString(double value, byte digitsOfPrecision)
         {
             return ValueToString(value, digitsOfPrecision, 1000000);
@@ -142,6 +142,9 @@ namespace PRISM
         /// <summary>
         /// Convert value to a string with the specified total digits of precision and customized scientific notation threshold
         /// </summary>
+        /// <remarks>
+        /// This method differs from DblToString in that here digitsOfPrecision is the total digits while DblToString focuses on the number of digits after the decimal point
+        /// </remarks>
         /// <param name="value">Number to convert to text</param>
         /// <param name="digitsOfPrecision">Total digits of precision (before and after the decimal point)</param>
         /// <param name="scientificNotationThreshold">
@@ -149,9 +152,6 @@ namespace PRISM
         /// Also, values less than "1 / scientificNotationThreshold" will be converted to scientific notation
         /// Thus, if this threshold is 1000000, numbers larger than 1000000 or smaller than 0.000001 will be in scientific notation
         /// </param>
-        /// <remarks>
-        /// This method differs from DblToString in that here digitsOfPrecision is the total digits while DblToString focuses on the number of digits after the decimal point
-        /// </remarks>
         /// <returns>Number as text</returns>
         public static string ValueToString(
             double value,
@@ -258,11 +258,11 @@ namespace PRISM
         /// <summary>
         /// Format the value to a string with a fixed number of decimal points
         /// </summary>
+        /// <remarks>If digitsOfPrecision is 0, will round the number to the nearest integer</remarks>
         /// <param name="value">Value to format</param>
         /// <param name="digitsAfterDecimal">Digits to show after the decimal place (0 or higher)</param>
         /// <param name="thresholdScientific">Numbers below this level will be displayed using Scientific notation</param>
         /// <returns>String representation of the value</returns>
-        /// <remarks>If digitsOfPrecision is 0, will round the number to the nearest integer</remarks>
         public static string DblToString(
             double value,
             byte digitsAfterDecimal,
@@ -274,6 +274,7 @@ namespace PRISM
         /// <summary>
         /// Format the value to a string with a fixed number of decimal points
         /// </summary>
+        /// <remarks>If digitsOfPrecision is 0, will round the number to the nearest integer</remarks>
         /// <param name="value">Value to format</param>
         /// <param name="digitsAfterDecimal">Digits to show after the decimal place (0 or higher)</param>
         /// <param name="limitDecimalsForLargeValues">When true, will limit the number of decimal points shown for values over 1</param>
@@ -283,7 +284,6 @@ namespace PRISM
         /// When false, the decimal point symbol will depend on the current system's culture settings.
         /// </param>
         /// <returns>String representation of the value</returns>
-        /// <remarks>If digitsOfPrecision is 0, will round the number to the nearest integer</remarks>
         public static string DblToString(
             double value,
             byte digitsAfterDecimal,
@@ -349,6 +349,7 @@ namespace PRISM
         /// <summary>
         /// Format the value to a string using scientific notation
         /// </summary>
+        /// <remarks>If digitsOfPrecision is 0, will round the number to the nearest integer</remarks>
         /// <param name="value">Value to format</param>
         /// <param name="digitsAfterDecimal">Digits to show after the decimal place (0 or higher)</param>
         /// <param name="invariantCulture">
@@ -356,7 +357,6 @@ namespace PRISM
         /// When false, the decimal point symbol will depend on the current system's culture settings.
         /// </param>
         /// <returns>String representation of the value</returns>
-        /// <remarks>If digitsOfPrecision is 0, will round the number to the nearest integer</remarks>
         public static string DblToStringScientific(
             double value,
             byte digitsAfterDecimal,

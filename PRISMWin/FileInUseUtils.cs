@@ -98,13 +98,13 @@ namespace PRISMWin
         /// <summary>
         /// Find out what process(es) have a lock on the specified file
         /// </summary>
-        /// <param name="paths">Full Path(s) of the file(s)</param>
-        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
-        /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
         /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
         /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
         /// </remarks>
+        /// <param name="paths">Full Path(s) of the file(s)</param>
+        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
+        /// <returns>Processes locking the file</returns>
         public static List<Process> WhoIsLocking(string[] paths, bool checkProcessStartTime)
         {
             var key = Guid.NewGuid().ToString();
@@ -197,13 +197,13 @@ namespace PRISMWin
         /// <summary>
         /// Find out what process(es) have a lock on the specified file
         /// </summary>
-        /// <param name="path">Full Path of the file</param>
-        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
-        /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
         /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
         /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
         /// </remarks>
+        /// <param name="path">Full Path of the file</param>
+        /// <param name="checkProcessStartTime">If true, tries to read and compare process start times</param>
+        /// <returns>Processes locking the file</returns>
         public static List<Process> WhoIsLocking(string path, bool checkProcessStartTime = false)
         {
             return WhoIsLocking(new string[] { path }, checkProcessStartTime);
@@ -212,12 +212,12 @@ namespace PRISMWin
         /// <summary>
         /// Find out what process(es) have a lock on the specified file
         /// </summary>
-        /// <param name="paths">Full Path(s) of the file(s)</param>
-        /// <returns>Processes locking the file</returns>
         /// <remarks>See also:
         /// http://msdn.microsoft.com/en-us/library/windows/desktop/aa373661(v=vs.85).aspx
         /// http://wyupdate.googlecode.com/svn-history/r401/trunk/frmFilesInUse.cs (no copyright in code at time of viewing)
         /// </remarks>
+        /// <param name="paths">Full Path(s) of the file(s)</param>
+        /// <returns>Processes locking the file</returns>
         public static List<Process> WhoIsLocking(params string[] paths)
         {
             return WhoIsLocking(paths, false);

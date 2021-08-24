@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -84,9 +84,9 @@ namespace PRISM
         /// <summary>
         /// Loads the settings for the defined Xml Settings File
         /// </summary>
+        /// <remarks>If case sensitive names are in place, all section and key names must be lowercase</remarks>
         /// <param name="XmlSettingsFilePath">The path to the XML settings file</param>
         /// <param name="isCaseSensitive">Case sensitive names if True. Non-case sensitive if false</param>
-        /// <remarks>If case sensitive names are in place, all section and key names must be lowercase</remarks>
         public bool LoadSettings(string XmlSettingsFilePath, bool isCaseSensitive)
         {
             mCaseSensitive = isCaseSensitive;
@@ -183,8 +183,8 @@ namespace PRISM
         /// <summary>
         /// Examines the Key Names for the given section, storing them in mCachedSection
         /// </summary>
-        /// <param name="sectionName"></param>
         /// <remarks>This is done so that this class will know the correct capitalization for the key names</remarks>
+        /// <param name="sectionName"></param>
         private bool CacheKeyNames(string sectionName)
         {
             List<string> keys;
@@ -487,11 +487,11 @@ namespace PRISM
         /// <summary>
         /// Get the numeric value for a given parameter in a given section
         /// </summary>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <param name="sectionName">The name of the section</param>
         /// <param name="keyName">The name of the key</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
         /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
-        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <returns>
         /// The numeric value of the "value" attribute as a short
         /// </returns>
@@ -535,11 +535,11 @@ namespace PRISM
         /// <summary>
         /// Get the numeric value for a given parameter in a given section
         /// </summary>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <param name="sectionName">The name of the section</param>
         /// <param name="keyName">The name of the key</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
         /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
-        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <returns>
         /// The numeric value of the "value" attribute as an integer
         /// </returns>
@@ -583,11 +583,11 @@ namespace PRISM
         /// <summary>
         /// Get the numeric value for a given parameter in a given section
         /// </summary>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <param name="sectionName">The name of the section</param>
         /// <param name="keyName">The name of the key</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
         /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
-        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <returns>
         /// The numeric value of the "value" attribute as a long
         /// </returns>
@@ -631,11 +631,11 @@ namespace PRISM
         /// <summary>
         /// Get the numeric value for a given parameter in a given section
         /// </summary>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <param name="sectionName">The name of the section</param>
         /// <param name="keyName">The name of the key</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
         /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
-        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <returns>
         /// The numeric value of the "value" attribute as a float
         /// </returns>
@@ -679,11 +679,11 @@ namespace PRISM
         /// <summary>
         /// Get the numeric value for a given parameter in a given section
         /// </summary>
+        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <param name="sectionName">The name of the section</param>
         /// <param name="keyName">The name of the key</param>
         /// <param name="valueIfMissing">Value to return if "sectionName" or "keyName" is missing</param>
         /// <param name="valueNotPresent">Output: True if "sectionName" or "keyName" is missing</param>
-        /// <remarks>If "value" is "true" returns -1; if "value" is "false" returns 0</remarks>
         /// <returns>
         /// The numeric value of the "value" attribute as a double
         /// </returns>

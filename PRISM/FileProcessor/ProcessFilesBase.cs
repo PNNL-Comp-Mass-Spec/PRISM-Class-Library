@@ -556,6 +556,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process files in a directory and in its subdirectories
         /// </summary>
+        /// <remarks>
+        /// The extensions should be of the form ".TXT" or ".RAW" (i.e. a period then the extension)
+        /// If any of the extensions is "*" or ".*", all files will be processed
+        /// </remarks>
         /// <param name="inputFilePathOrDirectory">
         /// Input file or directory (supports wildcards)
         /// If a directory path, or if empty, processes files with known entries in the working directory
@@ -575,10 +579,6 @@ namespace PRISM.FileProcessor
         /// </param>
         /// <param name="extensionsToParse">List of file extensions to parse</param>
         /// <returns>True if success, false if an error</returns>
-        /// <remarks>
-        /// The extensions should be of the form ".TXT" or ".RAW" (i.e. a period then the extension)
-        /// If any of the extensions is "*" or ".*", all files will be processed
-        /// </remarks>
         public bool ProcessFilesAndRecurseDirectories(
             string inputFilePathOrDirectory,
             string outputDirectoryNameOrPath,

@@ -42,11 +42,11 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Constructor that takes tool name and parameter file path
         /// </summary>
-        /// <param name="toolName">Tool name (for logging)</param>
-        /// <param name="paramFilePath">Parameter file path</param>
         /// <remarks>
         /// paramFilePath can be blank if you plan to call ParseKeyValueParameterList
         /// </remarks>
+        /// <param name="toolName">Tool name (for logging)</param>
+        /// <param name="paramFilePath">Parameter file path</param>
         public KeyValueParamFileReader(string toolName, string paramFilePath)
         {
             ErrorMessage = string.Empty;
@@ -66,13 +66,13 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Constructor that takes a working directory path and parameter file name
         /// </summary>
-        /// <param name="toolName">Tool name (for logging)</param>
-        /// <param name="workDirPath">Directory with the parameter file</param>
-        /// <param name="paramFileName">Parameter file name</param>
         /// <remarks>
         /// Parameter file name and working directory path will be validated in ParseKeyValueParameterFile
         /// workDirPath and paramFileName can be blank if you plan to call ParseKeyValueParameterList
         /// </remarks>
+        /// <param name="toolName">Tool name (for logging)</param>
+        /// <param name="workDirPath">Directory with the parameter file</param>
+        /// <param name="paramFileName">Parameter file name</param>
         public KeyValueParamFileReader(string toolName, string workDirPath, string paramFileName)
         {
             ErrorMessage = string.Empty;
@@ -84,12 +84,12 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Convert the parameter info into a command line
         /// </summary>
+        /// <remarks>Returns an empty string if multiple parameters resolve to the same argument name</remarks>
         /// <param name="paramFileEntries">Parameter names and values read from tool's parameter file</param>
         /// <param name="paramToArgMapping">Dictionary mapping parameter names to argument names</param>
         /// <param name="paramNamesToSkip">Parameter names in paramFileEntries to skip</param>
         /// <param name="argumentPrefix">Argument prefix; typically -- or -</param>
         /// <returns>String with command line arguments</returns>
-        /// <remarks>Returns an empty string if multiple parameters resolve to the same argument name</remarks>
         public string ConvertParamsToArgs(
             List<KeyValuePair<string, string>> paramFileEntries,
             Dictionary<string, string> paramToArgMapping,
@@ -152,13 +152,13 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Parse settingText to extract the key name and value (separated by an equals sign)
         /// </summary>
-        /// <param name="settingText"></param>
-        /// <param name="removeComment">When true, if the value of the setting has a # delimited comment, remove it</param>
-        /// <returns>Key/Value pair</returns>
         /// <remarks>
         /// If the line starts with # it is treated as a comment line and an empty key/value pair will be returned
         /// If the line contains a # sign in the middle, the comment is left intact if removeComment is false
         /// </remarks>
+        /// <param name="settingText"></param>
+        /// <param name="removeComment">When true, if the value of the setting has a # delimited comment, remove it</param>
+        /// <returns>Key/Value pair</returns>
         public static KeyValuePair<string, string> GetKeyValueSetting(string settingText, bool removeComment = false)
         {
             var emptyKvPair = new KeyValuePair<string, string>(string.Empty, string.Empty);
@@ -213,10 +213,10 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Get the boolean value associated with the given parameter
         /// </summary>
+        /// <remarks>Will return valueIfMissing if the parameter is missing or does not contain "true" or "false"</remarks>
         /// <param name="paramFileEntries"></param>
         /// <param name="paramName"></param>
         /// <param name="valueIfMissing"></param>
-        /// <remarks>Will return valueIfMissing if the parameter is missing or does not contain "true" or "false"</remarks>
         public static bool GetParameterValue(List<KeyValuePair<string, string>> paramFileEntries, string paramName, bool valueIfMissing)
         {
             foreach (var paramEntry in paramFileEntries.Where(paramEntry => paramEntry.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase)))
@@ -234,10 +234,10 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Get the integer value associated with the given parameter
         /// </summary>
+        /// <remarks>Will return valueIfMissing if the parameter is missing or does not contain an integer</remarks>
         /// <param name="paramFileEntries"></param>
         /// <param name="paramName"></param>
         /// <param name="valueIfMissing"></param>
-        /// <remarks>Will return valueIfMissing if the parameter is missing or does not contain an integer</remarks>
         public static int GetParameterValue(List<KeyValuePair<string, string>> paramFileEntries, string paramName, int valueIfMissing)
         {
             foreach (var paramEntry in paramFileEntries.Where(paramEntry => paramEntry.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase)))

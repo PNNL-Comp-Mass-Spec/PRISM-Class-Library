@@ -18,14 +18,14 @@ namespace PRISMTest
         /// <summary>
         /// Start long running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
         /// </summary>
-        /// <param name="exeName"></param>
-        /// <param name="cmdArgs"></param>
-        /// <param name="writeConsoleOutput"></param>
-        /// <param name="maxRuntimeSeconds"></param>
         /// <remarks>
         /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account; thus the DesktopInteraction category
         /// Category PNL_Domain is included here because these tests do not work on AppVeyor
         /// </remarks>
+        /// <param name="exeName"></param>
+        /// <param name="cmdArgs"></param>
+        /// <param name="writeConsoleOutput"></param>
+        /// <param name="maxRuntimeSeconds"></param>
         [TestCase("sleep.exe", "20",  true, 6)]
         [TestCase("ls.exe", @"-alFR c:\",  true, 3)]
         [Category("DesktopInteraction")]
@@ -38,13 +38,13 @@ namespace PRISMTest
         /// <summary>
         /// Start long running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
         /// </summary>
+        /// <remarks>
+        /// Category PNL_Domain is included here because these tests do not work on AppVeyor
+        /// </remarks>
         /// <param name="exeName"></param>
         /// <param name="cmdArgs"></param>
         /// <param name="writeConsoleOutput"></param>
         /// <param name="maxRuntimeSeconds"></param>
-        /// <remarks>
-        /// Category PNL_Domain is included here because these tests do not work on AppVeyor
-        /// </remarks>
         [TestCase("sleep.exe", "20",  true, 6)]
         [TestCase("ls.exe", @"-alFR c:\",  true, 3)]
         [Category("PNL_Domain")]
@@ -176,11 +176,11 @@ namespace PRISMTest
         /// <summary>
         /// Test starting a process, showing a window
         /// </summary>
+        /// <remarks>Category DesktopInteraction is included here because these tests do not work on AppVeyor or on Jenkins</remarks>
         /// <param name="exeName"></param>
         /// <param name="cmdArgs"></param>
         /// <param name="writeConsoleOutput"></param>
         /// <param name="maxRuntimeSeconds"></param>
-        /// <remarks>Category DesktopInteraction is included here because these tests do not work on AppVeyor or on Jenkins</remarks>
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("ls.exe", @"-alF c:\",  false, 15)]
@@ -193,11 +193,11 @@ namespace PRISMTest
         /// <summary>
         /// Test starting a process, no window
         /// </summary>
+        /// <remarks>Category PNL_Domain is included here because these tests do not work on AppVeyor</remarks>
         /// <param name="exeName"></param>
         /// <param name="cmdArgs"></param>
         /// <param name="writeConsoleOutput"></param>
         /// <param name="maxRuntimeSeconds"></param>
-        /// <remarks>Category PNL_Domain is included here because these tests do not work on AppVeyor</remarks>
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("ls.exe", @"-alF c:\",  false, 15)]

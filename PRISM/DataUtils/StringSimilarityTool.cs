@@ -95,9 +95,9 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Generates an array containing every two consecutive letters in the input string
         /// </summary>
+        /// <remarks>If the text is a single character, returns an array of length 1 with that single character</remarks>
         /// <param name="text"></param>
         /// <returns>List of pairs</returns>
-        /// <remarks>If the text is a single character, returns an array of length 1 with that single character</remarks>
         private static IEnumerable<string> LetterPairs(string text)
         {
             if (text.Length < 1)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -134,9 +134,9 @@ namespace PRISM
         /// <summary>
         /// This version of the constructor requires you to specify the share name by setting the <see cref="Share">Share</see> property
         /// </summary>
+        /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
-        /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>
         public ShareConnector(string userName, string userPwd)
         {
             RealNew(userName, userPwd);
@@ -145,10 +145,10 @@ namespace PRISM
         /// <summary>
         /// This version of the constructor allows you to specify the share name as an argument
         /// </summary>
+        /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ///
         /// <param name="shareName">The name of the file share to which you will connect</param>
         /// <param name="userName">Username</param>
         /// <param name="userPwd">Password</param>
-        /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ///
         public ShareConnector(string shareName, string userName, string userPwd)
         {
             DefineShareName(shareName);
@@ -217,8 +217,8 @@ namespace PRISM
         /// <summary>
         /// Updates class variable with the specified share path
         /// </summary>
-        /// <param name="shareName"></param>
         /// <remarks>If the path ends in a forward slash then the slash will be removed</remarks>
+        /// <param name="shareName"></param>
         private void DefineShareName(string shareName)
         {
             if (shareName.EndsWith("\\"))
