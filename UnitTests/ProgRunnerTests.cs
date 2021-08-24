@@ -242,6 +242,7 @@ namespace PRISMTest
                 CacheStandardOutput = false,
                 EchoOutputToConsole = false,
                 WriteConsoleOutputToFile = writeConsoleOutput,
+                ConsoleOutputFilePath = Path.Combine(workDir, Path.GetFileNameWithoutExtension(utilityExe.Name) + "_ConsoleOutput.txt"),
                 ConsoleOutputFileIncludesCommandLine = true
             };
 
