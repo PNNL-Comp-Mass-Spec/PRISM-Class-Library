@@ -54,8 +54,8 @@ namespace PRISMDatabaseUtils
         /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
         /// Assumes case-insensitive column names
         /// </summary>
-        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnNamesByIdentifier"></param>
         /// <param name="columnIdentifier"></param>
         /// <param name="columnNames">Comma separated list of column names</param>
@@ -70,8 +70,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
         /// </summary>
-        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnNamesByIdentifier"></param>
         /// <param name="columnIdentifier"></param>
         /// <param name="caseSensitiveColumnNames"></param>
@@ -604,8 +604,8 @@ namespace PRISMDatabaseUtils
         /// The order of the columns will be based on the default sort of the identifier data type, T
         /// When T is an enum, the sort order will be by the integer value of each enum
         /// </summary>
-        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnNamesByIdentifier">Column names, by identifier</param>
         /// <param name="columnDelimiter">Column delimiter, by default a tab</param>
         /// <returns>Delimited list of column names</returns>
@@ -621,8 +621,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Return a string of the expected column names in a header line for a tab-delimited text file
         /// </summary>
-        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <remarks>If an identifier in columnNamesByIdentifier has multiple supported column names, uses the first one in the SortedSet</remarks>
+        /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
         /// <param name="columnNamesByIdentifier">Column names, by identifier</param>
         /// <param name="columnIdentifierList">Ordered list of column identifiers (typically a string or an enum)</param>
         /// <param name="columnDelimiter">Column delimiter, by default a tab</param>

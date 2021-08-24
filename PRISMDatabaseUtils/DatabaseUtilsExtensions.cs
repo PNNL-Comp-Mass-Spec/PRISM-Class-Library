@@ -27,11 +27,11 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Simple conversion that handles DBNull for parsing database fields
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <remarks>
         /// This method does not work with VB.NET when Option Strict is enabled
         /// As an alternative, use GetInteger, GetString, etc. (in this class)
         /// </remarks>
+        /// <typeparam name="T"></typeparam>
         /// <param name="value"></param>
         /// <returns>If value is DBNull, then returns default(t) (string.Empty for string); otherwise casts value to T</returns>
         public static T CastDBVal<T>(this object value)
