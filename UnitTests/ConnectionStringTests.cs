@@ -251,9 +251,9 @@ namespace PRISMTest
 
             var startTime = DateTime.UtcNow;
 
-            var cmd = serverType == DbServerTypes.PostgreSQL ?
-                GetPostgresDbCommand(connectionString, sqlQuery) :
-                GetSqlServerDbCommand(connectionString, sqlQuery);
+            var cmd = serverType == DbServerTypes.PostgreSQL
+                ? GetPostgresDbCommand(connectionString, sqlQuery)
+                : GetSqlServerDbCommand(connectionString, sqlQuery);
 
             using (cmd)
             {

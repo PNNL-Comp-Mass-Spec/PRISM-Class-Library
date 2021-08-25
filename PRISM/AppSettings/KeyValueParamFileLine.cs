@@ -141,9 +141,9 @@ namespace PRISM.AppSettings
             Text = string.Format("{0}={1}{2}",
                 ParamName,
                 ParamValue,
-                string.IsNullOrWhiteSpace(Comment) ?
-                    string.Empty :
-                    string.Format("    {0}", Comment));
+                string.IsNullOrWhiteSpace(Comment)
+                    ? string.Empty
+                    : string.Format("    {0}", Comment));
         }
 
         /// <summary>

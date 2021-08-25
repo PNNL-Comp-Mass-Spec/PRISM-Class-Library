@@ -212,9 +212,9 @@ namespace PRISM.AppSettings
 
             var key = settingText.Substring(0, charIndex).Trim();
 
-            var value = charIndex < settingText.Length - 1 ?
-                            settingText.Substring(charIndex + 1).Trim() :
-                            string.Empty;
+            var value = charIndex < settingText.Length - 1
+                ? settingText.Substring(charIndex + 1).Trim()
+                : string.Empty;
 
             var commentIndex = value.IndexOf('#');
 
@@ -226,9 +226,9 @@ namespace PRISM.AppSettings
             if (commentIndex < 0 || !removeComment)
                 return new KeyValuePair<string, string>(key, value);
 
-            var valueClean = commentIndex < settingText.Length - 1 ?
-                                 value.Substring(0, commentIndex).Trim() :
-                                 string.Empty;
+            var valueClean = commentIndex < settingText.Length - 1
+                ? value.Substring(0, commentIndex).Trim()
+                : string.Empty;
 
             return new KeyValuePair<string, string>(key, valueClean);
         }

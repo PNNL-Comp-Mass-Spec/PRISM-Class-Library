@@ -187,9 +187,9 @@ namespace PRISMTest
                 parameterList = "@message:VarChar,@eventID:Int,@eventDate:DateTime,@success:TinyInt";
             }
 
-            var connectionString = usePostgres ?
-                                       GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD) :
-                                       GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            var connectionString = usePostgres
+                ? GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD)
+                : GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
 
             var parameters = ParseParameterList(parameterList);
 
@@ -227,9 +227,9 @@ namespace PRISMTest
                 parameterList = "@message:VarChar,@eventID:Integer,@eventDate:Timestamp,@maxValue:Double,@success:Boolean,@source:Citext";
             }
 
-            var connectionString = usePostgres ?
-                                       GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD) :
-                                       GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            var connectionString = usePostgres
+                ? GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD)
+                : GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
 
             var parameters = ParseParameterList(parameterList);
 
