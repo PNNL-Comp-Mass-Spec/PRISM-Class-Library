@@ -4,6 +4,7 @@ using Microsoft.Win32.SafeHandles;
 
 // ReSharper disable UnusedMember.Global
 
+// ReSharper disable once CheckNamespace
 namespace PRISM
 {
     /// <summary>
