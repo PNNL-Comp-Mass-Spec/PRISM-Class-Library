@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 
 // ReSharper disable UnusedMember.Global
+
 namespace PRISM.AppSettings
 {
     /// <summary>
@@ -154,13 +155,46 @@ namespace PRISM.AppSettings
         /// </summary>
         /// <remarks>
         /// If the line starts with # it is treated as a comment line and an empty key/value pair will be returned
-        /// If the line contains a # sign in the middle, the comment is left intact if removeComment is false
+        /// If the line contains a # sign in the middle, the comment text is stored in output argument comment
         /// </remarks>
         /// <param name="settingText"></param>
-        /// <param name="removeComment">When true, if the value of the setting has a # delimited comment, remove it</param>
+        /// <param name="removeComment">
+        /// When true, if the value of the setting has a # delimited comment, remove it
+        /// When false, the value of the setting will include the comment
+        /// (default false)
+        /// </param>
         /// <returns>Key/Value pair</returns>
         public static KeyValuePair<string, string> GetKeyValueSetting(string settingText, bool removeComment = false)
         {
+            return GetKeyValueSetting(settingText, out _, removeComment);
+        }
+
+        /// <summary>
+        /// Parse settingText to extract the key name and value (separated by an equals sign)
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// If the line starts with #, it is treated as a comment line and an empty key/value pair will be returned
+        /// </para>
+        /// <para>
+        /// If the line contains a # sign in the middle, the comment text will be removed from the value if removeComment is true
+        /// </para>
+        /// <para>
+        /// In either case, output argument comment will include the comment
+        /// </para>
+        /// </remarks>
+        /// <param name="settingText">Text to parse</param>
+        /// <param name="comment">Output: Comment text, if any (including the # sign)</param>
+        /// <param name="removeComment">
+        /// When true, if the value of the setting has a # delimited comment, remove it
+        /// When false, the value of the setting will include the comment
+        /// (default true, since this method has output argument comment)
+        /// </param>
+        /// <returns>Key/Value pair</returns>
+        public static KeyValuePair<string, string> GetKeyValueSetting(string settingText, out string comment, bool removeComment = true)
+        {
+            comment = string.Empty;
+
             var emptyKvPair = new KeyValuePair<string, string>(string.Empty, string.Empty);
 
             if (string.IsNullOrWhiteSpace(settingText))
@@ -184,7 +218,12 @@ namespace PRISM.AppSettings
 
             var commentIndex = value.IndexOf('#');
 
-            if (commentIndex == 0 || !removeComment)
+            if (commentIndex >= 0)
+            {
+                comment = value.Substring(commentIndex).Trim();
+            }
+
+            if (commentIndex < 0 || !removeComment)
                 return new KeyValuePair<string, string>(key, value);
 
             var valueClean = commentIndex < settingText.Length - 1 ?
@@ -370,11 +409,11 @@ namespace PRISM.AppSettings
 
                     var paramFileLine = new KeyValueParamFileLine(lineNumber, dataLine);
 
-                    var kvSetting = GetKeyValueSetting(dataLine, removeComments);
+                    var kvSetting = GetKeyValueSetting(dataLine, out var comment, removeComments);
 
                     if (!string.IsNullOrWhiteSpace(kvSetting.Key))
                     {
-                        paramFileLine.StoreParameter(kvSetting);
+                        paramFileLine.StoreParameter(kvSetting, comment);
                     }
 
                     paramFileLines.Add(paramFileLine);
@@ -440,11 +479,11 @@ namespace PRISM.AppSettings
         {
             var paramFileLine = new KeyValueParamFileLine(lineNumber, item);
 
-            var kvSetting = GetKeyValueSetting(item, removeComments);
+            var kvSetting = GetKeyValueSetting(item, out var comment, removeComments);
 
             if (!string.IsNullOrWhiteSpace(kvSetting.Key))
             {
-                paramFileLine.StoreParameter(kvSetting);
+                paramFileLine.StoreParameter(kvSetting, comment);
             }
 
             paramFileLines.Add(paramFileLine);
