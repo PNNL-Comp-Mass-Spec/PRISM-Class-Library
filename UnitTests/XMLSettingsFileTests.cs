@@ -16,11 +16,9 @@ namespace PRISMTest
             var reader = new XmlSettingsFileAccessor();
             reader.LoadSettings(settingsFilePath, false);
 
-            bool valueNotPresent;
-
             if (bool.TryParse(expectedValue, out var expectedBool))
             {
-                var actualBool = reader.GetParam(sectionName, settingName, false, out valueNotPresent);
+                var actualBool = reader.GetParam(sectionName, settingName, false, out var valueNotPresent);
 
                 if (valueNotPresent)
                 {
@@ -32,7 +30,7 @@ namespace PRISMTest
                 return;
             }
 
-            var actualValue = reader.GetParam(sectionName, settingName, "", out valueNotPresent);
+            var actualValue = reader.GetParam(sectionName, settingName, "", out _);
             Assert.AreEqual(expectedValue, actualValue, "Unexpected value for section {0}, setting {1}: {2}", sectionName, settingName, actualValue);
 
             Console.WriteLine("Value for section {0}, setting {1} is {2}", sectionName, settingName, actualValue);
