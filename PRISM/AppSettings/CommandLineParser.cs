@@ -615,6 +615,10 @@ namespace PRISM
 
                     if (!Results.Success)
                     {
+                        if (outputErrors)
+                        {
+                            Results.OutputErrors();
+                        }
                         return Results;
                     }
 
