@@ -175,7 +175,7 @@ namespace PRISM
             /// <summary>
             /// Set the parsing status to failed
             /// </summary>
-            internal void Failed(string failureReason)
+            internal void Failed(string failureReason, bool showWarning = true)
             {
                 ConsoleMsgUtils.ShowWarning("Argument parsing failed: " + failureReason);
                 Success = false;
@@ -428,6 +428,7 @@ namespace PRISM
             {
                 Results = new ParserResults(options)
             };
+
             return parser.ParseArgs(args).Success;
         }
 
@@ -486,7 +487,7 @@ namespace PRISM
                     // Show errors
                     Results.OutputErrors();
                 }
-                Results.Failed("Empty args array");
+                Results.Failed("Empty args array", false);
                 return Results;
             }
 
@@ -523,7 +524,7 @@ namespace PRISM
                     if (preprocessed.ContainsKey(helpArg) && validArgs.ContainsKey(helpArg.ToLower()) && validArgs[helpArg.ToLower()].IsBuiltInArg)
                     {
                         PrintHelp(ParamKeysFieldWidth, ParamDescriptionFieldWidth);
-                        Results.Failed("Help argument found: " + helpArg);
+                        Results.Failed("Help argument found: " + helpArg, false);
                         return Results;
                     }
                 }
