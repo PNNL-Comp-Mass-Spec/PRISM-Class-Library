@@ -160,12 +160,22 @@ namespace PRISM
 
             try
             {
-                var matchedFiles = directory.GetFiles(fileMask).ToList();
+                DirectoryInfo parentDirectory;
+                if (directory.FullName.Length + fileMask.Length + 2 >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+                {
+                    parentDirectory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directory.FullName));
+                }
+                else
+                {
+                    parentDirectory = directory;
+                }
+
+                var matchedFiles = parentDirectory.GetFiles(fileMask).ToList();
 
                 if (!recurse)
                     return matchedFiles;
 
-                foreach (var subdirectory in directory.GetDirectories())
+                foreach (var subdirectory in parentDirectory.GetDirectories())
                 {
                     DirectoryInfo subdirectoryToUse;
                     if (subdirectory.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
