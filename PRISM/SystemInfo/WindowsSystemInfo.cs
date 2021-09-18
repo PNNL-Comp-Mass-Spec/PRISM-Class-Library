@@ -765,52 +765,58 @@ namespace PRISM
             uint returnLength = 0;
 
             GetLogicalProcessorInformationEx(coreCountType, IntPtr.Zero, ref returnLength);
-            if (Marshal.GetLastWin32Error() == ERROR_INSUFFICIENT_BUFFER)
+
+            if (Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
             {
-                var ptr = Marshal.AllocHGlobal((int)returnLength);
-                try
+                return buffer.Count;
+            }
+
+            var ptr = Marshal.AllocHGlobal((int)returnLength);
+            try
+            {
+                if (GetLogicalProcessorInformationEx(coreCountType, ptr, ref returnLength))
                 {
-                    if (GetLogicalProcessorInformationEx(coreCountType, ptr, ref returnLength))
+                    var item = ptr;
+                    var readCount = 0;
+                    //int size = Marshal.SizeOf(typeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX));
+                    //int length = (int)returnLength / size;
+                    //for (int i = 0; i < length; i++)
+
+                    while (readCount < returnLength)
                     {
-                        var item = ptr;
-                        var readCount = 0;
-                        //int size = Marshal.SizeOf(typeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX));
-                        //int length = (int)returnLength / size;
-                        //for (int i = 0; i < length; i++)
+                        var type = (LOGICAL_PROCESSOR_RELATIONSHIP)Marshal.ReadInt32(item);
+                        var size = Marshal.ReadInt32(item, 4);
+                        var data = new byte[size];
+                        Marshal.Copy(item, data, 0, size);
 
-                        while (readCount < returnLength)
+                        switch (type)
                         {
-                            var type = (LOGICAL_PROCESSOR_RELATIONSHIP)Marshal.ReadInt32(item);
-                            var size = Marshal.ReadInt32(item, 4);
-                            var data = new byte[size];
-                            Marshal.Copy(item, data, 0, size);
+                            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
+                                buffer.Add((SLPI_PROCESSOR_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_PROCESSOR_RELATIONSHIP)));
+                                break;
 
-                            switch (type)
-                            {
-                                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
-                                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
-                                    buffer.Add((SLPI_PROCESSOR_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_PROCESSOR_RELATIONSHIP)));
-                                    break;
-                                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
-                                    buffer.Add((SLPI_NUMA_NODE_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_NUMA_NODE_RELATIONSHIP)));
-                                    break;
-                                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
-                                    buffer.Add((SLPI_CACHE_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_CACHE_RELATIONSHIP)));
-                                    break;
-                                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
-                                    buffer.Add((SLPI_GROUP_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_GROUP_RELATIONSHIP)));
-                                    break;
-                            }
+                            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                                buffer.Add((SLPI_NUMA_NODE_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_NUMA_NODE_RELATIONSHIP)));
+                                break;
 
-                            item += size;
-                            readCount += size;
+                            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
+                                buffer.Add((SLPI_CACHE_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_CACHE_RELATIONSHIP)));
+                                break;
+
+                            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
+                                buffer.Add((SLPI_GROUP_RELATIONSHIP)Marshal.PtrToStructure(item, typeof(SLPI_GROUP_RELATIONSHIP)));
+                                break;
                         }
+
+                        item += size;
+                        readCount += size;
                     }
                 }
-                finally
-                {
-                    Marshal.FreeHGlobal(ptr);
-                }
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(ptr);
             }
             //for each (var process in buffer)
             //{
