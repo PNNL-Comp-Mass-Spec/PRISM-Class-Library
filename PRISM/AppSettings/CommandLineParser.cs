@@ -177,7 +177,9 @@ namespace PRISM
             /// </summary>
             internal void Failed(string failureReason, bool showWarning = true)
             {
-                ConsoleMsgUtils.ShowWarning("Argument parsing failed: " + failureReason);
+                if (showWarning)
+                    ConsoleMsgUtils.ShowWarning("Argument parsing failed: " + failureReason);
+
                 Success = false;
             }
 
