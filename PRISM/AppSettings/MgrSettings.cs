@@ -113,8 +113,7 @@ namespace PRISM.AppSettings
         /// <returns>String containing full name and path</returns>
         protected static string GetConfigFilePath()
         {
-            var configFilePath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath() + ".config";
-            return configFilePath;
+            return FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath() + ".config";
         }
 
         /// <summary>
