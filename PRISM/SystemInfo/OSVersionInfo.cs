@@ -100,9 +100,11 @@ namespace PRISM
                         case "Ubuntu":
                             versionInfo = GetUbuntuVersion(reader);
                             break;
+
                         case "Generic":
                             versionInfo = GetOSReleaseVersion(reader);
                             break;
+
                         default:
                             var versionText = GetFirstLineVersion(reader, versionFileInfo.Key);
                             versionInfo = new List<string>
@@ -385,8 +387,10 @@ namespace PRISM
             {
                 case 3:
                     return "Windows NT 3.51";
+
                 case 4:
                     return "Windows NT 4.0";
+
                 case 5:
                     switch (osInfo.Version.Minor)
                     {
@@ -398,6 +402,7 @@ namespace PRISM
                             return "Windows 2003";
                     }
                     break;
+
                 case 6:
                     switch (osInfo.Version.Minor)
                     {
@@ -411,8 +416,10 @@ namespace PRISM
                             return "Windows 8.1";
                     }
                     break;
+
                 case 10:
                     return "Windows 10";
+
                 default:
                     if (osInfo.Version.Major > 10)
                         return "Windows " + osInfo.Version.Major;

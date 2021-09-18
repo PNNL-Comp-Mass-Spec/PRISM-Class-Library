@@ -341,6 +341,5 @@ namespace PRISMTest
             if (!expectedComment.Equals(string.Empty))
                 Assert.AreEqual(expectedComment, paramFileLine.Comment, "Actual comment does not match the expected comment");
         }
-
     }
 }

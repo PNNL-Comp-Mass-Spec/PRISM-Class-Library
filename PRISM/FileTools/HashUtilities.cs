@@ -437,13 +437,16 @@ namespace PRISM
                         case "size":
                             long.TryParse(dataColumns[1], out hashInfo.FileSize);
                             break;
+
                         case "date":
                         case "modification_date_utc":
                             DateTime.TryParse(dataColumns[1], out hashInfo.FileDateUtc);
                             break;
+
                         case "hash":
                             hashInfo.HashValue = dataColumns[1];
                             break;
+
                         case "hashtype":
 
                             hashInfo.HashType = dataColumns[1].ToLower() switch

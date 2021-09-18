@@ -157,13 +157,16 @@ namespace PRISM.Logging
                 case LogLevels.DEBUG:
                     ConsoleMsgUtils.ShowDebug(logMessage.Message);
                     break;
+
                 case LogLevels.WARN:
                     ConsoleMsgUtils.ShowWarning(logMessage.Message);
                     break;
+
                 case LogLevels.ERROR:
                 case LogLevels.FATAL:
                     ConsoleMsgUtils.ShowError(logMessage.Message);
                     break;
+
                 default:
                     Console.WriteLine(logMessage.Message);
                     break;
@@ -209,18 +212,23 @@ namespace PRISM.Logging
                 case LogLevels.DEBUG:
                     Debug(message, ex);
                     break;
+
                 case LogLevels.ERROR:
                     Error(message, ex);
                     break;
+
                 case LogLevels.FATAL:
                     Fatal(message, ex);
                     break;
+
                 case LogLevels.INFO:
                     Info(message, ex);
                     break;
+
                 case LogLevels.WARN:
                     Warn(message, ex);
                     break;
+
                 default:
                     throw new Exception("Invalid log level specified");
             }

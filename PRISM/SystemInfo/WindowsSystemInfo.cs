@@ -763,6 +763,7 @@ namespace PRISM
         {
             var buffer = new List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
             uint returnLength = 0;
+
             GetLogicalProcessorInformationEx(coreCountType, IntPtr.Zero, ref returnLength);
             if (Marshal.GetLastWin32Error() == ERROR_INSUFFICIENT_BUFFER)
             {

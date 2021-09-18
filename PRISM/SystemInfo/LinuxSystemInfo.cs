@@ -389,21 +389,27 @@ namespace PRISM
                 case "bytes":
                     memorySizeMB = (float)(memorySize / 1024.0 / 1024.0);
                     break;
+
                 case "kb":
                     memorySizeMB = (float)(memorySize / 1024.0);
                     break;
+
                 case "mb":
                     memorySizeMB = memorySize;
                     break;
+
                 case "gb":
                     memorySizeMB = (float)(memorySize * 1024.0);
                     break;
+
                 case "tb":
                     memorySizeMB = (float)(memorySize * 1024.0 * 1024);
                     break;
+
                 case "pb":
                     memorySizeMB = (float)(memorySize * 1024.0 * 1024 * 1024);
                     break;
+
                 default:
                     if (showDebugInfo)
                         ConditionalLogError("Memory size parse error; unknown units for " + dataLine);

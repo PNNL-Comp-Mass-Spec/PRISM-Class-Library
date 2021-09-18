@@ -464,9 +464,11 @@ namespace PRISM
                         case XMLItemTypeEnum.GetKeys:
                             items.Add(setting.Attributes.GetNamedItem("key").Value);
                             break;
+
                         case XMLItemTypeEnum.GetValues:
                             items.Add(setting.Attributes.GetNamedItem("value").Value);
                             break;
+
                         case XMLItemTypeEnum.GetKeysAndValues:
                             items.Add(setting.Attributes.GetNamedItem("key").Value + "=" + setting.Attributes.GetNamedItem("value").Value);
                             break;
@@ -717,12 +719,14 @@ namespace PRISM
                     // create a new section element
                     CreateSection(dataLine);
                     break;
+
                 case ";":
                     // new comment
                     var commentElement = doc.CreateElement("comment");
                     commentElement.InnerText = dataLine.Substring(1);
                     GetLastSection().AppendChild(commentElement);
                     break;
+
                 default:
                     // Look for typical XML settings file elements
 

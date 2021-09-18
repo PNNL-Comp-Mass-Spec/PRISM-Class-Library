@@ -1343,7 +1343,7 @@ namespace PRISM
                     key = key.Substring(0, separatorIndex);
                 }
 
-                if (!containedSeparator && !parsingParamFileArgs  && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
+                if (!containedSeparator && !parsingParamFileArgs && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
                 {
                     value = args[i + 1];
                     i++;

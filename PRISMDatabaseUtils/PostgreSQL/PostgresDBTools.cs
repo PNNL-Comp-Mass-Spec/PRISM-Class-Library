@@ -1315,8 +1315,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     parameter.Value = (int)parameter.Value;
                 }
             }
-
         }
-
     }
 }
