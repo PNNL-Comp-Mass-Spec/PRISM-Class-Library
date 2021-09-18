@@ -791,25 +791,25 @@ namespace PRISM
                     }
                     catch (InvalidCastException)
                     {
-                        var castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""";
+                        const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""";
                         Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
                         Results.Failed(castError);
                     }
                     catch (FormatException)
                     {
-                        var castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" using the given formatter";
+                        const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" using the given formatter";
                         Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
                         Results.Failed(castError);
                     }
                     catch (ArgumentException)
                     {
-                        var castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (ArgumentException)";
+                        const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (ArgumentException)";
                         Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
                         Results.Failed(castError);
                     }
                     catch (OverflowException)
                     {
-                        var castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)";
+                        const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)";
                         Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
                         Results.Failed(castError);
                     }
@@ -1142,15 +1142,14 @@ namespace PRISM
                     {
                         if (castMin.CompareTo(castValue) > 0)
                         {
-                            var parseError = "Error: argument {0}, value of {1} is less than minimum of {2}";
+                            const string parseError = "Error: argument {0}, value of {1} is less than minimum of {2}";
                             Results.AddParseError(parseError, argKey, castValue, castMin);
                             Results.Failed(parseError);
                         }
                     }
                     else
                     {
-                        var parseError =
-                            @"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""";
+                        const string parseError = @"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""";
                         Results.AddParseError(parseError, argKey, castValue, parseData.Min, propertyType.Name);
                         Results.Failed(parseError);
                     }
@@ -1163,15 +1162,14 @@ namespace PRISM
                     {
                         if (castMax.CompareTo(castValue) < 0)
                         {
-                            var parseError = "Error: argument {0}, value of {1} is greater than maximum of {2}";
+                            const string parseError = "Error: argument {0}, value of {1} is greater than maximum of {2}";
                             Results.AddParseError(parseError, argKey, castValue, castMax);
                             Results.Failed(parseError);
                         }
                     }
                     else
                     {
-                        var parseError =
-                            @"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""";
+                        const string parseError = @"Error: argument {0}, unable to check value of {1} against maximum of ""{2}"": cannot cast/compare maximum to type ""{3}""";
                         Results.AddParseError(parseError, argKey, castValue, parseData.Max, propertyType.Name);
                         Results.Failed(parseError);
                     }
@@ -1179,25 +1177,25 @@ namespace PRISM
             }
             catch (InvalidCastException)
             {
-                var castError = @"Error: argument {0}, cannot cast min or max to type ""{1}""";
+                const string castError = @"Error: argument {0}, cannot cast min or max to type ""{1}""";
                 Results.AddParseError(castError, argKey, propertyType.Name);
                 Results.Failed(castError);
             }
             catch (FormatException)
             {
-                var castError = @"Error: argument {0}, cannot cast min or max to type ""{1}"" using the given formatter";
+                const string castError = @"Error: argument {0}, cannot cast min or max to type ""{1}"" using the given formatter";
                 Results.AddParseError(castError, argKey, propertyType.Name);
                 Results.Failed(castError);
             }
             catch (ArgumentException)
             {
-                var castError = @"Error: argument {0}, cannot cast min or max to type ""{1}"" (ArgumentException)";
+                const string castError = @"Error: argument {0}, cannot cast min or max to type ""{1}"" (ArgumentException)";
                 Results.AddParseError(castError, argKey, propertyType.Name);
                 Results.Failed(castError);
             }
             catch (OverflowException)
             {
-                var castError = @"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)";
+                const string castError = @"Error: argument {0}, cannot cast min or max to type ""{1}"" (out of range)";
                 Results.AddParseError(castError, argKey, propertyType.Name);
                 Results.Failed(castError);
             }
