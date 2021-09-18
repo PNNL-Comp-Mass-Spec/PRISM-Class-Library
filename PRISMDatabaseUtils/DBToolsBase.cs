@@ -387,7 +387,7 @@ namespace PRISMDatabaseUtils
         /// <remarks>Looks for a parameter named _returnCode or with Direction == ParameterDirection.ReturnValue</remarks>
         /// <param name="cmdParameters"></param>
         /// <returns>Numeric return code</returns>
-        protected int GetReturnCode(DbParameterCollection cmdParameters)
+        protected static int GetReturnCode(DbParameterCollection cmdParameters)
         {
             foreach (DbParameter parameter in cmdParameters)
             {
@@ -438,7 +438,7 @@ namespace PRISMDatabaseUtils
         /// Set the default precision for a Decimal (aka Numeric) parameter
         /// </summary>
         /// <param name="param"></param>
-        protected void SetDefaultPrecision(DbParameter param)
+        protected static void SetDefaultPrecision(DbParameter param)
         {
             if (param.DbType != DbType.Decimal)
                 return;

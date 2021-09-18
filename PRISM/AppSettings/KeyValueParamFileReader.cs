@@ -475,7 +475,7 @@ namespace PRISM.AppSettings
             return false;
         }
 
-        private void ParseParameterEntry(ICollection<KeyValueParamFileLine> paramFileLines, int lineNumber, string item, bool removeComments)
+        private static void ParseParameterEntry(ICollection<KeyValueParamFileLine> paramFileLines, int lineNumber, string item, bool removeComments)
         {
             var paramFileLine = new KeyValueParamFileLine(lineNumber, item);
 

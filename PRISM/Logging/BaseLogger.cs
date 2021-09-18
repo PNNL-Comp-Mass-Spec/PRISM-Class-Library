@@ -81,7 +81,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Timestamp format, defaults to year-month-day time (24 hour clock)
         /// </summary>
-        public static LogMessage.TimestampFormatMode TimestampFormat = Logging.LogMessage.TimestampFormatMode.YearMonthDay24hr;
+        public static LogMessage.TimestampFormatMode TimestampFormat { get; set; } = Logging.LogMessage.TimestampFormatMode.YearMonthDay24hr;
 
         /// <summary>
         /// When true, show additional debug messages at the console
@@ -94,7 +94,7 @@ namespace PRISM.Logging
         /// <param name="messageLogLevel"></param>
         /// <param name="logThresholdLevel"></param>
         /// <returns>True if this message should be logged</returns>
-        protected bool AllowLog(LogLevels messageLogLevel, LogLevels logThresholdLevel)
+        protected static bool AllowLog(LogLevels messageLogLevel, LogLevels logThresholdLevel)
         {
             return messageLogLevel <= logThresholdLevel;
         }

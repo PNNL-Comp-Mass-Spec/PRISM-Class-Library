@@ -330,7 +330,7 @@ namespace PRISM
         /// <param name="dataLine"></param>
         /// <param name="id">Output: matched ID, or 0 if no match</param>
         /// <returns>True if success, otherwise false</returns>
-        private bool ExtractID(Regex reIdMatcher, string dataLine, out int id)
+        private static bool ExtractID(Regex reIdMatcher, string dataLine, out int id)
         {
             var match = reIdMatcher.Match(dataLine);
             if (!match.Success)

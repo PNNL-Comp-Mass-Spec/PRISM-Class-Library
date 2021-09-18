@@ -759,7 +759,7 @@ namespace PRISM
 
         private const int ERROR_INSUFFICIENT_BUFFER = 122;
 
-        private int GetProcessorInfo(LOGICAL_PROCESSOR_RELATIONSHIP coreCountType)
+        private static int GetProcessorInfo(LOGICAL_PROCESSOR_RELATIONSHIP coreCountType)
         {
             var buffer = new List<ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
             uint returnLength = 0;
@@ -820,7 +820,7 @@ namespace PRISM
             return buffer.Count;
         }
 
-        private void GetProcessorInformation()
+        private static void GetProcessorInformation()
         {
             if (loadedProcessorInformation)
             {

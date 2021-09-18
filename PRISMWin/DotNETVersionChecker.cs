@@ -43,7 +43,7 @@ namespace PRISMWin
         /// Determine the human-readable version of .NET
         /// </summary>
         /// <param name="releaseKey"></param>
-        private string CheckFor45DotVersion(int releaseKey)
+        private static string CheckFor45DotVersion(int releaseKey)
         {
             // Checking the version using >= will enable forward compatibility,
             // however you should always compile your code on newer versions of
@@ -69,7 +69,7 @@ namespace PRISMWin
             };
         }
 
-        private string GetDotNetVersion45OrLater()
+        private static string GetDotNetVersion45OrLater()
         {
             // Alternative to RegistryKey.OpenRemoteBaseKey is RegistryKey.OpenBaseKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full")
             // However, that can give odd behavior with 32-bit code on 64-bit Windows
@@ -120,7 +120,7 @@ namespace PRISMWin
         /// <summary>
         /// Get all installed versions of .NET
         /// </summary>
-        private Dictionary<int, List<string>> GetInstalledDotNETVersions(bool findingLegacyVersions)
+        private static Dictionary<int, List<string>> GetInstalledDotNETVersions(bool findingLegacyVersions)
         {
             // Keys in dotNETVersions are major versions (2, 3, or 4)
             // Values are a list of minor versions
@@ -298,7 +298,7 @@ namespace PRISMWin
         /// Look for the version integer in versionKeyName
         /// </summary>
         /// <param name="versionKeyName"></param>
-        private int GetMajorVersion(string versionKeyName)
+        private static int GetMajorVersion(string versionKeyName)
         {
             // This RegEx is used to find the first integer in a string
             var reVersionMatch = new Regex(@"(?<Version>\d+)");
@@ -322,7 +322,7 @@ namespace PRISMWin
             ErrorEvent?.Invoke(message, ex);
         }
 
-        private void StoreVersion(IDictionary<int, List<string>> dotNETVersions, int majorVersion, string specificVersion)
+        private static void StoreVersion(IDictionary<int, List<string>> dotNETVersions, int majorVersion, string specificVersion)
         {
             if (string.IsNullOrWhiteSpace(specificVersion))
                 return;

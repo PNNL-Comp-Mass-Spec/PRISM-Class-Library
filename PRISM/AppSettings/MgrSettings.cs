@@ -102,7 +102,7 @@ namespace PRISM.AppSettings
         /// Specifies the full name and path for the application config file
         /// </summary>
         /// <returns>String containing full name and path</returns>
-        private string GetConfigFileName()
+        private static string GetConfigFileName()
         {
             return Path.GetFileName(GetConfigFilePath());
         }
@@ -111,7 +111,7 @@ namespace PRISM.AppSettings
         /// Specifies the full name and path for the application config file
         /// </summary>
         /// <returns>String containing full name and path</returns>
-        protected string GetConfigFilePath()
+        protected static string GetConfigFilePath()
         {
             var configFilePath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath() + ".config";
             return configFilePath;
@@ -182,7 +182,7 @@ namespace PRISM.AppSettings
             return true;
         }
 
-        private Dictionary<string, string> InitializeMgrSettings(Dictionary<string, string> localSettings)
+        private static Dictionary<string, string> InitializeMgrSettings(Dictionary<string, string> localSettings)
         {
             var mgrSettingsFromFile = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
@@ -253,7 +253,7 @@ namespace PRISM.AppSettings
             return true;
         }
 
-        private string GetGroupNameFromSettings(IReadOnlyDictionary<string, string> mgrSettings)
+        private static string GetGroupNameFromSettings(IReadOnlyDictionary<string, string> mgrSettings)
         {
             if (!mgrSettings.TryGetValue("MgrSettingGroupName", out var groupName))
                 return string.Empty;

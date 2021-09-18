@@ -646,7 +646,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Npgsql treats <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
         /// We instead want to handle "stored procedure" command as CALL procedure_name()
         /// </summary>
-        private void ConvertStoredProcedureCommand(NpgsqlCommand sqlCmd)
+        private static void ConvertStoredProcedureCommand(NpgsqlCommand sqlCmd)
         {
             if (sqlCmd.CommandType != CommandType.StoredProcedure)
             {
@@ -1230,7 +1230,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Convert from enum SqlType to NpgsqlDbTypes.NpgsqlDbType
         /// </summary>
         /// <param name="sqlType"></param>
-        private NpgsqlDbType ConvertSqlType(SqlType sqlType)
+        private static NpgsqlDbType ConvertSqlType(SqlType sqlType)
         {
             return sqlType switch
             {
@@ -1265,7 +1265,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </summary>
         /// <param name="ex">Exception</param>
         /// <returns>True if the same error will happen again, so a retry is pointless</returns>
-        protected bool IsFatalException(Exception ex)
+        protected static bool IsFatalException(Exception ex)
         {
             return
                 ex.Message.IndexOf("permission denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -1277,7 +1277,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Auto-change the @ to _
         /// </summary>
         /// <param name="spCmd"></param>
-        private void UpdateSqlServerParameterNames(NpgsqlCommand spCmd)
+        private static void UpdateSqlServerParameterNames(NpgsqlCommand spCmd)
         {
             foreach (NpgsqlParameter parameter in spCmd.Parameters)
             {
@@ -1303,7 +1303,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Assure that parameter values are integers, not enums
         /// </summary>
         /// <param name="spCmd"></param>
-        private void UpdateSqlServerParameterValues(NpgsqlCommand spCmd)
+        private static void UpdateSqlServerParameterValues(NpgsqlCommand spCmd)
         {
             // When sending an enum to a PostgreSQL stored procedure (aka function), if you don't cast to an integer, you get this error:
             // Can't write CLR type Namespace.ClassName+EnumName with handler type Int32Handler

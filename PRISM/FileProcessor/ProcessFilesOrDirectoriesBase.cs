@@ -733,7 +733,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Gets the version for the entry assembly, if available
         /// </summary>
-        private string GetVersionForExecutingAssembly()
+        private static string GetVersionForExecutingAssembly()
         {
             string version;
 

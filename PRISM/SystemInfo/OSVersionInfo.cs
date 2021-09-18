@@ -186,7 +186,7 @@ namespace PRISM
             return GetFirstLineVersion(reader, osName);
         }
 
-        private string GetFirstLineVersion(StreamReader reader, string osName)
+        private static string GetFirstLineVersion(StreamReader reader, string osName)
         {
             // The first line should have the version info
             while (!reader.EndOfStream)
@@ -204,7 +204,7 @@ namespace PRISM
             return string.IsNullOrWhiteSpace(osName) ? string.Empty : osName;
         }
 
-        private IEnumerable<string> GetFirstNValues(Dictionary<string, string> contents, int valuesToReturn)
+        private static IEnumerable<string> GetFirstNValues(Dictionary<string, string> contents, int valuesToReturn)
         {
             var uniqueValues = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -358,7 +358,7 @@ namespace PRISM
         /// For old windows kernel
         /// </summary>
         /// <param name="osInfo"></param>
-        private string GetWin32Version(OperatingSystem osInfo)
+        private static string GetWin32Version(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows 95,
             // Windows 98, Windows 98 Second Edition, or Windows Me
@@ -379,7 +379,7 @@ namespace PRISM
         /// For NT kernel
         /// </summary>
         /// <param name="osInfo"></param>
-        private string GetWinNTVersion(OperatingSystem osInfo)
+        private static string GetWinNTVersion(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows NT 3.51,
             // Windows NT 4.0, Windows 2000, or Windows XP
@@ -435,7 +435,7 @@ namespace PRISM
         /// where the contents are expected to be in the form KEY=Value
         /// </summary>
         /// <param name="reader"></param>
-        private Dictionary<string, string> ReadReleaseFile(StreamReader reader)
+        private static Dictionary<string, string> ReadReleaseFile(StreamReader reader)
         {
             var contents = new List<string>();
             var osInfo = new Dictionary<string, string>();
@@ -473,7 +473,7 @@ namespace PRISM
         /// Remove leading and trailing double quotes
         /// </summary>
         /// <param name="dataLine"></param>
-        private string StripQuotes(string dataLine)
+        private static string StripQuotes(string dataLine)
         {
             if (string.IsNullOrWhiteSpace(dataLine))
                 return string.Empty;

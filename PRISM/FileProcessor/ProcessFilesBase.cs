@@ -275,7 +275,7 @@ namespace PRISM.FileProcessor
             return new List<string> { ".*" };
         }
 
-        private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputFilePathSpec, out string fileNameMatchPattern)
+        private static DirectoryInfo GetInputDirectoryAndMatchSpec(string inputFilePathSpec, out string fileNameMatchPattern)
         {
             // Copy the path into cleanPath and replace any * or ? characters with _
             var cleanPath = PathUtils.GetCleanPath(inputFilePathSpec);

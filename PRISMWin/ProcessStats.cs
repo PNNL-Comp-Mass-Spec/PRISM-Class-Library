@@ -261,7 +261,7 @@ namespace PRISMWin
         /// <param name="perfCounter">Performance counter instance</param>
         /// <param name="maxAttempts">Number of attempts</param>
         /// <returns>Number of cores in use; 0 if the process is terminated. Exception is thrown if a problem</returns>
-        private float GetCoreUsageForPerfCounter(PerformanceCounter perfCounter, int maxAttempts)
+        private static float GetCoreUsageForPerfCounter(PerformanceCounter perfCounter, int maxAttempts)
         {
             if (maxAttempts < 1)
                 maxAttempts = 1;

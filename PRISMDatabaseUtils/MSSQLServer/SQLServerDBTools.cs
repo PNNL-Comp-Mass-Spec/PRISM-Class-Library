@@ -1201,7 +1201,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Convert from enum SqlType to System.Data.SqlDbType
         /// </summary>
         /// <param name="sqlType"></param>
-        private SqlDbType ConvertSqlType(SqlType sqlType)
+        private static SqlDbType ConvertSqlType(SqlType sqlType)
         {
             return sqlType switch
             {
@@ -1234,7 +1234,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// </summary>
         /// <param name="ex">Exception</param>
         /// <returns>True if the same error will happen again, so a retry is pointless</returns>
-        protected bool IsFatalException(Exception ex)
+        protected static bool IsFatalException(Exception ex)
         {
             return
                 ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||

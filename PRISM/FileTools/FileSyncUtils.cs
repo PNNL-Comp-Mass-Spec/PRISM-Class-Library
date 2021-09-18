@@ -210,7 +210,7 @@ namespace PRISM
         /// Does nothing if the data file does not have a .hashcheck file
         /// </summary>
         /// <param name="dataFile"></param>
-        private void DeleteHashCheckFileForDataFile(FileInfo dataFile)
+        private static void DeleteHashCheckFileForDataFile(FileInfo dataFile)
         {
             try
             {
@@ -261,7 +261,7 @@ namespace PRISM
         /// If the .hashcheck file is more than this number of days old, re-compute the hash value of the local file and compare to the hashcheck file
         /// Set to 0 to check the hash on every call to this method
         /// </param>
-        private bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, HashUtilities.HashInfoType expectedHashInfo, int recheckIntervalDays = 0)
+        private static bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, HashUtilities.HashInfoType expectedHashInfo, int recheckIntervalDays = 0)
         {
             var hashCheckFilePath = string.Empty;
             const bool checkDate = true;

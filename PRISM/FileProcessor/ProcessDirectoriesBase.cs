@@ -199,7 +199,7 @@ namespace PRISM.FileProcessor
             };
         }
 
-        private DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)
+        private static DirectoryInfo GetInputDirectoryAndMatchSpec(string inputDirectoryPathSpec, out string directoryNameMatchPattern)
         {
             // Copy the path into cleanPath and replace any * or ? characters with _
             var cleanPath = PathUtils.GetCleanPath(inputDirectoryPathSpec);

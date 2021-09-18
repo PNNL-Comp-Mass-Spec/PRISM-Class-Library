@@ -452,7 +452,7 @@ namespace PRISM
         /// <param name="sourcePath"></param>
         /// <param name="destPath"></param>
         /// <param name="overwrite"></param>
-        private void CopyFileNative(string sourcePath, string destPath, bool overwrite)
+        private static void CopyFileNative(string sourcePath, string destPath, bool overwrite)
         {
             try
             {
@@ -975,7 +975,7 @@ namespace PRISM
         /// </summary>
         /// <param name="targetFile"></param>
         // ReSharper disable once SuggestBaseTypeForParameter
-        private void DeleteFileNative(FileInfo targetFile)
+        private static void DeleteFileNative(FileInfo targetFile)
         {
             try
             {
@@ -1345,7 +1345,7 @@ namespace PRISM
         /// <param name="sourceFile">Source FileInfo</param>
         /// <param name="targetFilePath">Target file path</param>
         /// <param name="readOnly">True to force the ReadOnly bit on, False to force it off</param>
-        private void UpdateReadonlyAttribute(FileSystemInfo sourceFile, string targetFilePath, bool readOnly)
+        private static void UpdateReadonlyAttribute(FileSystemInfo sourceFile, string targetFilePath, bool readOnly)
         {
             // Get the file attributes from the source file
             var fa = sourceFile.Attributes;
@@ -2873,7 +2873,7 @@ namespace PRISM
             }
         }
 
-        private bool WaitedTooLong(DateTime waitTimeStart, int maxLockfileWaitTimeMinutes)
+        private static bool WaitedTooLong(DateTime waitTimeStart, int maxLockfileWaitTimeMinutes)
         {
             return DateTime.UtcNow.Subtract(waitTimeStart).TotalMinutes >= maxLockfileWaitTimeMinutes;
         }

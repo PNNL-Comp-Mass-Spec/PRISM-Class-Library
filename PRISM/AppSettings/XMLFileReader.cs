@@ -814,7 +814,7 @@ namespace PRISM
             }
         }
 
-        private bool ParseLineManualCheckTag(string dataLine, string tagToFind, out string tagValue)
+        private static bool ParseLineManualCheckTag(string dataLine, string tagToFind, out string tagValue)
         {
             tagValue = string.Empty;
 

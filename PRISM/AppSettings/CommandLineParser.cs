@@ -1207,7 +1207,7 @@ namespace PRISM
         /// </summary>
         /// <param name="valueToConvert"></param>
         /// <param name="targetType"></param>
-        private object ConvertToType(object valueToConvert, Type targetType)
+        private static object ConvertToType(object valueToConvert, Type targetType)
         {
             // Properly parse enums
             if (targetType.IsEnum)
@@ -1242,12 +1242,12 @@ namespace PRISM
             };
         }
 
-        private void AppendArgumentValue(ICollection<string> existingArgumentValues, string newArgumentValue)
+        private static void AppendArgumentValue(ICollection<string> existingArgumentValues, string newArgumentValue)
         {
             AppendArgumentValues(existingArgumentValues, new List<string> { newArgumentValue });
         }
 
-        private void AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
+        private static void AppendArgumentValues(ICollection<string> existingArgumentValues, IEnumerable<string> newArgumentValues)
         {
             // Append new argument values, trimming trailing \r or \n characters
 
@@ -1384,7 +1384,7 @@ namespace PRISM
             return processed;
         }
 
-        private object GetDefaultValue(Type t)
+        private static object GetDefaultValue(Type t)
         {
             if (t.IsValueType)
             {
@@ -1399,7 +1399,7 @@ namespace PRISM
         /// </summary>
         /// <param name="argPosition"></param>
         /// <returns>Argument name</returns>
-        private string GetPositionalArgName(int argPosition)
+        private static string GetPositionalArgName(int argPosition)
         {
             return "##" + argPosition + "##";
         }
