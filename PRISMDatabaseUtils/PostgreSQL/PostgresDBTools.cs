@@ -978,6 +978,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             UpdateSqlServerParameterNames(sqlCmd);
 
+            UpdateSqlServerParameterValues(sqlCmd);
+
             ConvertStoredProcedureCommand(sqlCmd);
 
             // If this value is in error msg, exception occurred before resultCode was set
@@ -1296,5 +1298,25 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 }
             }
         }
+
+        /// <summary>
+        /// Assure that parameter values are integers, not enums
+        /// </summary>
+        /// <param name="spCmd"></param>
+        private void UpdateSqlServerParameterValues(NpgsqlCommand spCmd)
+        {
+            // When sending an enum to a PostgreSQL stored procedure (aka function), if you don't cast to an integer, you get this error:
+            // Can't write CLR type Namespace.ClassName+EnumName with handler type Int32Handler
+            // The following checks for this
+            foreach (NpgsqlParameter parameter in spCmd.Parameters)
+            {
+                if (parameter.Value != null && parameter.Value.GetType().IsEnum)
+                {
+                    parameter.Value = (int)parameter.Value;
+                }
+            }
+
+        }
+
     }
 }
