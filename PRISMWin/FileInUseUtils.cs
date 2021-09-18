@@ -206,7 +206,7 @@ namespace PRISMWin
         /// <returns>Processes locking the file</returns>
         public static List<Process> WhoIsLocking(string path, bool checkProcessStartTime = false)
         {
-            return WhoIsLocking(new string[] { path }, checkProcessStartTime);
+            return WhoIsLocking(new[] { path }, checkProcessStartTime);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace PRISMWin
         {
             if (!Directory.Exists(path))
             {
-                return WhoIsLocking(new string[] { path }, checkProcessStartTime);
+                return WhoIsLocking(new[] { path }, checkProcessStartTime);
             }
 
             var filePaths = Directory.GetFiles(path, "*", SearchOption.AllDirectories);

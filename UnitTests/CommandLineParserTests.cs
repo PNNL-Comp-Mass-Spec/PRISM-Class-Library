@@ -1245,8 +1245,8 @@ namespace PRISMTest
             results.DblMinOnly = 25;
             results.LowerChar = "Something";
             results.BoolCheck = true;
-            results.StringArray = new string[] {"S1", "S2" , "S3" , "S4" , "S5"};
-            results.IntArray = new int[] {1, 2, 3, 4, 5};
+            results.StringArray = new[] {"S1", "S2" , "S3" , "S4" , "S5"};
+            results.IntArray = new[] {1, 2, 3, 4, 5};
 
             var paramFileName = "exampleParams.txt";
             var paramFile = new FileInfo(paramFileName);
