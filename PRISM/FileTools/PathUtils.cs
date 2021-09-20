@@ -161,7 +161,7 @@ namespace PRISM
             try
             {
                 DirectoryInfo parentDirectory;
-                if (directory.FullName.Length + fileMask.Length + 2 >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+                if (directory.FullName.Length + fileMask.Length + 50 >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
                 {
                     parentDirectory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directory.FullName));
                 }
