@@ -107,6 +107,101 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Find all directories that match the given directory name pattern, optionally recursing
+        /// </summary>
+        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
+        /// <param name="pathSpec">Directory/subdirectory search specification, e.g. F:\MSData\15T\*.d</param>
+        /// <param name="recurse">True to recurse</param>
+        /// <returns>List of DirectoryInfo objects (empty list if the directory does not exist)</returns>
+        public static List<DirectoryInfo> FindDirectoriesWildcard(string pathSpec, bool recurse = false)
+        {
+            var cleanPath = GetCleanPath(pathSpec);
+            DirectoryInfo cleanDirectoryInfo;
+
+            if (cleanPath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+            {
+                cleanDirectoryInfo = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(cleanPath));
+            }
+            else
+            {
+                cleanDirectoryInfo = new DirectoryInfo(cleanPath);
+            }
+
+            string directoryPath;
+            if (cleanDirectoryInfo.Parent?.Exists == true)
+            {
+                directoryPath = cleanDirectoryInfo.Parent.FullName;
+            }
+            else
+            {
+                directoryPath = ".";
+            }
+
+            var directory = new DirectoryInfo(directoryPath);
+
+            // Remove any directory information from pathSpec
+            var directoryMask = Path.GetFileName(pathSpec);
+
+            return FindDirectoriesWildcard(directory, directoryMask, recurse);
+        }
+
+        /// <summary>
+        /// Find all directories that match the given directory name pattern in the given directory, optionally recursing
+        /// </summary>
+        /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
+        /// <param name="directory">Directory to search</param>
+        /// <param name="directoryMask">Name mask to find, e.g. *.d</param>
+        /// <param name="recurse">True to recurse</param>
+        /// <returns>List of DirectoryInfo objects (empty list if the directory does not exist)</returns>
+        public static List<DirectoryInfo> FindDirectoriesWildcard(DirectoryInfo directory, string directoryMask, bool recurse = false)
+        {
+            if (directory?.Exists != true)
+                return new List<DirectoryInfo>();
+
+            try
+            {
+                DirectoryInfo parentDirectory;
+                if (directory.FullName.Length + directoryMask.Length + 50 >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+                {
+                    parentDirectory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directory.FullName));
+                }
+                else
+                {
+                    parentDirectory = directory;
+                }
+
+                var matchedSubdirectories = parentDirectory.GetDirectories(directoryMask).ToList();
+
+                if (!recurse)
+                    return matchedSubdirectories;
+
+                foreach (var subdirectory in parentDirectory.GetDirectories())
+                {
+                    DirectoryInfo subdirectoryToUse;
+                    if (subdirectory.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+                    {
+                        subdirectoryToUse = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(subdirectory.FullName));
+                    }
+                    else
+                    {
+                        subdirectoryToUse = subdirectory;
+                    }
+
+                    var additionalDirectories = FindDirectoriesWildcard(subdirectoryToUse, directoryMask, true);
+
+                    matchedSubdirectories.AddRange(additionalDirectories);
+                }
+
+                return matchedSubdirectories;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Access denied
+                return new List<DirectoryInfo>();
+            }
+        }
+
+        /// <summary>
         /// Find all files that match the given file name pattern, optionally recursing
         /// </summary>
         /// <remarks>When recursing, skips directories for which the user does not have permission</remarks>
