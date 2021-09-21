@@ -79,6 +79,82 @@ namespace PRISMTest
             Assert.AreEqual(expectedResult, result);
         }
 
+        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "File*", "FileCopyTest, FileCopyTestWithLocks", false, 2)]
+        [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "File*", "FileCopyTest, FileCopyTestWithLocks", true, 4)]
+        [Category("PNL_Domain")]
+        public void TestFindDirectoriesWildcardInternal(string directoryPath, string directoryMask, string expectedDirectoryNames, bool recurse, int expectedDirectoryCount)
+        {
+            TestFindDirectoriesWildcardWork(directoryPath, directoryMask, expectedDirectoryNames, recurse, expectedDirectoryCount);
+        }
+
+        [TestCase(@"C:\Windows", "System*", "System, System32, SystemApps, SystemResources")]
+        [TestCase(@"C:\Windows\", "System*", "System, System32, SystemApps, SystemResources")]
+        public void TestFindDirectoriesWildcard(string directoryPath, string directoryMask, string expectedDirectoryNames)
+        {
+            TestFindDirectoriesWildcardWork(directoryPath, directoryMask, expectedDirectoryNames, false);
+        }
+
+        private void TestFindDirectoriesWildcardWork(string directoryPath, string directoryMask, string expectedDirectoryNames, bool recurse, int expectedDirectoryCount = 0)
+        {
+            DirectoryInfo directory;
+
+            if (directoryPath.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
+            {
+                directory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directoryPath));
+            }
+            else
+            {
+                directory = new DirectoryInfo(directoryPath);
+            }
+
+            // Combine the directory path and the directory mask
+            var pathSpec = Path.Combine(directory.FullName, directoryMask);
+
+            var directories1 = PathUtils.FindDirectoriesWildcard(pathSpec, recurse);
+
+            // Separately, send the DirectoryInfo object plus the directory mask
+            var directories2 = PathUtils.FindDirectoriesWildcard(directory, directoryMask, recurse);
+
+            Console.WriteLine("Directories via pathSpec: {0}", directories1.Count);
+            Console.WriteLine("Directories via directoryMask: {0}", directories2.Count);
+
+            Assert.AreEqual(directories1.Count, directories2.Count, "Directory count mismatch; {0} vs. {1}}", directories1.Count, directories2.Count);
+
+            if (string.IsNullOrWhiteSpace(expectedDirectoryNames))
+                return;
+
+            // Make sure we found directories with the expected names
+            var expectedDirectoryList = expectedDirectoryNames.Split(',');
+
+            var foundDirectoryNames = new SortedSet<string>();
+            foreach (var foundDirectory in directories1)
+            {
+                if (foundDirectoryNames.Contains(foundDirectory.Name))
+                    continue;
+
+                foundDirectoryNames.Add(foundDirectory.Name);
+
+                if (foundDirectoryNames.Count == 1)
+                    Console.Write(foundDirectory.Name);
+                else if (foundDirectoryNames.Count <= 5)
+                    Console.Write(", " + foundDirectory.Name);
+                else if (foundDirectoryNames.Count == 6)
+                    Console.WriteLine(" ...");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Found {0} directories (recurse={1})", directories1.Count, recurse);
+
+            foreach (var expectedDirectory in expectedDirectoryList)
+            {
+                if (!foundDirectoryNames.Contains(expectedDirectory.Trim()))
+                    Assert.Fail("Did not find an expected directory in {0}: {1}", directoryPath, expectedDirectory);
+            }
+
+            if (expectedDirectoryCount > 0)
+                Assert.GreaterOrEqual(directories1.Count, expectedDirectoryCount, "Found {0} directories; expected to find {1}", directories1.Count, expectedDirectoryCount);
+        }
+
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
         [Category("PNL_Domain")]
         public void TestFindFilesWildcardInternal(string directoryPath, string fileMask, string expectedFileNames, bool recurse)
