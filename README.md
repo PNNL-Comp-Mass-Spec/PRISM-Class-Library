@@ -17,7 +17,7 @@ PRISMWin.dll is available on NuGet at:
 
 ### Continuous Integration
 
-The latest versions of the DLLs are available on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library/build/artifacts)
+The latest versions of the DLLs are available for six months on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library/build/artifacts)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/xfpaypc30b8po1je?svg=true)](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library)
 
@@ -82,7 +82,7 @@ if the network connection is lost (or the copy process is manually terminated).
 Written by Matthew Monroe, Dave Clark, Gary Kiebel, Nathan Trimble, and Bryson Gibbons for the Department of Energy (PNNL, Richland, WA) \
 Copyright 2020, Battelle Memorial Institute.  All Rights Reserved. \
 E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov \
-Website: https://panomics.pnl.gov/ or https://omics.pnl.gov
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
 
 ## License
 
