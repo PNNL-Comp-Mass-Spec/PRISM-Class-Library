@@ -278,13 +278,10 @@ namespace PRISMTest
 
                 ProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
 
-                if (maxRuntimeSeconds > 0)
+                if (maxRuntimeSeconds > 0 && DateTime.UtcNow.Subtract(startTime).TotalSeconds > maxRuntimeSeconds)
                 {
-                    if (DateTime.UtcNow.Subtract(startTime).TotalSeconds > maxRuntimeSeconds)
-                    {
-                        Console.WriteLine("Aborting ProcessID {0} since runtime has exceeded {1} seconds", cachedProcessID, maxRuntimeSeconds);
-                        abortProcess = true;
-                    }
+                    Console.WriteLine("Aborting ProcessID {0} since runtime has exceeded {1} seconds", cachedProcessID, maxRuntimeSeconds);
+                    abortProcess = true;
                 }
 
                 if (abortProcess)
