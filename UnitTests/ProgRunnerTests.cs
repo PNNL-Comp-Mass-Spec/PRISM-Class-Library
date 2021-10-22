@@ -335,6 +335,17 @@ namespace PRISMTest
                     Assert.Fail("The first line of the ConsoleOutput file does not contain " + exeName + ": " + targetFile.FullName);
                 }
 
+                if (targetFile.Directory != null)
+                {
+                    // Delete old test files
+                    var filesToFind = Path.GetFileNameWithoutExtension(consoleOutputFilePath) + "_*.txt";
+                    foreach (var candidateFile in targetFile.Directory.GetFileSystemInfos(filesToFind))
+                    {
+                        if (DateTime.UtcNow.Subtract(candidateFile.LastWriteTimeUtc).TotalHours > 1)
+                        {
+                            candidateFile.Delete();
+                        }
+                    }
                 }
             }
 
