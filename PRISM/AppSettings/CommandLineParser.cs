@@ -197,12 +197,15 @@ namespace PRISM
             /// <summary>
             /// Add a Parsing error to the parsing error list
             /// </summary>
-            /// <param name="format"></param>
-            /// <param name="args"></param>
+            /// <param name="format">Format string for string.Format()</param>
+            /// <param name="args">Value to substitute in the format string</param>
+            /// <returns>Error message</returns>
             [StringFormatMethod("format")]
-            internal void AddParseError(string format, params object[] args)
+            internal string AddParseError(string format, params object[] args)
             {
-                AddParseError(string.Format(format, args));
+                var message = string.Format(format, args);
+                AddParseError(message);
+                return message;
             }
 
             /// <summary>
@@ -792,26 +795,26 @@ namespace PRISM
                     catch (InvalidCastException)
                     {
                         const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}""";
-                        Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
-                        Results.Failed(castError);
+                        var failureMessage = Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
+                        Results.Failed(failureMessage);
                     }
                     catch (FormatException)
                     {
                         const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" using the given formatter";
-                        Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
-                        Results.Failed(castError);
+                        var failureMessage = Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
+                        Results.Failed(failureMessage);
                     }
                     catch (ArgumentException)
                     {
                         const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (ArgumentException)";
-                        Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
-                        Results.Failed(castError);
+                        var failureMessage= Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
+                        Results.Failed(failureMessage);
                     }
                     catch (OverflowException)
                     {
                         const string castError = @"Error: argument {0}, cannot cast ""{1}"" to type ""{2}"" (out of range)";
-                        Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
-                        Results.Failed(castError);
+                        var failureMessage= Results.AddParseError(castError, keyGiven, lastVal, prop.Key.PropertyType.Name);
+                        Results.Failed(failureMessage);
                     }
 
                     if (!Results.Success || !prop.Value.IsInputFilePath)
@@ -850,11 +853,14 @@ namespace PRISM
                 {
                     Results.AddParseError(@"Created example parameter file at ""{0}""", exampleParamFilePath);
                 }
+
                 Results.AddParseError("-CreateParamFile provided. Exiting program.");
+
                 if (outputErrors)
                 {
                     Results.OutputErrors(true);
                 }
+
                 Results.Failed("CreateParamFile provided; exiting program");
                 return Results;
             }
@@ -894,8 +900,7 @@ namespace PRISM
             {
                 if (string.IsNullOrWhiteSpace(paramFilePath))
                 {
-                    Results.AddParseError(
-                        "Error: empty parameter file path; likely a programming bug");
+                    Results.AddParseError("Error: empty parameter file path; likely a programming bug");
                     return false;
                 }
 
@@ -908,10 +913,8 @@ namespace PRISM
 
                 if (!paramFile.Exists)
                 {
-                    Results.AddParseError(
-                        "Error: Specified parameter file was not found: " + paramFilePath);
-                    Results.AddParseError(
-                        "  ... Full path: " + paramFile.FullName);
+                    Results.AddParseError("Error: Specified parameter file was not found: " + paramFilePath);
+                    Results.AddParseError("  ... Full path: " + paramFile.FullName);
 
                     return false;
                 }
@@ -929,8 +932,7 @@ namespace PRISM
             {
                 if (!validParameterFilePath)
                 {
-                    Results.AddParseError(
-                        "Error: Invalid parameter file path: " + paramFilePath);
+                    Results.AddParseError("Error: Invalid parameter file path: " + paramFilePath);
                     Results.AddParseError("Exception: " + ex.Message);
                 }
                 else
@@ -991,8 +993,8 @@ namespace PRISM
             }
             catch (Exception e)
             {
-                Results.AddParseError(@"Error reading parameter file ""{0}"": {1}", paramFile.FullName, e);
-                Results.Failed("Error in ReadParamFile");
+                var failureMessage = Results.AddParseError(@"Error reading parameter file ""{0}"": {1}", paramFile.FullName, e);
+                Results.Failed("Error in ReadParamFile: " + failureMessage);
             }
 
             return lines;
@@ -1143,15 +1145,15 @@ namespace PRISM
                         if (castMin.CompareTo(castValue) > 0)
                         {
                             const string parseError = "Error: argument {0}, value of {1} is less than minimum of {2}";
-                            Results.AddParseError(parseError, argKey, castValue, castMin);
-                            Results.Failed(parseError);
+                            var failureMessage = Results.AddParseError(parseError, argKey, castValue, castMin);
+                            Results.Failed(failureMessage);
                         }
                     }
                     else
                     {
                         const string parseError = @"Error: argument {0}, unable to check value of {1} against minimum of ""{2}"": cannot cast/compare minimum to type ""{3}""";
-                        Results.AddParseError(parseError, argKey, castValue, parseData.Min, propertyType.Name);
-                        Results.Failed(parseError);
+                        var failureMessage = Results.AddParseError(parseError, argKey, castValue, parseData.Min, propertyType.Name);
+                        Results.Failed(failureMessage);
                     }
                 }
 
@@ -1163,8 +1165,8 @@ namespace PRISM
                         if (castMax.CompareTo(castValue) < 0)
                         {
                             const string parseError = "Error: argument {0}, value of {1} is greater than maximum of {2}";
-                            Results.AddParseError(parseError, argKey, castValue, castMax);
-                            Results.Failed(parseError);
+                            var failureMessage = Results.AddParseError(parseError, argKey, castValue, castMax);
+                            Results.Failed(failureMessage);
                         }
                     }
                     else
