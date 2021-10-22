@@ -308,26 +308,33 @@ namespace PRISMTest
                 {
                     Assert.Fail("Unable to determine the parent directory of " + consoleOutputFilePath);
                 }
-                var newFilePath = Path.Combine(consoleOutputFile.DirectoryName,
-                                               Path.GetFileNameWithoutExtension(consoleOutputFilePath) + "_" + secondsSinceMidnight + ".txt");
-                consoleOutputFile.MoveTo(newFilePath);
+
+                var newFileName = Path.GetFileNameWithoutExtension(consoleOutputFilePath) + "_" + secondsSinceMidnight + ".txt";
+
+                var targetFile = new FileInfo(Path.Combine(consoleOutputFile.DirectoryName, newFileName));
+                if (targetFile.Exists)
+                    targetFile.Delete();
+
+                consoleOutputFile.MoveTo(targetFile.FullName);
 
                 // Open the file and assure that the first line contains the .exe name
-                using var reader = new StreamReader(new FileStream(newFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
+                using var reader = new StreamReader(new FileStream(targetFile.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
 
                 if (reader.EndOfStream)
                 {
-                    Assert.Fail("The ConsoleOutput file is empty: " + newFilePath);
+                    Assert.Fail("The ConsoleOutput file is empty: " + targetFile.FullName);
                 }
                 var dataLine = reader.ReadLine();
                 if (string.IsNullOrWhiteSpace(dataLine))
                 {
-                    Assert.Fail("The first line of the ConsoleOutput file is empty: " + newFilePath);
+                    Assert.Fail("The first line of the ConsoleOutput file is empty: " + targetFile.FullName);
                 }
 
                 if (!dataLine.ToLower().Contains(exeName))
                 {
-                    Assert.Fail("The first line of the ConsoleOutput file does not contain " + exeName + ": " + newFilePath);
+                    Assert.Fail("The first line of the ConsoleOutput file does not contain " + exeName + ": " + targetFile.FullName);
+                }
+
                 }
             }
 
