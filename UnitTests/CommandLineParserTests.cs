@@ -332,6 +332,18 @@ namespace PRISMTest
                            "leo aliquam nonummy. Pulvinar tortor, leo rutrum blandit velit, quis lacus.")]
             public string Verbose { get; set; }
 
+            [Option("empty", HelpText = "Empty String test")]
+            public string EmptyString { get; set; }
+
+            [Option("space", HelpText = "Quoted WhiteSpace test")]
+            public string QuotedWhitespace { get; set; }
+
+            [Option("char", HelpText = "Test for char values")]
+            public char CharValue { get; set; } = 't';
+
+            [Option("charEmpty", HelpText = "Test for empty char values")]
+            public char EmptyCharValue { get; set; }
+
             /// <summary>
             /// Note that ## should be updated at runtime by calling UpdatePropertyHelpText
             /// </summary>
@@ -1119,6 +1131,10 @@ namespace PRISMTest
             results.Smooth2 = 10;
             results.OkayName = "A Real Value!";
             results.Verbose = "Concise";
+            results.CharValue = 'c';
+            results.EmptyString = "";
+            results.EmptyCharValue = '\0';
+            results.QuotedWhitespace = " ";
             results.ExtraSpecialProcessingOption = false;
 
             var paramFileName = "exampleParams.txt";
@@ -1141,6 +1157,10 @@ namespace PRISMTest
             Assert.AreEqual(results.Smooth2, results2.Smooth2);
             Assert.AreEqual(results.OkayName, results2.OkayName);
             Assert.AreEqual(results.Verbose, results2.Verbose);
+            Assert.AreEqual(results.CharValue, results2.CharValue);
+            Assert.AreEqual(results.EmptyString, results2.EmptyString);
+            Assert.AreEqual(results.EmptyCharValue, results2.EmptyCharValue);
+            Assert.AreEqual(results.QuotedWhitespace, results2.QuotedWhitespace);
 
             var parser3 = new CommandLineParser<OkayKey2>();
             var smooth2Override = 15;
@@ -1728,10 +1748,15 @@ namespace PRISMTest
         }
 
         [Test]
-        [TestCase("This is a comment", false)]
-        [TestCase(@"""This is a comment surrounded by double quotes""", true)]
-        [TestCase("'This is a comment surrounded by single quotes'", true)]
-        public void TestPropertyKeepQuotes(string propertyValue, bool commentShouldHaveQuotes)
+        [TestCase("This is a comment", 0)]
+        [TestCase(@"""This is a comment surrounded by double quotes""", 0)]
+        [TestCase("'This is a comment surrounded by single quotes'", 0)]
+        [TestCase("This is a comment with a trailing unmatched double quote\"", 1)]
+        [TestCase("This is a comment with a trailing unmatched single quote'", 1)]
+        [TestCase("\"This is a comment with mismatched quote'", 2)]
+        [TestCase("\"'This is a comment with doubled matching quotes'\"", 2)]
+        [TestCase("'\"This is a comment with doubled matching quotes\"'", 2)]
+        public void TestPropertyRemoveMatchingQuotes(string propertyValue, int expectedQuoteCount)
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { "-Comment", propertyValue, "/S" }, showHelpOnError, outputErrors);
@@ -1740,16 +1765,26 @@ namespace PRISMTest
             var parsedComment = parser.Results.ParsedResults.Comment;
             Console.WriteLine("Comment: " + parsedComment);
 
-            var commentIsQuoted = parsedComment.StartsWith("'") && parsedComment.EndsWith("'") ||
+            var commentQuoteCount = 0;
+            commentQuoteCount += parsedComment.StartsWith("'") ? 1 : 0;
+            commentQuoteCount += parsedComment.EndsWith("'") ? 1 : 0;
+            commentQuoteCount += parsedComment.StartsWith("\"") ? 1 : 0;
+            commentQuoteCount += parsedComment.EndsWith("\"") ? 1 : 0;
+
+            var commentHasMatchingQuotes = parsedComment.StartsWith("'") && parsedComment.EndsWith("'") ||
                                   parsedComment.StartsWith("\"") && parsedComment.EndsWith("\"");
 
-            if (commentShouldHaveQuotes)
+            if (expectedQuoteCount == 0 && commentHasMatchingQuotes)
             {
-                Assert.IsTrue(commentIsQuoted, "Leading/trailing quotes were removed from the comment, but they should not have been");
+                Assert.AreEqual(expectedQuoteCount, commentQuoteCount, "Matching leading/trailing quotes were not removed from the comment, but they should have been");
+            }
+            else if (expectedQuoteCount == 0)
+            {
+                Assert.AreEqual(expectedQuoteCount, commentQuoteCount, "The comment has quotes, but it shouldn't be quoted");
             }
             else
             {
-                Assert.IsFalse(commentIsQuoted, "The comment has quotes, but it shouldn't be quoted");
+                Assert.AreEqual(expectedQuoteCount, commentQuoteCount, "The comment does not have the expected number of non-removed quotes");
             }
         }
 

@@ -678,10 +678,20 @@ namespace PRISM
                         }
 
                         keyGiven = key;
+
+                        var fileArgs = filePreprocessedArgs[key];
+                        if (fileArgs.Count == 0 || fileArgs.All(string.IsNullOrWhiteSpace))
+                        {
+                            // We require parameter values in a parameter file to consider an argument valid
+                            // If no value was provided in the file, just act as if the parameter it wasn't specified
+                            // This also avoids overwriting default parameter values with type defaults
+                            continue;
+                        }
+
                         specified = true;
 
                         // Add in other values provided by argument keys that belong to this property
-                        AppendArgumentValues(value, filePreprocessedArgs[key]);
+                        AppendArgumentValues(value, fileArgs.Where(x => !string.IsNullOrWhiteSpace(x)));
                     }
 
                     // Find any arguments that match this property
@@ -773,12 +783,13 @@ namespace PRISM
                     try
                     {
                         // Parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
+                        // Also, use "RemoveMatchingQuotes" to remove one pair of matching quotes, if they are provided
                         object castValue;
                         if (prop.Key.PropertyType.IsArray)
                         {
                             var castValues = Array.CreateInstance(prop.Key.PropertyType.GetElementType(), value.Count);
                             var i = 0;
-                            foreach (var val in value)
+                            foreach (var val in value.Select(RemoveMatchingQuotes))
                             {
                                 lastVal = val;
                                 var castVal = ParseValueToType(prop.Key.PropertyType.GetElementType(), prop.Value, keyGiven, val);
@@ -788,7 +799,7 @@ namespace PRISM
                         }
                         else
                         {
-                            castValue = ParseValueToType(prop.Key.PropertyType, prop.Value, keyGiven, value.Last());
+                            castValue = ParseValueToType(prop.Key.PropertyType, prop.Value, keyGiven, RemoveMatchingQuotes(value.Last()));
                         }
                         prop.Key.SetValue(Results.ParsedResults, castValue);
                     }
@@ -1095,13 +1106,30 @@ namespace PRISM
                     {
                         foreach (var value in (Array)obj)
                         {
-                            lines.Add(string.Format("{0}{1}={2}", prefix, key, value));
+                            var writeValue = value;
+                            if (value is string str && string.IsNullOrWhiteSpace(str))
+                            {
+                                // wrap value in quotes to preserve the value on read
+                                writeValue = $"\"{value}\"";
+                            }
+
+                            lines.Add(string.Format("{0}{1}={2}", prefix, key, writeValue));
                         }
                     }
                 }
                 else
                 {
                     var value = prop.Key.GetValue(Results.ParsedResults);
+                    if (value is string str && string.IsNullOrWhiteSpace(str))
+                    {
+                        // wrap value in quotes to preserve the value on read
+                        value = $"\"{value}\"";
+                    }
+                    else if (value?.ToString() == "\0")
+                    {
+                        value = "";
+                    }
+
                     lines.Add(string.Format("{0}{1}={2}", prefix, key, value));
                 }
 
@@ -1131,7 +1159,15 @@ namespace PRISM
             object castValue = null;
             if (!string.Equals(NULL_VALUE_FLAG, valueToParse, StringComparison.OrdinalIgnoreCase))
             {
-                castValue = ConvertToType(valueToParse, propertyType);
+                if (propertyType.IsValueType && string.IsNullOrEmpty(valueToParse))
+                {
+                    // Don't crash with empty strings
+                    castValue = GetDefaultValue(propertyType);
+                }
+                else
+                {
+                    castValue = ConvertToType(valueToParse, propertyType);
+                }
             }
 
             try
@@ -2184,6 +2220,40 @@ namespace PRISM
             {
                 // Silently ignore errors here
             }
+        }
+
+        /// <summary>
+        /// Assure that the path is not surrounded by single quotes or by double quotes
+        /// </summary>
+        /// <param name="value"></param>
+        private static string RemoveMatchingQuotes(string value)
+        {
+            if (value == null || value.Length < 2)
+            {
+                // don't strip a single quote; it may have already been un-quoted.
+                return value;
+            }
+
+            try
+            {
+                if (value.StartsWith("\"") && value.EndsWith("\""))
+                {
+                    // The value is surrounded by double quotes; remove them
+                    return value.Trim('"');
+                }
+
+                if (value.StartsWith("'") && value.EndsWith("'"))
+                {
+                    // The value is surrounded by single quotes; remove them
+                    return value.Trim('\'');
+                }
+            }
+            catch
+            {
+                // Silently ignore errors here
+            }
+
+            return value;
         }
 
         /// <summary>
