@@ -213,10 +213,8 @@ namespace PRISM
                         }
                         else
                         {
-                            OnDebugEvent(string.Format(
-                                             "Cannot read the return code for stored procedure {0} " +
-                                             "since spCmd does not contain a parameter named @Return",
-                                             spCmd.CommandText));
+                            OnDebugEvent("Cannot read the return code for stored procedure {0} " +
+                                         "since spCmd does not contain a parameter named @Return", spCmd.CommandText);
                             resultCode = 0;
                         }
                     }
@@ -382,10 +380,8 @@ namespace PRISM
                         }
                         else
                         {
-                            OnDebugEvent(string.Format(
-                                             "Cannot read the return code for stored procedure {0} " +
-                                             "since spCmd does not contain a parameter named @Return",
-                                             spCmd.CommandText));
+                            OnDebugEvent("Cannot read the return code for stored procedure {0} " +
+                                         "since spCmd does not contain a parameter named @Return", spCmd.CommandText);
                             resultCode = 0;
                         }
                     }

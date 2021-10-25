@@ -1005,7 +1005,7 @@ namespace PRISM
                             var memAvailableMB = ExtractMemoryMB(dataLine, showDebugInfo);
 
                             if (showDebugInfo)
-                                OnDebugEvent(string.Format("  {0,17}: {1,6:0} MB", "Available memory", memAvailableMB));
+                                OnDebugEvent("  {0,17}: {1,6:0} MB", "Available memory", memAvailableMB);
 
                             return memAvailableMB;
                         }
@@ -1025,7 +1025,7 @@ namespace PRISM
                             if (memorySizeMB > -1)
                             {
                                 if (showDebugInfo)
-                                    OnDebugEvent(string.Format("  {0,17}: {1,6:0} MB", memoryStatKey, memorySizeMB));
+                                    OnDebugEvent("  {0,17}: {1,6:0} MB", memoryStatKey, memorySizeMB);
 
                                 totalAvailableMemoryMB += memorySizeMB;
                                 memoryStatsToSum[memoryStatKey] = true;
@@ -1040,7 +1040,7 @@ namespace PRISM
                     if (showDebugInfo)
                     {
                         OnDebugEvent("   ---------------------------");
-                        OnDebugEvent(string.Format("  {0,17}: {1,6:0} MB", "Available memory", totalAvailableMemoryMB));
+                        OnDebugEvent("  {0,17}: {1,6:0} MB", "Available memory", totalAvailableMemoryMB);
                     }
 
                     return totalAvailableMemoryMB;
@@ -1179,7 +1179,7 @@ namespace PRISM
                             var memTotalMB = ExtractMemoryMB(dataLine, showDebugInfo);
 
                             if (showDebugInfo)
-                                OnDebugEvent(string.Format("  {0,17}: {1,6:0} MB", "Total memory", memTotalMB));
+                                OnDebugEvent("  {0,17}: {1,6:0} MB", "Total memory", memTotalMB);
 
                             mTotalMemoryMBCached = memTotalMB;
 

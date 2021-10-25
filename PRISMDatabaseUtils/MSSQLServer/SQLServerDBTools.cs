@@ -141,7 +141,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     if (string.IsNullOrWhiteSpace(err.Procedure))
                         OnDebugEvent(err.Message);
                     else
-                        OnDebugEvent(string.Format("{0}: {1}", err.Procedure, err.Message));
+                        OnDebugEvent("{0}: {1}", err.Procedure, err.Message);
 
                     continue;
                 }

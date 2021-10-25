@@ -76,7 +76,7 @@ namespace PRISMDatabaseUtils
 
             if (!success)
             {
-                OnWarningEvent(string.Format("AddParameterByDataTypeName: Data type {0} not recognized for parameter {1}", dataTypeName, name));
+                OnWarningEvent("AddParameterByDataTypeName: Data type {0} not recognized for parameter {1}", dataTypeName, name);
                 return null;
             }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using PRISM.Logging;
 
 [assembly: CLSCompliant(true)]
@@ -167,6 +168,17 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Report a debug message
+        /// </summary>
+        /// <param name="format">Debug message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        protected void OnDebugEvent(string format, params object[] args)
+        {
+            OnDebugEvent(string.Format(format, args));
+        }
+
+        /// <summary>
         /// Report an error
         /// </summary>
         /// <param name="message">Error message</param>
@@ -178,6 +190,17 @@ namespace PRISM
             }
 
             ErrorEvent?.Invoke(message, null);
+        }
+
+        /// <summary>
+        /// Report an error
+        /// </summary>
+        /// <param name="format">Error message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        protected void OnErrorEvent(string format, params object[] args)
+        {
+            OnErrorEvent(string.Format(format, args));
         }
 
         /// <summary>
@@ -196,6 +219,18 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Report an error
+        /// </summary>
+        /// <param name="ex">Exception</param>
+        /// <param name="format">Error message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        protected void OnErrorEvent(Exception ex, string format, params object[] args)
+        {
+            OnErrorEvent(string.Format(format, args), ex);
+        }
+
+        /// <summary>
         /// Progress update
         /// </summary>
         /// <param name="progressMessage">Progress message</param>
@@ -208,6 +243,18 @@ namespace PRISM
             }
 
             ProgressUpdate?.Invoke(progressMessage, percentComplete);
+        }
+
+        /// <summary>
+        /// Progress update
+        /// </summary>
+        /// <param name="percentComplete">Value between 0 and 100</param>
+        /// <param name="format">Progress message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        protected void OnProgressUpdate(float percentComplete, string format, params object[] args)
+        {
+            OnProgressUpdate(string.Format(format, args), percentComplete);
         }
 
         /// <summary>
@@ -226,6 +273,17 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Report a status message
+        /// </summary>
+        /// <param name="format">Status message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        protected void OnStatusEvent(string format, params object[] args)
+        {
+            OnStatusEvent(string.Format(format, args));
+        }
+
+        /// <summary>
         /// Report a warning
         /// </summary>
         /// <param name="message">Warning message</param>
@@ -237,6 +295,17 @@ namespace PRISM
             }
 
             WarningEvent?.Invoke(message);
+        }
+
+        /// <summary>
+        /// Report a warning
+        /// </summary>
+        /// <param name="format">Warning message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        protected void OnWarningEvent(string format, params object[] args)
+        {
+            OnWarningEvent(string.Format(format, args));
         }
 
         /// <summary>

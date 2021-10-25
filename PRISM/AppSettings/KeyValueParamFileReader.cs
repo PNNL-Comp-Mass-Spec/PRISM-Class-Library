@@ -126,8 +126,7 @@ namespace PRISM.AppSettings
                     }
                     else
                     {
-                        OnWarningEvent(string.Format("Ignoring unknown setting {0} from parameter file {1}",
-                                                     kvSetting.Key, Path.GetFileName(ParamFilePath)));
+                        OnWarningEvent("Ignoring unknown setting {0} from parameter file {1}", kvSetting.Key, Path.GetFileName(ParamFilePath));
                     }
                 }
             }

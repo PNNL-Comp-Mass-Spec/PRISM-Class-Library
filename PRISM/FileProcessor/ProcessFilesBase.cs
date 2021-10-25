@@ -388,7 +388,7 @@ namespace PRISM.FileProcessor
                         continue;
 
                     lastProgress = DateTime.UtcNow;
-                    OnStatusEvent(string.Format("{0:F1}% complete", percentComplete));
+                    OnStatusEvent("{0:F1}% complete", percentComplete);
                 }
 
                 if (matchCount > 0)
@@ -867,7 +867,7 @@ namespace PRISM.FileProcessor
                         continue;
 
                     lastProgress = DateTime.UtcNow;
-                    OnStatusEvent(string.Format("{0:F1}% complete in {1}", percentComplete, FileTools.CompactPathString(inputDirectoryPath)));
+                    OnStatusEvent("{0:F1}% complete in {1}", percentComplete, FileTools.CompactPathString(inputDirectoryPath));
                 }
             }
             catch (Exception ex)

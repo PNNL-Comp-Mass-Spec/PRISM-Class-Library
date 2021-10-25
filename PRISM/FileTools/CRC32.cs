@@ -56,7 +56,7 @@ namespace PRISM
         /// </summary>
         /// <remarks>
         /// Pre- and post-conditioning (one's complement) is performed within this method so it shouldn't be done by the caller
-        /// <remarks>
+        /// </remarks>
         /// <example>
         /// uint crc = 0;
         ///

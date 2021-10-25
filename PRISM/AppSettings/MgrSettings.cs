@@ -296,9 +296,7 @@ namespace PRISM.AppSettings
 
             if (configFilePaths.Count == 0)
             {
-                OnErrorEvent(string.Format(
-                    "{0} setting not found in manager config file {1}",
-                    settingName, configFilePaths));
+                OnErrorEvent("{0} setting not found in manager config file {1}", settingName, configFilePaths);
             }
             else
             {
@@ -311,9 +309,7 @@ namespace PRISM.AppSettings
                     fileNameList.Append(Path.GetFileName(item));
                 }
 
-                OnErrorEvent(string.Format(
-                    "{0} setting not found in the specified manager config files ({1})",
-                    settingName, fileNameList));
+                OnErrorEvent("{0} setting not found in the specified manager config files ({1})", settingName, fileNameList);
             }
 
             return false;
@@ -376,7 +372,7 @@ namespace PRISM.AppSettings
             }
             catch (Exception ex)
             {
-                OnErrorEvent(string.Format("Exception reading setting {0} in {1}", settingName, configFilePath), ex);
+                OnErrorEvent(ex, "Exception reading setting {0} in {1}", settingName, configFilePath);
                 return false;
             }
         }

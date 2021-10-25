@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace PRISM.Logging
 {
@@ -202,6 +203,18 @@ namespace PRISM.Logging
         }
 
         /// <summary>
+        /// Show a status message at the console and in the log file, tagging it as a debug message
+        /// </summary>
+        /// <remarks>The message is shown in dark gray in the console</remarks>
+        /// <param name="format">Status message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogDebug(string format, params object[] args)
+        {
+            LogDebug(string.Format(format, args));
+        }
+
+        /// <summary>
         /// Log an error message and exception
         /// </summary>
         /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
@@ -221,6 +234,31 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(formattedError, ex2);
             }
+        }
+
+        /// <summary>
+        /// Log an error message and exception
+        /// </summary>
+        /// <remarks>The error is shown in red in the console.</remarks>
+        /// <param name="format">Error message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogError(string format, params object[] args)
+        {
+            LogError(string.Format(format, args));
+        }
+
+        /// <summary>
+        /// Log an error message and exception
+        /// </summary>
+        /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
+        /// <param name="ex">Exception to log</param>
+        /// <param name="format">Error message format string (do not include ex.message)</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogError(Exception ex, string format, params object[] args)
+        {
+            LogError(string.Format(format, args), ex);
         }
 
         /// <summary>
@@ -244,6 +282,32 @@ namespace PRISM.Logging
                 ErrorWritingToLog(formattedError, ex2);
             }
         }
+
+        /// <summary>
+        /// Log a fatal error message and exception
+        /// </summary>
+        /// <remarks>The error is shown in red in the console.</remarks>
+        /// <param name="format">Error message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogFatalError(string format, params object[] args)
+        {
+            LogFatalError(string.Format(format, args));
+        }
+
+        /// <summary>
+        /// Log a fatal error message and exception
+        /// </summary>
+        /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
+        /// <param name="ex">Exception to log</param>
+        /// <param name="format">Error message format string (do not include ex.message)</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogFatalError(Exception ex, string format, params object[] args)
+        {
+            LogFatalError(string.Format(format, args), ex);
+        }
+
         /// <summary>
         /// Show a status message at the console and optionally include in the log file
         /// </summary>
@@ -282,6 +346,17 @@ namespace PRISM.Logging
         }
 
         /// <summary>
+        /// Show a status message at the console and optionally include in the log file
+        /// </summary>
+        /// <param name="format">Status message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogMessage(string format, params object[] args)
+        {
+            LogMessage(string.Format(format, args));
+        }
+
+        /// <summary>
         /// Display a warning message at the console and write to the log file
         /// </summary>
         /// <param name="warningMessage">Warning message</param>
@@ -299,6 +374,17 @@ namespace PRISM.Logging
             {
                 ErrorWritingToLog(warningMessage, ex);
             }
+        }
+
+        /// <summary>
+        /// Display a warning message at the console and write to the log file
+        /// </summary>
+        /// <param name="format">Warning message format string</param>
+        /// <param name="args">string format arguments</param>
+        [StringFormatMethod("format")]
+        public static void LogWarning(string format, params object[] args)
+        {
+            LogWarning(string.Format(format, args));
         }
 
         /// <summary>

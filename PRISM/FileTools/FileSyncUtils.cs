@@ -92,7 +92,7 @@ namespace PRISM
 
                     try
                     {
-                        OnStatusEvent(string.Format("Creating .hashcheck file for {0}", sourceFile.FullName));
+                        OnStatusEvent("Creating .hashcheck file for {0}", sourceFile.FullName);
 
                         HashUtilities.CreateHashcheckFile(sourceFile.FullName, hashType, out var hashValueSource, out var warningMessage);
 
@@ -117,15 +117,14 @@ namespace PRISM
                     catch (Exception ex2)
                     {
                         // Treat this as a non-critical error
-                        OnWarningEvent(string.Format("Unable to create the .hashcheck file for source file {0}: {1}",
-                                                     sourceFile.FullName, ex2.Message));
+                        OnWarningEvent("Unable to create the .hashcheck file for source file {0}: {1}", sourceFile.FullName, ex2.Message);
                     }
                 }
 
                 // Validate the target directory
                 if (!targetDirectory.Exists)
                 {
-                    OnStatusEvent(string.Format("Creating directory {0}", targetDirectory.FullName));
+                    OnStatusEvent("Creating directory {0}", targetDirectory.FullName);
                     targetDirectory.Create();
                 }
 
@@ -136,7 +135,7 @@ namespace PRISM
                 {
                     DeleteHashCheckFileForDataFile(targetFile);
 
-                    OnStatusEvent(string.Format("Copying {0} to {1}", sourceFile.FullName, targetDirectory.FullName));
+                    OnStatusEvent("Copying {0} to {1}", sourceFile.FullName, targetDirectory.FullName);
 
                     // Copy the source file locally
                     mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
@@ -146,7 +145,7 @@ namespace PRISM
                     return validNewFile;
                 }
 
-                OnDebugEvent(string.Format("Validating {0} vs. expected hash {1}", targetFile.FullName, sourceHashInfo.HashValue));
+                OnDebugEvent("Validating {0} vs. expected hash {1}", targetFile.FullName, sourceHashInfo.HashValue);
 
                 // The target file exists
                 // Create or validate the local .hashcheck file, sending localFilePath and the hash info of the source file
@@ -168,7 +167,7 @@ namespace PRISM
                     var fileSizeMB = sourceFile.Length / 1024.0 / 1024;
                     var waitTimeSeconds = rand.Next(5, 15) + fileSizeMB / 50;
 
-                    OnStatusEvent(string.Format("Hashcheck mismatch for {0}; waiting {1} seconds then re-checking", targetFile.FullName, waitTimeSeconds));
+                    OnStatusEvent("Hashcheck mismatch for {0}; waiting {1} seconds then re-checking", targetFile.FullName, waitTimeSeconds);
 
                     ConsoleMsgUtils.SleepSeconds(waitTimeSeconds);
 
@@ -178,17 +177,16 @@ namespace PRISM
                     var validFileB = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays: 0);
                     if (validFileB)
                     {
-                        OnStatusEvent(string.Format("Hash value is now the expected value: {0}", sourceHashInfo.HashValue));
+                        OnStatusEvent("Hash value is now the expected value: {0}", sourceHashInfo.HashValue);
                         return true;
                     }
                 }
 
-                OnWarningEvent(string.Format("Hash for local file does not match the remote file; recopying {0} to {1}",
-                                             sourceFile.FullName, targetDirectory.FullName));
+                OnWarningEvent("Hash for local file does not match the remote file; recopying {0} to {1}", sourceFile.FullName, targetDirectory.FullName);
 
                 DeleteHashCheckFileForDataFile(targetFile);
 
-                OnStatusEvent(string.Format("Copying {0} to {1}", sourceFile.FullName, targetDirectory.FullName));
+                OnStatusEvent("Copying {0} to {1}", sourceFile.FullName, targetDirectory.FullName);
 
                 // Repeat copying the remote file locally
                 mFileTools.CopyFileUsingLocks(sourceFile, targetFile.FullName, true);
