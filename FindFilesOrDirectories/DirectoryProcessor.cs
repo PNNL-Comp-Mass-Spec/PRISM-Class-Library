@@ -3,7 +3,7 @@ using PRISM.FileProcessor;
 
 namespace FindFilesOrDirectories
 {
-    class DirectoryProcessor : ProcessDirectoriesBase
+    internal class DirectoryProcessor : ProcessDirectoriesBase
     {
         public override string GetErrorMessage()
         {

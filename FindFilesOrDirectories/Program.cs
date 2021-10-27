@@ -148,7 +148,7 @@ namespace FindFilesOrDirectories
 
         }
 
-        static void RegisterEvents(IEventNotifier processor)
+        private static void RegisterEvents(IEventNotifier processor)
         {
             processor.DebugEvent += Processor_DebugEvent;
             processor.ErrorEvent += Processor_ErrorEvent;
@@ -156,22 +156,22 @@ namespace FindFilesOrDirectories
             processor.WarningEvent += Processor_WarningEvent;
         }
 
-        static void Processor_DebugEvent(string message)
+        private static void Processor_DebugEvent(string message)
         {
             ConsoleMsgUtils.ShowDebug(message);
         }
 
-        static void Processor_ErrorEvent(string message, Exception ex)
+        private static void Processor_ErrorEvent(string message, Exception ex)
         {
             ShowErrorMessage(message, ex);
         }
 
-        static void Processor_StatusEvent(string message)
+        private static void Processor_StatusEvent(string message)
         {
             Console.WriteLine(message);
         }
 
-        static void Processor_WarningEvent(string message)
+        private static void Processor_WarningEvent(string message)
         {
             ConsoleMsgUtils.ShowWarning(message);
         }
