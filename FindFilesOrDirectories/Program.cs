@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using PRISM;
+using PRISM.FileProcessor;
 using PRISM.Logging;
 
 namespace FindFilesOrDirectories
@@ -13,48 +15,69 @@ namespace FindFilesOrDirectories
 
         public static int Main(string[] args)
         {
-            var objParseCommandLine = new clsParseCommandLine();
-
             try
             {
-                var success = false;
-
-                if (objParseCommandLine.ParseCommandLine())
+                var programName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
+                var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();
+                var exeName = Path.GetFileName(exePath);
+                var cmdLineParser = new CommandLineParser<SearchOptions>(programName, GetAppVersion())
                 {
-                    if (SetOptionsUsingCommandLineParameters(objParseCommandLine))
-                        success = true;
-                }
+                    ProgramInfo = "This is an example application demonstrating the use of the CommandLineParser " +
+                                  "and of classes that inherit ProcessDirectoriesBase and ProcessFilesBase.",
+                    ContactInfo = "Program written by Matthew Monroe for PNNL (Richland, WA)" + Environment.NewLine +
+                                  "E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov" + Environment.NewLine +
+                                  "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics"
+                };
 
-                if (!success ||
-                    objParseCommandLine.NeedToShowHelp ||
-                    string.IsNullOrWhiteSpace(mInputFileOrDirectoryPath))
+                cmdLineParser.UsageExamples.Add(exeName + " *.txt");
+                cmdLineParser.UsageExamples.Add(exeName + " *.txt /O:OutputDirectoryPath");
+                cmdLineParser.UsageExamples.Add(exeName + " *.D /Directories /P:ParameterFilePath");
+
+                // The default argument name for parameter files is /ParamFile or -ParamFile
+                // Also allow /Conf or /P
+                cmdLineParser.AddParamFileKey("Conf");
+                cmdLineParser.AddParamFileKey("P");
+
+                var result = cmdLineParser.ParseArgs(args);
+                var options = result.ParsedResults;
+                RegisterEvents(options);
+
+                if (!result.Success || !options.Validate())
                 {
-                    ShowProgramHelp();
+                    // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
+                    Thread.Sleep(750);
                     return -1;
                 }
 
-                const string PARAM_FILE_PATH = "";
+                bool success;
 
-                if (mProcessDirectories)
+                if (options.ProcessDirectories)
                 {
                     var processor = new DirectoryProcessor();
                     RegisterEvents(processor);
                     processor.SkipConsoleWriteIfNoProgressListener = true;
 
-                    if (mRecurse)
+                    if (options.RecurseDirectories)
                     {
                         ConsoleMsgUtils.ShowDebug("Calling processor.ProcessAndRecurseDirectories");
-                        success = processor.ProcessAndRecurseDirectories(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH, mRecurseDepth);
+                        success = processor.ProcessAndRecurseDirectories(
+                            options.InputFileOrDirectoryPath,
+                            options.OutputDirectoryPath,
+                            string.Empty,
+                            options.MaxLevelsToRecurse);
                     }
-                    else if (mAssumeNoWildcards)
+                    else if (PathHasWildcard(options.InputFileOrDirectoryPath))
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectory");
-                        success = processor.ProcessDirectory(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, PARAM_FILE_PATH);
+                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectoriesWildcard");
+                        success = processor.ProcessDirectoriesWildcard(
+                            options.InputFileOrDirectoryPath, options.OutputDirectoryPath);
                     }
                     else
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectoriesWildcard");
-                        success = processor.ProcessDirectoriesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
+                        ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectory");
+                        success = processor.ProcessDirectory(
+                            options.InputFileOrDirectoryPath,
+                            options.OutputDirectoryPath, string.Empty);
                     }
                 }
                 else
@@ -63,50 +86,65 @@ namespace FindFilesOrDirectories
                     RegisterEvents(fileProcessor);
                     fileProcessor.SkipConsoleWriteIfNoProgressListener = true;
 
-                    if (mRecurse)
+                    if (options.RecurseDirectories)
                     {
                         const bool RECREATE_DIRECTORY_HIERARCHY = true;
 
-                        if (mKnownExtensions.Count > 0)
+                        if (options.KnownFileExtensions.Length > 0)
                         {
                             ConsoleMsgUtils.ShowDebug(
                                 "Calling fileProcessor.ProcessFilesAndRecurseDirectories with user-defined extensions: " +
-                                string.Join(", ", mKnownExtensions));
+                                string.Join(", ", options.KnownFileExtensions));
 
                             success = fileProcessor.ProcessFilesAndRecurseDirectories(
-                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputDirectoryAlternatePath,
-                                RECREATE_DIRECTORY_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth, mKnownExtensions);
+                                options.InputFileOrDirectoryPath,
+                                options.OutputDirectoryPath,
+                                options.OutputDirectoryAlternatePath,
+                                RECREATE_DIRECTORY_HIERARCHY,
+                                string.Empty,
+                                options.MaxLevelsToRecurse,
+                                options.KnownFileExtensionList);
                         }
                         else
                         {
-                            ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesAndRecurseDirectories with " +
-                                                      "input file [" + mInputFileOrDirectoryPath + "], output directory [" + mOutputFileOrDirectoryPath + "]" +
-                                                      " and extensions: " + string.Join(", ", fileProcessor.GetDefaultExtensionsToParse()));
+                            ConsoleMsgUtils.ShowDebug(
+                                "Calling fileProcessor.ProcessFilesAndRecurseDirectories with " +
+                                "input file [" + options.InputFileOrDirectoryPath + "], " +
+                                "output directory [" + options.OutputDirectoryPath + "]" +
+                                " and extensions: " + string.Join(", ", fileProcessor.GetDefaultExtensionsToParse()));
 
                             success = fileProcessor.ProcessFilesAndRecurseDirectories(
-                                mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputDirectoryAlternatePath,
-                                RECREATE_DIRECTORY_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth);
+                                options.InputFileOrDirectoryPath,
+                                options.OutputDirectoryPath,
+                                options.OutputDirectoryAlternatePath,
+                                RECREATE_DIRECTORY_HIERARCHY,
+                                string.Empty,
+                                options.MaxLevelsToRecurse);
                         }
                     }
-                    else if (mAssumeNoWildcards)
+                    else if (PathHasWildcard(options.InputFileOrDirectoryPath))
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFile with " +
-                                                  "input file [" + mInputFileOrDirectoryPath + "] and output directory [" + mOutputFileOrDirectoryPath + "]");
+                        ConsoleMsgUtils.ShowDebug(
+                            "Calling fileProcessor.ProcessFilesWildcard with " +
+                            "input file [" + options.InputFileOrDirectoryPath + "] and " +
+                            "output directory [" + options.OutputDirectoryPath + "]");
 
-                        success = fileProcessor.ProcessFile(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
+                        success = fileProcessor.ProcessFilesWildcard(options.InputFileOrDirectoryPath, options.OutputDirectoryPath);
                     }
                     else
                     {
-                        ConsoleMsgUtils.ShowDebug("Calling fileProcessor.ProcessFilesWildcard with " +
-                                                  "input file [" + mInputFileOrDirectoryPath + "] and output directory [" + mOutputFileOrDirectoryPath + "]");
+                        ConsoleMsgUtils.ShowDebug(
+                            "Calling fileProcessor.ProcessFile with " +
+                            "input file [" + options.InputFileOrDirectoryPath + "] and " +
+                            "output directory [" + options.OutputDirectoryPath + "]");
 
-                        success = fileProcessor.ProcessFilesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
+                        success = fileProcessor.ProcessFile(options.InputFileOrDirectoryPath, options.OutputDirectoryPath);
                     }
                 }
 
                 if (!success)
                 {
-                    System.Threading.Thread.Sleep(1500);
+                    Thread.Sleep(1500);
                     return -3;
                 }
             }
@@ -114,11 +152,16 @@ namespace FindFilesOrDirectories
             {
                 Console.WriteLine("Error occurred in Program->Main: " + Environment.NewLine + ex.Message);
                 Console.WriteLine(ex.StackTrace);
-                System.Threading.Thread.Sleep(1500);
+                Thread.Sleep(1500);
                 return -1;
             }
 
             return 0;
+        }
+
+        private static bool PathHasWildcard(string fileOrDirectoryPath)
+        {
+            return fileOrDirectoryPath.Contains("*") || fileOrDirectoryPath.Contains("?");
         }
 
         private static void RegisterEvents(IEventNotifier processor)
@@ -154,140 +197,9 @@ namespace FindFilesOrDirectories
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version + " (" + PROGRAM_DATE + ")";
         }
 
-        private static bool SetOptionsUsingCommandLineParameters(clsParseCommandLine objParseCommandLine)
-        {
-            // Returns True if no problems; otherwise, returns false
-            var lstValidParameters = new List<string> {
-                "I", "O", "AltOutput", "Directories", "S", "NoWild", "Ext"};
-
-            try
-            {
-                // Make sure no invalid parameters are present
-                if (objParseCommandLine.InvalidParametersPresent(lstValidParameters))
-                {
-                    var badArguments = new List<string>();
-                    foreach (var item in objParseCommandLine.InvalidParameters(lstValidParameters))
-                    {
-                        badArguments.Add("/" + item);
-                    }
-
-                    ShowErrorMessage("Invalid command line parameters", badArguments);
-
-                    return false;
-                }
-
-                // Query objParseCommandLine to see if various parameters are present
-                if (objParseCommandLine.NonSwitchParameterCount > 0)
-                {
-                    mInputFileOrDirectoryPath = objParseCommandLine.RetrieveNonSwitchParameter(0);
-                }
-
-                if (objParseCommandLine.NonSwitchParameterCount > 1)
-                {
-                    mOutputFileOrDirectoryPath = objParseCommandLine.RetrieveNonSwitchParameter(1);
-                }
-
-                if (objParseCommandLine.RetrieveValueForParameter("I", out var paramValue))
-                {
-                    mInputFileOrDirectoryPath = string.Copy(paramValue);
-                }
-
-                if (objParseCommandLine.RetrieveValueForParameter("O", out paramValue))
-                {
-                    mOutputFileOrDirectoryPath = string.Copy(paramValue);
-                }
-
-                if (objParseCommandLine.RetrieveValueForParameter("AltOutput", out paramValue))
-                {
-                    mOutputDirectoryAlternatePath = string.Copy(paramValue);
-                }
-
-                if (objParseCommandLine.IsParameterPresent("Directories"))
-                    mProcessDirectories = true;
-
-                mRecurse = objParseCommandLine.IsParameterPresent("S");
-
-                if (mRecurse && objParseCommandLine.RetrieveValueForParameter("S", out paramValue))
-                {
-                    if (int.TryParse(paramValue, out var recurseDepth))
-                        mRecurseDepth = recurseDepth;
-                }
-
-                mAssumeNoWildcards = objParseCommandLine.IsParameterPresent("NoWild");
-
-                if (mRecurse && objParseCommandLine.RetrieveValueForParameter("Ext", out paramValue))
-                {
-                    var extensions = paramValue.Split(',');
-                    if (extensions.Length > 0)
-                    {
-                        mKnownExtensions.Clear();
-                        mKnownExtensions.AddRange(extensions);
-                    }
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                ShowErrorMessage("Error parsing the command line parameters: " + Environment.NewLine + ex.Message, ex);
-            }
-
-            return false;
-        }
-
         private static void ShowErrorMessage(string message, Exception ex)
         {
             ConsoleMsgUtils.ShowError(message, ex);
-        }
-
-        private static void ShowErrorMessage(string title, IEnumerable<string> messages)
-        {
-            ConsoleMsgUtils.ShowErrors(title, messages);
-        }
-
-        private static void ShowProgramHelp()
-        {
-            var exeName = System.IO.Path.GetFileName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            try
-            {
-                Console.WriteLine();
-                Console.WriteLine("This is a test program for FileProcessor and ProcessDirectoriesBase");
-                Console.WriteLine();
-                Console.WriteLine("Program syntax:" + Environment.NewLine + exeName);
-
-                Console.WriteLine(" InputFileOrDirectoryPath [/Directories] [/O:OutputFileOrDirectory] [/AltOutput] " +
-                                  "[/S:MaxDepth] [/NoWild] [/Ext:KnownExtensionList");
-
-                Console.WriteLine();
-                Console.WriteLine("By default finds files; use /Directories to find directories");
-                Console.WriteLine();
-                Console.WriteLine("Use /O to specify the output file or directory path");
-                Console.WriteLine();
-                Console.WriteLine("Use /AltOutput to create the results in an alternate output directory (will retain the directory hierarchy if /S is provided)");
-                Console.WriteLine();
-                Console.WriteLine("Use /S to recurse into subdirectories.  Optionally append a number for the max depth");
-                Console.WriteLine();
-                Console.WriteLine("Use /NoWild to not check for wildcards in the input path (ignored if /S is used)");
-                Console.WriteLine();
-                Console.WriteLine("Use /Ext define the list of known extensions to match; only valid for /Files and only valid if /S is used");
-                Console.WriteLine("For example, /Ext:.txt,.png");
-
-                Console.WriteLine();
-                Console.WriteLine("Program written by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in 2017");
-                Console.WriteLine("Version: " + GetAppVersion());
-                Console.WriteLine();
-
-                Console.WriteLine("E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov");
-                Console.WriteLine("Website: http://panomics.pnnl.gov/ or https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics");
-
-                // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
-                System.Threading.Thread.Sleep(750);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error displaying the program syntax: " + ex.Message);
-            }
         }
     }
 }
