@@ -7,32 +7,13 @@ namespace FindFilesOrDirectories
 {
     internal static class Program
     {
-        public const string PROGRAM_DATE = "February 12, 2020";
+        // Ignore Spelling: Conf
 
-        private static string mInputFileOrDirectoryPath;
-        private static string mOutputFileOrDirectoryPath;
-
-        private static string mOutputDirectoryAlternatePath;
-
-        private static bool mAssumeNoWildcards;
-        private static List<string> mKnownExtensions;
-        private static bool mProcessDirectories;
-        private static bool mRecurse;
-        private static int mRecurseDepth;
+        public const string PROGRAM_DATE = "October 27, 2021";
 
         public static int Main(string[] args)
         {
             var objParseCommandLine = new clsParseCommandLine();
-
-            mInputFileOrDirectoryPath = string.Empty;
-            mOutputFileOrDirectoryPath = string.Empty;
-            mOutputDirectoryAlternatePath = string.Empty;
-
-            mAssumeNoWildcards = false;
-            mKnownExtensions = new List<string>();
-            mProcessDirectories = false;
-            mRecurse = false;
-            mRecurseDepth = 0;
 
             try
             {
