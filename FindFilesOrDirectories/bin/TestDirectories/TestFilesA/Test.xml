@@ -1,0 +1,15 @@
+  <Peptide id="Pep_[+40CPATEHLIGAIR">
+    <PeptideSequence>CPATEHLIGAIR</PeptideSequence>
+    <Modification location="0" monoisotopicMassDelta="39.99491463">
+      <cvParam cvRef="UNIMOD" accession="UNIMOD:26" name="Pyro-carbamidomethyl"/>
+    </Modification>
+  </Peptide>
+  <Peptide id="Pep_[+40CPATEHLIGAIR">
+    <PeptideSequence>CPATEHLIGAIR</PeptideSequence>
+    <Modification location="0" monoisotopicMassDelta="58.00547933">
+      <cvParam cvRef="UNIMOD" accession="UNIMOD:6" name="Carboxymethyl"/>
+    </Modification>
+    <Modification location="0" monoisotopicMassDelta="-18.0105647">
+      <cvParam cvRef="PSI-MS" accession="MS:1001460" name="unknown modification" value="Phospho+PL"/>
+    </Modification>
+  </Peptide>
