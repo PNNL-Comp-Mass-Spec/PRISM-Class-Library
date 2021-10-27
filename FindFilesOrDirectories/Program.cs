@@ -7,7 +7,6 @@ namespace FindFilesOrDirectories
 {
     internal static class Program
     {
-
         public const string PROGRAM_DATE = "February 12, 2020";
 
         private static string mInputFileOrDirectoryPath;
@@ -23,7 +22,6 @@ namespace FindFilesOrDirectories
 
         public static int Main(string[] args)
         {
-
             var objParseCommandLine = new clsParseCommandLine();
 
             mInputFileOrDirectoryPath = string.Empty;
@@ -52,7 +50,6 @@ namespace FindFilesOrDirectories
                 {
                     ShowProgramHelp();
                     return -1;
-
                 }
 
                 const string PARAM_FILE_PATH = "";
@@ -78,7 +75,6 @@ namespace FindFilesOrDirectories
                         ConsoleMsgUtils.ShowDebug("Calling processor.ProcessDirectoriesWildcard");
                         success = processor.ProcessDirectoriesWildcard(mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath);
                     }
-
                 }
                 else
                 {
@@ -109,9 +105,7 @@ namespace FindFilesOrDirectories
                             success = fileProcessor.ProcessFilesAndRecurseDirectories(
                                 mInputFileOrDirectoryPath, mOutputFileOrDirectoryPath, mOutputDirectoryAlternatePath,
                                 RECREATE_DIRECTORY_HIERARCHY, PARAM_FILE_PATH, mRecurseDepth);
-
                         }
-
                     }
                     else if (mAssumeNoWildcards)
                     {
@@ -134,7 +128,6 @@ namespace FindFilesOrDirectories
                     System.Threading.Thread.Sleep(1500);
                     return -3;
                 }
-
             }
             catch (Exception ex)
             {
@@ -145,7 +138,6 @@ namespace FindFilesOrDirectories
             }
 
             return 0;
-
         }
 
         private static void RegisterEvents(IEventNotifier processor)
@@ -310,15 +302,11 @@ namespace FindFilesOrDirectories
 
                 // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
                 System.Threading.Thread.Sleep(750);
-
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error displaying the program syntax: " + ex.Message);
             }
-
         }
-
-
     }
 }
