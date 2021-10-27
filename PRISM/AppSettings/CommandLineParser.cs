@@ -746,7 +746,7 @@ namespace PRISM
                     {
                         var message = string.Format("Error: Required argument missing: {0}{1}", paramChars[0], prop.Value.ParamKeys[0]);
                         Results.AddParseError(message, true);
-                        Results.Failed("Missing required argument");
+                        Results.Failed("Missing required argument", !createExampleParamFile);
                     }
 
                     if (!specified)
@@ -872,7 +872,7 @@ namespace PRISM
                     Results.OutputErrors(true);
                 }
 
-                Results.Failed("CreateParamFile provided; exiting program");
+                Results.Failed("CreateParamFile provided; exiting program", false);
                 return Results;
             }
 
