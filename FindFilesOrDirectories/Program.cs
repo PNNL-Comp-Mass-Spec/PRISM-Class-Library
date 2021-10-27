@@ -53,7 +53,8 @@ namespace FindFilesOrDirectories
 
                 if (options.ProcessDirectories)
                 {
-                    var processor = new DirectoryProcessor();
+                    var processor = new DirectoryProcessor(options);
+
                     RegisterEvents(processor);
                     processor.SkipConsoleWriteIfNoProgressListener = true;
 
@@ -82,7 +83,8 @@ namespace FindFilesOrDirectories
                 }
                 else
                 {
-                    var fileProcessor = new FileProcessor();
+                    var fileProcessor = new FileProcessor(options);
+
                     RegisterEvents(fileProcessor);
                     fileProcessor.SkipConsoleWriteIfNoProgressListener = true;
 
