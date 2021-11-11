@@ -1018,26 +1018,28 @@ namespace PRISM
             try
             {
                 var lines = GetParamFileContents();
+
                 if (isFile)
                 {
                     var paramFile = new FileInfo(paramFilePath);
                     File.WriteAllLines(paramFile.FullName, lines);
+                    return true;
                 }
-                else
+
+                Console.WriteLine();
+                Console.WriteLine("##### Example parameter file contents: #####");
+                Console.WriteLine();
+
+                foreach (var line in lines)
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("##### Example parameter file contents: #####");
-                    Console.WriteLine();
-
-                    foreach (var line in lines)
-                    {
-                        Console.WriteLine(line);
-                    }
-
-                    Console.WriteLine();
-                    Console.WriteLine("##### End Example parameter file contents: #####");
-                    Console.WriteLine();
+                    Console.WriteLine(line);
                 }
+
+                Console.WriteLine();
+                Console.WriteLine("##### End Example parameter file contents: #####");
+                Console.WriteLine();
+
+                return true;
             }
             catch (Exception e)
             {
@@ -1045,8 +1047,6 @@ namespace PRISM
                 ConsoleMsgUtils.ShowError(e, "Error writing parameters to {0}!", target);
                 return false;
             }
-
-            return true;
         }
 
         private IEnumerable<string> GetParamFileContents()
