@@ -175,6 +175,7 @@ namespace PRISM
             /// <summary>
             /// Set the parsing status to failed
             /// </summary>
+            /// <remarks>This is also called when -CreateParamFile is provided or if not arguments were specified</remarks>
             internal void Failed(string failureReason, bool showWarning = true)
             {
                 if (showWarning)
@@ -186,6 +187,7 @@ namespace PRISM
             /// <summary>
             /// Add a Parsing error to the parsing error list
             /// </summary>
+            /// <remarks>This is also called when -CreateParamFile is provided</remarks>
             /// <param name="message">Error message</param>
             /// <param name="isMissingRequiredParameter">True if this is a missing required parameter</param>
             internal void AddParseError(string message, bool isMissingRequiredParameter = false)
@@ -240,6 +242,12 @@ namespace PRISM
         /// </summary>
         /// <remarks>If defined, shown at the end of PrintHelp</remarks>
         public string ContactInfo { get; set; }
+
+        /// <summary>
+        /// This is set to true if one of the arguments is -CreateParamFile
+        /// and thus an example parameter file was created or shown at the console
+        /// </summary>
+        public bool CreateParamFileProvided { get; private set; }
 
         /// <summary>
         /// Entry assembly name
@@ -865,14 +873,16 @@ namespace PRISM
                     Results.AddParseError(@"Created example parameter file at ""{0}""", exampleParamFilePath);
                 }
 
-                Results.AddParseError("-CreateParamFile provided. Exiting program.");
+                CreateParamFileProvided = true;
+
+                Results.AddParseError("-CreateParamFile provided; exiting program.");
 
                 if (outputErrors)
                 {
                     Results.OutputErrors(true);
                 }
 
-                Results.Failed("CreateParamFile provided; exiting program", false);
+                Results.Failed("-CreateParamFile provided; exiting program", false);
                 return Results;
             }
 
@@ -1011,6 +1021,12 @@ namespace PRISM
             return lines;
         }
 
+        /// <summary>
+        /// Writes the values in <see cref="Results"/>.ParsedResults as a parameter file,
+        /// or show at the console if paramFilePath is an empty string
+        /// </summary>
+        /// <param name="paramFilePath"></param>
+        /// <returns>True if successful, false if an error</returns>
         private bool WriteParamFile(string paramFilePath)
         {
             var isFile = !string.IsNullOrWhiteSpace(paramFilePath);
