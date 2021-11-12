@@ -11,7 +11,7 @@ namespace FindFilesOrDirectories
     {
         // Ignore Spelling: Conf
 
-        public const string PROGRAM_DATE = "October 27, 2021";
+        public const string PROGRAM_DATE = "November 11, 2021";
 
         public static int Main(string[] args)
         {
@@ -20,7 +20,8 @@ namespace FindFilesOrDirectories
                 var programName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
                 var exePath = ProcessFilesOrDirectoriesBase.GetAppPath();
                 var exeName = Path.GetFileName(exePath);
-                var cmdLineParser = new CommandLineParser<SearchOptions>(programName, GetAppVersion())
+
+                var parser = new CommandLineParser<SearchOptions>(programName, GetAppVersion())
                 {
                     ProgramInfo = "This is an example application demonstrating the use of the CommandLineParser " +
                                   "and of classes that inherit ProcessDirectoriesBase and ProcessFilesBase.",
@@ -29,21 +30,26 @@ namespace FindFilesOrDirectories
                                   "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics"
                 };
 
-                cmdLineParser.UsageExamples.Add(exeName + " *.txt");
-                cmdLineParser.UsageExamples.Add(exeName + " *.txt /O:OutputDirectoryPath");
-                cmdLineParser.UsageExamples.Add(exeName + " *.D /Directories /P:ParameterFilePath");
+                parser.UsageExamples.Add(exeName + " *.txt");
+                parser.UsageExamples.Add(exeName + " *.txt /O:OutputDirectoryPath");
+                parser.UsageExamples.Add(exeName + " *.D /Directories /P:ParameterFilePath");
 
                 // The default argument name for parameter files is /ParamFile or -ParamFile
                 // Also allow /Conf or /P
-                cmdLineParser.AddParamFileKey("Conf");
-                cmdLineParser.AddParamFileKey("P");
+                parser.AddParamFileKey("Conf");
+                parser.AddParamFileKey("P");
 
-                var result = cmdLineParser.ParseArgs(args);
+                var result = parser.ParseArgs(args);
                 var options = result.ParsedResults;
                 RegisterEvents(options);
 
                 if (!result.Success || !options.Validate())
                 {
+                    if (parser.CreateParamFileProvided)
+                    {
+                        return 0;
+                    }
+
                     // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
                     Thread.Sleep(750);
                     return -1;
