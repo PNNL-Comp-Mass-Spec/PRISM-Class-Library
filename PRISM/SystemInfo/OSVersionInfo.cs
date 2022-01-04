@@ -418,7 +418,9 @@ namespace PRISM
                     break;
 
                 case 10:
-                    return "Windows 10";
+                    return osInfo.Version >= new Version(10, 0, 22000, 0)
+                        ? "Windows 11"
+                        : "Windows 10";
 
                 default:
                     if (osInfo.Version.Major > 10)
