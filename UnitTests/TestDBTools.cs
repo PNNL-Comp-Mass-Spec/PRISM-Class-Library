@@ -947,7 +947,14 @@ namespace PRISMTest
 
             Assert.AreEqual(results.Count, expectedRowCount, "RowCount mismatch");
 
-            var firstRow = results.First();
+            if (expectedRowCount < 1)
+            {
+                Console.WriteLine("Rows returned: " + results.Count);
+                return;
+            }
+
+            var firstRow = results[0];
+
             for (var colIndex = 0; colIndex < firstRow.Count; colIndex++)
             {
                 if (colIndex >= expectedValues.Length)
@@ -1018,7 +1025,14 @@ namespace PRISMTest
 
             Assert.AreEqual(results.Count, expectedRowCount, "RowCount mismatch");
 
-            var firstRow = results.First();
+            if (expectedRowCount < 1)
+            {
+                Console.WriteLine("Rows returned: " + results.Count);
+                return;
+            }
+
+            var firstRow = results[0];
+
             for (var colIndex = 0; colIndex < firstRow.Count; colIndex++)
             {
                 if (colIndex >= expectedValues.Length)
