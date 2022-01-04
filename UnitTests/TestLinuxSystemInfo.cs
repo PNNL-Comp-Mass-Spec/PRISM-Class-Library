@@ -173,10 +173,20 @@ namespace PRISMTest
 
             Assert.AreEqual(expectedCoreUsageTotal, coreUsage, 0.1, "Core usage mismatch");
 
-            if (processIDs.Count == 1)
-                Console.WriteLine("Process ID: " + processIDs.First());
-            else
-                Console.WriteLine("Process IDs: " + string.Join(", ", processIDs));
+            switch (processIDs.Count)
+            {
+                case 0:
+                    Console.WriteLine("Process ID: no match");
+                    break;
+
+                case 1:
+                    Console.WriteLine("Process ID: " + processIDs[0]);
+                    break;
+
+                default:
+                    Console.WriteLine("Process IDs: " + string.Join(", ", processIDs));
+                    break;
+            }
         }
 
         [TestCase(@"LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
