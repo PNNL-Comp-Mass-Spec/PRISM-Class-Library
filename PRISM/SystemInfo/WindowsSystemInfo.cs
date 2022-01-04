@@ -927,7 +927,7 @@ namespace PRISM
                 // 2) A "Cannot process request because the process (<pid>) has exited" exception, meaning the process has terminated
 
                 // Force the exception to be raised by trying to access process.MainModule
-                var dummy = process.MainModule;
+                _ = process.MainModule;
 
                 exePath = string.Empty;
             }
