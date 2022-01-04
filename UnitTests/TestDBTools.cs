@@ -353,7 +353,7 @@ namespace PRISMTest
                 query = string.Format("SELECT " + string.Join(", ", columnNames) + " FROM (" +
                                       "   SELECT TOP {0} * FROM {1}" +
                                       "   Order By {2} Desc) LookupQ " +
-                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
+                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.FirstOrDefault());
             }
             else
             {
@@ -384,7 +384,7 @@ namespace PRISMTest
                 query = string.Format("SELECT  " + string.Join(", ", columnNames) + " FROM (" +
                                       "   SELECT * FROM {1}" +
                                       "   Order By {2} Desc Limit {0}) LookupQ " +
-                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.First());
+                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.FirstOrDefault());
             }
 
             var columnDataTypes = new List<SqlType>();
