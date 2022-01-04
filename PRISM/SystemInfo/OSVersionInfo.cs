@@ -223,12 +223,9 @@ namespace PRISM
 
         private static string GetGenericOSVersion()
         {
-            if (Path.DirectorySeparatorChar == '/')
-            {
-                return "Unknown Linux OS";
-            }
-
-            return "Unknown Windows OS";
+            return Path.DirectorySeparatorChar == '/'
+                ? "Unknown Linux OS"
+                : "Unknown Windows OS";
         }
 
         /// <summary>
