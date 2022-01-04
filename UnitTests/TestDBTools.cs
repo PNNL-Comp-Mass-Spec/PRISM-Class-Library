@@ -904,8 +904,7 @@ namespace PRISMTest
         [TestCase(
             "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
             "SELECT [Num C], [Num H], [Num N], [Num O], [Num S] FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol",
-            2,
-            "6, 12, 2, 1, 0")]
+            2, "6, 12, 2, 1, 0")]
         [TestCase(
             "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'",

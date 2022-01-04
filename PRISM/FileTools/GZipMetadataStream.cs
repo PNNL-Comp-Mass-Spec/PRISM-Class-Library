@@ -163,9 +163,11 @@ namespace PRISM
             }
 
             // ReSharper disable UnusedVariable
+
             var id1 = BaseStream.ReadByte(); // should be 31/0x1f (GZIP constant)
             var id2 = BaseStream.ReadByte(); // should be 139/0x8b (GZIP constant)
             var compressionMethod = BaseStream.ReadByte(); // should be 8 (deflate)
+
             // ReSharper restore UnusedVariable
 
             // ReSharper disable CommentTypo
