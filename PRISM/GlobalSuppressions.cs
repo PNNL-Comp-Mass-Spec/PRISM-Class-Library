@@ -6,6 +6,10 @@
 
 using System.Diagnostics.CodeAnalysis;
 
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Keep for reference", Scope = "member", Target = "~F:PRISM.ShareConnector.RESOURCE_USAGE_CONTAINER")]
+[assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.FileLogger.mQueueLogger")]
+[assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.ODBCDatabaseLogger.mQueueLogger")]
+[assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.SQLServerDatabaseLogger.mQueueLogger")]
 [assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "This RegEx is used; the compiler is confused", Scope = "member", Target = "~F:PRISM.WindowsSystemInfoInternal.mQuotedStringMatcher")]
 [assembly: SuppressMessage("Design", "RCS1075:Avoid empty catch clause that catches System.Exception.", Justification = "Acceptable design pattern", Scope = "module")]
 [assembly: SuppressMessage("Design", "RCS1158:Static member in generic type should use a type parameter.", Justification = "Not needed", Scope = "member", Target = "~M:PRISM.CommandLineParser`1.ParseArgs(System.String[],System.String)~PRISM.CommandLineParser`1.ParserResults`0")]
@@ -34,9 +38,14 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Allowed since obsolete method", Scope = "member", Target = "~M:PRISM.DBTools.UpdateDatabase(System.String,System.Int32@)~System.Boolean")]
 [assembly: SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "This parameter is used; the compiler is confused by the #if", Scope = "member", Target = "~M:PRISM.WindowsSystemInfoInternal.GetCommandLine(System.Diagnostics.Process,System.String@,System.Collections.Generic.List{System.String}@)~System.String")]
 [assembly: SuppressMessage("Redundancy", "RCS1163:Unused parameter.", Justification = "Used for debugging", Scope = "member", Target = "~M:PRISM.ParallelPreprocessing.ParallelPreprocessor`2.Producer(System.Collections.Generic.IEnumerator{`0},System.Func{`0,`1},System.Object,System.Int32)")]
-[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "Leave for debugging purposes", Scope = "member", Target = "~M:PRISM.WindowsSystemInfoInternal.GetFreeMemoryMB~System.Single")]
-[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "Leave for debugging purposes", Scope = "member", Target = "~M:PRISM.WindowsSystemInfoInternal.GetTotalMemoryMB~System.Single")]
-[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Leave for debugging purposes", Scope = "member", Target = "~M:PRISM.ParallelPreprocessing.ParallelPreprocessor`2.Producer(System.Collections.Generic.IEnumerator{`0},System.Func{`0,`1},System.Object,System.Int32)")]
+[assembly: SuppressMessage("Redundancy", "RCS1213:Remove unused member declaration.", Justification = "Keep for reference", Scope = "member", Target = "~F:PRISM.ShareConnector.RESOURCE_USAGE_CONTAINER")]
+[assembly: SuppressMessage("Redundancy", "RCS1213:Remove unused member declaration.", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.FileLogger.mQueueLogger")]
+[assembly: SuppressMessage("Redundancy", "RCS1213:Remove unused member declaration.", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.ODBCDatabaseLogger.mQueueLogger")]
+[assembly: SuppressMessage("Redundancy", "RCS1213:Remove unused member declaration.", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.SQLServerDatabaseLogger.mQueueLogger")]
+[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "Keep for debugging purposes", Scope = "member", Target = "~M:PRISM.GZipMetadataStream.ReadMetadata~System.Boolean")]
+[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "Keep for debugging purposes", Scope = "member", Target = "~M:PRISM.WindowsSystemInfoInternal.GetFreeMemoryMB~System.Single")]
+[assembly: SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "Keep for debugging purposes", Scope = "member", Target = "~M:PRISM.WindowsSystemInfoInternal.GetTotalMemoryMB~System.Single")]
+[assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "Keep for debugging purposes", Scope = "member", Target = "~M:PRISM.ParallelPreprocessing.ParallelPreprocessor`2.Producer(System.Collections.Generic.IEnumerator{`0},System.Func{`0,`1},System.Object,System.Int32)")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Allowed name", Scope = "type", Target = "~T:PRISM.clsParseCommandLine")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Allowed name", Scope = "type", Target = "~T:PRISM.FileProcessor.ProcessFilesBase.eProcessFilesErrorCodes")]
 [assembly: SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "Allowed name", Scope = "type", Target = "~T:PRISM.FileProcessor.ProcessFoldersBase.eProcessFoldersErrorCodes")]
