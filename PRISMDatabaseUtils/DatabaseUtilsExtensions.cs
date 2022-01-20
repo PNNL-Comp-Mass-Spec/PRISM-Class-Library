@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable UnusedMember.Global
 
@@ -9,7 +8,6 @@ namespace PRISMDatabaseUtils
     /// <summary>
     /// Some extension methods that are useful when reading from databases
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DatabaseUtilsExtensions
     {
         // Ignore Spelling: Sql

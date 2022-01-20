@@ -27,7 +27,6 @@ namespace PRISM
     {
         // Ignore Spelling: const, username
 
-#pragma warning disable 1591
         // ReSharper disable UnusedMember.Global
 
         public enum ResourceScope
@@ -62,8 +61,6 @@ namespace PRISM
             Tree = 0xa,
             NdsContainer = 0xb
         }
-
-#pragma warning restore 1591
 
         /// <summary>
         /// This structure is used to group a bunch of member variables

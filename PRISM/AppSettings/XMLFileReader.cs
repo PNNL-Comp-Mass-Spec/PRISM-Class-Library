@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 
@@ -12,7 +11,6 @@ namespace PRISM
     /// <summary>
     /// Tools for manipulating XML settings files
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class XMLFileReader
     {
         private enum XMLItemTypeEnum

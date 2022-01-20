@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Npgsql;
 using PRISMDatabaseUtils.MSSQLServer;
@@ -36,7 +35,6 @@ namespace PRISMDatabaseUtils
     /// <summary>
     /// Factory class for creating Database interaction objects
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class DbToolsFactory
     {
         // Ignore Spelling: pgpass, Postgres, PostgreSQL, Sql, Username

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -14,7 +13,6 @@ namespace PRISM.FileProcessor
     /// This class contains simple error codes that can be set from any derived classes;
     /// the derived classes can also set their own local error codes
     /// </remarks>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessDirectoriesBase : ProcessFilesOrDirectoriesBase
     {
         // Ignore Spelling: bool, enum, enums, wildcard, wildcards

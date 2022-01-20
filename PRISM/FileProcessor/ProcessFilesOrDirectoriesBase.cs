@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,7 +16,6 @@ namespace PRISM.FileProcessor
     /// <summary>
     /// Base class for both ProcessFilesBase and ProcessDirectoriesBase
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public abstract class ProcessFilesOrDirectoriesBase : EventNotifier
     {
         // Ignore Spelling: username, yyyy-MM-dd, hh:mm:ss tt

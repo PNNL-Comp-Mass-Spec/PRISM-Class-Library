@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,7 +11,6 @@ namespace PRISM
     /// <summary>
     /// This class includes methods to be used when displaying messages at the console while monitoring a class that inherits EventNotifier
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class ConsoleMsgUtils
     {
         private const string SEPARATOR = "------------------------------------------------------------------------------";

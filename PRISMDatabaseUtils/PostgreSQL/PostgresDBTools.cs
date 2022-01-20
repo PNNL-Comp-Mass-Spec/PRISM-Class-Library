@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,7 +14,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
     /// <summary>
     /// Tools to retrieve data from a database or run stored procedures
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class PostgresDBTools : DBToolsBase, IDBTools
     {
         // Ignore Spelling: backend, msg, Npgsql, PostgreSQL, sqlCmd, tmp, varchar

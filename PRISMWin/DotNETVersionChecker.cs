@@ -92,7 +92,6 @@ namespace PRISMWin
             //    }
             // }
 
-#pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only
             using var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "");
 
             var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
@@ -103,8 +102,6 @@ namespace PRISMWin
                 var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
                 return latestVersion;
             }
-
-#pragma warning restore CA1416 // Validate platform compatibility
 
             return string.Empty;
         }
@@ -141,7 +138,6 @@ namespace PRISMWin
             }
 
             // Opens the registry key for the .NET Framework entry
-#pragma warning disable CA1416 // Validate platform compatibility; Irrelevant here because this project is already targeted to Windows only
             using var ndpKey = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, "").OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\");
 
             if (ndpKey == null)
@@ -211,8 +207,6 @@ namespace PRISMWin
                     }
                 }
             }
-
-#pragma warning restore CA1416 // Validate platform compatibility
 
             return dotNETVersions;
         }

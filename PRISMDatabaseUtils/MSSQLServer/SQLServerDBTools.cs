@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using PRISM;
@@ -13,7 +12,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
     /// <summary>
     /// Tools to retrieve data from a database or run stored procedures
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal class SQLServerDBTools : DBToolsBase, IDBTools
     {
         // Ignore Spelling: cmd, Cn, msg, Sql, varchar

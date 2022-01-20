@@ -4,7 +4,6 @@
 
 namespace PRISMWin
 {
-#pragma warning disable CS1591  // Missing XML comments
 #pragma warning disable IDE1006 // Naming Styles
 
     [Obsolete("Use the DotNETVersionChecker class")]
@@ -21,6 +20,4 @@ namespace PRISMWin
     }
 
 #pragma warning restore IDE1006 // Naming Styles
-#pragma warning restore CS1591  // Missing XML comments
-
 }
