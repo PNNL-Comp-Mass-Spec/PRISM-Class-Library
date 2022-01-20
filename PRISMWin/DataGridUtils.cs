@@ -1,4 +1,8 @@
-﻿namespace PRISMWin
+﻿#if NETFRAMEWORK
+using System;
+#endif
+
+namespace PRISMWin
 {
     /// <summary>
     /// Methods for appending columns to a DataGrid table style
