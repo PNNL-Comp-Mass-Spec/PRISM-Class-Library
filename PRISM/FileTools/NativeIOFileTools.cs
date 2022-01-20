@@ -141,25 +141,21 @@ namespace PRISM
                 return fileInfo.Length;
             }
 
-            return InternalGetFileSize(filePath, out _);
+            return InternalGetFileSize(filePath);
         }
 
-        private static long InternalGetFileSize(string filePath, out NativeIOMethods.WIN32_FIND_DATA findData)
+        private static long InternalGetFileSize(string filePath)
         {
-            long size = 0;
             var INVALID_HANDLE_VALUE = new IntPtr(-1);
 
-            var findHandle = NativeIOMethods.FindFirstFile(WIN32_LONG_PATH_PREFIX + filePath, out findData);
+            var findHandle = NativeIOMethods.FindFirstFile(WIN32_LONG_PATH_PREFIX + filePath, out var findData);
 
-            if (findHandle != INVALID_HANDLE_VALUE)
+            if (findHandle != INVALID_HANDLE_VALUE && (findData.dwFileAttributes & FileAttributes.Directory) == 0)
             {
-                if ((findData.dwFileAttributes & FileAttributes.Directory) == 0)
-                {
-                    size = (long)findData.nFileSizeLow + (long)findData.nFileSizeHigh * 4294967296;
-                }
+                return findData.nFileSizeLow + findData.nFileSizeHigh * 4294967296;
             }
 
-            return size;
+            return 0;
         }
 
         [DebuggerStepThrough]
