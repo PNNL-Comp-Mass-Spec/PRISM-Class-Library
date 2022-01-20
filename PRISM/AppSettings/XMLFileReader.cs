@@ -987,6 +987,6 @@ namespace PRISM
         /// <summary>
         /// Returns a message describing this exception
         /// </summary>
-        public override string Message { get; } = "The XMLFileReader instance has not been properly initialized.";
+        public override string Message => "The XMLFileReader instance has not been properly initialized.";
     }
 }
