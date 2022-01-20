@@ -136,6 +136,7 @@ namespace PRISM
         /// Initializes a new instance of the clsFileLogger class
         /// </summary>
         /// <remarks>This constructor (without a file path) is required because clsDBLogger inherits clsFileLogger</remarks>
+        [Obsolete("Use Logging.FileLogger")]
         public clsFileLogger()
         {
         }
@@ -148,6 +149,7 @@ namespace PRISM
         /// logFileBaseName is allowed to be blank (e.g. if using clsDBLogger and there is no need for a local log file)
         /// </remarks>
         /// <param name="logFileBaseName">The name of the file to use for the log (either a filename like UpdateManager, or a relative path, like Logs\UpdateManager</param>
+        [Obsolete("Use Logging.FileLogger")]
         public clsFileLogger(string logFileBaseName)
         {
             LogFileBaseName = string.IsNullOrWhiteSpace(logFileBaseName) ? string.Empty : logFileBaseName;
