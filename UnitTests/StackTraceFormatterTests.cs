@@ -184,7 +184,6 @@ namespace PRISMTest
             : base(message, innerException)
         { }
 
-        public MyTestException() : base()
         {
         }
 

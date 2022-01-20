@@ -958,7 +958,7 @@ namespace PRISM
         /// <summary>
         /// Constructor
         /// </summary>
-        public XMLFileReaderNotInitializedException() : base()
+        public XMLFileReaderNotInitializedException()
         {
         }
 
