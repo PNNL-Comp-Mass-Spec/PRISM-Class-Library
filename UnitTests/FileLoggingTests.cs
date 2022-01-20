@@ -172,11 +172,11 @@ namespace PRISMTest
                 if (Path.HasExtension(expectedBaseName))
                 {
                     var currentExtension = Path.GetExtension(expectedBaseName);
-                    expectedName = Path.ChangeExtension(expectedBaseName, null) + "_" + DateTime.Now.ToString("MM-dd-yyyy") + currentExtension;
+                    expectedName = Path.ChangeExtension(expectedBaseName, null) + "_" + DateTime.Now.ToString("yyyy-MM-dd") + currentExtension;
                 }
                 else
                 {
-                    expectedName = expectedBaseName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+                    expectedName = expectedBaseName + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
                 }
             }
             else
@@ -223,7 +223,7 @@ namespace PRISMTest
             Console.WriteLine();
             Console.WriteLine("Log file path: " + FileLogger.LogFilePath);
 
-            var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+            var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
                 if (string.IsNullOrWhiteSpace(FileLogger.LogFilePath))
@@ -255,7 +255,7 @@ namespace PRISMTest
             Console.WriteLine();
             Console.WriteLine("Log file path: " + FileLogger.LogFilePath);
 
-            var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+            var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
@@ -312,7 +312,7 @@ namespace PRISMTest
                 ProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
-            var expectedName = logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION;
+            var expectedName = logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
@@ -336,7 +336,7 @@ namespace PRISMTest
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
-                logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
+                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -357,7 +357,7 @@ namespace PRISMTest
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
-                logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
+                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -417,7 +417,7 @@ namespace PRISMTest
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
-                logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy") + FileLogger.LOG_FILE_EXTENSION);
+                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
