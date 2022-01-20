@@ -72,7 +72,7 @@ namespace PRISM.FileProcessor
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupFolderPaths(ref string inputFolderPath, ref string outputFolderPath)
         {
-            return base.CleanupDirectoryPaths(ref inputFolderPath, ref outputFolderPath);
+            return CleanupDirectoryPaths(ref inputFolderPath, ref outputFolderPath);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace PRISM.FileProcessor
             string parameterFilePath = "",
             bool resetErrorCode = true)
         {
-            return base.ProcessDirectoriesWildcard(inputFolderPath, outputFolderAlternatePath, parameterFilePath, resetErrorCode);
+            return ProcessDirectoriesWildcard(inputFolderPath, outputFolderAlternatePath, parameterFilePath, resetErrorCode);
         }
 
         /// <summary>
