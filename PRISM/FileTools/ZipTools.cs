@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using PRISM.Logging;
+
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable once CheckNamespace
 namespace PRISM
@@ -14,7 +15,7 @@ namespace PRISM
     /// There are routines to create an archive, extract files from an existing archive,
     /// and verify an existing archive
     /// </remarks>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public class ZipTools
     {
         // ReSharper disable once CommentTypo

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable UnusedMember.Global
 
@@ -9,8 +8,8 @@ namespace PRISM.DatabaseUtils
     /// <summary>
     /// Methods for appending columns to a data table
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
+    // ReSharper disable once UnusedMember.Global
     public static class DataTableUtils
     {
         /// <summary>

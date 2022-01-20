@@ -1,12 +1,9 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-
-namespace PRISMWin
+﻿namespace PRISMWin
 {
     /// <summary>
     /// Methods for appending columns to a DataGrid table style
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public static class DataGridUtils
     {
         // Note: System.Windows.Forms.DataGrid is deprecated/gone in .NET 5.0, in favor of System.Windows.Forms.DataGridView

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -284,8 +283,10 @@ namespace PRISM
         }
 
         // https://stackoverflow.com/questions/6972437/pinvoke-for-getlogicalprocessorinformation-function
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+
+        // ReSharper disable MemberCanBePrivate.Local
+        // ReSharper disable FieldCanBeMadeReadOnly.Local
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct GROUP_AFFINITY
         {
@@ -302,6 +303,7 @@ namespace PRISM
             /// A platform-dependent method to get the Mask
             /// </summary>
             [MarshalAs(UnmanagedType.SysUInt)]
+
             public IntPtr MaskPtr;
 
             /// <summary>
@@ -314,13 +316,12 @@ namespace PRISM
             /// </summary>
             //[MarshalAs(UnmanagedType.SafeArray)]
             //public ushort[] Reserved;
+
             public ushort Reserved0;
             public ushort Reserved1;
             public ushort Reserved2;
         };
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct PROCESSOR_RELATIONSHIP
         {
@@ -402,8 +403,6 @@ namespace PRISM
             public IntPtr GroupMaskPtr;
         };
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct NUMA_NODE_RELATIONSHIP
         {
@@ -449,8 +448,6 @@ namespace PRISM
             CacheTrace = 3
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct CACHE_RELATIONSHIP
         {
@@ -499,8 +496,6 @@ namespace PRISM
             public GROUP_AFFINITY GroupMask;
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct PROCESSOR_GROUP_INFO
         {
@@ -541,8 +536,6 @@ namespace PRISM
             public IntPtr ActiveProcessorMaskPtr;
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct GROUP_RELATIONSHIP
         {
@@ -596,6 +589,9 @@ namespace PRISM
             /// </summary>
             public IntPtr GroupInfoPtr;
         }
+
+        // ReSharper restore FieldCanBeMadeReadOnly.Local
+        // ReSharper restore MemberCanBePrivate.Local
 
         /*[StructLayout(LayoutKind.Explicit, Pack = 1)]
         private struct SYSTEM_LOGICAL_PROCESSOR_INFORMATION_UNION
@@ -669,8 +665,9 @@ namespace PRISM
             uint StructSize { get; }
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+        // ReSharper disable MemberCanBePrivate.Local
+        // ReSharper disable FieldCanBeMadeReadOnly.Local
+
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_PROCESSOR_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -691,8 +688,6 @@ namespace PRISM
             public uint StructSize => Size;
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_NUMA_NODE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -713,8 +708,6 @@ namespace PRISM
             public uint StructSize => Size;
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_CACHE_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -735,8 +728,6 @@ namespace PRISM
             public uint StructSize => Size;
         }
 
-        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Local")]
-        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         private struct SLPI_GROUP_RELATIONSHIP : ISYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
         {
@@ -756,6 +747,9 @@ namespace PRISM
 
             public uint StructSize => Size;
         }
+
+        // ReSharper restore FieldCanBeMadeReadOnly.Local
+        // ReSharper restore MemberCanBePrivate.Local
 
         private const int ERROR_INSUFFICIENT_BUFFER = 122;
 

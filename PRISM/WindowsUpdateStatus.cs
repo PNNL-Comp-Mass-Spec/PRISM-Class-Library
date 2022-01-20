@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace PRISM
 {
@@ -8,7 +7,6 @@ namespace PRISM
     /// Windows desktop computers have Windows updates applied around 3 am on the first Thursday after the third Tuesday of the month
     /// Windows servers have Windows updates applied around 3 am or 10 am on the first Sunday after the second Tuesday of the month
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class WindowsUpdateStatus
     {
         // Ignore Spelling: hh:mm:ss tt
@@ -17,6 +15,7 @@ namespace PRISM
         /// Checks whether Windows Updates are expected to occur close to the current time of day
         /// </summary>
         /// <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
+        // ReSharper disable once UnusedMember.Global
         public static bool UpdatesArePending()
         {
             return UpdatesArePending(DateTime.Now, out _);
@@ -27,6 +26,7 @@ namespace PRISM
         /// </summary>
         /// <param name="pendingWindowsUpdateMessage">Output: description of the pending or recent Windows updates</param>
         /// <returns>True if Windows updates are likely pending on this computer or the Windows servers</returns>
+        // ReSharper disable once UnusedMember.Global
         public static bool UpdatesArePending(out string pendingWindowsUpdateMessage)
         {
             return UpdatesArePending(DateTime.Now, out pendingWindowsUpdateMessage);

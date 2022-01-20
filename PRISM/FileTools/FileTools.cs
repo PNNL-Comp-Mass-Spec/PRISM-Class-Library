@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace PRISM
     /// <summary>
     /// Tools to manipulate paths and directories
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public class FileTools : EventNotifier
     {
         // Ignore Spelling: gzip, gzipped, mbBacklog, picfs, yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt

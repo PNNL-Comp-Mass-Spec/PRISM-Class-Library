@@ -1,18 +1,18 @@
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using PRISM.Logging;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISM
 {
     /// <summary>
     /// This class runs a single program as an external process and monitors it with an internal thread
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgRunner : EventNotifier
     {
         /// <summary>

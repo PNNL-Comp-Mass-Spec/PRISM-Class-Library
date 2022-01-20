@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 // ReSharper disable UnusedMember.Global
@@ -13,8 +12,8 @@ namespace PRISM
     /// <summary>
     /// Tools to retrieve data from a database
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
+    // ReSharper disable once UnusedMember.Global
     public class DBTools : EventNotifier
     {
         // Ignore Spelling: cmd, Sql

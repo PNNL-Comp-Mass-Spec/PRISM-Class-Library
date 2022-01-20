@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable once CheckNamespace
 namespace PRISM
@@ -11,7 +12,7 @@ namespace PRISM
     /// Based on a class from the DMS Analysis Manager software written by Dave Clark and Gary Kiebel (PNNL, Richland, WA)
     /// Additional features added by Matthew Monroe for the Department of Energy (PNNL, Richland, WA) in October 2003
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public class XmlSettingsFileAccessor
     {
         /// <summary>

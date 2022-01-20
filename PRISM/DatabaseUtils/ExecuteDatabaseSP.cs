@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable UnusedMember.Global
 
@@ -11,8 +10,8 @@ namespace PRISM
     /// <summary>
     /// Tools to execute a stored procedure
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     [Obsolete("Use PRISMDatabaseUtils.MSSQLServer.SQLServerDBTools instead", true)]
+    // ReSharper disable once UnusedMember.Global
     public class ExecuteDatabaseSP : EventNotifier
     {
         //Ignore Spelling: spCmd, Namespace

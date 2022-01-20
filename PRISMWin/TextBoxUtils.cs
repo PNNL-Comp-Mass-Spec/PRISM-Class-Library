@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 // ReSharper disable UnusedMember.Global
@@ -9,7 +8,7 @@ namespace PRISMWin
     /// <summary>
     /// Methods for reading or validating data in a TextBox
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public static class TextBoxUtils
     {
         // Ignore Spelling: arg, Ctrl, Keypress

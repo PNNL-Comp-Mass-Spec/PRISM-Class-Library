@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable UnusedMember.Global
 
@@ -8,7 +7,7 @@ namespace PRISM.DataUtils
     /// <summary>
     /// Utilities for parsing values from strings
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public static class StringToValueUtils
     {
         /// <summary>

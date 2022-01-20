@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 // NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
@@ -15,7 +14,7 @@ namespace PRISM
     /// program is started from the command line
     /// </summary>
     /// <remarks>Superseded by CommandLineParser (but not marked obsolete since used in numerous applications)</remarks>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    // ReSharper disable once UnusedMember.Global
     public class clsParseCommandLine
     {
         /// <summary>

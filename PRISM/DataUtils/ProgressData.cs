@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
+
+// ReSharper disable UnusedMember.Global
 
 // ReSharper disable once CheckNamespace
 namespace PRISM
@@ -8,7 +9,6 @@ namespace PRISM
     /// Add functionality to progress reporting using <see cref="IProgress{T}"/>,
     /// including facilitating child process progress as a subset of overall progress
     /// </summary>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ProgressData
     {
         // Ignore Spelling: multithreading
