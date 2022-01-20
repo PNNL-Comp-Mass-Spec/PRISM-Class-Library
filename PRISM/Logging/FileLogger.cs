@@ -20,7 +20,7 @@ namespace PRISM.Logging
     /// </remarks>
     public class FileLogger : BaseLogger
     {
-        // Ignore Spelling: prepended, Wildcards
+        // Ignore Spelling: prepended, Wildcards, yyyy, yyyy-MM-dd
 
         /// <summary>
         /// Default number of old log files to keep when AppendDateToBaseFileName is false
@@ -640,10 +640,9 @@ namespace PRISM.Logging
                     }
                     catch (Exception ex2)
                     {
-                        ConsoleMsgUtils.ShowErrorCustom("Error defining the new log file name: " + ex2.Message,
-                                                        ex2,
-                                                        false,
-                                                        false);
+                        ConsoleMsgUtils.ShowErrorCustom(
+                            "Error defining the new log file name: " + ex2.Message,
+                            ex2, false, false);
                     }
 
                     if (logMessage.LogLevel == LogLevels.ERROR || logMessage.LogLevel == LogLevels.FATAL)

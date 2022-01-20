@@ -390,8 +390,10 @@ namespace PRISM
                     // Compare the hash to expectedHashInfo.HashValue (if .HashValue is not "")
                     if (!string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) && !localFileHash.Equals(expectedHashInfo.HashValue))
                     {
-                        errorMessage = string.Format("Mismatch between the expected hash value and the actual hash value for {0}: {1} vs. {2}",
-                                                    localFile.Name, expectedHashInfo.HashValue, localFileHash);
+                        errorMessage = string.Format(
+                            "Mismatch between the expected hash value and the actual hash value for {0}: {1} vs. {2}",
+                            localFile.Name, expectedHashInfo.HashValue, localFileHash);
+
                         ConsoleMsgUtils.ShowWarning(errorMessage);
                         return false;
                     }
@@ -410,16 +412,20 @@ namespace PRISM
                     !string.IsNullOrWhiteSpace(expectedHashInfo.HashValue) &&
                     !localHashInfo.HashValue.Equals(expectedHashInfo.HashValue))
                 {
-                    errorMessage = string.Format("Hash mismatch for {0}: expected {1} but actually {2}",
-                                                 localFile.Name, expectedHashInfo.HashValue, localHashInfo.HashValue);
+                    errorMessage = string.Format(
+                        "Hash mismatch for {0}: expected {1} but actually {2}",
+                        localFile.Name, expectedHashInfo.HashValue, localHashInfo.HashValue);
+
                     ConsoleMsgUtils.ShowWarning(errorMessage);
                     return false;
                 }
 
                 if (checkSize && localFile.Length != localHashInfo.FileSize)
                 {
-                    errorMessage = string.Format("File size mismatch for {0}: expected {1:#,##0} bytes but actually {2:#,##0} bytes",
-                                                 localFile.Name, localHashInfo.FileSize, localFile.Length);
+                    errorMessage = string.Format(
+                        "File size mismatch for {0}: expected {1:#,##0} bytes but actually {2:#,##0} bytes",
+                        localFile.Name, localHashInfo.FileSize, localFile.Length);
+
                     ConsoleMsgUtils.ShowWarning(errorMessage);
                     return false;
                 }
@@ -429,10 +435,12 @@ namespace PRISM
                 {
                     if (Math.Abs(localFile.LastWriteTimeUtc.Subtract(localHashInfo.FileDateUtc).TotalSeconds) > 2)
                     {
-                        errorMessage = string.Format("File date mismatch for {0}: expected {1} UTC but actually {2} UTC",
-                                                     localFile.Name,
-                                                     localHashInfo.FileDateUtc.ToString(HashUtilities.DATE_TIME_FORMAT),
-                                                     localFile.LastWriteTimeUtc.ToString(HashUtilities.DATE_TIME_FORMAT));
+                        errorMessage = string.Format(
+                            "File date mismatch for {0}: expected {1} UTC but actually {2} UTC",
+                            localFile.Name,
+                            localHashInfo.FileDateUtc.ToString(HashUtilities.DATE_TIME_FORMAT),
+                            localFile.LastWriteTimeUtc.ToString(HashUtilities.DATE_TIME_FORMAT));
+
                         ConsoleMsgUtils.ShowWarning(errorMessage);
                         return false;
                     }

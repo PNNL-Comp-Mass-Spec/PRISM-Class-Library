@@ -258,10 +258,9 @@ namespace PRISM.Logging
             }
             catch (Exception ex)
             {
-                ConsoleMsgUtils.ShowErrorCustom("Error writing queued log messages to the database using SQL Server: " + ex.Message,
-                                                ex,
-                                                false,
-                                                false);
+                ConsoleMsgUtils.ShowErrorCustom(
+                    "Error writing queued log messages to the database using SQL Server: " + ex.Message,
+                    ex, false, false);
             }
         }
 

@@ -249,9 +249,9 @@ namespace PRISM
 
                     ConsoleMsgUtils.ShowWarning("------------------------------------------------------------------------------");
                     ConsoleMsgUtils.ShowWarning(ConsoleMsgUtils.WrapParagraph(
-                                                    "This program cannot be run from a network share.  Please map a drive to the " +
-                                                    "network share you are currently accessing or copy the program files and " +
-                                                    "required DLLs to your local computer."));
+                        "This program cannot be run from a network share.  Please map a drive to the " +
+                        "network share you are currently accessing or copy the program files and " +
+                        "required DLLs to your local computer."));
                     ConsoleMsgUtils.ShowWarning("Exception: " + ex.Message);
                     ConsoleMsgUtils.ShowWarning("------------------------------------------------------------------------------");
 
