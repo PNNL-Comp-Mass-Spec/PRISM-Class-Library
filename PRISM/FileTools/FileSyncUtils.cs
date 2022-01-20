@@ -527,9 +527,11 @@ namespace PRISM
                     HashType = assumedHashType
                 };
 
-                var validFile = ValidateFileVsHashcheck(localFilePath, hashCheckFilePath, out errorMessage,
-                                                        expectedHashInfo, checkDate, computeHash, checkSize, recheckIntervalDays: 0);
-                return validFile;
+                return ValidateFileVsHashcheck(
+                    localFilePath, hashCheckFilePath,
+                    out errorMessage, expectedHashInfo,
+                    checkDate, computeHash,
+                    checkSize, recheckIntervalDays: 0);
             }
             catch (Exception ex)
             {
