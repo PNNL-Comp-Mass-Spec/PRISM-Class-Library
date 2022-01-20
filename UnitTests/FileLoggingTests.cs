@@ -15,15 +15,12 @@ namespace PRISMTest
 
         private const string LOGFILE_BASENAME = "FileLoggingTester";
 
-        [TestCase(@"C:\Temp", 5, 25)]
-        public void TestArchiveOldLogFiles(string logDirectory, int yearsToSimulate, int filesPerYear)
+        [TestCase(@"C:\Temp", 5)]
+        public void TestArchiveOldLogFiles(string logDirectory, int yearsToSimulate)
         {
-            var logDir = new DirectoryInfo(logDirectory);
+            const int FILES_PER_YEAR = 40;
 
-            if (filesPerYear < 10)
-                filesPerYear = 10;
-            else if (filesPerYear > 100)
-                filesPerYear = 100;
+            var logDir = new DirectoryInfo(logDirectory);
 
             if (yearsToSimulate > 20)
                 yearsToSimulate = 20;
@@ -40,49 +37,60 @@ namespace PRISMTest
                 }
             }
 
-            // Create dummy log files for 2018, starting on March 1
-            var logFilesCreated = CreateLogFiles(logDir, new DateTime(2018, 3, 1), filesPerYear);
+            // Create 10 dummy log files using the MM-dd-yyyy format, starting 52 days before today
+            var logFilesCreated1 = CreateLogFiles(logDir, DateTime.Now.AddDays(-52), 10, true);
+            Assert.IsTrue(logFilesCreated1.Count > 0, "CreateLogFiles returned an empty list for logFilesCreated1");
 
-            // If it is more than 30 days after March 1 of this year, the FileLogger will move log files into subdirectory 2018
-            // To avoid duplicates (which leads to filename backups), check for and delete any files that might get moved
-            // (this also avoids Console messages of the form
-            //  "Backing up identically named old log file: C:\Temp\2018\FileLoggingTester_03-08-2018.txt")
-            foreach (var logFile in logFilesCreated)
+            // Create 40 dummy log files using the yyyy-MM-dd format, starting 42 days before today
+            var logFilesCreated2 = CreateLogFiles(logDir, DateTime.Now.AddDays(-42), 40, false);
+            Assert.IsTrue(logFilesCreated2.Count > 0, "CreateLogFiles returned an empty list for logFilesCreated2");
+
+            // Delete old dummy log files from the previous year
+            var previousYearDir = new DirectoryInfo(Path.Combine(logDir.FullName, (DateTime.Now.Year - 1).ToString()));
+
+            if (previousYearDir.Exists)
             {
-                var candidateFileToDelete = new FileInfo(Path.Combine(logDir.FullName, "2018", logFile.Name));
+                var filesToFind = new List<FileInfo>();
+                filesToFind.AddRange(logFilesCreated1);
+                filesToFind.AddRange(logFilesCreated2);
 
-                if (candidateFileToDelete.Exists)
-                    candidateFileToDelete.Delete();
+                // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+                foreach (var logFile in filesToFind)
+                {
+                    var oldLogFile = new FileInfo(Path.Combine(previousYearDir.FullName, logFile.Name));
+                    if (oldLogFile.Exists)
+                        oldLogFile.Delete();
+                }
             }
 
             // Cache the list of old log file directories so we can examine the .zip file for each
             var logFileDirs = new List<DirectoryInfo>();
 
-            // Create dummy log files for previous years, starting on June 1 of each year
+            // Create dummy log files for previous years
             // In addition, delete any old .zip files
-            for (var i = 1; i <= yearsToSimulate; i++)
+            for (var i = 0; i < yearsToSimulate; i++)
             {
-                var oldLogFileYear = 2018 - i;
+                var startDate = DateTime.Now.AddDays(-230 - 365 * i);
 
-                var logFileStartDate = new DateTime(oldLogFileYear, 6, 1);
+                var logFileStartDate = new DateTime(startDate.Year, startDate.Month, startDate.Day);
 
-                var oldLogFilesDir = new DirectoryInfo(Path.Combine(logDir.FullName, oldLogFileYear.ToString()));
-                var oldLogDirZipFile = new FileInfo(Path.Combine(logDir.FullName, oldLogFileYear + ".zip"));
+                var oldLogFilesDir = new DirectoryInfo(Path.Combine(logDir.FullName, startDate.Year.ToString()));
+                var oldLogDirZipFile = new FileInfo(Path.Combine(logDir.FullName, startDate.Year + ".zip"));
 
-                CreateLogFiles(oldLogFilesDir, logFileStartDate, filesPerYear);
+                CreateLogFiles(oldLogFilesDir, logFileStartDate, FILES_PER_YEAR, true);
 
                 if (oldLogDirZipFile.Exists)
                     oldLogDirZipFile.Delete();
 
                 logFileDirs.Add(oldLogFilesDir);
 
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(250);
             }
 
             FileLogger.ChangeLogFileBaseName(Path.Combine(logDirectory, LOGFILE_BASENAME));
             FileLogger.ZipOldLogDirectories = true;
 
-            System.Threading.Thread.Sleep(1000);
+            System.Threading.Thread.Sleep(250);
 
             // Instruct the logger to create .zip files for previous years
             FileLogger.ArchiveOldLogFilesNow();
@@ -94,6 +102,26 @@ namespace PRISMTest
 
                 if (!zipFileToCheck.Exists)
                 {
+                    // The previous year won't have a zip file created until after March 1
+                    // Determine whether or not one should be expected
+
+                    if (!int.TryParse(oldLogFilesDir.Name, out var subDirYear))
+                    {
+                        Assert.Fail("Log file directory name is not a year: " + oldLogFilesDir.Name);
+                    }
+
+                    var dateThresholdForZippingPreviousYearFiles = new DateTime(DateTime.Now.Year, 1, 1).AddDays(FileLogger.OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS);
+
+                    if (subDirYear == DateTime.Now.Year ||
+                        subDirYear == DateTime.Now.Year - 1 && DateTime.Now < dateThresholdForZippingPreviousYearFiles)
+                    {
+                        Console.WriteLine(
+                            "The previous year is not 90 days in the past, thus files in {0} were not zipped; this is expected",
+                            oldLogFilesDir.FullName);
+
+                        continue;
+                    }
+
                     Assert.Fail("Expected .zip file not found: " + zipFileToCheck.FullName);
                 }
 
@@ -101,7 +129,7 @@ namespace PRISMTest
 
                 var fileCountInZip = archive.Entries.Count;
 
-                Assert.GreaterOrEqual(fileCountInZip, filesPerYear, "Zip file {0} has fewer than {1} files", zipFileToCheck.FullName, filesPerYear);
+                Assert.GreaterOrEqual(fileCountInZip, FILES_PER_YEAR, "Zip file {0} has fewer than {1} files", zipFileToCheck.FullName, FILES_PER_YEAR);
 
                 Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
             }
@@ -474,8 +502,10 @@ namespace PRISMTest
             EvaluateFormattedMessageTimestamp(formattedMessage, expectedFormatString, useLocalTime);
         }
 
-        private List<FileInfo> CreateLogFiles(DirectoryInfo logDir, DateTime logFileDate, int filesPerYear)
+        private List<FileInfo> CreateLogFiles(DirectoryInfo logDir, DateTime logFileDate, int filesPerYear, bool useLegacyDateFormat)
         {
+            const string LOG_FILE_DATE_CODE_LEGACY = "MM-dd-yyyy";
+
             var logFilesCreated = new List<FileInfo>();
 
             if (!logDir.Exists)
@@ -483,14 +513,22 @@ namespace PRISMTest
 
             for (var i = 0; i < filesPerYear; i++)
             {
-                var logFilePath = Path.Combine(logDir.FullName, string.Format("{0}_{1:MM-dd-yyyy}.txt", LOGFILE_BASENAME, logFileDate));
+                var timestampFormat = useLegacyDateFormat ? LOG_FILE_DATE_CODE_LEGACY : FileLogger.LOG_FILE_DATE_CODE;
+                var formatString = "{0}_{1:" + timestampFormat + "}.txt";
+
+                // formatString will be either
+                // {0}_{1:yyyy-MM-dd}.txt or
+                // {0}_{1:MM-dd-yyyy}.txt
+
+                var logFilePath = Path.Combine(logDir.FullName, string.Format(formatString, LOGFILE_BASENAME, logFileDate));
 
                 using (var writer = new StreamWriter(new FileStream(logFilePath, FileMode.Create, FileAccess.Write, FileShare.Read)))
                 {
                     writer.WriteLine("Test log file, created {0}", DateTime.Now.ToString(LogMessage.DATE_TIME_FORMAT_YEAR_MONTH_DAY_12H));
                 }
 
-                var logFile = new FileInfo(logFilePath) {
+                var logFile = new FileInfo(logFilePath)
+                {
                     LastWriteTime = logFileDate.AddHours(23)
                 };
 

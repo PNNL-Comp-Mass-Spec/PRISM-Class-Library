@@ -60,7 +60,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Directories with old log files (typically named by year) will be zipped this many days after January 1
         /// </summary>
-        private const int OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS = 90;
+        public const int OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS = 90;
 
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
