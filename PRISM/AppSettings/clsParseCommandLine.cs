@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-// NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
-// Instead use the CommandLineParser class.
 // ReSharper disable UnusedMember.Global
 
 // ReSharper disable once CheckNamespace
@@ -13,7 +11,15 @@ namespace PRISM
     /// This class can be used to parse the text following the program name when a
     /// program is started from the command line
     /// </summary>
-    /// <remarks>Superseded by CommandLineParser (but not marked obsolete since used in numerous applications)</remarks>
+    /// <remarks>
+    /// <para>
+    /// NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
+    /// Instead use the CommandLineParser class.
+    /// </para>
+    /// <para>
+    /// This class is not marked as obsolete since it is used in numerous applications
+    /// </para>
+    /// </remarks>
     // ReSharper disable once UnusedMember.Global
     public class clsParseCommandLine
     {

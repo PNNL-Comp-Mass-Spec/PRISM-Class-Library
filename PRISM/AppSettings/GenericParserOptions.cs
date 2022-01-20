@@ -48,6 +48,9 @@ namespace PRISM
         [Option("Log", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
         public string LogFilePath { get; set; }
 
+        /// <summary>
+        /// Display the current options at the console
+        /// </summary>
         // ReSharper disable once UnusedMember.Global
         public void OutputSetOptions()
         {
@@ -69,6 +72,10 @@ namespace PRISM
             }
         }
 
+        /// <summary>
+        /// Validate the options
+        /// </summary>
+        /// <param name="errorMessage"></param>
         // ReSharper disable once UnusedMember.Global
         public bool ValidateArgs(out string errorMessage)
         {
