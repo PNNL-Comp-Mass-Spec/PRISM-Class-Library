@@ -7,6 +7,8 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 
+// ReSharper disable UnusedMember.Global
+
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {

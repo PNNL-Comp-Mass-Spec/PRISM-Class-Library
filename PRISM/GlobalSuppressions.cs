@@ -7,6 +7,8 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Keep for reference", Scope = "member", Target = "~F:PRISM.ShareConnector.RESOURCE_USAGE_CONTAINER")]
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Keep for reference", Scope = "member", Target = "~M:PRISM.XMLFileReader.SetXMLComments(System.String,System.Collections.Generic.IEnumerable{System.String})~System.Boolean")]
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Keep for reference", Scope = "member", Target = "~M:PRISM.XMLFileReader.SetXmlKey(System.String,System.String,System.String)~System.Boolean")]
 [assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.FileLogger.mQueueLogger")]
 [assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.ODBCDatabaseLogger.mQueueLogger")]
 [assembly: SuppressMessage("CodeQuality", "IDE0052:Remove unread private members", Justification = "Leave as-is for readability", Scope = "member", Target = "~F:PRISM.Logging.SQLServerDatabaseLogger.mQueueLogger")]

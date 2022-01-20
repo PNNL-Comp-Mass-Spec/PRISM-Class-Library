@@ -8,6 +8,8 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using PRISM.Logging;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISM.FileProcessor
 {
 #pragma warning disable IDE1006 // Naming Styles

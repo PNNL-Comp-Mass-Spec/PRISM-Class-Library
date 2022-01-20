@@ -57,6 +57,7 @@ namespace PRISM
         /// <param name="internalComment">Comment to store to file metadata</param>
         /// <param name="addHeaderCrc">if true, write a CRC16 for the header to the metadata</param>
         // ReSharper disable once SuggestBaseTypeForParameter
+        // ReSharper disable once UnusedMember.Global
         public GZipMetadataStream(Stream baseStream, FileInfo inputFile, string internalComment = null, bool addHeaderCrc = false)
         {
             BaseStream = baseStream;

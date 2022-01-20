@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using JetBrains.Annotations;
+
+// ReSharper disable UnusedMember.Global
 
 namespace PRISM.Logging
 {
@@ -15,7 +16,6 @@ namespace PRISM.Logging
     /// Log files have date-based names, for example DataProcessor_01-02-2020.txt
     /// If you want year-month-day based names, update your class to inherit ProcessFilesBase or ProcessDirectoriesBase
     /// </remarks>
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LogTools
     {
         // Ignore Spelling: mm-dd-yyyy

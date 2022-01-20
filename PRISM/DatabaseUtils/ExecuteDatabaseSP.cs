@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 
+// ReSharper disable UnusedMember.Global
+
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {

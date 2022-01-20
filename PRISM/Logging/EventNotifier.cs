@@ -252,6 +252,7 @@ namespace PRISM
         /// <param name="format">Progress message format string</param>
         /// <param name="args">string format arguments</param>
         [StringFormatMethod("format")]
+        // ReSharper disable once UnusedMember.Global
         protected void OnProgressUpdate(float percentComplete, string format, params object[] args)
         {
             OnProgressUpdate(string.Format(format, args), percentComplete);

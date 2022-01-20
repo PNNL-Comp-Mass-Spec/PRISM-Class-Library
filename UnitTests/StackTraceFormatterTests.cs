@@ -184,11 +184,16 @@ namespace PRISMTest
             : base(message, innerException)
         { }
 
+        // ReSharper disable UnusedMember.Global
+
+        public MyTestException()
         {
         }
 
         public MyTestException(string message) : base(message)
         {
         }
+
+        // ReSharper restore UnusedMember.Global
     }
 }

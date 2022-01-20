@@ -71,6 +71,7 @@ namespace PRISM
         private struct NetResourceInfo
         {
 #pragma warning disable 169,414
+            // ReSharper disable InconsistentNaming
             public ResourceScope dwScope;
             public ResourceType dwType;
             public ResourceDisplayType dwDisplayType;
@@ -79,6 +80,7 @@ namespace PRISM
             public string lpRemoteName;
             public string lpComment;
             public string lpProvider;
+            // ReSharper restore InconsistentNaming
 #pragma warning restore 169,414
         }
 

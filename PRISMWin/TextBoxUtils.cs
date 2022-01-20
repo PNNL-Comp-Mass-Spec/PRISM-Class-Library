@@ -2,6 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISMWin
 {
     /// <summary>

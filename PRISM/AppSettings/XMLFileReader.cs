@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Xml;
 
+// ReSharper disable UnusedMember.Global
+
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
@@ -286,6 +288,7 @@ namespace PRISM
         /// <param name="newValue">The new value for the "key"</param>
         /// <returns>True if successful, otherwise false</returns>
         [Obsolete("Unused: this class is used to read XML files, not update them")]
+        // ReSharper disable once UnusedMember.Local
         private bool SetXmlKey(string sectionName, string keyName, string newValue)
         {
             if (!Initialized)
@@ -356,6 +359,7 @@ namespace PRISM
         /// <param name="comments">List of comments</param>
         /// <returns>True if successful, otherwise false</returns>
         [Obsolete("Unused: this class is used to read XML files, not update them")]
+        // ReSharper disable once UnusedMember.Local
         private bool SetXMLComments(string sectionName, IEnumerable<string> comments)
         {
             if (!Initialized)
@@ -962,6 +966,8 @@ namespace PRISM
         {
         }
 
+        // ReSharper disable UnusedMember.Global
+
         /// <summary>
         /// Constructor that takes a messages
         /// </summary>
@@ -975,6 +981,8 @@ namespace PRISM
         public XMLFileReaderNotInitializedException(string message, Exception innerException) : base(message, innerException)
         {
         }
+
+        // ReSharper restore UnusedMember.Global
 
         /// <summary>
         /// Returns a message describing this exception

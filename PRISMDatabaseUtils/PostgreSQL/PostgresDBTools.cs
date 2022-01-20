@@ -119,6 +119,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         /// <param name="columns"></param>
         /// <returns>Mapping from column name to column index</returns>
+        // ReSharper disable once UnusedMember.Global
         public Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
         {
             var columnMap = new Dictionary<string, int>();

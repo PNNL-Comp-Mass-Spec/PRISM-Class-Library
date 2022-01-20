@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
+// ReSharper disable UnusedMember.Global
+
 namespace PRISM.FileProcessor
 {
     /// <summary>
