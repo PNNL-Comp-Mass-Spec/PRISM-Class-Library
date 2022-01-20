@@ -18,7 +18,7 @@ namespace PRISM.Logging
     /// </remarks>
     public static class LogTools
     {
-        // Ignore Spelling: mm-dd-yyyy
+        // Ignore Spelling: yyyy
 
         /// <summary>
         /// Log types
@@ -90,7 +90,7 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
-        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// </param>
         public static void ChangeLogFileBaseName(string baseName, bool appendDateToBaseName)

@@ -15,12 +15,12 @@ namespace PRISM.Logging
     /// Logs messages to a file
     /// </summary>
     /// <remarks>
-    /// The filename is date-based, for example DataProcessor_01-02-2020.txt
+    /// The filename is date-based, for example DataProcessor_2020-08-02.txt
     /// If you want year-month-day based names, update your class to inherit ProcessFilesBase or ProcessDirectoriesBase
     /// </remarks>
     public class FileLogger : BaseLogger
     {
-        // Ignore Spelling: mm-dd-yyyy, prepended, Wildcards
+        // Ignore Spelling: prepended, Wildcards
 
         /// <summary>
         /// Default number of old log files to keep when AppendDateToBaseFileName is false
@@ -36,14 +36,18 @@ namespace PRISM.Logging
         /// Date format for log file names
         /// </summary>
         /// <remarks>
-        /// This is month-day-year based for historical reasons
-        /// In contrast, abstract classes ProcessFilesBase and ProcessDirectoriesBase create year-month-day log files
+        /// Prior to January 2022, this was month-day-year based; it is now year-month-day
+        /// Note that abstract classes ProcessFilesBase and ProcessDirectoriesBase create year-month-day log files
         /// </remarks>
-        public const string LOG_FILE_DATE_CODE = "MM-dd-yyyy";
+        public const string LOG_FILE_DATE_CODE = "yyyy-MM-dd";
 
-        private const string LOG_FILE_MATCH_SPEC = "??-??-????";
+        private const string LOG_FILE_MATCH_SPEC = "????-??-??";
 
-        private const string LOG_FILE_DATE_REGEX = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
+        private const string LOG_FILE_DATE_REGEX = @"(?<Year>\d{4,4})-(?<Month>\d+)-(?<Day>\d+)";
+
+        private const string LOG_FILE_MATCH_SPEC_LEGACY = "??-??-????";
+
+        private const string LOG_FILE_DATE_REGEX_LEGACY = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
 
         /// <summary>
         /// Default log file extension
@@ -85,7 +89,7 @@ namespace PRISM.Logging
         private LogLevels mLogThresholdLevel;
 
         /// <summary>
-        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// If a file exists with that name, but was last modified before today, it will be renamed to BaseName.txt.1
         /// </summary>
@@ -99,7 +103,7 @@ namespace PRISM.Logging
         /// This is updated by ChangeLogFileBaseName or via the constructor
         /// </summary>
         /// <remarks>
-        /// If AppendDateToBaseFileName is true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// If AppendDateToBaseFileName is true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt
         /// If AppendDateToBaseFileName is false, the actual log file name will be the base name plus .txt
         /// (unless the base name already has an extension, then the user-specified extension will be used)
         /// See also the comments for property AppendDateToBaseFileName
@@ -194,7 +198,7 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
-        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// </param>
         /// <param name="maxRolledLogFiles">
@@ -214,7 +218,7 @@ namespace PRISM.Logging
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="logLevel">Log threshold level</param>
         /// <param name="appendDateToBaseName">
-        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// </param>
         /// <param name="maxRolledLogFiles">
@@ -260,7 +264,13 @@ namespace PRISM.Logging
 
                 mLastCheckOldLogs = DateTime.UtcNow;
 
-                var archiveWarnings = ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX);
+                var archiveWarnings = new List<string>();
+
+                var legacyFileWarnings = ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC_LEGACY, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX_LEGACY, false);
+                archiveWarnings.AddRange(legacyFileWarnings);
+
+                var warnings = ArchiveOldLogs(logDirectory, LOG_FILE_MATCH_SPEC, LOG_FILE_EXTENSION, LOG_FILE_DATE_REGEX, ZipOldLogDirectories);
+                archiveWarnings.AddRange(warnings);
 
                 foreach (var warning in archiveWarnings)
                 {
@@ -277,10 +287,10 @@ namespace PRISM.Logging
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
         /// <remarks>
-        /// If logFileMatchSpec is ??-??-???? and logFileExtension is .txt, will find files named *_??-??-????.txt
+        /// If logFileMatchSpec is ????-??-?? and logFileExtension is .txt, will find files named *_????-??-??.txt
         /// </remarks>
         /// <param name="logDirectory">Path to the directory with log files</param>
-        /// <param name="logFileMatchSpec">Wildcards to use to find date-based log files, for example ??-??-????</param>
+        /// <param name="logFileMatchSpec">Wildcards to use to find date-based log files, for example ????-??-??</param>
         /// <param name="logFileExtension">Log file extension, for example .txt</param>
         /// <param name="logFileDateRegEx">
         /// RegEx pattern for extracting the log file date from the log file name
@@ -294,6 +304,33 @@ namespace PRISM.Logging
             string logFileMatchSpec,
             string logFileExtension,
             string logFileDateRegEx)
+        {
+            return ArchiveOldLogs(logDirectory, logFileMatchSpec, logFileExtension, logFileDateRegEx, ZipOldLogDirectories);
+        }
+
+        /// <summary>
+        /// Look for log files over 32 days old that can be moved into a subdirectory
+        /// </summary>
+        /// <remarks>
+        /// If logFileMatchSpec is ????-??-?? and logFileExtension is .txt, will find files named *_????-??-??.txt
+        /// </remarks>
+        /// <param name="logDirectory">Path to the directory with log files</param>
+        /// <param name="logFileMatchSpec">Wildcards to use to find date-based log files, for example ????-??-??</param>
+        /// <param name="logFileExtension">Log file extension, for example .txt</param>
+        /// <param name="logFileDateRegEx">
+        /// RegEx pattern for extracting the log file date from the log file name
+        /// The pattern must have named groups Year and Month
+        /// The pattern can optionally have named group Day
+        /// For an example, see constant LOG_FILE_DATE_REGEX
+        /// </param>
+        /// <param name="zipOldDirectories"></param>
+        /// <returns>List of warning messages</returns>
+        private static IEnumerable<string> ArchiveOldLogs(
+            DirectoryInfo logDirectory,
+            string logFileMatchSpec,
+            string logFileExtension,
+            string logFileDateRegEx,
+            bool zipOldDirectories)
         {
             // Be careful when updating this method's arguments and how they're used,
             // since this method is called by the following classes
@@ -364,7 +401,7 @@ namespace PRISM.Logging
                         if (targetFile.Exists)
                         {
                             // A file with the same name exists in the target directory
-                            // If the source and target files are the same size and have the same SHA1 hash, delete the source file
+                            // If the source and target files are the same size and have the same SHA-1 hash, delete the source file
                             // Otherwise, rename the file in the target directory, then move the source file
 
                             if (logFile.Length == targetFile.Length)
@@ -398,7 +435,7 @@ namespace PRISM.Logging
                     }
                 }
 
-                if (ZipOldLogDirectories)
+                if (zipOldDirectories)
                 {
                     var zipWarnings = ZipOldLogSubdirectories(logDirectory);
                     archiveWarnings.AddRange(zipWarnings);
@@ -434,7 +471,7 @@ namespace PRISM.Logging
         /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
-        /// When true, the actual log file name will have today's date appended to it, in the form mm-dd-yyyy.txt
+        /// When true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt
         /// When false, the actual log file name will be the base name plus .txt (unless the base name already has an extension)
         /// </param>
         /// <param name="relativeToEntryAssembly">
