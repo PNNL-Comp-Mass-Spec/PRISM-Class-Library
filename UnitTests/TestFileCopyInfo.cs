@@ -39,9 +39,10 @@ namespace PRISMTest
 
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (TestLinuxSystemInfo.SHOW_TRACE_MESSAGES)
-#pragma warning disable 162
+#pragma warning disable CS0162
+                // ReSharper disable once HeuristicUnreachableCode
                 Console.WriteLine("{0:HH:mm:ss.fff}: Copied file from {1} to {2}", DateTime.Now, SourceFile.FullName, TargetFile.FullName);
-#pragma warning restore 162
+#pragma warning restore CS0162
 
             Copied = true;
         }

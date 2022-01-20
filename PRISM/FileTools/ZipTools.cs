@@ -31,9 +31,12 @@ namespace PRISM
         /// </summary>
         private BaseLogger mLogger;
 
-#pragma warning disable 618
+#pragma warning disable CS0618
+
         [Obsolete("Use mLogger (typically a FileLogger)")]
         private ILogger mEventLogger;
+
+#pragma warning restore CS0618
 
         /// <summary>
         /// Create a zip file
@@ -47,9 +50,11 @@ namespace PRISM
             if (string.IsNullOrEmpty(ZipFilePath) || string.IsNullOrEmpty(WorkDir))
             {
                 const string msg = "Zip program path and/or working path not specified";
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Error(msg);
 
                 return false;
@@ -89,9 +94,11 @@ namespace PRISM
             if (string.IsNullOrEmpty(ZipFilePath) || string.IsNullOrEmpty(WorkDir))
             {
                 const string msg = "Zip program path and/or working path not specified";
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Error(msg);
 
                 return false;
@@ -101,9 +108,11 @@ namespace PRISM
             if (!File.Exists(zipFilePath))
             {
                 var msg = "Input file not found: " + zipFilePath;
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Error(msg);
 
                 return false;
@@ -113,9 +122,11 @@ namespace PRISM
             if (!Directory.Exists(outputDirectoryPath))
             {
                 var msg = "Output directory " + outputDirectoryPath + " does not exist";
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Error(msg);
 
                 return false;
@@ -191,9 +202,11 @@ namespace PRISM
             if (!File.Exists(zipFilePath))
             {
                 var msg = "Zip file not found; cannot verify: " + zipFilePath;
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Error(msg);
 
                 return false;
@@ -203,9 +216,11 @@ namespace PRISM
             if (string.IsNullOrEmpty(ZipFilePath) || string.IsNullOrEmpty(WorkDir))
             {
                 const string msg = "Zip program path and/or working path not specified";
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Error(msg);
 
                 return false;
@@ -240,9 +255,11 @@ namespace PRISM
             while (zipper.State != ProgRunner.States.NotMonitoring)
             {
                 var msg = "Waiting for zipper program; sleeping for " + mWaitInterval + " milliseconds";
-#pragma warning disable 618
+
+#pragma warning disable CS0618
                 mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
                 mLogger?.Debug(msg);
 
                 ProgRunner.SleepMilliseconds(mWaitInterval);
@@ -253,9 +270,11 @@ namespace PRISM
                 return true;
 
             var errorMsg = "Zipper program exited with code: " + zipper.ExitCode;
-#pragma warning disable 618
+
+#pragma warning disable CS0618
             mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
-#pragma warning restore 618
+#pragma warning restore CS0618
+
             mLogger?.Error(errorMsg);
 
             return false;

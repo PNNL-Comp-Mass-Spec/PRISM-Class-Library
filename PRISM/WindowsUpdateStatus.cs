@@ -46,7 +46,7 @@ namespace PRISM
 
             const bool CHECK_FOR_THURSDAY_UPDATES = false;
 
-#pragma warning disable 162
+#pragma warning disable CS0162
             // ReSharper disable HeuristicUnreachableCode
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (CHECK_FOR_THURSDAY_UPDATES)
@@ -77,7 +77,7 @@ namespace PRISM
                 }
             }
             // ReSharper restore HeuristicUnreachableCode
-#pragma warning restore 162
+#pragma warning restore CS0162
 
             // No processing box updates are scheduled
             // Check for server updates

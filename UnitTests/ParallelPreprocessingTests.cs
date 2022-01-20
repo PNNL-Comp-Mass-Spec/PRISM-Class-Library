@@ -4,7 +4,7 @@ using System.Threading;
 using NUnit.Framework;
 using PRISM;
 
-#pragma warning disable 1998
+#pragma warning disable CS1998
 
 namespace PRISMTest
 {

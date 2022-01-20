@@ -4,7 +4,7 @@ using System.IO;
 using NUnit.Framework;
 using PRISM;
 
-#pragma warning disable 618
+#pragma warning disable CS0618
 
 namespace PRISMTest
 {

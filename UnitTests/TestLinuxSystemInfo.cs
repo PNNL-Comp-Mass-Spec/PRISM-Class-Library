@@ -485,9 +485,9 @@ namespace PRISMTest
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (SHOW_TRACE_MESSAGES)
-#pragma warning disable 162
+#pragma warning disable CS0162
                 Console.WriteLine("{0:HH:mm:ss.fff}: {1}", DateTime.Now, message);
-#pragma warning restore 162
+#pragma warning restore CS0162
         }
 
         private DirectoryInfo ValidateLocalProcDirectory()
