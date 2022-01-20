@@ -271,7 +271,7 @@ namespace PRISM
         /// Computes the SHA-1 hash of a given stream
         /// </summary>
         /// <param name="data"></param>
-        /// <returns>SHA1 hash, as a string</returns>
+        /// <returns>SHA-1 hash, as a string</returns>
         private static string ComputeSha1Hash(Stream data)
         {
             var sha1Hasher = new SHA1CryptoServiceProvider();

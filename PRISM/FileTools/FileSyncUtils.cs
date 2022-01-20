@@ -40,7 +40,7 @@ namespace PRISM
 
         /// <summary>
         /// Copy a file from a remote path and store it locally, including creating a .hashcheck file and a .lastused file
-        /// If the file exists and the SHA1 hash matches, do not re-copy the file
+        /// If the file exists and the SHA-1 hash matches, do not re-copy the file
         /// </summary>
         /// <param name="sourceFilePath">Source file path</param>
         /// <param name="targetDirectoryPath">Target directory path</param>
