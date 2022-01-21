@@ -1900,7 +1900,6 @@ namespace PRISM
                         {
                             break;
                         }
-
                     } while (bytesRead > 0);
 
                     FileCopyProgress?.Invoke(sourceFile.Name, 100);

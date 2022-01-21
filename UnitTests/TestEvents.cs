@@ -166,6 +166,7 @@ namespace PRISMTest
                 {
                     var value1 = 25 - 23 - 2;
 
+                    // ReSharper disable once IntDivisionByZero
                     var result = 5 / value1;
 
                     Console.WriteLine(result);
