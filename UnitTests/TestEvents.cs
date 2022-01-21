@@ -117,6 +117,16 @@ namespace PRISMTest
                 OnWarningEvent("Warning Event");
 
                 OnProgressUpdate("Complete", 100);
+
+                try
+                {
+                    var values = new int[1];
+                    values[2] = 3;
+                }
+                catch (Exception ex)
+                {
+                    OnErrorEvent("As expected, exception in TestAllEvents", ex);
+                }
             }
 
             public void TestEventChaining()
