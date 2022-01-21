@@ -169,6 +169,11 @@ namespace PRISM
             if (writeToErrorStream)
             {
                 WriteToErrorStream(formattedError);
+
+                if (ex != null)
+                {
+                    WriteToErrorStream(StackTraceFormatter.GetExceptionStackTrace(ex));
+                }
             }
 
             return formattedError;
