@@ -91,9 +91,10 @@ namespace PRISM
         /// </summary>
         /// <param name="message">Error message (do not include ex.Message)</param>
         /// <param name="ex">Exception (can be null)</param>
-        public static string ShowError(string message, Exception ex)
+        /// <param name="writeToErrorStream">When true, also send the error to the standard error stream</param>
+        public static string ShowError(string message, Exception ex, bool writeToErrorStream = false)
         {
-            return ShowErrorCustom(message, ex);
+            return ShowErrorCustom(message, ex, true, writeToErrorStream);
         }
 
         /// <summary>
