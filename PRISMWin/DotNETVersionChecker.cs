@@ -310,7 +310,7 @@ namespace PRISMWin
         /// Report an error
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="ex">Exception (allowed to be nothing)</param>
+        /// <param name="ex">Exception (allowed to be null)</param>
         protected void OnErrorEvent(string message, Exception ex)
         {
             ErrorEvent?.Invoke(message, ex);

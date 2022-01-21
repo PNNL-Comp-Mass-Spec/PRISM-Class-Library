@@ -219,7 +219,7 @@ namespace PRISM.Logging
         /// </summary>
         /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
         /// <param name="errorMessage">Error message (do not include ex.message)</param>
-        /// <param name="ex">Exception to log (allowed to be nothing)</param>
+        /// <param name="ex">Exception to log (allowed to be null)</param>
         /// <param name="logToDatabase">When true, log to the database (and to the file)</param>
         public static void LogError(string errorMessage, Exception ex = null, bool logToDatabase = false)
         {
@@ -266,7 +266,7 @@ namespace PRISM.Logging
         /// </summary>
         /// <remarks>The error is shown in red in the console.  The exception stack trace is shown in cyan</remarks>
         /// <param name="errorMessage">Error message (do not include ex.message)</param>
-        /// <param name="ex">Exception to log (allowed to be nothing)</param>
+        /// <param name="ex">Exception to log (allowed to be null)</param>
         /// <param name="logToDatabase">When true, log to the database (and to the file)</param>
         public static void LogFatalError(string errorMessage, Exception ex = null, bool logToDatabase = false)
         {
