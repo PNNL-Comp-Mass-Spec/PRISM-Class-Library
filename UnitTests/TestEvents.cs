@@ -7,8 +7,12 @@ namespace PRISMTest
     [TestFixture]
     internal class TestEvents
     {
+        private bool mWriteErrorsToErrorStream;
+
         [Test]
-        public void TestMonitorEvents()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void TestMonitorEvents(bool writeErrorsToErrorStream)
         {
             var parentClass = new ClassA("Parent class");
 
@@ -17,6 +21,8 @@ namespace PRISMTest
             parentClass.StatusEvent += ParentClass_StatusEvent;
             parentClass.WarningEvent += ParentClass_WarningEvent;
             parentClass.ProgressUpdate += ParentClass_ProgressUpdate;
+
+            mWriteErrorsToErrorStream = writeErrorsToErrorStream;
 
             DoWork(parentClass, false);
         }
@@ -61,7 +67,7 @@ namespace PRISMTest
 
         private void ParentClass_ErrorEvent(string message, Exception ex)
         {
-            ConsoleMsgUtils.ShowError(message, ex);
+            ConsoleMsgUtils.ShowError(message, ex, mWriteErrorsToErrorStream);
         }
 
         private void ParentClass_StatusEvent(string message)
