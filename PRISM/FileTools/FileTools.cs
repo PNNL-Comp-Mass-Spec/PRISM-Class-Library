@@ -2142,6 +2142,7 @@ namespace PRISM
         /// </summary>
         /// <param name="fileToDelete">File to delete</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool DeleteFileWithRetry(FileInfo fileToDelete, out string errorMessage)
         {
             return DeleteFileWithRetry(fileToDelete, 3, out errorMessage);
@@ -2153,25 +2154,24 @@ namespace PRISM
         /// <param name="fileToDelete">File to delete</param>
         /// <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
+        /// <returns>True if successful, false if an error</returns>
         public bool DeleteFileWithRetry(FileInfo fileToDelete, int retryCount, out string errorMessage)
         {
-            var fileDeleted = false;
             var sleepTimeMsec = 500;
 
             var retriesRemaining = retryCount - 1;
             if (retriesRemaining < 0)
                 retriesRemaining = 0;
 
-            errorMessage = string.Empty;
-
-            while (!fileDeleted && retriesRemaining >= 0)
+            while (true)
             {
                 retriesRemaining--;
 
                 try
                 {
                     fileToDelete.Delete();
-                    fileDeleted = true;
+                    errorMessage = string.Empty;
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -2192,7 +2192,8 @@ namespace PRISM
                         {
                             // Retry the delete
                             fileToDelete.Delete();
-                            fileDeleted = true;
+                            errorMessage = string.Empty;
+                            return true;
                         }
                         catch (Exception ex2)
                         {
@@ -2205,30 +2206,18 @@ namespace PRISM
                     }
                 }
 
-                if (!fileDeleted)
-                {
-                    // Sleep for 0.5 second (or longer) then try again
-                    ProgRunner.SleepMilliseconds(sleepTimeMsec);
+                if (retriesRemaining < 0)
+                    return false;
 
-                    // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
-                    if (sleepTimeMsec < 5000)
-                    {
-                        sleepTimeMsec = Convert.ToInt32(Math.Round(sleepTimeMsec * 1.5, 0));
-                    }
+                // Sleep for 0.5 second (or longer) then try again
+                ProgRunner.SleepMilliseconds(sleepTimeMsec);
+
+                // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
+                if (sleepTimeMsec < 5000)
+                {
+                    sleepTimeMsec = Convert.ToInt32(Math.Round(sleepTimeMsec * 1.5, 0));
                 }
             }
-
-            if (fileDeleted)
-            {
-                errorMessage = string.Empty;
-            }
-            else if (string.IsNullOrWhiteSpace(errorMessage))
-            {
-                errorMessage = "Unknown error deleting file " + fileToDelete.FullName;
-            }
-
-            // ReSharper disable once NotAssignedOutParameter
-            return true;
         }
 
         /// <summary>
