@@ -2740,32 +2740,40 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Rename the file, retrying up to 3 times
-        /// </summary>
-        /// <param name="fileToRename">File to rename</param>
-        /// <param name="newFileName">New file name (just the name, not a full path)</param>
-        /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
-        /// <returns>True if successful, false if an error</returns>
-        public bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, out string errorMessage)
-        {
-            return RenameFileWithRetry(fileToRename, newFileName, 3, out errorMessage);
-        }
-
-        /// <summary>
         /// Rename the file, retrying up to retryCount times
         /// </summary>
         /// <param name="fileToRename">File to rename</param>
         /// <param name="newFileName">New file name (just the name, not a full path)</param>
-        /// <param name="retryCount">Maximum number of times to retry the rename, waiting 3 sec, then 6 sec between rename attempts</param>
         /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
+        /// <param name="retryCount">Maximum number of times to retry the rename, waiting 3 sec, then 6 sec between rename attempts</param>
         /// <returns>True if successful, false if an error</returns>
-        public bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, int retryCount, out string errorMessage)
+        public bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, out string errorMessage, int retryCount = 3)
         {
-            var renameAttempt = 0;
-
             var newPath = fileToRename.Directory == null
                 ? newFileName
                 : Path.Combine(fileToRename.Directory.FullName, Path.GetFileName(newFileName));
+
+            return RenameFileWithRetry(fileToRename, new FileInfo(newPath), out errorMessage, retryCount);
+        }
+
+        /// <summary>
+        /// Rename the file, optionally moving to a different directory
+        /// Retry the rename (or move) up to retryCount times
+        /// </summary>
+        /// <param name="fileToRename">File to rename</param>
+        /// <param name="newFileInfo">FileInfo object for the new file</param>
+        /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
+        /// <param name="retryCount">Maximum number of times to retry the rename, waiting 3 sec, then 6 sec between rename attempts</param>
+        /// <returns>True if successful, false if an error</returns>
+        public bool RenameFileWithRetry(FileInfo fileToRename, FileInfo newFileInfo, out string errorMessage, int retryCount = 3)
+        {
+            // ReSharper disable once MergeIntoPattern
+            if (newFileInfo.Directory != null && !newFileInfo.Directory.Exists)
+            {
+                CreateDirectoryIfNotExists(newFileInfo.Directory.FullName);
+            }
+
+            var renameAttempt = 0;
 
             while (true)
             {
@@ -2773,13 +2781,18 @@ namespace PRISM
 
                 try
                 {
-                    fileToRename.MoveTo(newPath);
+                    fileToRename.MoveTo(newFileInfo.FullName);
                     errorMessage = string.Empty;
                     return true;
                 }
                 catch (Exception ex)
                 {
-                    errorMessage = string.Format("Error renaming file {0} to {1}: {2}", fileToRename.FullName, newFileName, ex.Message);
+                    errorMessage = string.Format("Error renaming file {0} to {1}: {2}",
+                        fileToRename.FullName,
+                        string.Equals(fileToRename.DirectoryName, newFileInfo.DirectoryName, StringComparison.Ordinal)
+                            ? newFileInfo.Name
+                            : newFileInfo.FullName,
+                        ex.Message);
                 }
 
                 if (renameAttempt > retryCount)
