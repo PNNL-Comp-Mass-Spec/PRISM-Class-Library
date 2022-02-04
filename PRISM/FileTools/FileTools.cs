@@ -2767,6 +2767,22 @@ namespace PRISM
         /// <returns>True if successful, false if an error</returns>
         public bool RenameFileWithRetry(FileInfo fileToRename, FileInfo newFileInfo, out string errorMessage, int retryCount = 3)
         {
+            if (fileToRename == null)
+            {
+                throw new NullReferenceException(nameof(fileToRename));
+            }
+
+            if (newFileInfo == null)
+            {
+                throw new NullReferenceException(nameof(newFileInfo));
+            }
+
+            fileToRename.Refresh();
+            if (!fileToRename.Exists)
+            {
+                throw new FileNotFoundException("File not found: " + fileToRename.FullName);
+            }
+
             // ReSharper disable once MergeIntoPattern
             if (newFileInfo.Directory != null && !newFileInfo.Directory.Exists)
             {
