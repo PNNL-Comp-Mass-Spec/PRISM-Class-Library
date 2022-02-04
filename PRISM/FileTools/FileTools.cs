@@ -1504,11 +1504,10 @@ namespace PRISM
 
             if (useLockFile)
             {
-                var success = CopyFileUsingLocks(
+                return CopyFileUsingLocks(
                     lockDirectoryPathSource, lockDirectoryPathTarget,
                     sourceFile, targetFilePath,
                     managerName, overWrite);
-                return success;
             }
 
             var expectedSourceLockDirectory = GetLockDirectoryPath(sourceFile);
