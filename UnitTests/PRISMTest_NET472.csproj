@@ -44,11 +44,14 @@
     <Compile Include="ConnectionStringTests.cs" />
     <Compile Include="ConsoleMsgUtilsTest.cs" />
     <Compile Include="DatabaseLoggingTests.cs" />
+    <Compile Include="DirectoryTests.cs" />
     <Compile Include="DotNETVersionTest.cs" />
     <Compile Include="FileCopyTests.cs" />
+    <Compile Include="FileLockUtility.cs" />
     <Compile Include="FileLoggingTests.cs" />
     <Compile Include="FileProcessorTests.cs" />
     <Compile Include="FileRefs.cs" />
+    <Compile Include="FileRenameTests.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GZipTests.cs" />
     <Compile Include="KeyValueParamFileReaderTests.cs" />
