@@ -1879,6 +1879,12 @@ namespace PRISM
         /// <param name="directoryPath"></param>
         public void CreateDirectoryIfNotExists(string directoryPath)
         {
+            if (string.IsNullOrWhiteSpace(directoryPath))
+            {
+                // Nothing to do
+                return;
+            }
+
             // Create parent directories if missing, but ignore errors
 
             try
