@@ -88,8 +88,7 @@ namespace PRISM
         {
             foreach (var path in directoryPaths)
             {
-                var files = GetFiles(path, null, SearchOption.TopDirectoryOnly);
-                foreach (var file in files)
+                foreach (var file in GetFiles(path, null, SearchOption.TopDirectoryOnly))
                 {
                     NativeIOFileTools.Delete(file);
                 }

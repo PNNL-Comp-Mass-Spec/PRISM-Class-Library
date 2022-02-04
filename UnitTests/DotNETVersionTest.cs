@@ -25,12 +25,12 @@ namespace PRISMTest
         {
             var versionChecker = new DotNETVersionChecker();
 
-            var installedVersions = versionChecker.GetInstalledDotNETVersions();
-
-            foreach (var majorVersion in installedVersions)
+            foreach (var majorVersion in versionChecker.GetInstalledDotNETVersions())
             {
                 foreach (var installedVersion in majorVersion.Value)
+                {
                     Console.WriteLine(installedVersion);
+                }
             }
         }
 #endif
