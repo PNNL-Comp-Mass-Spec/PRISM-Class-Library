@@ -119,7 +119,7 @@ namespace PRISM
         {
             foreach (SqlError err in args.Errors)
             {
-                var s = 
+                var s =
                     "Message: " + err.Message +
                     ", Source: " + err.Source +
                     ", Class: " + err.Class +
