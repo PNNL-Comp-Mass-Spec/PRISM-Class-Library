@@ -2789,6 +2789,20 @@ namespace PRISM
                 CreateDirectoryIfNotExists(newFileInfo.Directory.FullName);
             }
 
+            newFileInfo.Refresh();
+            if (newFileInfo.Exists)
+            {
+                if (string.Equals(fileToRename.FullName, newFileInfo.FullName, StringComparison.OrdinalIgnoreCase))
+                {
+                    // The new path is the same as the old path; treat this as a success
+                    errorMessage = string.Empty;
+                    return true;
+                }
+
+                errorMessage = "Cannot rename since an existing file was found at the target path: " + newFileInfo.FullName;
+                return false;
+            }
+
             var renameAttempt = 0;
 
             while (true)
