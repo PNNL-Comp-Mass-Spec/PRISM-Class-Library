@@ -103,9 +103,9 @@ namespace PRISMWin
             if (!directoryPath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 directoryPath += Path.DirectorySeparatorChar;
 
-            var bResult = GetDiskFreeSpaceEx(directoryPath, ref freeAvailableUser, ref totalDriveCapacity, ref totalFree);
+            var result = GetDiskFreeSpaceEx(directoryPath, ref freeAvailableUser, ref totalDriveCapacity, ref totalFree);
 
-            if (!bResult)
+            if (!result)
             {
                 freeBytesAvailableToUser = 0;
                 totalDriveCapacityBytes = 0;
