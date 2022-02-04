@@ -119,14 +119,15 @@ namespace PRISM
         {
             foreach (SqlError err in args.Errors)
             {
-                var s = "Message: " + err.Message +
-                        ", Source: " + err.Source +
-                        ", Class: " + err.Class +
-                        ", State: " + err.State +
-                        ", Number: " + err.Number +
-                        ", LineNumber: " + err.LineNumber +
-                        ", Procedure:" + err.Procedure +
-                        ", Server: " + err.Server;
+                var s = 
+                    "Message: " + err.Message +
+                    ", Source: " + err.Source +
+                    ", Class: " + err.Class +
+                    ", State: " + err.State +
+                    ", Number: " + err.Number +
+                    ", LineNumber: " + err.LineNumber +
+                    ", Procedure:" + err.Procedure +
+                    ", Server: " + err.Server;
 
                 OnErrorEvent(s);
             }
