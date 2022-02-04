@@ -883,15 +883,7 @@ namespace PRISM
 
             if (!destDir.Exists)
             {
-                if (destPath.Length < NativeIODirectoryTools.DIRECTORY_PATH_LENGTH_THRESHOLD)
-                {
-                    // Issue: Throws an exception if the directory path > 248 characters
-                    destDir.Create();
-                }
-                else
-                {
-                    NativeIODirectoryTools.CreateDirectory(destPath);
-                }
+                CreateDirectoryIfNotExists(destPath);
             }
 
             // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
@@ -1131,11 +1123,6 @@ namespace PRISM
             {
                 throw new DirectoryNotFoundException("Unable to determine the parent directory of " + targetDirectory.FullName);
             }
-            // Verify the parent directory of the destination directory
-            if (!targetDirectory.Parent.Exists)
-            {
-                throw new DirectoryNotFoundException("Destination directory does not exist: " + targetDirectory.Parent.FullName);
-            }
 
             if (sourceDirectory.FullName == targetDirectory.FullName)
             {
@@ -1144,11 +1131,10 @@ namespace PRISM
 
             try
             {
-                // Create the target directory if necessary
+                // Create the target directory if necessary (will also create missing parent directories)
                 if (!targetDirectory.Exists)
                 {
-                    // TODO: Potential issues with path length > 248 characters
-                    targetDirectory.Create();
+                    CreateDirectoryIfNotExists(targetDirectory.FullName);
                 }
 
                 // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
