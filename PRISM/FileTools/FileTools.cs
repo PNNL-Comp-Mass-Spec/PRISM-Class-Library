@@ -2739,6 +2739,62 @@ namespace PRISM
             OnStatusEvent("  " + detailedMessage);
         }
 
+        /// <summary>
+        /// Rename the file, retrying up to 3 times
+        /// </summary>
+        /// <param name="fileToRename">File to rename</param>
+        /// <param name="newFileName">New file name (just the name, not a full path)</param>
+        /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
+        /// <returns>True if successful, false if an error</returns>
+        public bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, out string errorMessage)
+        {
+            return RenameFileWithRetry(fileToRename, newFileName, 3, out errorMessage);
+        }
+
+        /// <summary>
+        /// Rename the file, retrying up to retryCount times
+        /// </summary>
+        /// <param name="fileToRename">File to rename</param>
+        /// <param name="newFileName">New file name (just the name, not a full path)</param>
+        /// <param name="retryCount">Maximum number of times to retry the rename, waiting 3 sec, then 6 sec between rename attempts</param>
+        /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
+        /// <returns>True if successful, false if an error</returns>
+        public bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, int retryCount, out string errorMessage)
+        {
+            var renameAttempt = 0;
+
+            var newPath = fileToRename.Directory == null
+                ? newFileName
+                : Path.Combine(fileToRename.Directory.FullName, Path.GetFileName(newFileName));
+
+            while (true)
+            {
+                renameAttempt++;
+
+                try
+                {
+                    fileToRename.MoveTo(newPath);
+                    errorMessage = string.Empty;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    errorMessage = string.Format("Error renaming file {0} to {1}: {2}", fileToRename.FullName, newFileName, ex.Message);
+                }
+
+                if (renameAttempt > retryCount)
+                    return false;
+
+                // Sleep between 3 and 12 seconds
+                var secondsToSleep = Math.Min(renameAttempt * 3, 12);
+
+                ConsoleMsgUtils.ShowWarning(errorMessage);
+                ConsoleMsgUtils.ShowDebug("Sleeping for {0} seconds", secondsToSleep);
+
+                ConsoleMsgUtils.SleepSeconds(secondsToSleep);
+            }
+        }
+
         private void UpdateCurrentStatus(CopyStatus eStatus, string sourceFilePath)
         {
             CurrentCopyStatus = eStatus;
