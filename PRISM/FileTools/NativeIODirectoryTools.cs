@@ -47,8 +47,11 @@ namespace PRISM
             else
             {
                 var ok = NativeIOMethods.CreateDirectory(NativeIOFileTools.GetWin32LongPath(path), IntPtr.Zero);
+
                 if (!ok)
+                {
                     NativeIOFileTools.ThrowWin32Exception();
+                }
             }
         }
 
@@ -68,8 +71,11 @@ namespace PRISM
                 if (!recursive)
                 {
                     var ok = NativeIOMethods.RemoveDirectory(NativeIOFileTools.GetWin32LongPath(path));
+
                     if (!ok)
+                    {
                         NativeIOFileTools.ThrowWin32Exception();
+                    }
                 }
                 else
                 {
@@ -92,8 +98,11 @@ namespace PRISM
                 DeleteDirectories(matchingDirectories);
 
                 var ok = NativeIOMethods.RemoveDirectory(NativeIOFileTools.GetWin32LongPath(path));
+
                 if (!ok)
+                {
                     NativeIOFileTools.ThrowWin32Exception();
+                }
             }
         }
 

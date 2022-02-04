@@ -58,8 +58,11 @@ namespace PRISM
             else
             {
                 var ok = NativeIOMethods.CopyFileW(GetWin32LongPath(sourcePath), GetWin32LongPath(destPath), !overwrite);
+
                 if (!ok)
+                {
                     ThrowWin32Exception();
+                }
             }
         }
 
@@ -76,8 +79,11 @@ namespace PRISM
             else
             {
                 var ok = NativeIOMethods.DeleteFileW(GetWin32LongPath(filePath));
+
                 if (!ok)
+                {
                     ThrowWin32Exception();
+                }
             }
         }
 
