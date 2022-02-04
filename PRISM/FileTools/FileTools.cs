@@ -1877,12 +1877,32 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Attempts to create a directory only if it doesn't exist. Parent Directory must exist
+        /// Attempts to create a directory only if it doesn't exist
         /// </summary>
+        /// <remarks>Also creates parent directories if missing (shows a warning if an error, but continues)</remarks>
         /// <param name="directoryPath"></param>
         public void CreateDirectoryIfNotExists(string directoryPath)
         {
-            // Possible future change: add another version that handles nested, non-existing directories
+            // Create parent directories if missing, but ignore errors
+
+            try
+            {
+                var targetDirectory = new DirectoryInfo(directoryPath);
+
+                if (targetDirectory.Exists)
+                    return;
+
+                if (targetDirectory.Parent?.Exists == false)
+                {
+                    // Recursively call this method
+                    CreateDirectoryIfNotExists(targetDirectory.Parent.FullName);
+                }
+            }
+            catch (Exception ex)
+            {
+                ConsoleMsgUtils.ShowWarning("Error validating the parent directory of {0}: {1}", directoryPath, ex.Message);
+            }
+
             if (directoryPath.Length < NativeIODirectoryTools.DIRECTORY_PATH_LENGTH_THRESHOLD)
             {
                 if (!Directory.Exists(directoryPath))
