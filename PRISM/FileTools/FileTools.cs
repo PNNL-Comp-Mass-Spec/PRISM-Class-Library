@@ -862,8 +862,11 @@ namespace PRISM
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
         /// <param name="managerName">Name of the calling program; used when calling CopyFileUsingLocks</param>
-        private void CopyDirectoryEx(string sourcePath, string destPath, bool overWrite, bool setAttribute, bool readOnly,
-            IReadOnlyCollection<string> fileNamesToSkip, string managerName)
+        private void CopyDirectoryEx(
+            string sourcePath, string destPath, bool overWrite,
+            bool setAttribute, bool readOnly,
+            IReadOnlyCollection<string> fileNamesToSkip,
+            string managerName)
         {
             // Paths > 248 characters are okay for DirectoryInfo with .NET >= 4.6.2
             var sourceDir = new DirectoryInfo(sourcePath);
@@ -954,8 +957,9 @@ namespace PRISM
                     continue;
                 }
 
-                CopyDirectoryEx(subDirectory.FullName, Path.Combine(destDir.FullName, subDirectory.Name),
-                                overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
+                CopyDirectoryEx(
+                    subDirectory.FullName, Path.Combine(destDir.FullName, subDirectory.Name),
+                    overWrite, setAttribute, readOnly, fileNamesToSkip, managerName);
             }
         }
 
@@ -1017,7 +1021,8 @@ namespace PRISM
             const bool setAttribute = false;
             const bool readOnly = false;
 
-            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+            return CopyDirectoryWithResume(
+                sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out _, out _, out _, ignoreFileLocks);
         }
 
@@ -1046,7 +1051,8 @@ namespace PRISM
             const bool readOnly = false;
             var fileNamesToSkip = new List<string>();
 
-            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+            return CopyDirectoryWithResume(
+                sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied, ignoreFileLocks);
         }
 
@@ -1075,7 +1081,8 @@ namespace PRISM
             const bool setAttribute = false;
             const bool readOnly = false;
 
-            return CopyDirectoryWithResume(sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
+            return CopyDirectoryWithResume(
+                sourceDirectoryPath, targetDirectoryPath, recurse, fileOverwriteMode, setAttribute, readOnly,
                 fileNamesToSkip, out fileCountSkipped, out fileCountResumed, out fileCountNewlyCopied, ignoreFileLocks);
         }
 
@@ -1360,8 +1367,10 @@ namespace PRISM
         /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false</param>
         /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
         /// <param name="versionCountToKeep">Number of backup copies to keep</param>
-        private void CopyFileEx(string sourcePath, string destPath, bool overWrite,
-            bool backupDestFileBeforeCopy, int versionCountToKeep = DEFAULT_VERSION_COUNT_TO_KEEP)
+        private void CopyFileEx(
+            string sourcePath, string destPath,
+            bool overWrite, bool backupDestFileBeforeCopy,
+            int versionCountToKeep = DEFAULT_VERSION_COUNT_TO_KEEP)
         {
             var directoryPath = Path.GetDirectoryName(destPath);
 
@@ -1526,8 +1535,9 @@ namespace PRISM
 
                 if (DebugLevel >= 2)
                 {
-                    OnStatusEvent("Lock file directory not found on the source or target",
-                                  expectedSourceLockDirectory + " and " + expectedTargetLockDirectory);
+                    OnStatusEvent(
+                        "Lock file directory not found on the source or target",
+                        expectedSourceLockDirectory + " and " + expectedTargetLockDirectory);
                 }
             }
 
@@ -1605,9 +1615,10 @@ namespace PRISM
                     lockFilePathTarget = CreateLockFile(lockDirectoryTarget, lockFileTimestamp, sourceFile, targetFilePath, managerName);
                 }
 
-                WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, lockDirectoryTarget,
-                                     sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES,
-                                     lockFilePathSource, lockFilePathTarget);
+                WaitForLockFileQueue(
+                    lockFileTimestamp, lockDirectorySource, lockDirectoryTarget,
+                    sourceFile, targetFilePath, MAX_LOCKFILE_WAIT_TIME_MINUTES,
+                    lockFilePathSource, lockFilePathTarget);
 
                 if (DebugLevel >= 1)
                 {
@@ -2708,7 +2719,8 @@ namespace PRISM
                 adminBypassMessage = string.Format("Logic error; unable {0}", adminBypassBase.ToLower());
             }
 
-            WaitingForLockQueueNotifyLockFilePaths?.Invoke(lockFilePathSource ?? string.Empty,
+            WaitingForLockQueueNotifyLockFilePaths?.Invoke(
+                lockFilePathSource ?? string.Empty,
                 lockFilePathTarget ?? string.Empty,
                 adminBypassMessage);
         }
@@ -2886,9 +2898,10 @@ namespace PRISM
         /// <param name="maxWaitTimeMinutes"></param>
         public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo lockDirectorySource, FileInfo sourceFile, int maxWaitTimeMinutes)
         {
-            WaitForLockFileQueue(lockFileTimestamp, lockDirectorySource, null,
-                                 sourceFile, "Unknown_Target_File_Path",
-                                 maxWaitTimeMinutes, string.Empty, string.Empty);
+            WaitForLockFileQueue(
+                lockFileTimestamp, lockDirectorySource, null,
+                sourceFile, "Unknown_Target_File_Path",
+                maxWaitTimeMinutes, string.Empty, string.Empty);
         }
 
         /// <summary>
