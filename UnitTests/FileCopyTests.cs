@@ -23,13 +23,13 @@ namespace PRISMTest
         public void CopyDirectoryLocal(string sourceDirectoryPath, string targetDirectoryPath)
         {
             var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
+
             if (!sourceDirectory.Exists)
             {
                 try
                 {
                     // Create the missing source directory
-
-                    sourceDirectory.Create();
+                    mFileTools.CreateDirectoryIfNotExists(sourceDirectoryPath);
 
                     var rand = new Random();
 
@@ -84,6 +84,7 @@ namespace PRISMTest
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
         public void CopyFileLocal(string sourceFilePath, string targetFilePath)
         {
+            CreateTargetDirectoryIfMissing(targetFilePath);
             CopyFile(sourceFilePath, targetFilePath);
         }
 
@@ -134,6 +135,7 @@ namespace PRISMTest
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
         public void CopyFileUsingLocksLocal(string sourceFilePath, string targetFilePath)
         {
+            CreateTargetDirectoryIfMissing(targetFilePath);
             CopyFileUsingLocks(sourceFilePath, targetFilePath);
         }
 
@@ -190,11 +192,21 @@ namespace PRISMTest
             Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
         }
 
+        private void CreateTargetDirectoryIfMissing(string targetFilePath)
+        {
+            var targetFile = new FileInfo(targetFilePath);
+
+            // ReSharper disable once MergeIntoPattern
+            if (targetFile.Directory != null && !targetFile.Directory.Exists)
+                mFileTools.CreateDirectoryIfNotExists(targetFile.Directory.FullName);
+        }
+
 #if !NETCOREAPP2_0
         [TestCase(@"C:\Temp")]
         [TestCase(@"C:\Temp\")]
         public void GetDriveFreeSpaceForDirectoryLocal(string directoryPath)
         {
+            mFileTools.CreateDirectoryIfNotExists(directoryPath);
             GetDriveFreeSpaceForDirectory(directoryPath);
         }
 
@@ -211,6 +223,7 @@ namespace PRISMTest
         [Category("PNL_Protoapps")]
         public void GetDriveFreeSpaceForDirectoryRemote2(string directoryPath)
         {
+            mFileTools.CreateDirectoryIfNotExists(directoryPath);
             GetDriveFreeSpaceForDirectory(directoryPath);
         }
 
