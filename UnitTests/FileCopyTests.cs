@@ -9,6 +9,7 @@ namespace PRISMTest
     [TestFixture]
     internal class FileCopyTests
     {
+        // ReSharper disable once CommentTypo
         // Ignore Spelling: contam, Fasta, \\protoapps, trembl
 
         private FileTools mFileTools;
