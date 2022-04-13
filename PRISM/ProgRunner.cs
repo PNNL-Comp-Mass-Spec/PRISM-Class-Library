@@ -871,7 +871,7 @@ namespace PRISM
         /// </summary>
         protected bool StartingOrMonitoring()
         {
-            return State == States.Initializing || State == States.StartingProcess || State == States.Monitoring;
+            return State is States.Initializing or States.StartingProcess or States.Monitoring;
         }
 
         /// <summary>

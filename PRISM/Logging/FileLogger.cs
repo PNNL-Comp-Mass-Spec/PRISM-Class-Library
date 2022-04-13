@@ -645,7 +645,7 @@ namespace PRISM.Logging
                             ex2, false, false);
                     }
 
-                    if (logMessage.LogLevel == LogLevels.ERROR || logMessage.LogLevel == LogLevels.FATAL)
+                    if (logMessage.LogLevel is LogLevels.ERROR or LogLevels.FATAL)
                     {
                         MostRecentErrorMessage = logMessage.Message;
                     }
