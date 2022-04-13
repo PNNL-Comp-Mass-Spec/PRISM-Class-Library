@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using Ionic.Zip;
 using NUnit.Framework;
 using PRISM;
 using PRISM.Logging;
+using ZipFile = System.IO.Compression.ZipFile;
 
 namespace PRISMTest
 {
@@ -76,15 +77,58 @@ namespace PRISMTest
 
                 var oldLogFilesDir = new DirectoryInfo(Path.Combine(logDir.FullName, startDate.Year.ToString()));
                 var oldLogDirZipFile = new FileInfo(Path.Combine(logDir.FullName, startDate.Year + ".zip"));
+                var oldLogDirZipFileArchived = new FileInfo(Path.Combine(logDir.FullName, FileLogger.ARCHIVED_LOG_FILES_DIRECTORY_NAME, startDate.Year + ".zip"));
 
                 CreateLogFiles(oldLogFilesDir, logFileStartDate, FILES_PER_YEAR, true);
 
                 if (oldLogDirZipFile.Exists)
                     oldLogDirZipFile.Delete();
 
+                if (oldLogDirZipFileArchived.Exists)
+                    oldLogDirZipFileArchived.Delete();
+
                 logFileDirs.Add(oldLogFilesDir);
 
                 System.Threading.Thread.Sleep(250);
+            }
+
+            var oldZippedLogFiles = new List<FileInfo>();
+
+            // Create three placeholder zipped log files for prior years
+            // This is done to validate that they are moved into the log archive directory
+            for (var i = yearsToSimulate; i < yearsToSimulate + 3; i++)
+            {
+                var startDate = DateTime.Now.AddDays(-230 - 365 * i);
+
+                var infoFile = new FileInfo(Path.Combine(logDir.FullName, string.Format("FileLoggingTester_01-01-{0}.txt", startDate.Year)));
+
+                var oldLogDirZipFile = new FileInfo(Path.Combine(logDir.FullName, startDate.Year + ".zip"));
+
+                if (oldLogDirZipFile.Exists)
+                    oldLogDirZipFile.Delete();
+
+                using (var writer = new StreamWriter(new FileStream(infoFile.FullName, FileMode.Create, FileAccess.Write)))
+                {
+                    writer.WriteLine("Placeholder log file for {0}", startDate.Year);
+                }
+
+                // Ionic.Zip.ZipFile
+                using var zipper = new Ionic.Zip.ZipFile(oldLogDirZipFile.FullName)
+                {
+                    UseZip64WhenSaving = Zip64Option.AsNecessary
+                };
+
+                zipper.AddItem(infoFile.FullName, string.Empty);
+                zipper.Save();
+
+                oldZippedLogFiles.Add(oldLogDirZipFile);
+
+                var oldLogDirZipFileArchived = new FileInfo(Path.Combine(logDir.FullName, FileLogger.ARCHIVED_LOG_FILES_DIRECTORY_NAME, oldLogDirZipFile.Name));
+
+                if (oldLogDirZipFileArchived.Exists)
+                    oldLogDirZipFileArchived.Delete();
+
+                infoFile.Delete();
             }
 
             FileLogger.ChangeLogFileBaseName(Path.Combine(logDirectory, LOGFILE_BASENAME));
@@ -98,7 +142,9 @@ namespace PRISMTest
             // Assure that the zip files were created and have data
             foreach (var oldLogFilesDir in logFileDirs)
             {
-                var zipFileToCheck = new FileInfo(oldLogFilesDir.FullName + ".zip");
+                var zipFilePath = Path.Combine(logDirectory, FileLogger.ARCHIVED_LOG_FILES_DIRECTORY_NAME, oldLogFilesDir.Name + ".zip");
+
+                var zipFileToCheck = new FileInfo(zipFilePath);
 
                 if (!zipFileToCheck.Exists)
                 {
@@ -132,6 +178,19 @@ namespace PRISMTest
                 Assert.GreaterOrEqual(fileCountInZip, FILES_PER_YEAR, "Zip file {0} has fewer than {1} files", zipFileToCheck.FullName, FILES_PER_YEAR);
 
                 Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
+            }
+
+            // Assure that the placeholder .zip files were also archived
+            foreach (var zipFile in oldZippedLogFiles)
+            {
+                var zipFilePath = Path.Combine(logDirectory, FileLogger.ARCHIVED_LOG_FILES_DIRECTORY_NAME, zipFile.Name);
+
+                var zipFileToCheck = new FileInfo(zipFilePath);
+
+                if (!zipFileToCheck.Exists)
+                {
+                    Assert.Fail("Expected .zip file not found: " + zipFileToCheck.FullName);
+                }
             }
 
             FileLogger.FlushPendingMessages();
