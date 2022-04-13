@@ -284,10 +284,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     catch (Exception ex)
                     {
                         retryCount--;
+
                         if (string.IsNullOrWhiteSpace(callingFunction))
                         {
                             callingFunction = "Unknown";
                         }
+
                         var errorMessage = string.Format(
                             "Exception querying database (called from {0}): {1}; " +
                             "ConnectionString: {2}, RetryCount = {3}, Query {4}",
@@ -611,10 +613,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     catch (Exception ex)
                     {
                         retryCount--;
+
                         if (string.IsNullOrWhiteSpace(callingFunction))
                         {
                             callingFunction = "Unknown";
                         }
+
                         var errorMessage = string.Format(
                             "Exception querying database (called from {0}): {1}; " +
                             "ConnectionString: {2}, RetryCount = {3}, Query {4}",

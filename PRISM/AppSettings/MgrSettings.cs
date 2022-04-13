@@ -226,8 +226,10 @@ namespace PRISM.AppSettings
             {
                 if (bool.TryParse(usingDefaultsText, out var usingDefaults) && usingDefaults)
                 {
-                    ErrMsg = string.Format("MgrSettings.CheckInitialSettings; Config file problem, {0} contains UsingDefaults=True",
-                                           GetConfigFileName());
+                    ErrMsg = string.Format(
+                        "MgrSettings.CheckInitialSettings; Config file problem, {0} contains UsingDefaults=True",
+                        GetConfigFileName());
+
                     ReportError(ErrMsg);
                     return false;
                 }
@@ -383,9 +385,10 @@ namespace PRISM.AppSettings
         /// <param name="parameterName"></param>
         protected void HandleParameterNotDefined(string parameterName)
         {
-            ErrMsg = string.Format("Parameter '{0}' is not defined in file {1}",
-                                   parameterName,
-                                   GetConfigFileName());
+            ErrMsg = string.Format(
+                "Parameter '{0}' is not defined in file {1}",
+                parameterName, GetConfigFileName());
+
             ReportError(ErrMsg);
         }
 
@@ -685,8 +688,10 @@ namespace PRISM.AppSettings
             }
             catch (Exception ex)
             {
-                ErrMsg = string.Format("MgrSettings.StoreParameters; Exception storing settings for manager '{0}': {1}",
-                                       managerOrGroupName, ex.Message);
+                ErrMsg = string.Format(
+                    "MgrSettings.StoreParameters; Exception storing settings for manager '{0}': {1}",
+                    managerOrGroupName, ex.Message);
+
                 ReportError(ErrMsg);
                 success = false;
             }

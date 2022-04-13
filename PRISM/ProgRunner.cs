@@ -34,22 +34,27 @@ namespace PRISM
             /// Not Monitoring
             /// </summary>
             NotMonitoring,
+
             /// <summary>
             /// Monitoring
             /// </summary>
             Monitoring,
+
             /// <summary>
             /// Waiting
             /// </summary>
             Waiting,
+
             /// <summary>
             /// Cleaning up
             /// </summary>
             CleaningUp,
+
             /// <summary>
             /// Initializing
             /// </summary>
             Initializing,
+
             /// <summary>
             /// Starting the process
             /// </summary>

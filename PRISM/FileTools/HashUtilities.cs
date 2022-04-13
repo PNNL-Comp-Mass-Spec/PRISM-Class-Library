@@ -338,8 +338,7 @@ namespace PRISM
             catch (Exception ex)
             {
                 // Treat this as a non-critical error
-                warningMessage = string.Format("Unable to create the .hashcheck file for source file {0}: {1}",
-                                               dataFilePath, ex.Message);
+                warningMessage = string.Format("Unable to create the .hashcheck file for source file {0}: {1}", dataFilePath, ex.Message);
                 return string.Empty;
             }
         }

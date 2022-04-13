@@ -114,8 +114,10 @@ namespace PRISM.AppSettings
                     {
                         if (argumentsAppended.Contains(argumentName))
                         {
-                            var errMsg = string.Format("Duplicate argument {0} specified for parameter {1} in the {2} parameter file",
-                                                       argumentName, kvSetting.Key, ToolName);
+                            var errMsg = string.Format(
+                                "Duplicate argument {0} specified for parameter {1} in the {2} parameter file",
+                                argumentName, kvSetting.Key, ToolName);
+
                             LogError(errMsg);
                             return string.Empty;
                         }
@@ -132,8 +134,10 @@ namespace PRISM.AppSettings
             }
             catch (Exception ex)
             {
-                var errMsg = string.Format("Exception converting parameters loaded from the {0} parameter file into command line arguments",
-                                           ToolName);
+                var errMsg = string.Format(
+                    "Exception converting parameters loaded from the {0} parameter file into command line arguments",
+                    ToolName);
+
                 LogError(errMsg, ex);
                 return string.Empty;
             }
@@ -422,8 +426,10 @@ namespace PRISM.AppSettings
             }
             catch (Exception ex)
             {
-                var errMsg = string.Format("Exception reading {0} parameter file {1} in ParseKeyValueParameterFileWork",
-                                           ToolName, Path.GetFileName(ParamFilePath));
+                var errMsg = string.Format(
+                    "Exception reading {0} parameter file {1} in ParseKeyValueParameterFileWork",
+                    ToolName, Path.GetFileName(ParamFilePath));
+
                 LogError(errMsg, ex);
                 return false;
             }
