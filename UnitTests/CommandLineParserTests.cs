@@ -17,7 +17,7 @@ namespace PRISMTest
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: tda, arg, args, badname, minint, maxint, minmaxint, mindbl, maxdbl, minmaxdbl
+        // Ignore Spelling: tda, arg, args, badname, Intellisense, minint, maxint, minmaxint, mindbl, maxdbl, minmaxdbl
         // Ignore Spelling: minintbad, maxintbad, mindblbad, maxdblbad, minmaxInt, minmaxDbl, minmax, wildcards
 
         // ReSharper restore CommentTypo
@@ -951,6 +951,9 @@ namespace PRISMTest
             CantBeTruer = 3,
             Legend = 100
         }
+
+        // Use of System.ComponentModel.Description in the following enum results in the given description being displayed when Intellisense shows available enum values
+        // See also the output from unit test TestEnumHelp
 
         [Flags]
         private enum TestEnumFlags

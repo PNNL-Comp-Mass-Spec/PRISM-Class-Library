@@ -2246,7 +2246,7 @@ namespace PRISM
         {
             if (value == null || value.Length < 2)
             {
-                // don't strip a single quote; it may have already been un-quoted.
+                // don't strip a single quote; it may have already been unquoted.
                 return value;
             }
 
@@ -2424,7 +2424,7 @@ namespace PRISM
         public object Max { get; set; }
 
         /// <summary>
-        /// If the property is an enum, enum values are listed by default
+        /// If the property is an enum, the enum values are listed by default
         /// </summary>
         /// <remarks>Set this to 'true' to not list the enum values</remarks>
         public bool DoNotListEnumValues { get; set; }
