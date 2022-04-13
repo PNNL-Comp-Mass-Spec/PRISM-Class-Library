@@ -164,7 +164,7 @@ namespace PRISMTest
         }
 
         /// <summary>
-        /// Retrieve values from PostgreSQL function mc.GetManagerParameters()
+        /// Retrieve values from PostgreSQL function mc.get_manager_parameters()
         /// </summary>
         [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
@@ -178,10 +178,10 @@ namespace PRISMTest
             var spCmd = new NpgsqlCommand
             {
                 CommandType = CommandType.Text,
-                CommandText = "SELECT * FROM mc.GetManagerParameters('Pub-12-1, Pub-12-2', 0, 50)"
+                CommandText = "SELECT * FROM mc.get_manager_parameters('Pub-12-1, Pub-12-2', 0, 50)"
             };
 
-            Console.WriteLine("Querying function mc.GetManagerParameters in " + database + " as user " + user);
+            Console.WriteLine("Querying function mc.get_manager_parameters in " + database + " as user " + user);
 
             var success = dbTools.GetQueryResults(spCmd, out var results, 1);
 
@@ -191,7 +191,7 @@ namespace PRISMTest
         }
 
         /// <summary>
-        /// Retrieve values from PostgreSQL function mc.GetManagerParameters()
+        /// Retrieve values from PostgreSQL function mc.get_manager_parameters()
         /// </summary>
         [TestCase("prismdb1", "dms")]
         [Category("DatabaseNamedUser")]
@@ -205,14 +205,14 @@ namespace PRISMTest
             var spCmd = new NpgsqlCommand
             {
                 CommandType = CommandType.Text,
-                CommandText = "SELECT * FROM mc.GetManagerParameters(@managerNameList, @sortMode, @maxRecursion)"
+                CommandText = "SELECT * FROM mc.get_manager_parameters(@managerNameList, @sortMode, @maxRecursion)"
             };
 
             dbTools.AddParameter(spCmd, "managerNameList", SqlType.Text).Value = "Pub-12-1, Pub-12-2";
             dbTools.AddParameter(spCmd, "sortMode", SqlType.Int).Value = 0;
             dbTools.AddParameter(spCmd, "maxRecursion", SqlType.Int).Value = 50;
 
-            Console.WriteLine("Querying function mc.GetManagerParameters in " + database + " as user " + user);
+            Console.WriteLine("Querying function mc.get_manager_parameters in " + database + " as user " + user);
 
             var success = dbTools.GetQueryResults(spCmd, out var results, 1);
 
