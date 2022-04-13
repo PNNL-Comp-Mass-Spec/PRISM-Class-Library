@@ -22,6 +22,8 @@ namespace PRISM.Logging
     {
         // Ignore Spelling: prepended, Wildcards, yyyy, yyyy-MM-dd
 
+        public const string ARCHIVED_LOG_FILES_DIRECTORY_NAME = "Archived";
+
         /// <summary>
         /// Default number of old log files to keep when AppendDateToBaseFileName is false
         /// </summary>
@@ -871,6 +873,8 @@ namespace PRISM.Logging
 
                 var dateThresholdForZippingPreviousYearFiles = new DateTime(DateTime.Now.Year, 1, 1).AddDays(OLD_LOG_DIRECTORY_AGE_THRESHOLD_DAYS);
 
+                var zipFilesToArchive = new Dictionary<string, FileInfo>();
+
                 foreach (var subDir in subDirectories)
                 {
                     if (!yearMatcher.IsMatch(subDir.Name))
@@ -887,15 +891,27 @@ namespace PRISM.Logging
 
                     // The directory is old enough; zip all of the files
 
-                    var zipFile = new FileInfo(Path.Combine(logDirectory.FullName, subDir.Name + ".zip"));
+                    var zipFileName = subDir.Name + ".zip";
+                    var zipFile = new FileInfo(Path.Combine(logDirectory.FullName, zipFileName));
+                    var archivedZipFile = new FileInfo(Path.Combine(logDirectory.FullName, ARCHIVED_LOG_FILES_DIRECTORY_NAME, zipFileName));
+
                     if (zipFile.Exists)
                     {
                         zipWarnings.Add(string.Format(
-                                            "Not compressing old log directory {0} since the Zip file already exists at {1}",
-                                            subDir.Name, zipFile.FullName));
+                            "Not compressing old log directory {0} since the Zip file already exists at {1}",
+                            subDir.Name, zipFile.FullName));
+
                         continue;
                     }
 
+                    if (archivedZipFile.Exists)
+                    {
+                        zipWarnings.Add(string.Format(
+                            "Not compressing old log directory {0} since the Zip file has already been archived to {1}",
+                            subDir.Name, archivedZipFile.FullName));
+
+                        continue;
+                    }
                     try
                     {
                         ZipFile.CreateFromDirectory(subDir.FullName, zipFile.FullName);
@@ -922,14 +938,19 @@ namespace PRISM.Logging
 
                         if (fileCountInZip < expectedFileCount)
                         {
-                            zipWarnings.Add(string.Format("Zip file {0} has {1} files, but the subdirectory has {2} files: {3}",
-                                                          zipFile.Name, fileCountInZip, expectedFileCount, subDir.FullName));
+                            zipWarnings.Add(string.Format(
+                                "Zip file {0} has {1} files, but the subdirectory has {2} files: {3}",
+                                zipFile.Name, fileCountInZip, expectedFileCount, subDir.FullName));
+
                             continue;
                         }
 
-                        WriteLog(LogLevels.INFO, string.Format("Compressed {0} files in {1} to create {2}",
-                                                               fileCountInZip, subDir.FullName, zipFile.FullName));
+                        WriteLog(LogLevels.INFO, string.Format(
+                            "Compressed {0} files in {1} to create {2}",
+                            fileCountInZip, subDir.FullName, zipFile.FullName));
                     }
+
+                    bool removeOldLogSubdirectory;
 
                     try
                     {
@@ -951,22 +972,78 @@ namespace PRISM.Logging
                             zipFile.Refresh();
                             zipFile.LastWriteTime = newestLastWriteTime;
                         }
+
+                        removeOldLogSubdirectory = true;
                     }
                     catch (Exception ex2)
                     {
-                        zipWarnings.Add("Error deleting old log file after successfully creating the zip file: " + ex2.Message);
-                        continue;
+                        zipWarnings.Add("Error deleting old log files after successfully creating the zip file: " + ex2.Message);
+                        removeOldLogSubdirectory = false;
                     }
 
                     try
                     {
-                        if (subDir.GetFiles("*", SearchOption.AllDirectories).Length == 0)
+                        if (removeOldLogSubdirectory && subDir.GetFiles("*", SearchOption.AllDirectories).Length == 0)
+                        {
                             subDir.Delete();
+                        }
                     }
                     catch (Exception ex2)
                     {
                         zipWarnings.Add(string.Format("Error removing empty subdirectory {0}: {1}", subDir.FullName, ex2.Message));
                     }
+
+                    zipFilesToArchive.Add(zipFile.FullName, zipFile);
+                }
+
+                try
+                {
+                    // Move the zip file (plus any other year-named .zip files) into a subdirectory named Archived
+                    var archiveDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, ARCHIVED_LOG_FILES_DIRECTORY_NAME));
+
+                    if (!archiveDirectory.Exists)
+                    {
+                        archiveDirectory.Create();
+                    }
+
+                    // Look for additional zipped log files
+                    foreach (var zipFile in logDirectory.GetFiles("*.zip", SearchOption.TopDirectoryOnly))
+                    {
+                        if (!yearMatcher.IsMatch(Path.GetFileNameWithoutExtension(zipFile.Name)))
+                            continue;
+
+                        if (zipFilesToArchive.Keys.Contains(zipFile.FullName))
+                            continue;
+
+                        zipFilesToArchive.Add(zipFile.FullName, zipFile);
+                    }
+
+                    foreach (var zipFile in zipFilesToArchive.Values)
+                    {
+                        var targetFile = new FileInfo(Path.Combine(archiveDirectory.FullName, zipFile.Name));
+
+                        if (targetFile.Exists)
+                        {
+                            zipWarnings.Add(string.Format(
+                                "Not archiving Zip file {0} since an existing Zip file was found in directory {1}",
+                                zipFile.Name, archiveDirectory.FullName));
+
+                            continue;
+                        }
+
+                        zipFile.Refresh();
+                        if (!zipFile.Exists)
+                        {
+                            zipWarnings.Add(string.Format("Not archiving Zip file {0} since it no longer exists", zipFile.Name));
+                            continue;
+                        }
+
+                        zipFile.MoveTo(targetFile.FullName);
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    zipWarnings.Add("Error moving zipped log files into the archive directory: " + ex2.Message);
                 }
             }
             catch (Exception ex)
