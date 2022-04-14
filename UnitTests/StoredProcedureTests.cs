@@ -326,11 +326,11 @@ namespace PRISMTest
         public void TestEnableDisableManagersPostgres(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
-            TestEnableDisableManagers(connectionString, "mc.EnableDisableManagers");
+            TestEnableDisableManagers(connectionString, "mc.enable_disable_managers");
         }
 
         /// <summary>
-        /// Invoke stored procedure EnableDisableManagers and examine output parameter @message (or _message)
+        /// Invoke stored procedure EnableDisableManagers (or enable_disable_managers) and examine output parameter @message (or _message)
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procedureNameWithSchema"></param>
@@ -389,11 +389,11 @@ namespace PRISMTest
         public void TestEnableDisableManagersDataPostgres(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
-            TestEnableDisableManagersData(connectionString, "mc.EnableDisableManagers");
+            TestEnableDisableManagersData(connectionString, "mc.enable_disable_managers");
         }
 
         /// <summary>
-        /// Invoke stored procedure EnableDisableManagers and examine output parameter @message (or _message)
+        /// Invoke stored procedure EnableDisableManagers (or enable_disable_managers) and examine output parameter @message (or _message)
         /// </summary>
         /// <param name="connectionString"></param>
         /// <param name="procedureNameWithSchema"></param>
