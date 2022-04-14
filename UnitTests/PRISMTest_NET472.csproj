@@ -100,10 +100,10 @@
       <Version>4.1.3</Version>
     </PackageReference>
     <PackageReference Include="NUnit">
-      <Version>3.12.0</Version>
+      <Version>3.13.3</Version>
     </PackageReference>
     <PackageReference Include="NUnit3TestAdapter">
-      <Version>4.2.0</Version>
+      <Version>4.2.1</Version>
     </PackageReference>
   </ItemGroup>
   <Choose>
