@@ -12,7 +12,11 @@ namespace PRISMTest
     [TestFixture]
     public class StoredProcedureTests
     {
+        // ReSharper disable CommentTypo
+
         // Ignore Spelling: dms, dmsdev, dmswebuser, mtuser, Postgres, PostgreSQL, ProteinSeqs, workdir
+
+        // ReSharper restore CommentTypo
 
         private const string DMS_WEB_USER = "dmswebuser";
 
