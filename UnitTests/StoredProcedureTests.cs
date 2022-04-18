@@ -446,9 +446,9 @@ namespace PRISMTest
             TestGetReturnCode(connectionString, procedureName, skipProcedureCall, expectedReturnCode);
         }
 
-        [TestCase("prismweb3", "dmsdev", "FindLogEntry", true, 0, "")]
-        [TestCase("prismweb3", "dmsdev", "FindLogEntry", true, 2200, "2200L")]
-        [TestCase("prismweb3", "dmsdev", "FindLogEntry", true, 2, "2F005")]
+        [TestCase("prismweb3", "dmsdev", "find_log_entry", true, 0, "")]
+        [TestCase("prismweb3", "dmsdev", "find_log_entry", true, 2200, "2200L")]
+        [TestCase("prismweb3", "dmsdev", "find_log_entry", true, 2, "2F005")]
         public void TestGetReturnCodePostgres(
             string server,
             string database,
