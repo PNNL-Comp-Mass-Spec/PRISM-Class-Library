@@ -98,7 +98,7 @@ namespace PRISM.Logging
             string moduleName,
             string connectionString,
             LogLevels logLevel = LogLevels.INFO,
-            string storedProcedure = "PostLogEntry",
+            string storedProcedure = "post_log_entry",
             string logTypeParamName = "type",
             string messageParamName = "message",
             string postedByParamName = "postedBy",

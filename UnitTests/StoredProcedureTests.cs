@@ -530,7 +530,7 @@ namespace PRISMTest
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
-            var spCmd = dbTools.CreateCommand("PostLogEntry", CommandType.StoredProcedure);
+            var spCmd = dbTools.CreateCommand("post_log_entry", CommandType.StoredProcedure);
 
             dbTools.AddParameter(spCmd, "@type", SqlType.Text).Value = "Info";
             dbTools.AddParameter(spCmd, "@message", SqlType.Text).Value = "Test message 1";
@@ -575,7 +575,7 @@ namespace PRISMTest
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
-            var query = "call PostLogEntry(_postedBy => 'Test caller', _type =>'Info', _message => 'Test message 2')";
+            var query = "call post_log_entry(_postedBy => 'Test caller', _type =>'Info', _message => 'Test message 2')";
             var spCmd = dbTools.CreateCommand(query);
 
             var postSuccess = dbTools.GetQueryScalar(spCmd, out _, 1);
@@ -591,7 +591,7 @@ namespace PRISMTest
 
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
-            var query = "call PostLogEntry(_postedBy => @_postedBy, _type => @_type, _message => @_message)";
+            var query = "call post_log_entry(_postedBy => @_postedBy, _type => @_type, _message => @_message)";
             var spCmd = dbTools.CreateCommand(query);
 
             dbTools.AddParameter(spCmd, "_type", SqlType.Text).Value = "Info";
@@ -607,9 +607,9 @@ namespace PRISMTest
         private void VerifyTestPostLogEntry(IDBTools dbTools, string user, bool expectedPostSuccess, bool actualPostSuccess)
         {
             if (expectedPostSuccess)
-                Assert.IsTrue(actualPostSuccess, "Call to PostLogEntry failed for user {0}; it should have succeeded", user);
+                Assert.IsTrue(actualPostSuccess, "Call to post_log_entry failed for user {0}; it should have succeeded", user);
             else
-                Assert.IsFalse(actualPostSuccess, "Call to PostLogEntry succeeded for user {0}; it should have failed", user);
+                Assert.IsFalse(actualPostSuccess, "Call to post_log_entry succeeded for user {0}; it should have failed", user);
 
             if (!actualPostSuccess)
                 return;

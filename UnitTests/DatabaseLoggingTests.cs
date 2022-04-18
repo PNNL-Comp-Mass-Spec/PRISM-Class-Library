@@ -36,7 +36,7 @@ namespace PRISMTest
 
             Console.WriteLine("Calling logger.PostEntry using " + database + " as user " + user);
 
-            // Call stored procedure PostLogEntry
+            // Call stored procedure post_log_entry
             logger.WriteLog(BaseLogger.LogLevels.DEBUG, "Test log entry on " + DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss"));
         }
     }

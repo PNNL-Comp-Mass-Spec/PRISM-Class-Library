@@ -558,7 +558,7 @@ namespace PRISM
                 dbCn.Open();
 
                 // Create the command object
-                var sc = new SqlCommand("PostLogEntry", dbCn)
+                var sc = new SqlCommand("post_log_entry", dbCn)
                 {
                     CommandType = CommandType.StoredProcedure
                 };

@@ -158,7 +158,7 @@ namespace PRISM.Logging
             mDbLogger.EchoMessagesToFileLogger = true;
             mDbLogger.LogLevel = logLevel;
 
-            mDbLogger.ChangeConnectionInfo(moduleName, connectionString, "PostLogEntry", "type", "message", "postedBy");
+            mDbLogger.ChangeConnectionInfo(moduleName, connectionString, "post_log_entry", "type", "message", "postedBy");
         }
 
         /// <summary>

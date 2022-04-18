@@ -102,7 +102,7 @@ namespace PRISM.Logging
             string moduleName,
             string connectionString,
             LogLevels logLevel = LogLevels.INFO,
-            string storedProcedure = "PostLogEntry",
+            string storedProcedure = "post_log_entry",
             string logTypeParamName = "type",
             string messageParamName = "message",
             string postedByParamName = "postedBy",
@@ -297,8 +297,8 @@ namespace PRISM.Logging
                     odbcConnection.Open();
 
                     // Set up the command object prior to SP execution
-                    // The syntax for calling procedure PostLogEntry is
-                    // {call PostLogEntry (?,?,?)}
+                    // The syntax for calling procedure post_log_entry is
+                    // {call post_log_entry (?,?,?)}
 
                     var spCmdText = "{call " + StoredProcedureName + " (?,?,?)}";
 
