@@ -59,7 +59,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Constructor when the connection info is unknown
         /// </summary>
-        /// <remarks>No database logging will occur until ChangeConnectionInfo is called (to define the connection string)</remarks>
+        /// <remarks>
+        /// No database logging will occur until ChangeConnectionInfo is called (to define the connection string and stored procedure)
+        /// </remarks>
         /// <param name="logLevel">Log threshold level</param>
         public ODBCDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this(string.Empty, string.Empty, logLevel)
         {
@@ -75,7 +77,7 @@ namespace PRISM.Logging
         /// <param name="connectionString">ODBC-style connection string</param>
         /// <param name="logLevel">Log threshold level</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
-        /// <param name="logTypeParamName">LogType parameter name (string representation of logLevel</param>
+        /// <param name="logTypeParamName">LogType parameter name (string representation of logLevel)</param>
         /// <param name="messageParamName">Message parameter name</param>
         /// <param name="postedByParamName">Log source parameter name</param>
         /// <param name="logTypeParamSize">LogType parameter size</param>

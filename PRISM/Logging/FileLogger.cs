@@ -197,7 +197,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Constructor that takes base log file name and appendDateToBaseName
         /// </summary>
-        /// <remarks>If baseName is null or empty, the log file name will be named DefaultLogFileName</remarks>
+        /// <remarks>If baseName is null or empty, the log file name will be named ExecutableName_log.txt</remarks>
         /// <param name="baseName">Base log file name (or relative path)</param>
         /// <param name="appendDateToBaseName">
         /// When true, the actual log file name will have today's date appended to it, in the form yyyy-mm-dd.txt

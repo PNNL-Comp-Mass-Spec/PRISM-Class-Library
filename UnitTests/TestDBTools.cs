@@ -1053,10 +1053,10 @@ namespace PRISMTest
         /// Linux:   ~/.pgpass
         /// Windows: c:\users\username\AppData\Roaming\postgresql\pgpass.conf
         /// </remarks>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <param name="user"></param>
-        /// <param name="password">password</param>
+        /// <param name="server">Server (aka host) name</param>
+        /// <param name="database">Database name</param>
+        /// <param name="user">Username</param>
+        /// <param name="password">Password (if empty, use .pgpass or pgpass.conf)</param>
         public static string GetConnectionStringPostgres(string server, string database, string user, string password = "")
         {
             string optionalPassword;

@@ -12,7 +12,7 @@ using PRISM;
 namespace PRISMDatabaseUtils.PostgreSQL
 {
     /// <summary>
-    /// Tools to retrieve data from a database or run stored procedures
+    /// Tools to retrieve data from a database or call procedures
     /// </summary>
     internal class PostgresDBTools : DBToolsBase, IDBTools
     {
@@ -23,7 +23,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         private string mConnStr;
 
         /// <summary>
-        /// Timeout length, in seconds, when waiting for a query or stored procedure to finish running
+        /// Timeout length, in seconds, when waiting for a query or procedure to finish running
         /// </summary>
         private int mTimeoutSeconds;
 
@@ -269,7 +269,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             OnDebugEvent("GetQueryScalar: " + sqlCmd.CommandText);
                         }
 
-                        // PostgresSQL requires a transaction when calling stored procedures that return result sets.
+                        // PostgresSQL requires a transaction when calling procedures that return result sets.
                         // Without the transaction, the cursor is closed before we can read any data.
                         using var transaction = dbConnection.BeginTransaction();
 
@@ -598,7 +598,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             OnDebugEvent("GetQueryResults: " + cmd.CommandText);
                         }
 
-                        // PostgresSQL requires a transaction when calling stored procedures that return result sets.
+                        // PostgresSQL requires a transaction when calling procedures that return result sets.
                         // Without the transaction, the cursor is closed before we can read any data.
                         using var transaction = dbConnection.BeginTransaction();
 
@@ -673,11 +673,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for calling a procedure if a data table is to be returned
         /// </summary>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
+        /// <param name="spCmd">SQL command object containing procedure params</param>
         /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
-        /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="retryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         private int ExecuteSPData(
@@ -734,7 +734,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 OnDebugEvent("ExecuteSPData: " + sqlCmd.CommandText);
                             }
 
-                            // PostgresSQL requires a transaction when calling stored procedures that return result sets.
+                            // PostgresSQL requires a transaction when calling procedures that return result sets.
                             // Without the transaction, the cursor is closed before we can read any data.
                             using var transaction = dbConnection.BeginTransaction();
 
@@ -843,11 +843,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for calling a procedure if a data table is to be returned
         /// </summary>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
+        /// <param name="spCmd">SQL command object containing procedure params</param>
         /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
-        /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="retryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
@@ -898,11 +898,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for calling a procedure if a data table is to be returned
         /// </summary>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
+        /// <param name="spCmd">SQL command object containing procedure params</param>
         /// <param name="results">If SP successful, contains results as a DataTable</param>
-        /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="retryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         public int ExecuteSPDataTable(
@@ -923,11 +923,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for calling a procedure if a data table is to be returned
         /// </summary>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
+        /// <param name="spCmd">SQL command object containing procedure params</param>
         /// <param name="results">If SP successful, contains results as a DataSet</param>
-        /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="retryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         public int ExecuteSPDataSet(
@@ -948,10 +948,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure, assuming no data table is returned
+        /// Method for calling a procedure, assuming no data table is returned
         /// </summary>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="spCmd">SQL command object containing procedure params</param>
+        /// <param name="maxRetryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         public int ExecuteSP(DbCommand spCmd, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
@@ -960,12 +960,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure when a data table is not returned
+        /// Method for calling a procedure when a data table is not returned
         /// </summary>
         /// <remarks>No logging is performed by this procedure</remarks>
-        /// <param name="spCmd">SQL command object containing stored procedure params</param>
+        /// <param name="spCmd">SQL command object containing procedure params</param>
         /// <param name="errorMessage">Error message (output)</param>
-        /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
+        /// <param name="maxRetryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
         public int ExecuteSP(DbCommand spCmd, out string errorMessage, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
@@ -1039,7 +1039,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     catch (Exception ex)
                     {
                         retryCount--;
-                        errorMessage = "Exception calling stored procedure " + sqlCmd.CommandText + ": " + ex.Message;
+                        errorMessage = "Exception calling procedure " + sqlCmd.CommandText + ": " + ex.Message;
                         errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
                         errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
 
@@ -1270,7 +1270,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Examine the exception message to determine whether it is safe to rerun a failed query or failed stored procedure execution
+        /// Examine the exception message to determine whether it is safe to rerun a failed query or failed procedure execution
         /// </summary>
         /// <param name="ex">Exception</param>
         /// <returns>True if the same error will happen again, so a retry is pointless</returns>
@@ -1316,7 +1316,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="spCmd"></param>
         private static void UpdateSqlServerParameterValues(NpgsqlCommand spCmd)
         {
-            // When sending an enum to a PostgreSQL stored procedure (aka function), if you don't cast to an integer, you get this error:
+            // When sending an enum to a PostgreSQL function or procedure, if you don't cast to an integer, you get this error:
             // Can't write CLR type Namespace.ClassName+EnumName with handler type Int32Handler
             // The following checks for this
             foreach (NpgsqlParameter parameter in spCmd.Parameters)
