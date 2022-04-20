@@ -148,7 +148,7 @@ namespace PRISM.Logging
         {
             try
             {
-                if (mMessageQueue.IsEmpty)
+                if (mMessageQueue.IsEmpty || !HasConnectionInfo)
                     return;
 
                 ShowTrace(string.Format("SQLServerDatabaseLogger connecting to {0}", ConnectionString));
@@ -188,7 +188,7 @@ namespace PRISM.Logging
                             MostRecentErrorMessage = logMessage.Message;
                         }
 
-                        if (string.IsNullOrWhiteSpace(ConnectionString) || string.IsNullOrWhiteSpace(StoredProcedureName) || logMessageParam == null)
+                        if (logMessageParam == null)
                             continue;
 
                         logTypeParam.Value = LogLevelToString(logMessage.LogLevel);

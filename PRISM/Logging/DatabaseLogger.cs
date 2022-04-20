@@ -34,6 +34,11 @@ namespace PRISM.Logging
         public bool EchoMessagesToFileLogger { get; set; } = true;
 
         /// <summary>
+        /// True if the connection string and stored procedure name are defined
+        /// </summary>
+        public static bool HasConnectionInfo => !string.IsNullOrWhiteSpace(ConnectionString) && !string.IsNullOrWhiteSpace(LoggingProcedure.ProcedureName);
+
+        /// <summary>
         /// When true, log type will be changed from all caps to InitialCaps (e.g. INFO to Info)
         /// </summary>
         public static bool InitialCapsLogTypes { get; set; } = true;
