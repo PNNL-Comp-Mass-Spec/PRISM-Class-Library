@@ -552,7 +552,7 @@ namespace PRISMTest
             Console.WriteLine("Selecting recent rows from t_log_entries");
             Console.WriteLine();
 
-            var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '10 seconds'");
+            var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '20 seconds'");
 
             var success = dbTools.GetQueryResults(spSelectCmd, out var queryResults, 1);
 
@@ -622,7 +622,7 @@ namespace PRISMTest
             Console.WriteLine("Selecting recent rows from t_log_entries");
             Console.WriteLine();
 
-            var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '10 seconds'");
+            var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '20 seconds'");
 
             var querySuccess = dbTools.GetQueryResults(spSelectCmd, out var queryResults, 1);
 
