@@ -51,6 +51,7 @@
     <Compile Include="DBUtilsConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="IDBTools.cs" />
+    <Compile Include="Logging\PostgresDatabaseLogger.cs" />
     <Compile Include="MSSQLServer\SQLServerDBTools.cs" />
     <Compile Include="PostgreSQL\PostgresDBTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
