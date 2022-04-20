@@ -176,6 +176,9 @@ namespace PRISM.Logging
         /// </summary>
         public static void FlushPendingMessages()
         {
+            // Flush the database messages first so that if an error occurs, it will be logged by the file logger
+            mDbLogger.FlushPendingMessages();
+
             FileLogger.FlushPendingMessages();
         }
 
