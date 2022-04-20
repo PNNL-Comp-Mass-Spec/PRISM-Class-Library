@@ -8,13 +8,25 @@ using JetBrains.Annotations;
 namespace PRISM.Logging
 {
     /// <summary>
-    /// Class for handling logging via the FileLogger and DatabaseLogger
+    /// Class for handling logging via the FileLogger and
+    /// a class derived from DatabaseLogger:
+    ///   SqlServerDatabaseLogger,
+    ///   ODBCDatabaseLogger, or
+    ///   PostgresDatabaseLogger (defined in PRISM-DatabaseUtils, https://www.nuget.org/packages/PRISM-DatabaseUtils/)
     /// </summary>
     /// <remarks>
+    /// <para>
     /// Call method CreateFileLogger to define the log file name
-    /// Call method CreateDbLogger to define the database connection info
-    /// Log files have date-based names, for example DataProcessor_01-02-2020.txt
-    /// If you want year-month-day based names, update your class to inherit ProcessFilesBase or ProcessDirectoriesBase
+    /// </para>
+    /// <para>
+    /// Call method CreateDbLogger or SetDbLogger to define the database connection info
+    /// </para>
+    /// <para>
+    /// Log files have date-based names, for example DataProcessor_2020-08-02.txt
+    /// </para>
+    /// </remarks>
+    /// <remarks>
+    /// Warnings and errors are logged to the database if parameter logToDatabase is set to true when the log method is called
     /// </remarks>
     public static class LogTools
     {
@@ -44,7 +56,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Database logger
         /// </summary>
-        private static readonly DatabaseLogger mDbLogger = new SQLServerDatabaseLogger();
+        private static DatabaseLogger mDbLogger;
 
         /// <summary>
         /// File path for the current log file used by the FileLogger
@@ -129,8 +141,9 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Configures the database logger
+        /// Configures the database logger using a SQL Server style connection string
         /// </summary>
+        /// <remarks>For PostgreSQL databases, use SetDbLogger</remarks>
         /// <param name="connectionString">System.Data.SqlClient style connection string</param>
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
@@ -140,8 +153,9 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Configures the database logger
+        /// Configures the database logger using a SQL Server style connection string
         /// </summary>
+        /// <remarks>For PostgreSQL databases, use SetDbLogger</remarks>
         /// <param name="connectionString">System.Data.SqlClient style connection string</param>
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="logLevel">Log threshold level</param>
@@ -152,13 +166,37 @@ namespace PRISM.Logging
             BaseLogger.LogLevels logLevel = BaseLogger.LogLevels.INFO,
             bool traceMode = false)
         {
+            if (mDbLogger is not SQLServerDatabaseLogger)
+            {
+                mDbLogger = new SQLServerDatabaseLogger();
+            }
+
+            mDbLogger.ChangeConnectionInfo(moduleName, connectionString, "post_log_entry", "type", "message", "postedBy");
+
+            SetDbLogger(mDbLogger, logLevel, traceMode);
+        }
+
+        /// <summary>
+        /// Sets the databases logger
+        /// </summary>
+        /// <param name="dbLogger">Instance of DatabaseLogger</param>
+        /// <param name="logLevel"></param>
+        /// <param name="traceMode"></param>
+        public static void SetDbLogger(
+            DatabaseLogger dbLogger,
+            BaseLogger.LogLevels logLevel = BaseLogger.LogLevels.INFO,
+            bool traceMode = false)
+        {
             if (traceMode && !BaseLogger.TraceMode)
                 BaseLogger.TraceMode = true;
 
+            mDbLogger = dbLogger;
+
+            if (mDbLogger == null)
+                return;
+
             mDbLogger.EchoMessagesToFileLogger = true;
             mDbLogger.LogLevel = logLevel;
-
-            mDbLogger.ChangeConnectionInfo(moduleName, connectionString, "post_log_entry", "type", "message", "postedBy");
         }
 
         /// <summary>
@@ -395,7 +433,7 @@ namespace PRISM.Logging
         /// </summary>
         public static void RemoveDefaultDbLogger()
         {
-            mDbLogger.RemoveConnectionInfo();
+            mDbLogger?.RemoveConnectionInfo();
         }
 
         /// <summary>
@@ -467,17 +505,32 @@ namespace PRISM.Logging
             BaseLogger myLogger;
 
             // Establish which logger will be used
-            switch (loggerType)
+            if (loggerType == LoggerTypes.LogDb)
             {
-                case LoggerTypes.LogDb:
-                    // Note that the Database logger will (by default) also echo messages to the file logger
+                // ReSharper disable once MergeIntoNegatedPattern
+                if (mDbLogger == null || !DatabaseLogger.HasConnectionInfo)
+                {
+                    ConsoleMsgUtils.ShowWarning("Database logger is not configured; using the file logger");
+                    myLogger = mFileLogger;
+                }
+                else
+                {
                     myLogger = mDbLogger;
+                }
+            }
+            else
+            {
+                myLogger = mFileLogger;
+            }
+
+            switch (myLogger)
+            {
+                case DatabaseLogger:
+                    // Note that the Database logger will (by default) also echo messages to the file logger
                     message = System.Net.Dns.GetHostName() + ": " + message;
                     break;
 
-                case LoggerTypes.LogFile:
-                    myLogger = mFileLogger;
-
+                case FileLogger:
                     if (!string.IsNullOrWhiteSpace(FileLogger.LogFilePath) &&
                         !FileLogger.LogFilePath.Contains(Path.DirectorySeparatorChar.ToString()))
                     {
