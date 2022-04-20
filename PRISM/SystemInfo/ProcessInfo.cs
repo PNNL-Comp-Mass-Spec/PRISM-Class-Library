@@ -173,7 +173,7 @@ namespace PRISM
             foreach (var item in ArgumentList)
             {
                 i++;
-                var spacer = i < 10 ? " " : "";
+                var spacer = i < 10 ? " " : string.Empty;
                 description.AppendLine(string.Format("Arg{0}:   {1}{2}", i, spacer, item));
             }
 

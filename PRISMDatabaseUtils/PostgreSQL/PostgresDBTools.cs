@@ -741,7 +741,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             sqlCmd.Connection = dbConnection;
 
                             // Multiple cursors not supported
-                            var cursorName = "";
+                            var cursorName = string.Empty;
                             using (var reader = sqlCmd.ExecuteReader())
                             {
                                 while (reader.Read())

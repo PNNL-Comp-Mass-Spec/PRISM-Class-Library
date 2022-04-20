@@ -74,7 +74,7 @@ namespace PRISM.Logging
         /// </summary>
         /// <remarks>No database logging will occur until ChangeConnectionInfo is called (to define the connection string)</remarks>
         /// <param name="logLevel">Log threshold level</param>
-        public SQLServerDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this("", "", logLevel)
+        public SQLServerDatabaseLogger(LogLevels logLevel = LogLevels.INFO) : this(string.Empty, string.Empty, logLevel)
         {
         }
 
@@ -269,7 +269,7 @@ namespace PRISM.Logging
         /// </summary>
         public override void RemoveConnectionInfo()
         {
-            ChangeConnectionInfo(ModuleName, "", "", "", "", "");
+            ChangeConnectionInfo(ModuleName, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>

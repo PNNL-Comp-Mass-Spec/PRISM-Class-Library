@@ -365,7 +365,7 @@ namespace PRISM
                     Regex.IsMatch(directoryPath, @"^[a-z]:\\?$"))
                 {
                     directoryName = string.Empty;
-                    return "";
+                    return string.Empty;
                 }
             }
             else
@@ -374,7 +374,7 @@ namespace PRISM
                 if (directoryPath == "/")
                 {
                     directoryName = string.Empty;
-                    return "";
+                    return string.Empty;
                 }
             }
 
@@ -397,7 +397,7 @@ namespace PRISM
             if (pathParts.Length == 1)
             {
                 directoryName = pathParts[0];
-                return rootedLinuxPath ? "/" : "";
+                return rootedLinuxPath ? "/" : string.Empty;
             }
 
             directoryName = pathParts[pathParts.Length - 1];

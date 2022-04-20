@@ -763,7 +763,7 @@ namespace PRISM.Logging
                 if (pendingRenames.Count == 0)
                     return;
 
-                var pluralSuffix = pendingRenames.Count == 1 ? "" : "s";
+                var pluralSuffix = pendingRenames.Count == 1 ? string.Empty : "s";
 
                 ShowTrace(string.Format("Renaming {0} old log file{1} in {2}", pendingRenames.Count, pluralSuffix, currentLogFile.DirectoryName));
 

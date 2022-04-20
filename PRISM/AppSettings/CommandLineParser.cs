@@ -1116,7 +1116,7 @@ namespace PRISM
                     var obj = prop.Key.GetValue(Results.ParsedResults);
                     if (obj == null)
                     {
-                        lines.Add(string.Format("{0}{1}={2}", prefix, key, ""));
+                        lines.Add(string.Format("{0}{1}={2}", prefix, key, string.Empty));
                     }
                     else
                     {
@@ -1143,7 +1143,7 @@ namespace PRISM
                     }
                     else if (value?.ToString() == "\0")
                     {
-                        value = "";
+                        value = string.Empty;
                     }
 
                     lines.Add(string.Format("{0}{1}={2}", prefix, key, value));

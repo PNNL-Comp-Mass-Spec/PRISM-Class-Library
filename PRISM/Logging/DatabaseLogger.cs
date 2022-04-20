@@ -88,7 +88,7 @@ namespace PRISM.Logging
             // System.Runtime.InteropServices.RuntimeInformation is not available with .NET 4.6.2
             if (!System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
             {
-                return "";
+                return string.Empty;
             }
 #endif
                 return WindowsIdentity.GetCurrent().Name;
