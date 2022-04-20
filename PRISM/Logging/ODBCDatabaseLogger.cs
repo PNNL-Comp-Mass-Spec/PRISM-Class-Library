@@ -266,7 +266,8 @@ namespace PRISM.Logging
                 odbcConnectionParts.Add("Trusted_Connection=yes");
             }
 
-            var odbcConnectionString = string.Join(";", odbcConnectionParts) + ";";
+            return string.Join(";", odbcConnectionParts) + ";";
+        }
 
         /// <summary>
         /// Immediately write out any queued messages (using the current thread)

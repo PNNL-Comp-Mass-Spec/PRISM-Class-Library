@@ -163,8 +163,7 @@ namespace PRISM.Logging
         /// </summary>
         protected static string GetDefaultModuleName()
         {
-            var retVal = MachineName + ":" + UserName;
-            return retVal;
+            return MachineName + ":" + UserName;
         }
 
         /// <summary>

@@ -82,15 +82,15 @@ namespace PRISMDatabaseUtils
 
             if (!supportsSize)
             {
-                var parameter = AddParameter(command, name, dataType, direction);
-                return parameter;
+                // Data type does not support size
+                return AddParameter(command, name, dataType, direction);
             }
 
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
             switch (dataType)
             {
                 case SqlType.Char:
-                    var charParameter = AddParameter(command, name, dataType, size, string.Empty, direction);
-                    return charParameter;
+                    return AddParameter(command, name, dataType, size, string.Empty, direction);
 
                 default:
                     // Includes:
@@ -100,8 +100,9 @@ namespace PRISMDatabaseUtils
                     //   SqlType.DateTime
                     //   SqlType.TimestampTz
 
-                    var parameterWithNull = AddParameter(command, name, dataType, size, null, direction);
-                    return parameterWithNull;
+                    // Data type supports size
+                    // Use null for the default value
+                    return AddParameter(command, name, dataType, size, null, direction);
             }
         }
 
