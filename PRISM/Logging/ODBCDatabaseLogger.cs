@@ -35,11 +35,6 @@ namespace PRISM.Logging
         private static string mModuleName;
 
         /// <summary>
-        /// ODBC style connection string
-        /// </summary>
-        public static string ConnectionString { get; private set; }
-
-        /// <summary>
         /// Program name to pass to the PostedBy field when contacting the database
         /// </summary>
         /// <remarks>Will be auto-defined in LogQueuedMessages if blank</remarks>

@@ -24,6 +24,11 @@ namespace PRISM.Logging
         private LogLevels mLogThresholdLevel;
 
         /// <summary>
+        /// Database connection string
+        /// </summary>
+        public static string ConnectionString { get; protected set; }
+
+        /// <summary>
         /// When true, also send any messages to the file logger
         /// </summary>
         public bool EchoMessagesToFileLogger { get; set; } = true;
