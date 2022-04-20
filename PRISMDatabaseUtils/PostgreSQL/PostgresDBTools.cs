@@ -787,8 +787,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex) ||
-                            ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
+                        if (IsFatalException(ex))
                         {
                             retryCount = 0;
                         }
@@ -1046,8 +1045,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex) ||
-                            ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
+                        if (IsFatalException(ex))
                         {
                             break;
                         }
@@ -1279,6 +1277,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         protected static bool IsFatalException(Exception ex)
         {
             return
+                ex.Message.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("open data reader exists for this command", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 ex.Message.IndexOf("permission denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0;
         }
