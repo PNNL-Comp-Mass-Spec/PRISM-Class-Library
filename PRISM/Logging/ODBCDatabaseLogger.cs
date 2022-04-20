@@ -56,6 +56,13 @@ namespace PRISM.Logging
             set => mModuleName = value;
         }
 
+        // ReSharper disable once UnusedMember.Global
+
+        /// <summary>
+        /// Stored procedure used to store log messages
+        /// </summary>
+        public static string StoredProcedureName => LoggingProcedure?.ProcedureName;
+
         /// <summary>
         /// Constructor when the connection info is unknown
         /// </summary>
