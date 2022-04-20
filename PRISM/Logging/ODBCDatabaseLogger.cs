@@ -109,7 +109,27 @@ namespace PRISM.Logging
         /// (will be auto-defined later if blank)
         /// </param>
         /// <param name="connectionString">ODBC-style connection string</param>
-        /// <param name="storedProcedure">Stored procedure to call</param>
+        public override void ChangeConnectionInfo(
+            string moduleName,
+            string connectionString)
+        {
+            ChangeConnectionInfo(
+                moduleName, connectionString,
+                DEFAULT_STORED_PROCEDURE_NAME,
+                DEFAULT_PARAM_NAME_LOG_TYPE,
+                DEFAULT_PARAM_NAME_MESSAGE,
+                DEFAULT_PARAM_NAME_POSTED_BY);
+        }
+
+        /// <summary>
+        /// Update the database connection info
+        /// </summary>
+        /// <param name="moduleName">
+        /// Program name to pass to the postedByParamName field when contacting the database
+        /// (will be auto-defined later if blank)
+        /// </param>
+        /// <param name="connectionString">ODBC-style connection string</param>
+        /// <param name="storedProcedure">Stored procedure used to store the log message</param>
         /// <param name="logTypeParamName">LogType parameter name</param>
         /// <param name="messageParamName">Message parameter name</param>
         /// <param name="postedByParamName">Log source parameter name</param>

@@ -115,7 +115,17 @@ namespace PRISM.Logging
         /// </summary>
         /// <remarks>Will append today's date to the base name</remarks>
         /// <param name="moduleName">Program name to be sent to the PostedBy field when contacting the database</param>
-        /// <param name="connectionString">ODBC-style connection string</param>
+        /// <param name="connectionString">Database connection string</param>
+        public abstract void ChangeConnectionInfo(
+            string moduleName,
+            string connectionString);
+
+        /// <summary>
+        /// Update the database connection info
+        /// </summary>
+        /// <remarks>Will append today's date to the base name</remarks>
+        /// <param name="moduleName">Program name to be sent to the PostedBy field when contacting the database</param>
+        /// <param name="connectionString">Database connection string</param>
         /// <param name="storedProcedure">Stored procedure to call</param>
         /// <param name="logTypeParamName">LogType parameter name</param>
         /// <param name="messageParamName">Message parameter name</param>
