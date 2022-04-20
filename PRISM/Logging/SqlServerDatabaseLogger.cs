@@ -153,10 +153,33 @@ namespace PRISM.Logging
                 logTypeParamSize, messageParamSize, postedByParamSize);
         }
 
+        /// <summary>
+        /// Immediately write out any queued messages (using the current thread)
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// There is no need to call this method if you create an instance of this class
+        /// </para>
+        /// <para>
+        /// On the other hand, if you only call static methods in this class, call this method
+        /// before ending the program to assure that all messages have been logged
+        /// </para>
+        /// </remarks>
+        public override void FlushPendingMessages()
+        {
+            // Maximum time, in seconds, to continue to call StartLogQueuedMessages while the message queue is not empty
+            const int MAX_TIME_SECONDS = 5;
 
-            LogTypeParamSize = logTypeParamSize;
-            MessageParamSize = messageParamSize;
-            PostedByParamSize = postedByParamSize;
+            var startTime = DateTime.UtcNow;
+            while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < MAX_TIME_SECONDS)
+            {
+                StartLogQueuedMessages();
+
+                if (mMessageQueue.IsEmpty)
+                    break;
+
+                ProgRunner.SleepMilliseconds(10);
+            }
         }
 
         /// <summary>

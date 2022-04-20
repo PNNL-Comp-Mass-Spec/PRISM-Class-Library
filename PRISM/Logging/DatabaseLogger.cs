@@ -145,6 +145,20 @@ namespace PRISM.Logging
             int postedByParamSize = 128);
 
         /// <summary>
+        /// Immediately write out any queued messages (using the current thread)
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// There is no need to call this method if you create an instance of this class
+        /// </para>
+        /// <para>
+        /// On the other hand, if you only call static methods in this class, call this method
+        /// before ending the program to assure that all messages have been logged
+        /// </para>
+        /// </remarks>
+        public abstract void FlushPendingMessages();
+
+        /// <summary>
         /// Construct the string MachineName:UserName
         /// </summary>
         protected static string GetDefaultModuleName()
