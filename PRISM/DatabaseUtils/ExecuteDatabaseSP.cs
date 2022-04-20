@@ -232,7 +232,7 @@ namespace PRISM
                     OnErrorEvent(errorMessage);
                     Console.WriteLine(errorMessage);
 
-                    if (ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
+                    if (ex.Message.StartsWith("Could not find stored procedure"))
                     {
                         retryCount = 0;
                     }
@@ -401,7 +401,7 @@ namespace PRISM
 
                     OnErrorEvent(errorMessage);
 
-                    if (ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
+                    if (ex.Message.StartsWith("Could not find stored procedure"))
                     {
                         break;
                     }

@@ -391,7 +391,7 @@ namespace PRISM.Logging
                                 else
                                     FileLogger.WriteLog(LogLevels.WARN, errorMessage);
 
-                                if (!ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
+                                if (!ex.Message.StartsWith("Could not find stored procedure"))
                                 {
                                     // Try again
                                 }

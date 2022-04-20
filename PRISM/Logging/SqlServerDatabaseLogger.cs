@@ -220,6 +220,8 @@ namespace PRISM.Logging
                     spCmd.Connection = sqlConnection;
                     spCmd.CommandTimeout = TIMEOUT_SECONDS;
 
+                    var fatalError = false;
+
                     while (!mMessageQueue.IsEmpty)
                     {
                         if (!mMessageQueue.TryDequeue(out var logMessage))
@@ -264,21 +266,23 @@ namespace PRISM.Logging
                                                    "; resultCode = " + returnValue + "; Retry count = " + retryCount + "; " +
                                                    StackTraceFormatter.GetExceptionStackTrace(ex);
 
+                                ConsoleMsgUtils.ShowWarning(errorMessage);
+
                                 if (retryCount == 0)
                                     FileLogger.WriteLog(LogLevels.ERROR, errorMessage);
                                 else
                                     FileLogger.WriteLog(LogLevels.WARN, errorMessage);
 
-                                if (!ex.Message.StartsWith("Could not find stored procedure " + spCmd.CommandText))
+                                if (ex.Message.StartsWith("Could not find stored procedure"))
                                 {
-                                    // Try again
-                                }
-                                else
-                                {
+                                    fatalError = true;
                                     break;
                                 }
                             }
                         }
+
+                        if (fatalError)
+                            break;
                     }
                 }
 

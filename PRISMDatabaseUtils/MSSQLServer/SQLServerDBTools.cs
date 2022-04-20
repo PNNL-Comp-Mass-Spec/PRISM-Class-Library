@@ -785,8 +785,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex) ||
-                            ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
+                        if (IsFatalException(ex) || ex.Message.StartsWith("Could not find stored procedure"))
                         {
                             retryCount = 0;
                         }
@@ -1043,8 +1042,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex) ||
-                            ex.Message.StartsWith("Could not find stored procedure " + sqlCmd.CommandText))
+                        if (IsFatalException(ex) || ex.Message.StartsWith("Could not find stored procedure"))
                         {
                             break;
                         }
