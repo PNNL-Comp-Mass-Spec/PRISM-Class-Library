@@ -17,7 +17,7 @@ PRISMWin.dll is available on NuGet at:
 
 ### Continuous Integration
 
-The latest versions of the DLLs are available for six months on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library/build/artifacts)
+The latest versions of the DLLs are available for one month on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library/build/artifacts)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/xfpaypc30b8po1je?svg=true)](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library)
 
