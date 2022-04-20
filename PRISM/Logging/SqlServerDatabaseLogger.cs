@@ -13,6 +13,11 @@ namespace PRISM.Logging
     /// <remarks>Can only log to a single database at a time</remarks>
     public sealed class SQLServerDatabaseLogger : DatabaseLogger
     {
+        private const string DEFAULT_STORED_PROCEDURE_NAME = "post_log_entry";
+        private const string DEFAULT_PARAM_NAME_LOG_TYPE = "type";
+        private const string DEFAULT_PARAM_NAME_MESSAGE = "message";
+        private const string DEFAULT_PARAM_NAME_POSTED_BY = "postedBy";
+
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
         private static readonly object mMessageQueueLock = new();
@@ -76,10 +81,10 @@ namespace PRISM.Logging
             string moduleName,
             string connectionString,
             LogLevels logLevel = LogLevels.INFO,
-            string storedProcedure = "post_log_entry",
-            string logTypeParamName = "type",
-            string messageParamName = "message",
-            string postedByParamName = "postedBy",
+            string storedProcedure = DEFAULT_STORED_PROCEDURE_NAME,
+            string logTypeParamName = DEFAULT_PARAM_NAME_LOG_TYPE,
+            string messageParamName = DEFAULT_PARAM_NAME_MESSAGE,
+            string postedByParamName = DEFAULT_PARAM_NAME_POSTED_BY,
             int logTypeParamSize = 128,
             int messageParamSize = 4096,
             int postedByParamSize = 128)
