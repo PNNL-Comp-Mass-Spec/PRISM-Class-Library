@@ -73,6 +73,11 @@ namespace PRISM.Logging
         }
 
         /// <summary>
+        /// Information for the procedure used to store log messages in the database
+        /// </summary>
+        public static LogProcedureInfo LoggingProcedure { get; } = new();
+
+        /// <summary>
         /// The module name identifies the logging process
         /// </summary>
         public static string MachineName => System.Net.Dns.GetHostName();

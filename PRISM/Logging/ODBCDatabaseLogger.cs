@@ -57,23 +57,6 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Stored procedure where log messages will be posted
-        /// </summary>
-        public static string StoredProcedureName { get; private set; }
-
-        private static string LogTypeParamName { get; set; }
-
-        private static string MessageParamName { get; set; }
-
-        private static string PostedByParamName { get; set; }
-
-        private static int LogTypeParamSize { get; set; }
-
-        private static int MessageParamSize { get; set; }
-
-        private static int PostedByParamSize { get; set; }
-
-        /// <summary>
         /// Constructor when the connection info is unknown
         /// </summary>
         /// <remarks>No database logging will occur until ChangeConnectionInfo is called (to define the connection string)</remarks>
@@ -147,15 +130,11 @@ namespace PRISM.Logging
             ModuleName = moduleName;
 
             ConnectionString = connectionString;
-            StoredProcedureName = storedProcedure;
 
-            LogTypeParamName = logTypeParamName;
-            MessageParamName = messageParamName;
-            PostedByParamName = postedByParamName;
-
-            LogTypeParamSize = logTypeParamSize;
-            MessageParamSize = messageParamSize;
-            PostedByParamSize = postedByParamSize;
+            LoggingProcedure.UpdateProcedureInfo(
+                storedProcedure,
+                logTypeParamName, messageParamName, postedByParamName,
+                logTypeParamSize, messageParamSize, postedByParamSize);
         }
 
         /// <summary>
@@ -300,7 +279,7 @@ namespace PRISM.Logging
                     // The syntax for calling procedure post_log_entry is
                     // {call post_log_entry (?,?,?)}
 
-                    var spCmdText = "{call " + StoredProcedureName + " (?,?,?)}";
+                    var spCmdText = "{call " + LoggingProcedure.ProcedureName + " (?,?,?)}";
 
                     var spCmd = new OdbcCommand(spCmdText)
                     {
@@ -310,9 +289,9 @@ namespace PRISM.Logging
                     // Not including this parameter because it doesn't get populated when we use ExecuteNonQuery
                     // spCmd.Parameters.Add(new OdbcParameter("@Return", OdbcType.Int)).Direction = ParameterDirection.ReturnValue;
 
-                    var logTypeParam = spCmd.Parameters.Add(new OdbcParameter("@" + LogTypeParamName, OdbcType.VarChar, LogTypeParamSize));
-                    var logMessageParam = spCmd.Parameters.Add(new OdbcParameter("@" + MessageParamName, OdbcType.VarChar, MessageParamSize));
-                    spCmd.Parameters.Add(new OdbcParameter("@" + PostedByParamName, OdbcType.VarChar, PostedByParamSize)).Value = ModuleName;
+                    var logTypeParam = spCmd.Parameters.Add(new OdbcParameter("@" + LoggingProcedure.LogTypeParamName, OdbcType.VarChar, LoggingProcedure.LogTypeParamSize));
+                    var logMessageParam = spCmd.Parameters.Add(new OdbcParameter("@" + LoggingProcedure.MessageParamName, OdbcType.VarChar, LoggingProcedure.MessageParamSize));
+                    spCmd.Parameters.Add(new OdbcParameter("@" + LoggingProcedure.LogSourceParamName, OdbcType.VarChar, LoggingProcedure.LogSourceParamSize)).Value = ModuleName;
 
                     spCmd.Connection = odbcConnection;
                     spCmd.CommandTimeout = TIMEOUT_SECONDS;

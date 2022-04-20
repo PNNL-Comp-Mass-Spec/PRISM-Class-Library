@@ -53,23 +53,6 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Stored procedure where log messages will be posted
-        /// </summary>
-        public static string StoredProcedureName { get; private set; }
-
-        private static string LogTypeParamName { get; set; }
-
-        private static string MessageParamName { get; set; }
-
-        private static string PostedByParamName { get; set; }
-
-        private static int LogTypeParamSize { get; set; }
-
-        private static int MessageParamSize { get; set; }
-
-        private static int PostedByParamSize { get; set; }
-
-        /// <summary>
         /// Constructor when the connection info is unknown
         /// </summary>
         /// <remarks>No database logging will occur until ChangeConnectionInfo is called (to define the connection string)</remarks>
@@ -143,11 +126,13 @@ namespace PRISM.Logging
             ModuleName = moduleName;
 
             ConnectionString = connectionString;
-            StoredProcedureName = storedProcedure;
 
-            LogTypeParamName = logTypeParamName;
-            MessageParamName = messageParamName;
-            PostedByParamName = postedByParamName;
+            LoggingProcedure.UpdateProcedureInfo(
+                storedProcedure,
+                logTypeParamName, messageParamName, postedByParamName,
+                logTypeParamSize, messageParamSize, postedByParamSize);
+        }
+
 
             LogTypeParamSize = logTypeParamSize;
             MessageParamSize = messageParamSize;
@@ -178,16 +163,16 @@ namespace PRISM.Logging
                 {
                     sqlConnection.Open();
 
-                    var spCmd = new SqlCommand(StoredProcedureName)
+                    var spCmd = new SqlCommand(LoggingProcedure.ProcedureName)
                     {
                         CommandType = CommandType.StoredProcedure
                     };
 
                     spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
 
-                    var logTypeParam = spCmd.Parameters.Add(new SqlParameter(LogTypeParamName, SqlDbType.VarChar, LogTypeParamSize));
-                    var logMessageParam = spCmd.Parameters.Add(new SqlParameter(MessageParamName, SqlDbType.VarChar, MessageParamSize));
-                    spCmd.Parameters.Add(new SqlParameter(PostedByParamName, SqlDbType.VarChar, PostedByParamSize)).Value = ModuleName;
+                    var logTypeParam = spCmd.Parameters.Add(new SqlParameter(LoggingProcedure.LogTypeParamName, SqlDbType.VarChar, LoggingProcedure.LogTypeParamSize));
+                    var logMessageParam = spCmd.Parameters.Add(new SqlParameter(LoggingProcedure.MessageParamName, SqlDbType.VarChar, LoggingProcedure.MessageParamSize));
+                    spCmd.Parameters.Add(new SqlParameter(LoggingProcedure.LogSourceParamName, SqlDbType.VarChar, LoggingProcedure.LogSourceParamSize)).Value = ModuleName;
 
                     spCmd.Connection = sqlConnection;
                     spCmd.CommandTimeout = TIMEOUT_SECONDS;
