@@ -245,8 +245,10 @@ namespace PRISM
                 {
                     if (DebugMessagesEnabled)
                     {
-                        var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(startTime).TotalSeconds.ToString("##0.000") +
-                                           " seconds for SP " + spCmd.CommandText;
+                        var debugMessage = string.Format(
+                            "SP execution time: {0:##0.000} seconds for SP {1}",
+                            DateTime.UtcNow.Subtract(startTime).TotalSeconds,
+                            spCmd.CommandText);
 
                         OnDebugEvent(debugMessage);
                     }
@@ -414,7 +416,11 @@ namespace PRISM
                 {
                     if (DebugMessagesEnabled)
                     {
-                        var debugMessage = "SP execution time: " + DateTime.UtcNow.Subtract(startTime).TotalSeconds.ToString("##0.000") + " seconds for SP " + spCmd.CommandText;
+                        var debugMessage = string.Format(
+                            "SP execution time: {0:##0.000} seconds for SP {1}",
+                            DateTime.UtcNow.Subtract(startTime).TotalSeconds,
+                            spCmd.CommandText);
+
                         OnDebugEvent(debugMessage);
                     }
                 }
