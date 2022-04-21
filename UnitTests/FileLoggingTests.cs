@@ -395,7 +395,8 @@ namespace PRISMTest
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
-                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
+                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION,
+                logFileNameBase + "_" + DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -416,7 +417,8 @@ namespace PRISMTest
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
-                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
+                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION,
+                logFileNameBase + "_" + DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", "Test log message", BaseLogger.LogLevels.INFO, 4, 500)]
@@ -476,7 +478,8 @@ namespace PRISMTest
 
             TestStaticLogging(
                 message, entryType, logCount, logDelayMilliseconds,
-                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
+                logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION,
+                logFileNameBase + "_" + DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION);
         }
 
         [TestCase(@"C:\Temp", "TestLogFile", BaseLogger.LogLevels.INFO, BaseLogger.LogLevels.INFO)]
@@ -639,7 +642,8 @@ namespace PRISMTest
             BaseLogger.LogLevels entryType,
             int logCount,
             int logDelayMilliseconds,
-            string expectedLogFileName)
+            string expectedLogFileName,
+            string alternateExpectedName = "")
         {
             var randGenerator = new Random();
 
@@ -657,8 +661,15 @@ namespace PRISMTest
 
             if (!FileLogger.LogFilePath.EndsWith(expectedLogFileName))
             {
-                var errMsg = "Log file name was not in the expected format of " + expectedLogFileName + "; see " + FileLogger.LogFilePath;
-                Assert.Fail(errMsg);
+                if (!string.IsNullOrWhiteSpace(alternateExpectedName) && FileLogger.LogFilePath.EndsWith(alternateExpectedName))
+                {
+                    // Matched the alternate expected name (log file with yesterday's date)
+                }
+                else
+                {
+                    var errMsg = "Log file name was not in the expected format of " + expectedLogFileName + "; see " + FileLogger.LogFilePath;
+                    Assert.Fail(errMsg);
+                }
             }
 
             FileLogger.FlushPendingMessages();
