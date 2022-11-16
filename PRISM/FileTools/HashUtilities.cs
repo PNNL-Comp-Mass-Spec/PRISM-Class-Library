@@ -256,8 +256,9 @@ namespace PRISM
         /// <param name="data"></param>
         /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
         /// <returns>MD5 hash, as a string</returns>
-        private static string ComputeMD5Hash(Stream data, out string base64MD5) {
-            var md5Hasher = new MD5CryptoServiceProvider();
+        private static string ComputeMD5Hash(Stream data, out string base64MD5)
+        {
+            var md5Hasher = MD5.Create();
             var byteArray = ComputeHashGetByteArray(md5Hasher, data);
 
             base64MD5 = Convert.ToBase64String(byteArray);
@@ -273,7 +274,7 @@ namespace PRISM
         /// <returns>SHA-1 hash, as a string</returns>
         private static string ComputeSha1Hash(Stream data)
         {
-            var sha1Hasher = new SHA1CryptoServiceProvider();
+            var sha1Hasher = SHA1.Create();
             return ComputeHash(sha1Hasher, data);
         }
 
