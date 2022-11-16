@@ -646,9 +646,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
         /// <summary>
         /// Convert a "stored procedure" command to work properly with Npgsql
-        /// Npgsql treats <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
+        /// Npgsql 6.0 and earlier treated <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
         /// We instead want to handle "stored procedure" command as CALL procedure_name()
         /// </summary>
+        /// <remarks>
+        /// Npgsql 7.0 changed the behavior of <see cref="CommandType.StoredProcedure"/> to use "CALL", but this method is still valid
+        /// </remarks>
         private static void ConvertStoredProcedureCommand(NpgsqlCommand sqlCmd)
         {
             if (sqlCmd.CommandType != CommandType.StoredProcedure)

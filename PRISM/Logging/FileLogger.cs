@@ -22,6 +22,9 @@ namespace PRISM.Logging
     {
         // Ignore Spelling: prepended, Wildcards, yyyy, yyyy-MM-dd
 
+        /// <summary>
+        /// Archived log files directory name
+        /// </summary>
         public const string ARCHIVED_LOG_FILES_DIRECTORY_NAME = "Archived";
 
         /// <summary>

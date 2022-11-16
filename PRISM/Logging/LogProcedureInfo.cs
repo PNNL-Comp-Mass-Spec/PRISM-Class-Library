@@ -1,5 +1,8 @@
 ﻿namespace PRISM.Logging;
 
+/// <summary>
+/// This class tracks metadata for the procedure used to log messages
+/// </summary>
 public class LogProcedureInfo
 {
     /// <summary>

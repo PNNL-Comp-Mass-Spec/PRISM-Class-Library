@@ -29,36 +29,126 @@ namespace PRISM
 
         // ReSharper disable UnusedMember.Global
 
+        /// <summary>
+        /// Resource scope
+        /// </summary>
         public enum ResourceScope
         {
+            /// <summary>
+            /// Connected
+            /// </summary>
             Connected = 1,
+
+            /// <summary>
+            /// Global network
+            /// </summary>
             GlobalNetwork,
+
+            /// <summary>
+            /// Remembered
+            /// </summary>
             Remembered,
+
+            /// <summary>
+            /// Recent
+            /// </summary>
             Recent,
+
+            /// <summary>
+            /// Context
+            /// </summary>
             Context
         }
 
+        /// <summary>
+        /// Resource type
+        /// </summary>
         public enum ResourceType
         {
+            /// <summary>
+            /// Any
+            /// </summary>
             Any = 0,
+
+            /// <summary>
+            /// Disk
+            /// </summary>
             Disk = 1,
+
+            /// <summary>
+            /// Print
+            /// </summary>
             Print = 2,
+
+            /// <summary>
+            /// Reserved
+            /// </summary>
             Reserved = 8
         }
 
+        /// <summary>
+        /// Resource display type
+        /// </summary>
         public enum ResourceDisplayType
         {
+            /// <summary>
+            /// Generic
+            /// </summary>
             Generic = 0x0,
+
+            /// <summary>
+            /// Domain
+            /// </summary>
             Domain = 0x1,
+
+            /// <summary>
+            /// Server
+            /// </summary>
             Server = 0x2,
+
+            /// <summary>
+            /// Share
+            /// </summary>
             Share = 0x3,
+
+            /// <summary>
+            /// File
+            /// </summary>
             File = 0x4,
+
+            /// <summary>
+            /// Group
+            /// </summary>
             Group = 0x5,
+
+            /// <summary>
+            /// Network
+            /// </summary>
             Network = 0x6,
+
+            /// <summary>
+            /// Root
+            /// </summary>
             Root = 0x7,
+
+            /// <summary>
+            /// ShareAdmin
+            /// </summary>
             ShareAdmin = 0x8,
+
+            /// <summary>
+            /// Directory
+            /// </summary>
             Directory = 0x9,
+
+            /// <summary>
+            /// Tree
+            /// </summary>
             Tree = 0xa,
+
+            /// <summary>
+            /// NdsContainer
+            /// </summary>
             NdsContainer = 0xb
         }
 
@@ -67,18 +157,34 @@ namespace PRISM
         /// </summary>
         private struct NetResourceInfo
         {
-#pragma warning disable 169,414
+#pragma warning disable 169,414, CS0649
             // ReSharper disable InconsistentNaming
             public ResourceScope dwScope;
             public ResourceType dwType;
             public ResourceDisplayType dwDisplayType;
             public int dwUsage;
+
+            /// <summary>
+            /// Local name
+            /// </summary>
             public string lpLocalName;
+
+            /// <summary>
+            /// Remote name
+            /// </summary>
             public string lpRemoteName;
+
+            /// <summary>
+            /// Comment
+            /// </summary>
             public string lpComment;
+
+            /// <summary>
+            /// Provider
+            /// </summary>
             public string lpProvider;
             // ReSharper restore InconsistentNaming
-#pragma warning restore 169,414
+#pragma warning restore 169,414, CS0649
         }
 
         // ReSharper restore UnusedMember.Global

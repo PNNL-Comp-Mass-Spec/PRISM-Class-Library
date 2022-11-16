@@ -5,6 +5,9 @@ using PRISM.Logging;
 
 namespace PRISMDatabaseUtils.Logging;
 
+/// <summary>
+/// This class initializes the database logger in static class PRISM.Logging.LogTools
+/// </summary>
 public static class DbConfig
 {
     // Ignore Spelling: Postgres
