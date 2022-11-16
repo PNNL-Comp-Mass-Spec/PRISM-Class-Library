@@ -344,16 +344,32 @@ namespace PRISMTest
 
             var spCmd = dbTools.CreateCommand(procedureNameWithSchema, CommandType.StoredProcedure);
 
-            dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+            {
+                dbTools.AddParameter(spCmd, "_enable", SqlType.Boolean).Value = true;
+            }
+            else
+            {
+                dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
+            }
+
             dbTools.AddParameter(spCmd, "@ManagerTypeID", SqlType.Int).Value = 11;
             dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar, 4000).Value = "Pub-12-1, Pub-12-2";
-            dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+            {
+                dbTools.AddParameter(spCmd, "_infoOnly", SqlType.Boolean).Value = true;
+            }
+            else
+            {
+                dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+            }
 
             DbParameter messageParam;
 
             if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
-                dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Int).Value = 0;
+                dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Boolean).Value = false;
                 messageParam = dbTools.AddParameter(spCmd, "_message", SqlType.Text, ParameterDirection.InputOutput);
             }
             else
@@ -371,6 +387,7 @@ namespace PRISMTest
             Console.WriteLine();
             Console.WriteLine("Message: " + messageParam.Value);
             Console.WriteLine("Return:  " + returnParam.Value);
+
             if (!string.IsNullOrWhiteSpace(errorMessage))
             {
                 Console.WriteLine("Error:   " + errorMessage);
@@ -407,16 +424,32 @@ namespace PRISMTest
 
             var spCmd = dbTools.CreateCommand(procedureNameWithSchema, CommandType.StoredProcedure);
 
-            dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+            {
+                dbTools.AddParameter(spCmd, "_enable", SqlType.Boolean).Value = true;
+            }
+            else
+            {
+                dbTools.AddParameter(spCmd, "@Enable", SqlType.Int).Value = 1;
+            }
+
             dbTools.AddParameter(spCmd, "@ManagerTypeID", SqlType.Int).Value = 11;
             dbTools.AddParameter(spCmd, "@managerNameList", SqlType.VarChar, 4000).Value = "Pub-12-1, Pub-12-2";
-            dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+
+            if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+            {
+                dbTools.AddParameter(spCmd, "_infoOnly", SqlType.Boolean).Value = true;
+            }
+            else
+            {
+                dbTools.AddParameter(spCmd, "@infoOnly", SqlType.Int).Value = 1;
+            }
 
             DbParameter messageParam;
 
             if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
-                dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Int).Value = 0;
+                dbTools.AddParameter(spCmd, "_includeDisabled", SqlType.Boolean).Value = false;
                 messageParam = dbTools.AddParameter(spCmd, "_message", SqlType.Text, ParameterDirection.InputOutput);
             }
             else
@@ -434,6 +467,7 @@ namespace PRISMTest
             Console.WriteLine();
             Console.WriteLine("Message: " + messageParam.Value);
             Console.WriteLine("Return:  " + returnParam.Value);
+
             foreach (var row in results)
             {
                 Console.WriteLine(string.Join(", ", row));
@@ -542,7 +576,7 @@ namespace PRISMTest
 
             if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
-                dbTools.AddParameter(spCmd, "@targetSchema", SqlType.Text).Value = "public";
+                dbTools.AddParameter(spCmd, "_targetSchema", SqlType.Text).Value = "public";
             }
 
             dbTools.ExecuteSP(spCmd, 1);
