@@ -330,7 +330,7 @@ namespace PRISMTest
             {
                 if (tableName.Equals("T_Event_Log", StringComparison.OrdinalIgnoreCase))
                 {
-                    columnNames.Add("[Index]");
+                    columnNames.Add("Event_ID");
                     columnNames.Add("LookupQ.Target_Type");
                     columnNames.Add("LookupQ.Target_ID");
                     columnNames.Add("Target_State");
@@ -911,11 +911,11 @@ namespace PRISMTest
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
             "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
-            "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]';",
+            "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]' order by mgr_name;",
             4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
         [TestCase(
             "DbServerType=Postgres;Server=prismdb1;Username=dmsreader;Database=dms",
-            "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]';",
+            "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]' order by mgr_name;",
             4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
         [Category("PNL_Domain")]
         [Category("DatabaseIntegrated")]
