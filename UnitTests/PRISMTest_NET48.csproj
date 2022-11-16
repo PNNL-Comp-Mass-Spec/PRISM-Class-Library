@@ -8,9 +8,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PRISMTest</RootNamespace>
     <AssemblyName>PRISMTest</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <IntermediateOutputPath>$(SolutionDir)\obj\NET472\$(Configuration)\</IntermediateOutputPath>
+    <IntermediateOutputPath>$(SolutionDir)\obj\NET48\$(Configuration)\</IntermediateOutputPath>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <LangVersion>latest</LangVersion>
     <TargetFrameworkProfile />
@@ -79,17 +79,17 @@
     <Compile Include="XMLSettingsFileTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils_NET472.csproj">
+    <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils_NET48.csproj">
       <Project>{4ba5028d-0c04-4c32-9e4f-9ecb64548eac}</Project>
-      <Name>PRISMDatabaseUtils_NET472</Name>
+      <Name>PRISMDatabaseUtils_NET48</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PRISMWin\PRISMWin_NET472.csproj">
+    <ProjectReference Include="..\PRISMWin\PRISMWin_NET48.csproj">
       <Project>{0cadd6f6-5dc3-4779-babe-a70d25b724f6}</Project>
-      <Name>PRISMWin_NET472</Name>
+      <Name>PRISMWin_NET48</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PRISM\PRISM_NET472.csproj">
+    <ProjectReference Include="..\PRISM\PRISM_NET48.csproj">
       <Project>{c37995a7-258d-4b76-9703-aff6c4c32c8c}</Project>
-      <Name>PRISM_NET472</Name>
+      <Name>PRISM_NET48</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

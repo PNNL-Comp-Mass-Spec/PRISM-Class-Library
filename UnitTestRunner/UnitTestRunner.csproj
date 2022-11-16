@@ -51,17 +51,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils_NET472.csproj">
+    <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils_NET48.csproj">
       <Project>{4ba5028d-0c04-4c32-9e4f-9ecb64548eac}</Project>
-      <Name>PRISMDatabaseUtils_NET472</Name>
+      <Name>PRISMDatabaseUtils_NET48</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PRISM\PRISM_NET472.csproj">
+    <ProjectReference Include="..\PRISM\PRISM_NET48.csproj">
       <Project>{c37995a7-258d-4b76-9703-aff6c4c32c8c}</Project>
-      <Name>PRISM_NET472</Name>
+      <Name>PRISM_NET48</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UnitTests\PRISMTest_NET472.csproj">
+    <ProjectReference Include="..\UnitTests\PRISMTest_NET48.csproj">
       <Project>{1eb286f2-5e9f-45c8-8493-1bc5d36b9479}</Project>
-      <Name>PRISMTest_NET472</Name>
+      <Name>PRISMTest_NET48</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
