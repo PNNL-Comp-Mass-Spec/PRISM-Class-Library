@@ -247,8 +247,7 @@ namespace PRISM
         private static string ComputeCRC32Hash(Stream data)
         {
             var crc = Crc32.Crc(data);
-            var crcString = string.Format("{0:X8}", crc);
-            return crcString;
+            return string.Format("{0:X8}", crc);
         }
 
         /// <summary>
