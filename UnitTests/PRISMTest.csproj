@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472<!--;net5.0-windows--></TargetFrameworks>
+    <TargetFrameworks>net48<!--;net7.0-windows--></TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -15,11 +15,11 @@
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net5.0-windows'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net6.0-windows' OR '$(TargetFramework)'=='net7.0-windows'">
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net48'">
     <Reference Include="System.IO.Compression" />
   </ItemGroup>
 
@@ -28,7 +28,7 @@
     <ProjectReference Include="..\PRISMDatabaseUtils\PRISMDatabaseUtils.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net5.0-windows'">
+  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net48' OR '$(TargetFramework)'=='net6.0-windows' OR '$(TargetFramework)'=='net7.0-windows'">
     <ProjectReference Include="..\PRISMWin\PRISMWin.csproj" />
   </ItemGroup>
 
