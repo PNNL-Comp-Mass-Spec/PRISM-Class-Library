@@ -15,6 +15,9 @@ PRISM.Dll is available on NuGet at:
 PRISMWin.dll is available on NuGet at:
 * https://www.nuget.org/packages/PRISMWin-Library/
 
+PRISMDatabaseUtils.dll is available on NuGet at:
+* https://www.nuget.org/packages/PRISM-DatabaseUtils/
+
 ### Continuous Integration
 
 The latest versions of the DLLs are available for one month on the [AppVeyor CI server](https://ci.appveyor.com/project/PNNLCompMassSpec/prism-class-library/build/artifacts)
