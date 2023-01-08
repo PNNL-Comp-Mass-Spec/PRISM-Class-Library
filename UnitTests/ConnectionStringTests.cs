@@ -328,10 +328,11 @@ namespace PRISMTest
             var dbConnection = new NpgsqlConnection(connectionString);
             dbConnection.Open();
 
-            var sqlCmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text };
-            sqlCmd.Connection = dbConnection;
-
-            return sqlCmd;
+            return new NpgsqlCommand(sqlQuery)
+            {
+                CommandType = CommandType.Text,
+                Connection = dbConnection
+            };
         }
 
         private DbCommand GetSqlServerDbCommand(string connectionString, string sqlQuery)
@@ -339,11 +340,11 @@ namespace PRISMTest
             var dbConnection = new SqlConnection(connectionString);
             dbConnection.Open();
 
-            var sqlCmd = new SqlCommand(sqlQuery) { CommandType = CommandType.Text };
-
-            sqlCmd.Connection = dbConnection;
-
-            return sqlCmd;
+            return  new SqlCommand(sqlQuery)
+            {
+                CommandType = CommandType.Text,
+                Connection = dbConnection
+            };
         }
     }
 }
