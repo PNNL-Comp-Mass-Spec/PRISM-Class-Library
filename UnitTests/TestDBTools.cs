@@ -878,7 +878,7 @@ namespace PRISMTest
         [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
         [TestCase("Gigasax", "DMS5",
-            "SELECT [Num C], [Num H], [Num N], [Num O], [Num S] FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
+            "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
         [Category("DatabaseIntegrated")]
         public void TestQueryTableIntegrated(string server, string database, string query, int expectedRowCount, string expectedValueList)
@@ -889,7 +889,7 @@ namespace PRISMTest
         [TestCase("Gigasax", "DMS5",
             "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
         [TestCase("Gigasax", "DMS5",
-            "SELECT [Num C], [Num H], [Num N], [Num O], [Num S] FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
+            "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
         [Category("PNL_Domain")]
         public void TestQueryTableNamedUser(string server, string database, string query, int expectedRowCount, string expectedValueList)
@@ -903,7 +903,7 @@ namespace PRISMTest
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
             "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
-            "SELECT [Num C], [Num H], [Num N], [Num O], [Num S] FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol",
+            "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol",
             2, "6, 12, 2, 1, 0")]
         [TestCase(
             "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
