@@ -13,6 +13,9 @@ namespace PRISM
     /// <summary>
     /// System information for Windows; obtained via P/Invoke
     /// </summary>
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
     public class WindowsSystemInfo : EventNotifier, ISystemInfo
     {
         // Ignore Spelling: hyperthreading, NumaNode, struct, tradeoff, typeof, uint, ull, ushort
@@ -130,6 +133,9 @@ namespace PRISM
     /// <remarks>
     /// Internal to avoid big errors when trying to instantiate
     /// </remarks>
+#if NET5_0_OR_GREATER
+    [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+#endif
     internal class WindowsSystemInfoInternal : EventNotifier, ISystemInfo
     {
         /// <summary>

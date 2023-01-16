@@ -722,7 +722,9 @@ namespace PRISM.FileProcessor
         /// </summary>
         public static Assembly GetEntryOrExecutingAssembly()
         {
-            return Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+            var entry = Assembly.GetEntryAssembly();
+            var executing = Assembly.GetExecutingAssembly();
+            return entry ?? executing;
         }
 
         /// <summary>
