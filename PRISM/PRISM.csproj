@@ -35,13 +35,13 @@
     <None Include="..\appveyor.yml" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='netstandard2.1' OR '$(TargetFramework)'=='net6.0' OR '$(TargetFramework)'=='net7.0'">
+  <ItemGroup Condition="!$(TargetFramework.StartsWith('net4'))">
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <!-- <PackageReference Include="System.Data.Odbc" Version="5.0.0" /> -->
-    <!-- <PackageReference Include="System.Data.SqlClient" Version="4.8.2" /> -->
+    <PackageReference Include="System.Data.Odbc" Version="7.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-    <!-- <PackageReference Include="System.Management" Version="5.0.0" /> -->
+    <PackageReference Include="System.Management" Version="7.0.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
     <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0" />
@@ -51,15 +51,9 @@
     <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)'=='net462' OR '$(TargetFramework)'=='net472' OR '$(TargetFramework)'=='net48'">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4'))">
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Management" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Data.Odbc" Version="7.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="System.Management" Version="7.0.0" />
   </ItemGroup>
 
 </Project>
