@@ -1,0 +1,18 @@
+{ // PRISM
+  "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/main/src/NerdBank.GitVersioning/version.schema.json",
+  "version": "2.8",
+  "assemblyVersion": {
+    "precision": "build"
+  },
+  "pathFilters": [
+    ".", // Consider all committed file changes in the project root folder for version increases (don't include all repository files)
+    ":!AssemblyInfo.cs", // Exclude changes to AssemblyInfo.cs (only used by the debug project)
+    ":!PRISM_NET48.csproj" // Also exclude the debug project file
+  ],
+  "cloudBuild": {
+    "setVersionVariables": true,
+    "buildNumber": {
+      "enabled": false
+    }
+  }
+}
