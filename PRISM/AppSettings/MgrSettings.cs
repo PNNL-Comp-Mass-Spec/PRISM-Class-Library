@@ -28,6 +28,50 @@ namespace PRISM.AppSettings
     public class MgrSettings : EventNotifier
     {
         /// <summary>
+        /// Enum for database schema prefix manager parameters
+        /// </summary>
+        /// <remarks>Settings names are in the format SchemaPrefix.[enum value name], for example SchemaPrefix.DMS</remarks>
+        public enum SchemaPrefix
+        {
+            // ReSharper disable InconsistentNaming
+            /// <summary>
+            /// DMS main database schema prefix
+            /// </summary>
+            DMS,
+
+            /// <summary>
+            /// DMS analysis pipeline database schema prefix
+            /// </summary>
+            DMSPipeline,
+
+            /// <summary>
+            /// DMS data capture pipeline database schema prefix
+            /// </summary>
+            DMSCapture,
+
+            /// <summary>
+            /// DMS data package database schema prefix
+            /// </summary>
+            DMSDataPackage,
+
+            /// <summary>
+            /// DMS manager control database schema prefix
+            /// </summary>
+            ManagerControl,
+
+            /// <summary>
+            /// DMS protein collection/sequences database schema prefix
+            /// </summary>
+            ProteinCollection,
+
+            /// <summary>
+            /// DMS ontology lookup database schema prefix
+            /// </summary>
+            Ontology
+            // ReSharper restore InconsistentNaming
+        }
+
+        /// <summary>
         /// Status message for when the manager is deactivated locally
         /// </summary>
         /// <remarks>Used when MgrActive_Local is False in AppName.exe.config</remarks>
@@ -80,6 +124,11 @@ namespace PRISM.AppSettings
         public Dictionary<string, string> MgrParams { get; }
 
         /// <summary>
+        /// Schema prefix value dictionary. Subset of <see cref="MgrParams"/>
+        /// </summary>
+        public IReadOnlyDictionary<SchemaPrefix, string> SchemaPrefixes => schemaPrefixes;
+
+        /// <summary>
         /// When true, show additional messages at the console
         /// </summary>
         public bool TraceMode { get; set; }
@@ -98,6 +147,8 @@ namespace PRISM.AppSettings
             ParamsLoadedFromDB = false;
             MgrParams = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
+
+        private readonly Dictionary<SchemaPrefix, string> schemaPrefixes = new(7);
 
         /// <summary>
         /// Specifies the full name and path for the application config file
@@ -142,6 +193,8 @@ namespace PRISM.AppSettings
             var appPath = AppUtils.GetAppPath();
             var appFile = new FileInfo(appPath);
             SetParam("ApplicationPath", appFile.DirectoryName);
+
+            LoadSchemaPrefixesFromMgrParams();
 
             // Test the settings retrieved from the config file
             if (!CheckInitialSettings(MgrParams))
@@ -253,6 +306,20 @@ namespace PRISM.AppSettings
 
             // No problems found
             return true;
+        }
+
+        private void LoadSchemaPrefixesFromMgrParams()
+        {
+            schemaPrefixes.Clear();
+            const string settingNameBase = "SchemaPrefix.";
+
+            foreach (var entry in Enum.GetValues(typeof(SchemaPrefix)).Cast<SchemaPrefix>())
+            {
+                var settingName = settingNameBase + entry;
+                // Always add every enum entry to the dictionary.
+                schemaPrefixes.Add(entry,
+                    MgrParams.TryGetValue(settingName, out var value) ? value : string.Empty);
+            }
         }
 
         private static string GetGroupNameFromSettings(IReadOnlyDictionary<string, string> mgrSettings)

@@ -162,6 +162,9 @@ namespace PRISMTest
                 { MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, "True" },
                 { MgrSettings.MGR_PARAM_MGR_NAME, "Proto-4_InstDirScan" },
                 { MgrSettings.MGR_PARAM_USING_DEFAULTS, "False" },
+                { "SchemaPrefix.DMS", "DMS5" },
+                { "SchemaPrefix.DMSPipeline", "DMS_Pipeline" },
+                { "SchemaPrefix.DMSCapture", "DMS_Capture" },
             };
 
             Console.WriteLine("Connecting to database using " + connectionString);
