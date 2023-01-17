@@ -4,7 +4,6 @@
   "assemblyVersion": {
     "precision": "build"
   },
-  "versionHeightOffset": 1,
   "pathFilters": [
     ".", // Consider all committed file changes in the project root folder for version increases (don't include all repository files)
     ":!AssemblyInfo.cs", // Exclude changes to AssemblyInfo.cs (only used by the debug project)

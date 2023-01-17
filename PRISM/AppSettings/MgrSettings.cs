@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using JetBrains.Annotations;
 using PRISM.Logging;
 
 // ReSharper disable UnusedMember.Global
@@ -282,7 +283,7 @@ namespace PRISM.AppSettings
 
             foreach (var configFilePath in configFilePaths)
             {
-                ShowTrace(string.Format("Looking for setting {0} in {1}", settingName, configFilePath));
+                ShowTrace("Looking for setting {0} in {1}", settingName, configFilePath);
 
                 var valueFound = GetXmlConfigFileSetting(configFilePath, settingName, out var configFileExists, out settingValue);
 
@@ -644,6 +645,20 @@ namespace PRISM.AppSettings
                 return;
 
             ShowTraceMessage(message);
+        }
+
+        /// <summary>
+        /// If TraceMode is true, show a message at the console, preceded by a time stamp
+        /// </summary>
+        /// <param name="format">Message format string</param>
+        /// <param name="args">Arguments to use with <paramref name="format" /> string</param>
+        [StringFormatMethod("format")]
+        protected void ShowTrace(string format, params string[] args)
+        {
+            if (!TraceMode)
+                return;
+
+            ShowTraceMessage(string.Format(format, args));
         }
 
         /// <summary>
