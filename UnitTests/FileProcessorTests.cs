@@ -100,7 +100,7 @@ namespace PRISMTest
                 UseLogFilePath = false
             };
 
-            var fileToFind = ProcessFilesOrDirectoriesBase.GetAppPath();
+            var fileToFind = AppUtils.GetAppPath();
 
             fileStatsLogger.ProcessFile(fileToFind);
 
@@ -130,7 +130,7 @@ namespace PRISMTest
                 UseLogFilePath = true
             };
 
-            var fileToFind = ProcessFilesOrDirectoriesBase.GetAppPath();
+            var fileToFind = AppUtils.GetAppPath();
 
             fileStatsLogger.ProcessFile(fileToFind);
 

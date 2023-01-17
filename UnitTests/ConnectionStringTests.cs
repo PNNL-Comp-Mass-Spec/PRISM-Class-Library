@@ -300,7 +300,7 @@ namespace PRISMTest
 
                         if (secondsToStayConnected > 0)
                         {
-                            PRISM.ProgRunner.SleepMilliseconds(250);
+                            PRISM.AppUtils.SleepMilliseconds(250);
                         }
 
                         rowCount++;
@@ -316,7 +316,7 @@ namespace PRISMTest
 
                 while (secondsToStayConnected > 0 && DateTime.UtcNow.Subtract(startTime).TotalSeconds < secondsToStayConnected)
                 {
-                    PRISM.ProgRunner.SleepMilliseconds(250);
+                    PRISM.AppUtils.SleepMilliseconds(250);
                 }
 
                 cmd.Connection.Close();

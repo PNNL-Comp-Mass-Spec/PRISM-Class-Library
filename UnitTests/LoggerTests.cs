@@ -38,7 +38,7 @@ namespace PRISMTest
             for (var i = 0; i < logCount; i++)
             {
                 logger.PostEntry(string.Format(formatString, message, i + 1, logCount), entryType, true);
-                ProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
+                AppUtils.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
             var expectedName = logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy");
@@ -73,7 +73,7 @@ namespace PRISMTest
             for (var i = 0; i < logCount; i++)
             {
                 queueLogger.PostEntry(string.Format(formatString, message, i + 1, logCount), entryType, true);
-                ProgRunner.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
+                AppUtils.SleepMilliseconds(logDelayMilliseconds + randGenerator.Next(0, logDelayMilliseconds / 10));
             }
 
             if (logCount > 5)
@@ -87,7 +87,7 @@ namespace PRISMTest
             }
 
             // Sleep to give the Queue logger time to log the log entries
-            ProgRunner.SleepMilliseconds(4000);
+            AppUtils.SleepMilliseconds(4000);
 
             var expectedName = logFileNameBase + "_" + DateTime.Now.ToString(clsFileLogger.FILENAME_DATE_STAMP);
             if (!logger.CurrentLogFilePath.Contains(expectedName))

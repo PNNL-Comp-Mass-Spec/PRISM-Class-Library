@@ -262,7 +262,7 @@ namespace PRISM
 
                 mLogger?.Debug(msg);
 
-                ProgRunner.SleepMilliseconds(mWaitInterval);
+                AppUtils.SleepMilliseconds(mWaitInterval);
             }
 
             // Check for valid return value after completion

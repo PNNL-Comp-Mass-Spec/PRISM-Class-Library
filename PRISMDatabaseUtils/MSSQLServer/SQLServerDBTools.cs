@@ -203,7 +203,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     OnErrorEvent(errorMessage);
 
                     // Delay for 5 seconds before trying again
-                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
@@ -333,7 +333,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                             break;
 
                         // Delay for 5 seconds before trying again
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
             }
@@ -660,7 +660,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                             break;
 
                         // Delay for 5 seconds before trying again
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
             }
@@ -812,7 +812,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                     if (retryCount > 0)
                     {
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
 
@@ -1068,7 +1068,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                     if (retryCount > 0)
                     {
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
 

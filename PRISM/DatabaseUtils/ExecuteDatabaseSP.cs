@@ -259,7 +259,7 @@ namespace PRISM
 
                 if (retryCount > 0)
                 {
-                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
@@ -427,7 +427,7 @@ namespace PRISM
 
                 if (retryCount > 0)
                 {
-                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 

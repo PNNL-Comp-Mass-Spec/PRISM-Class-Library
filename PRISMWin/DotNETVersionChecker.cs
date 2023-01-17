@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace PRISMWin
 {
     /// <summary>
-    /// This classes examines the registry to determine the newest version of .NET installed
+    /// This classes examines the registry to determine the newest version of .NET Framework installed
     /// </summary>
     public class DotNETVersionChecker
     {

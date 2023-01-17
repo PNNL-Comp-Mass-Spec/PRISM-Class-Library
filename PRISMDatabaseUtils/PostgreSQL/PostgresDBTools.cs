@@ -308,7 +308,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             break;
 
                         // Delay for 5 seconds before trying again
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
             }
@@ -636,7 +636,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             break;
 
                         // Delay for 5 seconds before trying again
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
             }
@@ -817,7 +817,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                     if (retryCount > 0)
                     {
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
 
@@ -1072,7 +1072,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                     if (retryCount > 0)
                     {
-                        ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                     }
                 }
 

@@ -322,12 +322,12 @@ namespace PRISM
                 var remainingSeconds = endTime.Subtract(DateTime.UtcNow).TotalSeconds;
                 if (remainingSeconds > 10)
                 {
-                    ProgRunner.SleepMilliseconds(10000);
+                    AppUtils.SleepMilliseconds(10000);
                 }
                 else
                 {
                     var sleepTimeMsec = (int)Math.Ceiling(remainingSeconds * 1000);
-                    ProgRunner.SleepMilliseconds(sleepTimeMsec);
+                    AppUtils.SleepMilliseconds(sleepTimeMsec);
                 }
             }
         }
@@ -457,7 +457,7 @@ namespace PRISM
             {
                 Console.Write('.');
 
-                ProgRunner.SleepMilliseconds(millisecondsBetweenDots);
+                AppUtils.SleepMilliseconds(millisecondsBetweenDots);
 
                 iteration++;
             } while (iteration < totalIterations);

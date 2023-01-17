@@ -429,62 +429,20 @@ namespace PRISM
         /// <summary>
         /// Force the garbage collector to run, waiting up to 1 second for it to finish
         /// </summary>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void GarbageCollectNow()
         {
-            const int maxWaitTimeMSec = 1000;
-            GarbageCollectNow(maxWaitTimeMSec);
+            AppUtils.GarbageCollectNow();
         }
 
         /// <summary>
         /// Force the garbage collector to run
         /// </summary>
         /// <param name="maxWaitTimeMSec"></param>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {
-            const int THREAD_SLEEP_TIME_MSEC = 100;
-
-            if (maxWaitTimeMSec < 100)
-                maxWaitTimeMSec = 100;
-            if (maxWaitTimeMSec > 5000)
-                maxWaitTimeMSec = 5000;
-
-            Thread.Sleep(100);
-
-            try
-            {
-                var gcThread = new Thread(GarbageCollectWaitForGC);
-                gcThread.Start();
-
-                var totalThreadWaitTimeMsec = 0;
-                while (gcThread.IsAlive && totalThreadWaitTimeMsec < maxWaitTimeMSec)
-                {
-                    Thread.Sleep(THREAD_SLEEP_TIME_MSEC);
-                    totalThreadWaitTimeMsec += THREAD_SLEEP_TIME_MSEC;
-                }
-
-#if NETFRAMEWORK
-                // Thread.Abort() Throws a "PlatformNotSupportedException" on all .NET Standard/.NET Core platforms; warning as of .NET 5.0
-                if (gcThread.IsAlive)
-                    gcThread.Abort();
-#endif
-            }
-            catch
-            {
-                // Ignore errors here
-            }
-        }
-
-        private static void GarbageCollectWaitForGC()
-        {
-            try
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-            }
-            catch
-            {
-                // Ignore errors here
-            }
+            AppUtils.GarbageCollectNow(maxWaitTimeMSec);
         }
 
         /// <summary>
@@ -567,37 +525,20 @@ namespace PRISM
         /// Pause program execution for the specific number of milliseconds (maximum 10 seconds)
         /// </summary>
         /// <param name="sleepTimeMsec">Value between 10 and 10000 (i.e. between 10 msec and 10 seconds)</param>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void SleepMilliseconds(int sleepTimeMsec)
         {
-            if (sleepTimeMsec < 10)
-                sleepTimeMsec = 10;
-            else if (sleepTimeMsec > 10000)
-                sleepTimeMsec = 10000;
-
-            Task.Delay(sleepTimeMsec).Wait();
-
-            // Option 2:
-            // using (EventWaitHandle tempEvent = new ManualResetEvent(false))
-            // {
-            //     tempEvent.WaitOne(TimeSpan.FromMilliseconds(sleepTimeMsec));
-            // }
-
-            // Option 3, though this will be deprecated in .NET Standard
-            // System.Threading.Thread.Sleep(sleepTimeMsec);
+            AppUtils.SleepMilliseconds(sleepTimeMsec);
         }
 
         /// <summary>
         /// Pause program execution for the specific number of milliseconds (maximum 10 seconds)
         /// </summary>
         /// <param name="sleepTimeMsec">Value between 10 and 10000 (i.e. between 10 msec and 10 seconds)</param>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static async Task SleepMillisecondsAsync(int sleepTimeMsec)
         {
-            if (sleepTimeMsec < 10)
-                sleepTimeMsec = 10;
-            else if (sleepTimeMsec > 10000)
-                sleepTimeMsec = 10000;
-
-            await Task.Delay(TimeSpan.FromMilliseconds(sleepTimeMsec)).ConfigureAwait(false);
+            await AppUtils.SleepMillisecondsAsync(sleepTimeMsec);
         }
 
         /// <summary>
@@ -816,7 +757,7 @@ namespace PRISM
                 if (mConsoleOutputStreamWriter != null)
                 {
                     // Give the other threads time to write any additional info to mConsoleOutputStreamWriter
-                    GarbageCollectNow();
+                    AppUtils.GarbageCollectNow();
                     mConsoleOutputStreamWriter.Flush();
                     mConsoleOutputStreamWriter.Dispose();
                 }
@@ -832,7 +773,7 @@ namespace PRISM
                     RaiseConditionalProgChangedEvent(this);
 
                     var holdoffMilliseconds = Convert.ToInt32(RepeatHoldOffTime * 1000);
-                    SleepMilliseconds(holdoffMilliseconds);
+                    AppUtils.SleepMilliseconds(holdoffMilliseconds);
 
                     State = States.Monitoring;
                 }
@@ -891,7 +832,7 @@ namespace PRISM
                 {
                     // mProcess.Kill();
                     mCancellationToken?.Cancel();
-                    SleepMilliseconds(500);
+                    AppUtils.SleepMilliseconds(500);
                     mCancellationToken?.Dispose();
                 }
                 catch (System.ComponentModel.Win32Exception ex)

@@ -1709,7 +1709,7 @@ namespace PRISM
                 if (targetFile.Exists)
                 {
                     DeleteFileNative(targetFile);
-                    ProgRunner.SleepMilliseconds(25);
+                    AppUtils.SleepMilliseconds(25);
                 }
 
                 // Check for a #FilePart# file
@@ -1779,7 +1779,7 @@ namespace PRISM
                     if (filePart.Exists)
                     {
                         filePart.Delete();
-                        ProgRunner.SleepMilliseconds(25);
+                        AppUtils.SleepMilliseconds(25);
                     }
 
                     // Create the FILE_PART_INFO_TAG file
@@ -1864,7 +1864,7 @@ namespace PRISM
             catch (Exception ex)
             {
                 filePartWriter?.Flush();
-                ProgRunner.GarbageCollectNow();
+                AppUtils.GarbageCollectNow();
 
                 throw new IOException("Exception copying file with resume: " + ex.Message, ex);
             }
@@ -2009,7 +2009,7 @@ namespace PRISM
                     throw;
 
                 // Collect garbage, then delete the files one-by-one
-                ProgRunner.GarbageCollectNow();
+                AppUtils.GarbageCollectNow();
 
                 return DeleteDirectoryFiles(directoryPath, deleteDirectoryIfEmpty: true);
             }
@@ -2109,7 +2109,7 @@ namespace PRISM
                     if (DateTime.UtcNow.Subtract(mLastGC).TotalMilliseconds >= 500)
                     {
                         mLastGC = DateTime.UtcNow;
-                        ProgRunner.GarbageCollectNow();
+                        AppUtils.GarbageCollectNow();
                     }
                 }
 
@@ -2232,7 +2232,7 @@ namespace PRISM
                     return false;
 
                 // Sleep for 0.5 second (or longer) then try again
-                ProgRunner.SleepMilliseconds(sleepTimeMsec);
+                AppUtils.SleepMilliseconds(sleepTimeMsec);
 
                 // Increase sleepTimeMsec so that we sleep longer the next time, but cap the sleep time at 5.7 seconds
                 if (sleepTimeMsec < 5000)
@@ -3151,7 +3151,7 @@ namespace PRISM
 
                 WaitingForLockQueue?.Invoke(sourceFile.FullName, targetFilePath, mbBacklogSource, mbBacklogTarget);
 
-                ProgRunner.SleepMilliseconds(Convert.ToInt32(sleepTimeSec) * 1000);
+                AppUtils.SleepMilliseconds(Convert.ToInt32(sleepTimeSec) * 1000);
 
                 if (totalWaitTimeMinutes < MAX_LOCKFILE_WAIT_TIME_MINUTES)
                     continue;

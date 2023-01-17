@@ -382,7 +382,7 @@ namespace PRISM.FileProcessor
                 mLogFile.Close();
                 mLogFile = null;
 
-                GarbageCollectNow();
+                AppUtils.GarbageCollectNow();
                 Thread.Sleep(100);
             }
         }
@@ -482,11 +482,11 @@ namespace PRISM.FileProcessor
                 if (string.IsNullOrWhiteSpace(logFileBaseName))
                 {
                     // Auto-name the log file
-                    logFileBaseName = Path.GetFileNameWithoutExtension(GetAppPath());
+                    logFileBaseName = Path.GetFileNameWithoutExtension(AppUtils.GetAppPath());
 
                     if (string.IsNullOrWhiteSpace(logFileBaseName))
                     {
-                        logFileBaseName = GetEntryOrExecutingAssembly().GetName().Name;
+                        logFileBaseName = AppUtils.GetEntryOrExecutingAssembly().GetName().Name;
                     }
                 }
 
@@ -572,7 +572,7 @@ namespace PRISM.FileProcessor
             {
                 if (!File.Exists(settingsFilePathLocal))
                 {
-                    var masterSettingsFile = new FileInfo(Path.Combine(GetAppDirectoryPath(), Path.GetFileName(settingsFilePathLocal)));
+                    var masterSettingsFile = new FileInfo(Path.Combine(AppUtils.GetAppDirectoryPath(), Path.GetFileName(settingsFilePathLocal)));
 
                     if (masterSettingsFile.Exists)
                     {
@@ -592,57 +592,20 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Perform garbage collection
         /// </summary>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void GarbageCollectNow()
         {
-            const int maxWaitTimeMSec = 1000;
-            GarbageCollectNow(maxWaitTimeMSec);
+            AppUtils.GarbageCollectNow();
         }
 
         /// <summary>
         /// Perform garbage collection
         /// </summary>
         /// <param name="maxWaitTimeMSec"></param>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {
-            const int THREAD_SLEEP_TIME_MSEC = 100;
-
-            if (maxWaitTimeMSec < 100)
-                maxWaitTimeMSec = 100;
-            if (maxWaitTimeMSec > 5000)
-                maxWaitTimeMSec = 5000;
-
-            Thread.Sleep(100);
-
-            try
-            {
-                var gcThread = new Thread(GarbageCollectWaitForGC);
-                gcThread.Start();
-
-                var totalThreadWaitTimeMsec = 0;
-                while (gcThread.IsAlive && totalThreadWaitTimeMsec < maxWaitTimeMSec)
-                {
-                    Thread.Sleep(THREAD_SLEEP_TIME_MSEC);
-                    totalThreadWaitTimeMsec += THREAD_SLEEP_TIME_MSEC;
-                }
-
-#if NETFRAMEWORK
-                // Thread.Abort() Throws a "PlatformNotSupportedException" on all .NET Standard/.NET Core platforms; warning as of .NET 5.0
-                if (gcThread.IsAlive)
-                    gcThread.Abort();
-#endif
-            }
-            catch (Exception)
-            {
-                // Ignore errors here
-            }
-        }
-
-        /// <summary>
-        /// Force the garbage collector to run, waiting up to 1 second for it to finish
-        /// </summary>
-        protected static void GarbageCollectWaitForGC()
-        {
-            ProgRunner.GarbageCollectNow();
+            AppUtils.GarbageCollectNow(maxWaitTimeMSec);
         }
 
         /// <summary>
@@ -650,57 +613,39 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
         /// <param name="appName"></param>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static string GetAppDataDirectoryPath(string appName)
         {
-            string appDataDirectory;
-
-            if (string.IsNullOrWhiteSpace(appName))
-            {
-                appName = string.Empty;
-            }
-
-            try
-            {
-                appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
-                if (!Directory.Exists(appDataDirectory))
-                {
-                    Directory.CreateDirectory(appDataDirectory);
-                }
-            }
-            catch (Exception)
-            {
-                // Error creating the directory, revert to using the system Temp directory
-                appDataDirectory = Path.GetTempPath();
-            }
-
-            return appDataDirectory;
+            return AppUtils.GetAppDataDirectoryPath(appName);
         }
 
         /// <summary>
         /// Returns the full path to the directory that contains the currently executing .Exe or .Dll
         /// </summary>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static string GetAppDirectoryPath()
         {
-            // Could use Application.StartupPath, but .GetExecutingAssembly is better
-            return Path.GetDirectoryName(GetAppPath());
+            return AppUtils.GetAppDirectoryPath();
         }
 
         /// <summary>
         /// Returns the full path to the executing .Exe or .Dll
         /// </summary>
         /// <returns>File path</returns>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static string GetAppPath()
         {
-            return GetEntryOrExecutingAssembly().Location;
+            return AppUtils.GetAppPath();
         }
 
         /// <summary>
         /// Returns the .NET assembly version followed by the program date
         /// </summary>
         /// <param name="programDate"></param>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static string GetAppVersion(string programDate)
         {
-            return GetEntryOrExecutingAssembly().GetName().Version + " (" + programDate + ")";
+            return AppUtils.GetAppVersion(programDate);
         }
 
         /// <summary>
@@ -711,7 +656,7 @@ namespace PRISM.FileProcessor
         {
             if (string.IsNullOrWhiteSpace(mLogFileBasePath))
             {
-                mLogFileBasePath = GetEntryOrExecutingAssembly().GetName().Name + LOG_FILE_SUFFIX;
+                mLogFileBasePath = AppUtils.GetEntryOrExecutingAssembly().GetName().Name + LOG_FILE_SUFFIX;
             }
 
             return mLogFileBasePath + "_" + date.ToString(LOG_FILE_TIMESTAMP_FORMAT) + LOG_FILE_EXTENSION;
@@ -720,11 +665,10 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Returns the entry assembly, if it is unavailable, returns the executing assembly
         /// </summary>
+        [Obsolete("Moved to static class PRISM.AppUtils")]
         public static Assembly GetEntryOrExecutingAssembly()
         {
-            var entry = Assembly.GetEntryAssembly();
-            var executing = Assembly.GetExecutingAssembly();
-            return entry ?? executing;
+            return AppUtils.GetEntryOrExecutingAssembly();
         }
 
         /// <summary>
@@ -741,7 +685,7 @@ namespace PRISM.FileProcessor
 
             try
             {
-                version = GetEntryOrExecutingAssembly().GetName().Version.ToString();
+                version = AppUtils.GetEntryOrExecutingAssembly().GetName().Version.ToString();
             }
             catch (Exception)
             {
@@ -759,7 +703,7 @@ namespace PRISM.FileProcessor
         /// <param name="settingsFileName"></param>
         public static string GetSettingsFilePathLocal(string applicationName, string settingsFileName)
         {
-            return Path.Combine(GetAppDataDirectoryPath(applicationName), settingsFileName);
+            return Path.Combine(AppUtils.GetAppDataDirectoryPath(applicationName), settingsFileName);
         }
 
         /// <summary>

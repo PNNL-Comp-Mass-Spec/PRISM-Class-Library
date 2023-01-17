@@ -140,7 +140,7 @@ namespace PRISMTest
             Console.WriteLine("Compressed {0} in {1:F1} seconds to create {2}", fileToCompressLocal, procTimeSeconds, compressedFile.FullName);
             Console.WriteLine(".gz file size: {0:#,###} bytes", compressedFile.Length);
 
-            PRISM.ProgRunner.SleepMilliseconds(250);
+            PRISM.AppUtils.SleepMilliseconds(250);
 
             // Rename the file that we just compressed
             // This is required to avoid collisions when we call ValidateGZipFile
@@ -180,7 +180,7 @@ namespace PRISMTest
             string tempDirectoryPath, long expectedSizeBytes,
             bool includedMetadata, bool usedExplicitNames)
         {
-            PRISM.ProgRunner.SleepMilliseconds(250);
+            PRISM.AppUtils.SleepMilliseconds(250);
 
             // Decompress the newly created .gz file
             // Use both .GZipDecompressWithMetadata and .GZipDecompress

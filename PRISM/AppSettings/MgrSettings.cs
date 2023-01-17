@@ -113,7 +113,7 @@ namespace PRISM.AppSettings
         /// <returns>String containing full name and path</returns>
         protected static string GetConfigFilePath()
         {
-            return FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath() + ".config";
+            return AppUtils.GetAppPath() + ".config";
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace PRISM.AppSettings
             }
 
             // Auto-add setting ApplicationPath, which is the directory with this applications .exe
-            var appPath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath();
+            var appPath = AppUtils.GetAppPath();
             var appFile = new FileInfo(appPath);
             SetParam("ApplicationPath", appFile.DirectoryName);
 

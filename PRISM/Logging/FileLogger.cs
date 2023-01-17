@@ -512,7 +512,7 @@ namespace PRISM.Logging
             }
             else if (relativeToEntryAssembly || string.IsNullOrWhiteSpace(baseName))
             {
-                var appDirectoryPath = FileProcessor.ProcessFilesOrDirectoriesBase.GetAppDirectoryPath();
+                var appDirectoryPath = AppUtils.GetAppDirectoryPath();
                 string logFilePath;
                 if (string.IsNullOrWhiteSpace(baseName))
                 {
@@ -596,7 +596,7 @@ namespace PRISM.Logging
                 if (mMessageQueue.IsEmpty)
                     break;
 
-                ProgRunner.SleepMilliseconds(10);
+                AppUtils.SleepMilliseconds(10);
             }
         }
 

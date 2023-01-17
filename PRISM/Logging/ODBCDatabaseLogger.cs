@@ -303,7 +303,7 @@ namespace PRISM.Logging
                 if (mMessageQueue.IsEmpty)
                     break;
 
-                ProgRunner.SleepMilliseconds(10);
+                AppUtils.SleepMilliseconds(10);
             }
         }
 

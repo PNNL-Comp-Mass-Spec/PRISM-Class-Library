@@ -184,7 +184,7 @@ public sealed class PostgresDatabaseLogger : DatabaseLogger
             if (mMessageQueue.IsEmpty)
                 break;
 
-            ProgRunner.SleepMilliseconds(10);
+            AppUtils.SleepMilliseconds(10);
         }
     }
 

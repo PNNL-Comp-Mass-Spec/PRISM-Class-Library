@@ -146,7 +146,7 @@ namespace PRISMTest
                 Console.WriteLine("Garbage collect at {0:yyyy-MM-dd hh:mm:ss tt} ({1:F1} seconds elapsed)",
                     DateTime.Now, DateTime.UtcNow.Subtract(lastGC).TotalSeconds);
 
-                ProgRunner.GarbageCollectNow();
+                AppUtils.GarbageCollectNow();
 
                 lastGC = DateTime.UtcNow;
             }
@@ -261,7 +261,7 @@ namespace PRISMTest
                     cachedProcessID = progRunner.PID;
                 }
 
-                ProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
+                AppUtils.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
 
                 try
                 {
@@ -276,7 +276,7 @@ namespace PRISMTest
                     Console.WriteLine("Unable to get the core usage: {0}", ex.Message);
                 }
 
-                ProgRunner.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
+                AppUtils.SleepMilliseconds(MONITOR_INTERVAL_MSEC / 2);
 
                 if (maxRuntimeSeconds > 0 && DateTime.UtcNow.Subtract(startTime).TotalSeconds > maxRuntimeSeconds)
                 {
@@ -292,7 +292,7 @@ namespace PRISMTest
 
             if (writeConsoleOutput)
             {
-                ProgRunner.SleepMilliseconds(250);
+                AppUtils.SleepMilliseconds(250);
 
                 var consoleOutputFilePath = progRunner.ConsoleOutputFilePath;
                 Assert.IsNotEmpty(consoleOutputFilePath, "Console output file path is empty");

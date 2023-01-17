@@ -383,7 +383,7 @@ namespace PRISM
                     OnErrorEvent(errorMessage);
 
                     // Delay for 5 seconds before trying again
-                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
@@ -493,7 +493,7 @@ namespace PRISM
                     }
 
                     // Delay for 5 seconds before trying again
-                    ProgRunner.SleepMilliseconds(retryDelaySeconds * 1000);
+                    AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
                 }
             }
 
