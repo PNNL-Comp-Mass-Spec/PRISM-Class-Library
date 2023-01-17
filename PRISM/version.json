@@ -9,6 +9,9 @@
     ":!AssemblyInfo.cs", // Exclude changes to AssemblyInfo.cs (only used by the debug project)
     ":!PRISM_NET48.csproj" // Also exclude the debug project file
   ],
+  "publicReleaseRefSpec": [
+    "^refs/heads/master$" // we release out of master
+  ],
   "cloudBuild": {
     "setVersionVariables": true,
     "buildNumber": {

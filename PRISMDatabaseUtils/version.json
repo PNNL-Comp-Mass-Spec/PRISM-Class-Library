@@ -19,6 +19,9 @@
     ":^/PRISM/Logging/ODBCDatabaseLogger.cs", // Exclude file in PRISM.Logging that we do not depend on
     ":^/PRISM/OutputUtils/StringUtilities.cs" // Exclude file in PRISM.OutputUtils that we do not depend on
   ],
+  "publicReleaseRefSpec": [
+    "^refs/heads/master$" // we release out of master
+  ],
   "cloudBuild": {
     "setVersionVariables": true,
     "buildNumber": {
