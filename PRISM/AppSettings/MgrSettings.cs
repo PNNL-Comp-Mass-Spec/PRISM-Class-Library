@@ -312,13 +312,29 @@ namespace PRISM.AppSettings
         {
             schemaPrefixes.Clear();
             const string settingNameBase = "SchemaPrefix.";
+            var validPrefixMatch = new Regex(@"^[\[\]a-z0-9_.]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             foreach (var entry in Enum.GetValues(typeof(SchemaPrefix)).Cast<SchemaPrefix>())
             {
                 var settingName = settingNameBase + entry;
                 // Always add every enum entry to the dictionary.
-                schemaPrefixes.Add(entry,
-                    MgrParams.TryGetValue(settingName, out var value) ? value : string.Empty);
+                schemaPrefixes.Add(entry, string.Empty);
+
+                if (MgrParams.TryGetValue(settingName, out var value) &&
+                    !string.IsNullOrWhiteSpace(value))
+                {
+                    var cleaned = value.Trim();
+                    if (!validPrefixMatch.IsMatch(cleaned))
+                    {
+                        ReportError($"Local setting '{settingName}' value of '{cleaned}' is invalid. Ignoring setting...");
+                        continue;
+                    }
+
+                    // Add a trailing '.' if not present
+                    var validated = cleaned.EndsWith(".", StringComparison.OrdinalIgnoreCase) ? cleaned : cleaned + ".";
+                    // overwrite the empty value with the read value
+                    schemaPrefixes[entry] = validated;
+                }
             }
         }
 
