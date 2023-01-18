@@ -131,7 +131,7 @@ namespace PRISMTest
         public void TestLoadManagerConfigDBSqlServer(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
-            TestLoadManagerConfigDB(connectionString);
+            TestLoadManagerConfigDB(connectionString, false);
         }
 
         [TestCase("prismdb1", "dms")]
@@ -139,7 +139,7 @@ namespace PRISMTest
         public void TestLoadManagerConfigDBPostgres(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
-            TestLoadManagerConfigDB(connectionString);
+            TestLoadManagerConfigDB(connectionString, true);
         }
 
         [TestCase("prismdb1", "dms")]
@@ -150,10 +150,10 @@ namespace PRISMTest
             // Authentication will fail if that file does not exist
 
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
-            TestLoadManagerConfigDB(connectionString);
+            TestLoadManagerConfigDB(connectionString, true);
         }
 
-        private void TestLoadManagerConfigDB(string connectionString)
+        private void TestLoadManagerConfigDB(string connectionString, bool isPostgres)
         {
             var mgrSettings = new MgrSettingsDB();
             var testSettings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -164,8 +164,17 @@ namespace PRISMTest
                 { MgrSettings.MGR_PARAM_USING_DEFAULTS, "False" },
                 { "SchemaPrefix.DMS", "DMS5.dbo" },
                 { "SchemaPrefix.DMSPipeline", "[DMS_Pipeline].dbo" },
-                { "SchemaPrefix.DMSCapture", "DMS_Capture" },
+                { "SchemaPrefix.DMSCapture", "DMS_Capture.dbo" },
+                { "SchemaPrefix.ManagerControl", "Manager_Control.dbo" },
             };
+
+            if (isPostgres)
+            {
+                testSettings["SchemaPrefix.DMS"] = "public";
+                testSettings["SchemaPrefix.DMSPipeline"] = "sw";
+                testSettings["SchemaPrefix.DMSCapture"] = "cap";
+                testSettings["SchemaPrefix.ManagerControl"] = "mc";
+            }
 
             Console.WriteLine("Connecting to database using " + connectionString);
 
