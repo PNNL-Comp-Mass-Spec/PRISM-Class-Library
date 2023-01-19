@@ -876,7 +876,7 @@ namespace PRISMTest
         }
 
         [TestCase("Gigasax", "DMS5",
-            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
+            "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
         [TestCase("Gigasax", "DMS5",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
@@ -887,7 +887,7 @@ namespace PRISMTest
         }
 
         [TestCase("Gigasax", "DMS5",
-            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
+            "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
         [TestCase("Gigasax", "DMS5",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
@@ -899,7 +899,7 @@ namespace PRISMTest
 
         [TestCase(
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
-            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'",
+            "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
             "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
@@ -907,7 +907,7 @@ namespace PRISMTest
             2, "6, 12, 2, 1, 0")]
         [TestCase(
             "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
-            "SELECT U_PRN, U_Name, U_HID FROM T_Users WHERE U_Name = 'AutoUser'",
+            "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
             "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
