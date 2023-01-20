@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +13,56 @@ namespace PRISM
     /// </summary>
     public static class AppUtils
     {
+        /// <summary>
+        /// Decode a string with a simple alternating shift cipher
+        /// </summary>
+        /// <param name="encoded">Encoded string</param>
+        /// <returns>Decoded string</returns>
+        public static string DecodeShiftCipher(string encoded)
+        {
+            return EncryptDecryptShiftCipher(encoded, false);
+        }
+
+        /// <summary>
+        /// Encode a string with a simple alternating shift cipher
+        /// </summary>
+        /// <param name="text">Clear text string</param>
+        /// <returns>Encoded string</returns>
+        public static string EncodeShiftCipher(string text)
+        {
+            return EncryptDecryptShiftCipher(text, true);
+        }
+
+        /// <summary>
+        /// Encode or decode a string with a simple alternating shift cipher
+        /// </summary>
+        /// <param name="text">text to encode/decode</param>
+        /// <param name="encrypt">True to encode the text; false to decode the text</param>
+        /// <returns>Encoded text</returns>
+        private static string EncryptDecryptShiftCipher(string text, bool encrypt)
+        {
+            // Convert the text string to a character array
+            var chars = text.ToCharArray();
+            var charsAdj = new List<char>();
+
+            var bytes = chars.Select(t => (byte)t).ToList();
+
+            var modTest = encrypt ? 1 : 0;
+
+            // Modify the byte array by shifting alternating bytes up or down and converting back to char
+            for (var index = 0; index < bytes.Count; index++)
+            {
+                if (index % 2 == modTest)
+                    bytes[index]++;
+                else
+                    bytes[index]--;
+
+                charsAdj.Add((char)bytes[index]);
+            }
+
+            return string.Join(string.Empty, charsAdj);
+        }
+
         /// <summary>
         /// Force the garbage collector to run, waiting up to 1 second for it to finish
         /// </summary>
