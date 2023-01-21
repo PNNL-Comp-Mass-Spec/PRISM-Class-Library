@@ -183,6 +183,32 @@ namespace PRISMDatabaseUtils
             [CallerMemberName] string callingFunction = "UnknownMethod");
 
         /// <summary>
+        /// Run a query against a SQL database, return the results as a list of strings
+        /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// Null values are converted to empty strings
+        /// Numbers are converted to their string equivalent
+        /// By default, retries the query up to 3 times
+        /// </remarks>
+        /// <param name="cmd">Query to run</param>
+        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="columnNames">Column names (as returned by the database)</param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
+        /// <returns>True if success, false if an error</returns>
+        bool GetQueryResults(
+            DbCommand cmd,
+            out List<List<string>> results,
+            out List<string> columnNames,
+            int retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod");
+
+        /// <summary>
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
         /// <remarks>

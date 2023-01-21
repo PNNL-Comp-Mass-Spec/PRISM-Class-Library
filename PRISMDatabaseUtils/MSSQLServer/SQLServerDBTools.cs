@@ -343,7 +343,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL Server database, return the results as a list of strings
+        /// Run a query against a SQL Server database, return the results as a list of strings (does not include column names)
         /// </summary>
         /// <remarks>
         /// Uses the connection string passed to the constructor of this class
@@ -401,10 +401,43 @@ namespace PRISMDatabaseUtils.MSSQLServer
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod")
         {
-            // Declare a local variable to append the results to
+            return GetQueryResults(cmd, out results, out _, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
+        }
+
+        /// <summary>
+        /// Run a query against a SQL Server database, return the results as a list of strings
+        /// Also returns the column names in a separate list
+        /// </summary>
+        /// <remarks>
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>Null values are converted to empty strings</para>
+        /// <para>Numbers are converted to their string equivalent</para>
+        /// <para>By default, retries the query up to 3 times</para>
+        /// </remarks>
+        /// <param name="cmd">Query to run</param>
+        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="columnNames">Column names (as returned by the database)</param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
+        /// <returns>True if success, false if an error</returns>
+        public bool GetQueryResults(
+            DbCommand cmd,
+            out List<List<string>> results,
+            out List<string> columnNames,
+            int retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
+        {
+            // Declare local variables to append the query results and column names to
             // This is required because we cannot use an out parameter in a lambda expression (the Action => block below)
             var dbResults = new List<List<string>>();
             results = dbResults;
+
+            var dbColumns = new List<string>();
+            columnNames = dbColumns;
 
             var readMethod = new Action<SqlCommand>(x =>
             {
@@ -418,6 +451,15 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 while (reader.Read())
                 {
                     var currentRow = new List<string>();
+
+                    if (dbColumns.Count == 0)
+                    {
+                        // Store the column names
+                        for (var i = 0; i < reader.FieldCount; i++)
+                        {
+                            dbColumns.Add(reader.GetName(i));
+                        }
+                    }
 
                     for (var columnIndex = 0; columnIndex < reader.FieldCount; columnIndex++)
                     {
