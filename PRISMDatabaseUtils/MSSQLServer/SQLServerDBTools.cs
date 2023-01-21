@@ -211,11 +211,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the scalar result
+        /// Run a query against a SQL Server database, return the scalar result
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
@@ -242,11 +242,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the scalar result
+        /// Run a query against a SQL Server database, return the scalar result
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
@@ -346,10 +346,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Run a query against a SQL Server database, return the results as a list of strings (does not include column names)
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// Null values are converted to empty strings
-        /// Numbers are converted to their string equivalent
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>Null values are converted to empty strings</para>
+        /// <para>Numbers are converted to their string equivalent</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
@@ -488,11 +488,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataTable object
+        /// Run a query against a SQL Server database, return the results as a DataTable object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
@@ -519,11 +519,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataTable object
+        /// Run a query against a SQL Server database, return the results as a DataTable object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
@@ -540,6 +540,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             var results = new DataTable();
             queryResults = results;
+
             var readMethod = new Action<SqlCommand>(x =>
             {
                 using var da = new SqlDataAdapter(x);
@@ -550,11 +551,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataSet object
+        /// Run a query against a SQL Server database, return the results as a DataSet object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
@@ -581,11 +582,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataSet object
+        /// Run a query against a SQL Server database, return the results as a DataSet object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
@@ -602,6 +603,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             var results = new DataSet();
             queryResults = results;
+
             var readMethod = new Action<SqlCommand>(x =>
             {
                 using var da = new SqlDataAdapter(x);
@@ -612,11 +614,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results via <paramref name="readMethod"/>
+        /// Run a query against a SQL Server database, return the results via <paramref name="readMethod"/>
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
@@ -953,6 +955,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             var queryResults = new DataTable();
             results = queryResults;
+
             var readMethod = new Action<SqlCommand>(x =>
             {
                 using var da = new SqlDataAdapter(x);
@@ -978,6 +981,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             var queryResults = new DataSet();
             results = queryResults;
+
             var readMethod = new Action<SqlCommand>(x =>
             {
                 using var da = new SqlDataAdapter(x);

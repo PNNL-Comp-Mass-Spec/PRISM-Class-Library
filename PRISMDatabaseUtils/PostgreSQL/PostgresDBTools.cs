@@ -183,8 +183,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the scalar result
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
@@ -214,8 +214,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the scalar result
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
@@ -318,13 +318,13 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL Server database, return the results as a list of strings
+        /// Run a query against a SQL Server database, return the results as a list of strings (does not include column names)
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// Null values are converted to empty strings
-        /// Numbers are converted to their string equivalent
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>Null values are converted to empty strings</para>
+        /// <para>Numbers are converted to their string equivalent</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
@@ -457,6 +457,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         break;
                     }
                 }
+
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -466,8 +467,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
@@ -497,8 +498,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataTable object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
@@ -515,6 +516,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             var results = new DataTable();
             queryResults = results;
+
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
                 using var da = new NpgsqlDataAdapter(x);
@@ -528,8 +530,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataSet object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
@@ -559,8 +561,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results as a DataSet object
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
@@ -577,6 +579,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             var results = new DataSet();
             queryResults = results;
+
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
                 using var da = new NpgsqlDataAdapter(x);
@@ -590,8 +593,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Run a query against a SQL database, return the results via <paramref name="readMethod"/>
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
@@ -963,6 +966,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             var queryResults = new DataTable();
             results = queryResults;
+
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
                 using var da = new NpgsqlDataAdapter(x);
@@ -988,6 +992,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             var queryResults = new DataSet();
             results = queryResults;
+
             var readMethod = new Action<NpgsqlCommand>(x =>
             {
                 using var da = new NpgsqlDataAdapter(x);
@@ -1004,7 +1009,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        public int ExecuteSP(DbCommand spCmd, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
+        public int ExecuteSP(
+            DbCommand spCmd,
+            int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
+            int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
             return ExecuteSP(spCmd, out _, maxRetryCount, retryDelaySeconds);
         }
@@ -1018,7 +1026,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
-        public int ExecuteSP(DbCommand spCmd, out string errorMessage, int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT, int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
+        public int ExecuteSP(
+            DbCommand spCmd,
+            out string errorMessage,
+            int maxRetryCount = DbUtilsConstants.DEFAULT_SP_RETRY_COUNT,
+            int retryDelaySeconds = DbUtilsConstants.DEFAULT_SP_RETRY_DELAY_SEC)
         {
             if (spCmd is not NpgsqlCommand sqlCmd)
             {
