@@ -1421,12 +1421,14 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>If a column name occurs more than once, it will not be included in the dictionary</para>
         /// <para>Only matches column names that have letters, numbers, and underscores</para>
         /// </remarks>
-        /// <param name="sqlQuery">SQL Query</param>
+        /// <param name="sqlQuery">SQL query</param>
         /// <param name="columnCountWithCapitalLetters">Output: number of columns with at least one capital letter (ignoring quoted column names)</param>
         /// <returns>Dictionary where both keys and values are the column names, but the dictionary uses case insensitive string lookups</returns>
         private static Dictionary<string, string> GetColumnCapitalizationMap(string sqlQuery, out int columnCountWithCapitalLetters)
         {
             var columnNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            // Keys in this dictionary are column names, values are the number of times each column was found in the SELECT list in the SQL query
             var columnCountByName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
             columnCountWithCapitalLetters = 0;
@@ -1481,7 +1483,21 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 }
             }
 
-            return columnNameMap;
+            // Populate a new dictionary, using only those columns that appeared once in the select list
+            var filteredColumnNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var item in columnCountByName)
+            {
+                if (item.Value > 1)
+                    continue;
+
+                var columnName = item.Key;
+                var capitalizedName = columnNameMap[columnName];
+
+                filteredColumnNameMap.Add(columnName, capitalizedName);
+            }
+
+            return filteredColumnNameMap;
         }
 
         /// <summary>
