@@ -1435,7 +1435,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             var columnNameMatcher = new Regex("(?<ColumnName>[a-z0-9_]+)[\t ]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             // Replace any quoted names with "X"
-            sqlQuery = quotedNameMatcher.Replace(sqlQuery, "X");
+            sqlQuery = quotedNameMatcher.Replace(sqlQuery, "\"X\"");
 
             // Replace \r and \n with spaces
             sqlQuery = sqlQuery.Replace('\r', ' ').Replace('\n', ' ');
@@ -1463,7 +1463,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 if (!columnMatch.Success)
                     continue;
 
-                var columnName = columnMatch.Groups[0].Value;
+                var columnName = columnMatch.Groups[0].Value.Trim();
 
                 if (columnCountByName.TryGetValue(columnName, out var existingCount))
                 {
