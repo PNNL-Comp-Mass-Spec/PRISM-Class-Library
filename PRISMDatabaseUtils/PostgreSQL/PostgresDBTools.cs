@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using Npgsql;
 using NpgsqlTypes;
 using PRISM;
@@ -30,6 +31,17 @@ namespace PRISMDatabaseUtils.PostgreSQL
         #endregion
 
         #region "Properties"
+
+        /// <summary>
+        /// When true, for SQL queries, if any of the column names after the SELECT keyword has capital letters,
+        /// the column names in the result table (or columnName list) will be auto-capitalized
+        /// </summary>
+        /// <remarks>
+        /// <para>Only matches column names that have letters, numbers, and underscores</para>
+        /// <para>Ignores column names that are quoted with double quotes</para>
+        /// <para>If a column name occurs more than once, it will not be included in the dictionary</para>
+        /// </remarks>
+        public bool CapitalizeColumnNamesInResults { get; set; } = true;
 
         /// <summary>
         /// Database connection string
@@ -458,6 +470,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
                 }
 
+                // Capitalize column names in dbColumns
+                CapitalizeColumnNames(cmd, dbColumns);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -521,6 +535,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 using var da = new NpgsqlDataAdapter(x);
                 da.Fill(results);
+
+                // Capitalize column names in the data table
+                CapitalizeColumnNames(cmd, results);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -584,6 +601,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 using var da = new NpgsqlDataAdapter(x);
                 da.Fill(results);
+
+                if (results.Tables.Count == 0)
+                    return;
+
+                // Capitalize column names in the first data table in the query results
+                CapitalizeColumnNames(cmd, results.Tables[0]);
             });
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
@@ -1298,6 +1321,62 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
+        /// Parse the query text to look for the list of columns after the SELECT keyword
+        /// If any of the columns has capital letters, update the column name in the data table to match the capitalized column names
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="dataTable"></param>
+        private static void CapitalizeColumnNames(IDisposable cmd, DataTable dataTable)
+        {
+            var columnNames = new List<string>();
+
+            for (var i = 0; i < dataTable.Columns.Count; i++)
+            {
+                columnNames.Add(dataTable.Columns[i].ColumnName);
+            }
+
+            CapitalizeColumnNames(cmd, columnNames);
+
+            for (var i = 0; i < dataTable.Columns.Count; i++)
+            {
+                if (!dataTable.Columns[i].ColumnName.Equals(columnNames[i]))
+                {
+                    dataTable.Columns[i].ColumnName = columnNames[i];
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parse the query text to look for the list of columns after the SELECT keyword
+        /// If any of the columns has capital letters, update the column name in the data table to match the capitalized column names
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="columnNames"></param>
+        private static void CapitalizeColumnNames(IDisposable cmd, IList<string> columnNames)
+        {
+            if (cmd is not NpgsqlCommand sqlCmd)
+                return;
+
+            // ReSharper disable once MergeIntoPattern
+            if (sqlCmd.CommandType != CommandType.Text)
+                return;
+
+            var columnNameMap = GetColumnCapitalizationMap(sqlCmd.CommandText, out var columnCountWithCapitalLetters);
+
+            if (columnCountWithCapitalLetters == 0)
+                return;
+
+            for (var i = 0; i < columnNames.Count; i++)
+            {
+                if (columnNameMap.TryGetValue(columnNames[i], out var capitalizedName) &&
+                    !columnNames[i].Equals(capitalizedName))
+                {
+                    columnNames[i] = capitalizedName;
+                }
+            }
+        }
+
+        /// <summary>
         /// Convert from enum SqlType to NpgsqlDbTypes.NpgsqlDbType
         /// </summary>
         /// <param name="sqlType"></param>
@@ -1329,6 +1408,77 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 SqlType.JSON => NpgsqlDbType.Json,
                 _ => throw new ArgumentOutOfRangeException(nameof(sqlType), sqlType, $"Conversion for SqlType {sqlType} is not defined"),
             };
+        }
+
+        /// <summary>
+        /// Looks for column names in the first SELECT clause in the SQL
+        /// Populates a dictionary that maps case-insensitive column names to capitalized names, ignoring column names that are quoted with double quotes
+        /// </summary>
+        /// <remarks>
+        /// <para>If a column name occurs more than once, it will not be included in the dictionary</para>
+        /// <para>Only matches column names that have letters, numbers, and underscores</para>
+        /// </remarks>
+        /// <param name="sqlQuery">SQL Query</param>
+        /// <param name="columnCountWithCapitalLetters">Output: number of columns with at least one capital letter (ignoring quoted column names)</param>
+        /// <returns>Dictionary where both keys and values are the column names, but the dictionary uses case insensitive string lookups</returns>
+        private static Dictionary<string, string> GetColumnCapitalizationMap(string sqlQuery, out int columnCountWithCapitalLetters)
+        {
+            var columnNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var columnCountByName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+            columnCountWithCapitalLetters = 0;
+
+            var quotedNameMatcher = new Regex(@"""[^""]+""", RegexOptions.Compiled);
+            var columnNameMatcher = new Regex("(?<ColumnName>[a-z0-9_]+)[\t ]*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+            // Replace any quoted names with "X"
+            sqlQuery = quotedNameMatcher.Replace(sqlQuery, "X");
+
+            // Replace \r and \n with spaces
+            sqlQuery = sqlQuery.Replace('\r', ' ').Replace('\n', ' ');
+
+            // Extract the text between the first SELECT ... FROM
+            var selectMatcher = new Regex(@"\bselect\b", RegexOptions.IgnoreCase);
+            var fromMatcher = new Regex(@"\bfrom\b", RegexOptions.IgnoreCase);
+
+            var selectMatch = selectMatcher.Match(sqlQuery);
+            var fromMatch = fromMatcher.Match(sqlQuery);
+
+            if (!selectMatch.Success || !fromMatch.Success)
+            {
+                return columnNameMap;
+            }
+
+            var startIndex = selectMatch.Index + selectMatch.Length;
+
+            var columnList = sqlQuery.Substring(startIndex, fromMatch.Index - startIndex);
+
+            // Split on commas
+            foreach (var column in columnList.Split(','))
+            {
+                var columnMatch = columnNameMatcher.Match(column);
+                if (!columnMatch.Success)
+                    continue;
+
+                var columnName = columnMatch.Groups[0].Value;
+
+                if (columnCountByName.TryGetValue(columnName, out var existingCount))
+                {
+                    // Duplicate column
+                    columnCountByName[columnName] = existingCount + 1;
+                    continue;
+                }
+
+                columnNameMap.Add(columnName, columnName);
+                columnCountByName.Add(columnName, 1);
+
+                if (!columnName.ToLower().Equals(columnName))
+                {
+                    columnCountWithCapitalLetters++;
+                }
+            }
+
+            return columnNameMap;
         }
 
         /// <summary>
