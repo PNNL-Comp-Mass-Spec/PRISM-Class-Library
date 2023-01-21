@@ -793,8 +793,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                             sqlCmd.Connection = dbConnection;
 
-                            // Multiple cursors not supported
+                            // Look for any refcursor output parameters
                             var cursorName = string.Empty;
+
                             using (var reader = sqlCmd.ExecuteReader())
                             {
                                 while (reader.Read())
@@ -809,8 +810,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                         }
                                         else
                                         {
-                                            OnWarningEvent($"Reading of multiple RefCursors not supported; ignoring RefCursor {name}.");
-                                            // Log error: Multiple cursors not supported
+                                            OnWarningEvent($"Reading of multiple RefCursors is not supported; ignoring RefCursor {name}.");
                                         }
                                     }
                                 }
@@ -818,7 +818,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                             if (!string.IsNullOrEmpty(cursorName))
                             {
-                                // We got a cursor; read it and populate the output object
+                                // Cursor found; read it and populate the output object
                                 using var cmd = new NpgsqlCommand($"FETCH ALL FROM {cursorName}", dbConnection);
 
                                 readMethod(cmd);
