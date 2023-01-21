@@ -65,7 +65,7 @@ namespace PRISMTest
         /// </summary>
         /// <param name="columnIdentifierList"></param>
         /// <param name="columnNameList"></param>
-        [TestCase("Shape,Sides,Color,Perimeter","")]
+        [TestCase("Shape,Sides,Color,Perimeter", "")]
         [TestCase("ShapeName,SideCount,Color,Perimeter", "Shape,Sides,Color,Perimeter")]
         public void TestAddColumnIdentifiersString(string columnIdentifierList, string columnNameList)
         {
@@ -76,7 +76,8 @@ namespace PRISMTest
                 "columnIdentifierList.Count does not match columnNameList.Count: {0} vs. {1}", columnIdentifiers.Length, columnNames.Length);
 
             var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
-            for (var i = 0; i < columnIdentifiers.Length; i++) {
+            for (var i = 0; i < columnIdentifiers.Length; i++)
+            {
                 DataTableUtils.AddColumnNamesForIdentifier(columnNamesByIdentifier, columnIdentifiers[i], columnNames[i]);
             }
 
@@ -740,6 +741,56 @@ namespace PRISMTest
             {
                 Console.WriteLine("Expected exception has been thrown: " + ex.Message);
             }
+        }
+
+        [TestCase("prismdb1", "dms", "SELECT * FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message, entered_by", false)]
+        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message", false)]
+        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "Entry_ID, Posted_By, Entered, Type, Message", true)]
+        [TestCase("prismdb1", "dms", "SELECT entry_id, posted_by, entered, type, message FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message", true)]
+        [TestCase("prismdb1", "dms", "SELECT Entry_ID, \"posted_by\", Entered, type, Message FROM t_log_entries LIMIT 5", "Entry_ID, posted_by, Entered, type, Message", true)]
+        [TestCase("prismdb1", "dms", "SELECT Tool_Name, \"HMS\", \"HMS-MSn\" FROM v_analysis_tool_dataset_type_crosstab LIMIT 6", "Tool_Name, HMS, HMS-MSn", true)]
+        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By AS \"Posted By\", Entered, Type, Message FROM public.t_log_entries limit 6", "Entry_ID, Posted By, Entered, Type, Message", true)]
+        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "Entry_ID, Posted_By, Entered, Type, Message", true)]
+        [TestCase("prismdb1", "dms", "SELECT t.Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types T ON PF.param_file_type_id = T.param_file_type_id WHERE t.param_file_type Like 'MSGF%' Limit 6;", "param_file_type, param_file_id, param_file_name, Type ID", false)]
+        [TestCase("prismdb1", "dms", "SELECT t.Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types T ON PF.param_file_type_id = T.param_file_type_id WHERE t.param_file_type Like 'MSGF%' Limit 6;", "Param_File_Type, Param_File_ID, Param_File_Name, Type ID", true)]
+        [TestCase("prismdb1", "dms", "SELECT \"Param-File-Types\".Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types \"Param-File-Types\" ON PF.param_file_type_id = \"Param-File-Types\".param_file_type_id WHERE \"Param-File-Types\".param_file_type Like 'MSGF%' Limit 6;", "Param_File_Type, Param_File_ID, Param_File_Name, Type ID", true)]
+        [Category("DatabaseNamedUser")]
+        public void TestGetExpectedCapitalizedColumnNames(string server, string database, string query, string expectedColumnNames, bool autoCapitalize)
+        {
+            var connectionString = GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
+
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+            dbTools.CapitalizeColumnNamesInResults = autoCapitalize;
+
+            Console.WriteLine("Create command at {0:yyyy-MM-dd hh:mm:ss tt}", DateTime.Now);
+
+            var spCmd = dbTools.CreateCommand(query);
+
+            var success = dbTools.GetQueryResults(spCmd, out var queryResults, out var columnNames, 1);
+
+            Console.WriteLine();
+
+            Assert.IsTrue(success, "GetQueryResults returned false");
+
+            Assert.Greater(queryResults.Count, 0, "Row count should be non-zero, but was not");
+
+            var expectedNames = expectedColumnNames.Split(',');
+
+            if (expectedNames.Length != columnNames.Count)
+            {
+                Assert.Fail("Expected column name list has {0} columns, but the query results have {1} columns", expectedNames.Length, columnNames.Count);
+            }
+
+            for (var i = 0; i < expectedNames.Length; i++)
+            {
+                var expectedName = expectedNames[i].Trim();
+                var actualName = columnNames[i];
+
+                Assert.AreEqual(expectedName, actualName,
+                    "Actual column name does not match the expected column name: {0} vs. {1}", actualName, expectedName);
+            }
+
+            Console.WriteLine("All {0} column names matched the expected capitalization: {1}", expectedNames.Length, expectedColumnNames);
         }
 
         [TestCase("Gigasax", "dms5", 5, 1, false)]
