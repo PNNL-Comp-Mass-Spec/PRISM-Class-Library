@@ -1176,17 +1176,18 @@ namespace PRISMDatabaseUtils.MSSQLServer
             int size,
             ParameterDirection direction = ParameterDirection.Input)
         {
-            if (dbType == SqlType.Text)
+            // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            switch (dbType)
             {
-                return AddParameter(command, name, SqlType.Text, 0, string.Empty, direction);
-            }
+                case SqlType.Text:
+                    return AddParameter(command, name, SqlType.Text, 0, string.Empty, direction);
 
-            if (dbType == SqlType.VarChar)
-            {
-                return AddParameter(command, name, dbType, size, string.Empty, direction);
-            }
+                case SqlType.VarChar:
+                    return AddParameter(command, name, dbType, size, string.Empty, direction);
 
-            return AddParameter(command, name, dbType, size, null, direction);
+                default:
+                    return AddParameter(command, name, dbType, size, null, direction);
+            }
         }
 
         /// <inheritdoc />
