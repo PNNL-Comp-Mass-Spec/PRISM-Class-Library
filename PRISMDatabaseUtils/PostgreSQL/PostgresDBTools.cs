@@ -471,7 +471,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
                 }
 
-                // Capitalize column names in dbColumns
                 CapitalizeColumnNames(cmd, dbColumns);
             });
 
@@ -1327,7 +1326,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="dataTable"></param>
-        private static void CapitalizeColumnNames(IDisposable cmd, DataTable dataTable)
+        private void CapitalizeColumnNames(IDisposable cmd, DataTable dataTable)
         {
             var columnNames = new List<string>();
 
@@ -1353,8 +1352,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="columnNames"></param>
-        private static void CapitalizeColumnNames(IDisposable cmd, IList<string> columnNames)
+        private void CapitalizeColumnNames(IDisposable cmd, IList<string> columnNames)
         {
+            if (!CapitalizeColumnNamesInResults)
+                return;
+
             if (cmd is not NpgsqlCommand sqlCmd)
                 return;
 
