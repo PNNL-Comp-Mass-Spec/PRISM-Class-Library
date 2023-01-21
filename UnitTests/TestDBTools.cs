@@ -350,10 +350,11 @@ namespace PRISMTest
                     throw new Exception("Invalid table name: " + tableName);
                 }
 
-                query = string.Format("SELECT " + string.Join(", ", columnNames) + " FROM (" +
+                query = string.Format("SELECT " + string.Join(", ", columnNames) +
+                                      " FROM (" +
                                       "   SELECT TOP {0} * FROM {1}" +
-                                      "   Order By {2} Desc) LookupQ " +
-                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.FirstOrDefault());
+                                      "   ORDER BY {2} Desc) LookupQ " +
+                                      "ORDER BY {2}", rowCountToRetrieve, tableName, columnNames.FirstOrDefault());
             }
             else
             {
@@ -381,10 +382,11 @@ namespace PRISMTest
                     throw new Exception("Invalid table name: " + tableName);
                 }
 
-                query = string.Format("SELECT  " + string.Join(", ", columnNames) + " FROM (" +
+                query = string.Format("SELECT  " + string.Join(", ", columnNames) +
+                                      " FROM (" +
                                       "   SELECT * FROM {1}" +
-                                      "   Order By {2} Desc Limit {0}) LookupQ " +
-                                      "Order By {2}", rowCountToRetrieve, tableName, columnNames.FirstOrDefault());
+                                      "   ORDER BY {2} DESC LIMIT {0}) LookupQ " +
+                                      "ORDER BY {2}", rowCountToRetrieve, tableName, columnNames.FirstOrDefault());
             }
 
             var columnDataTypes = new List<SqlType>();
@@ -740,22 +742,24 @@ namespace PRISMTest
             }
         }
 
-        [TestCase("Gigasax", "dms5", 5, 1)]
-        [TestCase("Gigasax", "dms5", 10, 2)]
+        [TestCase("Gigasax", "dms5", 5, 1, false)]
+        [TestCase("Gigasax", "dms5", 5, 1, true)]
+        [TestCase("Gigasax", "dms5", 10, 2, true)]
         [Category("DatabaseIntegrated")]
-        public void TestGetRecentLogEntriesSqlServer(string server, string database, int rowCountToRetrieve, int iterations)
+        public void TestGetRecentLogEntriesSqlServer(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
             var connectionString = GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
-            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
+            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations, specifyColumnNames);
         }
 
-        [TestCase("prismdb1", "dms", 5, 1)]
-        [TestCase("prismdb1", "dms", 10, 2)]
+        [TestCase("prismdb1", "dms", 5, 1, false)]
+        [TestCase("prismdb1", "dms", 5, 1, true)]
+        [TestCase("prismdb1", "dms", 10, 2, true)]
         [Category("DatabaseNamedUser")]
-        public void TestGetRecentLogEntriesPostgres(string server, string database, int rowCountToRetrieve, int iterations)
+        public void TestGetRecentLogEntriesPostgres(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
             var connectionString = GetConnectionStringPostgres(server, database, DMS_READER, DMS_READER_PASSWORD);
-            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
+            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations, specifyColumnNames);
         }
 
         /// <summary>
@@ -769,15 +773,17 @@ namespace PRISMTest
         /// <param name="database"></param>
         /// <param name="rowCountToRetrieve"></param>
         /// <param name="iterations"></param>
-        [TestCase("prismweb2", "dmsdev2", 5, 2)]
+        /// <param name="specifyColumnNames">When true, use explicit column names instead of *</param>
+        [TestCase("prismweb2", "dmsdev2", 5, 2, false)]
+        [TestCase("prismweb2", "dmsdev2", 5, 2, true)]
         [Category("DatabaseIntegrated")]
-        public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations)
+        public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
             var connectionString = string.Format("Host={0};Database={1};Integrated Security=true;Username=d3l243", server, database);
-            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations);
+            TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations, specifyColumnNames);
         }
 
-        public void TestGetRecentLogEntries(string connectionString, int rowCountToRetrieve, int iterations)
+        public void TestGetRecentLogEntries(string connectionString, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
@@ -790,37 +796,48 @@ namespace PRISMTest
             {
                 string query;
                 string tableName;
-                if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
-                {
-                    tableName = "t_log_entries";
 
-                    query = string.Format("SELECT * FROM (" +
-                                          "   SELECT TOP {0} * FROM {1}" +
-                                          "   Order By entry_id Desc) LookupQ " +
-                                          "Order By entry_id", rowCountToRetrieve + i * 2, tableName);
-                }
-                else
+                var isPostgres = (dbTools.DbServerType == DbServerTypes.PostgreSQL);
+
+                // Note that the SQL Server version of DMS does not have column Entered_BY in table T_Log_Entries
+                // In contrast, the Postgres version of DMS does have column entered_by
+                var columnList = specifyColumnNames
+                    ? string.Format("Entry_ID, Posted_By, Entered, Type, Message{0}", isPostgres ? ", Entered_By" : "")
+                    : "*";
+
+                if (isPostgres)
                 {
                     tableName = "public.t_log_entries";
 
-                    query = string.Format("SELECT * FROM (" +
-                                          "   SELECT * FROM {1}" +
-                                          "   Order By entry_id Desc Limit {0}) LookupQ " +
-                                          "Order By entry_id", rowCountToRetrieve + i * 2, tableName);
+                    query = string.Format("SELECT {0} FROM (" +
+                                          "   SELECT {0} FROM {2}" +
+                                          "   Order By entry_id Desc Limit {1}) LookupQ " +
+                                          "ORDER BY entry_id",
+                        columnList, rowCountToRetrieve + i * 2, tableName);
+                }
+                else
+                {
+                    tableName = "t_log_entries";
+
+                    query = string.Format("SELECT {0} FROM (" +
+                                          "   SELECT TOP {1} {0} FROM {2}" +
+                                          "   ORDER BY entry_id Desc) LookupQ " +
+                                          "ORDER BY entry_id",
+                        columnList, rowCountToRetrieve + i * 2, tableName);
                 }
 
                 Console.WriteLine("Create command at {0:yyyy-MM-dd hh:mm:ss tt}", DateTime.Now);
 
                 var spCmd = dbTools.CreateCommand(query);
 
-                var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
+                var success = dbTools.GetQueryResults(spCmd, out var queryResults, out var columnNames, 1);
 
                 Assert.IsTrue(success, "GetQueryResults returned false");
 
                 Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
 
                 Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
-                ShowRowsFromTLogEntries(queryResults);
+                ShowRowsFromTLogEntries(queryResults, columnNames);
 
                 if (i < iterations - 1)
                 {
@@ -831,9 +848,13 @@ namespace PRISMTest
             }
         }
 
-        public static void ShowRowsFromTLogEntries(List<List<string>> results)
+        public static void ShowRowsFromTLogEntries(List<List<string>> results, List<string> columnNames)
         {
-            Console.WriteLine("{0,-10} {1,-21} {2,-20} {3}", "Entry_ID", "Date", "Posted_By", "Message");
+            if (columnNames.Count == 0)
+                Console.WriteLine("{0,-10} {1,-21} {2,-20} {3}", "Entry_ID", "Date", "Posted_By", "Message");
+            else
+                Console.WriteLine("{0,-10} {1,-21} {2,-20} {3}", columnNames[0], columnNames[2], columnNames[1], columnNames[4]);
+
             foreach (var item in results)
             {
                 var postingTime = DateTime.Parse(item[2]);

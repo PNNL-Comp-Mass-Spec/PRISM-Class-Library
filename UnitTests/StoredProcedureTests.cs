@@ -588,11 +588,11 @@ namespace PRISMTest
 
             var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '20 seconds'");
 
-            var success = dbTools.GetQueryResults(spSelectCmd, out var queryResults, 1);
+            var success = dbTools.GetQueryResults(spSelectCmd, out var queryResults, out var columnNames, 1);
 
             Assert.IsTrue(success, "GetQueryResults returned false while querying t_log_entries");
 
-            TestDBTools.ShowRowsFromTLogEntries(queryResults);
+            TestDBTools.ShowRowsFromTLogEntries(queryResults, columnNames);
         }
 
         [TestCase("prismweb3", "dmsdev", TestDBTools.DMS_READER, false)]
@@ -658,11 +658,11 @@ namespace PRISMTest
 
             var spSelectCmd = dbTools.CreateCommand("Select * from t_log_entries where posting_time >= current_timestamp - Interval '20 seconds'");
 
-            var querySuccess = dbTools.GetQueryResults(spSelectCmd, out var queryResults, 1);
+            var querySuccess = dbTools.GetQueryResults(spSelectCmd, out var queryResults, out var columnNames, 1);
 
             Assert.IsTrue(querySuccess, "GetQueryResults returned false while querying t_log_entries");
 
-            TestDBTools.ShowRowsFromTLogEntries(queryResults);
+            TestDBTools.ShowRowsFromTLogEntries(queryResults, columnNames);
         }
     }
 }
