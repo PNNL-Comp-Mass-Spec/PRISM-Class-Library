@@ -46,6 +46,19 @@ namespace PRISMDatabaseUtils
         string DatabaseName { get; }
 
         /// <summary>
+        /// For SQL queries against PostgreSQL databases, when this is true,
+        /// if any of the column names after the SELECT keyword has capital letters,
+        /// the column names in the result table (or columnName list) will be auto-capitalized
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to true</para>
+        /// <para>Only matches column names that have letters, numbers, and underscores</para>
+        /// <para>Ignores column names that are quoted with double quotes</para>
+        /// <para>If a column name occurs more than once, it will not be included in the dictionary</para>
+        /// </remarks>
+        public bool CapitalizeColumnNamesInResults { get; set; }
+
+        /// <summary>
         /// Run a query against a SQL database, return the scalar result
         /// </summary>
         /// <remarks>

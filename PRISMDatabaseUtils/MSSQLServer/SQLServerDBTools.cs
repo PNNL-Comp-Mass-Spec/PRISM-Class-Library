@@ -30,6 +30,16 @@ namespace PRISMDatabaseUtils.MSSQLServer
         #region "Properties"
 
         /// <summary>
+        /// For SQL queries against PostgreSQL databases, when this is true,
+        /// if any of the column names after the SELECT keyword has capital letters,
+        /// the column names in the result table (or columnName list) will be auto-capitalized
+        /// </summary>
+        /// <remarks>
+        /// <para>Ignored by this class, since only applies to PostgreSQL</para>
+        /// </remarks>
+        public bool CapitalizeColumnNamesInResults { get; set; } = true;
+
+        /// <summary>
         /// Database connection string
         /// </summary>
         public string ConnectStr
