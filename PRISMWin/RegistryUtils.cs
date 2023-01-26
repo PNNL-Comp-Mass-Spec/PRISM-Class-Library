@@ -13,9 +13,9 @@ namespace PRISMWin
         /// <summary>
         /// Determines the directory that contains R.exe and Rcmd.exe (as defined in the Windows registry)
         /// </summary>
-        /// <param name="errorMessage">Output: error message (empty string if no error)</param>
+        /// <param name="errorMessage">Output: error message if an error, otherwise an empty string</param>
         /// <param name="callingFunction">>Name of the calling method (for logging purposes)</param>
-        /// <returns>Directory path for R</returns>
+        /// <returns>Directory path, e.g. C:\Program Files\R\R-3.2.2\bin\x64</returns>
         public string GetRPathFromWindowsRegistry(out string errorMessage, [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             // ReSharper disable once IdentifierTypo
