@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace PRISMWin
 {
-    public class RegistryUtils
+    public static class RegistryUtils
     {
         /// <summary>
         /// Determines the directory that contains R.exe and Rcmd.exe (as defined in the Windows registry)
@@ -16,7 +16,7 @@ namespace PRISMWin
         /// <param name="errorMessage">Output: error message if an error, otherwise an empty string</param>
         /// <param name="callingFunction">>Name of the calling method (for logging purposes)</param>
         /// <returns>Directory path, e.g. C:\Program Files\R\R-3.2.2\bin\x64</returns>
-        public string GetRPathFromWindowsRegistry(out string errorMessage, [CallerMemberName] string callingFunction = "UnknownMethod")
+        public static string GetRPathFromWindowsRegistry(out string errorMessage, [CallerMemberName] string callingFunction = "UnknownMethod")
         {
             // ReSharper disable once IdentifierTypo
             const string RCORE_SUBKEY = @"SOFTWARE\R-core";
