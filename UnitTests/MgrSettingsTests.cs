@@ -82,6 +82,8 @@ namespace PRISMTest
             Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
 
             var mgrSettings = new MgrSettings();
+
+            // Send an empty dictionary to LoadMgrSettingsFromFile() to use the method that only reads settings from a single .config file
             var settings = mgrSettings.LoadMgrSettingsFromFile(configFile.FullName, new Dictionary<string, string>());
 
             ValidateSettings(testProgSingleConfig, settings);
@@ -96,6 +98,8 @@ namespace PRISMTest
             Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
 
             var mgrSettings = new MgrSettings();
+
+            // Read the .exe.config file, plus other, related files (TestProg.exe.db.config and TestProg.exe.local.config)
             var settings = mgrSettings.LoadMgrSettingsFromFile(configFile.FullName);
 
             ValidateSettings(testProgMultiConfig, settings);
@@ -110,6 +114,8 @@ namespace PRISMTest
             Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
 
             var mgrSettings = new MgrSettings();
+
+            // Read the .exe.config file, plus other, related files (TestProg2.exe.db.config and TestProg2.exe.local.config)
             var settings = mgrSettings.LoadMgrSettingsFromFile(configFile.FullName);
 
             ValidateSettings(testProg2MultiConfig, settings);

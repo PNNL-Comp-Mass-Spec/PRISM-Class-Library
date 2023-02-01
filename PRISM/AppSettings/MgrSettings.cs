@@ -548,16 +548,20 @@ namespace PRISM.AppSettings
         }
 
         /// <summary>
-        /// Read settings from file AppName.exe.config
-        /// If the file path ends with ".exe.config", other files with similar names are also read afterward
-        /// (matching RegEx "AppName\.exe\..+config$")
+        /// Read settings from the application's config file, e.g. AnalysisManagerProg.exe.config
+        /// If the file path ends with ".exe.config", other files with similar names are also read afterward, e.g. AppName.exe.db.config
         /// </summary>
-        /// <remarks>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</remarks>
-        /// <param name="configFilePath">Path to config file</param>
+        /// <remarks>
+        /// <para>Uses an XML reader instead of Properties.Settings.Default (to allow for non-standard .exe.config files)</para>
+        /// <para>Many PRISM managers use three config files: AppName.exe.config, AppName.exe.db.config, and AppName.exe.local.config</para>
+        /// <para>Related config files are processed alphabetically, though the .local.config file is loaded last</para>
+        /// </remarks>
+        /// <param name="configFilePath">Configuration file path</param>
         /// <returns>Dictionary of settings as key/value pairs; null on error</returns>
         public Dictionary<string, string> LoadMgrSettingsFromFile(string configFilePath)
         {
             var configFile = new FileInfo(configFilePath);
+
             if (!configFile.Exists)
             {
                 ReportError("LoadMgrSettingsFromFile; manager config file not found: " + configFilePath);
@@ -565,17 +569,45 @@ namespace PRISM.AppSettings
             }
 
             var settings = LoadMgrSettingsFromFile(configFilePath, new Dictionary<string, string>());
-            if (configFilePath.EndsWith(".exe.config", StringComparison.OrdinalIgnoreCase))
+
+            if (!configFilePath.EndsWith(".exe.config", StringComparison.OrdinalIgnoreCase))
+                return settings;
+
+            // Look for other .config files and read them alphabetically (ignoring case)
+            // Always load the .local.config file last
+
+            // Define the base name by removing ".config" from "AppName.exe.config"
+            var baseName = configFile.Name.Substring(0, configFile.Name.Length - 7);
+
+            var workingDirectory = configFile.Directory ?? new DirectoryInfo(".");
+
+            var configFiles = workingDirectory.GetFiles(baseName + "*.config");
+
+            var configFilesToLoad = new List<FileInfo>();
+
+            FileInfo localConfigFile = null;
+
+            foreach (var file in from file in configFiles orderby file.Name.ToLower() select file)
             {
-                var baseName = configFile.Name.Substring(0, configFile.Name.Length - 6);
-                var dir = configFile.Directory ?? new DirectoryInfo(".");
-                var files = dir.EnumerateFiles(baseName + "*config");
-                foreach (var file in files.Where(x =>
-                    x.Name.EndsWith("config", StringComparison.OrdinalIgnoreCase) &&
-                    !x.Name.Equals(configFile.Name, StringComparison.OrdinalIgnoreCase)))
+                if (file.Name.Equals(configFile.Name, StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                if (file.Name.EndsWith(".local.config", StringComparison.OrdinalIgnoreCase))
                 {
-                    settings = LoadMgrSettingsFromFile(file.FullName, settings);
+                    localConfigFile = file;
+                    continue;
                 }
+
+                configFilesToLoad.Add(file);
+            }
+
+            if (localConfigFile != null)
+                configFilesToLoad.Add(localConfigFile);
+
+            // ReSharper disable once ForeachCanBeConvertedToQueryUsingAnotherGetEnumerator
+            foreach (var file in configFilesToLoad)
+            {
+                settings = LoadMgrSettingsFromFile(file.FullName, settings);
             }
 
             return settings;
@@ -624,6 +656,7 @@ namespace PRISM.AppSettings
 
                 // Read each of the settings
                 var settingNodes = appSettingsNode.SelectNodes("//setting[@name]");
+
                 if (settingNodes == null)
                 {
                     ReportError("LoadMgrSettingsFromFile; applicationSettings/*/setting nodes not found in " + configFilePath);
