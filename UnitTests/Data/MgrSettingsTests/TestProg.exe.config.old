@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<applicationSettings>
+  <setting name="MgrActive_Local" serializeAs="String">
+    <value>BadValue</value>
+  </setting>
+  <setting name="MgrCnfgDbConnectStr" serializeAs="String">
+    <value>BadValue</value>
+  </setting>
+  <setting name="MgrName" serializeAs="String">
+    <value>BadValue</value>
+  </setting>
+  <setting name="UsingDefaults" serializeAs="String">
+    <value>BadValue</value>
+  </setting>
+  <setting name="DefaultDMSConnString" serializeAs="String">
+    <value>BadValue</value>
+  </setting>
+</applicationSettings>
