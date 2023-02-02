@@ -184,7 +184,7 @@ namespace PRISMTest
             TestFindFilesWildcardWork(directoryPath, fileMask, expectedFileNames, true);
         }
 
-        [TestCase(@"LinuxTestFiles\Ubuntu\proc\cpuinfo", "*info", "cpuinfo, meminfo", 6)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\proc\cpuinfo", "*info", "cpuinfo, meminfo", 6)]
         public void TestFindFilesWildcardRelativeDirectory(string filePath, string fileMask, string expectedFileNames, int expectedFileCount)
         {
             // Get the full path to the LinuxTestFiles directory, 3 levels up from the cpuinfo test file

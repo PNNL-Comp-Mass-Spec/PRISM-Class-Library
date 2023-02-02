@@ -18,8 +18,8 @@ namespace PRISMTest
 
         internal const bool SHOW_TRACE_MESSAGES = false;
 
-        [TestCase(@"LinuxTestFiles\Centos6\etc", "lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
-        [TestCase(@"LinuxTestFiles\Centos6\etc", "redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\etc", "lsb-release", "LSB_VERSION=base-4.0-amd64:base-4.0-noarch:core-4.0-amd64")]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\etc", "redhat-release", "Red Hat Enterprise Linux Workstation release 6.9 (Santiago)")]
         public void TestGetCentos6Version(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -32,7 +32,7 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu 17.04 (Zesty Zapus)")]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu 17.04 (Zesty Zapus)")]
         public void TestGetOSReleaseVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -45,7 +45,7 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Solaris\etc", "release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Solaris\etc", "release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
         public void TestGetSolarisVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -58,8 +58,8 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Ubuntu\etc", "lsb-release", "Ubuntu 17.04")]
-        [TestCase(@"LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\etc", "lsb-release", "Ubuntu 17.04")]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu; 17.04 (Zesty Zapus)")]
         public void TestGetUbuntuVersion(string remoteVersionDirectoryPath, string versionFileName, string expectedVersionTextStart)
         {
             var osVersionInfo = new OSVersionInfo();
@@ -73,9 +73,9 @@ namespace PRISMTest
             Assert.True(versionText.StartsWith(expectedVersionTextStart));
         }
 
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 16, 2)]
-        [TestCase(@"LinuxTestFiles\Cygwin\proc", 4, 1)]
-        [TestCase(@"LinuxTestFiles\Ubuntu\proc", 2, 1)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 16, 2)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Cygwin\proc", 4, 1)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\proc", 2, 1)]
         public void TestGetCoreCount(string sourceProcDirectoryPath, int expectedCoreCount, int expectedProcessorPackages)
         {
             var procDirectory = ValidateLocalProcDirectory();
@@ -96,11 +96,11 @@ namespace PRISMTest
             Assert.AreEqual(expectedProcessorPackages, linuxSystemInfo.GetProcessorPackageCount());
         }
 
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "", 3.841)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, "mono", "cpuloadtest", 3.841)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 7.408)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "mono", "InvalidArgs", -1)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, "InvalidProgram", "", -1)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98079, "mono", "", 3.841)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98079, "mono", "cpuloadtest", 3.841)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98096, "mono", "cpuloadtest", 7.408)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98096, "mono", "InvalidArgs", -1)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98096, "InvalidProgram", "", -1)]
         public void TestGetCoreUsageByProcessName(string sourceProcDirectoryPath, int processID, string processName, string arguments, double expectedCoreUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
@@ -188,9 +188,9 @@ namespace PRISMTest
             }
         }
 
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 3.841, 24)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 7.408, 46.3)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 34304, 7.88, 49.3)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98079, 3.841, 24)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98096, 7.408, 46.3)]
         public void TestGetCoreUsageByProcessID(string sourceProcDirectoryPath, int processID, double expectedCoreUsage, double expectedCpuUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
@@ -351,8 +351,8 @@ namespace PRISMTest
             }
         }
 
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98079, 24.100)]
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 98096, 46.366)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98079, 24.100)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98096, 46.366)]
         public void TestGetCPUUtilization(string sourceProcDirectoryPath, int processID, double expectedCpuUsageTotal)
         {
             const int SAMPLING_TIME_SECONDS = 3;
@@ -394,9 +394,9 @@ namespace PRISMTest
             Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.01, "CPU usage mismatch");
         }
 
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 42128)]
-        [TestCase(@"LinuxTestFiles\Cygwin\proc", 13050)]
-        [TestCase(@"LinuxTestFiles\Ubuntu\proc", 1276)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 42128)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Cygwin\proc", 13050)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\proc", 1276)]
         public void TestGetFreeMemory(string sourceProcDirectoryPath, float expectedFreeMemoryMB)
         {
             var procDirectory = ValidateLocalProcDirectory();
@@ -435,9 +435,9 @@ namespace PRISMTest
             Assert.AreEqual(expectedFreeMemoryMB, freeMemoryMB, 1);
         }
 
-        [TestCase(@"LinuxTestFiles\Centos6\proc", 64183)]
-        [TestCase(@"LinuxTestFiles\Cygwin\proc", 32672)]
-        [TestCase(@"LinuxTestFiles\Ubuntu\proc", 3938)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 64183)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Cygwin\proc", 32672)]
+        [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\proc", 3938)]
         public void TestGetTotalMemory(string sourceProcDirectoryPath, float expectedTotalMemoryMB)
         {
             var procDirectory = ValidateLocalProcDirectory();
