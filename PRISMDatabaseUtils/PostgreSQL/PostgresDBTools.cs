@@ -1516,8 +1516,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
         /// <summary>
         /// Look for parameter names that start with @
-        /// Auto-change the @ to _
+        /// Auto-change the at sign to an underscore: @ to _
         /// </summary>
+        /// <remarks>Parameters named "@Return" with a ReturnValue parameter direction are auto-renamed to "_returnCode" and updated to have an InputOutput parameter direction</remarks>
         /// <param name="spCmd"></param>
         private static void UpdateSqlServerParameterNames(NpgsqlCommand spCmd)
         {
