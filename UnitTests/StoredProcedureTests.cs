@@ -5,7 +5,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using Npgsql;
 using NUnit.Framework;
-using PRISM;
 using PRISMDatabaseUtils;
 
 namespace PRISMTest
@@ -570,13 +569,15 @@ namespace PRISMTest
         }
 
         [TestCase("Gigasax", "dms5", 0)]
+        [Category("DatabaseIntegrated")]
         public void TestGetNamedReturnCodeSqlServer(string server, string database, int expectedReturnCode)
         {
-            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, DMS_WEB_USER, "password_goes_here");
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database);
             TestGetNamedReturnCode(connectionString, expectedReturnCode);
         }
 
         [TestCase("prismdb1", "dms", 0)]
+        [Category("DatabaseNamedUser")]
         public void TestGetNamedReturnCodePostgres(string server, string database, int expectedReturnCode)
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
