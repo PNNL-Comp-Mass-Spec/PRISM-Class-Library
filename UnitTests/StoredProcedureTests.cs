@@ -46,7 +46,7 @@ namespace PRISMTest
             var spCmd = new SqlCommand
             {
                 CommandType = CommandType.StoredProcedure,
-                CommandText = "FindLogEntry"
+                CommandText = "Find_Log_Entry"
             };
 
             spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
@@ -255,13 +255,13 @@ namespace PRISMTest
             var spCmd = new SqlCommand
             {
                 CommandType = CommandType.StoredProcedure,
-                CommandText = "GetManagerParameters"
+                CommandText = "Get_Manager_Parameters"
             };
 
             spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
-            spCmd.Parameters.Add(new SqlParameter("@ManagerNameList", SqlDbType.VarChar, 4000)).Value = "Pub-12-1, Pub-12-2";
-            spCmd.Parameters.Add(new SqlParameter("@SortMode", SqlDbType.TinyInt)).Value = 0;
-            spCmd.Parameters.Add(new SqlParameter("@MaxRecursion", SqlDbType.TinyInt)).Value = 50;
+            spCmd.Parameters.Add(new SqlParameter("@managerNameList", SqlDbType.VarChar, 4000)).Value = "Pub-12-1, Pub-12-2";
+            spCmd.Parameters.Add(new SqlParameter("@sortMode", SqlDbType.TinyInt)).Value = 0;
+            spCmd.Parameters.Add(new SqlParameter("@maxRecursion", SqlDbType.TinyInt)).Value = 50;
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
@@ -323,7 +323,7 @@ namespace PRISMTest
         public void TestEnableDisableManagersSqlServer(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
-            TestEnableDisableManagers(connectionString, "EnableDisableManagers");
+            TestEnableDisableManagers(connectionString, "enable_disable_managers");
         }
 
         [TestCase("prismdb1", "dms")]
@@ -403,7 +403,7 @@ namespace PRISMTest
         public void TestEnableDisableManagersDataSqlServer(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
-            TestEnableDisableManagersData(connectionString, "EnableDisableManagers");
+            TestEnableDisableManagersData(connectionString, "enable_disable_managers");
         }
 
         [TestCase("prismdb1", "dms")]
