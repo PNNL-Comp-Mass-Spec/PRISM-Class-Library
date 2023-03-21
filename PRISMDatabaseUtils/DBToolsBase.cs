@@ -22,6 +22,26 @@ namespace PRISMDatabaseUtils
         private static readonly Regex mIntegerMatcher = new(@"\d+", RegexOptions.Compiled);
 
         /// <summary>
+        /// Test connecting to the database
+        /// </summary>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the connection</param>
+        /// <returns>True if success, false if unable to connect</returns>
+        public bool TestDatabaseConnection(int retryCount = 3, int retryDelaySeconds = 5)
+        {
+            return TestDatabaseConnection(out _, retryCount, retryDelaySeconds);
+        }
+
+        /// <summary>
+        /// Test connecting to the database
+        /// </summary>
+        /// <param name="serverVersion">Version string returned by the server connection</param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the connection</param>
+        /// <returns>True if success, false if unable to connect</returns>
+        public abstract bool TestDatabaseConnection(out string serverVersion, int retryCount = 3, int retryDelaySeconds = 5);
+
+        /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
         /// <remarks>

@@ -1012,9 +1012,10 @@ namespace PRISMTest
         private void TestQueryTableWork(string connectionString, string database, string user, string query, int expectedRowCount, string expectedValueList)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
+            var connectionWorks = dbTools.TestDatabaseConnection(out var version);
 
             Console.WriteLine("Running query " + query + " against " + database + " as user " + user);
-            Console.WriteLine("Connection string: " + connectionString);
+            Console.WriteLine("Connection string: {0} (connection test {1}, version {2})", connectionString, connectionWorks ? "successful" : "failed", version);
 
             dbTools.GetQueryResults(query, out var results);
 

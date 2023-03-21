@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Runtime.CompilerServices;
 using System.Text;
 using PRISM;
@@ -211,6 +212,62 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         ex.Message, ConnectStr, retryCount, sqlQuery);
 
                     OnErrorEvent(errorMessage);
+
+                    // Delay for 5 seconds before trying again
+                    AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Test connecting to the database
+        /// </summary>
+        /// <param name="serverVersion">Version string returned by the server connection</param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the connection</param>
+        /// <returns>True if success, false if unable to connect</returns>
+        public override bool TestDatabaseConnection(out string serverVersion, int retryCount = 3, int retryDelaySeconds = 5)
+        {
+            serverVersion = string.Empty;
+            if (retryCount < 1)
+                retryCount = 1;
+
+            if (retryDelaySeconds < 1)
+                retryDelaySeconds = 1;
+
+            while (true)
+            {
+                try
+                {
+                    using var dbConnection = new SqlConnection(ConnectStr);
+
+                    dbConnection.InfoMessage += OnInfoMessage;
+                    dbConnection.Open();
+
+                    serverVersion = dbConnection.ServerVersion;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    retryCount--;
+
+                    var errorMessage = string.Format(
+                        "Exception testing connection to database: {0}; " +
+                        "ConnectionString: {1}, RetryCount = {2}",
+                        ex.Message, ConnectStr, retryCount);
+
+                    OnErrorEvent(errorMessage);
+
+                    if (IsFatalException(ex))
+                    {
+                        // No point in retrying the query; it will fail again
+                        return false;
+                    }
+
+                    if (retryCount <= 0)
+                        break;
 
                     // Delay for 5 seconds before trying again
                     AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);

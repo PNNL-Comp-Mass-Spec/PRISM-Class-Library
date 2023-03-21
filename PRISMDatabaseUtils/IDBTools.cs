@@ -59,6 +59,23 @@ namespace PRISMDatabaseUtils
         public bool CapitalizeColumnNamesInResults { get; set; }
 
         /// <summary>
+        /// Test connecting to the database
+        /// </summary>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the connection</param>
+        /// <returns>True if success, false if unable to connect</returns>
+        bool TestDatabaseConnection(int retryCount = 3, int retryDelaySeconds = 5);
+
+        /// <summary>
+        /// Test connecting to the database
+        /// </summary>
+        /// <param name="serverVersion">Version string returned by the server connection</param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the connection</param>
+        /// <returns>True if success, false if unable to connect</returns>
+        bool TestDatabaseConnection(out string serverVersion, int retryCount = 3, int retryDelaySeconds = 5);
+
+        /// <summary>
         /// Run a query against a SQL database, return the scalar result
         /// </summary>
         /// <remarks>
