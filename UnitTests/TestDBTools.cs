@@ -825,8 +825,8 @@ namespace PRISMTest
         /// <param name="rowCountToRetrieve"></param>
         /// <param name="iterations"></param>
         /// <param name="specifyColumnNames">When true, use explicit column names instead of *</param>
-        [TestCase("prismweb2", "dmsdev2", 5, 2, false)]
-        [TestCase("prismweb2", "dmsdev2", 5, 2, true)]
+        [TestCase("prismdb1", "dms", 5, 2, false)]
+        [TestCase("prismdb1", "dms", 5, 2, true)]
         [Category("DatabaseIntegrated")]
         public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
