@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using Npgsql;
 using NUnit.Framework;
+using PRISM;
 using PRISMDatabaseUtils;
 
 namespace PRISMTest
@@ -500,6 +501,14 @@ namespace PRISMTest
             TestGetReturnCode(connectionString, procedureName, skipProcedureCall, expectedReturnCode, returnCodeOverride);
         }
 
+        /// <summary>
+        /// Call the specified stored procedure and examine the return code
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="procedureName"></param>
+        /// <param name="skipProcedureCall"></param>
+        /// <param name="expectedReturnCode"></param>
+        /// <param name="returnCodeOverride"></param>
         private void TestGetReturnCode(
             string connectionString,
             string procedureName,
@@ -558,6 +567,138 @@ namespace PRISMTest
                 Console.WriteLine("_returnCode {0} evaluates to return value {1}", returnCodeOverride, returnCodeValue);
 
             Assert.AreEqual(expectedReturnCode, returnCodeValue, "Return code mismatch");
+        }
+
+        [TestCase("Gigasax", "dms5", 0)]
+        public void TestGetNamedReturnCodeSqlServer(string server, string database, int expectedReturnCode)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, DMS_WEB_USER, "password_goes_here");
+            TestGetNamedReturnCode(connectionString, expectedReturnCode);
+        }
+
+        [TestCase("prismdb1", "dms", 0)]
+        public void TestGetNamedReturnCodePostgres(string server, string database, int expectedReturnCode)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
+            TestGetNamedReturnCode(connectionString, expectedReturnCode);
+        }
+
+        private void TestGetNamedReturnCode(string connectionString, int expectedReturnCode)
+        {
+            const string SP_NAME_REPORT_GET_SPECTRAL_LIBRARY_ID = "get_spectral_library_id";
+
+            try
+            {
+                var connectionStringToUse = DbToolsFactory.AddApplicationNameToConnectionString(connectionString, "PRISMTest");
+
+                var dbTools = DbToolsFactory.GetDBTools(connectionStringToUse, debugMode: true);
+
+                var dbServerType = DbToolsFactory.GetServerTypeFromConnectionString(dbTools.ConnectStr);
+
+                var cmd = dbTools.CreateCommand(SP_NAME_REPORT_GET_SPECTRAL_LIBRARY_ID, CommandType.StoredProcedure);
+
+                if (dbServerType == DbServerTypes.PostgreSQL)
+                    dbTools.AddParameter(cmd, "@allowAddNew", SqlType.Boolean).Value = true;
+                else
+                    dbTools.AddParameter(cmd, "@allowAddNew", SqlType.TinyInt).Value = 1;
+
+                dbTools.AddParameter(cmd, "@dmsSourceJob", SqlType.Int).Value = 0;
+                // ReSharper disable once StringLiteralTypo
+                dbTools.AddParameter(cmd, "@proteinCollectionList", SqlType.VarChar, 2000).Value = "H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov";
+                dbTools.AddParameter(cmd, "@organismDbFile", SqlType.VarChar, 128).Value = "na";
+                dbTools.AddParameter(cmd, "@fragmentIonMzMin", SqlType.Real).Value = 200f;
+                dbTools.AddParameter(cmd, "@fragmentIonMzMax", SqlType.Real).Value = 1800f;
+
+                if (dbServerType == DbServerTypes.PostgreSQL)
+                    dbTools.AddParameter(cmd, "@trimNTerminalMet", SqlType.Boolean).Value = true;
+                else
+                    dbTools.AddParameter(cmd, "@trimNTerminalMet", SqlType.TinyInt).Value = 1;
+
+                dbTools.AddParameter(cmd, "@cleavageSpecificity", SqlType.VarChar, 64).Value = "K*,R*";
+                dbTools.AddParameter(cmd, "@missedCleavages", SqlType.Int).Value = 2;
+                dbTools.AddParameter(cmd, "@peptideLengthMin", SqlType.Int).Value = 7;
+                dbTools.AddParameter(cmd, "@peptideLengthMax", SqlType.Int).Value = 30;
+                dbTools.AddParameter(cmd, "@precursorMzMin", SqlType.Real).Value = 350f;
+                dbTools.AddParameter(cmd, "@precursorMzMax", SqlType.Real).Value = 1800f;
+                dbTools.AddParameter(cmd, "@precursorChargeMin", SqlType.Int).Value = 2;
+                dbTools.AddParameter(cmd, "@precursorChargeMax", SqlType.Int).Value = 4;
+
+                if (dbServerType == DbServerTypes.PostgreSQL)
+                    dbTools.AddParameter(cmd, "@staticCysCarbamidomethyl", SqlType.Boolean).Value = true;
+                else
+                    dbTools.AddParameter(cmd, "@staticCysCarbamidomethyl", SqlType.TinyInt).Value = 1;
+
+                dbTools.AddParameter(cmd, "@staticMods", SqlType.VarChar, 512).Value = string.Empty;
+                dbTools.AddParameter(cmd, "@dynamicMods", SqlType.VarChar, 512).Value = "UniMod:35,   15.994915,  M";
+                dbTools.AddParameter(cmd, "@maxDynamicMods", SqlType.Int).Value = 3;
+
+                // Append the output parameters
+
+                var libraryIdParam = dbTools.AddParameter(cmd, "@libraryId", SqlType.Int, ParameterDirection.InputOutput);
+                var libraryStateIdParam = dbTools.AddParameter(cmd, "@libraryStateId", SqlType.Int, ParameterDirection.InputOutput);
+                var libraryNameParam = dbTools.AddParameter(cmd, "@libraryName", SqlType.VarChar, 255, ParameterDirection.InputOutput);
+                var storagePathParam = dbTools.AddParameter(cmd, "@storagePath", SqlType.VarChar, 255, ParameterDirection.InputOutput);
+
+                var shouldMakeLibraryParam = dbTools.AddParameter(cmd, "@sourceJobShouldMakeLibrary", dbServerType == DbServerTypes.PostgreSQL ? SqlType.Boolean : SqlType.TinyInt, ParameterDirection.InputOutput);
+
+                var messageParam = dbTools.AddParameter(cmd, "@message", SqlType.VarChar, 255, ParameterDirection.InputOutput);
+                var returnCodeParam = dbTools.AddParameter(cmd, "@returnCode", SqlType.VarChar, 64, ParameterDirection.InputOutput);
+
+                // Initialize the output parameter values (required for PostgreSQL)
+                libraryIdParam.Value = 0;
+                libraryStateIdParam.Value = 0;
+                libraryNameParam.Value = string.Empty;
+                storagePathParam.Value = string.Empty;
+
+                shouldMakeLibraryParam.Value = dbServerType == DbServerTypes.PostgreSQL ? false : 0;
+
+                messageParam.Value = string.Empty;
+                returnCodeParam.Value = string.Empty;
+
+                // Execute the SP
+                var returnCode = dbTools.ExecuteSP(cmd, out var errorMessage, 0);
+
+                var success = returnCode == 0;
+
+                if (!success)
+                {
+                    var errorMsg = string.Format(
+                        "Procedure {0} returned error code {1}{2}",
+                        SP_NAME_REPORT_GET_SPECTRAL_LIBRARY_ID, returnCode,
+                        string.IsNullOrWhiteSpace(errorMessage)
+                            ? string.Empty
+                            : ": " + errorMessage);
+
+                    Console.WriteLine("Error: " + errorMsg);
+                }
+
+                // Expected messages:
+
+                // If the spectral library does not exist, and allowAddNew is false:
+                //   Would create a new spectral library named H_sapiens_UniProt_SPROT_2021-06-20_Tryp_Pig_Bov_7D7D8EC4.predicted.speclib
+
+                // If the spectral library does not exist, and allowAddNew is true:
+                //   Created spectral library ID 1002: H_sapiens_UniProt_SPROT_2021-06-20_Tryp_Pig_Bov_7D7D8EC4.predicted.speclib
+
+                // If the spectral library already exists:
+                //   Found existing spectral library ID 1002 with state 2: H_sapiens_UniProt_SPROT_2021-06-20_Tryp_Pig_Bov_7D7D8EC4.predicted.speclib
+
+                Console.WriteLine();
+                Console.WriteLine("Message:             " + messageParam.Value);
+                Console.WriteLine("Return code:         " + returnCodeParam.Value);
+
+                Console.WriteLine("Library ID:          " + libraryIdParam.Value);
+                Console.WriteLine("Library State ID:    " + libraryStateIdParam.Value);
+                Console.WriteLine("Library Name:        " + libraryNameParam.Value);
+                Console.WriteLine("Storage Path:        " + storagePathParam.Value);
+                Console.WriteLine("Should Make New Lib: " + shouldMakeLibraryParam.Value);
+
+                Assert.AreEqual(expectedReturnCode, returnCode, "Return code mismatch");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error calling {0}: {1}", SP_NAME_REPORT_GET_SPECTRAL_LIBRARY_ID, ex.Message);
+            }
         }
 
         [TestCase("prismweb3", "dmsdev")]
