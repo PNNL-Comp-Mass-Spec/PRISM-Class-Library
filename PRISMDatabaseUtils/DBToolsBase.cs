@@ -385,14 +385,15 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Determine the return code to report after calling a stored procedure or function
         /// </summary>
-        /// <remarks>Looks for a parameter named _returnCode or with Direction == ParameterDirection.ReturnValue</remarks>
+        /// <remarks>Looks for a parameter named _returnCode or @returnCode, or with Direction == ParameterDirection.ReturnValue</remarks>
         /// <param name="cmdParameters"></param>
         /// <returns>Numeric return code</returns>
         protected static int GetReturnCode(DbParameterCollection cmdParameters)
         {
             foreach (DbParameter parameter in cmdParameters)
             {
-                if (parameter.ParameterName.Equals("_returnCode", StringComparison.OrdinalIgnoreCase))
+                if (parameter.ParameterName.Equals("_returnCode", StringComparison.OrdinalIgnoreCase) ||
+                    parameter.ParameterName.Equals("@returnCode", StringComparison.OrdinalIgnoreCase))
                 {
                     return GetReturnCode(parameter);
                 }
