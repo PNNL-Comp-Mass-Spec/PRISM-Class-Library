@@ -1208,8 +1208,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             int size,
             ParameterDirection direction = ParameterDirection.Input)
         {
-            var parameter = AddParameterByDataTypeName(command, name, dataTypeName, size, direction);
-            return parameter;
+            return AddParameterByDataTypeName(command, name, dataTypeName, size, direction);
         }
 
         /// <summary>
