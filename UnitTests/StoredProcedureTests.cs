@@ -14,7 +14,7 @@ namespace PRISMTest
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: dms, dmsdev, dmswebuser, mtuser, Postgres, PostgreSQL, ProteinSeqs, workdir
+        // Ignore Spelling: dms, dmsdev, dmswebuser, mtuser, na, Postgres, PostgreSQL, ProteinSeqs, workdir
 
         // ReSharper restore CommentTypo
 
