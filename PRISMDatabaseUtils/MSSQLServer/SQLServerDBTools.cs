@@ -865,9 +865,22 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                     dbConnection.InfoMessage += OnInfoMessage;
 
+                    SqlDataReader reader;
+
                     try
                     {
+                        // Open connection
                         dbConnection.Open();
+
+                        if (DebugMessagesEnabled)
+                        {
+                            OnDebugEvent("GetQueryResults: " + sqlCmd.CommandText);
+                        }
+
+                        sqlCmd.Connection = dbConnection;
+
+                        // initialize the reader
+                        reader = sqlCmd.ExecuteReader();
                     }
                     catch (Exception ex)
                     {
@@ -899,24 +912,21 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         continue;
                     }
 
-                    if (DebugMessagesEnabled)
-                    {
-                        OnDebugEvent("GetQueryResults: " + sqlCmd.CommandText);
-                    }
-
-                    sqlCmd.Connection = dbConnection;
-
                     var rowCount = 0;
                     if (maxRowsToReturn == 0)
                     {
                         maxRowsToReturn = int.MaxValue;
                     }
 
-                    using var reader = sqlCmd.ExecuteReader();
-                    while (reader.Read() && rowCount < maxRowsToReturn)
+                    // cannot use 'yield return' inside of a try-catch block
+                    // but initialize the reader there to limit potential exceptions outside of try-catch
+                    using (reader)
                     {
-                        yield return rowObjectCreator(reader);
-                        rowCount++;
+                        while (reader.Read() && rowCount < maxRowsToReturn)
+                        {
+                            yield return rowObjectCreator(reader);
+                            rowCount++;
+                        }
                     }
 
                     break;
