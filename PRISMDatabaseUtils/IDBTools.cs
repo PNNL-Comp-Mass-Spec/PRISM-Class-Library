@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
@@ -275,6 +276,52 @@ namespace PRISMDatabaseUtils
             DbCommand cmd,
             out DataSet queryResults,
             int retryCount = 3,
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod");
+
+        /// <summary>
+        /// Run a query against a SQL database, return the results as an IEnumerable of objects
+        /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the connection (but not the query) up to 3 times
+        /// </remarks>
+        /// <param name="sqlQuery">Query to run</param>
+        /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
+        /// <returns>Data; empty if no data or error</returns>
+        IEnumerable<T> GetQueryResultsEnumerable<T>(
+            string sqlQuery,
+            Func<DbDataReader, T> rowObjectCreator,
+            int retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5,
+            int timeoutSeconds = -1,
+            [CallerMemberName] string callingFunction = "UnknownMethod");
+
+        /// <summary>
+        /// Run a query against a SQL database, return the results as an IEnumerable of objects
+        /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the connection (but not the query) up to 3 times
+        /// </remarks>
+        /// <param name="cmd">Query to run</param>
+        /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
+        /// <returns>Data; empty if no data or error</returns>
+        IEnumerable<T> GetQueryResultsEnumerable<T>(
+            DbCommand cmd,
+            Func<DbDataReader, T> rowObjectCreator,
+            int retryCount = 3,
+            int maxRowsToReturn = 0,
             int retryDelaySeconds = 5,
             [CallerMemberName] string callingFunction = "UnknownMethod");
 

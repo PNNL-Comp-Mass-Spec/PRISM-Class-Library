@@ -775,6 +775,152 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
+        /// Run a query against a SQL database, return the results as an IEnumerable of objects
+        /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the connection (but not the query) up to 3 times
+        /// </remarks>
+        /// <param name="sqlQuery">Query to run</param>
+        /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
+        /// <returns>Data; empty if no data or error</returns>
+        public IEnumerable<T> GetQueryResultsEnumerable<T>(
+            string sqlQuery,
+            Func<DbDataReader, T> rowObjectCreator,
+            int retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5,
+            int timeoutSeconds = -1,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
+        {
+            if (timeoutSeconds <= 0)
+            {
+                timeoutSeconds = TimeoutSeconds;
+            }
+
+            var cmd = new NpgsqlCommand(sqlQuery) { CommandType = CommandType.Text, CommandTimeout = timeoutSeconds };
+            return GetQueryResultsEnumerable(cmd, rowObjectCreator, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
+        }
+
+        /// <summary>
+        /// Run a query against a SQL database, return the results as an IEnumerable of objects
+        /// </summary>
+        /// <remarks>
+        /// Uses the connection string passed to the constructor of this class
+        /// By default, retries the connection (but not the query) up to 3 times
+        /// </remarks>
+        /// <param name="cmd">Query to run</param>
+        /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
+        /// <returns>Data; empty if no data or error</returns>
+        public IEnumerable<T> GetQueryResultsEnumerable<T>(
+            DbCommand cmd,
+            Func<DbDataReader, T> rowObjectCreator,
+            int retryCount = 3,
+            int maxRowsToReturn = 0,
+            int retryDelaySeconds = 5,
+            [CallerMemberName] string callingFunction = "UnknownMethod")
+        {
+            if (string.IsNullOrWhiteSpace(callingFunction))
+            {
+                callingFunction = "UnknownCaller";
+            }
+
+            if (cmd is not NpgsqlCommand sqlCmd)
+            {
+                if (cmd == null)
+                {
+                    throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                }
+
+                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+            }
+
+            if (retryCount < 1)
+                retryCount = 1;
+
+            if (retryDelaySeconds < 1)
+                retryDelaySeconds = 1;
+
+            // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
+            // Could use clones for each try, but that would cause problems with "Output" parameters
+            using (sqlCmd)
+            {
+                while (true)
+                {
+                    using var dbConnection = new NpgsqlConnection(ConnectStr);
+
+                    dbConnection.Notice += OnNotice;
+
+                    try
+                    {
+                        dbConnection.Open();
+                    }
+                    catch (Exception ex)
+                    {
+                        retryCount--;
+
+                        if (string.IsNullOrWhiteSpace(callingFunction))
+                        {
+                            callingFunction = "Unknown";
+                        }
+
+                        var errorMessage = string.Format(
+                            "Exception querying database (called from {0}): {1}; " +
+                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
+
+                        OnErrorEvent(errorMessage);
+
+                        if (IsFatalException(ex))
+                        {
+                            // No point in retrying the query; it will fail again
+                            yield break;
+                        }
+
+                        if (retryCount <= 0)
+                            break;
+
+                        // Delay for 5 seconds before trying again
+                        AppUtils.SleepMilliseconds(retryDelaySeconds * 1000);
+                        continue;
+                    }
+
+                    if (DebugMessagesEnabled)
+                    {
+                        OnDebugEvent("GetQueryResults: " + cmd.CommandText);
+                    }
+
+                    sqlCmd.Connection = dbConnection;
+
+                    var rowCount = 0;
+                    if (maxRowsToReturn == 0)
+                    {
+                        maxRowsToReturn = int.MaxValue;
+                    }
+
+                    using var reader = sqlCmd.ExecuteReader();
+
+                    while (reader.Read() && rowCount < maxRowsToReturn)
+                    {
+                        yield return rowObjectCreator(reader);
+                        rowCount++;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Convert a "stored procedure" command to work properly with Npgsql
         /// Npgsql 6.0 and earlier treated <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
         /// We instead want to handle "stored procedure" command as CALL procedure_name()
