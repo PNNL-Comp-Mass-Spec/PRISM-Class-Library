@@ -431,10 +431,10 @@ namespace PRISMDatabaseUtils
 
         /// <summary>
         /// Parse a parameter (of type string or integer) to determine the return code
-        /// Supports Postgres error codes that might contain a letter, e.g. 22P06 or 2200L
+        /// Supports Postgres error codes that might contain a letter, including 22P06, 2200L, and U5201
         /// </summary>
         /// <param name="parameter"></param>
-        /// <returns>Parsed integer, or -1 if does not start with an integer</returns>
+        /// <returns>Parsed integer, or -1 if the return code does not have a non-zero integer</returns>
         public static int GetReturnCode(IDataParameter parameter)
         {
             var returnCodeValue = parameter.Value.CastDBVal<string>();
