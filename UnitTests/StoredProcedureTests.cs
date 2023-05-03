@@ -682,7 +682,16 @@ namespace PRISMTest
                             ? string.Empty
                             : ": " + errorMessage);
 
-                    Console.WriteLine("Error: " + errorMsg);
+
+                    if (returnCode == DbUtilsConstants.RET_VAL_EXCESSIVE_RETRIES)
+                    {
+                        // Return code was -5
+                        Console.WriteLine("A return code of {0} indicates that the stored procedure call failed", DbUtilsConstants.RET_VAL_EXCESSIVE_RETRIES);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: " + errorMsg);
+                    }
                 }
 
                 // Expected messages:
