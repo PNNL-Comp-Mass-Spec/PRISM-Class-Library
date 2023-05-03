@@ -152,8 +152,11 @@ namespace PRISMTest
         [Category("DatabaseNamedUser")]
         public void TestLoadManagerConfigDBPostgresPgPass(string server, string database)
         {
-            // The password for the dmsreader user will read from file c:\users\CurrentUser\AppData\Roaming\postgresql\pgpass.conf
+            // The password for the dmsreader user will read from file C:\users\username\AppData\Roaming\postgresql\pgpass.conf
             // Authentication will fail if that file does not exist
+
+            // On Proto-2, the Jenkins service runs under the NETWORK SERVICE account
+            // The required location for the pgpass file is: C:\Windows\ServiceProfiles\NetworkService\AppData\Roaming\postgresql\pgpass.conf
 
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, TestDBTools.DMS_READER);
             TestLoadManagerConfigDB(connectionString, true);

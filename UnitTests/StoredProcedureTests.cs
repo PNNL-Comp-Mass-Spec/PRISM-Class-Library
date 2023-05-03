@@ -582,6 +582,12 @@ namespace PRISMTest
             TestGetNamedReturnCode(connectionString, expectedReturnCode);
         }
 
+        // Note that this test will only work if the computer has a .pgpass file defining the password for user dmswebuser
+        // On Windows, the file is at C:\users\username\AppData\Roaming\postgresql\pgpass.conf
+
+        // On Proto-2, the Jenkins service runs under the NETWORK SERVICE account
+        // The required location for the pgpass file is: C:\Windows\ServiceProfiles\NetworkService\AppData\Roaming\postgresql\pgpass.conf
+
         [TestCase("prismdb1", "dms", 0)]
         [Category("DatabaseNamedUser")]
         public void TestGetNamedReturnCodePostgres(string server, string database, int expectedReturnCode)

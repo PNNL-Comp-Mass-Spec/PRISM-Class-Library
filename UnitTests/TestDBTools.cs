@@ -1136,7 +1136,8 @@ namespace PRISMTest
         /// <remarks>
         /// Instead of providing an explicit password, create a pgpass file
         /// Linux:   ~/.pgpass
-        /// Windows: c:\users\username\AppData\Roaming\postgresql\pgpass.conf
+        /// Windows: C:\users\username\AppData\Roaming\postgresql\pgpass.conf
+        /// Proto-2: C:\Windows\ServiceProfiles\NetworkService\AppData\Roaming\postgresql\pgpass.conf
         /// </remarks>
         /// <param name="server">Server (aka host) name</param>
         /// <param name="database">Database name</param>
