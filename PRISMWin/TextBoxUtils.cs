@@ -337,6 +337,7 @@ namespace PRISMWin
                 try
                 {
                     var value = int.Parse(thisTextBox.Text);
+
                     if (value < minimum || value > maximum)
                     {
                         thisTextBox.Text = defaultValue.ToString();
@@ -367,6 +368,7 @@ namespace PRISMWin
                 try
                 {
                     var value = float.Parse(thisTextBox.Text);
+
                     if (value < minimum || value > maximum)
                     {
                         thisTextBox.Text = defaultValue.ToString(CultureInfo.InvariantCulture);

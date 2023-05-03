@@ -342,6 +342,7 @@ namespace PRISM
         private bool RealConnect()
         {
             var errorNum = WNetAddConnection2(ref mNetResource, mPassword, mUsername, 0);
+
             if (errorNum == NO_ERROR)
             {
                 Debug.WriteLine("Connected.");
@@ -360,6 +361,7 @@ namespace PRISM
         public bool Disconnect()
         {
             var errorNum = WNetCancelConnection2(mNetResource.lpRemoteName, 0, Convert.ToInt32(true));
+
             if (errorNum == NO_ERROR)
             {
                 Debug.WriteLine("Disconnected.");

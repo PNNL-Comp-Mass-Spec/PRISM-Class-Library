@@ -86,6 +86,7 @@ namespace PRISM
             foreach (var versionFileInfo in versionFiles)
             {
                 var versionFile = new FileInfo(versionFileInfo.Value);
+
                 if (!versionFile.Exists)
                     continue;
 
@@ -176,6 +177,7 @@ namespace PRISM
         public string GetFirstLineVersion(string versionFilePath, string osName = "")
         {
             var versionFile = new FileInfo(versionFilePath);
+
             if (!versionFile.Exists)
             {
                 return string.IsNullOrWhiteSpace(osName) ? string.Empty : osName;
@@ -192,6 +194,7 @@ namespace PRISM
             while (!reader.EndOfStream)
             {
                 var dataLine = StripQuotes(reader.ReadLine());
+
                 if (string.IsNullOrWhiteSpace(dataLine))
                     continue;
 
@@ -235,6 +238,7 @@ namespace PRISM
         public string GetOSReleaseVersion(string osReleaseFilePath)
         {
             var versionFile = new FileInfo(osReleaseFilePath);
+
             if (!versionFile.Exists)
                 return string.Empty;
 
@@ -297,6 +301,7 @@ namespace PRISM
         public string GetUbuntuVersion(string lsbReleaseFilePath)
         {
             var versionFile = new FileInfo(lsbReleaseFilePath);
+
             if (!versionFile.Exists)
                 return string.Empty;
 
@@ -444,12 +449,14 @@ namespace PRISM
             while (!reader.EndOfStream)
             {
                 var dataLine = reader.ReadLine();
+
                 if (string.IsNullOrWhiteSpace(dataLine))
                     continue;
 
                 contents.Add(dataLine);
 
                 var lineParts = dataLine.Split(sepChars, 2);
+
                 if (lineParts.Length > 1)
                 {
                     osInfo.Add(lineParts[0], StripQuotes(lineParts[1]));

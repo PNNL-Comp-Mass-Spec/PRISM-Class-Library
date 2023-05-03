@@ -150,6 +150,7 @@ namespace PRISM
                 // The target file exists
                 // Create or validate the local .hashcheck file, sending localFilePath and the hash info of the source file
                 var validFile = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays);
+
                 if (validFile)
                     return true;
 
@@ -175,6 +176,7 @@ namespace PRISM
                     // If valid, return true
                     // Otherwise, delete the local file and the local hashcheck file and re-try the copy to the local directory
                     var validFileB = ValidateFileVsHashcheck(targetFile.FullName, out errorMessage, sourceHashInfo, recheckIntervalDays: 0);
+
                     if (validFileB)
                     {
                         OnStatusEvent("Hash value is now the expected value: {0}", sourceHashInfo.HashValue);
@@ -213,10 +215,12 @@ namespace PRISM
             try
             {
                 var dataFileDirectory = dataFile.Directory;
+
                 if (dataFileDirectory == null)
                     return;
 
                 var localHashCheckFile = new FileInfo(Path.Combine(dataFileDirectory.FullName, dataFile.Name + HashUtilities.HASHCHECK_FILE_SUFFIX));
+
                 if (localHashCheckFile.Exists)
                     localHashCheckFile.Delete();
             }
@@ -352,6 +356,7 @@ namespace PRISM
             try
             {
                 var localFile = new FileInfo(localFilePath);
+
                 if (!localFile.Exists)
                 {
                     errorMessage = "File not found: " + localFilePath;
@@ -360,6 +365,7 @@ namespace PRISM
                 }
 
                 FileInfo localHashcheckFile;
+
                 if (string.IsNullOrWhiteSpace(hashCheckFilePath))
                     localHashcheckFile = new FileInfo(localFile.FullName + HashUtilities.HASHCHECK_FILE_SUFFIX);
                 else
@@ -509,6 +515,7 @@ namespace PRISM
             try
             {
                 var localFile = new FileInfo(localFilePath);
+
                 if (!localFile.Exists)
                 {
                     errorMessage = "File not found: " + localFile.FullName;
@@ -516,6 +523,7 @@ namespace PRISM
                 }
 
                 var localHashcheckFile = new FileInfo(hashCheckFilePath);
+
                 if (!localHashcheckFile.Exists)
                 {
                     errorMessage = "Data file at " + localFile.FullName + " does not have a corresponding .hashcheck file named " + localHashcheckFile.Name;

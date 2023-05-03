@@ -33,9 +33,11 @@ namespace PRISMTest
 
             Console.WriteLine();
             Console.WriteLine("Processes with command line arguments");
+
             foreach (var process in processes)
             {
                 var procInfo = process.Value;
+
                 if (procInfo.ArgumentList.Count == 0)
                     continue;
 

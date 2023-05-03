@@ -68,6 +68,7 @@ namespace PRISMTest
             };
 
             paramNamesToSkip = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+
             foreach (var item in skipNames)
             {
                 paramNamesToSkip.Add(item);

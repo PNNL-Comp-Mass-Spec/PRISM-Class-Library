@@ -30,6 +30,7 @@ namespace PRISMTest
             var randGenerator = new Random();
 
             string formatString;
+
             if (logCount < 10)
                 formatString = "{0} {1}/{2}";
             else
@@ -42,6 +43,7 @@ namespace PRISMTest
             }
 
             var expectedName = logFileNameBase + "_" + DateTime.Now.ToString("MM-dd-yyyy");
+
             if (!logger.CurrentLogFilePath.Contains(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + logger.CurrentLogFilePath);
@@ -65,6 +67,7 @@ namespace PRISMTest
             var queueLogger = new clsQueLogger(logger);
 
             string formatString;
+
             if (logCount < 10)
                 formatString = "{0} {1}/{2}";
             else
@@ -90,6 +93,7 @@ namespace PRISMTest
             AppUtils.SleepMilliseconds(4000);
 
             var expectedName = logFileNameBase + "_" + DateTime.Now.ToString(clsFileLogger.FILENAME_DATE_STAMP);
+
             if (!logger.CurrentLogFilePath.Contains(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + logger.CurrentLogFilePath);

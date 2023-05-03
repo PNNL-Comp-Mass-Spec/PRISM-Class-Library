@@ -380,6 +380,7 @@ namespace PRISM.FileProcessor
                     else
                     {
                         FileProcessErrors++;
+
                         if (!IgnoreErrorsWhenUsingWildcardMatching)
                             break;
                     }
@@ -616,6 +617,7 @@ namespace PRISM.FileProcessor
                 else
                 {
                     var candidateInputDirectory = new DirectoryInfo(inputFilePathOrDirectory);
+
                     if (candidateInputDirectory.Exists)
                     {
                         inputDirectory = candidateInputDirectory;
@@ -649,6 +651,7 @@ namespace PRISM.FileProcessor
                     try
                     {
                         var alternateOutputDirectory = new DirectoryInfo(outputDirectoryAlternatePath);
+
                         if (!alternateOutputDirectory.Exists)
                             alternateOutputDirectory.Create();
                     }

@@ -171,6 +171,7 @@ namespace PRISMTest
             }
 
             newFile.Refresh();
+
             if (!newFile.Exists)
             {
                 Assert.Fail("Renamed file not found: " + newFile.FullName);

@@ -217,6 +217,7 @@ namespace PRISM
                 var currentLogFile = new FileInfo(CurrentLogFilePath);
 
                 var logDirectory = currentLogFile.Directory;
+
                 if (logDirectory == null)
                     return;
 

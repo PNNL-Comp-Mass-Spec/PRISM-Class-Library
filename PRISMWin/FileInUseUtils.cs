@@ -153,6 +153,7 @@ namespace PRISMWin
                             {
                                 var process = Process.GetProcessById(processInfo[i].Process.dwProcessId);
                                 var add = true;
+
                                 if (checkProcessStartTime)
                                 {
                                     // Check the process start time to ensure this is the same process

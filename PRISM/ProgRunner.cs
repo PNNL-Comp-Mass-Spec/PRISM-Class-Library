@@ -454,6 +454,7 @@ namespace PRISM
         public string GetConsoleOutputFilePath()
         {
             string consoleOutputFileName;
+
             if (string.IsNullOrEmpty(Program))
             {
                 consoleOutputFileName = "ProgRunner_ConsoleOutput.txt";
@@ -697,6 +698,7 @@ namespace PRISM
                     try
                     {
                         mProcess.WaitForExit(mMonitorInterval);
+
                         if (mProcess.HasExited)
                             break;
 

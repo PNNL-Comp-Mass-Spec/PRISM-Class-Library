@@ -317,6 +317,7 @@ namespace PRISMTest
             try
             {
                 var parentDirectory = targetStatFile.Directory;
+
                 if (parentDirectory == null)
                     Assert.Fail("Unable to determine the parent directory of " + targetStatFile.FullName);
 
@@ -493,6 +494,7 @@ namespace PRISMTest
         private DirectoryInfo ValidateLocalProcDirectory()
         {
             var procDirectory = new DirectoryInfo(LinuxSystemInfo.ROOT_PROC_DIRECTORY);
+
             if (procDirectory.Exists)
                 return procDirectory;
 

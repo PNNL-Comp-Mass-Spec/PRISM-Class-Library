@@ -97,6 +97,7 @@ namespace PRISMWin
             var v4FullKey = ndpKey.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full");
 
             var releaseValue = v4FullKey?.GetValue("Release");
+
             if (releaseValue != null)
             {
                 var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
@@ -130,6 +131,7 @@ namespace PRISMWin
                 if (!string.Equals(latestVersion, EARLIER_THAN_45))
                 {
                     var majorVersion = GetMajorVersion(latestVersion);
+
                     if (majorVersion > 0)
                     {
                         StoreVersion(dotNETVersions, majorVersion, latestVersion);
@@ -149,6 +151,7 @@ namespace PRISMWin
                     continue;
 
                 var versionKey = ndpKey.OpenSubKey(versionKeyName);
+
                 if (versionKey == null)
                     continue;
 
@@ -179,6 +182,7 @@ namespace PRISMWin
                 foreach (var subKeyName in versionKey.GetSubKeyNames())
                 {
                     var subKey = versionKey.OpenSubKey(subKeyName);
+
                     if (subKey == null)
                         continue;
 
@@ -189,6 +193,7 @@ namespace PRISMWin
                         subKeySP = subKey.GetValue("SP", "").ToString();
 
                     var subKeyInstall = subKey.GetValue("Install", "").ToString();
+
                     if (subKeyInstall.Length == 0)
                     {
                         // No service pack install; store this version
@@ -220,6 +225,7 @@ namespace PRISMWin
             try
             {
                 var latestVersion = GetDotNetVersion45OrLater();
+
                 if (!string.Equals(latestVersion, EARLIER_THAN_45))
                 {
                     return latestVersion;
@@ -229,6 +235,7 @@ namespace PRISMWin
 
                 // Find the newest version in dotNETVersions
                 var newestMajorVersion = (from item in dotNETVersions orderby item.Key select item.Value).Last();
+
                 if (newestMajorVersion.Count == 0)
                 {
                     return UNKNOWN_VERSION;
@@ -245,6 +252,7 @@ namespace PRISMWin
                 foreach (var installedVersion in newestMajorVersion)
                 {
                     var match = reVersionMatch.Match(installedVersion);
+
                     if (!match.Success)
                         continue;
 
@@ -253,6 +261,7 @@ namespace PRISMWin
                     var build = int.Parse(match.Groups["Build"].Value);
 
                     var updateNewest = false;
+
                     if (string.IsNullOrWhiteSpace(newestVersion))
                     {
                         updateNewest = true;
@@ -298,6 +307,7 @@ namespace PRISMWin
             var reVersionMatch = new Regex(@"(?<Version>\d+)");
 
             var versionMatch = reVersionMatch.Match(versionKeyName);
+
             if (versionMatch.Success)
             {
                 return int.Parse(versionMatch.Groups["Version"].Value);

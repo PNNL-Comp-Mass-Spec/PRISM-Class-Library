@@ -50,6 +50,7 @@ namespace PRISMTest
             var columnIdentifiers = columnIdentifierList.Split(',');
 
             var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
+
             foreach (var columnIdentifier in columnIdentifiers)
             {
                 DataTableUtils.AddColumnIdentifier(columnNamesByIdentifier, columnIdentifier);
@@ -257,9 +258,11 @@ namespace PRISMTest
         private void DisplayParameters(IEnumerable<DbParameter> addedParameters)
         {
             Console.WriteLine("{0,-15} {1,-15} {2}", "Param Name", "SqlType", "Db Type");
+
             foreach (var item in addedParameters)
             {
                 string dbType;
+
                 if (item is NpgsqlParameter npgSqlParam)
                 {
                     dbType = npgSqlParam.NpgsqlDbType.ToString();
@@ -284,6 +287,7 @@ namespace PRISMTest
             foreach (var item in parameterList.Split(','))
             {
                 var colonIndex = item.IndexOf(':');
+
                 if (colonIndex < 0)
                     throw new Exception("Colon not found in the parameter list for " + item);
 
@@ -427,6 +431,7 @@ namespace PRISMTest
             Console.WriteLine();
 
             var dataLine = new StringBuilder();
+
             foreach (var column in columnNames)
             {
                 if (dataLine.Length > 0)
@@ -436,6 +441,7 @@ namespace PRISMTest
             Console.WriteLine(dataLine.ToString());
 
             var rowNumber = 0;
+
             foreach (var resultRow in queryResults)
             {
                 rowNumber++;
@@ -447,6 +453,7 @@ namespace PRISMTest
                         dataLine.Append("   ");
 
                     string currentColumnName;
+
                     if (rowNumber % 3 == 0)
                     {
                         // Force a fuzzy name match
@@ -840,6 +847,7 @@ namespace PRISMTest
 
             if (iterations < 1)
                 iterations = 1;
+
             if (iterations > 5)
                 iterations = 5;
 
@@ -1137,6 +1145,7 @@ namespace PRISMTest
         public static string GetConnectionStringPostgres(string server, string database, string user, string password = "")
         {
             string optionalPassword;
+
             if (string.IsNullOrWhiteSpace(password))
                 optionalPassword = string.Empty;
             else

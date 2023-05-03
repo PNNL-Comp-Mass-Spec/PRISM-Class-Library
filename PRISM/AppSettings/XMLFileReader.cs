@@ -147,6 +147,7 @@ namespace PRISM
             {
                 keyName = SetNameCase(keyName);
                 var section = GetSection(sectionName);
+
                 if (section != null)
                 {
                     return (XmlElement)section.SelectSingleNode("item[@key='" + keyName + "']");
@@ -170,6 +171,7 @@ namespace PRISM
                 return false;
 
             var section = GetSection(oldSection);
+
             if (section != null)
             {
                 section.SetAttribute("name", SetNameCase(newSection));
@@ -192,6 +194,7 @@ namespace PRISM
                 throw new XMLFileReaderNotInitializedException();
 
             var section = GetSection(sectionName);
+
             if (section == null)
             {
                 // Section not found; add it
@@ -218,6 +221,7 @@ namespace PRISM
             }
 
             var item = GetItem(sectionName, keyName);
+
             if (item != null)
             {
                 if (newValue == null)
@@ -252,6 +256,7 @@ namespace PRISM
         private bool DeleteSection(string sectionName)
         {
             var section = GetSection(sectionName);
+
             if (section != null)
             {
                 section.ParentNode?.RemoveChild(section);
@@ -270,6 +275,7 @@ namespace PRISM
         private bool DeleteItem(string sectionName, string keyName)
         {
             var item = GetItem(sectionName, keyName);
+
             if (item != null)
             {
                 item.ParentNode?.RemoveChild(item);
@@ -293,6 +299,7 @@ namespace PRISM
                 throw new XMLFileReaderNotInitializedException();
 
             var item = GetItem(sectionName, keyName);
+
             if (item != null)
             {
                 item.SetAttribute("key", SetNameCase(newValue));
@@ -339,6 +346,7 @@ namespace PRISM
             }
 
             var commentNodes = target?.SelectNodes("comment");
+
             if (commentNodes?.Count > 0)
             {
                 foreach (XmlElement commentNode in commentNodes)
@@ -377,6 +385,7 @@ namespace PRISM
             if (targetSection != null)
             {
                 var commentNodes = targetSection.SelectNodes("comment");
+
                 if (commentNodes != null)
                 {
                     foreach (XmlNode commentNode in commentNodes)
@@ -390,6 +399,7 @@ namespace PRISM
                     var comment = mXmlDoc.CreateElement("comment");
                     comment.InnerText = s;
                     var lastComment = (XmlElement)targetSection.SelectSingleNode("comment[last()]");
+
                     if (lastComment == null)
                     {
                         targetSection.PrependChild(comment);
@@ -454,6 +464,7 @@ namespace PRISM
             }
 
             var nodes = section.SelectNodes("item");
+
             if (nodes?.Count > 0)
             {
                 foreach (XmlNode setting in nodes)
@@ -534,6 +545,7 @@ namespace PRISM
             if (!string.IsNullOrWhiteSpace(attributeName))
             {
                 var setting = GetItem(sectionName, keyName);
+
                 if (setting != null)
                 {
                     attributeName = SetNameCase(attributeName);
@@ -563,6 +575,7 @@ namespace PRISM
             }
 
             var setting = GetItem(sectionName, keyName);
+
             if (setting == null)
             {
                 return false;
@@ -640,6 +653,7 @@ namespace PRISM
             try
             {
                 var fileToFind = new FileInfo(filePath);
+
                 if (fileToFind.Exists)
                 {
                     // Read filePath line-by-line to see if it has any .Ini style settings
@@ -671,6 +685,7 @@ namespace PRISM
                 {
                     // File doesn't exist; create a new, blank .XML file
                     XmlFilePath = filePath;
+
                     using (var settingsFile = new FileStream(XmlFilePath, FileMode.Create, FileAccess.Write))
                     {
                         mXmlDoc.Save(settingsFile);
@@ -706,6 +721,7 @@ namespace PRISM
             const string VALUE_TAG = "value=";
 
             dataLine = dataLine.TrimStart();
+
             if (dataLine.Length == 0)
             {
                 return;
@@ -742,6 +758,7 @@ namespace PRISM
                     else
                     {
                         string value;
+
                         if (ParseLineManualCheckTag(dataLine, KEY_TAG, out keyName))
                         {
                             // This is an XML-style key
@@ -774,6 +791,7 @@ namespace PRISM
                         }
 
                         bool addSetting;
+
                         if (keyName.Length > 0)
                         {
                             addSetting = true;
@@ -832,6 +850,7 @@ namespace PRISM
                 }
 
                 var nextMatchIndex = tagValue.IndexOf('"');
+
                 if (nextMatchIndex >= 0)
                 {
                     tagValue = tagValue.Substring(0, nextMatchIndex);
@@ -860,6 +879,7 @@ namespace PRISM
                     throw new XMLFileReaderNotInitializedException();
 
                 var fi = new FileInfo(value);
+
                 if (fi.Directory?.Exists == false)
                 {
                     if (NotifyOnException)
@@ -885,6 +905,7 @@ namespace PRISM
             if (OutputFilename != null && mXmlDoc != null)
             {
                 var outputFile = new FileInfo(OutputFilename);
+
                 if (outputFile.Directory?.Exists == false)
                 {
                     if (NotifyOnException)

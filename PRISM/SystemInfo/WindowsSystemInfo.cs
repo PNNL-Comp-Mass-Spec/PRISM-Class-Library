@@ -26,6 +26,7 @@ namespace PRISM
         public WindowsSystemInfo()
         {
             var c = new OSVersionInfo();
+
             if (c.GetOSVersion().IndexOf("windows", StringComparison.OrdinalIgnoreCase) < 0)
             {
                 throw new Exception("This class only works on Windows platforms");
@@ -778,6 +779,7 @@ namespace PRISM
                 {
                     var item = ptr;
                     var readCount = 0;
+
                     //int size = Marshal.SizeOf(typeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX));
                     //int length = (int)returnLength / size;
                     //for (int i = 0; i < length; i++)
@@ -930,6 +932,7 @@ namespace PRISM
                 if (cmdLine.StartsWith("\""))
                 {
                     var match = mQuotedStringMatcher.Match(cmdLine);
+
                     if (match.Success)
                     {
                         // Remove leading/trailing double quotes when defining exePath
@@ -948,9 +951,11 @@ namespace PRISM
                     // If on Windows, look for the first /
 
                     int splitIndex;
+
                     if (System.IO.Path.DirectorySeparatorChar == '\\')
                     {
                         var slashIndex = cmdLine.IndexOf('/');
+
                         if (slashIndex > 0)
                         {
                             splitIndex = slashIndex - 1;
@@ -970,6 +975,7 @@ namespace PRISM
                     if (splitIndex > 0)
                     {
                         exePath = cmdLine.Substring(0, splitIndex);
+
                         if (splitIndex < cmdLine.Length - 1)
                         {
                             arguments = cmdLine.Substring(splitIndex + 1).Trim();
@@ -989,6 +995,7 @@ namespace PRISM
                 var cleanedArguments = arguments;
 
                 var argumentMatch = mQuotedStringMatcher.Match(arguments);
+
                 while (argumentMatch.Success)
                 {
                     argumentList.Add(argumentMatch.Value.Trim('"'));

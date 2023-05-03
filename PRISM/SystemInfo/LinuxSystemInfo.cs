@@ -174,6 +174,7 @@ namespace PRISM
 
             // Sum all of the numbers following cpu
             var fields = dataLine.Split(' ');
+
             if (fields.Length < 2)
                 return 0;
 
@@ -195,6 +196,7 @@ namespace PRISM
             }
 
             var match = mCpuIdleTimeMatcher.Match(dataLine);
+
             if (match.Success)
             {
                 idleTime = long.Parse(match.Groups["Idle"].Value) + long.Parse(match.Groups["IOWait"].Value);
@@ -202,6 +204,7 @@ namespace PRISM
             else
             {
                 var match2 = mCpuIdleTimeMatcherNoIOWait.Match(dataLine);
+
                 if (match2.Success)
                 {
                     idleTime = long.Parse(match2.Groups["Idle"].Value);
@@ -333,6 +336,7 @@ namespace PRISM
         private static bool ExtractID(Regex reIdMatcher, string dataLine, out int id)
         {
             var match = reIdMatcher.Match(dataLine);
+
             if (!match.Success)
             {
                 id = 0;
@@ -479,6 +483,7 @@ namespace PRISM
                 return mCoreCountCached;
 
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreCount).TotalSeconds > 15;
+
             if (showDebugInfo)
                 mLastDebugInfoTimeCoreCount = DateTime.UtcNow;
 
@@ -489,6 +494,7 @@ namespace PRISM
                 var cpuInfoFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, CPUINFO_FILE);
 
                 var cpuInfoFile = new FileInfo(cpuInfoFilePath);
+
                 if (!cpuInfoFile.Exists)
                 {
                     if (showDebugInfo)
@@ -512,6 +518,7 @@ namespace PRISM
                     while (!reader.EndOfStream)
                     {
                         var dataLine = reader.ReadLine();
+
                         if (string.IsNullOrWhiteSpace(dataLine))
                             continue;
 
@@ -563,6 +570,7 @@ namespace PRISM
                 foreach (var processor in processorList)
                 {
                     var key = processor.Value.PhysicalID + "_" + processor.Value.CoreID;
+
                     if (!uniquePhysicalCoreIDs.Contains(key))
                         uniquePhysicalCoreIDs.Add(key);
                 }
@@ -665,6 +673,7 @@ namespace PRISM
         public float GetCoreUsageByProcessName(string processName, string argumentText, out List<int> processIDs, float samplingTimeSeconds = 1)
         {
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreUseByProcessID).TotalSeconds > 15;
+
             if (showDebugInfo)
                 mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow;
 
@@ -674,6 +683,7 @@ namespace PRISM
             {
                 // Examine the processes tracked by Process IDs in the /proc directory
                 var processes = GetProcesses();
+
                 if (processes.Count == 0)
                 {
                     // No processes found; an error has likely already been logged
@@ -687,6 +697,7 @@ namespace PRISM
                     if (matchProgramNameOnly)
                     {
                         var processIdProgramName = Path.GetFileName(process.ExePath);
+
                         if (string.IsNullOrWhiteSpace(processIdProgramName))
                             continue;
 
@@ -702,6 +713,7 @@ namespace PRISM
                     if (!string.IsNullOrWhiteSpace(argumentText))
                     {
                         var validMatch = process.ArgumentList.Any(argument => argument.IndexOf(argumentText, StringComparison.OrdinalIgnoreCase) >= 0);
+
                         if (!validMatch)
                             continue;
                     }
@@ -752,6 +764,7 @@ namespace PRISM
             // See also https://github.com/scaidermern/top-processes/blob/master/top_proc.c
 
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeCoreUseByProcessID).TotalSeconds > 15;
+
             if (showDebugInfo)
                 mLastDebugInfoTimeCoreUseByProcessID = DateTime.UtcNow;
 
@@ -760,6 +773,7 @@ namespace PRISM
             try
             {
                 var coreCount = GetCoreCount();
+
                 if (coreCount < 1)
                 {
                     if (showDebugInfo)
@@ -769,6 +783,7 @@ namespace PRISM
                 }
 
                 var timeTotal1 = ComputeTotalCPUTime();
+
                 if (timeTotal1 == 0)
                 {
                     if (showDebugInfo)
@@ -787,6 +802,7 @@ namespace PRISM
                         ROOT_PROC_DIRECTORY, processID.ToString()), "stat");
 
                     var statFile = new FileInfo(statFilePath);
+
                     if (!statFile.Exists)
                     {
                         errorMessage = "Stat file not found for ProcessID " + processID;
@@ -816,12 +832,14 @@ namespace PRISM
                 // Wait samplingTimeSeconds, then read the values again
                 if (samplingTimeSeconds < 0.1)
                     Thread.Sleep(100);
+
                 if (samplingTimeSeconds > 10)
                     Thread.Sleep(10000);
                 else
                     Thread.Sleep((int)(samplingTimeSeconds * 1000));
 
                 var timeTotal2 = ComputeTotalCPUTime();
+
                 if (timeTotal2 == 0)
                 {
                     if (showDebugInfo)
@@ -831,6 +849,7 @@ namespace PRISM
                 }
 
                 var deltaTimeTotal = timeTotal2 - timeTotal1;
+
                 if (deltaTimeTotal < 1)
                 {
                     // No increase in CPU time
@@ -846,6 +865,7 @@ namespace PRISM
                     var stime1 = item.Value.Item2;
 
                     statFile.Refresh();
+
                     if (!statFile.Exists)
                     {
                         // Stat file no longer exists; the process has ended
@@ -853,6 +873,7 @@ namespace PRISM
                     }
 
                     var success = ExtractCPUTimes(statFile, out var utime2, out var stime2);
+
                     if (!success)
                     {
                         // Stat file no longer exists; the process has ended
@@ -862,6 +883,7 @@ namespace PRISM
                     var cpuUsage = 0f;
 
                     var deltaUserTime = utime2 - utime1;
+
                     if (deltaUserTime > 0)
                     {
                         var cpuUsageUser = deltaUserTime / (float)deltaTimeTotal * 100;
@@ -869,6 +891,7 @@ namespace PRISM
                     }
 
                     var deltaSystemTime = stime2 - stime1;
+
                     if (deltaSystemTime > 0)
                     {
                         var cpuUsageSystem = deltaSystemTime / (float)deltaTimeTotal * 100;
@@ -909,6 +932,7 @@ namespace PRISM
             try
             {
                 var timeTotal1 = ComputeTotalCPUTime(out var idleTime1);
+
                 if (timeTotal1 == 0)
                 {
                     return 0;
@@ -916,18 +940,21 @@ namespace PRISM
 
                 if (samplingTimeSeconds < 0.1)
                     Thread.Sleep(100);
+
                 if (samplingTimeSeconds > 10)
                     Thread.Sleep(10000);
                 else
                     Thread.Sleep((int)(samplingTimeSeconds * 1000));
 
                 var timeTotal2 = ComputeTotalCPUTime(out var idleTime2);
+
                 if (timeTotal2 == 0)
                 {
                     return 0;
                 }
 
                 var deltaTimeTotal = timeTotal2 - timeTotal1;
+
                 if (deltaTimeTotal < 1)
                 {
                     return 0;
@@ -952,6 +979,7 @@ namespace PRISM
         public float GetFreeMemoryMB()
         {
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeMemory).TotalSeconds > 15;
+
             if (showDebugInfo)
                 mLastDebugInfoTimeMemory = DateTime.UtcNow;
 
@@ -960,6 +988,7 @@ namespace PRISM
                 var memInfoFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
 
                 var memInfoFile = new FileInfo(memInfoFilePath);
+
                 if (!memInfoFile.Exists)
                 {
                     if (showDebugInfo)
@@ -997,6 +1026,7 @@ namespace PRISM
                     while (!reader.EndOfStream)
                     {
                         var dataLine = reader.ReadLine();
+
                         if (string.IsNullOrWhiteSpace(dataLine))
                             continue;
 
@@ -1022,6 +1052,7 @@ namespace PRISM
                                 continue;
 
                             var memorySizeMB = ExtractMemoryMB(dataLine, showDebugInfo);
+
                             if (memorySizeMB > -1)
                             {
                                 if (showDebugInfo)
@@ -1068,6 +1099,7 @@ namespace PRISM
         public Dictionary<int, ProcessInfo> GetProcesses(bool lookupCommandLineInfo = true)
         {
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeProcesses).TotalSeconds > 15;
+
             if (showDebugInfo)
                 mLastDebugInfoTimeProcesses = DateTime.UtcNow;
 
@@ -1077,6 +1109,7 @@ namespace PRISM
             {
                 // Examine the processes tracked by Process IDs in the /proc directory
                 var procDirectory = new DirectoryInfo(ROOT_PROC_DIRECTORY);
+
                 if (!procDirectory.Exists)
                 {
                     if (showDebugInfo)
@@ -1098,10 +1131,12 @@ namespace PRISM
                         ROOT_PROC_DIRECTORY, processIdDirectory.Name), "cmdline");
 
                     var cmdLineFile = new FileInfo(cmdLineFilePath);
+
                     if (!cmdLineFile.Exists)
                         continue;
 
                     var success = GetCmdLineFileInfo(cmdLineFile, out var exePath, out var arguments);
+
                     if (!success)
                         continue;
 
@@ -1145,6 +1180,7 @@ namespace PRISM
             }
 
             var showDebugInfo = DateTime.UtcNow.Subtract(mLastDebugInfoTimeMemory).TotalSeconds > 15;
+
             if (showDebugInfo)
                 mLastDebugInfoTimeMemory = DateTime.UtcNow;
 
@@ -1153,6 +1189,7 @@ namespace PRISM
                 var memInfoFilePath = PathUtils.CombineLinuxPaths(ROOT_PROC_DIRECTORY, MEMINFO_FILE);
 
                 var memInfoFile = new FileInfo(memInfoFilePath);
+
                 if (!memInfoFile.Exists)
                 {
                     if (showDebugInfo)
@@ -1171,6 +1208,7 @@ namespace PRISM
                     while (!reader.EndOfStream)
                     {
                         var dataLine = reader.ReadLine();
+
                         if (string.IsNullOrWhiteSpace(dataLine))
                             continue;
 

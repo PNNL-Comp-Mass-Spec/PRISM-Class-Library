@@ -63,6 +63,7 @@ namespace PRISMTest
             Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
+
             foreach (var result in results)
             {
                 Assert.GreaterOrEqual(result.Count, 5, "Result row has fewer than 5 columns");
@@ -127,6 +128,7 @@ namespace PRISMTest
             Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
+
             foreach (var result in results)
             {
                 Assert.GreaterOrEqual(result.Count, 9, "Result row has fewer than 9 columns");
@@ -274,6 +276,7 @@ namespace PRISMTest
         private void ExamineManagerParams(IReadOnlyCollection<List<string>> results)
         {
             var rowsDisplayed = 0;
+
             foreach (var result in results)
             {
                 Assert.GreaterOrEqual(result.Count, 12, "Result row has fewer than 12 columns");
@@ -526,17 +529,20 @@ namespace PRISMTest
             {
                 dbTools.ExecuteSPData(spCmd, out var results);
                 var rowsDisplayed = 0;
+
                 foreach (var result in results)
                 {
                     for (var colIndex = 0; colIndex < result.Count; colIndex++)
                     {
                         string valueToShow;
+
                         if (result[colIndex].Length > 20)
                             valueToShow = result[colIndex].Substring(0, 20) + " ...";
                         else
                             valueToShow = result[colIndex];
 
                         Console.Write(valueToShow + "  ");
+
                         if (colIndex > 3)
                             break;
                     }
@@ -744,6 +750,7 @@ namespace PRISMTest
         public void TestPostLogEntryAsQuery(string server, string database, string user, bool expectedPostSuccess)
         {
             string connectionString;
+
             if (user.Equals(TestDBTools.DMS_READER))
             {
                 connectionString = TestDBTools.GetConnectionStringPostgres(server, database, user, TestDBTools.DMS_READER_PASSWORD);

@@ -69,6 +69,7 @@ namespace PRISMTest
         private void RecursiveMethodA(ExceptionTypes targetException, List<string> parents, int depth, int maxDepth)
         {
             parents.Add("Level " + depth);
+
             if (depth == maxDepth)
             {
                 ThrowExceptionNow(targetException, parents, depth);
@@ -80,6 +81,7 @@ namespace PRISMTest
         private void RecursiveMethodB(ExceptionTypes targetException, List<string> parents, int depth, int maxDepth)
         {
             parents.Add("Level " + depth);
+
             if (depth == maxDepth)
             {
                 ThrowExceptionNow(targetException, parents, depth);
@@ -91,6 +93,7 @@ namespace PRISMTest
         private void RecursiveMethodC(ExceptionTypes targetException, List<string> parents, int depth, int maxDepth)
         {
             parents.Add("Level " + depth);
+
             if (depth == maxDepth)
             {
                 ThrowExceptionNow(targetException, parents, depth);
@@ -102,6 +105,7 @@ namespace PRISMTest
         private void RecursiveMethodX(List<string> parents, int depth, int maxDepth, bool multiLine)
         {
             parents.Add("Level " + depth);
+
             if (depth == maxDepth)
             {
                 ShowStackTraceNow(parents, depth, multiLine);
@@ -114,6 +118,7 @@ namespace PRISMTest
         private void RecursiveMethodY(List<string> parents, int depth, int maxDepth, bool multiLine)
         {
             parents.Add("Level " + depth);
+
             if (depth == maxDepth)
             {
                 ShowStackTraceNow(parents, depth, multiLine);
@@ -126,6 +131,7 @@ namespace PRISMTest
         private void RecursiveMethodZ(List<string> parents, int depth, int maxDepth, bool multiLine)
         {
             parents.Add("Level " + depth);
+
             if (depth == maxDepth)
             {
                 ShowStackTraceNow(parents, depth, multiLine);
@@ -140,6 +146,7 @@ namespace PRISMTest
             Assert.AreEqual(depth, parents.Count, "Parent list length invalid");
 
             string stackTrace;
+
             if (multiLine)
                 stackTrace = StackTraceFormatter.GetCurrentStackTraceMultiLine();
             else

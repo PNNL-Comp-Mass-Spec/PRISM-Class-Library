@@ -82,6 +82,7 @@ namespace PRISM
 
             if (maxWaitTimeMSec < 100)
                 maxWaitTimeMSec = 100;
+
             if (maxWaitTimeMSec > 5000)
                 maxWaitTimeMSec = 5000;
 
@@ -93,6 +94,7 @@ namespace PRISM
                 gcThread.Start();
 
                 var totalThreadWaitTimeMsec = 0;
+
                 while (gcThread.IsAlive && totalThreadWaitTimeMsec < maxWaitTimeMSec)
                 {
                     Thread.Sleep(THREAD_SLEEP_TIME_MSEC);
@@ -141,6 +143,7 @@ namespace PRISM
             try
             {
                 appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), appName);
+
                 if (!Directory.Exists(appDataDirectory))
                 {
                     Directory.CreateDirectory(appDataDirectory);

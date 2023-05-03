@@ -227,9 +227,11 @@ namespace PRISM
                     if (fileMatch.Success)
                     {
                         currentMethodFile = fileMatch.Groups["FileName"].Value;
+
                         if (finalFile.Length == 0)
                         {
                             var lineMatchFinalFile = reLineInCode.Match(currentMethodFile);
+
                             if (lineMatchFinalFile.Success)
                             {
                                 finalFile = currentMethodFile.Substring(0, lineMatchFinalFile.Index);
@@ -254,6 +256,7 @@ namespace PRISM
                     {
                         // Look for the word " in "
                         var charIndex = dataLine.ToLower().IndexOf(" in ", StringComparison.Ordinal);
+
                         if (charIndex == 0)
                         {
                             // " in" not found; look for the first space after startIndex 4
@@ -275,6 +278,7 @@ namespace PRISM
                             else
                             {
                                 var parenthesisIndex = dataLine.IndexOf("(", StringComparison.Ordinal);
+
                                 if (parenthesisIndex > 0)
                                     currentMethod = dataLine.Substring(0, Math.Min(parenthesisIndex, charIndex));
                                 else
@@ -331,6 +335,7 @@ namespace PRISM
         private static void AppendInnerExceptions(Exception ex, ICollection<string> stackTraceLines, string messagePrefix)
         {
             var innerException = ex.InnerException;
+
             while (innerException != null)
             {
                 var skipMessage = false;
@@ -361,6 +366,7 @@ namespace PRISM
             for (var i = levelsToIgnore; i < stackTrace.FrameCount; i++)
             {
                 var parentMethod = stackTrace.GetFrame(i).GetMethod();
+
                 if (includeParamTypes)
                     parentMethods.Add(parentMethod.Module + ": " + parentMethod);
                 else
@@ -373,6 +379,7 @@ namespace PRISM
         private static string TrimLinePrefix(string fileDescription, string codeLinePrefix)
         {
             var matchIndex = fileDescription.IndexOf(codeLinePrefix, StringComparison.Ordinal);
+
             if (matchIndex > 0)
             {
                 return fileDescription.Substring(0, matchIndex);

@@ -367,6 +367,7 @@ namespace PRISM
             }
 
             var hashCheckFilePath = dataFile.FullName + HASHCHECK_FILE_SUFFIX;
+
             if (string.IsNullOrWhiteSpace(hashValue))
                 hashValue = string.Empty;
 
@@ -422,12 +423,14 @@ namespace PRISM
                 while (!reader.EndOfStream)
                 {
                     var dataLine = reader.ReadLine();
+
                     if (string.IsNullOrWhiteSpace(dataLine) || dataLine.Trim().StartsWith("#") || !dataLine.Contains("="))
                     {
                         continue;
                     }
 
                     var dataColumns = dataLine.Trim().Split(splitChar, 2);
+
                     if (dataColumns.Length > 2)
                         continue;
 

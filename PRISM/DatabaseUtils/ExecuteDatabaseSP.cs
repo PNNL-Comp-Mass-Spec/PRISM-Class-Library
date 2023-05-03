@@ -85,6 +85,7 @@ namespace PRISM
             {
                 if (value == 0)
                     value = DEFAULT_SP_TIMEOUT_SEC;
+
                 if (value < 10)
                     value = 10;
 
@@ -267,6 +268,7 @@ namespace PRISM
             {
                 // Too many retries, log and return error
                 errorMessage = "Excessive retries";
+
                 if (deadlockOccurred)
                 {
                     errorMessage += " (including deadlock)";
@@ -435,6 +437,7 @@ namespace PRISM
             {
                 // Too many retries, log and return error
                 errorMessage = "Excessive retries";
+
                 if (deadlockOccurred)
                 {
                     errorMessage += " (including deadlock)";

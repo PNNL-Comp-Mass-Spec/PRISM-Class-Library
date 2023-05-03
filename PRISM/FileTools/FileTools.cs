@@ -230,11 +230,13 @@ namespace PRISM
 
             if (versionCountToKeep == 0)
                 versionCountToKeep = 2;
+
             if (versionCountToKeep < 1)
                 versionCountToKeep = 1;
 
             var baseName = Path.GetFileNameWithoutExtension(targetFile.Name);
             var extension = Path.GetExtension(targetFile.Name);
+
             if (string.IsNullOrEmpty(extension))
             {
                 extension = ".bak";
@@ -250,6 +252,7 @@ namespace PRISM
             for (var revision = versionCountToKeep - 1; revision >= 0; revision += -1)
             {
                 var baseNameCurrent = baseName;
+
                 if (revision > 0)
                 {
                     baseNameCurrent += "_Old" + revision;
@@ -286,14 +289,17 @@ namespace PRISM
                 return string.Format("{0:F1} bytes", bytes);
 
             var scaledBytes = bytes / 1024.0;
+
             if (scaledBytes < 1000)
                 return string.Format("{0:F1} KB", scaledBytes);
 
             scaledBytes /= 1024.0;
+
             if (scaledBytes < 1000)
                 return string.Format("{0:F1} MB", scaledBytes);
 
             scaledBytes /= 1024.0;
+
             if (scaledBytes < 1000)
                 return string.Format("{0:F1} GB", scaledBytes);
 
@@ -358,12 +364,14 @@ namespace PRISM
             }
 
             var firstPathSepChar = pathToCompact.IndexOfAny(pathSepChars);
+
             if (firstPathSepChar >= 0)
             {
                 pathSepCharPreferred = pathToCompact[firstPathSepChar];
             }
 
             pathToCompact = pathToCompact.Trim();
+
             if (pathToCompact.Length <= maxLength)
             {
                 return pathToCompact;
@@ -415,6 +423,7 @@ namespace PRISM
             do
             {
                 charIndex = pathParts[pathPartCount - 1].IndexOfAny(pathSepChars);
+
                 if (charIndex >= 0)
                 {
                     pathParts[pathPartCount] = pathParts[pathPartCount - 1].Substring(charIndex + 1);
@@ -435,10 +444,12 @@ namespace PRISM
                 if (leadingChars.StartsWith(@"\\"))
                 {
                     leadingCharsLength = leadingChars.Length;
+
                     if (leadingCharsLength > 5)
                     {
                         // Can shorten the server name as needed
                         shortLength = maxLength - pathParts[0].Length - 3;
+
                         if (shortLength < leadingCharsLength)
                         {
                             if (shortLength < 3)
@@ -449,8 +460,10 @@ namespace PRISM
                 }
 
                 shortLength = maxLength - leadingChars.Length - 2;
+
                 if (shortLength < 3)
                     shortLength = 3;
+
                 if (shortLength < pathParts[0].Length - 2)
                 {
                     if (shortLength < 4)
@@ -476,6 +489,7 @@ namespace PRISM
 
                 // First check if pathParts[1] = "...\" or ".../"
                 short multiPathCorrection;
+
                 if (pathParts[0] == @"...\" || pathParts[0] == ".../")
                 {
                     multiPathCorrection = 4;
@@ -493,6 +507,7 @@ namespace PRISM
                 // Shorten the first to as little as possible
                 // If not short enough, replace the first with ... and call this method again
                 shortLength = maxLength - leadingChars.Length - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 3 - multiPathCorrection;
+
                 if (shortLength < 1 && pathParts[2].Length > 0)
                 {
                     // Not short enough, but other subdirectories are present
@@ -505,10 +520,12 @@ namespace PRISM
                     if (leadingChars.StartsWith(@"\\"))
                     {
                         leadingCharsLength = leadingChars.Length;
+
                         if (leadingCharsLength > 5)
                         {
                             // Can shorten the server name as needed
                             shortLength = maxLength - pathParts[3].Length - pathParts[2].Length - pathParts[1].Length - 7 - multiPathCorrection;
+
                             if (shortLength < leadingCharsLength - 3)
                             {
                                 if (shortLength < 3)
@@ -534,6 +551,7 @@ namespace PRISM
                     // See if still too long
                     // If it is, will need to shorten the filename too
                     var overLength = shortenedPath.Length - maxLength;
+
                     if (overLength > 0)
                     {
                         // Need to shorten filename too
@@ -546,6 +564,7 @@ namespace PRISM
                         }
 
                         shortLength = pathParts[fileNameIndex].Length - overLength - 2;
+
                         if (shortLength < 4)
                         {
                             pathParts[fileNameIndex] = pathParts[fileNameIndex].Substring(0, 3) + "..";
@@ -891,6 +910,7 @@ namespace PRISM
 
             // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
             var sortedFileNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+
             if (fileNamesToSkip != null)
             {
                 foreach (var fileName in fileNamesToSkip)
@@ -905,6 +925,7 @@ namespace PRISM
                 // Look for both the file name and the full path in sortedFileNames
                 // If either matches, do not copy the file
                 bool copyFile;
+
                 if (sortedFileNames.Contains(childFile.Name))
                 {
                     copyFile = false;
@@ -1146,6 +1167,7 @@ namespace PRISM
 
                 // Copy the values from fileNamesToSkip to sortedFileNames so that we can perform case-insensitive searching
                 var sortedFileNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+
                 if (fileNamesToSkip != null)
                 {
                     foreach (var item in fileNamesToSkip)
@@ -1161,6 +1183,7 @@ namespace PRISM
                     // Look for both the file name and the full path in sortedFileNames
                     // If either matches, do not copy the file
                     bool copyFile;
+
                     if (sortedFileNames.Contains(sourceFile.Name))
                     {
                         copyFile = false;
@@ -1573,10 +1596,12 @@ namespace PRISM
             // If less than LOCKFILE_MINIMUM_SOURCE_FILE_SIZE_MB then
             // copy the file normally
             var sourceFileSizeMB = Convert.ToInt32(sourceFile.Length / 1024.0 / 1024.0);
+
             if (sourceFileSizeMB < LOCKFILE_MINIMUM_SOURCE_FILE_SIZE_MB ||
                 string.IsNullOrWhiteSpace(lockDirectoryPathSource) && string.IsNullOrWhiteSpace(lockDirectoryPathTarget))
             {
                 const bool backupDestFileBeforeCopy = false;
+
                 if (DebugLevel >= 2)
                 {
                     var debugMsg = string.Format(
@@ -1688,8 +1713,8 @@ namespace PRISM
                 {
                     mFlushThresholdMB = mChunkSizeMB;
                 }
-                var flushThresholdBytes = mFlushThresholdMB * 1024 * 1024;
 
+                var flushThresholdBytes = mFlushThresholdMB * 1024 * 1024;
                 var resumeCopy = false;
 
                 if (sourceFile.Length <= chunkSizeBytes)
@@ -1706,6 +1731,7 @@ namespace PRISM
 
                 // Delete the target file if it already exists
                 var targetFile = new FileInfo(targetFilePath);
+
                 if (targetFile.Exists)
                 {
                     DeleteFileNative(targetFile);
@@ -1826,6 +1852,7 @@ namespace PRISM
 
                         // Flush out the data periodically
                         bytesSinceLastFlush += bytesRead;
+
                         if (bytesSinceLastFlush >= flushThresholdBytes)
                         {
                             filePartWriter.Flush();
@@ -1945,6 +1972,7 @@ namespace PRISM
             // Define the lock file name
             var lockFileName = GenerateLockFileName(lockFileTimestamp, sourceFile, managerName);
             var lockFilePath = Path.Combine(lockDirectory.FullName, lockFileName);
+
             while (File.Exists(lockFilePath))
             {
                 // File already exists for this manager; append a dash to the path
@@ -2038,6 +2066,7 @@ namespace PRISM
         public bool DeleteDirectoryFiles(string directoryPath, bool deleteDirectoryIfEmpty)
         {
             var targetDirectory = new DirectoryInfo(directoryPath);
+
             if (!targetDirectory.Exists)
                 return true;
 
@@ -2182,6 +2211,7 @@ namespace PRISM
             var sleepTimeMsec = 500;
 
             var retriesRemaining = retryCount - 1;
+
             if (retriesRemaining < 0)
                 retriesRemaining = 0;
 
@@ -2421,6 +2451,7 @@ namespace PRISM
             if (Path.IsPathRooted(dataFile.FullName))
             {
                 var directory = dataFile.Directory;
+
                 if (directory?.Root.FullName.StartsWith(@"\\") == true)
                 {
                     return Path.Combine(GetServerShareBase(directory.Root.FullName), "DMS_LockFiles");
@@ -2449,10 +2480,12 @@ namespace PRISM
                 return string.Empty;
 
             var slashIndex = serverSharePath.IndexOf('\\', 2);
+
             if (slashIndex <= 0)
                 return serverSharePath;
 
             var serverShareBase = serverSharePath.Substring(0, slashIndex);
+
             if (string.Equals(serverShareBase, @"\\picfs", StringComparison.OrdinalIgnoreCase))
             {
                 serverShareBase = @"\\picfs\projects\DMS";
@@ -2495,6 +2528,7 @@ namespace PRISM
             var compressedFilePath = ConstructCompressedGZipFilePath(fileToCompress, compressedDirectoryPath, compressedFileName);
 
             string storedFileName = null;
+
             if (!doNotStoreFileName)
             {
                 storedFileName = fileToCompress.Name;
@@ -2529,6 +2563,7 @@ namespace PRISM
                 var fileNameOrPath = string.IsNullOrWhiteSpace(decompressedFileName) ? currentFilePathWithoutGz : decompressedFileName;
 
                 var directoryPath = string.IsNullOrWhiteSpace(decompressedDirectoryPath) ? fileToDecompress.DirectoryName : decompressedDirectoryPath;
+
                 if (string.IsNullOrWhiteSpace(directoryPath))
                 {
                     directoryPath = ".";
@@ -2570,6 +2605,7 @@ namespace PRISM
 
             // If decompressedDirectoryPath is provided, override the default path appropriately
             var dir = string.IsNullOrWhiteSpace(decompressedDirectoryPath) ? fileToDecompress.DirectoryName : decompressedDirectoryPath;
+
             if (string.IsNullOrWhiteSpace(dir))
             {
                 dir = ".";
@@ -2588,6 +2624,7 @@ namespace PRISM
                 }
 
                 string fileNameOrPath;
+
                 if (!doNotUseStoredFileName && !string.IsNullOrWhiteSpace(gzipMetadataStream.InternalFilename))
                 {
                     fileNameOrPath = gzipMetadataStream.InternalFilename;
@@ -2618,6 +2655,7 @@ namespace PRISM
         public static bool IsVimSwapFile(string filePath)
         {
             var fileName = Path.GetFileName(filePath);
+
             if (fileName == null)
                 return false;
 
@@ -2654,6 +2692,7 @@ namespace PRISM
             foreach (var subDirectory in sourceDirectory.GetDirectories())
             {
                 success = MoveDirectory(subDirectory.FullName, Path.Combine(targetDirectoryPath, subDirectory.Name), overwriteFiles, managerName);
+
                 if (!success)
                 {
                     throw new Exception("Error moving directory " + subDirectory.FullName + " to " + targetDirectoryPath + "; MoveDirectory returned False");
@@ -2663,6 +2702,7 @@ namespace PRISM
             foreach (var sourceFile in sourceDirectory.GetFiles())
             {
                 success = CopyFileUsingLocks(sourceFile.FullName, Path.Combine(targetDirectoryPath, sourceFile.Name), managerName, overwriteFiles);
+
                 if (!success)
                 {
                     throw new Exception("Error copying file " + sourceFile.FullName + " to " + targetDirectoryPath + "; CopyFileUsingLocks returned False");
@@ -2707,6 +2747,7 @@ namespace PRISM
             const string adminBypassBase = "To force the file copy and bypass the lock file queue";
 
             string adminBypassMessage;
+
             if (!string.IsNullOrWhiteSpace(lockFilePathSource) && !string.IsNullOrWhiteSpace(lockFilePathTarget))
             {
                 adminBypassMessage = string.Format("{0}, delete {1} and {2}", adminBypassBase, lockFilePathSource, lockFilePathTarget);
@@ -2733,6 +2774,7 @@ namespace PRISM
         private void OnStatusEvent(string message, string detailedMessage)
         {
             OnStatusEvent(message);
+
             if (DebugLevel >= 2)
             {
                 OnDebugEvent("  " + detailedMessage);
@@ -2784,6 +2826,7 @@ namespace PRISM
             }
 
             fileToRename.Refresh();
+
             if (!fileToRename.Exists)
             {
                 throw new FileNotFoundException("File not found: " + fileToRename.FullName);
@@ -2796,6 +2839,7 @@ namespace PRISM
             }
 
             newFileInfo.Refresh();
+
             if (newFileInfo.Exists)
             {
                 if (string.Equals(fileToRename.FullName, newFileInfo.FullName, StringComparison.OrdinalIgnoreCase))
@@ -3063,6 +3107,7 @@ namespace PRISM
 
             var maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES;
             var maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES;
+
             if (maxWaitTimeMinutes > 0)
             {
                 maxWaitTimeSource = maxWaitTimeMinutes;
@@ -3114,6 +3159,7 @@ namespace PRISM
                 if (!stopWaiting && deletedLockFilesThreshold > 0)
                 {
                     var lockFilesDeleted = 0;
+
                     if (checkForDeletedSourceLockFile && !File.Exists(lockFilePathSource))
                         lockFilesDeleted++;
 
@@ -3140,6 +3186,7 @@ namespace PRISM
 
                 if (sleepTimeSec < 1)
                     sleepTimeSec = 1;
+
                 if (sleepTimeSec > 30)
                     sleepTimeSec = 30;
 

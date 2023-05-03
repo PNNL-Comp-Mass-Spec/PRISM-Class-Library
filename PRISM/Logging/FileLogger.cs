@@ -261,6 +261,7 @@ namespace PRISM.Logging
             {
                 var currentLogFile = new FileInfo(logFilePath);
                 var logDirectory = currentLogFile.Directory;
+
                 if (logDirectory == null)
                 {
                     WriteLog(LogLevels.WARN, "Error archiving old log files; cannot determine the parent directory of " + currentLogFile);
@@ -370,6 +371,7 @@ namespace PRISM.Logging
 
                     DateTime logDate;
                     int logFileYear;
+
                     if (yearGroup.Success && monthGroup.Success)
                     {
                         logFileYear = int.Parse(match.Groups["Year"].Value);
@@ -396,6 +398,7 @@ namespace PRISM.Logging
                         continue;
 
                     var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
+
                     if (!targetDirectory.Exists)
                         targetDirectory.Create();
 
@@ -413,6 +416,7 @@ namespace PRISM.Logging
                             {
                                 var logFileHash = HashUtilities.ComputeFileHashSha1(logFile.FullName);
                                 var targetFileHash = HashUtilities.ComputeFileHashSha1(targetFile.FullName);
+
                                 if (logFileHash.Equals(targetFileHash))
                                 {
                                     ConsoleMsgUtils.ShowDebug("Identical old log file already exists in the target directory; deleting " + logFile.FullName);
@@ -425,6 +429,7 @@ namespace PRISM.Logging
                             FileTools.BackupFileBeforeCopy(targetFile.FullName);
 
                             targetFile.Refresh();
+
                             if (targetFile.Exists)
                             {
                                 ConsoleMsgUtils.ShowDebug("Backup/rename failed; cannot archive old log file " + logFile.FullName);
@@ -514,6 +519,7 @@ namespace PRISM.Logging
             {
                 var appDirectoryPath = AppUtils.GetAppDirectoryPath();
                 string logFilePath;
+
                 if (string.IsNullOrWhiteSpace(baseName))
                 {
                     logFilePath = Path.Combine(appDirectoryPath, DefaultLogFileName);
@@ -547,6 +553,7 @@ namespace PRISM.Logging
                 BaseLogFileName = DefaultLogFileName;
 
             string newLogFilePath;
+
             if (AppendDateToBaseFileName)
             {
                 if (Path.HasExtension(BaseLogFileName))
@@ -589,6 +596,7 @@ namespace PRISM.Logging
             const int MAX_TIME_SECONDS = 5;
 
             var startTime = DateTime.UtcNow;
+
             while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < MAX_TIME_SECONDS)
             {
                 StartLogQueuedMessages();
@@ -632,6 +640,7 @@ namespace PRISM.Logging
                     {
                         // Check to determine if a new file should be started
                         var testFileDate = logMessage.MessageDateLocal.ToString(LOG_FILE_DATE_CODE);
+
                         if (!string.Equals(testFileDate, LogFileDateText))
                         {
                             ShowTrace(string.Format("Updating log file date from {0} to {1}", LogFileDateText, testFileDate));
@@ -663,6 +672,7 @@ namespace PRISM.Logging
                         }
 
                         var logFile = new FileInfo(LogFilePath);
+
                         if (logFile.Directory == null)
                         {
                             // Create the log file in the current directory
@@ -733,6 +743,7 @@ namespace PRISM.Logging
             try
             {
                 var currentLogFile = new FileInfo(currentLogFilePath);
+
                 if (!currentLogFile.Exists)
                 {
                     // Nothing to do
@@ -783,6 +794,7 @@ namespace PRISM.Logging
                         else
                         {
                             var newPath = pendingRenames[item].Value;
+
                             if (File.Exists(newPath))
                             {
                                 ConsoleMsgUtils.ShowError(
@@ -1035,6 +1047,7 @@ namespace PRISM.Logging
                         }
 
                         zipFile.Refresh();
+
                         if (!zipFile.Exists)
                         {
                             zipWarnings.Add(string.Format("Not archiving Zip file {0} since it no longer exists", zipFile.Name));

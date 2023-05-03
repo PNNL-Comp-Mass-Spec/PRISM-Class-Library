@@ -67,6 +67,7 @@ namespace PRISMTest
 
             var charCount = 0;
             var lineCount = 0;
+
             foreach (var textLine in wrappedLines)
             {
                 charCount += textLine.Length;
@@ -75,6 +76,7 @@ namespace PRISMTest
 
             Console.WriteLine();
             Console.WriteLine("Wrapping to {0} characters per line gives {1} lines of wrapped text and {2} total characters", wrapWidth, lineCount, charCount);
+
             if (spaceIndentCount > 0)
             {
                 Console.WriteLine("Indented text by {0} characters", spaceIndentCount);
@@ -140,6 +142,7 @@ namespace PRISMTest
 
             Console.WriteLine();
             Console.WriteLine("Wrapping to {0} characters per line gives {1} lines of wrapped text and {2} total characters", wrapWidth, wrappedText.Count, charCount);
+
             if (spaceIndentCount > 0)
             {
                 Console.WriteLine("Indented text by {0} characters", spaceIndentCount);

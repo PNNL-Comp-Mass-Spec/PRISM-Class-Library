@@ -97,6 +97,7 @@ namespace PRISM
                 return path;
 
             var newPath = path;
+
             if (newPath.StartsWith("\\"))
             {
                 newPath = @"\\?\UNC\" + newPath.Substring(2);
@@ -109,6 +110,7 @@ namespace PRISM
             {
                 var currentDirectory = Environment.CurrentDirectory;
                 newPath = Path.Combine(currentDirectory, newPath);
+
                 while (newPath.Contains("\\.\\"))
                 {
                     newPath = newPath.Replace("\\.\\", "\\");
@@ -168,6 +170,7 @@ namespace PRISM
         internal static void ThrowWin32Exception()
         {
             var code = Marshal.GetLastWin32Error();
+
             if (code != 0)
             {
                 throw new System.ComponentModel.Win32Exception(code);

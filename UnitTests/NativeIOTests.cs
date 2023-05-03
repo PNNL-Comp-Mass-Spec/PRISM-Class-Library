@@ -118,6 +118,7 @@ namespace PRISMTest
             }
 
             Console.WriteLine();
+
             foreach (var item in actualLengthsByName)
             {
                 var expectedSize = expectedLengthsByName[item.Key];

@@ -309,6 +309,7 @@ namespace PRISM.FileProcessor
                     else
                     {
                         DirectoryProcessErrors++;
+
                         if (!IgnoreErrorsWhenUsingWildcardMatching)
                             break;
                     }
@@ -442,6 +443,7 @@ namespace PRISM.FileProcessor
                     try
                     {
                         var alternateOutputDirectory = new DirectoryInfo(outputDirectoryAlternatePath);
+
                         if (!alternateOutputDirectory.Exists)
                             alternateOutputDirectory.Create();
                     }
@@ -523,6 +525,7 @@ namespace PRISM.FileProcessor
                 {
                     // Need to process the current directory
                     success = ProcessDirectory(inputDirectory.FullName, outputDirectoryPathToUse, parameterFilePath, true);
+
                     if (success)
                     {
                         DirectoriesProcessed++;
@@ -598,6 +601,7 @@ namespace PRISM.FileProcessor
                 var success = RecurseDirectoriesWork(subdirectory.FullName, directoryNameMatchPattern,
                                                      parameterFilePath, outputDirectoryAlternatePath,
                                                      recursionLevel + 1, maxLevelsToRecurse);
+
                 if (!success)
                     return false;
             }

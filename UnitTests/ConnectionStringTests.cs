@@ -208,6 +208,7 @@ namespace PRISMTest
         private string GetPaddedList(List<string> items, string stringFormat)
         {
             var result = new StringBuilder();
+
             foreach (var item in items)
             {
                 if (result.Length > 0)
@@ -267,6 +268,7 @@ namespace PRISMTest
                     }
 
                     var schemaTable = reader.GetSchemaTable();
+
                     if (schemaTable != null)
                     {
                         var columnNames = schemaTable.Rows
@@ -278,6 +280,7 @@ namespace PRISMTest
                     }
 
                     var rowCount = 0;
+
                     while (reader.Read())
                     {
                         var currentRow = new List<string>();

@@ -122,6 +122,7 @@ namespace PRISM.Logging
             var formatString = GetTimestampFormatString(timestampFormat);
 
             string timeStamp;
+
             if (useLocalTime)
                 timeStamp = MessageDateLocal.ToString(formatString);
             else

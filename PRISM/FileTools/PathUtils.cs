@@ -84,6 +84,7 @@ namespace PRISM
                 return path2;
 
             var ch = path1[path1.Length - 1];
+
             if (ch != Path.DirectorySeparatorChar && ch != Path.AltDirectorySeparatorChar && ch != Path.VolumeSeparatorChar)
                 return path1 + directorySepChar + path2;
 
@@ -128,6 +129,7 @@ namespace PRISM
             }
 
             string directoryPath;
+
             if (cleanDirectoryInfo.Parent?.Exists == true)
             {
                 directoryPath = cleanDirectoryInfo.Parent.FullName;
@@ -161,6 +163,7 @@ namespace PRISM
             try
             {
                 DirectoryInfo parentDirectory;
+
                 if (directory.FullName.Length + directoryMask.Length + 50 >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
                 {
                     parentDirectory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directory.FullName));
@@ -178,6 +181,7 @@ namespace PRISM
                 foreach (var subdirectory in parentDirectory.GetDirectories())
                 {
                     DirectoryInfo subdirectoryToUse;
+
                     if (subdirectory.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
                     {
                         subdirectoryToUse = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(subdirectory.FullName));
@@ -223,6 +227,7 @@ namespace PRISM
             }
 
             string directoryPath;
+
             if (cleanFileInfo.Directory?.Exists == true && cleanFileInfo.DirectoryName != null)
             {
                 directoryPath = cleanFileInfo.DirectoryName;
@@ -256,6 +261,7 @@ namespace PRISM
             try
             {
                 DirectoryInfo parentDirectory;
+
                 if (directory.FullName.Length + fileMask.Length + 50 >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
                 {
                     parentDirectory = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(directory.FullName));
@@ -273,6 +279,7 @@ namespace PRISM
                 foreach (var subdirectory in parentDirectory.GetDirectories())
                 {
                     DirectoryInfo subdirectoryToUse;
+
                     if (subdirectory.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !SystemInfo.IsLinux)
                     {
                         subdirectoryToUse = new DirectoryInfo(NativeIOFileTools.GetWin32LongPath(subdirectory.FullName));
@@ -349,6 +356,7 @@ namespace PRISM
             }
 
             char sepChar;
+
             if (directoryPath.Contains(Path.DirectorySeparatorChar))
             {
                 sepChar = Path.DirectorySeparatorChar;
@@ -383,6 +391,7 @@ namespace PRISM
 
             bool rootedLinuxPath;
             string[] pathParts;
+
             if (directoryPath.StartsWith("/"))
             {
                 rootedLinuxPath = true;
@@ -403,6 +412,7 @@ namespace PRISM
             directoryName = pathParts[pathParts.Length - 1];
 
             var parentPath = directoryPath.Substring(0, directoryPath.Length - directoryName.Length - 1);
+
             if (rootedLinuxPath && !parentPath.StartsWith("/"))
                 return "/" + parentPath;
 

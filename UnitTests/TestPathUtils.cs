@@ -127,6 +127,7 @@ namespace PRISMTest
             var expectedDirectoryList = expectedDirectoryNames.Split(',');
 
             var foundDirectoryNames = new SortedSet<string>();
+
             foreach (var foundDirectory in directories1)
             {
                 if (foundDirectoryNames.Contains(foundDirectory.Name))
@@ -191,12 +192,14 @@ namespace PRISMTest
             var cpuInfoFile = FileRefs.GetTestFile(filePath);
 
             var currentDirectory = cpuInfoFile.Directory;
+
             if (currentDirectory == null)
                 Assert.Fail("Cannot determine the parent directory of " + cpuInfoFile.FullName);
 
             for (var parentCount = 1; parentCount < 3; parentCount++)
             {
                 var parentCandidate = currentDirectory.Parent;
+
                 if (parentCandidate == null)
                     Assert.Fail("Cannot determine the parent directory of " + currentDirectory.FullName);
 
@@ -249,12 +252,14 @@ namespace PRISMTest
             var expectedFileList = expectedFileNames.Split(',');
 
             var foundFileNames = new SortedSet<string>();
+
             foreach (var foundFile in files1)
             {
                 if (foundFileNames.Contains(foundFile.Name))
                     continue;
 
                 foundFileNames.Add(foundFile.Name);
+
                 if (foundFileNames.Count == 1)
                     Console.Write(foundFile.Name);
                 else if (foundFileNames.Count <= 5)

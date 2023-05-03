@@ -83,6 +83,7 @@ namespace PRISMDatabaseUtils
             params string[] columnNames)
         {
             StringComparer stringComparer;
+
             if (caseSensitiveColumnNames)
                 stringComparer = StringComparer.Ordinal;
             else
@@ -281,6 +282,7 @@ namespace PRISMDatabaseUtils
             if (allowColumnNameMatchOnly)
             {
                 var periodAndName = "." + columnName;
+
                 foreach (var item in columnMap)
                 {
                     if (item.Key is string keyName &&
@@ -317,6 +319,7 @@ namespace PRISMDatabaseUtils
         public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columnNames, bool caseSensitiveColumnNames = true)
         {
             StringComparer stringComparer;
+
             if (caseSensitiveColumnNames)
                 stringComparer = StringComparer.Ordinal;
             else
@@ -366,6 +369,7 @@ namespace PRISMDatabaseUtils
             Dictionary<T, SortedSet<string>> columnNamesByIdentifier)
         {
             columnMap.Clear();
+
             foreach (var candidateColumn in columnNamesByIdentifier)
             {
                 columnMap.Add(candidateColumn.Key, -1);
@@ -477,6 +481,7 @@ namespace PRISMDatabaseUtils
             out bool validNumber)
         {
             var valueText = GetColumnValue(resultRow, columnMap, columnIdentifier, string.Empty, out var validColumn);
+
             if (!validColumn)
             {
                 validNumber = false;
@@ -512,6 +517,7 @@ namespace PRISMDatabaseUtils
             out bool validNumber)
         {
             var valueText = GetColumnValue(resultRow, columnMap, columnIdentifier, string.Empty, out var validColumn);
+
             if (!validColumn)
             {
                 validNumber = false;
@@ -547,6 +553,7 @@ namespace PRISMDatabaseUtils
             out bool validNumber)
         {
             var valueText = GetColumnValue(resultRow, columnMap, columnIdentifier, string.Empty, out var validColumn);
+
             if (!validColumn)
             {
                 validNumber = false;
@@ -663,6 +670,7 @@ namespace PRISMDatabaseUtils
         public static string GetInvalidColumnNameExceptionMessage<T>(int columnIndex, T columnIdentifier)
         {
             string errorReason;
+
             if (columnIndex < 0)
                 errorReason = "invalid column name";
             else
@@ -680,6 +688,7 @@ namespace PRISMDatabaseUtils
         public static string GetInvalidColumnNameExceptionMessage<T>(IReadOnlyDictionary<T, int> columnMap, T columnIdentifier)
         {
             string errorReason;
+
             if (!columnMap.ContainsKey(columnIdentifier))
                 errorReason = "invalid column name";
             else

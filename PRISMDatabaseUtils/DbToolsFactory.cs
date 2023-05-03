@@ -381,6 +381,7 @@ namespace PRISMDatabaseUtils
             try
             {
                 var builder = new SqlConnectionStringBuilder(connectionString);
+
                 if (!string.IsNullOrWhiteSpace(builder.DataSource))
                 {
                     return DbServerTypes.MSSQLServer;
@@ -394,6 +395,7 @@ namespace PRISMDatabaseUtils
             try
             {
                 var builder = new NpgsqlConnectionStringBuilder();
+
                 if (!string.IsNullOrWhiteSpace(builder.Host))
                 {
                     return DbServerTypes.PostgreSQL;

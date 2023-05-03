@@ -247,6 +247,7 @@ namespace PRISM.FileProcessor
             set
             {
                 mLogFilePath = value ?? string.Empty;
+
                 if (!string.IsNullOrWhiteSpace(mLogFilePath))
                 {
                     mLogFileUsesDateStamp = false;
@@ -344,6 +345,7 @@ namespace PRISM.FileProcessor
             {
                 var baseLogFile = new FileInfo(mLogFileBasePath);
                 var logDirectory = baseLogFile.Directory;
+
                 if (logDirectory == null)
                 {
                     ShowWarning("Error archiving old log files; cannot determine the parent directory of " + mLogFileBasePath);
@@ -725,6 +727,7 @@ namespace PRISM.FileProcessor
             }
 
             string formattedError;
+
             if (ex == null || baseMessage.Contains(ex.Message))
             {
                 formattedError = baseMessage;
@@ -1040,6 +1043,7 @@ namespace PRISM.FileProcessor
                 dates.Sort();
 
                 var thresholdIndex = Convert.ToInt32(Math.Floor(mLogDataCache.Count - MAX_LOG_DATA_CACHE_SIZE * 0.9));
+
                 if (thresholdIndex < 0)
                     thresholdIndex = 0;
 
@@ -1098,6 +1102,7 @@ namespace PRISM.FileProcessor
                 {
                     // Read the log file from the previous day
                     var previousLogFile = GetDateBasedLogFilePath(DateTime.Now.AddDays(-1));
+
                     if (!string.IsNullOrWhiteSpace(previousLogFile) && File.Exists(previousLogFile))
                     {
                         UpdateLogDataCache(previousLogFile, DateTime.UtcNow.AddHours(-CACHE_LENGTH_HOURS));
@@ -1126,6 +1131,7 @@ namespace PRISM.FileProcessor
                     while (!logFileReader.EndOfStream)
                     {
                         var lineIn = logFileReader.ReadLine();
+
                         if (string.IsNullOrWhiteSpace(lineIn))
                             continue;
 
@@ -1138,6 +1144,7 @@ namespace PRISM.FileProcessor
                             continue;
 
                         var universalTime = logTime.ToUniversalTime();
+
                         if (universalTime < dateThresholdToStoreUTC)
                             continue;
 
@@ -1198,6 +1205,7 @@ namespace PRISM.FileProcessor
             var descriptionChanged = !string.Equals(progressStepDescription, ProgressStepDescription);
 
             ProgressStepDescription = progressStepDescription;
+
             if (percentComplete < 0)
             {
                 percentComplete = 0;
@@ -1251,6 +1259,7 @@ namespace PRISM.FileProcessor
         private void WriteToLogFile(string message, MessageTypeConstants messageType, int duplicateHoldoffHours)
         {
             var level = ConvertMessageTypeToLogLevel(messageType);
+
             if (level < LoggingLevel)
             {
                 return;

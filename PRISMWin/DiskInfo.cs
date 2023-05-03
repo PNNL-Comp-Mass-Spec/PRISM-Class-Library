@@ -38,6 +38,7 @@ namespace PRISMWin
             try
             {
                 var directoryInfo = new FileInfo(filePath).Directory;
+
                 if (directoryInfo == null)
                 {
                     errorMessage = "Unable to determine the parent directory of " + filePath;

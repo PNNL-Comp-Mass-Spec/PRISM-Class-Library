@@ -136,6 +136,7 @@ namespace PRISM
                             {
                                 var subdirectory = Path.Combine(path, findData.cFileName);
                                 dirs.Add(NativeIOFileTools.GetCleanPath(subdirectory));
+
                                 if (searchOption == SearchOption.AllDirectories)
                                 {
                                     InternalGetDirectories(subdirectory, searchPattern, searchOption, ref dirs);

@@ -59,6 +59,7 @@ namespace PRISMTest
                 foreach (var logFile in filesToFind)
                 {
                     var oldLogFile = new FileInfo(Path.Combine(previousYearDir.FullName, logFile.Name));
+
                     if (oldLogFile.Exists)
                         oldLogFile.Delete();
                 }
@@ -213,6 +214,7 @@ namespace PRISMTest
             FileLogger.ResetLogFileName();
 
             string logFilePath;
+
             if (string.IsNullOrWhiteSpace(logFileNameBase))
                 logFilePath = string.Empty;
             else if (string.IsNullOrWhiteSpace(logDirectory))
@@ -283,6 +285,7 @@ namespace PRISMTest
             Console.WriteLine("Log file path: " + FileLogger.LogFilePath);
 
             var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
+
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
                 if (string.IsNullOrWhiteSpace(FileLogger.LogFilePath))
@@ -315,6 +318,7 @@ namespace PRISMTest
             Console.WriteLine("Log file path: " + FileLogger.LogFilePath);
 
             var expectedName = expectedBaseName + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
+
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
@@ -372,6 +376,7 @@ namespace PRISMTest
             }
 
             var expectedName = logFileNameBase + "_" + DateTime.Now.ToString("yyyy-MM-dd") + FileLogger.LOG_FILE_EXTENSION;
+
             if (!FileLogger.LogFilePath.EndsWith(expectedName))
             {
                 Assert.Fail("Log file name was not in the expected format of " + expectedName + "; see " + FileLogger.LogFilePath);
@@ -615,6 +620,7 @@ namespace PRISMTest
             var messageTimestampText = messageParts[0];
 
             string expectedTimestampText;
+
             if (useLocalTime)
                 expectedTimestampText = DateTime.Now.ToString(expectedFormatString);
             else
@@ -648,6 +654,7 @@ namespace PRISMTest
             var randGenerator = new Random();
 
             string formatString;
+
             if (logCount < 10)
                 formatString = "{0} {1}/{2}";
             else

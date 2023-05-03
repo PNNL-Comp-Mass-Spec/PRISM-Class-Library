@@ -135,6 +135,7 @@ namespace PRISM
             }
 
             string formattedError;
+
             if (ex == null || message.Contains(ex.Message))
             {
                 formattedError = message;
@@ -215,6 +216,7 @@ namespace PRISM
             }
 
             Console.WriteLine(SEPARATOR);
+
             if (emptyLinesBeforeMessage > 0)
             {
                 Console.WriteLine();
@@ -265,6 +267,7 @@ namespace PRISM
             ConsoleWriteEmptyLines(emptyLinesBeforeMessage);
 
             Console.ForegroundColor = DebugFontColor;
+
             if (string.IsNullOrEmpty(indentChars))
             {
                 Console.WriteLine(indentChars + message);
@@ -317,9 +320,11 @@ namespace PRISM
         public static void SleepSeconds(double waitTimeSeconds)
         {
             var endTime = DateTime.UtcNow.AddSeconds(waitTimeSeconds);
+
             while (endTime.Subtract(DateTime.UtcNow).TotalMilliseconds > 10)
             {
                 var remainingSeconds = endTime.Subtract(DateTime.UtcNow).TotalSeconds;
+
                 if (remainingSeconds > 10)
                 {
                     AppUtils.SleepMilliseconds(10000);
@@ -342,6 +347,7 @@ namespace PRISM
         public static string WrapParagraph(string textToWrap, int wrapWidth = 80)
         {
             var wrappedText = new StringBuilder();
+
             foreach (var line in WrapParagraphAsList(textToWrap, wrapWidth))
             {
                 if (wrappedText.Length > 0)

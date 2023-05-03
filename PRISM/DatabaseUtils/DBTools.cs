@@ -329,6 +329,7 @@ namespace PRISM
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args)
         {
             var errMsg = new StringBuilder();
+
             foreach (SqlError err in args.Errors)
             {
                 errMsg.Clear();

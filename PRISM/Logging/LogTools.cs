@@ -536,6 +536,7 @@ namespace PRISM.Logging
                     {
                         var logFileName = Path.GetFileName(FileLogger.LogFilePath);
                         string workDirLogPath;
+
                         if (string.IsNullOrEmpty(WorkDirPath))
                             workDirLogPath = Path.Combine(".", logFileName);
                         else

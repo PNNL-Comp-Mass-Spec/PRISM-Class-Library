@@ -17,6 +17,7 @@ namespace PRISMTest
         public void Setup()
         {
             var sourceDirectory = new DirectoryInfo(HASH_TEST_TEMP_DIR_PATH);
+
             if (!sourceDirectory.Exists)
             {
                 try
@@ -31,6 +32,7 @@ namespace PRISMTest
             }
 
             var hashTestFile = new FileInfo(HashTestFilePath);
+
             if (hashTestFile.Exists && hashTestFile.Length > 1000000)
                 return;
 

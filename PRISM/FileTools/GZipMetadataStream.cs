@@ -222,10 +222,12 @@ namespace PRISM
             // ReSharper restore CommentTypo
 
             var iso8859Encoding = Encoding.GetEncoding("ISO-8859-1");
+
             if (flags.HasFlag(GzipFlags.FNAME))
             {
                 var nameBytes = new List<byte>();
                 int c;
+
                 while ((c = BaseStream.ReadByte()) > 0)
                 {
                     nameBytes.Add((byte)c);
@@ -238,6 +240,7 @@ namespace PRISM
             {
                 var commentBytes = new List<byte>();
                 int c;
+
                 while ((c = BaseStream.ReadByte()) > 0)
                 {
                     commentBytes.Add((byte)c);
@@ -247,9 +250,11 @@ namespace PRISM
             }
 
             var headerCorrupted = false;
+
             if (flags.HasFlag(GzipFlags.FHCRC))
             {
                 var headerCrcPosition = (int)BaseStream.Position;
+
                 // Applies to all bytes prior to this item
                 var headerCrcBytes = new byte[2];
                 headerCrcBytes[0] = (byte)BaseStream.ReadByte();
@@ -293,6 +298,7 @@ namespace PRISM
                 modifiedBuffer.Add(buffer[i++]); // should be 8 (deflate)
                 var flags = (GzipFlags)buffer[i++];
                 var writeFileName = false;
+
                 if (!flags.HasFlag(GzipFlags.FNAME) && !string.IsNullOrWhiteSpace(InternalFilename))
                 {
                     writeFileName = true;
@@ -300,6 +306,7 @@ namespace PRISM
                 }
 
                 var writeComment = false;
+
                 if (!flags.HasFlag(GzipFlags.FCOMMENT) && !string.IsNullOrWhiteSpace(InternalComment))
                 {
                     writeComment = true;
@@ -307,6 +314,7 @@ namespace PRISM
                 }
 
                 var addingHeaderCrc = true;
+
                 if (AddOrCheckHeaderCrc)
                 {
                     if (flags.HasFlag(GzipFlags.FHCRC))
@@ -319,6 +327,7 @@ namespace PRISM
                 modifiedBuffer.Add((byte)flags);
 
                 var unixTimeStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
                 if (InternalLastModified.ToUniversalTime() > unixTimeStart)
                 {
                     i += 4;
@@ -355,6 +364,7 @@ namespace PRISM
                 }
 
                 var iso8859Encoding = Encoding.GetEncoding("ISO-8859-1");
+
                 if (writeFileName)
                 {
                     var bytes = iso8859Encoding.GetBytes(InternalFilename);

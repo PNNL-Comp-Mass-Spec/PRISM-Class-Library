@@ -205,6 +205,7 @@ namespace PRISM.Logging
             foreach (var setting in settingsList)
             {
                 var settingParts = setting.Split(keyParts, 2);
+
                 if (settingParts.Length < 2)
                     continue;
 
@@ -296,6 +297,7 @@ namespace PRISM.Logging
             const int MAX_TIME_SECONDS = 5;
 
             var startTime = DateTime.UtcNow;
+
             while (DateTime.UtcNow.Subtract(startTime).TotalSeconds < MAX_TIME_SECONDS)
             {
                 StartLogQueuedMessages();

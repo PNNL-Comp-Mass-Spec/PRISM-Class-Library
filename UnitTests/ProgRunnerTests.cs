@@ -90,6 +90,7 @@ namespace PRISMTest
             {
                 // Pick a dictionary at random (add new dictionaries if required)
                 var dictionaryIndex = rand.Next(0, dictionaryCount - 1);
+
                 while (dictionaries.Count < dictionaryIndex + 1)
                 {
                     dictionaries.Add(new Dictionary<int, List<FileInfo>>());
@@ -112,6 +113,7 @@ namespace PRISMTest
 
                 // Pick a random key for selecting a list to append the FileInfo object to
                 var key = rand.Next(0, dictionarySize);
+
                 if (currentDictionary.TryGetValue(key, out var values))
                 {
                     values.Add(randomFile);
@@ -212,6 +214,7 @@ namespace PRISMTest
             const int MONITOR_INTERVAL_MSEC = 500;
 
             var utilityExe = new FileInfo(Path.Combine(UTILITIES_DIRECTORY, exeName));
+
             if (!utilityExe.Exists)
             {
                 Assert.Fail("Exe not found: " + utilityExe.FullName);
@@ -221,6 +224,7 @@ namespace PRISMTest
 
             var workDir = @"C:\Temp";
             var tempDir = new DirectoryInfo(workDir);
+
             if (!tempDir.Exists)
                 tempDir.Create();
 
@@ -301,6 +305,7 @@ namespace PRISMTest
                 Assert.True(consoleOutputFile.Exists, "File not found: " + consoleOutputFilePath);
 
                 var secondsSinceMidnight = (int)(DateTime.Now.Subtract(DateTime.Today).TotalSeconds);
+
                 if (consoleOutputFile.DirectoryName == null)
                 {
                     Assert.Fail("Unable to determine the parent directory of " + consoleOutputFilePath);
@@ -309,6 +314,7 @@ namespace PRISMTest
                 var newFileName = Path.GetFileNameWithoutExtension(consoleOutputFilePath) + "_" + secondsSinceMidnight + ".txt";
 
                 var targetFile = new FileInfo(Path.Combine(consoleOutputFile.DirectoryName, newFileName));
+
                 if (targetFile.Exists)
                     targetFile.Delete();
 
@@ -321,7 +327,9 @@ namespace PRISMTest
                 {
                     Assert.Fail("The ConsoleOutput file is empty: " + targetFile.FullName);
                 }
+
                 var dataLine = reader.ReadLine();
+
                 if (string.IsNullOrWhiteSpace(dataLine))
                 {
                     Assert.Fail("The first line of the ConsoleOutput file is empty: " + targetFile.FullName);
@@ -336,6 +344,7 @@ namespace PRISMTest
                 {
                     // Delete old test files
                     var filesToFind = Path.GetFileNameWithoutExtension(consoleOutputFilePath) + "_*.txt";
+
                     foreach (var candidateFile in targetFile.Directory.GetFileSystemInfos(filesToFind))
                     {
                         if (DateTime.UtcNow.Subtract(candidateFile.LastWriteTimeUtc).TotalHours > 1)

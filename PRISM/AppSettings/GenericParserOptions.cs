@@ -57,6 +57,7 @@ namespace PRISM
             Console.WriteLine("Using options:");
 
             Console.WriteLine("First ID: {0}", StartID);
+
             if (EndID < int.MaxValue)
                 Console.WriteLine("Last ID: {0}", EndID);
 

@@ -68,6 +68,7 @@ namespace PRISMTest
         public void CopyDirectory(string sourceDirectoryPath, string targetDirectoryPath)
         {
             var sourceDirectory = new DirectoryInfo(sourceDirectoryPath);
+
             if (!sourceDirectory.Exists)
             {
                 Assert.Fail("Source directory not found: " + sourceDirectoryPath);
@@ -76,6 +77,7 @@ namespace PRISMTest
             var filesToSkip = new List<string> { "H_sapiens_Uniprot_trembl_2015-10-14.fasta" };
 
             var targetDirectory = new DirectoryInfo(targetDirectoryPath);
+
             if (targetDirectory.Exists)
                 targetDirectory.Delete(true);
 
@@ -100,12 +102,14 @@ namespace PRISMTest
         private void CopyFile(string sourceFilePath, string targetFilePath)
         {
             var sourceFile = new FileInfo(sourceFilePath);
+
             if (!sourceFile.Exists)
             {
                 Assert.Fail("Source file not found: " + sourceFile);
             }
 
             var targetFile = new FileInfo(targetFilePath);
+
             if (targetFile.Exists)
                 targetFile.Delete();
 
@@ -154,6 +158,7 @@ namespace PRISMTest
         private void CopyFileUsingLocks(string sourceFilePath, string targetFilePath)
         {
             var sourceFile = new FileInfo(sourceFilePath);
+
             if (!sourceFile.Exists)
             {
                 Assert.Fail("Source file not found: " + sourceFile);

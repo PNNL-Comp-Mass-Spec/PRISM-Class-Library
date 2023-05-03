@@ -343,6 +343,7 @@ namespace PRISM.AppSettings
         public bool ParseKeyValueParameterFile(out List<KeyValuePair<string, string>> paramFileEntries, bool removeComments = false)
         {
             var success = ParseKeyValueParameterFileWork(out var paramFileLines, removeComments);
+
             if (!success)
             {
                 paramFileEntries = new List<KeyValuePair<string, string>>();
@@ -405,6 +406,7 @@ namespace PRISM.AppSettings
                 using var paramFileReader = new StreamReader(new FileStream(ParamFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
 
                 var lineNumber = 0;
+
                 while (!paramFileReader.EndOfStream)
                 {
                     var dataLine = paramFileReader.ReadLine();
@@ -451,6 +453,7 @@ namespace PRISM.AppSettings
             try
             {
                 var lineNumber = 0;
+
                 foreach (var item in parameterList)
                 {
                     lineNumber++;

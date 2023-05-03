@@ -254,6 +254,7 @@ namespace PRISMDatabaseUtils
         public static bool GetSqlTypeByDataTypeName(string dataTypeName, out SqlType dataType, out bool supportsSize)
         {
             var success = GetDbTypeByDataTypeName(dataTypeName, out var dbType, out supportsSize);
+
             if (!success)
             {
                 dataType = SqlType.Integer;
@@ -446,9 +447,11 @@ namespace PRISMDatabaseUtils
 
             // Find the first integer in returnCodeValue
             var match = mIntegerMatcher.Match(returnCodeValue);
+
             if (match.Success)
             {
                 var matchValue = int.Parse(match.Value);
+
                 if (matchValue != 0)
                     return matchValue;
             }

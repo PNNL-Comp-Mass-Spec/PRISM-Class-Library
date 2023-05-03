@@ -99,6 +99,7 @@ namespace PRISM
             Arguments = argumentList == null ? string.Empty : string.Join(" ", argumentList);
 
             ArgumentList = argumentList;
+
             if (string.IsNullOrWhiteSpace(exePath))
                 exePath = string.Empty;
 
@@ -120,6 +121,7 @@ namespace PRISM
             {
                 var serviceMatcher = new Regex("(?<ServiceName>^[^ ]+): ");
                 var serviceMatch = serviceMatcher.Match(exePath);
+
                 if (serviceMatch.Success)
                 {
                     // exePath is of the form "ServiceName: arguments"
@@ -134,6 +136,7 @@ namespace PRISM
             catch (Exception)
             {
                 var lastSlash = exePath.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
+
                 if (lastSlash >= 0 && lastSlash < exePath.Length)
                 {
                     ExeName = exePath.Substring(lastSlash + 1);
@@ -170,6 +173,7 @@ namespace PRISM
             description.AppendLine("ExeName: " + ExeName);
 
             var i = 0;
+
             foreach (var item in ArgumentList)
             {
                 i++;

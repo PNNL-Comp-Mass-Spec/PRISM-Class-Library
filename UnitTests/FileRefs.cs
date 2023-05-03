@@ -35,6 +35,7 @@ namespace PRISMTest
         public static FileInfo GetTestFile(string relativeFilePath)
         {
             var dataFile = new FileInfo(relativeFilePath);
+
             if (dataFile.Exists)
             {
                 return dataFile;
@@ -63,17 +64,20 @@ namespace PRISMTest
                 foreach (var relativePath in relativePathsToCheck)
                 {
                     var alternateFile = new FileInfo(Path.Combine(mLastMatchedParentPath, relativePath));
+
                     if (alternateFile.Exists)
                         return alternateFile;
                 }
             }
 
             var parentToCheck = dataFile.Directory?.Parent;
+
             while (parentToCheck != null)
             {
                 foreach (var relativePath in relativePathsToCheck)
                 {
                     var alternateFile = new FileInfo(Path.Combine(parentToCheck.FullName, relativePath));
+
                     if (alternateFile.Exists)
                     {
 #if DEBUG
@@ -91,6 +95,7 @@ namespace PRISMTest
             foreach (var relativePath in relativePathsToCheck)
             {
                 var serverPathFile = new FileInfo(Path.Combine(SharePath, relativePath));
+
                 if (serverPathFile.Exists)
                 {
 #if DEBUG

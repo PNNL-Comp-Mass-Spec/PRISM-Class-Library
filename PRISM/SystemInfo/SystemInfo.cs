@@ -25,6 +25,7 @@ namespace PRISM
         static SystemInfo()
         {
             var c = new OSVersionInfo();
+
             if (c.GetOSVersion().IndexOf("windows", System.StringComparison.OrdinalIgnoreCase) >= 0
 #if NET5_0_OR_GREATER
                 && OperatingSystem.IsWindows() // Guard check valid for .NET Core that silences a warning about using WindowsSystemInfo

@@ -132,12 +132,14 @@ namespace PRISM
         private static DateTime GetNthTuesdayInMonth(DateTime currentTime, int occurrence)
         {
             var candidateDate = new DateTime(currentTime.Year, currentTime.Month, 1);
+
             while (candidateDate.DayOfWeek != DayOfWeek.Tuesday)
             {
                 candidateDate = candidateDate.AddDays(1);
             }
 
             var addOn = occurrence * 7 - 7;
+
             if (addOn == 0)
             {
                 return candidateDate;

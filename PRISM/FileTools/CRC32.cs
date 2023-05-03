@@ -103,6 +103,7 @@ namespace PRISM
             uint crc = 0;
 
             int count;
+
             while ((count = stream.Read(buffer, 0, BUFFER_SIZE)) > 0)
             {
                 crc = UpdateCrc(crc, buffer.Take(count));

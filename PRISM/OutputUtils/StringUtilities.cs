@@ -202,6 +202,7 @@ namespace PRISM
                     var formatString = GetFormatString(digitsAfterDecimal);
 
                     valueText = value.ToString(formatString);
+
                     if (Math.Abs(double.Parse(valueText)) < double.Epsilon)
                     {
                         // Value was converted to 0; use scientific notation

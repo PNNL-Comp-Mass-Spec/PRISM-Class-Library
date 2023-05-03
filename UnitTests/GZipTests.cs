@@ -12,6 +12,7 @@ namespace PRISMTest
         public void TestGZipCompressLocalFile(string filePath, bool includeMetadata)
         {
             var fileToCompress = new FileInfo(filePath);
+
             if (!fileToCompress.Exists)
             {
                 Assert.Ignore("File not found: " + fileToCompress.FullName);
@@ -146,6 +147,7 @@ namespace PRISMTest
             // This is required to avoid collisions when we call ValidateGZipFile
 
             var movedFileToCompress = new FileInfo(fileToCompressLocal.FullName + ".original");
+
             if (File.Exists(movedFileToCompress.FullName))
                 File.Delete(movedFileToCompress.FullName);
 
@@ -163,6 +165,7 @@ namespace PRISMTest
         private void MoveFile(FileInfo fileToMove, string newFilePath)
         {
             var targetFile = new FileInfo(newFilePath);
+
             if (string.Equals(fileToMove.FullName, targetFile.FullName, StringComparison.OrdinalIgnoreCase))
             {
                 // Names match; nothing to do

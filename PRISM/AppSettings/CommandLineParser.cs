@@ -303,6 +303,7 @@ namespace PRISM
             set
             {
                 var distinct = value.Distinct().ToArray();
+
                 if (distinct.Length > 0)
                 {
                     paramChars = distinct;
@@ -319,6 +320,7 @@ namespace PRISM
             set
             {
                 var distinct = value.Distinct().ToArray();
+
                 if (distinct.Length > 0)
                 {
                     separatorChars = distinct;
@@ -573,6 +575,7 @@ namespace PRISM
                     {
                         // Only permit one param file; I don't want to get into merging results from multiple param files in a predictable fashion
                         Results.AddParseError("Error: Only one parameter file argument allowed: {0}{1}", paramChars[0], paramFileArg);
+
                         if (outputErrors)
                         {
                             Results.OutputErrors();
@@ -597,6 +600,7 @@ namespace PRISM
                     var filePreprocessed = ArgsPreprocess(paramFileLines, true);
 
                     var emptyArrayArgs = new List<string>();
+
                     // Check and possibly error on duplicate parameters in the parameter file
                     foreach (var prop in props)
                     {
@@ -688,6 +692,7 @@ namespace PRISM
                         keyGiven = key;
 
                         var fileArgs = filePreprocessedArgs[key];
+
                         if (fileArgs.Count == 0 || fileArgs.All(string.IsNullOrWhiteSpace))
                         {
                             // We require parameter values in a parameter file to consider an argument valid
@@ -706,6 +711,7 @@ namespace PRISM
                     foreach (var key in prop.Value.ParamKeys)
                     {
                         var isSwitch = prop.Key.PropertyType == typeof(bool);
+
                         if (!preprocessed.ContainsKey(key))
                         {
                             continue;
@@ -726,6 +732,7 @@ namespace PRISM
                     }
 
                     var positionalArgName = GetPositionalArgName(prop.Value.ArgPosition);
+
                     if (prop.Value.ArgPosition > 0 && preprocessed.ContainsKey(positionalArgName))
                     {
                         keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
@@ -737,6 +744,7 @@ namespace PRISM
                     var currentValue = prop.Key.GetValue(Results.ParsedResults);
 
                     bool currentValueIsDefault;
+
                     if (prop.Key.PropertyType == typeof(string))
                     {
                         currentValueIsDefault = string.IsNullOrEmpty((string)currentValue);
@@ -744,6 +752,7 @@ namespace PRISM
                     else
                     {
                         var defaultValue = GetDefaultValue(prop.Key.PropertyType);
+
                         if (defaultValue == null)
                             currentValueIsDefault = currentValue != null;
                         else
@@ -793,10 +802,12 @@ namespace PRISM
                         // Parse/cast the value to the appropriate type, checking the min and max limits, and set the value using reflection
                         // Also, use "RemoveMatchingQuotes" to remove one pair of matching quotes, if they are provided
                         object castValue;
+
                         if (prop.Key.PropertyType.IsArray)
                         {
                             var castValues = Array.CreateInstance(prop.Key.PropertyType.GetElementType(), value.Count);
                             var i = 0;
+
                             foreach (var val in value.Select(RemoveMatchingQuotes))
                             {
                                 lastVal = val;
@@ -858,6 +869,7 @@ namespace PRISM
                 ConsoleMsgUtils.ShowError("Error in CommandLineParser.ParseArgs", ex);
                 Console.WriteLine();
                 Console.WriteLine("Command line arguments:");
+
                 foreach (var arg in args)
                 {
                     Console.WriteLine(arg);
@@ -975,6 +987,7 @@ namespace PRISM
         private IEnumerable<string> ReadParamFile(FileSystemInfo paramFile)
         {
             var lines = new List<string>();
+
             if (!paramFile.Exists)
             {
                 return lines;
@@ -989,12 +1002,14 @@ namespace PRISM
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
+
                     if (string.IsNullOrWhiteSpace(line))
                     {
                         continue;
                     }
 
                     var trimmedLine = line.Trim();
+
                     if (trimmedLine.IndexOfAny(commentChars) == 0)
                     {
                         // Comment line; skip it
@@ -1072,6 +1087,7 @@ namespace PRISM
             var secondaryArguments = 0;
 
             var props = GetPropertiesAttributes();
+
             foreach (var prop in props.OrderByDescending(x => x.Value.Required))
             {
                 if (prop.Value.Hidden)
@@ -1099,6 +1115,7 @@ namespace PRISM
                 }
 
                 string prefix;
+
                 if (prop.Value.SecondaryArg)
                 {
                     // Comment out secondary arguments
@@ -1111,9 +1128,11 @@ namespace PRISM
                 }
 
                 var key = prop.Value.ParamKeys[0];
+
                 if (prop.Key.PropertyType.IsArray)
                 {
                     var obj = prop.Key.GetValue(Results.ParsedResults);
+
                     if (obj == null)
                     {
                         lines.Add(string.Format("{0}{1}={2}", prefix, key, string.Empty));
@@ -1123,6 +1142,7 @@ namespace PRISM
                         foreach (var value in (Array)obj)
                         {
                             var writeValue = value;
+
                             if (value is string str && string.IsNullOrWhiteSpace(str))
                             {
                                 // wrap value in quotes to preserve the value on read
@@ -1136,6 +1156,7 @@ namespace PRISM
                 else
                 {
                     var value = prop.Key.GetValue(Results.ParsedResults);
+
                     if (value is string str && string.IsNullOrWhiteSpace(str))
                     {
                         // wrap value in quotes to preserve the value on read
@@ -1173,6 +1194,7 @@ namespace PRISM
         private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
         {
             object castValue = null;
+
             if (!string.Equals(NULL_VALUE_FLAG, valueToParse, StringComparison.OrdinalIgnoreCase))
             {
                 if (propertyType.IsValueType && string.IsNullOrEmpty(valueToParse))
@@ -1267,6 +1289,7 @@ namespace PRISM
             if (targetType.IsEnum)
             {
                 var result = Enum.Parse(targetType, valueToConvert.ToString(), true);
+
                 if (!Enum.IsDefined(targetType, result) && targetType.CustomAttributes.All(x => x.AttributeType != typeof(FlagsAttribute)))
                 {
                     throw new ArgumentException("Cast attempted to undefined enum!", nameof(valueToConvert));
@@ -1281,6 +1304,7 @@ namespace PRISM
 
             // Support using '0', '1', 'y', 'yes', 'n', 'no' with booleans
             var valueLCase = valueToConvert.ToString().ToLowerInvariant();
+
             if (int.TryParse(valueLCase, out var boolResult))
             {
                 return boolResult != 0;
@@ -1311,6 +1335,7 @@ namespace PRISM
             foreach (var value in newArgumentValues)
             {
                 var trimmedValue = value.Trim('\r', '\n');
+
                 if (string.IsNullOrWhiteSpace(trimmedValue))
                     continue;
 
@@ -1333,6 +1358,7 @@ namespace PRISM
         private Dictionary<string, List<string>> ArgsPreprocess(IReadOnlyList<string> args, bool parsingParamFileArgs)
         {
             var validArgs = GetValidArgs();
+
             if (validArgs == null)
             {
                 return null;
@@ -1390,6 +1416,7 @@ namespace PRISM
 
                 // Only split off the first separator, since others may be part of drive specifiers
                 var separatorIndex = key.IndexOfAny(separatorChars);
+
                 if (separatorIndex > -1)
                 {
                     containedSeparator = true;
@@ -1405,6 +1432,7 @@ namespace PRISM
 
                 // Key normalization - usually allow case-insensitivity
                 var ciKey = key.ToLower();
+
                 if (validArgs.ContainsKey(ciKey))
                 {
                     var argInfo = validArgs[ciKey];
@@ -1544,6 +1572,7 @@ namespace PRISM
             }
 
             Console.WriteLine();
+
             if (!string.IsNullOrWhiteSpace(ExeVersionInfo))
             {
                 Console.WriteLine("{0} {1}", EntryAssemblyName, ExeVersionInfo);
@@ -1594,6 +1623,7 @@ namespace PRISM
 
                 // Output the argument data with proper spacing
                 Console.WriteLine();
+
                 foreach (var line in overflow)
                 {
                     Console.WriteLine(outputFormatString, line.Item1, line.Item2);
@@ -1714,6 +1744,7 @@ namespace PRISM
                 // Get the default value to display
                 var defaultValueObj = prop.Key.GetValue(optionsForDefaults);
                 var defaultValue = NULL_VALUE_FLAG;
+
                 if (defaultValueObj != null)
                 {
                     defaultValue = defaultValueObj.ToString();
@@ -1734,6 +1765,7 @@ namespace PRISM
 
                 // Create the list of parameter keys
                 var keys = new List<string>();
+
                 foreach (var key in prop.Value.ParamKeys)
                 {
                     if (duplicateKeyCheck.ContainsKey(key))
@@ -2078,6 +2110,7 @@ namespace PRISM
                 }
 
                 var argPosition = prop.Value.ArgPosition;
+
                 if (argPosition <= 0)
                 {
                     continue;
@@ -2181,10 +2214,12 @@ namespace PRISM
                     return;
 
                 var fileToFind = new FileInfo(cleanFileOrDirectoryPath);
+
                 if (fileToFind.Exists)
                     return;
 
                 var directoryToFind = new DirectoryInfo(cleanFileOrDirectoryPath);
+
                 if (directoryToFind.Exists)
                     return;
 
@@ -2198,6 +2233,7 @@ namespace PRISM
                 }
 
                 var alternateInputDirectory = new DirectoryInfo(alternatePath);
+
                 if (alternateInputDirectory.Exists)
                 {
                     prop.Key.SetValue(Results.ParsedResults, alternateInputDirectory.FullName);
@@ -2356,6 +2392,7 @@ namespace PRISM
                     continue;
 
                 var match = Array.Find(properties, x => x.Name.Equals(optionData.ArgExistsProperty));
+
                 if (match != null && match.PropertyType == typeof(bool))
                 {
                     optionData.ArgExistsPropertyInfo = match;

@@ -132,6 +132,7 @@ namespace PRISM
                 if (done)
                 {
                     threadMonitor?.Dispose();
+
                     foreach (var thread in producerThreads)
                     {
                         thread.Join();
@@ -204,6 +205,7 @@ namespace PRISM
                 CancellationToken cancellationToken = default)
             {
                 cancelToken = cancellationToken;
+
                 if (maxPreprocessed < 1)
                 {
                     maxPreprocessed = maxThreads;

@@ -216,6 +216,7 @@ namespace PRISM
             IsPartialRange = false;
             ProgressObj = progress;
             PreventBackwardsProgress = preventBackwardsProgress;
+
             if (progress == null)
             {
                 ProgressObj = new Progress<ProgressData>();
@@ -372,6 +373,7 @@ namespace PRISM
             }
 
             Percent = pct;
+
             if (newStatus != null)
             {
                 Status = newStatus;

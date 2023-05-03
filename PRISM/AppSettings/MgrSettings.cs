@@ -317,6 +317,7 @@ namespace PRISM.AppSettings
             foreach (var entry in Enum.GetValues(typeof(SchemaPrefix)).Cast<SchemaPrefix>())
             {
                 var settingName = settingNameBase + entry;
+
                 // Always add every enum entry to the dictionary.
                 schemaPrefixes.Add(entry, string.Empty);
 
@@ -324,6 +325,7 @@ namespace PRISM.AppSettings
                     !string.IsNullOrWhiteSpace(value))
                 {
                     var cleaned = value.Trim();
+
                     if (!validPrefixMatch.IsMatch(cleaned))
                     {
                         ReportError($"Local setting '{settingName}' value of '{cleaned}' is invalid. Ignoring setting...");
@@ -332,6 +334,7 @@ namespace PRISM.AppSettings
 
                     // Add a trailing '.' if not present
                     var validated = cleaned.EndsWith(".", StringComparison.OrdinalIgnoreCase) ? cleaned : cleaned + ".";
+
                     // overwrite the empty value with the read value
                     schemaPrefixes[entry] = validated;
                 }
@@ -387,6 +390,7 @@ namespace PRISM.AppSettings
             else
             {
                 var fileNameList = new StringBuilder();
+
                 foreach (var item in configFilePaths)
                 {
                     if (fileNameList.Length > 0)
@@ -435,6 +439,7 @@ namespace PRISM.AppSettings
                     while (!reader.EndOfStream)
                     {
                         var dataLine = reader.ReadLine();
+
                         if (string.IsNullOrWhiteSpace(dataLine))
                             continue;
 
@@ -627,6 +632,7 @@ namespace PRISM.AppSettings
             try
             {
                 var configFile = new FileInfo(configFilePath);
+
                 if (!configFile.Exists)
                 {
                     ReportError("LoadMgrSettingsFromFile; manager config file not found: " + configFilePath);
@@ -703,6 +709,7 @@ namespace PRISM.AppSettings
                 var settingName = settingNode.Attributes["name"].Value;
 
                 var valueNode = settingNode.SelectSingleNode("value");
+
                 if (valueNode == null)
                 {
                     if (traceEnabled)
@@ -735,11 +742,13 @@ namespace PRISM.AppSettings
             var longestName = settings.Keys.Max(item => item.Length);
 
             Console.ForegroundColor = ConsoleMsgUtils.DebugFontColor;
+
             foreach (var key in from item in settings.Keys orderby item select item)
             {
                 var value = settings[key] ?? string.Empty;
 
                 int keyWidth;
+
                 if (longestName < 45)
                     keyWidth = longestName;
                 else
@@ -876,6 +885,7 @@ namespace PRISM.AppSettings
                 {
                     if (integerValue == 0)
                         return false;
+
                     if (integerValue == 1)
                         return true;
                 }

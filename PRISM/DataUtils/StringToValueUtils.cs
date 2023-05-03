@@ -142,6 +142,7 @@ namespace PRISM.DataUtils
             if (columnIndex >= 0 && columnIndex < dataColumns.Length)
             {
                 value = dataColumns[columnIndex];
+
                 if (string.IsNullOrEmpty(value))
                     value = string.Empty;
                 return true;

@@ -330,10 +330,12 @@ namespace PRISMWin
         {
             processIDs = new List<int>();
             var processInstances = Process.GetProcessesByName(processName);
+
             if (processInstances.Length == 0)
                 return -1;
 
             float coreUsageOverall = 0;
+
             foreach (var runningProcess in processInstances)
             {
                 var processID = runningProcess.Id;
@@ -341,6 +343,7 @@ namespace PRISMWin
 
                 var processIdInstanceName = "";
                 var coreUsage = GetCoreUsageByProcessID(processID, ref processIdInstanceName);
+
                 if (coreUsage > 0)
                 {
                     coreUsageOverall += coreUsage;
@@ -389,6 +392,7 @@ namespace PRISMWin
         public PerformanceCounter GetPerfCounterForProcessID(int processId, out string instanceName, string processCounterName = "% Processor Time")
         {
             instanceName = GetInstanceNameForProcessId(processId);
+
             if (string.IsNullOrEmpty(instanceName))
             {
                 return null;
@@ -420,6 +424,7 @@ namespace PRISMWin
                     using var counterInstance = new PerformanceCounter("Process", "ID Process", instanceName, true);
 
                     var instanceProcessID = Convert.ToInt32(counterInstance.RawValue);
+
                     if (instanceProcessID == processId)
                     {
                         return instanceName;

@@ -323,6 +323,7 @@ namespace PRISM
                     var paramValue = string.Empty;
 
                     bool isSwitchParam;
+
                     if (paramName.StartsWith(switchStartChar.ToString()))
                     {
                         isSwitchParam = true;

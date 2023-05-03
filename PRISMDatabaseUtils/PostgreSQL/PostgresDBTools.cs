@@ -203,6 +203,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         public override bool TestDatabaseConnection(out string serverVersion, int retryCount = 3, int retryDelaySeconds = 5)
         {
             serverVersion = string.Empty;
+
             if (retryCount < 1)
                 retryCount = 1;
 
@@ -908,6 +909,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     }
 
                     var rowCount = 0;
+
                     if (maxRowsToReturn == 0)
                     {
                         maxRowsToReturn = int.MaxValue;
@@ -1039,6 +1041,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                     foreach (var column in reader.GetColumnSchema().Where(x => x.NpgsqlDbType == NpgsqlDbType.Refcursor))
                                     {
                                         var name = reader[column.ColumnName].CastDBVal<string>();
+
                                         if (string.IsNullOrWhiteSpace(cursorName))
                                         {
                                             cursorName = name;
@@ -1110,10 +1113,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 {
                     // Too many retries, log and return error
                     errorMessage = "Excessive retries";
+
                     if (deadlockOccurred)
                     {
                         errorMessage += " (including deadlock)";
                     }
+
                     errorMessage += " executing SP " + sqlCmd.CommandText;
 
                     OnErrorEvent(errorMessage);
@@ -1374,10 +1379,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 {
                     // Too many retries, log and return error
                     errorMessage = "Excessive retries";
+
                     if (deadlockOccurred)
                     {
                         errorMessage += " (including deadlock)";
                     }
+
                     errorMessage += " executing SP " + sqlCmd.CommandText;
 
                     OnErrorEvent(errorMessage);
@@ -1673,6 +1680,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             foreach (var column in columnList.Split(','))
             {
                 var columnMatch = columnNameMatcher.Match(column);
+
                 if (!columnMatch.Success)
                     continue;
 
