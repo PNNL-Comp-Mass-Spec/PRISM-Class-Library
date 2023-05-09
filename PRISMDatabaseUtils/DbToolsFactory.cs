@@ -55,6 +55,19 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Add / update the application name in a connection string
         /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Example input connection strings:
+        ///   Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=True
+        ///   Host=prismdb1;Port=5432;Database=dms;UserId=svc-dms
+        ///   Host=prismdb1;Port=5432;Database=dms;Username=svc-dms
+        /// </para>
+        /// <para>
+        /// Example return values:
+        ///   Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=True;Application Name=Proto-6_DIM
+        ///   Host=prismdb1;Port=5432;Database=dms;Username=svc-dms;Application Name=Proto-6_DIM
+        /// </para>
+        /// </remarks>
         /// <param name="connectionString"></param>
         /// <param name="applicationName"></param>
         /// <param name="serverType">If undefined, this method will auto-determine the connection string type</param>
