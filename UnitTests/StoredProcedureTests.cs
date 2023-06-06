@@ -242,7 +242,7 @@ namespace PRISMTest
         }
 
         /// <summary>
-        /// Retrieve values from SQL Server stored procedure GetManagerParameters
+        /// Retrieve values from SQL Server stored procedure Get_Manager_Parameters
         /// </summary>
         /// <param name="server"></param>
         /// <param name="database"></param>
@@ -480,7 +480,7 @@ namespace PRISMTest
             Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
-        [TestCase("Gigasax", "dms5", "FindLogEntry", false, 0)]
+        [TestCase("Gigasax", "dms5", "find_log_entry", false, 0)]
         public void TestGetReturnCodeSqlServer(string server, string database, string procedureName, bool skipProcedureCall, int expectedReturnCode)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
