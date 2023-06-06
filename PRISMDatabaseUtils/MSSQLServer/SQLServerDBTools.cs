@@ -1398,6 +1398,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
             ParameterDirection direction = ParameterDirection.Input)
         {
             // ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+            // ReSharper disable once ConvertSwitchStatementToSwitchExpression
             switch (dbType)
             {
                 case SqlType.Text:
