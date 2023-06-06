@@ -23,44 +23,85 @@ namespace PRISMTest
         private const string MTS_READER = "mtuser";
         private const string MTS_READER_PASSWORD = "mt4fun";
 
+        /// <summary>
+        /// Use stored procedure Find_Log_Entry to look for log entries
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
         public void TestSearchLogsIntegrated(string server, string database)
         {
-            TestSearchLogs(server, database, "Integrated", string.Empty);
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestSearchLogs(connectionString, database, "Integrated");
         }
 
+        /// <summary>
+        /// Use stored procedure Find_Log_Entry to look for log entries
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseNamedUser")]
         public void TestSearchLogsNamedUser(string server, string database)
         {
-            TestSearchLogs(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, TestDBTools.DMS_READER, TestDBTools.DMS_READER_PASSWORD);
+            TestSearchLogs(connectionString, database, TestDBTools.DMS_READER);
         }
 
-        private void TestSearchLogs(string server, string database, string user, string password)
+        /// <summary>
+        /// Use procedure Find_Log_Entry to look for log entries
+        /// </summary>
+        /// <remarks>
+        /// The procedure returns the results using a refcursor, which ExecuteSPData auto-converts into a result set
+        /// </remarks>
+        /// <param name="server"></param>
+        /// <param name="database"></param>
+        [TestCase("prismdb1", "dms")]
+        public void TestSearchLogsPostgres(string server, string database)
         {
-            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
+            TestSearchLogs(connectionString, database, DMS_WEB_USER);
+        }
+
+        private void TestSearchLogs(string connectionString, string database, string user)
+        {
+
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
-            var spCmd = new SqlCommand
-            {
-                CommandType = CommandType.StoredProcedure,
-                CommandText = "Find_Log_Entry"
-            };
+            var spCmd = dbTools.CreateCommand("Find_Log_Entry", CommandType.StoredProcedure);
 
-            spCmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
+            // On Postgres, the call to ExecuteSP will auto-change this parameter to _returnCode of type InputOutput
+            var returnParam = dbTools.AddParameter(spCmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
 
-            var entryTypeParam = spCmd.Parameters.Add(new SqlParameter("@EntryType", SqlDbType.VarChar, 32));
+            var entryTypeParam = dbTools.AddParameter(spCmd, "@entryType", SqlType.VarChar, 32);
             entryTypeParam.Value = "Normal";
 
-            var messageTextParam = spCmd.Parameters.Add(new SqlParameter("@MessageText", SqlDbType.VarChar, 500));
+            var messageTextParam = dbTools.AddParameter(spCmd, "@messageText", SqlType.VarChar, 500);
             messageTextParam.Value = "complete";
+
+            dbTools.AddParameter(spCmd, "@maxRowCount", SqlType.Int).Value = 15;
+
+            var messageParam = dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 255, ParameterDirection.InputOutput);
 
             Console.WriteLine("Running stored procedure " + spCmd.CommandText + " against " + database + " as user " + user);
 
-            var returnCode = dbTools.ExecuteSPData(spCmd, out var results);
+            // On Postgres, procedure Find_Log_Entry returns the results using a refcursor, which ExecuteSPData auto-converts into a result set
+            var resCode = dbTools.ExecuteSPData(spCmd, out var results, 1);
 
-            Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
+            if (resCode != 0)
+            {
+                Console.WriteLine("Procedure " + spCmd.CommandText + " returned a non-zero value: " + resCode);
+            }
+
+            if (!string.IsNullOrWhiteSpace(messageParam.Value.CastDBVal<string>()))
+            {
+                Console.WriteLine("Procedure " + spCmd.CommandText + " returned message: " + messageParam.Value.CastDBVal<string>());
+            }
+
+            var returnCodeValue = DBToolsBase.GetReturnCode(returnParam);
+
+            Assert.AreEqual(0, returnCodeValue, spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
 
@@ -419,6 +460,10 @@ namespace PRISMTest
         /// <summary>
         /// Invoke stored procedure EnableDisableManagers (or enable_disable_managers) and examine output parameter @message (or _message)
         /// </summary>
+        /// <remarks>
+        /// On PostgreSQL, procedure mc.enable_disable_managers returns query results using a reference cursor (_results refcursor)
+        /// ExecuteSPData looks for parameters of type refcursor and retrieves the results
+        /// </remarks>
         /// <param name="connectionString"></param>
         /// <param name="procedureNameWithSchema"></param>
         private void TestEnableDisableManagersData(string connectionString, string procedureNameWithSchema)
@@ -487,9 +532,9 @@ namespace PRISMTest
             TestGetReturnCode(connectionString, procedureName, skipProcedureCall, expectedReturnCode);
         }
 
-        [TestCase("prismweb3", "dmsdev", "find_log_entry", true, 0, "")]
-        [TestCase("prismweb3", "dmsdev", "find_log_entry", true, 2200, "2200L")]
-        [TestCase("prismweb3", "dmsdev", "find_log_entry", true, 2, "2F005")]
+        [TestCase("prismdb1", "dms", "find_log_entry", true, 0, "")]
+        [TestCase("prismdb1", "dms", "find_log_entry", true, 2200, "2200L")]
+        [TestCase("prismdb1", "dms", "find_log_entry", true, 2, "2F005")]
         public void TestGetReturnCodePostgres(
             string server,
             string database,
