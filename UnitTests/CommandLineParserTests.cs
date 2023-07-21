@@ -1898,5 +1898,79 @@ namespace PRISMTest
 
             Console.WriteLine("\nThis error message was expected");
         }
+
+        private interface ITestInherit
+        {
+            [Option("int", HelpText = "Test inherit int")]
+            int InheritInt { get; set; }
+            [Option("bool", HelpText = "Test inherit bool")]
+            bool InheritBool { get; set; }
+        }
+
+        private abstract class TestInheritBase : ITestInherit
+        {
+            public int InheritInt { get; set; }
+            public bool InheritBool { get; set; }
+
+            [Option("double", HelpText = "Base class double")]
+            public double BaseClassDouble { get; set; }
+        }
+
+        private class TestInherit : TestInheritBase
+        {
+            [Option("string", HelpText = "Not inherited string")]
+            public string NotInheritedString { get; set; }
+        }
+
+        [Test]
+        public void TestHelpInherited()
+        {
+            var parser = new CommandLineParser<TestInherit>();
+            var cOut = Console.Out;
+            //var cError = Console.Error;
+            var sw = new StringWriter();
+            Console.SetOut(sw);
+            //Console.SetError(sw);
+            var result = parser.ParseArgs(new[] { "--help" }, showHelpOnError, outputErrors);
+            Console.SetOut(cOut);
+            //Console.SetError(cError);
+            var output = sw.ToString();
+            Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
+            Console.WriteLine(output);
+            Assert.IsTrue(output.Contains("-int"));
+            Assert.IsTrue(output.Contains("-bool"));
+            Assert.IsTrue(output.Contains("-double"));
+            Assert.IsTrue(output.Contains("-string"));
+
+            foreach (var message in result.ParseErrors)
+            {
+                Console.WriteLine(message);
+            }
+
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+        }
+
+        [Test]
+        public void TestInherited()
+        {
+            var parser = new CommandLineParser<TestInherit>();
+            var result = parser.ParseArgs(
+                new[] { "-string:\"test string\"", "-int:17", "-bool", "-double=3.1415" },
+                showHelpOnError, outputErrors);
+
+            Assert.IsTrue(result.Success, "Parser did not succeed");
+
+            var options = result.ParsedResults;
+
+            Console.WriteLine("{0,-15} {1}", "int:", options.InheritInt);
+            Console.WriteLine("{0,-15} {1}", "bool:", options.InheritBool);
+            Console.WriteLine("{0,-15} {1}", "double:", options.BaseClassDouble);
+            Console.WriteLine("{0,-15} {1}", "string:", options.NotInheritedString);
+
+            Assert.AreEqual(17, options.InheritInt, "Should be '17'");
+            Assert.AreEqual(true, options.InheritBool, "Should be 'True'");
+            Assert.AreEqual(3.1415, options.BaseClassDouble, "Should be '3.1415'");
+            Assert.AreEqual("test string", options.NotInheritedString, "Should be 'test string'");
+        }
     }
 }

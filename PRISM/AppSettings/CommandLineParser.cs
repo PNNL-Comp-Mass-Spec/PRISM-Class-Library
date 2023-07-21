@@ -2365,25 +2365,17 @@ namespace PRISM
 
             var props = new Dictionary<PropertyInfo, OptionAttribute>();
 
-            var properties = typeof(T).GetProperties();
+            var properties = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
 
             foreach (var property in properties)
             {
-                // Check for the attribute
-                if (!Attribute.IsDefined(property, typeof(OptionAttribute)))
+                // Check for and retrieve the attribute
+                if (!GetOptionAttributes(property, out var attributes))
                 {
                     continue;
                 }
 
-                var attribute = property.GetCustomAttributes(typeof(OptionAttribute), true);
-                var attributeList = attribute.ToArray();
-
-                if (attributeList.Length == 0)
-                {
-                    continue;
-                }
-
-                var optionData = (OptionAttribute)attributeList[0];
+                var optionData = attributes[0];
 
                 // Ignore any duplicates (shouldn't occur anyway)
                 props.Add(property, optionData);
@@ -2401,6 +2393,42 @@ namespace PRISM
 
             propertiesAndAttributes = props;
             return props;
+        }
+
+        private bool GetOptionAttributes(PropertyInfo property, out List<OptionAttribute> attributes, bool firstMatchOnly = true)
+        {
+            attributes = new List<OptionAttribute>();
+            if (Attribute.IsDefined(property, typeof(OptionAttribute), true))
+            {
+                attributes.AddRange(property.GetCustomAttributes(typeof(OptionAttribute), true).Cast<OptionAttribute>());
+
+                if (firstMatchOnly)
+                {
+                    return true;
+                }
+            }
+
+            var interfaces = typeof(T).GetInterfaces();
+            foreach (var i in interfaces)
+            {
+                var prop = i.GetProperty(property.Name, property.PropertyType);
+                if (prop == null)
+                {
+                    continue;
+                }
+
+                if (Attribute.IsDefined(prop, typeof(OptionAttribute), true))
+                {
+                    attributes.AddRange(prop.GetCustomAttributes(typeof(OptionAttribute), true).Cast<OptionAttribute>());
+
+                    if (firstMatchOnly)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return attributes.Count > 0;
         }
     }
 
