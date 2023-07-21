@@ -916,6 +916,20 @@ namespace PRISM
         }
 
         /// <summary>
+        /// Parse arguments only from a parameter file (not from the command line); does not output errors
+        /// </summary>
+        /// <remarks>
+        /// The initial goal of this method is supporting the idea of a "processing method" save/load, for use in GUI programs
+        /// </remarks>
+        /// <param name="paramFilePath">Path (relative or absolute) to a parameter file</param>
+        /// <returns>Parser results</returns>
+        public ParserResults ParseParamFile(string paramFilePath)
+        {
+            var args = new string[] { "-ParamFile", paramFilePath };
+            return ParseArgs(args, false, false);
+        }
+
+        /// <summary>
         /// Reads a parameter file
         /// </summary>
         /// <param name="paramFilePath">Parameter file path</param>

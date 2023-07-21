@@ -1836,6 +1836,32 @@ namespace PRISMTest
         }
 
         [Test]
+        [Category("PNL_Domain")]
+        public void TestFileInfoPropertyWithParameterFileParseMethod()
+        {
+            var remoteParamFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\ParamFileTests\ExampleParamFile.conf");
+            Assert.IsNotNull(remoteParamFile.DirectoryName, "Could not determine the parent directory of the remote parameter file");
+
+            var parameterClass = new FileInfoPropertyGood();
+            var parser = new CommandLineParser<FileInfoPropertyGood>(parameterClass);
+            var result = parser.ParseParamFile(remoteParamFile.FullName);
+            Assert.IsTrue(result.Success, "Parser did not succeed");
+
+            var paramFilePath = parser.Results.ParamFilePath;
+            var inputFilePath = parser.Results.ParsedResults.InputFile;
+
+            Assert.IsNotNull(inputFilePath, "InputFile parameter of the parsed results is null");
+
+            var inputFilePathExpected = Path.Combine(remoteParamFile.DirectoryName, Path.GetFileName(inputFilePath));
+
+            Console.WriteLine("Parameter file path: " + paramFilePath);
+            Console.WriteLine("Input file path: " + inputFilePath);
+
+            Assert.AreEqual(remoteParamFile.FullName, paramFilePath);
+            Assert.AreEqual(inputFilePathExpected, inputFilePath);
+        }
+
+        [Test]
         public void TestMissingParameterFile()
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
