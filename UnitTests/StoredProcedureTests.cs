@@ -14,7 +14,7 @@ namespace PRISMTest
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: dms, dmsdev, dmswebuser, mtuser, na, Postgres, PostgreSQL, ProteinSeqs, workdir
+        // Ignore Spelling: dms, dmsdev, dmswebuser, mtuser, na, Postgres, PostgreSQL, ProteinSeqs, SQL, workdir
 
         // ReSharper restore CommentTypo
 
@@ -731,7 +731,7 @@ namespace PRISMTest
                     if (returnCode == DbUtilsConstants.RET_VAL_EXCESSIVE_RETRIES)
                     {
                         // Return code was -5
-                        Console.WriteLine("A return code of {0} indicates that the stored procedure call failed", DbUtilsConstants.RET_VAL_EXCESSIVE_RETRIES);
+                        Console.WriteLine("A return code of {0} indicates that the stored procedure call failed or permission was denied", DbUtilsConstants.RET_VAL_EXCESSIVE_RETRIES);
                     }
                     else
                     {

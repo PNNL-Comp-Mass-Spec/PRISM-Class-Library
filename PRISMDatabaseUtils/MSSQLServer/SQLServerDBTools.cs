@@ -230,6 +230,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         public override bool TestDatabaseConnection(out string serverVersion, int retryCount = 3, int retryDelaySeconds = 5)
         {
             serverVersion = string.Empty;
+
             if (retryCount < 1)
                 retryCount = 1;
 
@@ -259,7 +260,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
                     OnErrorEvent(errorMessage);
 
-                    if (IsFatalException(ex))
+                    if (IsFatalException(ex, out _))
                     {
                         // No point in retrying the query; it will fail again
                         return false;
@@ -381,14 +382,20 @@ namespace PRISMDatabaseUtils.MSSQLServer
                             callingFunction = "Unknown";
                         }
 
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception querying database
+                        // or
+                        // Permission denied querying database
+
                         var errorMessage = string.Format(
-                            "Exception querying database (called from {0}): {1}; " +
-                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
                             callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             // No point in retrying the query; it will fail again
                             queryResult = null;
@@ -447,10 +454,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Run a query against a SQL Server database, return the results as a list of strings
         /// </summary>
         /// <remarks>
-        /// Uses the connection string passed to the constructor of this class
-        /// Null values are converted to empty strings
-        /// Numbers are converted to their string equivalent
-        /// By default, retries the query up to 3 times
+        /// <para>Uses the connection string passed to the constructor of this class</para>
+        /// <para>Null values are converted to empty strings</para>
+        /// <para>Numbers are converted to their string equivalent</para>
+        /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
         /// <param name="results">Results (list of list of strings)</param>
@@ -687,7 +694,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
+        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
@@ -753,14 +760,20 @@ namespace PRISMDatabaseUtils.MSSQLServer
                             callingFunction = "Unknown";
                         }
 
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception querying database
+                        // or
+                        // Permission denied querying database
+
                         var errorMessage = string.Format(
-                            "Exception querying database (called from {0}): {1}; " +
-                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
                             callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             // No point in retrying the query; it will fail again
                             return false;
@@ -890,14 +903,20 @@ namespace PRISMDatabaseUtils.MSSQLServer
                             callingFunction = "Unknown";
                         }
 
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception querying database
+                        // or
+                        // Permission denied querying database
+
                         var errorMessage = string.Format(
-                            "Exception querying database (called from {0}): {1}; " +
-                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
                             callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             // No point in retrying the query; it will fail again
                             yield break;
@@ -912,6 +931,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     }
 
                     var rowCount = 0;
+
                     if (maxRowsToReturn == 0)
                     {
                         maxRowsToReturn = int.MaxValue;
@@ -975,10 +995,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for executing a stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="readMethod">method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
+        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
@@ -1044,13 +1064,21 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     catch (Exception ex)
                     {
                         retryCount--;
-                        errorMessage = "Exception filling data adapter for " + sqlCmd.CommandText + ": " + ex.Message;
-                        errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                        errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception filling data adapter
+                        // or
+                        // Permission denied filling data adapter
+
+                        errorMessage = string.Format(
+                            "{0} filling data adapter: {1}; resultCode = {2}; SQL: {3}; Retry count = {4}; {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
+                            ex.Message, resultCode, sqlCmd.CommandText, retryCount,
+                            StackTraceFormatter.GetExceptionStackTrace(ex));
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex) || ex.Message.StartsWith("Could not find stored procedure"))
+                        if (fatalException || ex.Message.StartsWith("Could not find stored procedure"))
                         {
                             retryCount = 0;
                         }
@@ -1085,10 +1113,12 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 {
                     // Too many retries, log and return error
                     errorMessage = "Excessive retries";
+
                     if (deadlockOccurred)
                     {
                         errorMessage += " (including deadlock)";
                     }
+
                     errorMessage += " executing SP " + sqlCmd.CommandText;
 
                     OnErrorEvent(errorMessage);
@@ -1106,7 +1136,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for executing a stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
@@ -1161,7 +1191,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for executing a stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="results">If SP successful, contains results as a DataTable</param>
@@ -1187,7 +1217,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure if a data table is to be returned
+        /// Method for executing a stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="results">If SP successful, contains results as a DataSet</param>
@@ -1213,7 +1243,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure, assuming no data table is returned
+        /// Method for executing a stored procedure, assuming no data table is returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
         /// <param name="maxRetryCount">Maximum number of times to attempt to call the stored procedure</param>
@@ -1228,7 +1258,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         }
 
         /// <summary>
-        /// Method for executing a db stored procedure when a data table is not returned
+        /// Method for executing a stored procedure when a data table is not returned
         /// </summary>
         /// <remarks>No logging is performed by this procedure</remarks>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
@@ -1305,13 +1335,24 @@ namespace PRISMDatabaseUtils.MSSQLServer
                     catch (Exception ex)
                     {
                         retryCount--;
-                        errorMessage = "Exception calling stored procedure " + sqlCmd.CommandText + ": " + ex.Message;
-                        errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                        errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
+
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        var procedureName = sqlCmd.CommandText;
+
+                        // Exception calling procedure
+                        // or
+                        // Permission denied calling procedure
+
+                        errorMessage = string.Format(
+                            "{0} calling procedure {1}: {2}; resultCode = {3}; Retry count = {4}; {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
+                            procedureName, ex.Message, resultCode, retryCount,
+                            StackTraceFormatter.GetExceptionStackTrace(ex));
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex) || ex.Message.StartsWith("Could not find stored procedure"))
+                        if (fatalException || ex.Message.StartsWith("Could not find stored procedure"))
                         {
                             break;
                         }
@@ -1508,14 +1549,21 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Examine the exception message to determine whether it is safe to rerun a failed query or failed stored procedure execution
         /// </summary>
         /// <param name="ex">Exception</param>
+        /// <param name="permissionDenied">Output: true if the error message contains "Login failed" or "permission was denied"</param>
         /// <returns>True if the same error will happen again, so a retry is pointless</returns>
-        protected static bool IsFatalException(Exception ex)
+        protected static bool IsFatalException(Exception ex, out bool permissionDenied)
         {
-            return
-                ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                ex.Message.IndexOf("Invalid object name", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0;
+            if (ex.Message.IndexOf("Login failed", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                ex.Message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                permissionDenied = true;
+                return true;
+            }
+
+            permissionDenied = false;
+
+            return ex.Message.IndexOf("Invalid object name", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("Invalid column name", StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

@@ -17,11 +17,13 @@ namespace PRISMDatabaseUtils.PostgreSQL
     /// </summary>
     internal class PostgresDBTools : DBToolsBase, IDBTools
     {
-        // Ignore Spelling: backend, msg, Npgsql, PostgreSQL, sqlCmd, tmp, varchar
+        // Ignore Spelling: backend, msg, Npgsql, PostgreSQL, SQL, sqlCmd, tmp, Utils, varchar
 
         #region "Member Variables"
 
         private string mConnStr;
+
+        private static readonly Regex mProcedureAccessDeniedMatcher = new("User.+cannot use procedure", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         /// <summary>
         /// Timeout length, in seconds, when waiting for a query or procedure to finish running
@@ -232,7 +234,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                     OnErrorEvent(errorMessage);
 
-                    if (IsFatalException(ex))
+                    if (IsFatalException(ex, out _))
                     {
                         // No point in retrying the query; it will fail again
                         return false;
@@ -250,7 +252,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the scalar result
+        /// Run a query against a PostgreSQL database, return the scalar result
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -281,7 +283,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the scalar result
+        /// Run a query against a PostgreSQL database, return the scalar result
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -360,14 +362,20 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             callingFunction = "Unknown";
                         }
 
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception querying database
+                        // or
+                        // Permission denied querying database
+
                         var errorMessage = string.Format(
-                            "Exception querying database (called from {0}): {1}; " +
-                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
                             callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             // No point in retrying the query; it will fail again
                             queryResult = null;
@@ -423,7 +431,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL Server database, return the results as a list of strings (does not include column names)
+        /// Run a query against a PostgreSQL database, return the results as a list of strings (does not include column names)
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -535,7 +543,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataTable object
+        /// Run a query against a PostgreSQL database, return the results as a DataTable object
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -566,7 +574,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataTable object
+        /// Run a query against a PostgreSQL database, return the results as a DataTable object
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -601,7 +609,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataSet object
+        /// Run a query against a PostgreSQL database, return the results as a DataSet object
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -632,7 +640,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results as a DataSet object
+        /// Run a query against a PostgreSQL database, return the results as a DataSet object
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -670,7 +678,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         }
 
         /// <summary>
-        /// Run a query against a SQL database, return the results via <paramref name="readMethod"/>
+        /// Run a query against a PostgreSQL database, return the results via <paramref name="readMethod"/>
         /// </summary>
         /// <remarks>
         /// <para>Uses the connection string passed to the constructor of this class</para>
@@ -749,14 +757,20 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             callingFunction = "Unknown";
                         }
 
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception querying database
+                        // or
+                        // Permission denied querying database
+
                         var errorMessage = string.Format(
-                            "Exception querying database (called from {0}): {1}; " +
-                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
                             callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             // No point in retrying the query; it will fail again
                             return false;
@@ -886,14 +900,20 @@ namespace PRISMDatabaseUtils.PostgreSQL
                             callingFunction = "Unknown";
                         }
 
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception querying database
+                        // or
+                        // Permission denied querying database
+
                         var errorMessage = string.Format(
-                            "Exception querying database (called from {0}): {1}; " +
-                            "ConnectionString: {2}, RetryCount = {3}, Query {4}",
+                            "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
                             callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             // No point in retrying the query; it will fail again
                             yield break;
@@ -1071,13 +1091,22 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     catch (Exception ex)
                     {
                         retryCount--;
-                        errorMessage = "Exception filling data adapter for " + sqlCmd.CommandText + ": " + ex.Message;
-                        errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                        errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
+
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        // Exception filling data adapter
+                        // or
+                        // Permission denied filling data adapter
+
+                        errorMessage = string.Format(
+                            "{0} filling data adapter: {1}; resultCode = {2}; SQL: {3}; Retry count = {4}; {5}",
+                            permissionDenied ? "Permission denied" : "Exception",
+                            ex.Message, resultCode, sqlCmd.CommandText, retryCount,
+                            StackTraceFormatter.GetExceptionStackTrace(ex));
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             retryCount = 0;
                         }
@@ -1340,13 +1369,24 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     catch (Exception ex)
                     {
                         retryCount--;
-                        errorMessage = "Exception calling procedure " + sqlCmd.CommandText + ": " + ex.Message;
-                        errorMessage += "; resultCode = " + resultCode + "; Retry count = " + retryCount;
-                        errorMessage += "; " + StackTraceFormatter.GetExceptionStackTrace(ex);
+
+                        var fatalException = IsFatalException(ex, out var permissionDenied);
+
+                        var procedureName = GetProcedureNameFromCommand(sqlCmd.CommandText);
+
+                        // Exception calling procedure
+                        // or
+                        // Permission denied calling procedure
+
+                        errorMessage = string.Format(
+                            "{0} calling procedure {1}: {2}; resultCode = {3}; SQL: {4}; Retry count = {5}; {6}",
+                            permissionDenied ? "Permission denied" : "Exception",
+                            procedureName, ex.Message, resultCode, sqlCmd.CommandText, retryCount,
+                            StackTraceFormatter.GetExceptionStackTrace(ex));
 
                         OnErrorEvent(errorMessage);
 
-                        if (IsFatalException(ex))
+                        if (fatalException)
                         {
                             break;
                         }
@@ -1398,6 +1438,20 @@ namespace PRISMDatabaseUtils.PostgreSQL
             }
 
             return resultCode;
+        }
+
+        private string GetProcedureNameFromCommand(string sqlCmd)
+        {
+            var charIndex = sqlCmd.IndexOf('(');
+
+            if (charIndex <= 0)
+            {
+                return sqlCmd;
+            }
+
+            var startIndex = sqlCmd.StartsWith("CALL ", StringComparison.Ordinal) ? 5 : 0;
+
+            return sqlCmd.Substring(startIndex, charIndex - startIndex);
         }
 
         /// <inheritdoc />
@@ -1722,14 +1776,22 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Examine the exception message to determine whether it is safe to rerun a failed query or failed procedure execution
         /// </summary>
         /// <param name="ex">Exception</param>
+        /// <param name="permissionDenied">Output: true if the error message contains "permission denied" or "User username cannot use procedure"</param>
         /// <returns>True if the same error will happen again, so a retry is pointless</returns>
-        protected static bool IsFatalException(Exception ex)
+        protected static bool IsFatalException(Exception ex, out bool permissionDenied)
         {
-            return
-                ex.Message.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                ex.Message.IndexOf("open data reader exists for this command", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                ex.Message.IndexOf("permission denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0;
+            if (ex.Message.IndexOf("permission denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                mProcedureAccessDeniedMatcher.IsMatch(ex.Message))
+            {
+                permissionDenied = true;
+                return true;
+            }
+
+            permissionDenied = false;
+
+            return ex.Message.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("open data reader exists for this command", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>
