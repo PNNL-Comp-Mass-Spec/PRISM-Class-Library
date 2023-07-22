@@ -1417,16 +1417,24 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 if (retryCount < 1)
                 {
                     // Too many retries, log and return error
-                    errorMessage = "Excessive retries";
 
-                    if (deadlockOccurred)
+                    var procedureName = GetProcedureNameFromCommand(sqlCmd.CommandText);
+
+                    // Excessive retries calling procedure
+                    // or
+                    // Excessive retries (including deadlock) calling procedure
+
+                    var logMessage = string.Format(
+                        "Excessive retries{0} calling procedure {1}; {2}",
+                        deadlockOccurred ? " (including deadlock) " : string.Empty,
+                        procedureName, sqlCmd.CommandText);
+
+                    OnErrorEvent(logMessage);
+
+                    if (string.IsNullOrWhiteSpace(errorMessage))
                     {
-                        errorMessage += " (including deadlock)";
+                        errorMessage = logMessage;
                     }
-
-                    errorMessage += " executing SP " + sqlCmd.CommandText;
-
-                    OnErrorEvent(errorMessage);
 
                     if (deadlockOccurred)
                     {

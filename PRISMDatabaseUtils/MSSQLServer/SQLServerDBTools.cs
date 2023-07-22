@@ -1383,14 +1383,22 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 if (retryCount < 1)
                 {
                     // Too many retries, log and return error
-                    errorMessage = "Excessive retries";
-                    if (deadlockOccurred)
-                    {
-                        errorMessage += " (including deadlock)";
-                    }
-                    errorMessage += " executing SP " + sqlCmd.CommandText;
 
-                    OnErrorEvent(errorMessage);
+                    // Excessive retries calling procedure
+                    // or
+                    // Excessive retries (including deadlock) calling procedure
+
+                    var logMessage = string.Format(
+                        "Excessive retries{0} calling procedure {1}",
+                        deadlockOccurred ? " (including deadlock) " : string.Empty,
+                        sqlCmd.CommandText);
+
+                    OnErrorEvent(logMessage);
+
+                    if (string.IsNullOrWhiteSpace(errorMessage))
+                    {
+                        errorMessage = logMessage;
+                    }
 
                     if (deadlockOccurred)
                     {
