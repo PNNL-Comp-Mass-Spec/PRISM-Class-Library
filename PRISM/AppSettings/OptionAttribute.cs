@@ -102,6 +102,11 @@ namespace PRISM
         internal PropertyInfo ArgExistsPropertyInfo { get; set; }
 
         /// <summary>
+        /// The preferred output parameter name/key when writing a parameter file
+        /// </summary>
+        internal string ParamFileOutputParamName { get; }
+
+        /// <summary>
         /// When true, this is a secondary (not primary) argument and will be commented out in example parameter files created by CreateParamFile
         /// </summary>
         public bool SecondaryArg { get; set; }
@@ -110,11 +115,11 @@ namespace PRISM
         /// Constructor supporting any number of param keys
         /// </summary>
         /// <remarks>Not CLS compliant</remarks>
-        /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class</param>
+        /// <param name="paramKeys">Must supply at least one key for the argument, and it must be distinct within the class. Parameter file output will use either the first param key prefixed by '+', or the first param key if there are no matches; the prefix '+' is otherwise ignored.</param>
         public OptionAttribute(params string[] paramKeys)
         {
-            // Check for null and remove blank entries
-            ParamKeys = paramKeys?.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray() ?? throw new ArgumentNullException(nameof(paramKeys), "Argument cannot be null");
+            // Check for null and remove blank entries; also remove leading/trailing spaces, and leading '+'
+            ParamKeys = paramKeys?.Select(x => x.TrimStart(' ', '+').Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray() ?? throw new ArgumentNullException(nameof(paramKeys), "Argument cannot be null");
 
             if (ParamKeys.Length == 0)
                 throw new ArgumentException("At least one argument name must be provided", nameof(paramKeys));
@@ -129,6 +134,32 @@ namespace PRISM
             ArgExistsProperty = null;
             ArgExistsPropertyInfo = null;
             IsInputFilePath = false;
+
+            ParamFileOutputParamName = ParamKeys[0];
+
+            if (paramKeys.Any(x => x.Trim().StartsWith("+")))
+            {
+                foreach (var key in paramKeys)
+                {
+                    if (string.IsNullOrWhiteSpace(key) || !key.Contains("+"))
+                    {
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(key.TrimStart(' ', '+').Trim()))
+                    {
+                        continue;
+                    }
+
+                    var trimmed = key.Trim();
+                    if (trimmed.StartsWith("+"))
+                    {
+                        ParamFileOutputParamName = trimmed.TrimStart(' ', '+');
+
+                        break;
+                    }
+                }
+            }
         }
 
         /// <summary>

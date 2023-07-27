@@ -1998,5 +1998,43 @@ namespace PRISMTest
             Assert.AreEqual(3.1415, options.BaseClassDouble, "Should be '3.1415'");
             Assert.AreEqual("test string", options.NotInheritedString, "Should be 'test string'");
         }
+
+        private class TestParamFileKeyPreference
+        {
+            [Option("int1", "+FirstParameter")]
+            public int Param1 { get; set; }
+
+            [Option("int2", "+SecondParameter", "+ignoredSecond")]
+            public int Param2 { get; set; }
+
+            [Option("int3", "ThirdParameter")]
+            public int Param3 { get; set; }
+        }
+
+        [Test]
+        public void TestParamFileOutputKeyPreference()
+        {
+            var parser = new CommandLineParser<TestParamFileKeyPreference>();
+            var args = new List<string> { "-CreateParamFile" };
+
+            var result = parser.ParseArgs(args.ToArray());
+
+            Console.WriteLine();
+            Console.WriteLine("Class description of parsed results:");
+            Console.WriteLine(result);
+        }
+
+        [Test]
+        public void TestParamFileOutputKeyPreferenceHelp()
+        {
+            var parser = new CommandLineParser<TestParamFileKeyPreference>();
+            var args = new List<string>();
+
+            var result = parser.ParseArgs(args.ToArray());
+
+            Console.WriteLine();
+            Console.WriteLine("Class description of parsed results:");
+            Console.WriteLine(result);
+        }
     }
 }

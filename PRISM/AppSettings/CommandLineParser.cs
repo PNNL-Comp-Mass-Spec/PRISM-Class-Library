@@ -1141,7 +1141,7 @@ namespace PRISM
                     prefix = string.Empty;
                 }
 
-                var key = prop.Value.ParamKeys[0];
+                var key = prop.Value.ParamFileOutputParamName;
 
                 if (prop.Key.PropertyType.IsArray)
                 {
