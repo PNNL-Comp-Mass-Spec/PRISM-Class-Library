@@ -37,7 +37,7 @@ namespace PRISMDatabaseUtils
     /// </summary>
     public static class DbToolsFactory
     {
-        // Ignore Spelling: pgpass, Postgres, PostgreSQL, Sql, Username
+        // Ignore Spelling: pgpass, Postgres, PostgreSQL, Sql, Username, Utils
 
         /// <summary>
         /// Set to true once mConnectionStringKeywordMap has been initialized

@@ -10,6 +10,8 @@ namespace PRISMWin
 {
     public static class RegistryUtils
     {
+        // Ignore Spelling: Utils
+
         /// <summary>
         /// Determines the directory that contains R.exe and Rcmd.exe (as defined in the Windows registry)
         /// </summary>

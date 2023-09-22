@@ -10,6 +10,8 @@ namespace PRISMWin
     // ReSharper disable once UnusedMember.Global
     public static class DataGridUtils
     {
+        // Ignore Spelling: utils
+
         // Note: System.Windows.Forms.DataGrid is deprecated/gone in .NET 5.0, in favor of System.Windows.Forms.DataGridView
 #if NETFRAMEWORK
         /// <summary>

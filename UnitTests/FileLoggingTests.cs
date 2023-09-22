@@ -12,7 +12,7 @@ namespace PRISMTest
     [TestFixture]
     internal class FileLoggingTests
     {
-        // Ignore Spelling: MM-dd-yyyy, hh:mm:ss, tt
+        // Ignore Spelling: MM-dd-yyyy, hh:mm:ss, tt, utc
 
         private const string LOGFILE_BASENAME = "FileLoggingTester";
 

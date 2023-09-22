@@ -14,7 +14,7 @@ namespace PRISMWin
     /// </summary>
     public class ProcessStats
     {
-        // Ignore Spelling: hyperthreading
+        // Ignore Spelling: hyperthreading, perf
 
         #region "Events and Event Handlers"
 

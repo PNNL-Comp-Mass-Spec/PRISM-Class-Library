@@ -16,6 +16,7 @@ namespace PRISMWin
     /// <remarks>https://blogs.msdn.microsoft.com/oldnewthing/20120217-00/?p=8283</remarks>
     public static class FileInUseUtils
     {
+        // Ignore Spelling: App, utils
         [StructLayout(LayoutKind.Sequential)]
         private struct FILETIME
         {

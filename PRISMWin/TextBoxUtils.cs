@@ -11,7 +11,7 @@ namespace PRISMWin
     // ReSharper disable once UnusedMember.Global
     public static class TextBoxUtils
     {
-        // Ignore Spelling: arg, Ctrl, Keypress
+        // Ignore Spelling: arg, Ctrl, Keypress, Utils
 
         /// <summary>
         /// Tries to convert the string to a double
