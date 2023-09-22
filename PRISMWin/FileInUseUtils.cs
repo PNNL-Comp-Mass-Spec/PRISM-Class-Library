@@ -17,6 +17,11 @@ namespace PRISMWin
     public static class FileInUseUtils
     {
         // Ignore Spelling: App, utils
+
+        // ReSharper disable InconsistentNaming
+
+        // ReSharper disable once IdentifierTypo
+
         [StructLayout(LayoutKind.Sequential)]
         private struct FILETIME
         {
