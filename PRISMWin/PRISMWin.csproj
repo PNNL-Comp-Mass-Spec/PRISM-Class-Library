@@ -14,6 +14,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/PNNL-Comp-Mass-Spec/PRISM-Class-Library</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <UseWindowsForms>true</UseWindowsForms>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -24,6 +25,10 @@
 
   <ItemGroup>
     <Compile Remove="Properties\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup Condition="!$(TargetFramework.StartsWith('net4'))">
