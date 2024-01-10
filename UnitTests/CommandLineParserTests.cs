@@ -507,6 +507,151 @@ namespace PRISMTest
         }
 
         [Test]
+        public void TestPositionalArgsLinuxPath()
+        {
+            var args = new[]
+            {
+                "/home/user/MyInputFile.txt",
+                "/home/user/OutputFile.txt",
+                "UnusedPositionalArg.txt",
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+
+            Console.WriteLine("Input file path: {0}", options.InputFilePath);
+            Console.WriteLine("Output file path: {0}", options.OutputFilePath);
+
+            Assert.AreEqual("/home/user/MyInputFile.txt", options.InputFilePath);
+            Assert.AreEqual("/home/user/OutputFile.txt", options.OutputFilePath);
+        }
+
+        [Test]
+        public void TestPositionalArgsLinuxPath2()
+        {
+            var args = new[]
+            {
+                "/pagefile.sys",
+                "/ProgramData",
+                "UnusedPositionalArg.txt",
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+
+            Console.WriteLine("Input file path: {0}", options.InputFilePath);
+            Console.WriteLine("Output file path: {0}", options.OutputFilePath);
+
+            Assert.AreEqual("/pagefile.sys", options.InputFilePath);
+            Assert.AreEqual("/ProgramData", options.OutputFilePath);
+        }
+
+        [Test]
+        public void TestPositionalArgsLinuxPathBad()
+        {
+            var args = new[]
+            {
+                "/badPath",
+                "/BadPath2",
+                "UnusedPositionalArg.txt",
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
+
+            foreach (var message in result.ParseErrors)
+            {
+                Console.WriteLine(message);
+            }
+
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+
+            Console.WriteLine("\nThis error message was expected");
+        }
+
+        [Test]
+        public void TestArgsLinuxPath()
+        {
+            var args = new[]
+            {
+                "-i", "/home/user/MyInputFile.txt",
+                "-o", "/home/user/OutputFile.txt"
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+
+            Console.WriteLine("Input file path: {0}", options.InputFilePath);
+            Console.WriteLine("Output file path: {0}", options.OutputFilePath);
+
+            Assert.AreEqual("/home/user/MyInputFile.txt", options.InputFilePath);
+            Assert.AreEqual("/home/user/OutputFile.txt", options.OutputFilePath);
+        }
+
+        [Test]
+        public void TestArgsLinuxPath2()
+        {
+            var args = new[]
+            {
+                "-i", "/pagefile.sys",
+                "-o", "/ProgramData"
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
+            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+
+            Console.WriteLine("Input file path: {0}", options.InputFilePath);
+            Console.WriteLine("Output file path: {0}", options.OutputFilePath);
+
+            Assert.AreEqual("/pagefile.sys", options.InputFilePath);
+            Assert.AreEqual("/ProgramData", options.OutputFilePath);
+        }
+
+        [Test]
+        public void TestArgsLinuxPathBad()
+        {
+            var args = new[]
+            {
+                "-i", "/BadPath",
+                "-o", "/BadPath2"
+            };
+
+            var parser = new CommandLineParser<ArgsPositionalOnly>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+            var options = result.ParsedResults;
+
+            Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
+
+            foreach (var message in result.ParseErrors)
+            {
+                Console.WriteLine(message);
+            }
+
+            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+
+            Console.WriteLine("\nThis error message was expected");
+        }
+
+        [Test]
         public void TestMinInt1()
         {
             var args = new[]

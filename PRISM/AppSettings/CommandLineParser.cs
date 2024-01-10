@@ -1378,7 +1378,7 @@ namespace PRISM
                 return null;
             }
 
-            // In this dictionary, keys are argument names and values are the setting for the argument
+            // In this dictionary, keys are argument names and values are the settings for the argument
             var processed = new Dictionary<string, List<string>>();
             var positionArgumentNumber = 0;
 
@@ -1392,7 +1392,12 @@ namespace PRISM
                     continue;
                 }
 
-                if (!parsingParamFileArgs && !paramChars.Contains(args[i][0]))
+                var argIsLinuxRootedPath = paramChars.Contains('/') && args[i].StartsWith("/") &&
+                                           (args[i].TrimStart('/').Count(x => x == '/') >= 1 ||
+                                            ((File.Exists(args[i]) || Directory.Exists(args[i])) &&
+                                             !validArgs.ContainsKey(args[i].TrimStart('/'))));
+
+                if (!parsingParamFileArgs && (argIsLinuxRootedPath || !paramChars.Contains(args[i][0])))
                 {
                     // Positional argument
                     positionArgumentNumber++;
@@ -1412,19 +1417,6 @@ namespace PRISM
 
                 var key = args[i].TrimStart(paramChars);
                 var value = string.Empty;
-                var nextArgIsNumber = false;
-
-                if (!parsingParamFileArgs && paramChars.Contains('-') && i + 1 < args.Count && args[i + 1].StartsWith("-"))
-                {
-                    // Try converting to most forgiving number format
-                    nextArgIsNumber = double.TryParse(args[i + 1], out _);
-
-                    // Check if the program supports a numeric argument (but we only need to remove a '-', because a '/' won't parse as a double)
-                    if (nextArgIsNumber && validArgs.ContainsKey(args[i + 1].TrimStart('-')))
-                    {
-                        nextArgIsNumber = false;
-                    }
-                }
 
                 var containedSeparator = false;
 
@@ -1438,10 +1430,45 @@ namespace PRISM
                     key = key.Substring(0, separatorIndex);
                 }
 
-                if (!containedSeparator && !parsingParamFileArgs && i + 1 < args.Count && (nextArgIsNumber || !paramChars.Contains(args[i + 1][0])))
+                if (!containedSeparator && !parsingParamFileArgs && i + 1 < args.Count)
                 {
-                    value = args[i + 1];
-                    i++;
+                    var nextArg = args[i + 1];
+                    var nextArgIsNumber = false;
+                    var nextArgIsLinuxRootedPath = false;
+
+                    if (paramChars.Contains('-') && nextArg.StartsWith("-"))
+                    {
+                        // Try converting to most forgiving number format
+                        nextArgIsNumber = double.TryParse(nextArg, out _);
+
+                        // Check if the program supports a numeric argument (but we only need to remove a '-', because a '/' won't parse as a double)
+                        if (nextArgIsNumber && validArgs.ContainsKey(nextArg.TrimStart('-')))
+                        {
+                            nextArgIsNumber = false;
+                        }
+                    }
+
+                    if (paramChars.Contains('/') && nextArg.StartsWith("/"))
+                    {
+                        // Don't try to treat a linux rooted path (starts with '/') as an argument
+                        if (nextArg.TrimStart('/').Count(x => x == '/') >= 1)
+                        {
+                            // Path has at least one '/' that is not at the start of the string
+                            nextArgIsLinuxRootedPath = true;
+                        }
+                        else if ((File.Exists(nextArg) || Directory.Exists(nextArg)) && !validArgs.ContainsKey(nextArg.TrimStart('/')))
+                        {
+                            // Path exists on current system, and is not an argument name
+                            // TODO: Could possibly change this check to not include the 'exists' check, and just check if it's not a valid argument, but needs more testing for error conditions first.
+                            nextArgIsLinuxRootedPath = true;
+                        }
+                    }
+
+                    if (nextArgIsNumber || nextArgIsLinuxRootedPath || !paramChars.Contains(args[i + 1][0]))
+                    {
+                        value = args[i + 1];
+                        i++;
+                    }
                 }
 
                 // Key normalization - usually allow case-insensitivity
