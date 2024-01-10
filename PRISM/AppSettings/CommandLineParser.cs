@@ -2142,6 +2142,15 @@ namespace PRISM
                         }
                     }
 
+                    if (key.Contains("/"))
+                    {
+                        // ERROR: Linux path separator character in parameter! (we allow '-', but '/' is not allowed because of potential issues)
+                        Results.AddParseError(
+                            @"Error: bad character in argument key ""{0}"" in {1}; key contains invalid char '{2}'",
+                            key, typeof(T).Name, "/");
+                        return null;
+                    }
+
                     foreach (var invalidChar in separatorChars)
                     {
                         if (!key.Contains(invalidChar.ToString()))

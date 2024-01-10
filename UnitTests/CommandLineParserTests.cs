@@ -157,6 +157,25 @@ namespace PRISMTest
             Console.WriteLine("\nThis error message was expected");
         }
 
+        [Test]
+        public void TestBadKey8()
+        {
+            var parser = new CommandLineParser<BadKey8>();
+            var result = parser.ParseArgs(new[] { "-bad/name", "b" }, showHelpOnError, outputErrors);
+            Assert.IsFalse(result.Success, "Parser did not fail with '/' in arg key");
+
+            foreach (var message in result.ParseErrors)
+            {
+                Console.WriteLine(message);
+            }
+
+            Assert.IsTrue(result.ParseErrors.Any(x =>
+                    x.Message.Contains("bad character") && x.Message.Contains("char '/'")),
+                "Error message does not contain \"bad character\" and \"char '='\"");
+
+            Console.WriteLine("\nThis error message was expected");
+        }
+
         private class BadKey1
         {
             [Option("-bad-name")]
@@ -208,6 +227,12 @@ namespace PRISMTest
         private class BadKey7
         {
             [Option("bad=name")]
+            public string BadName { get; set; }
+        }
+
+        private class BadKey8
+        {
+            [Option("bad/name")]
             public string BadName { get; set; }
         }
 
@@ -266,7 +291,7 @@ namespace PRISMTest
         public void TestOkayKey2()
         {
             var parser = new CommandLineParser<OkayKey2>();
-            var result = parser.ParseArgs(new[] { "/okay/name", "b" }, showHelpOnError, outputErrors);
+            var result = parser.ParseArgs(new[] { "/okay-name", "b" }, showHelpOnError, outputErrors);
             Assert.IsTrue(result.Success, "Parser failed with '/' not at start of arg key");
 
             foreach (var message in result.ParseErrors)
@@ -318,7 +343,7 @@ namespace PRISMTest
 
         private class OkayKey2
         {
-            [Option("Okay/name", HelpText = "This switch has a slash in the name; that's unusual, but allowed")]
+            [Option("Okay-name", HelpText = "This switch has a dash in the name; that's unusual, but allowed")]
             public string OkayName { get; set; }
 
             [Option("Verbose", "Wordy", "Detailed",
@@ -1315,7 +1340,7 @@ namespace PRISMTest
             var smooth2Override = 15;
             var okayNameOverride = "A Different Value?";
             var results3 = parser3.ParseArgs(
-                new[] { "-smooth2", smooth2Override.ToString(), "-okay/name", okayNameOverride, "-ESP", "-ParamFile", paramFileName }).ParsedResults;
+                new[] { "-smooth2", smooth2Override.ToString(), "-okay-name", okayNameOverride, "-ESP", "-ParamFile", paramFileName }).ParsedResults;
             Assert.AreEqual(results.Smooth, results3.Smooth);
             Assert.AreEqual(smooth2Override, results3.Smooth2);
             Assert.AreEqual(okayNameOverride, results3.OkayName);
@@ -1347,7 +1372,7 @@ namespace PRISMTest
             Assert.AreEqual(results.Verbose, results2.Verbose);
 
             // "Duplicate parameter" parsing error with duplicated, non-array parameter
-            File.AppendAllText(paramFile.FullName, "\nOkay/Name=Duplicated\n");
+            File.AppendAllText(paramFile.FullName, "\nOkay-Name=Duplicated\n");
             var parser3 = new CommandLineParser<OkayKey2>();
             var results3 = parser3.ParseArgs(new[] { "-ParamFile", paramFile.FullName });
             Assert.AreEqual(false, results3.Success);
