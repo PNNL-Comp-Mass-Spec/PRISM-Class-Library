@@ -295,14 +295,23 @@ namespace PRISM
         public string ParameterFilePath { get; private set; }
 
         /// <summary>
-        /// Get or set the characters allowed at the beginning of an argument specifier
+        /// The characters allowed at the beginning of an argument specifier. Defaults to '-' and '/', and other characters are not supported.
+        /// The point of this property is to change a program to only use '-' (or '--') or only use '/' (or '//') as the argument specifier prefix
         /// </summary>
         public IEnumerable<char> ParamFlagCharacters
         {
             get => paramChars;
             set
             {
-                var distinct = value.Distinct().ToArray();
+                var newValue = value.ToArray();
+                var distinct = newValue.Distinct().Where(x => mDefaultParamChars.Contains(x)).ToArray();
+
+                if (distinct.Length == 0 && newValue.Length > 0)
+                {
+                    var badChars = newValue.Distinct().Where(x => !mDefaultParamChars.Contains(x)).ToArray();
+                    throw new ArgumentException($"{nameof(ParamFlagCharacters)} only supports the following characters: '{string.Join("', '", mDefaultParamChars)}'; " +
+                                                $"Character(s) '{string.Join("', '", badChars)}' are not supported.");
+                }
 
                 if (distinct.Length > 0)
                 {
