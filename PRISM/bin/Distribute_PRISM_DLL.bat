@@ -172,12 +172,12 @@ xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\ProteinNmerGenerator
 
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\QRollupExport\bin" /Y /D
 
-xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\GordonSlysz\DeconTools_IQ\Library" /Y /D
+xcopy ..\ShFolderBrowser\bin\ShFolderBrowser.dll "F:\My Documents\Projects\Gordon_Slysz\DeconTools_IQ\Library" /Y /D
 
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\KenAuberry\Organism_Database_Handler\Shared Libraries" /Y /D
 
-xcopy net462\PRISM.DLL "F:\My Documents\Projects\JoshAldrich\InterferenceDetection\InterDetect\DLLLibrary" /Y /D
-xcopy net462\PRISM.DLL "F:\My Documents\Projects\JohnSandoval\APE_DLL\Lib" /Y /D
+xcopy net462\PRISM.DLL "F:\My Documents\Projects\Josh_Aldrich\InterferenceDetection\InterDetect\DLLLibrary" /Y /D
+xcopy net462\PRISM.DLL "F:\My Documents\Projects\John_Sandoval\APE_DLL\Lib" /Y /D
 
 xcopy net462\PRISM.DLL "F:\My Documents\Projects\DataMining\SharedVBNetRoutines" /Y /D
 
