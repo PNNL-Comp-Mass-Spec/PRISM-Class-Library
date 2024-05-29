@@ -87,7 +87,7 @@ if the network connection is lost (or the copy process is manually terminated).
 Written by Matthew Monroe, Dave Clark, Gary Kiebel, Nathan Trimble, and Bryson Gibbons for the Department of Energy (PNNL, Richland, WA) \
 Copyright 2020, Battelle Memorial Institute. All Rights Reserved. \
 E-mail: matthew.monroe@pnnl.gov or proteomics@pnnl.gov \
-Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics
+Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics
 
 ## License
 

@@ -66,7 +66,6 @@ namespace PRISMTest
 
         private void TestSearchLogs(string connectionString, string database, string user)
         {
-
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
 
             var spCmd = dbTools.CreateCommand("Find_Log_Entry", CommandType.StoredProcedure);
@@ -726,7 +725,6 @@ namespace PRISMTest
                         string.IsNullOrWhiteSpace(errorMessage)
                             ? string.Empty
                             : ": " + errorMessage);
-
 
                     if (returnCode == DbUtilsConstants.RET_VAL_EXCESSIVE_RETRIES)
                     {

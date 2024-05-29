@@ -50,7 +50,7 @@ namespace FindFilesOrDirectories
                         return 0;
                     }
 
-                    // Delay for 750 msec in case the user double clicked this file from within Windows Explorer (or started the program via a shortcut)
+                    // Delay for 750 msec in case the user double-clicked this file from within Windows Explorer (or started the program via a shortcut)
                     Thread.Sleep(750);
                     return -1;
                 }
