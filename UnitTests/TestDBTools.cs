@@ -306,6 +306,15 @@ namespace PRISMTest
             TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
         }
 
+        [TestCase("Gigasax", "dms5", "dmsreader", "dms4fun", "T_Event_Log", 15)]
+        [TestCase("Gigasax", "dms5", "dmsreader", "dms4fun", "T_Event_Target", 15)]
+        [Category("DatabaseIntegrated")]
+        public void TestGetColumnValueSqlServerUsePassword(string server, string database, string username, string password, string tableName, int rowCountToRetrieve)
+        {
+            var connectionString = GetConnectionStringSqlServer(server, database, username, password);
+            TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
+        }
+
         [TestCase("prismdb1", "dms", "T_Event_Log", 15)]
         [TestCase("prismdb1", "dms", "T_Event_Target", 15)]
         [Category("DatabaseNamedUser")]
