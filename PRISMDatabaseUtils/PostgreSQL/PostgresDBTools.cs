@@ -125,7 +125,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="columns"></param>
         /// <returns>Mapping from column name to column index</returns>
         // ReSharper disable once UnusedMember.Global
-        public Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
+        public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
         {
             var columnMap = new Dictionary<string, int>();
 
@@ -1440,7 +1440,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             return resultCode;
         }
 
-        private string GetProcedureNameFromCommand(string sqlCmd)
+        private static string GetProcedureNameFromCommand(string sqlCmd)
         {
             var charIndex = sqlCmd.IndexOf('(');
 
