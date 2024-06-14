@@ -303,10 +303,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 if (cmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                    throw new ArgumentException($"Method GetQueryScalar requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+                throw new ArgumentException($"Method GetQueryScalar requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
             }
 
             if (retryCount < 1)
@@ -698,10 +698,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 if (cmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                    throw new ArgumentException($"Method GetQueryResults requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+                throw new ArgumentException($"Method GetQueryResults requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
             }
 
             if (retryCount < 1)
@@ -844,10 +844,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 if (cmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                    throw new ArgumentException($"Method GetQueryResultsEnumerable requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+                throw new ArgumentException($"Method GetQueryResultsEnumerable requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
             }
 
             if (retryCount < 1)
@@ -991,10 +991,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 if (spCmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
+                    throw new ArgumentException($"Method ExecuteSPData requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
+                throw new ArgumentException($"Method ExecuteSPData requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
             }
 
             UpdateSqlServerParameterNames(sqlCmd);
@@ -1296,10 +1296,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 if (spCmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
+                    throw new ArgumentException($"Method ExecuteSP requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
+                throw new ArgumentException($"Method ExecuteSP requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
             }
 
             UpdateSqlServerParameterNames(sqlCmd);
@@ -1534,7 +1534,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             if (command is not NpgsqlCommand npgCmd)
             {
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
+                throw new ArgumentException($"Method AddParameter requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
 
             // Optional: force the parameter name to be lowercase
@@ -1572,7 +1572,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             if (command is not NpgsqlCommand npgCmd)
             {
-                throw new ArgumentException($"This method requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
+                throw new ArgumentException($"Method AddTypedParameter requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
 
             var param = new NpgsqlParameter<T>(name, value)

@@ -329,10 +329,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 if (cmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                    throw new ArgumentException($"Method GetQueryScalar requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+                throw new ArgumentException($"Method GetQueryScalar requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
             }
 
             if (retryCount < 1)
@@ -707,10 +707,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 if (cmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                    throw new ArgumentException($"Method GetQueryResultsrequires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+                throw new ArgumentException($"Method GetQueryResults requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
             }
 
             if (retryCount < 1)
@@ -847,10 +847,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 if (cmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
+                    throw new ArgumentException($"Method GetQueryResultsEnumerable requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(cmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
+                throw new ArgumentException($"Method GetQueryResultsEnumerable requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {cmd.GetType().FullName}.", nameof(cmd));
             }
 
             if (retryCount < 1)
@@ -956,7 +956,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             affectedRows = 0;
 
-            throw new Exception("This method is obsolete (because it blindly executes the SQL); do not use");
+            throw new Exception("Method UpdateDatabase is obsolete (because it blindly executes the SQL); do not use");
 
             /*
                 // Updates a database table as specified in the SQL statement
@@ -1004,10 +1004,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 if (spCmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
+                    throw new ArgumentException($"Method ExecuteSPData requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
+                throw new ArgumentException($"Method ExecuteSPData requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
             }
 
             // If this value is in error msg, exception occurred before resultCode was set
@@ -1268,10 +1268,10 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 if (spCmd == null)
                 {
-                    throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
+                    throw new ArgumentException($"Method ExecuteSP requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of 'null'.", nameof(spCmd));
                 }
 
-                throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
+                throw new ArgumentException($"Method ExecuteSP requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {spCmd.GetType().FullName}.", nameof(spCmd));
             }
 
             // If this value is in error msg, exception occurred before resultCode was set
@@ -1484,7 +1484,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             if (command is not SqlCommand sqlCmd)
             {
-                throw new ArgumentException($"This method requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
+                throw new ArgumentException($"Method AddParameter requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
 
             var param = new SqlParameter(name, ConvertSqlType(dbType), size)
