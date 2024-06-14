@@ -228,26 +228,13 @@ namespace PRISMDatabaseUtils
                             builder.Database = databaseName;
                         }
 
-                        if (string.IsNullOrWhiteSpace(userName))
-                        {
-                            builder.IntegratedSecurity = true;
-                        }
-                        else
+                        if (!string.IsNullOrWhiteSpace(userName))
                         {
                             builder.Username = userName;
 
-                            if (string.IsNullOrWhiteSpace(password))
-                            {
-                                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                                if (useIntegratedSecurity.HasValue)
-                                    builder.IntegratedSecurity = useIntegratedSecurity.Value;
-                            }
-                            else
+                            if (!string.IsNullOrWhiteSpace(password))
                             {
                                 builder.Password = password;
-
-                                if (useIntegratedSecurity.HasValue)
-                                    builder.IntegratedSecurity = false;
                             }
                         }
 
