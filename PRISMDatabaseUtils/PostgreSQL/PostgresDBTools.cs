@@ -222,7 +222,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     var errorMessage = string.Format(
                         "Exception testing connection to database: {0}; " +
                         "ConnectionString: {1}, RetryCount = {2}",
-                        ex.Message, ConnectStr, retryCount);
+                        ex.Message, MaskConnectionStringPassword(ConnectStr), retryCount);
 
                     OnErrorEvent(errorMessage);
 
@@ -363,7 +363,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         var errorMessage = string.Format(
                             "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
                             permissionDenied ? "Permission denied" : "Exception",
-                            callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
+                            callingFunction, ex.Message, MaskConnectionStringPassword(ConnectStr), retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
@@ -758,7 +758,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         var errorMessage = string.Format(
                             "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
                             permissionDenied ? "Permission denied" : "Exception",
-                            callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
+                            callingFunction, ex.Message, MaskConnectionStringPassword(ConnectStr), retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 
@@ -901,7 +901,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         var errorMessage = string.Format(
                             "{0} querying database (called from {1}): {2}; ConnectionString: {3}, RetryCount = {4}, Query {5}",
                             permissionDenied ? "Permission denied" : "Exception",
-                            callingFunction, ex.Message, ConnectStr, retryCount, sqlCmd);
+                            callingFunction, ex.Message, MaskConnectionStringPassword(ConnectStr), retryCount, sqlCmd);
 
                         OnErrorEvent(errorMessage);
 

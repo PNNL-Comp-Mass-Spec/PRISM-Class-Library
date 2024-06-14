@@ -21,6 +21,8 @@ namespace PRISMDatabaseUtils
 
         private static readonly Regex mIntegerMatcher = new(@"\d+", RegexOptions.Compiled);
 
+        private static readonly Regex mPasswordMatcher = new("Password *= *[^;]+;*", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
         /// <summary>
         /// Test connecting to the database
         /// </summary>
@@ -457,6 +459,24 @@ namespace PRISMDatabaseUtils
             }
 
             return DbUtilsConstants.RET_VAL_UNDEFINED_ERROR;
+        }
+
+        /// <summary>
+        /// Look for Password=value in the connection string
+        /// If found, replace with Password=******
+        /// </summary>
+        /// <param name="connectionString">Connection string</param>
+        /// <returns>Updated connection string</returns>
+        protected static string MaskConnectionStringPassword(string connectionString)
+        {
+            var match = mPasswordMatcher.Match(connectionString);
+
+            if (match.Success)
+            {
+                return mPasswordMatcher.Replace(connectionString, "Password=******");
+            }
+
+            return connectionString;
         }
 
         /// <summary>
