@@ -70,8 +70,8 @@ namespace PRISMDatabaseUtils
         ///   Host=prismdb1;Port=5432;Database=dms;Username=svc-dms;Application Name=Proto-6_DIM
         /// </para>
         /// </remarks>
-        /// <param name="connectionString"></param>
-        /// <param name="applicationName"></param>
+        /// <param name="connectionString">Connection string</param>
+        /// <param name="applicationName">Application name</param>
         /// <param name="serverType">If undefined, this method will auto-determine the connection string type</param>
         /// <returns>Updated connection string, with the application name appended (if not an empty string)</returns>
         public static string AddApplicationNameToConnectionString(string connectionString, string applicationName, DbServerTypes serverType = DbServerTypes.Undefined)
@@ -142,15 +142,15 @@ namespace PRISMDatabaseUtils
         /// Get a connection string for the given database and server, using the specified username
         /// </summary>
         /// <remarks>See method ValidatePgPass in class MgrSettingsDB for info on pgpass files</remarks>
-        /// <param name="serverType"></param>
-        /// <param name="serverName"></param>
-        /// <param name="databaseName"></param>
+        /// <param name="serverType">Server type (DbServerTypes.MSSQLServer or DbServerTypes.PostgreSQL)</param>
+        /// <param name="serverName">Server name</param>
+        /// <param name="databaseName">Database name</param>
         /// <param name="userName">If this is an empty string, sets IntegratedSecurity to true</param>
         /// <param name="password">For PostgreSQL, this can be an empty string, provided the username is defined in a .pgpass or pgpass.conf file</param>
-        /// <param name="applicationName"></param>
+        /// <param name="applicationName">Application name</param>
         /// <param name="useIntegratedSecurity">
-        /// <para>Value to use for the "Integrated Security" setting</para>
-        /// <para>If null, auto-determine based on server type and whether userName is defined</para>
+        /// <para>Value to use for the "Integrated Security" setting (only applicable for SQL Server)</para>
+        /// <para>If null, auto-determine based on whether userName is defined</para>
         /// <para>If password is not an empty string, useIntegratedSecurity will be set to false by this method</para>
         /// </param>
         /// <returns>Connection string</returns>
@@ -164,7 +164,8 @@ namespace PRISMDatabaseUtils
             bool? useIntegratedSecurity = null)
         {
             // Example SQL Server connection string:
-            // "Data Source=MyServer;Initial Catalog=MyDatabase;integrated security=SSPI;Application Name=Analysis Manager"
+            // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=SSPI;Application Name=Analysis Manager"
+            // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=False;User ID=MyUser;Password=pass;Application Name=Analysis Manager"
 
             // Example PostgreSQL connection strings:
             // "Host=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"
@@ -277,7 +278,7 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get a SQL Server or PostgreSQL DBTools instance, as specified by serverType
         /// </summary>
-        /// <param name="serverType"></param>
+        /// <param name="serverType">Server type (DbServerTypes.MSSQLServer or DbServerTypes.PostgreSQL)</param>
         /// <param name="connectionString">Database connection string</param>
         /// <param name="timeoutSeconds">Query timeout, in seconds</param>
         /// <param name="debugMode">When true, show queries and procedure calls using OnDebugEvent</param>
@@ -298,7 +299,7 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Get the preferred SQL type for a .NET type
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">.NET type</param>
         public static SqlType GetPreferredSqlTypeForType(Type type)
         {
             if (type == typeof(int))
@@ -333,7 +334,7 @@ namespace PRISMDatabaseUtils
         public static DbServerTypes GetServerTypeFromConnectionString(string connectionString)
         {
             // Example SQL Server connection string:
-            // "Data Source=MyServer;Initial Catalog=MyDatabase;integrated security=SSPI;Application Name=Analysis Manager"
+            // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=SSPI;Application Name=Analysis Manager"
 
             // Example PostgreSQL connection strings:
             // "Host=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"

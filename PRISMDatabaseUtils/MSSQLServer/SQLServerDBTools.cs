@@ -929,8 +929,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         maxRowsToReturn = int.MaxValue;
                     }
 
-                    // cannot use 'yield return' inside of a try-catch block
-                    // but initialize the reader there to limit potential exceptions outside of try-catch
+                    // Cannot use 'yield return' inside of a try-catch block
+                    // Instead, initialize the reader there to limit potential exceptions outside of try-catch
                     using (reader)
                     {
                         while (reader.Read() && rowCount < maxRowsToReturn)
