@@ -16,7 +16,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
     {
         // Ignore Spelling: cmd, Cn, msg, Sql, varchar
 
-        #region "Member Variables"
 
         private string mConnStr;
 
@@ -24,10 +23,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Timeout length, in seconds, when waiting for a query or stored procedure to finish running
         /// </summary>
         private int mTimeoutSeconds;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// For SQL queries against PostgreSQL databases, when this is true,
@@ -93,8 +88,6 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// The name of the database to which the connection string connects
         /// </summary>
         public string DatabaseName { get; private set; }
-
-        #endregion
 
         /// <summary>
         /// Constructor

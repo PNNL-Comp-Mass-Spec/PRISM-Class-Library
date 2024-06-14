@@ -19,7 +19,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
     {
         // Ignore Spelling: backend, msg, Npgsql, Postgres, PostgreSQL, SQL, sqlCmd, tmp, Utils, varchar
 
-        #region "Member Variables"
 
         private string mConnStr;
 
@@ -29,10 +28,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Timeout length, in seconds, when waiting for a query or procedure to finish running
         /// </summary>
         private int mTimeoutSeconds;
-
-        #endregion
-
-        #region "Properties"
 
         /// <summary>
         /// When true, for SQL queries, if any of the column names after the SELECT keyword has capital letters,
@@ -100,8 +95,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// The name of the database to which the connection string connects
         /// </summary>
         public string DatabaseName { get; private set; }
-
-        #endregion
 
         /// <summary>
         /// Constructor

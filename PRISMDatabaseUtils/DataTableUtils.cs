@@ -13,7 +13,6 @@ namespace PRISMDatabaseUtils
     /// </summary>
     public static class DataTableUtils
     {
-        #region "Properties"
 
         /// <summary>
         /// When using GetColumnValue, if an exact match is not found and this is true,
@@ -32,8 +31,6 @@ namespace PRISMDatabaseUtils
         /// or if the column index is out of range vs. the actual number of columns
         /// </summary>
         public static bool GetColumnValueThrowExceptions { get; set; } = true;
-
-        #endregion
 
         /// <summary>
         /// Append to a dictionary mapping a column identifier to the names supported for that column identifier
