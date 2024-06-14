@@ -139,21 +139,11 @@ namespace PRISMTest
             Assert.AreEqual(16, perimeter, "Perimeter mismatch");
         }
 
-        [TestCase(
-            "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
-            DbServerTypes.MSSQLServer)]
-        [TestCase(
-            "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
-            DbServerTypes.MSSQLServer)]
-        [TestCase(
-            "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
-            DbServerTypes.MSSQLServer)]
-        [TestCase(
-            "Host=prismdb1;Username=dmsreader;Database=dms",
-            DbServerTypes.PostgreSQL)]
-        [TestCase(
-            "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
-            DbServerTypes.PostgreSQL)]
+        [TestCase("Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
+        [TestCase("Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun", DbServerTypes.MSSQLServer)]
+        [TestCase("DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
+        [TestCase("Host=prismdb1;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
+        [TestCase("DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
         public void TestDbToolsInitialization(string connectionString, DbServerTypes expectedServerType)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString);

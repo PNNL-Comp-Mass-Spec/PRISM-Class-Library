@@ -46,8 +46,7 @@ namespace PRISMDatabaseUtils
         /// </summary>
         private static bool mConnectionStringKeywordMapInitialized;
 
-        private static readonly Regex mDbServerTypeMatcher = new
-(@"DbServerType\s*=(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex mDbServerTypeMatcher = new (@"DbServerType\s*=(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Map between RegEx matchers and the server type for each RegEx
