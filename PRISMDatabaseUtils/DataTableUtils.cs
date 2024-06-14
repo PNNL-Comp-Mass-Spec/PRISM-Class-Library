@@ -13,6 +13,7 @@ namespace PRISMDatabaseUtils
     /// </summary>
     public static class DataTableUtils
     {
+        // Ignore Spelling: Utils
 
         /// <summary>
         /// When using GetColumnValue, if an exact match is not found and this is true,

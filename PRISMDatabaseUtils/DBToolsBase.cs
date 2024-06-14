@@ -13,9 +13,9 @@ namespace PRISMDatabaseUtils
     {
         // ReSharper disable CommentTypo
 
-        // Ignore Spelling: Postgres
-        // Ignore Spelling: smallint, tinyint, bigint, bool, nchar, nvarchar, citext, ntext, datetime
-        // Ignore Spelling: datetimeoffset, timestamptz, uuid, uniqueidentifier, sql, json, varchar
+        // Ignore Spelling: Postgres, Utils
+        // Ignore Spelling: bigint, bool, citext, datetime, datetimeoffset, json, nchar, ntext, nvarchar
+        // Ignore Spelling: smallint, sql, timestamp, timestamptz, tinyint, uniqueidentifier, uuid, varchar, xml
 
         // ReSharper restore CommentTypo
 

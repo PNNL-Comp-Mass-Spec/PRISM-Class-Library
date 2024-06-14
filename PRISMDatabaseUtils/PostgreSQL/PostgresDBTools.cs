@@ -17,8 +17,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
     /// </summary>
     internal class PostgresDBTools : DBToolsBase, IDBTools
     {
-        // Ignore Spelling: backend, msg, Npgsql, Postgres, PostgreSQL, SQL, sqlCmd, tmp, Utils, varchar
-
+        // Ignore Spelling: backend, enums, msg, Npgsql, Postgre, Postgres, PostgreSQL, refcursor, SQL, sqlCmd, tmp, username, Utils, varchar
 
         private string mConnStr;
 

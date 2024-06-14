@@ -11,6 +11,8 @@ using PRISMDatabaseUtils.PostgreSQL;
 
 namespace PRISMDatabaseUtils
 {
+    // Ignore Spelling: dms, gigasax, proto, Utils, svc
+
     /// <summary>
     /// Enum of supported relational database systems
     /// </summary>

@@ -5,7 +5,7 @@
     /// </summary>
     public static class DbUtilsConstants
     {
-        // Ignore Spelling: PostgreSQL
+        // Ignore Spelling: PostgreSQL, Ret, Utils
 
         /// <summary>
         /// Return value indicating everything is OK

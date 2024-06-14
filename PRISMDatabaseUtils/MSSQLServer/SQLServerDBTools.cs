@@ -14,8 +14,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
     /// </summary>
     internal class SQLServerDBTools : DBToolsBase, IDBTools
     {
-        // Ignore Spelling: cmd, Cn, msg, Sql, varchar
-
+        // Ignore Spelling: cmd, Cn, msg, Sql, Timestamp, Utils, varchar
 
         private string mConnStr;
 

@@ -10,7 +10,7 @@ namespace PRISMDatabaseUtils
     /// </summary>
     public static class DatabaseUtilsExtensions
     {
-        // Ignore Spelling: Sql
+        // Ignore Spelling: Sql, Utils
 
         /// <summary>
         /// When using GetColumnValue, if an exact match is not found and this is true,
