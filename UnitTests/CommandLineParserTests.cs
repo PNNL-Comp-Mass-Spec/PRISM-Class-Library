@@ -534,6 +534,9 @@ namespace PRISMTest
         [Test]
         public void TestPositionalArgsLinuxPath()
         {
+            // These file paths have multiple forward slashes, so they will be treated as values for the -i and -o arguments
+            // See also test methods TestPositionalArgsLinuxPath2 and TestArgsLinuxPath2
+
             var args = new[]
             {
                 "/home/user/MyInputFile.txt",
@@ -558,12 +561,20 @@ namespace PRISMTest
         [Test]
         public void TestPositionalArgsLinuxPath2()
         {
+            // ReSharper disable CommentTypo
+
+            // These file paths only have one forward slash, so they will be assumed to be arguments
+            // To avoid this issue, either use \/pagefile.sys or use ./pagefile.sys
+            // See also test methods TestPositionalArgsLinuxPath and TestArgsLinuxPath2
+
             var args = new[]
             {
-                "/pagefile.sys",
-                "/ProgramData",
+                "./pagefile.sys",
+                "./ProgramData",
                 "UnusedPositionalArg.txt",
             };
+
+            // ReSharper restore CommentTypo
 
             var parser = new CommandLineParser<ArgsPositionalOnly>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
@@ -575,8 +586,8 @@ namespace PRISMTest
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
 
-            Assert.AreEqual("/pagefile.sys", options.InputFilePath);
-            Assert.AreEqual("/ProgramData", options.OutputFilePath);
+            Assert.AreEqual("./pagefile.sys", options.InputFilePath);
+            Assert.AreEqual("./ProgramData", options.OutputFilePath);
         }
 
         [Test]
@@ -631,10 +642,13 @@ namespace PRISMTest
         [Test]
         public void TestArgsLinuxPath2()
         {
+            // Use an equals sign after -i and -o since the file path only has one forward slash
+            // See also test methods TestPositionalArgsLinuxPath and TestPositionalArgsLinuxPath2
+
             var args = new[]
             {
-                "-i", "/pagefile.sys",
-                "-o", "/ProgramData"
+                "-i=/pagefile.sys",
+                "-o=/ProgramData"
             };
 
             var parser = new CommandLineParser<ArgsPositionalOnly>();
