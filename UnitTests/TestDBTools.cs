@@ -142,8 +142,8 @@ namespace PRISMTest
         [TestCase("Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
         [TestCase("Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun", DbServerTypes.MSSQLServer)]
         [TestCase("DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
-        [TestCase("Host=prismdb1;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
-        [TestCase("DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
+        [TestCase("Host=prismdb2;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
+        [TestCase("DbServerType=Postgres;Host=prismdb2;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
         public void TestDbToolsInitialization(string connectionString, DbServerTypes expectedServerType)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString);
@@ -315,8 +315,8 @@ namespace PRISMTest
             TestGetColumnValue(connectionString, tableName, rowCountToRetrieve);
         }
 
-        [TestCase("prismdb1", "dms", "T_Event_Log", 15)]
-        [TestCase("prismdb1", "dms", "T_Event_Target", 15)]
+        [TestCase("prismdb2", "dms", "T_Event_Log", 15)]
+        [TestCase("prismdb2", "dms", "T_Event_Target", 15)]
         [Category("DatabaseNamedUser")]
         public void TestGetColumnValuePostgres(string server, string database, string tableName, int rowCountToRetrieve)
         {
@@ -750,17 +750,17 @@ namespace PRISMTest
             }
         }
 
-        [TestCase("prismdb1", "dms", "SELECT * FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message, entered_by", false)]
-        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message", false)]
-        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "Entry_ID, Posted_By, Entered, Type, Message", true)]
-        [TestCase("prismdb1", "dms", "SELECT entry_id, posted_by, entered, type, message FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message", true)]
-        [TestCase("prismdb1", "dms", "SELECT Entry_ID, \"posted_by\", Entered, type, Message FROM t_log_entries LIMIT 5", "Entry_ID, posted_by, Entered, type, Message", true)]
-        [TestCase("prismdb1", "dms", "SELECT Tool_Name, \"HMS\", \"HMS-MSn\" FROM v_analysis_tool_dataset_type_crosstab LIMIT 6", "Tool_Name, HMS, HMS-MSn", true)]
-        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By AS \"Posted By\", Entered, Type, Message FROM public.t_log_entries limit 6", "Entry_ID, Posted By, Entered, Type, Message", true)]
-        [TestCase("prismdb1", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "Entry_ID, Posted_By, Entered, Type, Message", true)]
-        [TestCase("prismdb1", "dms", "SELECT t.Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types T ON PF.param_file_type_id = T.param_file_type_id WHERE t.param_file_type Like 'MSGF%' Limit 6;", "param_file_type, param_file_id, param_file_name, Type ID", false)]
-        [TestCase("prismdb1", "dms", "SELECT t.Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types T ON PF.param_file_type_id = T.param_file_type_id WHERE t.param_file_type Like 'MSGF%' Limit 6;", "Param_File_Type, Param_File_ID, Param_File_Name, Type ID", true)]
-        [TestCase("prismdb1", "dms", "SELECT \"Param-File-Types\".Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types \"Param-File-Types\" ON PF.param_file_type_id = \"Param-File-Types\".param_file_type_id WHERE \"Param-File-Types\".param_file_type Like 'MSGF%' Limit 6;", "Param_File_Type, Param_File_ID, Param_File_Name, Type ID", true)]
+        [TestCase("prismdb2", "dms", "SELECT * FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message, entered_by", false)]
+        [TestCase("prismdb2", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message", false)]
+        [TestCase("prismdb2", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "Entry_ID, Posted_By, Entered, Type, Message", true)]
+        [TestCase("prismdb2", "dms", "SELECT entry_id, posted_by, entered, type, message FROM t_log_entries LIMIT 5", "entry_id, posted_by, entered, type, message", true)]
+        [TestCase("prismdb2", "dms", "SELECT Entry_ID, \"posted_by\", Entered, type, Message FROM t_log_entries LIMIT 5", "Entry_ID, posted_by, Entered, type, Message", true)]
+        [TestCase("prismdb2", "dms", "SELECT Tool_Name, \"HMS\", \"HMS-MSn\" FROM v_analysis_tool_dataset_type_crosstab LIMIT 6", "Tool_Name, HMS, HMS-MSn", true)]
+        [TestCase("prismdb2", "dms", "SELECT Entry_ID, Posted_By AS \"Posted By\", Entered, Type, Message FROM public.t_log_entries limit 6", "Entry_ID, Posted By, Entered, Type, Message", true)]
+        [TestCase("prismdb2", "dms", "SELECT Entry_ID, Posted_By, Entered, Type, Message FROM t_log_entries LIMIT 5", "Entry_ID, Posted_By, Entered, Type, Message", true)]
+        [TestCase("prismdb2", "dms", "SELECT t.Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types T ON PF.param_file_type_id = T.param_file_type_id WHERE t.param_file_type Like 'MSGF%' Limit 6;", "param_file_type, param_file_id, param_file_name, Type ID", false)]
+        [TestCase("prismdb2", "dms", "SELECT t.Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types T ON PF.param_file_type_id = T.param_file_type_id WHERE t.param_file_type Like 'MSGF%' Limit 6;", "Param_File_Type, Param_File_ID, Param_File_Name, Type ID", true)]
+        [TestCase("prismdb2", "dms", "SELECT \"Param-File-Types\".Param_File_Type, pf.Param_File_ID, pf.Param_File_Name, pf.param_file_type_id AS \"Type ID\" FROM t_param_files PF INNER JOIN t_param_file_types \"Param-File-Types\" ON PF.param_file_type_id = \"Param-File-Types\".param_file_type_id WHERE \"Param-File-Types\".param_file_type Like 'MSGF%' Limit 6;", "Param_File_Type, Param_File_ID, Param_File_Name, Type ID", true)]
         [Category("DatabaseNamedUser")]
         public void TestGetExpectedCapitalizedColumnNames(string server, string database, string query, string expectedColumnNames, bool autoCapitalize)
         {
@@ -810,9 +810,9 @@ namespace PRISMTest
             TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations, specifyColumnNames);
         }
 
-        [TestCase("prismdb1", "dms", 5, 1, false)]
-        [TestCase("prismdb1", "dms", 5, 1, true)]
-        [TestCase("prismdb1", "dms", 10, 2, true)]
+        [TestCase("prismdb2", "dms", 5, 1, false)]
+        [TestCase("prismdb2", "dms", 5, 1, true)]
+        [TestCase("prismdb2", "dms", 10, 2, true)]
         [Category("DatabaseNamedUser")]
         public void TestGetRecentLogEntriesPostgres(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
@@ -832,8 +832,8 @@ namespace PRISMTest
         /// <param name="rowCountToRetrieve"></param>
         /// <param name="iterations"></param>
         /// <param name="specifyColumnNames">When true, use explicit column names instead of *</param>
-        [TestCase("prismdb1", "dms", 5, 2, false)]
-        [TestCase("prismdb1", "dms", 5, 2, true)]
+        [TestCase("prismdb2", "dms", 5, 2, false)]
+        [TestCase("prismdb2", "dms", 5, 2, true)]
         [Category("DatabaseIntegrated")]
         public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
@@ -929,7 +929,7 @@ namespace PRISMTest
             TestGetTableRowCount(connectionString, tableName);
         }
 
-        [TestCase("prismdb1", "dms", "public.t_log_entries")]
+        [TestCase("prismdb2", "dms", "public.t_log_entries")]
         [Category("DatabaseNamedUser")]
         public void TestGetTableRowCountPostgres(string server, string database, string tableName)
         {
@@ -990,15 +990,15 @@ namespace PRISMTest
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
-            "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
+            "DbServerType=Postgres;Host=prismdb2;Username=dmsreader;Database=dms",
             "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]' order by mgr_name;",
             4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
         [TestCase(
-            "DbServerType=Postgres;Server=prismdb1;Username=dmsreader;Database=dms",
+            "DbServerType=Postgres;Server=prismdb2;Username=dmsreader;Database=dms",
             "select mgr_name from mc.t_mgrs where mgr_name similar to 'pub-12-[1-4]' order by mgr_name;",
             4, "Pub-12-1,Pub-12-2,Pub-12-3,Pub-12-4")]
         [TestCase(
-            "DbServerType=Postgres;Host=prismdb1;Username=dmsreader;Database=dms",
+            "DbServerType=Postgres;Host=prismdb2;Username=dmsreader;Database=dms",
              "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         [Category("PNL_Domain")]

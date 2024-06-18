@@ -140,7 +140,7 @@ namespace PRISMTest
             TestLoadManagerConfigDB(connectionString, false);
         }
 
-        [TestCase("prismdb1", "dms")]
+        [TestCase("prismdb2", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestLoadManagerConfigDBPostgres(string server, string database)
         {
@@ -148,7 +148,7 @@ namespace PRISMTest
             TestLoadManagerConfigDB(connectionString, true);
         }
 
-        [TestCase("prismdb1", "dms")]
+        [TestCase("prismdb2", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestLoadManagerConfigDBPostgresPgPass(string server, string database)
         {
