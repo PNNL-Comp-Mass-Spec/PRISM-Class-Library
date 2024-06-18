@@ -10,7 +10,7 @@ namespace PRISMTest
     [TestFixture]
     internal class ProgRunnerTests
     {
-        // Ignore Spelling: AppVeyor, alF
+        // Ignore Spelling: AppVeyor, alF, CRC, gc, Sha
 
 #if !NETCOREAPP2_0
         private const string UTILITIES_DIRECTORY = @"\\proto-2\unitTest_Files\PRISM\Utilities";

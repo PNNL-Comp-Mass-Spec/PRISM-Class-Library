@@ -12,7 +12,7 @@ namespace PRISM
     /// </summary>
     public static class HashUtilities
     {
-        // Ignore Spelling: "Hashcheck, hashtype, utc, yyyy-MM-dd, hh:mm:ss tt
+        // Ignore Spelling: CRC, dest, Hashcheck, hashtype, Sha, utc, yyyy-MM-dd, hh:mm:ss tt
 
         /// <summary>
         /// Default date/time format

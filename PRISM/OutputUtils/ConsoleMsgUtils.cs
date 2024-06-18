@@ -13,6 +13,8 @@ namespace PRISM
     /// </summary>
     public static class ConsoleMsgUtils
     {
+        // Ignore Spelling: Utils
+
         private const string SEPARATOR = "------------------------------------------------------------------------------";
 
         private static bool mAutoCheckedDebugFontColor;

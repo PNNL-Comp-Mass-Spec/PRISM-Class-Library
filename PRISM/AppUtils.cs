@@ -13,6 +13,8 @@ namespace PRISM
     /// </summary>
     public static class AppUtils
     {
+        // Ignore Spelling: App, Utils
+
         /// <summary>
         /// Decode a string with a simple alternating shift cipher
         /// </summary>

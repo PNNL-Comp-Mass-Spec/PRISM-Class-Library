@@ -27,6 +27,8 @@ namespace PRISM.AppSettings
     /// </remarks>
     public class MgrSettings : EventNotifier
     {
+        // Ignore Spelling: App, Cfg, DMS
+
         /// <summary>
         /// Enum for database schema prefix manager parameters
         /// </summary>

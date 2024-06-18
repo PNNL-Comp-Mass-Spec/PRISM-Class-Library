@@ -15,6 +15,8 @@ namespace PRISM
     /// </summary>
     public class ProgRunner : EventNotifier
     {
+        // Ignore Spelling: PID, Prog
+
         /// <summary>
         /// Default monitoring interval, in milliseconds
         /// </summary>

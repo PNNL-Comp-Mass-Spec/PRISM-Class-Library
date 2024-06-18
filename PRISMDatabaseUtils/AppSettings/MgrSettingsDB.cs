@@ -14,7 +14,7 @@ namespace PRISMDatabaseUtils.AppSettings
     /// </summary>
     public class MgrSettingsDB : MgrSettings
     {
-        // Ignore Spelling: Postgres, PostgreSQL, pgpass
+        // Ignore Spelling: App, Postgres, PostgreSQL, pgpass, Utils
 
         /// <summary>
         /// Load manager settings from the database

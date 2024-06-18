@@ -13,6 +13,8 @@ namespace PRISM
     /// </summary>
     internal class XMLFileReader
     {
+        // Ignore Spelling: Ini
+
         private enum XMLItemTypeEnum
         {
             GetKeys = 0,

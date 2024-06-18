@@ -17,7 +17,7 @@ namespace PRISM
     // ReSharper disable once UnusedMember.Global
     public class FileTools : EventNotifier
     {
-        // Ignore Spelling: gzip, gzipped, mbBacklog, picfs, yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt
+        // Ignore Spelling: CRC, dest, gzip, gzipped, LockFile, mbBacklog, picfs, yyyy-MM-dd, hh:mm:ss, hh:mm:ss.fff tt
 
         /// <summary>
         /// File copy starting event

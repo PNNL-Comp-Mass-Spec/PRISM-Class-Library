@@ -13,8 +13,8 @@ namespace PRISMTest
     [TestFixture]
     internal class TestLinuxSystemInfo
     {
-        // Ignore Spelling: lsb, redhat, ubuntu, noarch, Zapus, os, proc, Solaris, cygwin, cpuinfo, cpu, cpuload, cpuloadtest
-        // Ignore Spelling: args, cmdline, meminfo
+        // Ignore Spelling: args, centos, cmdline, cpu, cpuinfo, cpuload, cpuloadtest, cygwin
+        // Ignore Spelling: lsb, meminfo, noarch, os, proc, redhat, Solaris, ubuntu, Zapus,
 
         internal const bool SHOW_TRACE_MESSAGES = false;
 

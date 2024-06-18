@@ -20,7 +20,7 @@ namespace PRISM.Logging
         private const string DEFAULT_PARAM_NAME_MESSAGE = "message";
         private const string DEFAULT_PARAM_NAME_POSTED_BY = "postedBy";
 
-        // Ignore Spelling: Pwd, uid
+        // Ignore Spelling: ODBC, Pwd, uid, SQL
 
         private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 
