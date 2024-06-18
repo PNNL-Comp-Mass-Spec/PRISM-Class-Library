@@ -184,7 +184,7 @@ namespace PRISMTest
         [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Application Name=PRISMTest", true)]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "", "d3l243", "", null, "", "Host=prismdb2;Username=d3l243", true)]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", null, "", "Host=prismdb2;Database=dms;Username=d3l243", true)]
-        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", true, "", "Host=prismdb2;Database=dms;Username=d3l243;Integrated Security=True", true)]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", true, "", "Host=prismdb2;Database=dms;Username=d3l243", true)]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", null, "PRISMTest", "Host=prismdb2;Database=dms;Username=d3l243;Application Name=PRISMTest", true)]
         [Category("PNL_Domain")]
         [Category("DatabaseIntegrated")]

@@ -837,7 +837,7 @@ namespace PRISMTest
         [Category("DatabaseIntegrated")]
         public void TestGetRecentLogEntriesPostgresIntegrated(string server, string database, int rowCountToRetrieve, int iterations, bool specifyColumnNames)
         {
-            var connectionString = string.Format("Host={0};Database={1};Integrated Security=true;Username=d3l243", server, database);
+            var connectionString = string.Format("Host={0};Database={1};Username=d3l243", server, database);
             TestGetRecentLogEntries(connectionString, rowCountToRetrieve, iterations, specifyColumnNames);
         }
 
