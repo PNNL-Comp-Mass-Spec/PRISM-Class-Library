@@ -14,14 +14,17 @@ namespace PRISMWin
 
         // Note: System.Windows.Forms.DataGrid is deprecated/gone in .NET 5.0, in favor of System.Windows.Forms.DataGridView
 #if NETFRAMEWORK
+
+        // ReSharper disable once UnusedMember.Global
+
         /// <summary>
         /// Append a column to a DataGrid table style
         /// </summary>
-        /// <param name="tableStyle"></param>
-        /// <param name="mappingName"></param>
+        /// <param name="tableStyle">Table style</param>
+        /// <param name="mappingName">Mapping name</param>
         /// <param name="headerText">User-friendly column name</param>
-        /// <param name="columnWidth"></param>
-        /// <param name="isReadOnly"></param>
+        /// <param name="columnWidth">Column width</param>
+        /// <param name="isReadOnly">True if readonly</param>
         /// <param name="isDateTime">When true, format the column as a date</param>
         /// <param name="decimalPlaces">
         /// If 0 or greater, a format string is constructed to show the specified number of decimal places
@@ -60,14 +63,16 @@ namespace PRISMWin
             tableStyle.GridColumnStyles.Add(newColumn);
         }
 
+        // ReSharper disable once UnusedMember.Global
+
         /// <summary>
         /// Append a boolean column to a DataGrid table style
         /// </summary>
-        /// <param name="tableStyle"></param>
-        /// <param name="mappingName"></param>
+        /// <param name="tableStyle">Table style</param>
+        /// <param name="mappingName">Mapping name</param>
         /// <param name="headerText">User-friendly column name</param>
-        /// <param name="columnWidth"></param>
-        /// <param name="isReadOnly"></param>
+        /// <param name="columnWidth">Column width</param>
+        /// <param name="isReadOnly">True if readonly</param>
         /// <param name="sourceIsTrueFalse">
         /// True if the source data represents true and false using boolean values
         /// False if the source data represents true and false using 1 and 0

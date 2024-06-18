@@ -94,6 +94,8 @@ namespace PRISMWin
         [DllImport("rstrtmgr.dll")]
         private static extern int RmEndSession(uint pSessionHandle);
 
+        // ReSharper disable once IdentifierTypo
+
         [DllImport("rstrtmgr.dll")]
         private static extern int RmGetList(uint dwSessionHandle,
                                     out uint pnProcInfoNeeded,
@@ -123,6 +125,8 @@ namespace PRISMWin
 
             try
             {
+                // ReSharper disable IdentifierTypo
+
                 const int ERROR_MORE_DATA = 234;
                 uint pnProcInfo = 0,
                      lpdwRebootReasons = RmRebootReasonNone;
@@ -138,6 +142,8 @@ namespace PRISMWin
                 //  The first call to RmGetList() returns the total number of process.
                 //  However, when we call RmGetList() again to get the actual processes this number may have increased.
                 res = RmGetList(handle, out var pnProcInfoNeeded, ref pnProcInfo, null, ref lpdwRebootReasons);
+
+                // ReSharper enable IdentifierTypo
 
                 if (res == ERROR_MORE_DATA)
                 {
