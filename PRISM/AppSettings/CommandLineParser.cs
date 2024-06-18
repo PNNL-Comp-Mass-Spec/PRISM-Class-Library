@@ -189,7 +189,7 @@ namespace PRISM
             /// </summary>
             /// <remarks>This is also called when -CreateParamFile is provided</remarks>
             /// <param name="message">Error message</param>
-            /// <param name="isMissingRequiredParameter">True if this is a missing required parameter</param>
+            /// <param name="isMissingRequiredParameter">True if this is a missing, required parameter</param>
             internal void AddParseError(string message, bool isMissingRequiredParameter = false)
             {
                 var errorInfo = new ParseErrorInfo(message, isMissingRequiredParameter);
@@ -414,7 +414,7 @@ namespace PRISM
         /// Writes the values in <see cref="Results"/>.ParsedResults as a parameter file
         /// </summary>
         /// <param name="paramFilePath">Path for the parameter file</param>
-        /// <returns>True if the write was successful</returns>
+        /// <returns>True if the parameter file was created</returns>
         public bool CreateParamFile(string paramFilePath)
         {
             if (string.IsNullOrWhiteSpace(paramFilePath))
@@ -569,7 +569,7 @@ namespace PRISM
                 var filePreprocessedArgs = new Dictionary<string, List<string>>();
 
                 // Check for a parameter file, and load any arguments from it
-                // Don't automatically merge with the command-line arguments
+                // Do not automatically merge with the command-line arguments
                 foreach (var paramFileArg in paramFileArgs)
                 {
                     // Make sure the param file arg is not defined in the template class
@@ -942,7 +942,7 @@ namespace PRISM
         /// Reads a parameter file
         /// </summary>
         /// <param name="paramFilePath">Parameter file path</param>
-        /// <param name="paramFileLines">Output: List of parameters read from the parameter file; each line will starts with a dash</param>
+        /// <param name="paramFileLines">Output: List of parameters read from the parameter file; each line will start with a dash</param>
         /// <param name="paramFileDirectory">Output: parameter file directory</param>
         /// <returns>True if success, false if an error</returns>
         private bool ReadParamFile(string paramFilePath, out List<string> paramFileLines, out DirectoryInfo paramFileDirectory)
@@ -1005,7 +1005,7 @@ namespace PRISM
         /// <param name="paramFile">Parameter file</param>
         /// <returns>
         /// List of parameters read from the parameter file
-        /// Each line will starts with a dash
+        /// Each line will start with a dash
         /// </returns>
         private IEnumerable<string> ReadParamFile(FileSystemInfo paramFile)
         {
@@ -2022,7 +2022,7 @@ namespace PRISM
 
             if (keyNamesToHide.Count > 0 && keyNamesToHide.Count == prop.Value.ParamKeys.Length)
             {
-                // All of the key names are long; show the shortest one
+                // All key names are long; show the shortest one
                 keyNamesToHide.Remove(shortestLongName);
             }
         }
@@ -2079,7 +2079,7 @@ namespace PRISM
                 {
                     if (string.IsNullOrWhiteSpace(prop.Value.ArgExistsProperty))
                     {
-                        // ArgExistsProperty is set to a empty or whitespace value
+                        // ArgExistsProperty is set to an empty or whitespace value
                         Results.AddParseError(
                             @"Error: {0} must be either null, or a boolean property name (use nameof()); class {1}, property {2}, current value is ""{3}""",
                             nameof(prop.Value.ArgExistsProperty), typeof(T).Name, prop.Key.Name, prop.Value.ArgExistsProperty);
@@ -2383,7 +2383,7 @@ namespace PRISM
             public List<string> AllArgNormalCase { get; }
 
             /// <summary>
-            /// If the name is case sensitive
+            /// If the name is case-sensitive
             /// </summary>
             public bool CaseSensitive { get; set; }
 

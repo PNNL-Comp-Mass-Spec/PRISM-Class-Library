@@ -677,7 +677,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
+        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to this Action</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
@@ -977,7 +977,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Method for calling a procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing procedure params</param>
-        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to the this Action</param>
+        /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to this Action</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <returns>Result code returned by SP; -1 if unable to execute SP</returns>
@@ -1694,7 +1694,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </remarks>
         /// <param name="sqlQuery">SQL query</param>
         /// <param name="columnCountWithCapitalLetters">Output: number of columns with at least one capital letter (ignoring quoted column names)</param>
-        /// <returns>Dictionary where both keys and values are the column names, but the dictionary uses case insensitive string lookups</returns>
+        /// <returns>Dictionary where both keys and values are the column names, but the dictionary uses case-insensitive string lookups</returns>
         private static Dictionary<string, string> GetColumnCapitalizationMap(string sqlQuery, out int columnCountWithCapitalLetters)
         {
             var columnNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

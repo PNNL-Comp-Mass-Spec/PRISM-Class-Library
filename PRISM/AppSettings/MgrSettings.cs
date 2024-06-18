@@ -191,7 +191,7 @@ namespace PRISM.AppSettings
                 MgrParams.Add(item.Key, item.Value);
             }
 
-            // Auto-add setting ApplicationPath, which is the directory with this applications .exe
+            // Auto-add setting ApplicationPath, which is the directory with this application's .exe
             var appPath = AppUtils.GetAppPath();
             var appFile = new FileInfo(appPath);
             SetParam("ApplicationPath", appFile.DirectoryName);

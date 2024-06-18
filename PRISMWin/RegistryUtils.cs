@@ -154,7 +154,7 @@ namespace PRISMWin
 
                     // Up to 2.11.x, DLLs are installed in R_HOME\bin
                     // From 2.12.0, DLLs are installed in either i386 or x64 (or both) below the bin directory
-                    // The bin directory has an R.exe file but it does not have Rcmd.exe or R.dll
+                    // The bin directory has an R.exe file, but it does not have Rcmd.exe or R.dll
                     if (currentVersion < new Version(2, 12))
                     {
                         errorMessage = string.Empty;

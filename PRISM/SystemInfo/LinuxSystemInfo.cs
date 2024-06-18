@@ -106,7 +106,7 @@ namespace PRISM
             // This RegEx matches the ProcessID and command name, plus the various stats
             mStatLineMatcher = new Regex(@"^(?<pid>\d+) (?<command>\([^)]+\)) (?<state>\S) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
-            // This is a fall back RegEx that starts at state in case mStatLineMatcher fails
+            // This is a fallback RegEx that starts at state in case mStatLineMatcher fails
             mStatLineMatcherNoCommand = new Regex(@"(?<state>[A-Za-z]) (?<ppid>[0-9-]+) (?<pgrp>[0-9-]+) (?<session>[0-9-]+) (?<tty_nr>[0-9-]+) (?<tty_pgrp>[0-9-]+) (?<flags>\d+) (?<minflt>\d+) (?<cminflt>\d+) (?<majflt>\d+) (?<cmajflt>\d+) (?<utime>\d+) (?<stime>\d+)");
 
             // Prevent DebugEvent messages from being displayed at console if the calling class has not subscribed to DebugEvent
@@ -172,7 +172,7 @@ namespace PRISM
             //  guest      Time spent running a virtual CPU for guest operating systems (included in user)
             //  guest_nice Time spent running a virtual CPU with low priority for guest operating systems (included in nice)
 
-            // Sum all of the numbers following cpu
+            // Sum the numbers following cpu
             var fields = dataLine.Split(' ');
 
             if (fields.Length < 2)
@@ -234,7 +234,7 @@ namespace PRISM
         /// Parse utime and stime from a stat file for a given process
         /// </summary>
         /// <remarks>
-        /// For multi-threaded applications, the task directory below the ProcessID directory will have
+        /// For multithreaded applications, the task directory below the ProcessID directory will have
         /// separate ProcessID directories for each thread. Those directories could be parsed to determine
         /// the processing time for each thread. However, the stat file in the base ProcessID directory
         /// has the combined processing time for all threads, so parsing of individual thread stat times

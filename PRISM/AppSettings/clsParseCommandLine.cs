@@ -14,7 +14,7 @@ namespace PRISM
     /// <remarks>
     /// <para>
     /// NET Standard does not have Environment.CommandLine, which means making this functional under NET Standard is non-trivial and API-breaking.
-    /// Instead use the CommandLineParser class.
+    /// Instead, use the CommandLineParser class.
     /// </para>
     /// <para>
     /// This class is not marked as obsolete since it is used in numerous applications

@@ -65,7 +65,7 @@ namespace PRISMTest
                 }
             }
 
-            // Cache the list of old log file directories so we can examine the .zip file for each
+            // Cache the list of old log file directories, so we can examine the .zip file for each
             var logFileDirs = new List<DirectoryInfo>();
 
             // Create dummy log files for previous years
@@ -150,7 +150,7 @@ namespace PRISMTest
                 if (!zipFileToCheck.Exists)
                 {
                     // The previous year won't have a zip file created until after March 1
-                    // Determine whether or not one should be expected
+                    // Determine whether one should be expected
 
                     if (!int.TryParse(oldLogFilesDir.Name, out var subDirYear))
                     {

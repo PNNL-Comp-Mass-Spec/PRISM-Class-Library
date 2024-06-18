@@ -64,7 +64,7 @@ namespace PRISM
         private CachedSectionInfo mCachedSection;
 
         /// <summary>
-        /// Loads the settings for the defined Xml Settings File; assumes names are not case sensitive
+        /// Loads the settings for the defined Xml Settings File; assumes names are not case-sensitive
         /// </summary>
         /// <returns>True if successfully loaded, otherwise false</returns>
         public bool LoadSettings()
@@ -73,7 +73,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Loads the settings for the defined Xml Settings File; assumes names are not case sensitive
+        /// Loads the settings for the defined Xml Settings File; assumes names are not case-sensitive
         /// </summary>
         /// <param name="XmlSettingsFilePath">The path to the XML settings file</param>
         /// <returns>True if successfully loaded, otherwise false</returns>
@@ -85,9 +85,9 @@ namespace PRISM
         /// <summary>
         /// Loads the settings for the defined Xml Settings File
         /// </summary>
-        /// <remarks>If case sensitive names are in place, all section and key names must be lowercase</remarks>
+        /// <remarks>If case-sensitive names are in place, all section and key names must be lowercase</remarks>
         /// <param name="XmlSettingsFilePath">The path to the XML settings file</param>
-        /// <param name="isCaseSensitive">Case sensitive names if True. Non-case sensitive if false</param>
+        /// <param name="isCaseSensitive">Case-sensitive names if True. Non-case sensitive if false</param>
         public bool LoadSettings(string XmlSettingsFilePath, bool isCaseSensitive)
         {
             mCaseSensitive = isCaseSensitive;

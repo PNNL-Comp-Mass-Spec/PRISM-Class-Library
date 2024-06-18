@@ -200,10 +200,10 @@ namespace PRISM
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
         /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        /// Use this method to backup old versions of a file before copying a new version to a target directory
+        /// Use this method to back up old versions of a file before copying a new version to a target directory
         /// Keeps up to 9 old versions of a file
         /// </summary>
-        /// <param name="targetFilePath">Full path to the file to backup</param>
+        /// <param name="targetFilePath">Full path to the file to back up</param>
         /// <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
         public static bool BackupFileBeforeCopy(string targetFilePath)
         {
@@ -213,9 +213,9 @@ namespace PRISM
         /// <summary>
         /// Renames targetFilePath to have _Old1 before the file extension
         /// Also looks for and renames other backed up versions of the file (those with _Old2, _Old3, etc.)
-        /// Use this method to backup old versions of a file before copying a new version to a target directory
+        /// Use this method to back up old versions of a file before copying a new version to a target directory
         /// </summary>
-        /// <param name="targetFilePath">Full path to the file to backup</param>
+        /// <param name="targetFilePath">Full path to the file to back up</param>
         /// <param name="versionCountToKeep">Maximum backup copies of the file to keep</param>
         /// <returns>True if the file was successfully renamed (also returns True if the target file does not exist)</returns>
         public static bool BackupFileBeforeCopy(string targetFilePath, int versionCountToKeep)
@@ -224,7 +224,7 @@ namespace PRISM
 
             if (!targetFile.Exists)
             {
-                // Target file does not exist; nothing to backup
+                // Target file does not exist; nothing to back up
                 return true;
             }
 
@@ -554,7 +554,7 @@ namespace PRISM
 
                     if (overLength > 0)
                     {
-                        // Need to shorten filename too
+                        // Need to also shorten filename
                         // Determine which index the filename is in
                         int fileNameIndex;
                         for (fileNameIndex = pathPartCount - 1; fileNameIndex >= 0; fileNameIndex += -1)
@@ -969,7 +969,7 @@ namespace PRISM
                 UpdateCurrentStatusIdle();
             }
 
-            // Copy all the sub-directories by recursively calling this same routine
+            // Copy the subdirectories by recursively calling this same routine
             foreach (var subDirectory in sourceDir.GetDirectories())
             {
                 if (subDirectory.FullName.Equals(destDir.FullName))
@@ -1349,7 +1349,7 @@ namespace PRISM
         /// <param name="sourcePath">The source file path</param>
         /// <param name="destPath">The destination file path</param>
         /// <param name="overWrite">True to overwrite</param>
-        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
+        /// <param name="backupDestFileBeforeCopy">True to back up the destination file before copying</param>
         public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy)
         {
             CopyFile(sourcePath, destPath, overWrite, backupDestFileBeforeCopy, DEFAULT_VERSION_COUNT_TO_KEEP);
@@ -1361,7 +1361,7 @@ namespace PRISM
         /// <param name="sourcePath">The source file path</param>
         /// <param name="destPath">The destination file path</param>
         /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false</param>
-        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
+        /// <param name="backupDestFileBeforeCopy">True to back up the destination file before copying</param>
         /// <param name="versionCountToKeep">Number of backup copies to keep</param>
         public void CopyFile(string sourcePath, string destPath, bool overWrite, bool backupDestFileBeforeCopy, int versionCountToKeep)
         {
@@ -1388,7 +1388,7 @@ namespace PRISM
         /// <param name="sourcePath">The source file path</param>
         /// <param name="destPath">The destination file path</param>
         /// <param name="overWrite">True if the destination file can be overwritten; otherwise, false</param>
-        /// <param name="backupDestFileBeforeCopy">True to backup the destination file before copying</param>
+        /// <param name="backupDestFileBeforeCopy">True to back up the destination file before copying</param>
         /// <param name="versionCountToKeep">Number of backup copies to keep</param>
         private void CopyFileEx(
             string sourcePath, string destPath,
@@ -2128,7 +2128,7 @@ namespace PRISM
 
             try
             {
-                // The file might be ReadOnly; check for this then re-try the delete
+                // The file might be ReadOnly; check for this then retry deleting the file
                 if (targetFile.IsReadOnly)
                 {
                     targetFile.IsReadOnly = false;
@@ -2242,7 +2242,7 @@ namespace PRISM
 
                         try
                         {
-                            // Retry the delete
+                            // Retry deleting the file
                             fileToDelete.Delete();
                             errorMessage = string.Empty;
                             return true;
@@ -2399,7 +2399,7 @@ namespace PRISM
                 fileCount++;
             }
 
-            // Add the size of each sub-directory, that is retrieved by recursively
+            // Add the size of each subdirectory, that is retrieved by recursively
             // calling this same routine
             foreach (var subDir in directory.GetDirectories())
             {
@@ -3103,7 +3103,7 @@ namespace PRISM
             // Wait for up to 180 minutes (3 hours) for the server resources to free up
 
             // However, if retrieving files from agate.emsl.pnl.gov only wait for a maximum of 30 minutes
-            // because sometimes that directory's permissions get messed up and we can create files there, but cannot delete them
+            // because sometimes that directory's permissions get messed up, and we can create files there, but cannot delete them
 
             var maxWaitTimeSource = MAX_LOCKFILE_WAIT_TIME_MINUTES;
             var maxWaitTimeTarget = MAX_LOCKFILE_WAIT_TIME_MINUTES;
@@ -3149,7 +3149,7 @@ namespace PRISM
                         // The source server has enough resources available to allow the copy
                         if (mbBacklogTarget + sourceFileSizeMB < LOCKFILE_TRANSFER_THRESHOLD_MB || WaitedTooLong(waitTimeStart, maxWaitTimeTarget))
                         {
-                            // The target server has enough resources available to allow the copy
+                            // The target server has enough resources available to allow copying the file
                             // Copy the file
                             stopWaiting = true;
                         }

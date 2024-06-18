@@ -56,7 +56,7 @@ namespace PRISMTest
         {
             if (spaceIndentCount > 0)
             {
-                // Indent all of the wrapped lines by the given amount
+                // Indent the wrapped lines by the given amount
                 textToWrap = new string(' ', spaceIndentCount) + textToWrap;
             }
 
@@ -127,7 +127,7 @@ namespace PRISMTest
         {
             if (spaceIndentCount > 0)
             {
-                // Indent all of the wrapped lines by the given amount
+                // Indent the wrapped lines by the given amount
                 textToWrap = new string(' ', spaceIndentCount) + textToWrap;
             }
 

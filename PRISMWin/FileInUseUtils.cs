@@ -152,7 +152,7 @@ namespace PRISMWin
                     {
                         processes = new List<Process>((int)pnProcInfo);
 
-                        // Enumerate all of the results and add them to the list to be returned
+                        // Enumerate the results and add them to the list to be returned
                         for (var i = 0; i < pnProcInfo; i++)
                         {
                             try

@@ -16,10 +16,10 @@ namespace PRISMTest
         private const string UTILITIES_DIRECTORY = @"\\proto-2\unitTest_Files\PRISM\Utilities";
 
         /// <summary>
-        /// Start long running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
+        /// Start long-running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
         /// </summary>
         /// <remarks>
-        /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account; thus the DesktopInteraction category
+        /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account; thus the category DesktopInteraction
         /// Category PNL_Domain is included here because these tests do not work on AppVeyor
         /// </remarks>
         /// <param name="exeName"></param>
@@ -36,7 +36,7 @@ namespace PRISMTest
         }
 
         /// <summary>
-        /// Start long running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
+        /// Start long-running processes then force them to be aborted by setting maxRuntimeSeconds to a small value
         /// </summary>
         /// <remarks>
         /// Category PNL_Domain is included here because these tests do not work on AppVeyor

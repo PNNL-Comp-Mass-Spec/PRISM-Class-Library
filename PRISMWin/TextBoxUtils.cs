@@ -31,7 +31,7 @@ namespace PRISMWin
         }
 
         /// <summary>
-        /// Look for a integer value in a TextBox
+        /// Look for an integer value in a TextBox
         /// </summary>
         /// <param name="thisTextBox">TextBox</param>
         /// <param name="messageIfError">Message to show the user if an error and informOnError is true</param>

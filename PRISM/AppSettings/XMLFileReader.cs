@@ -34,7 +34,7 @@ namespace PRISM
         private readonly bool NotifyOnException;
 
         /// <summary>
-        /// Initializes a new instance of the XMLFileReader (non case-sensitive)
+        /// Initializes a new instance of the XMLFileReader (non-case sensitive)
         /// </summary>
         /// <param name="xmlFilename">XML file name</param>
         /// <param name="isCaseSensitive"></param>
@@ -81,7 +81,7 @@ namespace PRISM
         public bool Initialized { get; private set; }
 
         /// <summary>
-        /// This is True if setting names are case sensitive
+        /// This is True if setting names are case-sensitive
         /// </summary>
         private bool CaseSensitive { get; }
 
@@ -644,7 +644,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Manually read a XML or .INI settings file line-by-line, extracting out any settings in the expected format
+        /// Manually read an XML or .INI settings file line-by-line, extracting out any settings in the expected format
         /// </summary>
         /// <param name="filePath"></param>
         public bool ManualParseXmlOrIniFile(string filePath)

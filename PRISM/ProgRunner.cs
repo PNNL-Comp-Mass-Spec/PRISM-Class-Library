@@ -766,8 +766,7 @@ namespace PRISM
                     mConsoleOutputStreamWriter.Dispose();
                 }
 
-                // Decide whether or not to repeat starting
-                // the external process again, or quit
+                // Decide whether to repeat starting the external process again, or quit
                 if (Repeat && !mDoCleanup)
                 {
                     // Repeat starting the process

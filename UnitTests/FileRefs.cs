@@ -13,7 +13,7 @@ namespace PRISMTest
         /// <summary>
         /// This keeps track of the last parent path where we successfully found a data file
         /// </summary>
-        /// <remarks>This path is check first on subsequent calls to GetTestFile in the same test session</remarks>
+        /// <remarks>This path is checked first on subsequent calls to GetTestFile in the same test session</remarks>
         private static string mLastMatchedParentPath = "";
 
         /// <summary>

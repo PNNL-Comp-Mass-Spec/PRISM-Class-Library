@@ -8,7 +8,7 @@ using System.Threading;
 namespace PRISM
 {
     /// <summary>
-    /// Static class to contain an extension method for limited parallel processing of an IEnumerable and the class containing all of the implementation details
+    /// Static class to contain an extension method for limited parallel processing of an IEnumerable and the class containing the implementation details
     /// </summary>
     public static class ParallelPreprocessing
     {

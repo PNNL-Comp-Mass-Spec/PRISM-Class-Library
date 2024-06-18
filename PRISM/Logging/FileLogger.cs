@@ -904,7 +904,7 @@ namespace PRISM.Logging
                         continue;
                     }
 
-                    // The directory is old enough; zip all of the files
+                    // The directory is old enough; zip the files
 
                     var zipFileName = subDir.Name + ".zip";
                     var zipFile = new FileInfo(Path.Combine(logDirectory.FullName, zipFileName));
