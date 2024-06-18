@@ -744,12 +744,12 @@ namespace PRISM
 
                     var positionalArgName = GetPositionalArgName(prop.Value.ArgPosition);
 
-                    if (prop.Value.ArgPosition > 0 && preprocessed.ContainsKey(positionalArgName))
+                    if (prop.Value.ArgPosition > 0 && preprocessed.TryGetValue(positionalArgName, out var argValue))
                     {
                         keyGiven = "PositionalArgument" + prop.Value.ArgPosition;
                         specified = true;
 
-                        AppendArgumentValues(value, preprocessed[positionalArgName]);
+                        AppendArgumentValues(value, argValue);
                     }
 
                     var currentValue = prop.Key.GetValue(Results.ParsedResults);
@@ -1487,10 +1487,8 @@ namespace PRISM
                 // Key normalization - usually allow case-insensitivity
                 var ciKey = key.ToLower();
 
-                if (validArgs.ContainsKey(ciKey))
+                if (validArgs.TryGetValue(ciKey, out var argInfo))
                 {
-                    var argInfo = validArgs[ciKey];
-
                     // if argument is case-sensitive, make sure it matches an argument
                     if (argInfo.CaseSensitive && !argInfo.AllArgNormalCase.Contains(key))
                     {
@@ -2114,7 +2112,7 @@ namespace PRISM
                     ArgInfo info;
 
                     // Check for name collision on the same spelling
-                    if (!validArgs.ContainsKey(lower))
+                    if (!validArgs.TryGetValue(lower, out var arg))
                     {
                         info = new ArgInfo();
                         validArgs.Add(lower, info);
@@ -2122,7 +2120,7 @@ namespace PRISM
                     }
                     else
                     {
-                        info = validArgs[lower];
+                        info = arg;
                         info.CaseSensitive = true;
                     }
 

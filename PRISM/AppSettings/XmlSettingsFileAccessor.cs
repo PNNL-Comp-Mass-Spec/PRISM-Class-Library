@@ -304,9 +304,9 @@ namespace PRISM
                 {
                     var keyNameToFind = SetNameCase(keyName);
 
-                    if (mCachedSection.Keys.ContainsKey(keyNameToFind))
+                    if (mCachedSection.Keys.TryGetValue(keyNameToFind, out var value))
                     {
-                        return mCachedSection.Keys[keyNameToFind];
+                        return value;
                     }
 
                     return string.Empty;
@@ -325,9 +325,9 @@ namespace PRISM
         {
             var sectionNameToFind = SetNameCase(sectionName);
 
-            if (mSectionNames.ContainsKey(sectionNameToFind))
+            if (mSectionNames.TryGetValue(sectionNameToFind, out var value))
             {
-                return mSectionNames[sectionNameToFind];
+                return value;
             }
 
             return string.Empty;

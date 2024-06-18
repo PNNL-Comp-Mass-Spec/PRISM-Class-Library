@@ -501,9 +501,9 @@ namespace PRISM
 
                 if (caseSensitive)
                 {
-                    if (mSwitches.ContainsKey(paramName))
+                    if (mSwitches.TryGetValue(paramName, out var value))
                     {
-                        paramValue = Convert.ToString(mSwitches[paramName]);
+                        paramValue = Convert.ToString(value);
                         return true;
                     }
 
