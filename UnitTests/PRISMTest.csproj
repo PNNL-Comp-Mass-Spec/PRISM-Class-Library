@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-    <NoWarn>IDE0028;1701;1702</NoWarn>
+    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-    <NoWarn>IDE0028;1701;1702</NoWarn>
+    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
