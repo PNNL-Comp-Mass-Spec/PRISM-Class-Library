@@ -315,6 +315,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -387,6 +389,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             return false;
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings (does not include column names)
         /// </summary>
@@ -422,6 +426,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             return GetQueryResults(cmd, out results, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Run a query against a PostgreSQL database, return the results as a list of strings (does not include column names)
         /// </summary>
@@ -448,6 +454,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             return GetQueryResults(cmd, out results, out _, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings
@@ -533,6 +541,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             return GetQueryResults(cmd, readMethod, retryCount, retryDelaySeconds, callingFunction);
         }
+
+        // ReSharper disable once UnusedMember.Global
 
         /// <summary>
         /// Run a query against a PostgreSQL database, return the results as a DataTable object
@@ -710,6 +720,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
+            // ReSharper disable once GrammarMistakeInComment
+
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -856,6 +869,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -926,8 +941,13 @@ namespace PRISMDatabaseUtils.PostgreSQL
                         maxRowsToReturn = int.MaxValue;
                     }
 
+                    // ReSharper disable GrammarMistakeInComment
+
                     // Cannot use 'yield return' inside of a try-catch block
                     // Instead, initialize the reader there to limit potential exceptions outside of try-catch
+
+                    // ReSharper restore GrammarMistakeInComment
+
                     using (reader)
                     {
                         while (reader.Read() && rowCount < maxRowsToReturn)
@@ -1013,6 +1033,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 retryDelaySeconds = 1;
 
             var deadlockOccurred = false;
+
+            // ReSharper disable once GrammarMistakeInComment
 
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
@@ -1154,6 +1176,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             return resultCode;
         }
+
+        // ReSharper disable once GrammarMistakeInComment
+        // ReSharper disable once UnusedMember.Global
 
         /// <summary>
         /// Method for calling a procedure if a data table is to be returned
@@ -1326,6 +1351,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 retryDelaySeconds = 1;
             }
+
+            // ReSharper disable once GrammarMistakeInComment
 
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
@@ -1540,6 +1567,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
             // Optional: force the parameter name to be lowercase
             // See https://stackoverflow.com/a/45080006/1179467
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // string updatedName;
             // if (name.StartsWith("\""))
             //     // Surrounded by double quotes; leave as-is
@@ -1560,6 +1589,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             return param;
         }
+
+        // ReSharper disable once UnusedMember.Global
 
         /// <inheritdoc />
         public DbParameter AddTypedParameter<T>(

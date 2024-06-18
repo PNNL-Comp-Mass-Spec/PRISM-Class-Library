@@ -134,6 +134,8 @@ namespace PRISM
             }
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>

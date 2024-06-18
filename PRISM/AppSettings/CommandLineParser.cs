@@ -294,6 +294,8 @@ namespace PRISM
         /// </remarks>
         public string ParameterFilePath { get; private set; }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// The characters allowed at the beginning of an argument specifier. Defaults to '-' and '/', and other characters are not supported.
         /// The point of this property is to change a program to only use '-' (or '--') or only use '/' (or '//') as the argument specifier prefix
@@ -1459,7 +1461,9 @@ namespace PRISM
 
                     if (paramChars.Contains('/') && nextArg.StartsWith("/"))
                     {
-                        // Don't try to treat a linux rooted path (starts with '/') as an argument
+                        // ReSharper disable once GrammarMistakeInComment
+
+                        // Don't try to treat a Linux rooted path (starts with '/') as an argument
                         if (nextArg.TrimStart('/').Count(x => x == '/') >= 1)
                         {
                             // Path has at least one '/' that is not at the start of the string
@@ -1500,6 +1504,8 @@ namespace PRISM
                         key = argInfo.ArgNormalCase;
                     }
                 }
+
+                // ReSharper disable once GrammarMistakeInComment
 
                 // Keep track of each of the values defined for an argument (if listed multiple times on the command line or in a parameter file)
                 // If the argument's property is an array, all of the arguments are kept

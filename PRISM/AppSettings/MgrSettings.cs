@@ -29,6 +29,8 @@ namespace PRISM.AppSettings
     {
         // Ignore Spelling: App, Cfg, DMS
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Enum for database schema prefix manager parameters
         /// </summary>

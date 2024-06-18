@@ -15,6 +15,8 @@ namespace PRISM
     {
         // Ignore Spelling: App, Utils
 
+        // ReSharper disable once UnusedMember.Global
+
         /// <summary>
         /// Decode a string with a simple alternating shift cipher
         /// </summary>
@@ -24,6 +26,8 @@ namespace PRISM
         {
             return EncryptDecryptShiftCipher(encoded, false);
         }
+
+        // ReSharper disable once UnusedMember.Global
 
         /// <summary>
         /// Encode a string with a simple alternating shift cipher

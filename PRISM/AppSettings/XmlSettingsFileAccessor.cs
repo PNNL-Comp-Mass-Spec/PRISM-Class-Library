@@ -7,6 +7,8 @@ using System.Globalization;
 // ReSharper disable once CheckNamespace
 namespace PRISM
 {
+    // ReSharper disable once GrammarMistakeInComment
+
     /// <summary>
     /// This class can be used to read or write settings in an Xml settings file
     /// Based on a class from the DMS Analysis Manager software written by Dave Clark and Gary Kiebel (PNNL, Richland, WA)

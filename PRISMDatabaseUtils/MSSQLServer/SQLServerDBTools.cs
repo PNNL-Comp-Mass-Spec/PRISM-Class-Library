@@ -167,6 +167,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             }
         }
 
+        // ReSharper disable once UnusedMember.Global
+
         /// <summary>
         /// Get a disconnected dataset as specified by the SQL statement
         /// </summary>
@@ -341,6 +343,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -407,6 +411,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             return false;
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings (does not include column names)
         /// </summary>
@@ -442,6 +448,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             return GetQueryResults(cmd, out results, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings
         /// </summary>
@@ -468,6 +476,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
         {
             return GetQueryResults(cmd, out results, out _, retryCount, maxRowsToReturn, retryDelaySeconds, callingFunction);
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Run a query against a SQL Server database, return the results as a list of strings
@@ -719,6 +729,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -782,6 +794,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
             return false;
         }
+
+        // ReSharper disable once UnusedMember.Global
 
         /// <summary>
         /// Run a query against a SQL database, return the results as an IEnumerable of objects
@@ -859,6 +873,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             if (retryDelaySeconds < 1)
                 retryDelaySeconds = 1;
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -929,8 +945,13 @@ namespace PRISMDatabaseUtils.MSSQLServer
                         maxRowsToReturn = int.MaxValue;
                     }
 
+                    // ReSharper disable GrammarMistakeInComment
+
                     // Cannot use 'yield return' inside of a try-catch block
                     // Instead, initialize the reader there to limit potential exceptions outside of try-catch
+
+                    // ReSharper restore GrammarMistakeInComment
+
                     using (reader)
                     {
                         while (reader.Read() && rowCount < maxRowsToReturn)
@@ -1022,6 +1043,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 retryDelaySeconds = 1;
 
             var deadlockOccurred = false;
+
+            // ReSharper disable once GrammarMistakeInComment
 
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
@@ -1126,6 +1149,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
 
             return resultCode;
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Method for executing a stored procedure if a data table is to be returned
@@ -1292,6 +1317,8 @@ namespace PRISMDatabaseUtils.MSSQLServer
             {
                 retryDelaySeconds = 1;
             }
+
+            // ReSharper disable once GrammarMistakeInComment
 
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters

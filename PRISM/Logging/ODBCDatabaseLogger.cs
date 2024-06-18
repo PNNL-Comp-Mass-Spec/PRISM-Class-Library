@@ -190,6 +190,8 @@ namespace PRISM.Logging
             // To ODBC style:
             //   Driver={SQL Server Native Client 11.0};Server=myServerAddress;Database=myDataBase;Trusted_Connection=yes;
 
+            // ReSharper disable once GrammarMistakeInComment
+
             // Standard security:
             // Convert from one of these forms:
             //   Server=myServerAddress;Database=myDataBase;User Id=myUsername;Password=myPassword;
