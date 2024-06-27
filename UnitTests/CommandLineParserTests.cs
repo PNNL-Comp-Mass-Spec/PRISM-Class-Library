@@ -1277,7 +1277,7 @@ namespace PRISMTest
                 ContactInfo = "Program written by Maecenas cursus for fermentum ullamcorper velit in 2017" +
                               Environment.NewLine +
                               "E-mail: person@place.org or alternate@place.org" + Environment.NewLine +
-                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://panomics.pnnl.gov/ or https://www.pnnl.gov/integrative-omics",
+                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics",
 
                 UsageExamples = {
                     exeName + " InputFile.txt",
