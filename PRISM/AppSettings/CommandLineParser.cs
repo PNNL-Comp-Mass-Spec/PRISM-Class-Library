@@ -2463,7 +2463,13 @@ namespace PRISM
             attributes = new List<OptionAttribute>();
             if (Attribute.IsDefined(property, typeof(OptionAttribute), true))
             {
-                attributes.AddRange(property.GetCustomAttributes(typeof(OptionAttribute), true).Cast<OptionAttribute>());
+                // Note: as noted in the below link, MemberInfo.GetCustomAttributes() inheritance boolean is ignored for properties and events
+                // so 'property.GetCustomAttributes(typeof(OptionAttribute), true)', while convenient, will not find attributes only defined in the base class
+                // Attribute.IsDefined does find the attributes in the base class, and
+                // Attribute.GetCustomAttributes(property, typeof(OptionAttribute), true) will include attributes only defined in the base class
+                // https://learn.microsoft.com/en-us/dotnet/api/system.reflection.memberinfo.getcustomattributes?view=netframework-4.7.2#system-reflection-memberinfo-getcustomattributes(system-type-system-boolean)
+
+                attributes.AddRange(Attribute.GetCustomAttributes(property, typeof(OptionAttribute), true).Cast<OptionAttribute>());
 
                 if (firstMatchOnly)
                 {
