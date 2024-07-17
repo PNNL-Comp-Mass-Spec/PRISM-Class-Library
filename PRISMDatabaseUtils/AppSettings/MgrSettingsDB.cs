@@ -16,6 +16,10 @@ namespace PRISMDatabaseUtils.AppSettings
     {
         // Ignore Spelling: App, Postgres, PostgreSQL, pgpass, Utils
 
+        /// <summary>
+        /// Most recent error message reported by the DB Tools Factory
+        /// </summary>
+        private string RecentErrorMessage { get; set; } = string.Empty;
 
         /// <summary>
         /// Determine the expected path to the pgpass.conf file (or the .pgpass file if on Linux)
@@ -66,7 +70,9 @@ namespace PRISMDatabaseUtils.AppSettings
             }
 
             if (string.IsNullOrWhiteSpace(managerNameForConnectionString))
+            {
                 managerNameForConnectionString = managerName;
+            }
 
             var connectionStringToUse = DbToolsFactory.AddApplicationNameToConnectionString(dbConnectionString, managerNameForConnectionString);
 
@@ -78,6 +84,8 @@ namespace PRISMDatabaseUtils.AppSettings
 
             // Query the database
             var dbTools = DbToolsFactory.GetDBTools(connectionStringToUse);
+
+            dbTools.ErrorEvent += OnDbToolsErrorEvent;
 
             if (logConnectionErrors)
             {
@@ -91,7 +99,32 @@ namespace PRISMDatabaseUtils.AppSettings
                 // Log the message to the DB if the monthly Windows updates are not pending
                 var criticalError = !WindowsUpdateStatus.ServerUpdatesArePending();
 
-                ErrMsg = "MgrSettings.LoadMgrSettingsFromDBWork; Excessive failures attempting to retrieve manager settings from database for manager " + managerName;
+                var defaultErrorMessage = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: Excessive failures attempting to retrieve manager settings from database for manager {0}", managerName);
+
+                if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
+                {
+                    if (RecentErrorMessage.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        var pgPassFile = GetPgPassFile();
+
+                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: " +
+                                               "user specified in the connection string is not defined in the .pgpass file for the user running this manager; " +
+                                               "update file {0}; {1}", pgPassFile.FullName, RecentErrorMessage);
+                    }
+                    else if (RecentErrorMessage.IndexOf("LDAP authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: user specified in the connection string is not defined in the pg_hba.conf file on the PostgreSQL server; {0}", RecentErrorMessage);
+                    }
+                    else
+                    {
+                        ErrMsg = defaultErrorMessage;
+                    }
+                }
+                else
+                {
+                    ErrMsg = defaultErrorMessage;
+                }
+
                 if (logConnectionErrors)
                     ReportError(ErrMsg, criticalError);
 
@@ -114,6 +147,16 @@ namespace PRISMDatabaseUtils.AppSettings
             }
 
             return true;
+        }
+
+        /// <summary>Report an error</summary>
+        /// <param name="message">Error message</param>
+        /// <param name="ex">Exception (allowed to be null)</param>
+        private void OnDbToolsErrorEvent(string message, Exception ex)
+        {
+            RecentErrorMessage = string.Format("{0}{1}",
+                message,
+                ex == null ? string.Empty : string.Format("; {0}", ex.Message));
         }
 
         /// <summary>
@@ -145,8 +188,8 @@ namespace PRISMDatabaseUtils.AppSettings
         /// Examine configFileSettings to look for parameters in connectionStringParameterNames
         /// If defined, and if pointing to a PostgreSQL server, look for a pgpass file for the current user
         /// </summary>
-        /// <param name="configFileSettings"></param>
-        /// <param name="connectionStringParameterNames"></param>
+        /// <param name="configFileSettings">Dictionary with config file settings</param>
+        /// <param name="connectionStringParameterNames">Connection string parameter names</param>
         public void ValidatePgPass(IReadOnlyDictionary<string, string> configFileSettings, SortedSet<string> connectionStringParameterNames)
         {
             // This is used to look for Integrated Security=true
