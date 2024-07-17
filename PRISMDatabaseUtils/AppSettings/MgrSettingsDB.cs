@@ -16,6 +16,26 @@ namespace PRISMDatabaseUtils.AppSettings
     {
         // Ignore Spelling: App, Postgres, PostgreSQL, pgpass, Utils
 
+
+        /// <summary>
+        /// Determine the expected path to the pgpass.conf file (or the .pgpass file if on Linux)
+        /// </summary>
+        /// <returns>FileInfo instance</returns>
+        private static FileInfo GetPgPassFile()
+        {
+            if (SystemInfo.IsLinux)
+            {
+                // Standard location: ~/.pgpass
+                return new FileInfo(Path.Combine("~", ".pgpass"));
+            }
+
+            // ReSharper disable once CommentTypo
+            // Standard location: %APPDATA%\postgresql\pgpass.conf
+            var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+            return new FileInfo(Path.Combine(appDataDirectory, "postgresql", "pgpass.conf"));
+        }
+
         /// <summary>
         /// Load manager settings from the database
         /// </summary>
@@ -148,21 +168,7 @@ namespace PRISMDatabaseUtils.AppSettings
                     return;
                 }
 
-                FileInfo pgPassFile;
-                if (SystemInfo.IsLinux)
-                {
-                    // Standard location: ~/.pgpass
-                    var passwordFileName = ".pgpass";
-                    pgPassFile = new FileInfo(Path.Combine("~", passwordFileName));
-                }
-                else
-                {
-                    // ReSharper disable once CommentTypo
-                    // Standard location: %APPDATA%\postgresql\pgpass.conf
-                    var passwordFileName = "pgpass.conf";
-                    var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                    pgPassFile = new FileInfo(Path.Combine(appDataDirectory, "postgresql", passwordFileName));
-                }
+                var pgPassFile = GetPgPassFile();
 
                 if (pgPassFile.Exists)
                 {
