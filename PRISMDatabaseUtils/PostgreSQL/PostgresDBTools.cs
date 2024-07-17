@@ -722,7 +722,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             // ReSharper disable once GrammarMistakeInComment
 
-
             // Make sure we dispose of the command object; however, it must be done outside of the while loop (since we use the same command for retries)
             // Could use clones for each try, but that would cause problems with "Output" parameters
             using (sqlCmd)
@@ -1822,7 +1821,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             return ex.Message.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("open data reader exists for this command", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0;
+                   ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("LDAP authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>
