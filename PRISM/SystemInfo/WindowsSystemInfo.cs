@@ -869,6 +869,8 @@ namespace PRISM
             // Store the results in a dictionary
             var matchEnum = searcher.Get().GetEnumerator();
 
+            using var disposableMatchEnum = (IDisposable)matchEnum;
+
             while (matchEnum.MoveNext())
             {
                 var processId = (uint)matchEnum.Current["ProcessId"];
@@ -902,6 +904,8 @@ namespace PRISM
                     string.Format("SELECT CommandLine FROM Win32_Process WHERE ProcessId = {0}", process.Id));
 
                 var matchEnum = searcher.Get().GetEnumerator();
+
+                using var disposableMatchEnum = (IDisposable)matchEnum;
 
                 // Move to the 1st item
                 if (matchEnum.MoveNext())
