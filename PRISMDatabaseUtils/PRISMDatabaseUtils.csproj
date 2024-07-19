@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net462;net472;net48;netstandard2.0;netstandard2.1;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net462;net472;net48;netstandard2.0;netstandard2.1;net6.0;net8.0</TargetFrameworks>
     <RootNamespace>PRISMDatabaseUtils</RootNamespace>
     <AssemblyName>PRISMDatabaseUtils</AssemblyName>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -47,7 +47,7 @@
     <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
     <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
 
@@ -75,7 +75,7 @@
     <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net7.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
     <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
 
