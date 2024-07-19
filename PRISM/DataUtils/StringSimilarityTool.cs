@@ -125,16 +125,16 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Gets all letter pairs for each individual word in the string
         /// </summary>
-        /// <param name="textBob"></param>
+        /// <param name="text">Text to parse</param>
         /// <param name="removeNumbers">When true, remove digits from the text before comparing</param>
         /// <param name="removeSymbolsAndWhitespace">When true, remove symbols (anything not a letter or number) and whitespace from the text before comparing</param>
         /// <param name="caseSensitive">When true, require matching capitalization</param>
         /// <returns>List of word letter pairs</returns>
-        private static List<string> WordLetterPairs(string textBob, bool removeNumbers = false, bool removeSymbolsAndWhitespace = true, bool caseSensitive = false)
+        private static List<string> WordLetterPairs(string text, bool removeNumbers = false, bool removeSymbolsAndWhitespace = true, bool caseSensitive = false)
         {
             var allPairs = new List<string>();
 
-            var textToCheck = caseSensitive ? textBob : textBob.ToUpper();
+            var textToCheck = caseSensitive ? text : text.ToUpper();
             string filteredText;
 
             if (removeSymbolsAndWhitespace)
