@@ -27,8 +27,8 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Compares two strings based on letter pair matches
         /// </summary>
-        /// <param name="text1"></param>
-        /// <param name="text2"></param>
+        /// <param name="text1">String 1</param>
+        /// <param name="text2">String 2</param>
         /// <param name="removeNumbers">When true, remove digits from the text before comparing</param>
         /// <param name="removeSymbolsAndWhitespace">When true, remove symbols (anything not a letter or number) and whitespace from the text before comparing</param>
         /// <param name="caseSensitive">When true, require matching capitalization</param>
@@ -75,8 +75,8 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Concatenate all RegEx matches in text
         /// </summary>
-        /// <param name="matcher"></param>
-        /// <param name="text"></param>
+        /// <param name="matcher">RegEx matcher</param>
+        /// <param name="text">Text to match</param>
         private static string CombineAllMatches(Regex matcher, string text)
         {
             var filteredText = new StringBuilder();
@@ -96,7 +96,7 @@ namespace PRISM.DataUtils
         /// Generates an array containing every two consecutive letters in the input string
         /// </summary>
         /// <remarks>If the text is a single character, returns an array of length 1 with that single character</remarks>
-        /// <param name="text"></param>
+        /// <param name="text">Text to examine</param>
         /// <returns>List of pairs</returns>
         private static IEnumerable<string> LetterPairs(string text)
         {

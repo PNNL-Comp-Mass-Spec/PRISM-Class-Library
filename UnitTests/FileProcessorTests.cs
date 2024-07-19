@@ -18,7 +18,7 @@ namespace PRISMTest
         /// <param name="currentTaskProgressAtStart">Progress at the start of the current task (value between 0 and 100)</param>
         /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
         /// <param name="subTaskProgress">Progress of the current task (value between 0 and 100)</param>
-        /// <param name="expectedOverallProgress"></param>
+        /// <param name="expectedOverallProgress">Expected overall progress</param>
         [TestCase(0, 5, 0, 0)]
         [TestCase(0, 5, 20, 1)]
         [TestCase(5, 25, 33, 11.6)]
@@ -52,7 +52,7 @@ namespace PRISMTest
         /// <param name="currentTaskProgressAtEnd">Progress at the start of the current task (value between 0 and 100)</param>
         /// <param name="currentTaskItemsProcessed">Number of items processed so far during this task</param>
         /// <param name="currentTaskTotalItems">Total number of items to process during this task</param>
-        /// <param name="expectedOverallProgress"></param>
+        /// <param name="expectedOverallProgress">Expected overall progress</param>
         [TestCase(0, 5, 0, 5, 0)]
         [TestCase(0, 5, 1, 5, 1)]
         [TestCase(5, 25, 25, 75, 11.6666)]

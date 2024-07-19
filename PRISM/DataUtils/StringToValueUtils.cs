@@ -14,7 +14,7 @@ namespace PRISM.DataUtils
         /// Converts a string value of True or False to a boolean equivalent
         /// </summary>
         /// <remarks>Returns false if unable to convert</remarks>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="defaultValue">Boolean value to return if value is empty or cannot be converted</param>
         public static bool CBoolSafe(string value, bool defaultValue = false)
         {
@@ -34,7 +34,7 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Converts value to an integer
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="defaultValue">Double to return if value is not numeric</param>
         public static double CDoubleSafe(string value, double defaultValue)
         {
@@ -54,7 +54,7 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Converts value to a float
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="defaultValue">Float to return if value is not numeric</param>
         public static float CFloatSafe(string value, float defaultValue)
         {
@@ -74,7 +74,7 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Converts value to an integer
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="defaultValue">Integer to return if value is not numeric</param>
         public static int CIntSafe(string value, int defaultValue)
         {
@@ -94,7 +94,7 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Converts value to a short integer
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="defaultValue">Short to return if value is not numeric</param>
         public static short CShortSafe(string value, short defaultValue)
         {
@@ -114,7 +114,7 @@ namespace PRISM.DataUtils
         /// <summary>
         /// Check whether a string can be converted to a double
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <returns>True if successful, otherwise false</returns>
         public static bool IsNumber(string value)
         {

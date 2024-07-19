@@ -169,7 +169,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Convert log level to a string, optionally changing from all caps to initial caps
         /// </summary>
-        /// <param name="logLevel"></param>
+        /// <param name="logLevel">Log level</param>
         protected static string LogLevelToString(LogLevels logLevel)
         {
             var logLevelText = logLevel.ToString();
@@ -272,9 +272,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message (regardless of the log threshold level)
         /// </summary>
-        /// <param name="logLevel"></param>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="logLevel">Log level</param>
+        /// <param name="message">Message</param>
+        /// <param name="ex">Exception</param>
         public void WriteLog(LogLevels logLevel, string message, Exception ex = null)
         {
             var logMessage = new LogMessage(logLevel, message, ex);
@@ -284,7 +284,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message (regardless of the log threshold level)
         /// </summary>
-        /// <param name="logMessage"></param>
+        /// <param name="logMessage">Message</param>
         public abstract void WriteLog(LogMessage logMessage);
     }
 }

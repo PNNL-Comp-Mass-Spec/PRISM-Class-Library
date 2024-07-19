@@ -191,7 +191,7 @@ public sealed class PostgresDatabaseLogger : DatabaseLogger
     /// <summary>
     /// Callback invoked by the mQueueLogger timer
     /// </summary>
-    /// <param name="state"></param>
+    /// <param name="state">State</param>
     private static void LogMessagesCallback(object state)
     {
         ShowTrace("PostgresDatabaseLogger.mQueueLogger callback raised");
@@ -297,7 +297,7 @@ public sealed class PostgresDatabaseLogger : DatabaseLogger
     /// <summary>
     /// Log a message (regardless of this.LogLevel)
     /// </summary>
-    /// <param name="logMessage"></param>
+    /// <param name="logMessage">Log message</param>
     public override void WriteLog(LogMessage logMessage)
     {
         mMessageQueue.Enqueue(logMessage);

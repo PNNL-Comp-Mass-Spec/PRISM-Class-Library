@@ -129,7 +129,7 @@ namespace PRISMDatabaseUtils
         /// By default, retries the query up to 3 times
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -199,7 +199,7 @@ namespace PRISMDatabaseUtils
         /// By default, retries the query up to 3 times
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -223,7 +223,7 @@ namespace PRISMDatabaseUtils
         /// By default, retries the query up to 3 times
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="columnNames">Column names (as returned by the database)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
@@ -247,7 +247,7 @@ namespace PRISMDatabaseUtils
         /// By default, retries the query up to 3 times
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="queryResults">Results (list of list of strings)</param>
+        /// <param name="queryResults">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
@@ -329,7 +329,7 @@ namespace PRISMDatabaseUtils
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of, list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -399,8 +399,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Creates a DbCommand for the database type
         /// </summary>
-        /// <param name="cmdText"></param>
-        /// <param name="cmdType"></param>
+        /// <param name="cmdText">SQL Query or stored procedure name</param>
+        /// <param name="cmdType">Command type</param>
         DbCommand CreateCommand(string cmdText, CommandType cmdType = CommandType.Text);
 
         /// <summary>
@@ -409,7 +409,7 @@ namespace PRISMDatabaseUtils
         /// <remarks>
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
         /// </remarks>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="direction">Parameter direction</param>
@@ -427,7 +427,7 @@ namespace PRISMDatabaseUtils
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
         /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
         /// </remarks>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
@@ -447,7 +447,7 @@ namespace PRISMDatabaseUtils
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
         /// For Postgres, if dbType is VarChar and size is 0, initializes the parameter as text and sets the value to string.Empty
         /// </remarks>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dataTypeName">Database data type name</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
@@ -463,11 +463,11 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
-        /// <param name="value"></param>
+        /// <param name="value">Parameter value</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         DbParameter AddParameter(
@@ -481,11 +481,11 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
-        /// <param name="value"></param>
+        /// <param name="value">Parameter value</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         DbParameter AddTypedParameter<T>(

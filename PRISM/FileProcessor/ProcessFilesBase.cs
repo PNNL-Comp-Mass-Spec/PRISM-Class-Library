@@ -160,8 +160,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Cleanup file/directory paths
         /// </summary>
-        /// <param name="inputFileOrDirectoryPath"></param>
-        /// <param name="outputDirectoryPath"></param>
+        /// <param name="inputFileOrDirectoryPath">Input file or directory path</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         protected override void CleanupPaths(ref string inputFileOrDirectoryPath, ref string outputDirectoryPath)
         {
             CleanupFilePaths(ref inputFileOrDirectoryPath, ref outputDirectoryPath);
@@ -170,8 +170,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Make sure inputFilePath points to a valid file and validate the output directory (defining it if null or empty)
         /// </summary>
-        /// <param name="inputFilePath"></param>
-        /// <param name="outputDirectoryPath"></param>
+        /// <param name="inputFilePath">Input file path</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupFilePaths(ref string inputFilePath, ref string outputDirectoryPath)
         {
@@ -222,7 +222,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Make sure inputFilePath points to a valid file
         /// </summary>
-        /// <param name="inputFilePath"></param>
+        /// <param name="inputFilePath">Input file path</param>
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupInputFilePath(ref string inputFilePath)
         {
@@ -908,7 +908,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update the base class error code
         /// </summary>
-        /// <param name="newErrorCode"></param>
+        /// <param name="newErrorCode">Error code</param>
         protected void SetBaseClassErrorCode(ProcessFilesErrorCodes newErrorCode)
         {
             ErrorCode = newErrorCode;

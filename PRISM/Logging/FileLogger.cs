@@ -256,7 +256,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Look for log files over 32 days old that can be moved into a subdirectory
         /// </summary>
-        /// <param name="logFilePath"></param>
+        /// <param name="logFilePath">Log file path</param>
         private static void ArchiveOldLogFilesNow(string logFilePath)
         {
             try
@@ -331,7 +331,7 @@ namespace PRISM.Logging
         /// The pattern can optionally have named group Day
         /// For an example, see constant LOG_FILE_DATE_REGEX
         /// </param>
-        /// <param name="zipOldDirectories"></param>
+        /// <param name="zipOldDirectories">When true, zip old directories</param>
         /// <returns>List of warning messages</returns>
         private static IEnumerable<string> ArchiveOldLogs(
             DirectoryInfo logDirectory,
@@ -613,7 +613,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Callback invoked by the mQueueLogger timer
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="state">State</param>
         private static void LogMessagesCallback(object state)
         {
             ShowTrace("FileLogger.mQueueLogger callback raised");
@@ -849,7 +849,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Show a stack trace when entering a method
         /// </summary>
-        /// <param name="callingMethod"></param>
+        /// <param name="callingMethod">Calling method</param>
         private static void ShowStackTraceOnEnter(string callingMethod)
         {
             if (TraceMode)
@@ -1152,8 +1152,8 @@ namespace PRISM.Logging
         /// Log a message (regardless of the log threshold level)
         /// </summary>
         /// <param name="logLevel">Log level of the message</param>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="message">Message</param>
+        /// <param name="ex">Exception</param>
         public static void WriteLog(LogLevels logLevel, string message, Exception ex = null)
         {
             var logMessage = new LogMessage(logLevel, message, ex);
@@ -1163,7 +1163,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message (regardless of the log threshold level)
         /// </summary>
-        /// <param name="logMessage"></param>
+        /// <param name="logMessage">Message</param>
         public static void WriteLog(LogMessage logMessage)
         {
             mMessageQueue.Enqueue(logMessage);

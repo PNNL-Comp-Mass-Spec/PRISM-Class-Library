@@ -85,7 +85,7 @@ namespace PRISMWin
         /// Uses GetDiskFreeSpaceEx in Kernel32.dll
         /// All three out params will be 0 if an error
         /// </remarks>
-        /// <param name="directoryPath"></param>
+        /// <param name="directoryPath">Directory path</param>
         /// <param name="freeBytesAvailableToUser">Output: Free bytes available to the user</param>
         /// <param name="totalDriveCapacityBytes">Output: Total drive capacity (bytes)</param>
         /// <param name="totalNumberOfFreeBytes">Output: Total free bytes</param>

@@ -81,7 +81,7 @@ namespace PRISM
         /// <summary>
         /// Force the garbage collector to run
         /// </summary>
-        /// <param name="maxWaitTimeMSec"></param>
+        /// <param name="maxWaitTimeMSec">Max time to wait, in milliseconds</param>
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {
             const int THREAD_SLEEP_TIME_MSEC = 100;
@@ -136,7 +136,7 @@ namespace PRISM
         /// Returns the full path to the directory into which this application should read/write settings file information
         /// </summary>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
-        /// <param name="appName"></param>
+        /// <param name="appName">Application name</param>/param>
         public static string GetAppDataDirectoryPath(string appName)
         {
             string appDataDirectory;
@@ -185,7 +185,7 @@ namespace PRISM
         /// <summary>
         /// Returns the .NET assembly version followed by the program date
         /// </summary>
-        /// <param name="programDate"></param>
+        /// <param name="programDate">Program date</param>
         public static string GetAppVersion(string programDate)
         {
             return GetEntryOrExecutingAssembly().GetName().Version + " (" + programDate + ")";

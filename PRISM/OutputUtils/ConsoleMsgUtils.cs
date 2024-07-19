@@ -44,7 +44,7 @@ namespace PRISM
         /// <summary>
         /// Call Console.WriteLine() the specified number of times
         /// </summary>
-        /// <param name="emptyLineCount"></param>
+        /// <param name="emptyLineCount">Empty line count</param>
         public static void ConsoleWriteEmptyLines(int emptyLineCount)
         {
             for (var i = 1; i <= emptyLineCount; i++)
@@ -56,7 +56,7 @@ namespace PRISM
         /// <summary>
         /// Display an error message at the console with color ErrorFontColor (defaults to red)
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         public static string ShowError(string message)
         {
             return ShowErrorCustom(message);
@@ -230,7 +230,7 @@ namespace PRISM
         /// <summary>
         /// Display a debug message at the console with color DebugFontColor (defaults to dark gray)
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         public static void ShowDebug(string message)
         {
             ShowDebugCustom(message);
@@ -284,7 +284,7 @@ namespace PRISM
         /// <summary>
         /// Display a warning message at the console with color WarningFontColor (defaults to yellow)
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         public static void ShowWarning(string message)
         {
             ShowWarningCustom(message);
@@ -318,7 +318,7 @@ namespace PRISM
         /// Sleep for the specified number of seconds
         /// </summary>
         /// <remarks>Sleeps for 10 second chunks until waitTimeSeconds has elapsed</remarks>
-        /// <param name="waitTimeSeconds"></param>
+        /// <param name="waitTimeSeconds">Sleep time, in seconds</param>
         public static void SleepSeconds(double waitTimeSeconds)
         {
             var endTime = DateTime.UtcNow.AddSeconds(waitTimeSeconds);
@@ -421,7 +421,7 @@ namespace PRISM
         /// <summary>
         /// Write a message to the error stream
         /// </summary>
-        /// <param name="errorMessage"></param>
+        /// <param name="errorMessage">Error message</param>
         public static void WriteToErrorStream(string errorMessage)
         {
             try

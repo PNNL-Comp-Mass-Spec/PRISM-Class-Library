@@ -88,9 +88,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="logLevel"></param>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="logLevel">Log level</param>
+        /// <param name="message">Message</param>
+        /// <param name="ex">Exception</param>
         public LogMessage(BaseLogger.LogLevels logLevel, string message, Exception ex = null)
         {
             LogLevel = logLevel;

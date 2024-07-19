@@ -886,9 +886,9 @@ namespace PRISM
         /// <summary>
         /// Determine the command line of a process by ProcessID
         /// </summary>
-        /// <param name="process"></param>
-        /// <param name="exePath"></param>
-        /// <param name="argumentList"></param>
+        /// <param name="process">Process</param>
+        /// <param name="exePath">Executable path</param>
+        /// <param name="argumentList">List of command line arguments</param>
         /// <returns>Full command line: exePath (surrounded in double quotes if a space), then a space, then the arguments</returns>
         private string GetCommandLine(Process process, out string exePath, out List<string> argumentList)
         {

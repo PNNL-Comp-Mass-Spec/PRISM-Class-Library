@@ -175,10 +175,10 @@ namespace PRISM
         /// Constructor supporting up to 4 param keys
         /// </summary>
         /// <remarks>CLS compliant</remarks>
-        /// <param name="paramKey1"></param>
-        /// <param name="paramKey2"></param>
-        /// <param name="paramKey3"></param>
-        /// <param name="paramKey4"></param>
+        /// <param name="paramKey1">Parameter key 1</param>
+        /// <param name="paramKey2">Parameter key 2</param>
+        /// <param name="paramKey3">Parameter key 3</param>
+        /// <param name="paramKey4">Parameter key 4</param>
         public OptionAttribute(string paramKey1, string paramKey2, string paramKey3 = "", string paramKey4 = "") : this(new[] { paramKey1, paramKey2, paramKey3, paramKey4 })
         {
         }

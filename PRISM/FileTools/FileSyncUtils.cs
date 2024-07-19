@@ -10,7 +10,7 @@ namespace PRISM
     // ReSharper disable once UnusedMember.Global
     public class FileSyncUtils : EventNotifier
     {
-        // Ignore Spelling: hashcheck, hashtype, utc
+        // Ignore Spelling: hashcheck, hashtype, utc, utils
 
         /// <summary>
         /// Extension for .LastUsed files that track when a data file was last used
@@ -23,7 +23,7 @@ namespace PRISM
         /// Constructor that takes a manager name
         /// </summary>
         /// <remarks>Will instantiate a new instance of clsFileTools</remarks>
-        /// <param name="managerName"></param>
+        /// <param name="managerName">Manager name</param>
         public FileSyncUtils(string managerName)
         {
             mFileTools = new FileTools(managerName, 1);
@@ -32,7 +32,7 @@ namespace PRISM
         /// <summary>
         /// Constructor that takes a clsFileTools instance
         /// </summary>
-        /// <param name="fileTools"></param>
+        /// <param name="fileTools">File tools instance</param>
         public FileSyncUtils(FileTools fileTools)
         {
             mFileTools = fileTools;
@@ -209,7 +209,7 @@ namespace PRISM
         /// Delete the .hashcheck file for the given data file
         /// Does nothing if the data file does not have a .hashcheck file
         /// </summary>
-        /// <param name="dataFile"></param>
+        /// <param name="dataFile">Data file</param>
         private static void DeleteHashCheckFileForDataFile(FileInfo dataFile)
         {
             try
@@ -233,7 +233,7 @@ namespace PRISM
         /// <summary>
         /// Update the .lastused file for the given data file
         /// </summary>
-        /// <param name="dataFile"></param>
+        /// <param name="dataFile">Data file</param>
         public static void UpdateLastUsedFile(FileInfo dataFile)
         {
             var lastUsedFilePath = dataFile.FullName + LASTUSED_FILE_EXTENSION;

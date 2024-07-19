@@ -117,7 +117,7 @@ namespace PRISM
         /// <summary>
         /// Parse an XML settings file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">Settings file path</param>
         [Obsolete("Use LoadSettings")]
         public bool ManualParseXmlOrIniFile(string filePath)
         {
@@ -188,7 +188,7 @@ namespace PRISM
         /// Examines the Key Names for the given section, storing them in mCachedSection
         /// </summary>
         /// <remarks>This is done so that this class will know the correct capitalization for the key names</remarks>
-        /// <param name="sectionName"></param>
+        /// <param name="sectionName">Section name</param>
         private bool CacheKeyNames(string sectionName)
         {
             List<string> keys;
@@ -276,8 +276,8 @@ namespace PRISM
         /// <summary>
         /// Looks up the correct capitalization for the given key in the given section
         /// </summary>
-        /// <param name="sectionName"></param>
-        /// <param name="keyName"></param>
+        /// <param name="sectionName">Section name</param>
+        /// <param name="keyName">Key name</param>
         /// <returns>Key name if found, or an empty string</returns>
         private string GetCachedKeyName(string sectionName, string keyName)
         {
@@ -319,7 +319,7 @@ namespace PRISM
         /// <summary>
         /// Determines the correct capitalization for sectionName
         /// </summary>
-        /// <param name="sectionName"></param>
+        /// <param name="sectionName">Section name</param>
         /// <returns>Name if found, or an empty string</returns>
         private string GetCachedSectionName(string sectionName)
         {

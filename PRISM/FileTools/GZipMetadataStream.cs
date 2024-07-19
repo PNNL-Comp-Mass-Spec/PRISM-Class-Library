@@ -72,7 +72,7 @@ namespace PRISM
         /// Constructor for reading
         /// </summary>
         /// <param name="baseStream">Stream to wrap; must be seek-able (CanSeek == true)</param>
-        /// <param name="checkHeaderCrc"></param>
+        /// <param name="checkHeaderCrc">If true, write a CRC16 for the header to the metadata</param>
         public GZipMetadataStream(Stream baseStream, bool checkHeaderCrc = false)
         {
             BaseStream = baseStream;

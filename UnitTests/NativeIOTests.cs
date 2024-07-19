@@ -185,7 +185,7 @@ namespace PRISMTest
         /// <summary>
         /// Delete directories in the stack
         /// </summary>
-        /// <param name="directoriesCreatedOrFound"></param>
+        /// <param name="directoriesCreatedOrFound">Stack of directory paths</param>
         /// <param name="recursive">When true, delete any files or subdirectories inside each target directory</param>
         /// <returns>True if success, false if an error</returns>
         private bool DeleteDirectories(Stack<string> directoriesCreatedOrFound, bool recursive = false)

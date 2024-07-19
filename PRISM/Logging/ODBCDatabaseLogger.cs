@@ -314,7 +314,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Callback invoked by the mQueueLogger timer
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="state">State</param>
         private static void LogMessagesCallback(object state)
         {
             ShowTrace("ODBCDatabaseLogger.mQueueLogger callback raised");
@@ -454,7 +454,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message (regardless of this.LogLevel)
         /// </summary>
-        /// <param name="logMessage"></param>
+        /// <param name="logMessage">Log message</param>
         public override void WriteLog(LogMessage logMessage)
         {
             mMessageQueue.Enqueue(logMessage);

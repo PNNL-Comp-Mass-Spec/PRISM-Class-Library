@@ -184,7 +184,7 @@ namespace PRISMDatabaseUtils.AppSettings
         /// Examine configFileSettings to look for parameters MgrCnfgDbConnectStr and/or DefaultDMSConnString
         /// If defined, and if pointing to a PostgreSQL server, look for a pgpass file for the current user
         /// </summary>
-        /// <param name="configFileSettings"></param>
+        /// <param name="configFileSettings">Dictionary of settings loaded from the config file</param>
         public void ValidatePgPass(IReadOnlyDictionary<string, string> configFileSettings)
         {
             var connectionStringSettingNames = new SortedSet<string>(StringComparer.OrdinalIgnoreCase)

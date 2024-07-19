@@ -56,7 +56,7 @@ namespace PRISM
         /// <summary>
         /// Constructor that takes process ID only
         /// </summary>
-        /// <param name="processId"></param>
+        /// <param name="processId">Process ID</param>
         // ReSharper disable once UnusedMember.Global
         public ProcessInfo(int processId)
         {
@@ -73,7 +73,7 @@ namespace PRISM
         /// <remarks>
         /// Assumes that the executable path is everything before the first space and arguments are everything after the first space
         /// </remarks>
-        /// <param name="processId"></param>
+        /// <param name="processId">Process ID</param>
         /// <param name="processName">Command line</param>
         public ProcessInfo(int processId, string processName)
         {
@@ -89,11 +89,11 @@ namespace PRISM
         /// <summary>
         /// Constructor that takes process ID, process name, executable path, a list of arguments, and optionally the full command line
         /// </summary>
-        /// <param name="processId"></param>
-        /// <param name="processName"></param>
-        /// <param name="exePath"></param>
-        /// <param name="argumentList"></param>
-        /// <param name="cmdLine"></param>
+        /// <param name="processId">Process ID</param>
+        /// <param name="processName">Process name</param>
+        /// <param name="exePath">Executable path</param>
+        /// <param name="argumentList">Argument list</param>
+        /// <param name="cmdLine">Command line</param>
         public ProcessInfo(int processId, string processName, string exePath, List<string> argumentList, string cmdLine = "")
         {
             Arguments = argumentList == null ? string.Empty : string.Join(" ", argumentList);

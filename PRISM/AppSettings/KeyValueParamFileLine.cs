@@ -47,8 +47,8 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Constructor that takes a line number and line text
         /// </summary>
-        /// <param name="lineNumber"></param>
-        /// <param name="lineText"></param>
+        /// <param name="lineNumber">Line number</param>
+        /// <param name="lineText">Line text</param>
         /// <param name="parseKeyValuePair">When true, parse lineText to determine the key name and value</param>
         public KeyValueParamFileLine(int lineNumber, string lineText, bool parseKeyValuePair = false)
         {
@@ -73,7 +73,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Constructor that just takes an instance of this class
         /// </summary>
-        /// <param name="paramFileLine"></param>
+        /// <param name="paramFileLine">Parameter info</param>
         public KeyValueParamFileLine(KeyValueParamFileLine paramFileLine) : this(paramFileLine.LineNumber, paramFileLine.Text)
         {
             ParamName = paramFileLine.ParamName;
@@ -149,7 +149,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Update the value for this parameter
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="updateTextProperty">When true, update <see cref="Text"/></param>
         protected void UpdateValue(string value, bool updateTextProperty = false)
         {

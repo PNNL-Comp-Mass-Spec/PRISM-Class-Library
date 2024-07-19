@@ -99,7 +99,7 @@ namespace PRISMTest
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="classId"></param>
+            /// <param name="classId">Class ID</param>
             public ClassA(string classId)
             {
                 ClassID = classId;
@@ -154,7 +154,7 @@ namespace PRISMTest
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="classId"></param>
+            /// <param name="classId">Class ID</param>
             public ClassB(string classId) : base(classId)
             {
                 OnDebugEvent("Instantiating " + classId);

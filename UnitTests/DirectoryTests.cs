@@ -18,8 +18,8 @@ namespace PRISMTest
         /// <summary>
         /// Test creating a directory, including creating parent directories
         /// </summary>
-        /// <param name="directoryPath"></param>
-        /// <param name="removeExistingBeforeCreating"></param>
+        /// <param name="directoryPath">Directory path</param>
+        /// <param name="removeExistingBeforeCreating">When true, remove existing target directories (but only if they're empty)</param>
         [TestCase(@"C:\Temp\PRISM", false)]
         [TestCase(@"C:\Temp\TestDirectory1", true)]
         [TestCase(@"C:\Temp\TestDirectory2\Ancestor\Grandparent\Parent\Child", true)]

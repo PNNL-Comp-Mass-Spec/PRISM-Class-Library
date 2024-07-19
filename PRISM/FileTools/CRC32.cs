@@ -55,7 +55,7 @@ namespace PRISM
         /// the crc should be initialized to zero.
         /// </summary>
         /// <remarks>
-        /// Pre- and post-conditioning (one's complement) is performed within this method so it shouldn't be done by the caller
+        /// Pre- and post-conditioning (one's complement) is performed within this method, so it shouldn't be done by the caller
         /// </remarks>
         /// <example>
         /// uint crc = 0;
@@ -66,8 +66,8 @@ namespace PRISM
         /// }
         /// if (crc != originalCrc) error();
         /// </example>
-        /// <param name="crc"></param>
-        /// <param name="buf"></param>
+        /// <param name="crc">CRC</param>
+        /// <param name="buf">Byte buffer</param>
         public static uint UpdateCrc(uint crc, IEnumerable<byte> buf)
         {
             var c = crc ^ 0xffffffff;
@@ -85,7 +85,7 @@ namespace PRISM
         /// <summary>
         /// Return the CRC32 of the enumerable byte buffer
         /// </summary>
-        /// <param name="buf"></param>
+        /// <param name="buf">Byte buffer</param>
         public static uint Crc(IEnumerable<byte> buf)
         {
             return UpdateCrc(0, buf);

@@ -121,7 +121,7 @@ namespace PRISM
         /// <summary>
         /// Computes the CRC32 hash of a file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <returns>CRC32 hash, as a string</returns>
         public static string ComputeFileHashCrc32(string filePath)
         {
@@ -135,7 +135,7 @@ namespace PRISM
         /// <summary>
         /// Computes the MD5 hash of a file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <returns>MD5 hash, as a hex string</returns>
         public static string ComputeFileHashMD5(string filePath)
         {
@@ -145,7 +145,7 @@ namespace PRISM
         /// <summary>
         /// Computes the MD5 hash of a file, both as a hex string and as a Base64 encoded string
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
         /// <returns>MD5 hash, as a hex string</returns>
         public static string ComputeFileHashMD5(string filePath, out string base64MD5)
@@ -160,7 +160,7 @@ namespace PRISM
         /// <summary>
         /// Computes the MD5 hash of a string
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="text">Text to hash</param>
         /// <returns>MD5 hash, as a hex string</returns>
         // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashMD5(string text)
@@ -171,7 +171,7 @@ namespace PRISM
         /// <summary>
         /// Computes the MD5 hash of a string, both as a hex string and as a Base64 encoded string
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="text">Text to hash</param>
         /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
         /// <returns>MD5 hash, as a hex string</returns>
         public static string ComputeStringHashMD5(string text, out string base64MD5)
@@ -184,7 +184,7 @@ namespace PRISM
         /// <summary>
         /// Computes the hash of a file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <param name="hashType">Hash type</param>
         /// <returns>Hash value</returns>
         public static string ComputeFileHash(string filePath, HashTypeConstants hashType)
@@ -215,7 +215,7 @@ namespace PRISM
         /// <summary>
         /// Computes the SHA-1 hash for a file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <returns>SHA-1 hash, as a hex string</returns>
         public static string ComputeFileHashSha1(string filePath)
         {
@@ -229,7 +229,7 @@ namespace PRISM
         /// <summary>
         /// Computes the SHA-1 hash for a string
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="text">Text to hash</param>
         /// <returns>SHA-1 hash, as a hex string</returns>
         // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashSha1(string text)
@@ -242,7 +242,7 @@ namespace PRISM
         /// <summary>
         /// Computes the CRC32 hash of a given stream
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Stream to hash</param>
         /// <returns>CRC32 hash, as a string</returns>
         private static string ComputeCRC32Hash(Stream data)
         {
@@ -253,7 +253,7 @@ namespace PRISM
         /// <summary>
         /// Computes the MD5 hash of a given stream
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Stream to hash</param>
         /// <param name="base64MD5">Output: Base64 encoded MD5 hash</param>
         /// <returns>MD5 hash, as a string</returns>
         private static string ComputeMD5Hash(Stream data, out string base64MD5)
@@ -270,7 +270,7 @@ namespace PRISM
         /// <summary>
         /// Computes the SHA-1 hash of a given stream
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="data">Stream to hash</param>
         /// <returns>SHA-1 hash, as a string</returns>
         private static string ComputeSha1Hash(Stream data)
         {
@@ -281,8 +281,8 @@ namespace PRISM
         /// <summary>
         /// Use the given hash algorithm to compute a hash of the data stream
         /// </summary>
-        /// <param name="hasher"></param>
-        /// <param name="data"></param>
+        /// <param name="hasher">Hash algorithm</param>
+        /// <param name="data">Stream to hash</param>
         /// <returns>Hash string</returns>
         private static string ComputeHash(HashAlgorithm hasher, Stream data)
         {
@@ -296,8 +296,8 @@ namespace PRISM
         /// <summary>
         /// Use the given hash algorithm to compute a hash of the data stream
         /// </summary>
-        /// <param name="hasher"></param>
-        /// <param name="data"></param>
+        /// <param name="hasher">Hash algorithm</param>
+        /// <param name="data">Stream to hash</param>
         /// <returns>Hash string</returns>
         private static byte[] ComputeHashGetByteArray(HashAlgorithm hasher, Stream data)
         {
@@ -406,7 +406,7 @@ namespace PRISM
         /// <summary>
         /// Read the data in an existing hashcheck file
         /// </summary>
-        /// <param name="hashCheckFilePath"></param>
+        /// <param name="hashCheckFilePath">.hashcheck file path</param>
         /// <param name="assumedHashType">
         /// Hashtype to assume if the .hashcheck file does not have "hashtype" defined and if the hash length is not 8, 32, or 40
         /// </param>

@@ -258,8 +258,8 @@ namespace PRISM
         /// <summary>
         /// Perform validity checks on new min/max percent values, and then set them accordingly
         /// </summary>
-        /// <param name="newMin"></param>
-        /// <param name="newMax"></param>
+        /// <param name="newMin">New minimum percent complete</param>
+        /// <param name="newMax">New maximum percent complete</param>
         private void CheckSetMinMaxRange(double newMin, double newMax)
         {
             if (_useForwardOnlyLogic)
@@ -320,7 +320,7 @@ namespace PRISM
         /// <summary>
         /// Update percent, and return object. For single-lining a progress update and report with <see cref="IProgress{T}.Report"/>
         /// </summary>
-        /// <param name="pct"></param>
+        /// <param name="pct">Percent complete</param>
         [Obsolete("Use Report() instead, with ProgressObj set.")]
         public ProgressData UpdatePercent(double pct)
         {

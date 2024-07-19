@@ -88,9 +88,9 @@ namespace PRISM
         /// <summary>
         /// Event is raised if we wait to long for our turn in the lock file queue
         /// </summary>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="targetFilePath"></param>
-        /// <param name="waitTimeMinutes"></param>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="waitTimeMinutes">Wait time, in minutes</param>
         public delegate void LockQueueTimedOutEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
 
         /// <summary>
@@ -101,9 +101,9 @@ namespace PRISM
         /// <summary>
         /// Event is raised when we are done waiting for our turn in the lock file queue
         /// </summary>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="targetFilePath"></param>
-        /// <param name="waitTimeMinutes"></param>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="waitTimeMinutes">Wait time, in minutes</param>
         public delegate void LockQueueWaitCompleteEventHandler(string sourceFilePath, string targetFilePath, double waitTimeMinutes);
 
         /// <summary>
@@ -282,7 +282,7 @@ namespace PRISM
         /// Convert a size, bytes, to a string representation
         /// For example, 165342 will return 161.5 KB
         /// </summary>
-        /// <param name="bytes"></param>
+        /// <param name="bytes">File size, in bytes</param>
         public static string BytesToHumanReadable(long bytes)
         {
             if (bytes < 2048)
@@ -314,7 +314,7 @@ namespace PRISM
         /// C:\...\W..\Business\Finances.doc
         /// C:\My Doc..\Word\Business\Finances.doc
         /// </summary>
-        /// <param name="pathToCompact"></param>
+        /// <param name="pathToCompact">Path to shorten</param>
         /// <param name="maxLength">Maximum length of the shortened path</param>
         /// <returns>Shortened path</returns>
         public static string CompactPathString(string pathToCompact, int maxLength = 40)
@@ -743,9 +743,9 @@ namespace PRISM
         /// <summary>
         /// Construct the path to the .gz file to create, possibly overriding the target directory and/or target filename
         /// </summary>
-        /// <param name="fileToCompress"></param>
-        /// <param name="compressedDirectoryPath"></param>
-        /// <param name="compressedFileName"></param>
+        /// <param name="fileToCompress">File to compress</param>
+        /// <param name="compressedDirectoryPath">Directory where the .gz file should be created (auto-define if an empty string)</param>
+        /// <param name="compressedFileName">Compressed file name (auto-define if an empty string)</param>
         private static string ConstructCompressedGZipFilePath(FileInfo fileToCompress, string compressedDirectoryPath, string compressedFileName)
         {
             if (string.IsNullOrWhiteSpace(compressedDirectoryPath) && string.IsNullOrWhiteSpace(compressedFileName))
@@ -773,7 +773,7 @@ namespace PRISM
         /// </summary>
         /// <param name="sourcePath">The source directory path</param>
         /// <param name="destPath">The destination directory path</param>
-        /// <param name="managerName"></param>
+        /// <param name="managerName">Manager name</param>
         public void CopyDirectory(string sourcePath, string destPath, string managerName)
         {
             CopyDirectory(sourcePath, destPath, overWrite: false, managerName: managerName);
@@ -808,7 +808,7 @@ namespace PRISM
         /// <param name="sourcePath">The source directory path</param>
         /// <param name="destPath">The destination directory path</param>
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false</param>
-        /// <param name="managerName"></param>
+        /// <param name="managerName">Manager name</param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, string managerName)
         {
             const bool readOnly = false;
@@ -863,7 +863,7 @@ namespace PRISM
         /// <param name="overWrite">true if the destination file can be overwritten; otherwise, false</param>
         /// <param name="readOnly">The value to be assigned to the read-only attribute of the destination file</param>
         /// <param name="fileNamesToSkip">List of file names to skip when copying the directory (and subdirectories); can optionally contain full path names to skip</param>
-        /// <param name="managerName"></param>
+        /// <param name="managerName">Manager name</param>
         public void CopyDirectory(string sourcePath, string destPath, bool overWrite, bool readOnly, List<string> fileNamesToSkip, string managerName)
         {
             const bool setAttribute = true;
@@ -1426,9 +1426,9 @@ namespace PRISM
         /// If the copy fails due to the path length being 260 characters or longer,
         /// and if we're running Windows, use CopyFileW in kernel32.dll instead
         /// </summary>
-        /// <param name="sourcePath"></param>
-        /// <param name="destPath"></param>
-        /// <param name="overwrite"></param>
+        /// <param name="sourcePath">Source file path</param>
+        /// <param name="destPath">Target file path</param>
+        /// <param name="overwrite">When true, overwrite existing files</param>
         private static void CopyFileNative(string sourcePath, string destPath, bool overwrite)
         {
             try
@@ -1673,9 +1673,9 @@ namespace PRISM
         /// <summary>
         /// Copy a file using chunks, thus allowing for resuming
         /// </summary>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="targetFilePath"></param>
-        /// <param name="copyResumed"></param>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="copyResumed">Output parameter; true if copying was resumed</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
         /// <returns>True if success; false if an error</returns>
         public bool CopyFileWithResume(string sourceFilePath, string targetFilePath, out bool copyResumed, bool ignoreFileLocks = false)
@@ -1688,8 +1688,8 @@ namespace PRISM
         /// Copy sourceFile to targetDirectory
         /// Copies the file using chunks, thus allowing for resuming
         /// </summary>
-        /// <param name="sourceFile"></param>
-        /// <param name="targetFilePath"></param>
+        /// <param name="sourceFile">Source file</param>
+        /// <param name="targetFilePath">Target file path</param>
         /// <param name="copyResumed">Output parameter; true if copying was resumed</param>
         /// <param name="ignoreFileLocks">When true, copy the file even if another program has it open for writing</param>
         /// <returns>True if success; false if an error</returns>
@@ -1903,7 +1903,7 @@ namespace PRISM
         /// Attempts to create a directory only if it doesn't exist
         /// </summary>
         /// <remarks>Also creates parent directories if missing (shows a warning if an error, but continues)</remarks>
-        /// <param name="directoryPath"></param>
+        /// <param name="directoryPath">Directory path</param>
         public void CreateDirectoryIfNotExists(string directoryPath)
         {
             if (string.IsNullOrWhiteSpace(directoryPath))
@@ -1951,11 +1951,11 @@ namespace PRISM
         /// <summary>
         /// Create a lock file in the specified lock directory
         /// </summary>
-        /// <param name="lockDirectory"></param>
-        /// <param name="lockFileTimestamp"></param>
-        /// <param name="sourceFile"></param>
-        /// <param name="targetFilePath"></param>
-        /// <param name="managerName"></param>
+        /// <param name="lockDirectory">Lock file directory</param>
+        /// <param name="lockFileTimestamp">Lock file timestamp</param>
+        /// <param name="sourceFile">Source file</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="managerName">Manager name</param>
         /// <returns>Full path to the lock file; empty string if an error or if lockDirectory is null</returns>
         public string CreateLockFile(DirectoryInfo lockDirectory, long lockFileTimestamp, FileInfo sourceFile, string targetFilePath, string managerName)
         {
@@ -2008,7 +2008,7 @@ namespace PRISM
         /// <summary>
         /// Deletes the specified directory and all subdirectories
         /// </summary>
-        /// <param name="directoryPath"></param>
+        /// <param name="directoryPath">Directory path</param>
         /// <returns>True if success, false if an error</returns>
         public bool DeleteDirectory(string directoryPath)
         {
@@ -2018,8 +2018,8 @@ namespace PRISM
         /// <summary>
         /// Deletes the specified directory and all subdirectories
         /// </summary>
-        /// <param name="directoryPath"></param>
-        /// <param name="ignoreErrors"></param>
+        /// <param name="directoryPath">Directory path</param>
+        /// <param name="ignoreErrors">When true, ignore errors</param>
         /// <returns>True if success, false if an error</returns>
         public bool DeleteDirectory(string directoryPath, bool ignoreErrors)
         {
@@ -2046,10 +2046,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Deletes the specified directory and all subdirectories; does not delete the target directory
+        /// Deletes files in the specified directory and all subdirectories; does not delete the target directory
         /// </summary>
-        /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        /// <param name="directoryPath"></param>
+        /// <remarks>Deletes each file individually; deletion errors are reported, but are not treated as fatal errors</remarks>
+        /// <param name="directoryPath">Directory path</param>
         /// <returns>True if success, false if an error</returns>
         public bool DeleteDirectoryFiles(string directoryPath)
         {
@@ -2059,9 +2059,9 @@ namespace PRISM
         /// <summary>
         /// Deletes the specified directory and all subdirectories
         /// </summary>
-        /// <remarks>Deletes each file individually.  Deletion errors are reported but are not treated as a fatal error</remarks>
-        /// <param name="directoryPath"></param>
-        /// <param name="deleteDirectoryIfEmpty">Set to True to delete the directory, if it is empty</param>
+        /// <remarks>Deletes each file individually; deletion errors are reported, but are not treated as fatal errors</remarks>
+        /// <param name="directoryPath">Directory path</param>
+        /// <param name="deleteDirectoryIfEmpty">When True, delete the directory if all of its files and subdirectories were successfully deleted</param>
         /// <returns>True if success, false if an error</returns>
         public bool DeleteDirectoryFiles(string directoryPath, bool deleteDirectoryIfEmpty)
         {
@@ -2107,7 +2107,7 @@ namespace PRISM
         /// If not ReadOnly, performs a garbage collection (minimum 500 msec between GC calls)
         /// </para>
         /// </remarks>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <returns>True if successfully deleted (or if the file doesn't exist); false if an error</returns>
         private bool DeleteFileIgnoreErrors(string filePath)
         {
@@ -2160,7 +2160,7 @@ namespace PRISM
         /// If the delete fails due to the path length being 260 characters or longer,
         /// and if we're running Windows, use DeleteFileW in kernel32.dll instead
         /// </summary>
-        /// <param name="targetFile"></param>
+        /// <param name="targetFile">File path</param>
         // ReSharper disable once SuggestBaseTypeForParameter
         private static void DeleteFileNative(FileInfo targetFile)
         {
@@ -2275,8 +2275,8 @@ namespace PRISM
         /// <summary>
         /// Finds lock files with a timestamp less than
         /// </summary>
-        /// <param name="lockDirectory"></param>
-        /// <param name="lockFileTimestamp"></param>
+        /// <param name="lockDirectory">Lock file directory</param>
+        /// <param name="lockFileTimestamp">Lock file timestamp</param>
         private List<int> FindLockFiles(DirectoryInfo lockDirectory, long lockFileTimestamp)
         {
             var lockFiles = new List<int>();
@@ -2320,9 +2320,9 @@ namespace PRISM
         /// then has the source file size (in MB),
         /// then has information on the machine creating the file
         /// </summary>
-        /// <param name="lockFileTimestamp"></param>
-        /// <param name="sourceFile"></param>
-        /// <param name="managerName"></param>
+        /// <param name="lockFileTimestamp">Lock file timestamp</param>
+        /// <param name="sourceFile">Source file</param>
+        /// <param name="managerName">Manager name</param>
         private string GenerateLockFileName(long lockFileTimestamp, FileInfo sourceFile, string managerName)
         {
             if (string.IsNullOrWhiteSpace(managerName))
@@ -2411,10 +2411,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Given a file path, return the lock file directory if it exists
+        /// Given a file instance, return the lock file directory if it exists
         /// </summary>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
-        /// <param name="dataFile"></param>
+        /// <param name="dataFile">File instance</param>
         /// <returns>Lock directory path if it exists</returns>
         [Obsolete("Use GetLockDirectory")]
         public string GetLockFolder(FileInfo dataFile)
@@ -2423,10 +2423,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Given a file path, return the lock file directory if it exists
+        /// Given a file instance, return the lock file directory if it exists
         /// </summary>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
-        /// <param name="dataFile"></param>
+        /// <param name="dataFile">File instance</param>
         /// <returns>Lock directory path if it exists</returns>
         public string GetLockDirectory(FileInfo dataFile)
         {
@@ -2441,10 +2441,10 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Given a file path, return the lock file directory path (does not verify that it exists)
+        /// Given a file instance, return the lock file directory path (does not verify that it exists)
         /// </summary>
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
-        /// <param name="dataFile"></param>
+        /// <param name="dataFile">File instance</param>
         /// <returns>Lock directory path</returns>
         private string GetLockDirectoryPath(FileInfo dataFile)
         {
@@ -2473,7 +2473,7 @@ namespace PRISM
         /// Returns the first portion of a network share path, for example \\MyServer is returned for \\MyServer\Share\Filename.txt
         /// </summary>
         /// <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
-        /// <param name="serverSharePath"></param>
+        /// <param name="serverSharePath">Server share path</param>
         public string GetServerShareBase(string serverSharePath)
         {
             if (!serverSharePath.StartsWith(@"\\"))
@@ -2651,7 +2651,7 @@ namespace PRISM
         /// <summary>
         /// Returns true if the file is _.swp or starts with a . and ends with .swp
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         public static bool IsVimSwapFile(string filePath)
         {
             var fileName = Path.GetFileName(filePath);
@@ -2667,9 +2667,9 @@ namespace PRISM
         /// <summary>
         /// Move a directory
         /// </summary>
-        /// <param name="sourceDirectoryPath"></param>
-        /// <param name="targetDirectoryPath"></param>
-        /// <param name="overwriteFiles"></param>
+        /// <param name="sourceDirectoryPath">Source directory path</param>
+        /// <param name="targetDirectoryPath">Target directory path</param>
+        /// <param name="overwriteFiles">When true, overwrite existing files</param>
         public bool MoveDirectory(string sourceDirectoryPath, string targetDirectoryPath, bool overwriteFiles)
         {
             return MoveDirectory(sourceDirectoryPath, targetDirectoryPath, overwriteFiles, ManagerName);
@@ -2678,10 +2678,10 @@ namespace PRISM
         /// <summary>
         /// Move a directory
         /// </summary>
-        /// <param name="sourceDirectoryPath"></param>
-        /// <param name="targetDirectoryPath"></param>
-        /// <param name="overwriteFiles"></param>
-        /// <param name="managerName"></param>
+        /// <param name="sourceDirectoryPath">Source directory path</param>
+        /// <param name="targetDirectoryPath">Target directory path</param>
+        /// <param name="overwriteFiles">When true, overwrite existing files</param>
+        /// <param name="managerName">Manager name</param>
         public bool MoveDirectory(string sourceDirectoryPath, string targetDirectoryPath, bool overwriteFiles, string managerName)
         {
             bool success;
@@ -3040,10 +3040,10 @@ namespace PRISM
         /// <summary>
         /// Wait for the lock file queue to drop below a threshold
         /// </summary>
-        /// <param name="lockFileTimestamp"></param>
-        /// <param name="lockDirectorySource"></param>
-        /// <param name="sourceFile"></param>
-        /// <param name="maxWaitTimeMinutes"></param>
+        /// <param name="lockFileTimestamp">Lock file timestamp</param>
+        /// <param name="lockDirectorySource">Lock file directory for the source file</param>
+        /// <param name="sourceFile">Source file</param>
+        /// <param name="maxWaitTimeMinutes">Maximum wait time, in minutes</param>
         public void WaitForLockFileQueue(long lockFileTimestamp, DirectoryInfo lockDirectorySource, FileInfo sourceFile, int maxWaitTimeMinutes)
         {
             WaitForLockFileQueue(
@@ -3055,14 +3055,14 @@ namespace PRISM
         /// <summary>
         /// Wait for the lock file queue to drop below a threshold
         /// </summary>
-        /// <param name="lockFileTimestamp"></param>
-        /// <param name="lockDirectorySource"></param>
-        /// <param name="lockDirectoryTarget"></param>
-        /// <param name="sourceFile"></param>
-        /// <param name="targetFilePath"></param>
-        /// <param name="maxWaitTimeMinutes"></param>
-        /// <param name="lockFilePathSource"></param>
-        /// <param name="lockFilePathTarget"></param>
+        /// <param name="lockFileTimestamp">Lock file timestamp</param>
+        /// <param name="lockDirectorySource">Lock file directory for the source file</param>
+        /// <param name="lockDirectoryTarget">Lock file directory for the target file</param>
+        /// <param name="sourceFile">Source file</param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="maxWaitTimeMinutes">Maximum wait time, in minutes</param>
+        /// <param name="lockFilePathSource">Lock file path for the source file</param>
+        /// <param name="lockFilePathTarget">Lock file path for the target file</param>
         public void WaitForLockFileQueue(
             long lockFileTimestamp, DirectoryInfo lockDirectorySource,
             DirectoryInfo lockDirectoryTarget,

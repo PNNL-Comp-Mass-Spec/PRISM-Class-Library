@@ -103,8 +103,8 @@ namespace PRISM
         /// <summary>
         /// Validate that the user-provided parameters are in the validParameters list
         /// </summary>
-        /// <param name="validParameters"></param>
-        /// <param name="caseSensitive"></param>
+        /// <param name="validParameters">List of valid parameters</param>
+        /// <param name="caseSensitive">True if parameter names are case-sensitive</param>
         public bool InvalidParametersPresent(List<string> validParameters, bool caseSensitive)
         {
             return InvalidParameters(validParameters, caseSensitive).Count > 0;
@@ -113,7 +113,7 @@ namespace PRISM
         /// <summary>
         /// Retrieve a list of the user-provided parameters that are not in validParameters
         /// </summary>
-        /// <param name="validParameters"></param>
+        /// <param name="validParameters">List of valid parameters</param>
         public List<string> InvalidParameters(List<string> validParameters)
         {
             const bool caseSensitive = false;
@@ -123,8 +123,8 @@ namespace PRISM
         /// <summary>
         /// Retrieve a list of the user-provided parameters that are not in validParameters
         /// </summary>
-        /// <param name="validParameters"></param>
-        /// <param name="caseSensitive"></param>
+        /// <param name="validParameters">List of valid parameters</param>
+        /// <param name="caseSensitive">True if parameter names are case-sensitive</param>
         public List<string> InvalidParameters(List<string> validParameters, bool caseSensitive)
         {
             var invalidParameters = new List<string>();
@@ -209,8 +209,8 @@ namespace PRISM
         /// If /? or /help is found, returns False and sets mShowHelp to True
         /// If there are no arguments at the command line, returns false, but sets NoArgumentsProvided to true
         /// </remarks>
-        /// <param name="switchStartChar"></param>
-        /// <param name="switchParameterChar"></param>
+        /// <param name="switchStartChar">Argument start character</param>
+        /// <param name="switchParameterChar">Switch parameter start character</param>
         /// <returns>Returns True if any command line parameters were found; otherwise false</returns>
         public bool ParseCommandLine(char switchStartChar, char switchParameterChar)
         {

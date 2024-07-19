@@ -39,8 +39,8 @@ namespace PRISMDatabaseUtils
         /// Assumes case-insensitive column names
         /// </summary>
         /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
-        /// <param name="columnNamesByIdentifier"></param>
-        /// <param name="columnIdentifier"></param>
+        /// <param name="columnNamesByIdentifier">Dictionary of known column names for each column identifier</param>
+        /// <param name="columnIdentifier">Primary column identifier (name)</param>
         public static void AddColumnIdentifier(
             Dictionary<string, SortedSet<string>> columnNamesByIdentifier,
             string columnIdentifier)
@@ -54,9 +54,9 @@ namespace PRISMDatabaseUtils
         /// </summary>
         /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
-        /// <param name="columnNamesByIdentifier"></param>
-        /// <param name="columnIdentifier"></param>
-        /// <param name="columnNames">Comma separated list of column names</param>
+        /// <param name="columnNamesByIdentifier">Dictionary of known column names for each column identifier</param>
+        /// <param name="columnIdentifier">Primary column identifier (name)</param>
+        /// <param name="columnNames">List of possible column names (synonyms)</param>
         public static void AddColumnNamesForIdentifier<T>(
             Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
             T columnIdentifier,
@@ -70,10 +70,10 @@ namespace PRISMDatabaseUtils
         /// </summary>
         /// <remarks>Use this method in conjunction with GetColumnMappingFromHeaderLine</remarks>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
-        /// <param name="columnNamesByIdentifier"></param>
-        /// <param name="columnIdentifier"></param>
-        /// <param name="caseSensitiveColumnNames"></param>
-        /// <param name="columnNames"></param>
+        /// <param name="columnNamesByIdentifier">Dictionary of known column names for each column identifier</param>
+        /// <param name="columnIdentifier">Primary column identifier (name)</param>
+        /// <param name="caseSensitiveColumnNames">True if the column names are case-sensitive</param>
+        /// <param name="columnNames">List of possible column names (synonyms)</param>
         public static void AddColumnNamesForIdentifier<T>(
             Dictionary<T, SortedSet<string>> columnNamesByIdentifier,
             T columnIdentifier,
@@ -100,14 +100,14 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Append a column of the given type to the DataTable
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dataTable"></param>
-        /// <param name="columnName"></param>
-        /// <param name="columnType"></param>
-        /// <param name="defaultValue"></param>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="dataTable">Data table</param>
+        /// <param name="columnName">Column name</param>
+        /// <param name="columnType">Column type</param>
+        /// <param name="defaultValue">Default value (ignored if autoIncrement is true)</param>
         /// <param name="isReadOnly">True if the column value cannot be updated after a row is added to a table</param>
-        /// <param name="isUnique"></param>
-        /// <param name="autoIncrement"></param>
+        /// <param name="isUnique">True if the value in each row of the column must be unique</param>
+        /// <param name="autoIncrement">True if this is an auto incremented value</param>
         private static bool AppendColumnToTable<T>(
             DataTable dataTable,
             string columnName,
@@ -165,7 +165,7 @@ namespace PRISMDatabaseUtils
         /// <param name="columnName">Column name</param>
         /// <param name="defaultValue">Default value</param>
         /// <param name="isReadOnly">True if the column value cannot be updated after a row is added to a table</param>
-        /// <param name="isUnique"></param>
+        /// <param name="isUnique">True if the value in each row of the column must be unique</param>
         public static bool AppendColumnDoubleToTable(DataTable dataTable, string columnName, double defaultValue = 0, bool isReadOnly = false, bool isUnique = false)
         {
             return AppendColumnToTable(dataTable, columnName, Type.GetType("System.Double"), defaultValue, isReadOnly, isUnique);
@@ -178,7 +178,7 @@ namespace PRISMDatabaseUtils
         /// <param name="columnName">Column name</param>
         /// <param name="defaultValue">Default value</param>
         /// <param name="isReadOnly">True if the column value cannot be updated after a row is added to a table</param>
-        /// <param name="isUnique"></param>
+        /// <param name="isUnique">True if the value in each row of the column must be unique</param>
         public static bool AppendColumnFloatToTable(DataTable dataTable, string columnName, float defaultValue = 0, bool isReadOnly = false, bool isUnique = false)
         {
             return AppendColumnToTable(dataTable, columnName, Type.GetType("System.Double"), defaultValue, isReadOnly, isUnique);
@@ -311,8 +311,8 @@ namespace PRISMDatabaseUtils
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
-        /// <param name="columnNames"></param>
-        /// <param name="caseSensitiveColumnNames"></param>
+        /// <param name="columnNames">Column names</param>
+        /// <param name="caseSensitiveColumnNames">When true, names are case-sensitive</param>
         /// <returns>Mapping from column name to column index</returns>
         public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columnNames, bool caseSensitiveColumnNames = true)
         {
@@ -641,6 +641,7 @@ namespace PRISMDatabaseUtils
 
             foreach (var identifier in columnIdentifierList)
             {
+                // ReSharper disable once CanSimplifyDictionaryLookupWithTryGetValue
                 if (!columnNamesByIdentifier.ContainsKey(identifier))
                 {
                     throw new Exception("Error in GetExpectedHeaderLine; columnNamesByIdentifier does not contain enum " + identifier);
@@ -663,8 +664,8 @@ namespace PRISMDatabaseUtils
         /// Get the error message for either an invalid column name or not enough columns
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
-        /// <param name="columnIndex"></param>
-        /// <param name="columnIdentifier"></param>
+        /// <param name="columnIndex">Column index</param>
+        /// <param name="columnIdentifier">Column identifier</param>
         public static string GetInvalidColumnNameExceptionMessage<T>(int columnIndex, T columnIdentifier)
         {
             string errorReason;
@@ -681,8 +682,8 @@ namespace PRISMDatabaseUtils
         /// Get the error message for either an invalid column name or not enough columns
         /// </summary>
         /// <typeparam name="T">Column identifier type (typically string or an enum)</typeparam>
-        /// <param name="columnMap"></param>
-        /// <param name="columnIdentifier"></param>
+        /// <param name="columnMap">Map of column name to column index, as returned by GetColumnMapping</param>
+        /// <param name="columnIdentifier">Column identifier</param>
         public static string GetInvalidColumnNameExceptionMessage<T>(IReadOnlyDictionary<T, int> columnMap, T columnIdentifier)
         {
             string errorReason;

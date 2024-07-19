@@ -12,13 +12,13 @@ namespace PRISM
     /// </summary>
     public static class ParallelPreprocessing
     {
-        // Ignore Spelling: pre
+        // Ignore Spelling: pre, preprocess
 
         /// <summary>
         /// Performs pre-processing using parallelization. Up to <paramref name="maxThreads"/> threads will be used to process data prior to it being requested by (and simultaneous with) the enumerable consumer. Backed by a producer-consumer queue pattern
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="T">Source data type</typeparam>
+        /// <typeparam name="TResult">Result data type</typeparam>
         /// <param name="sourceEnum">source enumerable; preferably something like a list of file that need to be loaded</param>
         /// <param name="processFunction">Method to transform from <paramref name="sourceEnum"/> to return type; should involve heavy processing (if x => x, you may see a performance penalty)</param>
         /// <param name="maxThreads">Max number of <paramref name="sourceEnum"/> items to process simultaneously</param>
@@ -35,8 +35,8 @@ namespace PRISM
         /// <summary>
         /// Implementation details for the extension method; implements a producer-consumer pattern with 1 consumer and x producers
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="T">Source data type</typeparam>
+        /// <typeparam name="TResult">Result data type</typeparam>
         private class ParallelPreprocessor<T, TResult> : IDisposable
         {
             /// <summary>
@@ -79,9 +79,9 @@ namespace PRISM
             /// <summary>
             /// Setup for and start the producers
             /// </summary>
-            /// <param name="sourceEnum"></param>
-            /// <param name="processFunction"></param>
-            /// <param name="numThreads"></param>
+            /// <param name="sourceEnum">Source data enum</param>
+            /// <param name="processFunction">Processing function</param>
+            /// <param name="numThreads">Number of threads</param>
             /// <param name="checkIntervalSeconds">How often to check for completion of the preprocessing</param>
             private void Start(IEnumerable<T> sourceEnum, Func<T, TResult> processFunction, int numThreads = 1, double checkIntervalSeconds = 1)
             {
@@ -109,7 +109,7 @@ namespace PRISM
             /// <summary>
             /// Timer callback method: check on the producer threads, if they are no longer alive, then mark the target block as complete
             /// </summary>
-            /// <param name="sender"></param>
+            /// <param name="sender">Sender</param>
             private void ThreadMonitorCheck(object sender)
             {
                 var done = true;
@@ -146,9 +146,9 @@ namespace PRISM
             /// <summary>
             /// Producer method: process the source enumerable in parallel, with limits and checks
             /// </summary>
-            /// <param name="sourceEnumerator"></param>
-            /// <param name="processFunction"></param>
-            /// <param name="accessLock"></param>
+            /// <param name="sourceEnumerator">Source data enumerator</param>
+            /// <param name="processFunction">Processing function</param>
+            /// <param name="accessLock">Access lock</param>
             /// <param name="threadId">A 'threadID' for debugging purposes</param>
             // ReSharper disable once UnusedParameter.Local
             private async void Producer(IEnumerator<T> sourceEnumerator, Func<T, TResult> processFunction, object accessLock, int threadId)

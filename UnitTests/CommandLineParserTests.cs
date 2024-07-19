@@ -1020,10 +1020,10 @@ namespace PRISMTest
         /// Test cases using On and Off will produce an error;
         /// this is expected since the CommandLineParser does not support On or Off for boolean args
         /// </remarks>
-        /// <param name="testCaseIndex"></param>
-        /// <param name="verboseFlagValue"></param>
-        /// <param name="expectedParseResult"></param>
-        /// <param name="parseErrorExpected"></param>
+        /// <param name="testCaseIndex">Test case index</param>
+        /// <param name="verboseFlagValue">Verbose flag</param>
+        /// <param name="expectedParseResult">Expected parse result</param>
+        /// <param name="parseErrorExpected">True if we expect an error</param>
         [Test]
         [TestCase(0, "True", true)]
         [TestCase(1, "False", false)]

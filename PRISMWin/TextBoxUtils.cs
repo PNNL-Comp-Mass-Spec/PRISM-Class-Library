@@ -16,7 +16,7 @@ namespace PRISMWin
         /// <summary>
         /// Tries to convert the string to a double
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <returns>True if successful, otherwise false</returns>
         private static bool IsNumber(string value)
         {
@@ -329,7 +329,7 @@ namespace PRISMWin
         /// <param name="thisTextBox">TextBox</param>
         /// <param name="minimum">Minimum allowed integer</param>
         /// <param name="maximum">Maximum allowed integer</param>
-        /// <param name="defaultValue"></param>
+        /// <param name="defaultValue">Default value</param>
         public static void ValidateTextBoxInt(System.Windows.Forms.TextBox thisTextBox, int minimum, int maximum, int defaultValue)
         {
             if (IsNumber(thisTextBox.Text))
@@ -360,7 +360,7 @@ namespace PRISMWin
         /// <param name="thisTextBox">TextBox</param>
         /// <param name="minimum">Minimum allowed float</param>
         /// <param name="maximum">Maximum allowed float</param>
-        /// <param name="defaultValue"></param>
+        /// <param name="defaultValue">Default value</param>
         public static void ValidateTextBoxFloat(System.Windows.Forms.TextBox thisTextBox, float minimum, float maximum, float defaultValue)
         {
             if (IsNumber(thisTextBox.Text))

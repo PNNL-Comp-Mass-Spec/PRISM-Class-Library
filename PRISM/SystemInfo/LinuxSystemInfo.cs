@@ -240,7 +240,7 @@ namespace PRISM
         /// has the combined processing time for all threads, so parsing of individual thread stat times
         /// is not necessary to determine overall processing time.
         /// </remarks>
-        /// <param name="statFile"></param>
+        /// <param name="statFile">Stat file</param>
         /// <param name="utime">Amount of time that the process has been scheduled in user mode, in jiffies</param>
         /// <param name="stime">Amount of time that the process has been scheduled in kernel mode, in jiffies</param>
         /// <returns>True if success, false if an error</returns>
@@ -329,8 +329,8 @@ namespace PRISM
         /// Match the data line with the RegEx matcher
         /// If success, extract the ID group, returning the integer via parameter id
         /// </summary>
-        /// <param name="reIdMatcher"></param>
-        /// <param name="dataLine"></param>
+        /// <param name="reIdMatcher">RegEx matcher</param>
+        /// <param name="dataLine">Data line</param>
         /// <param name="id">Output: matched ID, or 0 if no match</param>
         /// <returns>True if success, otherwise false</returns>
         private static bool ExtractID(Regex reIdMatcher, string dataLine, out int id)
@@ -740,7 +740,7 @@ namespace PRISM
         /// Determine the core usage for a given process
         /// </summary>
         /// <remarks>If a single core was 100% utilized, this method returns 1</remarks>
-        /// <param name="processID"></param>
+        /// <param name="processID">Process ID</param>
         /// <param name="cpuUsageTotal">Output: Total CPU usage (value between 0 and 100)</param>
         /// <param name="samplingTimeSeconds">Time (in seconds) to wait while determining CPU usage; default 1, minimum 0.1, maximum 10</param>
         /// <returns>Core usage, or 0 if process not found</returns>

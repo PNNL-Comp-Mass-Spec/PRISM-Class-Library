@@ -127,7 +127,7 @@ namespace PRISM
         /// <summary>
         /// Return the first, second, third, fourth, or fifth Tuesday in the month
         /// </summary>
-        /// <param name="currentTime"></param>
+        /// <param name="currentTime">Current time</param>
         /// <param name="occurrence">1 for the first Tuesday, 2 for the second, etc.</param>
         private static DateTime GetNthTuesdayInMonth(DateTime currentTime, int occurrence)
         {

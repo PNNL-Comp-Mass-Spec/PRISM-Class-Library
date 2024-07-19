@@ -22,8 +22,8 @@ namespace PRISMTest
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="targetFilePath"></param>
-        /// <param name="lockTimeSeconds"></param>
+        /// <param name="targetFilePath">Target file path</param>
+        /// <param name="lockTimeSeconds">Lock time, in seconds</param>
         public FileLockUtility(string targetFilePath, int lockTimeSeconds)
         {
             TargetFilePath = targetFilePath;

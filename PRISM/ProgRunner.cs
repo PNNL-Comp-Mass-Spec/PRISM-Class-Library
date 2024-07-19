@@ -132,7 +132,7 @@ namespace PRISM
         /// <summary>
         /// Progress changed event delegate
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">Program runner instance</param>
         public delegate void ProgChangedEventHandler(ProgRunner obj);
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace PRISM
         /// <summary>
         /// Console output event delegate
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         public delegate void ConsoleOutputEventEventHandler(string message);
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace PRISM
         /// <summary>
         /// Console error event delegate
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         public delegate void ConsoleErrorEventEventHandler(string message);
 
         /// <summary>
@@ -440,7 +440,7 @@ namespace PRISM
         /// <summary>
         /// Force the garbage collector to run
         /// </summary>
-        /// <param name="maxWaitTimeMSec"></param>
+        /// <param name="maxWaitTimeMSec">Maximum wait time, in seconds</param>
         [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {

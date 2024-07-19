@@ -31,11 +31,11 @@ namespace PRISMTest
         /// <summary>
         /// Test renaming a file, including waiting for a locked file to be released by another thread
         /// </summary>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="newFileName"></param>
-        /// <param name="retryCount"></param>
-        /// <param name="secondsToLockFile"></param>
-        /// <param name="expectSuccessfulRename"></param>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="newFileName">New filename</param>
+        /// <param name="retryCount">Retry count</param>
+        /// <param name="secondsToLockFile">Lock time, in seconds</param>
+        /// <param name="expectSuccessfulRename">True if we expect to rename to succeed</param>
         [TestCase(@"C:\Temp\PrismLibraryTestFileA.txt", "PrismLibraryTestFileB.txt", 3, 0)]
         [TestCase(@"C:\Temp\PrismLibraryTestFileC.txt", "PrismLibraryTestFileD.txt", 3, 3)]
         [TestCase(@"C:\Temp\PrismLibraryTestFileE.txt", "PrismLibraryTestFileF.txt", 3, 7)]
@@ -57,11 +57,11 @@ namespace PRISMTest
         /// <summary>
         /// Test renaming a file, moving it to a new directory, including waiting for a locked file to be released by another thread
         /// </summary>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="newFilePath"></param>
-        /// <param name="retryCount"></param>
-        /// <param name="secondsToLockFile"></param>
-        /// <param name="expectSuccessfulRename"></param>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="newFilePath">New file path</param>
+        /// <param name="retryCount">Retry count</param>
+        /// <param name="secondsToLockFile">Lock time, in seconds</param>
+        /// <param name="expectSuccessfulRename">True if we expect to rename to succeed</param>
         [TestCase(@"C:\Temp\PrismLibraryTestFileA.txt", @"C:\Temp\Renamed\PrismLibraryTestFileB.txt", 3, 0)]
         [TestCase(@"C:\Temp\PrismLibraryTestFileC.txt", @"C:\Temp\Renamed\PrismLibraryTestFileD.txt", 3, 3)]
         [TestCase(@"C:\Temp\PrismLibraryTestFileE.txt", @"C:\Temp\Renamed\PrismLibraryTestFileF.txt", 3, 7)]
@@ -83,8 +83,8 @@ namespace PRISMTest
         /// <summary>
         /// Test renaming a file when the target file already exists
         /// </summary>
-        /// <param name="sourceFilePath"></param>
-        /// <param name="newFilePath"></param>
+        /// <param name="sourceFilePath">Source file path</param>
+        /// <param name="newFilePath">New file path</param>
         [TestCase(@"C:\Temp\PrismLibraryTestFileM.txt", @"C:\Temp\PrismLibraryTestFileN.txt")]
         [TestCase(@"C:\Temp\PrismLibraryTestFileO.txt", @"C:\Temp\Renamed\PrismLibraryTestFileP.txt")]
         public void RenameFileTestConflicts(string sourceFilePath, string newFilePath)

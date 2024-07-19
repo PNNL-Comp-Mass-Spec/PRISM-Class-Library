@@ -423,7 +423,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -460,7 +460,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -490,7 +490,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="columnNames">Column names (as returned by the database)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
@@ -1156,7 +1156,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// Method for executing a stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of, list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -1443,7 +1443,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <remarks>
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
         /// </remarks>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="direction">Parameter direction</param>
@@ -1494,11 +1494,11 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
-        /// <param name="value"></param>
+        /// <param name="value">Parameter value</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         public override DbParameter AddParameter(
@@ -1543,7 +1543,7 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// <summary>
         /// Convert from enum SqlType to System.Data.SqlDbType
         /// </summary>
-        /// <param name="sqlType"></param>
+        /// <param name="sqlType">SQL Type enum</param>
         private static SqlDbType ConvertSqlType(SqlType sqlType)
         {
             return sqlType switch

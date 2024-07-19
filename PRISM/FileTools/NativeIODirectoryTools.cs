@@ -22,7 +22,7 @@ namespace PRISM
         /// <summary>
         /// Check whether the directory exists
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Directory path</param>
         public static bool Exists(string path)
         {
             if (path.Length < DIRECTORY_PATH_LENGTH_THRESHOLD)
@@ -37,7 +37,7 @@ namespace PRISM
         /// <summary>
         /// Create a directory, optionally having a long path
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">Directory path</param>
         public static void CreateDirectory(string path)
         {
             if (path.Length < DIRECTORY_PATH_LENGTH_THRESHOLD)
@@ -58,8 +58,8 @@ namespace PRISM
         /// <summary>
         /// Delete a directory, optionally having a long path
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="recursive"></param>
+        /// <param name="path">Directory path</param>
+        /// <param name="recursive">When true, delete files recursively</param>
         public static void Delete(string path, bool recursive)
         {
             if (path.Length < NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD && !recursive)

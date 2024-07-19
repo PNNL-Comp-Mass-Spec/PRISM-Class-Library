@@ -85,7 +85,7 @@ namespace PRISM
     /// <para>    options.OutputSetOptions();</para>
     /// <para>An example class suitable for use when instantiating the CommandLineParser is GenericParserOptions in this project</para>
     /// </remarks>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">Type</typeparam>
     public class CommandLineParser<T> where T : class, new()
     {
         // ReSharper disable StaticMemberInGenericType
@@ -113,8 +113,8 @@ namespace PRISM
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="message"></param>
-            /// <param name="isMissingRequiredParameter"></param>
+            /// <param name="message">Message</param>
+            /// <param name="isMissingRequiredParameter">True if this is a required, but missing parameter</param>
             public ParseErrorInfo(string message, bool isMissingRequiredParameter = false)
             {
                 Message = message;
@@ -164,7 +164,7 @@ namespace PRISM
             /// <summary>
             /// Constructor
             /// </summary>
-            /// <param name="parsed"></param>
+            /// <param name="parsed">Parsed results</param>
             public ParserResults(T parsed)
             {
                 Success = true;
@@ -393,7 +393,7 @@ namespace PRISM
         /// Add additional param keys that can be used to specify a parameter file argument, for example "Conf"
         /// </summary>
         /// <remarks>The default argument name for parameter files is /ParamFile or -ParamFile</remarks>
-        /// <param name="paramKey"></param>
+        /// <param name="paramKey">Parameter key</param>
         public void AddParamFileKey(string paramKey)
         {
             if (string.IsNullOrWhiteSpace(paramKey))
@@ -430,8 +430,8 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments into <paramref name="options"/>, returning a bool. Entry assembly name is retrieved via reflection
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="options"></param>
+        /// <param name="args">Arguments</param>
+        /// <param name="options">Options</param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>True on success, false if argument parse failed</returns>
         public static bool ParseArgs(string[] args, T options, string versionInfo = "")
@@ -443,8 +443,8 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments into <paramref name="options"/>, returning a bool
         /// </summary>
-        /// <param name="args"></param>
-        /// <param name="options"></param>
+        /// <param name="args">Arguments</param>
+        /// <param name="options">Options</param>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>True on success, false if argument parse failed</returns>
@@ -461,7 +461,7 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>. Entry assembly name is retrieved via reflection
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Arguments</param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>Parser results</returns>
         public static ParserResults ParseArgs(string[] args, string versionInfo)
@@ -473,7 +473,7 @@ namespace PRISM
         /// <summary>
         /// Parse the arguments, returning the parsing results in <see cref="ParserResults"/>
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Arguments</param>
         /// <param name="entryAssemblyName">Name of the executable</param>
         /// <param name="versionInfo">Executable version info</param>
         /// <returns>Parser results</returns>
@@ -1065,7 +1065,7 @@ namespace PRISM
         /// Writes the values in <see cref="Results"/>.ParsedResults as a parameter file,
         /// or show at the console if paramFilePath is an empty string
         /// </summary>
-        /// <param name="paramFilePath"></param>
+        /// <param name="paramFilePath">Parameter file path</param>
         /// <returns>True if successful, false if an error</returns>
         private bool WriteParamFile(string paramFilePath)
         {
@@ -1211,10 +1211,10 @@ namespace PRISM
         /// <summary>
         /// Parses a value to the specified type, checking min and max limits
         /// </summary>
-        /// <param name="propertyType"></param>
-        /// <param name="parseData"></param>
-        /// <param name="argKey"></param>
-        /// <param name="valueToParse"></param>
+        /// <param name="propertyType">Property type</param>
+        /// <param name="parseData">Data to parse</param>
+        /// <param name="argKey">Argument key</param>
+        /// <param name="valueToParse">Value to parse</param>
         /// <returns>Converted value</returns>
         private object ParseValueToType(Type propertyType, OptionAttribute parseData, string argKey, string valueToParse)
         {
@@ -1306,8 +1306,8 @@ namespace PRISM
         /// <summary>
         /// Parse most objects normally, but parse enums using Enum.Parse
         /// </summary>
-        /// <param name="valueToConvert"></param>
-        /// <param name="targetType"></param>
+        /// <param name="valueToConvert">Value to convert</param>
+        /// <param name="targetType">Target type</param>
         private static object ConvertToType(object valueToConvert, Type targetType)
         {
             // Properly parse enums
@@ -1374,7 +1374,7 @@ namespace PRISM
         /// <remarks>
         /// Arguments loaded from a parameter file will each start with a dash, followed by the argument name, then an equals sign, then the value
         /// </remarks>
-        /// <param name="args"></param>
+        /// <param name="args">List of arguments</param>
         /// <param name="parsingParamFileArgs">Set this to true if the arguments were loaded from a parameter file</param>
         /// <returns>
         /// Dictionary where keys are argument names and values are the setting for the argument
@@ -1533,7 +1533,7 @@ namespace PRISM
         /// <summary>
         /// Generate the special argument name used to track positional arguments
         /// </summary>
-        /// <param name="argPosition"></param>
+        /// <param name="argPosition">Argument position</param>
         /// <returns>Argument name</returns>
         private static string GetPositionalArgName(int argPosition)
         {
@@ -2262,8 +2262,8 @@ namespace PRISM
         /// Look for the file (or directory) specified by the given property (whose type is string)
         /// If the item does not exist in the working directory, but does exist in paramFileDirectory, auto-update the path
         /// </summary>
-        /// <param name="prop"></param>
-        /// <param name="paramFileDirectory"></param>
+        /// <param name="prop">Property</param>
+        /// <param name="paramFileDirectory">Parameter file directory</param>
         private void VerifyFileOrDirectoryPath(KeyValuePair<PropertyInfo, OptionAttribute> prop, FileSystemInfo paramFileDirectory)
         {
             try
@@ -2311,7 +2311,7 @@ namespace PRISM
         /// <summary>
         /// Assure that the path is not surrounded by single quotes or by double quotes
         /// </summary>
-        /// <param name="prop"></param>
+        /// <param name="prop">Property</param>
         private void VerifyPathNotQuoted(KeyValuePair<PropertyInfo, OptionAttribute> prop)
         {
             try
@@ -2340,7 +2340,7 @@ namespace PRISM
         /// <summary>
         /// Assure that the path is not surrounded by single quotes or by double quotes
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         private static string RemoveMatchingQuotes(string value)
         {
             if (value == null || value.Length < 2)

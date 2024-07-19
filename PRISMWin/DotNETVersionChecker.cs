@@ -33,8 +33,8 @@ namespace PRISMWin
         /// <summary>
         /// Error event
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="message">Message</param>
+        /// <param name="ex">Exception</param>
         public delegate void ErrorEventEventHandler(string message, Exception ex);
 
         #endregion
@@ -42,7 +42,7 @@ namespace PRISMWin
         /// <summary>
         /// Determine the human-readable version of .NET
         /// </summary>
-        /// <param name="releaseKey"></param>
+        /// <param name="releaseKey">.NET release</param>
         private static string CheckFor45DotVersion(int releaseKey)
         {
             // Checking the version using >= will enable forward compatibility,
@@ -100,8 +100,7 @@ namespace PRISMWin
 
             if (releaseValue != null)
             {
-                var latestVersion = CheckFor45DotVersion(Convert.ToInt32(releaseValue));
-                return latestVersion;
+                return CheckFor45DotVersion(Convert.ToInt32(releaseValue));
             }
 
             return string.Empty;
@@ -300,7 +299,7 @@ namespace PRISMWin
         /// <summary>
         /// Look for the version integer in versionKeyName
         /// </summary>
-        /// <param name="versionKeyName"></param>
+        /// <param name="versionKeyName">.NET version</param>
         private static int GetMajorVersion(string versionKeyName)
         {
             // This RegEx is used to find the first integer in a string
@@ -319,7 +318,7 @@ namespace PRISMWin
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         /// <param name="ex">Exception (allowed to be null)</param>
         protected void OnErrorEvent(string message, Exception ex)
         {

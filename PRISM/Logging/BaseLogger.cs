@@ -79,7 +79,7 @@ namespace PRISM.Logging
         public static string MostRecentErrorMessage { get; protected set; } = string.Empty;
 
         /// <summary>
-        /// Timestamp format, defaults to year-month-day time (24 hour clock)
+        /// Timestamp format, defaults to year-month-day time (24-hour clock)
         /// </summary>
         public static LogMessage.TimestampFormatMode TimestampFormat { get; set; } = Logging.LogMessage.TimestampFormatMode.YearMonthDay24hr;
 
@@ -89,10 +89,11 @@ namespace PRISM.Logging
         public static bool TraceMode { get; set; }
 
         /// <summary>
-        /// Compare message log level to the log threshold level
+        /// Compare message log level to the log threshold level,
+        /// returning true if the message log level is less than or equal to the log threshold level
         /// </summary>
-        /// <param name="messageLogLevel"></param>
-        /// <param name="logThresholdLevel"></param>
+        /// <param name="messageLogLevel">Message log level</param>
+        /// <param name="logThresholdLevel">Log threshold level</param>
         /// <returns>True if this message should be logged</returns>
         protected static bool AllowLog(LogLevels messageLogLevel, LogLevels logThresholdLevel)
         {
@@ -102,8 +103,8 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a local message regarding a message queue dequeue error
         /// </summary>
-        /// <param name="failedDequeueEvents"></param>
-        /// <param name="messageQueueCount"></param>
+        /// <param name="failedDequeueEvents">Number of failed dequeue events</param>
+        /// <param name="messageQueueCount">Message queue count</param>
         protected static void LogDequeueError(int failedDequeueEvents, int messageQueueCount)
         {
             bool warnUser;
@@ -135,9 +136,9 @@ namespace PRISM.Logging
         /// Log a message to the local, generic log file
         /// </summary>
         /// <remarks>Used to log errors and warnings when the standard log file (or database) cannot be written to</remarks>
-        /// <param name="logLevel"></param>
-        /// <param name="message"></param>
-        /// <param name="localLogFilePath"></param>
+        /// <param name="logLevel">Log level</param>
+        /// <param name="message">Message</param>
+        /// <param name="localLogFilePath">Local log file path</param>
         protected static void LogLocalMessage(LogLevels logLevel, string message, string localLogFilePath = "FileLoggerErrors.txt")
         {
             var logMessage = new LogMessage(logLevel, message);
@@ -148,8 +149,8 @@ namespace PRISM.Logging
         /// Log a message to the local, generic log file
         /// </summary>
         /// <remarks>Used to log errors and warnings when the standard log file (or database) cannot be written to</remarks>
-        /// <param name="logMessage"></param>
-        /// <param name="localLogFilePath"></param>
+        /// <param name="logMessage">Message</param>
+        /// <param name="localLogFilePath">Local log file path</param>
         protected static void LogLocalMessage(LogMessage logMessage, string localLogFilePath = "FileLoggerErrors.txt")
         {
             switch (logMessage.LogLevel)
@@ -201,9 +202,9 @@ namespace PRISM.Logging
         /// <summary>
         /// Log a message (provided logLevel is the log threshold value or lower)
         /// </summary>
-        /// <param name="logLevel"></param>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="logLevel">Log level</param>
+        /// <param name="message">Message</param>
+        /// <param name="ex">Exception</param>
         public void LogMessage(LogLevels logLevel, string message, Exception ex = null)
         {
             // Send the log message
@@ -237,7 +238,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Show a trace message at the console if TraceMode is true
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         protected static void ShowTrace(string message)
         {
             if (TraceMode)

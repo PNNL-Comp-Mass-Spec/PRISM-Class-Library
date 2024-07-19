@@ -49,7 +49,7 @@ namespace PRISMDatabaseUtils
         /// <remarks>
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
         /// </remarks>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="direction">Parameter direction</param>
@@ -63,11 +63,11 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
-        /// <param name="value"></param>
+        /// <param name="value">Parameter value</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         public abstract DbParameter AddParameter(
@@ -81,7 +81,7 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dataTypeName">Database data type name</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
@@ -409,7 +409,7 @@ namespace PRISMDatabaseUtils
         /// Determine the return code to report after calling a stored procedure or function
         /// </summary>
         /// <remarks>Looks for a parameter named _returnCode or @returnCode, or with Direction == ParameterDirection.ReturnValue</remarks>
-        /// <param name="cmdParameters"></param>
+        /// <param name="cmdParameters">Collection of database parameters</param>
         /// <returns>Numeric return code</returns>
         protected static int GetReturnCode(DbParameterCollection cmdParameters)
         {
@@ -435,7 +435,7 @@ namespace PRISMDatabaseUtils
         /// Parse a parameter (of type string or integer) to determine the return code
         /// Supports Postgres error codes that might contain a letter, including 22P06, 2200L, and U5201
         /// </summary>
-        /// <param name="parameter"></param>
+        /// <param name="parameter">Database parameter</param>
         /// <returns>Parsed integer, or -1 if the return code does not have a non-zero integer</returns>
         public static int GetReturnCode(IDataParameter parameter)
         {
@@ -482,7 +482,7 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Set the default precision for a Decimal (aka Numeric) parameter
         /// </summary>
-        /// <param name="param"></param>
+        /// <param name="param">Database parameter</param>
         protected static void SetDefaultPrecision(DbParameter param)
         {
             if (param.DbType != DbType.Decimal)

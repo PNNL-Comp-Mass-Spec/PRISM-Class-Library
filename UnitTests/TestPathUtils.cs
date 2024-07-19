@@ -174,9 +174,9 @@ namespace PRISMTest
         /// Find files recursively below C:\Windows
         /// Only run this inside PNNL because it is slow on AppVeyor
         /// </summary>
-        /// <param name="directoryPath"></param>
-        /// <param name="fileMask"></param>
-        /// <param name="expectedFileNames"></param>
+        /// <param name="directoryPath">Directory path</param>
+        /// <param name="fileMask">File mask</param>
+        /// <param name="expectedFileNames">Expected file names</param>
         [TestCase(@"c:\windows", "*.ini", "system.ini, win.ini")]
         [TestCase(@"c:\windows\", "*.dll", "perfos.dll, perfnet.dll")]
         [Category("PNL_Domain")]

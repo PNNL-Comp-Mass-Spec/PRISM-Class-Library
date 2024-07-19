@@ -22,10 +22,10 @@ namespace PRISMTest
         /// These tests work when run as a normal user but can fail when run on our Jenkins server under the NETWORK SERVICE account; thus the category DesktopInteraction
         /// Category PNL_Domain is included here because these tests do not work on AppVeyor
         /// </remarks>
-        /// <param name="exeName"></param>
-        /// <param name="cmdArgs"></param>
-        /// <param name="writeConsoleOutput"></param>
-        /// <param name="maxRuntimeSeconds"></param>
+        /// <param name="exeName">Executable name</param>
+        /// <param name="cmdArgs">Command line arguments</param>
+        /// <param name="writeConsoleOutput">When true, write the output to the console</param>
+        /// <param name="maxRuntimeSeconds">Maximum runtime, in seconds</param>
         [TestCase("sleep.exe", "20",  true, 6)]
         [TestCase("ls.exe", @"-alFR c:\",  true, 3)]
         [Category("DesktopInteraction")]
@@ -41,10 +41,10 @@ namespace PRISMTest
         /// <remarks>
         /// Category PNL_Domain is included here because these tests do not work on AppVeyor
         /// </remarks>
-        /// <param name="exeName"></param>
-        /// <param name="cmdArgs"></param>
-        /// <param name="writeConsoleOutput"></param>
-        /// <param name="maxRuntimeSeconds"></param>
+        /// <param name="exeName">Executable name</param>
+        /// <param name="cmdArgs">Command line arguments</param>
+        /// <param name="writeConsoleOutput">When true, write the output to the console</param>
+        /// <param name="maxRuntimeSeconds">Maximum runtime, in seconds</param>
         [TestCase("sleep.exe", "20",  true, 6)]
         [TestCase("ls.exe", @"-alFR c:\",  true, 3)]
         [Category("PNL_Domain")]
@@ -70,10 +70,10 @@ namespace PRISMTest
         /// This method will create 2.5 million FileInfo objects (if iterations is 2500000) and store those in random locations in various dictionaries
         /// It will remove half of the dictionaries garbageCollectionEvents times, calling GarbageCollectNow after each removal
         /// </summary>
-        /// <param name="iterations"></param>
-        /// <param name="garbageCollectionEvents"></param>
-        /// <param name="dictionaryCount"></param>
-        /// <param name="dictionarySize"></param>
+        /// <param name="iterations">Number of iterations</param>
+        /// <param name="garbageCollectionEvents">Number of garbage collection events</param>
+        /// <param name="dictionaryCount">Number of dictionaries to create</param>
+        /// <param name="dictionarySize">Size of each dictionary</param>
         private void TestGarbageCollectionWork(int iterations, int garbageCollectionEvents, int dictionaryCount, int dictionarySize)
         {
             var dictionaries = new List<Dictionary<int, List<FileInfo>>>();
@@ -179,10 +179,10 @@ namespace PRISMTest
         /// Test starting a process, showing a window
         /// </summary>
         /// <remarks>Category DesktopInteraction is included here because these tests do not work on AppVeyor or on Jenkins</remarks>
-        /// <param name="exeName"></param>
-        /// <param name="cmdArgs"></param>
-        /// <param name="writeConsoleOutput"></param>
-        /// <param name="maxRuntimeSeconds"></param>
+        /// <param name="exeName">Executable name</param>
+        /// <param name="cmdArgs">Command line arguments</param>
+        /// <param name="writeConsoleOutput">When true, write the output to the console</param>
+        /// <param name="maxRuntimeSeconds">Maximum runtime, in seconds</param>
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("ls.exe", @"-alF c:\",  false, 15)]
@@ -196,10 +196,10 @@ namespace PRISMTest
         /// Test starting a process, no window
         /// </summary>
         /// <remarks>Category PNL_Domain is included here because these tests do not work on AppVeyor</remarks>
-        /// <param name="exeName"></param>
-        /// <param name="cmdArgs"></param>
-        /// <param name="writeConsoleOutput"></param>
-        /// <param name="maxRuntimeSeconds"></param>
+        /// <param name="exeName">Executable name</param>
+        /// <param name="cmdArgs">Command line arguments</param>
+        /// <param name="writeConsoleOutput">When true, write the output to the console</param>
+        /// <param name="maxRuntimeSeconds">Maximum runtime, in seconds</param>
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("sleep.exe", "3",  false, 15)]
         [TestCase("ls.exe", @"-alF c:\",  false, 15)]

@@ -26,8 +26,8 @@ namespace PRISMTest
         /// <summary>
         /// Use stored procedure Find_Log_Entry to look for log entries
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
+        /// <param name="server">Server</param>
+        /// <param name="database">Database</param>
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseIntegrated")]
         public void TestSearchLogsIntegrated(string server, string database)
@@ -39,8 +39,8 @@ namespace PRISMTest
         /// <summary>
         /// Use stored procedure Find_Log_Entry to look for log entries
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
+        /// <param name="server">Server</param>
+        /// <param name="database">Database</param>
         [TestCase("Gigasax", "DMS5")]
         [Category("DatabaseNamedUser")]
         public void TestSearchLogsNamedUser(string server, string database)
@@ -55,8 +55,8 @@ namespace PRISMTest
         /// <remarks>
         /// The procedure returns the results using a refcursor, which ExecuteSPData auto-converts into a result set
         /// </remarks>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
+        /// <param name="server">Server</param>
+        /// <param name="database">Database</param>
         [TestCase("prismdb2", "dms")]
         public void TestSearchLogsPostgres(string server, string database)
         {
@@ -284,10 +284,10 @@ namespace PRISMTest
         /// <summary>
         /// Retrieve values from SQL Server stored procedure Get_Manager_Parameters
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <param name="user"></param>
-        /// <param name="password"></param>
+        /// <param name="server">Server</param>
+        /// <param name="database">Database</param>
+        /// <param name="user">User</param>
+        /// <param name="password">Password</param>
         private void TestGetManagerParametersSP(string server, string database, string user, string password)
         {
             var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, user, password);
@@ -379,8 +379,8 @@ namespace PRISMTest
         /// <summary>
         /// Invoke stored procedure EnableDisableManagers (or enable_disable_managers) and examine output parameter @message (or _message)
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <param name="procedureNameWithSchema"></param>
+        /// <param name="connectionString">Connection string</param>
+        /// <param name="procedureNameWithSchema">Procedure name</param>
         private void TestEnableDisableManagers(string connectionString, string procedureNameWithSchema)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
@@ -463,8 +463,8 @@ namespace PRISMTest
         /// On PostgreSQL, procedure mc.enable_disable_managers returns query results using a reference cursor (_results refcursor)
         /// ExecuteSPData looks for parameters of type refcursor and retrieves the results
         /// </remarks>
-        /// <param name="connectionString"></param>
-        /// <param name="procedureNameWithSchema"></param>
+        /// <param name="connectionString">Connection string</param>
+        /// <param name="procedureNameWithSchema">Procedure name</param>
         private void TestEnableDisableManagersData(string connectionString, string procedureNameWithSchema)
         {
             var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
@@ -550,11 +550,11 @@ namespace PRISMTest
         /// <summary>
         /// Call the specified stored procedure and examine the return code
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <param name="procedureName"></param>
-        /// <param name="skipProcedureCall"></param>
-        /// <param name="expectedReturnCode"></param>
-        /// <param name="returnCodeOverride"></param>
+        /// <param name="connectionString">Connection string</param>
+        /// <param name="procedureName">Procedure name</param>
+        /// <param name="skipProcedureCall">If true, skip the procedure call</param>
+        /// <param name="expectedReturnCode">Expected return code</param>
+        /// <param name="returnCodeOverride">If not an empty string, auto-change returnParam to be named _returnCode and to have this argument's text</param>
         private void TestGetReturnCode(
             string connectionString,
             string procedureName,
@@ -630,7 +630,7 @@ namespace PRISMTest
         // On Windows, the file is at C:\users\username\AppData\Roaming\postgresql\pgpass.conf
 
         // On Proto-2, the Jenkins service runs under the NETWORK SERVICE account
-        // The required location for the pgpass file is: C:\Windows\ServiceProfiles\NetworkService\AppData\Roaming\postgresql\pgpass.conf
+        // The required location for the PgPass file is: C:\Windows\ServiceProfiles\NetworkService\AppData\Roaming\postgresql\pgpass.conf
 
         [TestCase("prismdb2", "dms", 0)]
         [Category("DatabaseNamedUser")]

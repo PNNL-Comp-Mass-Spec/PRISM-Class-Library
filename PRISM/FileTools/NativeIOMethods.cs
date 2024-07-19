@@ -82,7 +82,7 @@ namespace PRISM
         /// <summary>
         /// Win32 IO CreateDirectory
         /// </summary>
-        /// <param name="lpPathName"></param>
+        /// <param name="lpPathName">Directory path</param>
         /// <param name="lpSecurityAttributes">Use "IntPtr.Zero" for NULL (default) security attributes</param>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool CreateDirectory(string lpPathName, IntPtr lpSecurityAttributes);
@@ -90,13 +90,13 @@ namespace PRISM
         /// <summary>
         /// Win32 IO CreateFile
         /// </summary>
-        /// <param name="lpFileName"></param>
-        /// <param name="dwDesiredAccess"></param>
-        /// <param name="dwShareMode"></param>
+        /// <param name="lpFileName">File path</param>
+        /// <param name="dwDesiredAccess">Desired access</param>
+        /// <param name="dwShareMode">Share mode</param>
         /// <param name="lpSecurityAttributes">Use "IntPtr.Zero" for NULL (default) security attributes</param>
-        /// <param name="dwCreationDisposition"></param>
-        /// <param name="dwFlagsAndAttributes"></param>
-        /// <param name="hTemplateFile"></param>
+        /// <param name="dwCreationDisposition">Disposition</param>
+        /// <param name="dwFlagsAndAttributes">Flags and attributes</param>
+        /// <param name="hTemplateFile">Template file</param>
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr lpSecurityAttributes, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
 

@@ -15,14 +15,14 @@ namespace PRISM.DatabaseUtils
         /// <summary>
         /// Append a column of the given type to the DataTable
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dataTable"></param>
-        /// <param name="columnName"></param>
-        /// <param name="columnType"></param>
-        /// <param name="defaultValue"></param>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="dataTable">Data table</param>
+        /// <param name="columnName">Column name</param>
+        /// <param name="columnType">Column data type</param>
+        /// <param name="defaultValue">Default value</param>
         /// <param name="isReadOnly">True if the column value cannot be updated after a row is added to a table</param>
-        /// <param name="isUnique"></param>
-        /// <param name="autoIncrement"></param>
+        /// <param name="isUnique">True if the value in each row of the column must be unique</param>
+        /// <param name="autoIncrement">True if this is an auto incremented value</param>
         private static bool AppendColumnToTable<T>(DataTable dataTable, string columnName, Type columnType, T defaultValue, bool isReadOnly, bool isUnique, bool autoIncrement = false)
         {
             try
@@ -73,7 +73,7 @@ namespace PRISM.DatabaseUtils
         /// <param name="columnName">Column name</param>
         /// <param name="defaultValue">Default value</param>
         /// <param name="isReadOnly">True if the column value cannot be updated after a row is added to a table</param>
-        /// <param name="isUnique"></param>
+        /// <param name="isUnique">True if the value in each row of the column must be unique</param>
         public static bool AppendColumnDoubleToTable(DataTable dataTable, string columnName, double defaultValue = 0, bool isReadOnly = false, bool isUnique = false)
         {
             return AppendColumnToTable(dataTable, columnName, Type.GetType("System.Double"), defaultValue, isReadOnly, isUnique);
@@ -86,7 +86,7 @@ namespace PRISM.DatabaseUtils
         /// <param name="columnName">Column name</param>
         /// <param name="defaultValue">Default value</param>
         /// <param name="isReadOnly">True if the column value cannot be updated after a row is added to a table</param>
-        /// <param name="isUnique"></param>
+        /// <param name="isUnique">True if the value in each row of the column must be unique</param>
         public static bool AppendColumnFloatToTable(DataTable dataTable, string columnName, float defaultValue = 0, bool isReadOnly = false, bool isUnique = false)
         {
             return AppendColumnToTable(dataTable, columnName, Type.GetType("System.Double"), defaultValue, isReadOnly, isUnique);

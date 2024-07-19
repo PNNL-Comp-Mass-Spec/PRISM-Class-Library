@@ -114,8 +114,8 @@ namespace PRISM
         /// Event handler for InfoMessage event
         /// </summary>
         /// <remarks>Errors and warnings from SQL Server are caught here</remarks>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
+        /// <param name="sender">Sender</param>
+        /// <param name="args">Arguments</param>
         private void OnInfoMessage(object sender, SqlInfoMessageEventArgs args)
         {
             foreach (SqlError err in args.Errors)
@@ -140,7 +140,7 @@ namespace PRISM
         /// Method for executing a db stored procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing stored procedure params</param>
-        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of, list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the stored procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>

@@ -17,6 +17,8 @@ namespace PRISM
     /// </remarks>
     public static class NativeIOFileTools
     {
+        // Ignore Spelling: dest
+
         /// <summary>
         /// File path length threshold at which we should switch to NativeIO calls
         /// </summary>
@@ -30,7 +32,7 @@ namespace PRISM
         /// <summary>
         /// Check whether the file exists
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">File path</param>
         /// <returns>True if the file exists, otherwise false</returns>
         public static bool Exists(string path)
         {
@@ -46,9 +48,9 @@ namespace PRISM
         /// <summary>
         /// Copy the file
         /// </summary>
-        /// <param name="sourcePath"></param>
-        /// <param name="destPath"></param>
-        /// <param name="overwrite"></param>
+        /// <param name="sourcePath">Source file path</param>
+        /// <param name="destPath">Destination file path</param>
+        /// <param name="overwrite">When true, overwrite existing files</param>
         public static void Copy(string sourcePath, string destPath, bool overwrite)
         {
             if (sourcePath.Length < FILE_PATH_LENGTH_THRESHOLD && destPath.Length < FILE_PATH_LENGTH_THRESHOLD)
@@ -69,7 +71,7 @@ namespace PRISM
         /// <summary>
         /// Delete the file
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         public static void Delete(string filePath)
         {
             if (filePath.Length < FILE_PATH_LENGTH_THRESHOLD)
@@ -90,7 +92,7 @@ namespace PRISM
         /// <summary>
         /// Format the path as a Win32 long path
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">File or directory path</param>
         public static string GetWin32LongPath(string path)
         {
             if (path.StartsWith(WIN32_LONG_PATH_PREFIX))
@@ -124,7 +126,7 @@ namespace PRISM
         /// <summary>
         /// Remove Win32 long path characters
         /// </summary>
-        /// <param name="path"></param>
+        /// <param name="path">File or directory pat</param>
         public static string GetCleanPath(string path)
         {
             if (path.StartsWith(@"\\?\UNC\"))
@@ -139,7 +141,7 @@ namespace PRISM
         /// <summary>
         /// Get the size of a file, in bytes
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File path</param>
         /// <returns>File size, in bytes</returns>
         public static long GetFileLength(string filePath)
         {

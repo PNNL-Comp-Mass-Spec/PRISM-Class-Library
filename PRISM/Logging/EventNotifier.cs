@@ -43,7 +43,7 @@ namespace PRISM
         /// <summary>
         /// Progress updated
         /// </summary>
-        /// <param name="progressMessage"></param>
+        /// <param name="progressMessage">Progress message</param>
         /// <param name="percentComplete">Value between 0 and 100</param>
         public delegate void ProgressUpdateEventHandler(string progressMessage, float percentComplete);
 
@@ -312,7 +312,7 @@ namespace PRISM
         /// <summary>
         /// Use this method to chain events between classes
         /// </summary>
-        /// <param name="sourceClass"></param>
+        /// <param name="sourceClass">Source class</param>
         protected void RegisterEvents(EventNotifier sourceClass)
         {
             RegisterEvents((IEventNotifier)sourceClass);
@@ -321,7 +321,7 @@ namespace PRISM
         /// <summary>
         /// Use this method to chain events between classes
         /// </summary>
-        /// <param name="sourceClass"></param>
+        /// <param name="sourceClass">Source class</param>
         protected void RegisterEvents(IEventNotifier sourceClass)
         {
             sourceClass.DebugEvent += OnDebugEvent;

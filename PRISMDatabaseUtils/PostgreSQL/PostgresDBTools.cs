@@ -122,7 +122,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
-        /// <param name="columns"></param>
+        /// <param name="columns">List of column names</param>
         /// <returns>Mapping from column name to column index</returns>
         // ReSharper disable once UnusedMember.Global
         public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
@@ -141,8 +141,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Event handler for Notice event
         /// </summary>
         /// <remarks>Errors and warnings from PostgresSQL are reported here</remarks>
-        /// <param name="sender"></param>
-        /// <param name="args"></param>
+        /// <param name="sender">Sender</param>
+        /// <param name="args">Arguments</param>
         private void OnNotice(object sender, NpgsqlNoticeEventArgs args)
         {
             var msg = new StringBuilder();
@@ -401,7 +401,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -438,7 +438,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -473,7 +473,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </para>
         /// </remarks>
         /// <param name="cmd">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="columnNames">Column names (as returned by the database)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
@@ -1183,7 +1183,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Method for calling a procedure if a data table is to be returned
         /// </summary>
         /// <param name="spCmd">SQL command object containing procedure params</param>
-        /// <param name="results">If SP successful, contains Results (list of list of strings)</param>
+        /// <param name="results">If SP successful, contains Results (list of, list of strings)</param>
         /// <param name="retryCount">Maximum number of times to attempt to call the procedure</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 for no limit</param>
         /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
@@ -1492,7 +1492,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <remarks>
         /// If dbType is Text or VarChar, sets the parameter's value to string.Empty
         /// </remarks>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="direction">Parameter direction</param>
@@ -1543,11 +1543,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type
         /// </summary>
-        /// <param name="command"></param>
+        /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>
         /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
-        /// <param name="value"></param>
+        /// <param name="value">Value</param>
         /// <param name="direction">Parameter direction</param>
         /// <returns>The newly added parameter</returns>
         public override DbParameter AddParameter(
@@ -1625,8 +1625,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Parse the query text to look for the list of columns after the SELECT keyword
         /// If any of the columns has capital letters, update the column name in the data table to match the capitalized column names
         /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="dataTable"></param>
+        /// <param name="cmd">DbCommand</param>
+        /// <param name="dataTable">Datatable</param>
         private void CapitalizeColumnNames(IDisposable cmd, DataTable dataTable)
         {
             var columnNames = new List<string>();
@@ -1651,8 +1651,8 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Parse the query text to look for the list of columns after the SELECT keyword
         /// If any of the columns has capital letters, update the column name in the data table to match the capitalized column names
         /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="columnNames"></param>
+        /// <param name="cmd">DbCommand</param>
+        /// <param name="columnNames">List of column names</param>
         private void CapitalizeColumnNames(IDisposable cmd, IList<string> columnNames)
         {
             if (!CapitalizeColumnNamesInResults)
@@ -1683,7 +1683,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <summary>
         /// Convert from enum SqlType to NpgsqlDbTypes.NpgsqlDbType
         /// </summary>
-        /// <param name="sqlType"></param>
+        /// <param name="sqlType">SQL type enum</param>
         private static NpgsqlDbType ConvertSqlType(SqlType sqlType)
         {
             return sqlType switch
@@ -1832,7 +1832,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Auto-change the at sign to an underscore: @ to _
         /// </summary>
         /// <remarks>Parameters named "@Return" with a ReturnValue parameter direction are auto-renamed to "_returnCode" and updated to have an InputOutput parameter direction</remarks>
-        /// <param name="spCmd"></param>
+        /// <param name="spCmd">NpgSQL command</param>
         private static void UpdateSqlServerParameterNames(NpgsqlCommand spCmd)
         {
             foreach (var parameter in spCmd.Parameters.Cast<NpgsqlParameter>())
@@ -1858,7 +1858,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <summary>
         /// Assure that parameter values are integers, not enums
         /// </summary>
-        /// <param name="spCmd"></param>
+        /// <param name="spCmd">NpgSQL command</param>
         private static void UpdateSqlServerParameterValues(NpgsqlCommand spCmd)
         {
             // When sending an enum to a PostgreSQL function or procedure, if you don't cast to an integer, you get this error:

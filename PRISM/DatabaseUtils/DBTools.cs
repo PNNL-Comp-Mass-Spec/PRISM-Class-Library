@@ -61,7 +61,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts an database field value to a string, checking for null values
+        /// Converts a database field value to a string, checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <param name="dbValue">Value from database</param>
@@ -77,7 +77,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts an database field value to a float (single), checking for null values
+        /// Converts a database field value to a float (single), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -94,7 +94,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts an database field value to a double, checking for null values
+        /// Converts a database field value to a double, checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -111,7 +111,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts an database field value to an integer (Int32), checking for null values
+        /// Converts a database field value to an integer (Int32), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -128,7 +128,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Converts an database field value to a long integer (Int64), checking for null values
+        /// Converts a database field value to a long integer (Int64), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -148,7 +148,7 @@ namespace PRISM
         /// Get a mapping from column name to column index, based on column order
         /// </summary>
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
-        /// <param name="columns"></param>
+        /// <param name="columns">List of columns</param>
         /// <returns>Mapping from column name to column index</returns>
         [Obsolete("Use PRISMDatabaseUtils.DataTableUtils instead", true)]
         public static Dictionary<string, int> GetColumnMapping(IReadOnlyList<string> columns)
@@ -401,7 +401,7 @@ namespace PRISM
         /// By default, retries the query up to 3 times
         /// </remarks>
         /// <param name="sqlQuery">Query to run</param>
-        /// <param name="results">Results (list of list of strings)</param>
+        /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>

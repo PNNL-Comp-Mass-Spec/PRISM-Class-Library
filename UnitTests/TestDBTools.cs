@@ -43,7 +43,7 @@ namespace PRISMTest
         /// <summary>
         /// This method tests using the same name for each column identifier and column name
         /// </summary>
-        /// <param name="columnIdentifierList"></param>
+        /// <param name="columnIdentifierList">Column identifier list</param>
         [TestCase("Shape,Sides,Color,Perimeter")]
         [TestCase("ShapeName,SideCount,Color,Perimeter")]
         public void TestAddColumnIdentifiers(string columnIdentifierList)
@@ -65,8 +65,8 @@ namespace PRISMTest
         /// <summary>
         /// This method tests using different strings for column identifier and column name
         /// </summary>
-        /// <param name="columnIdentifierList"></param>
-        /// <param name="columnNameList"></param>
+        /// <param name="columnIdentifierList">Column identifier list</param>
+        /// <param name="columnNameList">Column names</param>
         [TestCase("Shape,Sides,Color,Perimeter", "")]
         [TestCase("ShapeName,SideCount,Color,Perimeter", "Shape,Sides,Color,Perimeter")]
         public void TestAddColumnIdentifiersString(string columnIdentifierList, string columnNameList)
@@ -827,10 +827,10 @@ namespace PRISMTest
         /// If the Postgres instance on the target server is not integrated with LDAP, the following exception occurs:
         /// LDAP authentication failed for user "d3l243"
         /// </remarks>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <param name="rowCountToRetrieve"></param>
-        /// <param name="iterations"></param>
+        /// <param name="server">Server (aka host) name</param>
+        /// <param name="database">Database name</param>
+        /// <param name="rowCountToRetrieve">Row count to retrieve</param>
+        /// <param name="iterations">Iterations</param>
         /// <param name="specifyColumnNames">When true, use explicit column names instead of *</param>
         [TestCase("prismdb2", "dms", 5, 2, false)]
         [TestCase("prismdb2", "dms", 5, 2, true)]
@@ -1158,10 +1158,10 @@ namespace PRISMTest
         /// <summary>
         /// Get a SQL Server compatible connection string
         /// </summary>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <param name="user"></param>
-        /// <param name="password"></param>
+        /// <param name="server">Server (aka host) name</param>
+        /// <param name="database">Database name</param>
+        /// <param name="user">Username</param>
+        /// <param name="password">Password</param>
         public static string GetConnectionStringSqlServer(string server, string database, string user = "Integrated", string password = "")
         {
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))

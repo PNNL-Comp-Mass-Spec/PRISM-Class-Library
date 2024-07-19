@@ -67,8 +67,8 @@ namespace PRISM.FileProcessor
         /// Make sure inputFolderPath points to a valid directory and validate the output directory (defining it if null or empty)
         /// </summary>
         /// <remarks>Create outputFolderPath if it does not exist</remarks>
-        /// <param name="inputFolderPath"></param>
-        /// <param name="outputFolderPath"></param>
+        /// <param name="inputFolderPath">Input directory path</param>
+        /// <param name="outputFolderPath">Output directory path</param>
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupFolderPaths(ref string inputFolderPath, ref string outputFolderPath)
         {
@@ -128,8 +128,12 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
-        /// <param name="inputFolderPath"></param>
-        /// <param name="recurseFoldersMaxLevels"></param>
+        /// <param name="inputFolderPath">Input directory path</param>
+        /// <param name="recurseFoldersMaxLevels">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
         public bool ProcessAndRecurseFolders(string inputFolderPath, int recurseFoldersMaxLevels)
         {
             return ProcessAndRecurseFolders(inputFolderPath, string.Empty, string.Empty, recurseFoldersMaxLevels);
@@ -142,7 +146,11 @@ namespace PRISM.FileProcessor
         /// <param name="inputFolderPath">Input directory path (supports wildcards)</param>
         /// <param name="outputFolderAlternatePath">Alternate directory path</param>
         /// <param name="parameterFilePath">Parameter file path</param>
-        /// <param name="recurseFoldersMaxLevels">If 0 or negative, recurse infinitely</param>
+        /// <param name="recurseFoldersMaxLevels">
+        /// When 0 or negative, recurse infinitely
+        /// When 1, only process the current directory
+        /// When 2, process the current directory and files in its subdirectories
+        /// </param>
         public bool ProcessAndRecurseFolders(
             string inputFolderPath,
             string outputFolderAlternatePath = "",

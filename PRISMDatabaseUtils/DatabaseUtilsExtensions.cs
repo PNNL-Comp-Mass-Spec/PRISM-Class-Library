@@ -31,8 +31,8 @@ namespace PRISMDatabaseUtils
         /// This method does not work with VB.NET when Option Strict is enabled
         /// As an alternative, use GetInteger, GetString, etc. (in this class)
         /// </remarks>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="value">Value</param>
         /// <returns>If value is DBNull, then returns default(t) (string.Empty for string); otherwise casts value to T</returns>
         public static T CastDBVal<T>(this object value)
         {
@@ -57,8 +57,8 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Simple conversion that handles DBNull for parsing database fields
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
+        /// <typeparam name="T">Type</typeparam>
+        /// <param name="value">Value</param>
         /// <param name="valueIfNull">The value to return if the value is null or DBNull</param>
         public static T CastDBVal<T>(this object value, T valueIfNull)
         {
@@ -71,7 +71,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Converts an database field value to a string, checking for null values
+        /// Converts a database field value to a string, checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <param name="dbTools">Reference to dbTools so this can resolve as an extension method</param>
@@ -88,7 +88,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Converts an database field value to a float (single), checking for null values
+        /// Converts a database field value to a float (single), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -106,7 +106,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Converts an database field value to a double, checking for null values
+        /// Converts a database field value to a double, checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -124,7 +124,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Converts an database field value to an integer (Int32), checking for null values
+        /// Converts a database field value to an integer (Int32), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -142,7 +142,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Converts an database field value to a long integer (Int64), checking for null values
+        /// Converts a database field value to a long integer (Int64), checking for null values
         /// This is intended to be used with DataSet objects retrieved via a SqlDataAdapter
         /// </summary>
         /// <remarks>An exception will be thrown if the value is not numeric</remarks>
@@ -205,7 +205,7 @@ namespace PRISMDatabaseUtils
         /// </summary>
         /// <remarks>Use in conjunction with GetColumnValue, e.g. GetColumnValue(resultRow, columnMap, "ID")</remarks>
         /// <param name="dbTools">Reference to dbTools so this can resolve as an extension method</param>
-        /// <param name="columns"></param>
+        /// <param name="columns">List of columns</param>
         /// <returns>Mapping from column name to column index</returns>
         public static Dictionary<string, int> GetColumnMapping(this IDBTools dbTools, IReadOnlyList<string> columns)
         {

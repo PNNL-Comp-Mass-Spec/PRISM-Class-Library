@@ -268,7 +268,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Tests initial settings retrieved from config file
         /// </summary>
-        /// <param name="paramDictionary"></param>
+        /// <param name="paramDictionary">Dictionary of parameters</param>
         /// <returns>
         /// True if settings were loaded and MgrActive_Local is true (or MgrActive_Local is missing)
         /// False if MgrActive_Local is false or if UsingDefaults is true
@@ -475,7 +475,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Reports errors caused by required parameters that are missing
         /// </summary>
-        /// <param name="parameterName"></param>
+        /// <param name="parameterName">Parameter name</param>
         protected void HandleParameterNotDefined(string parameterName)
         {
             ErrMsg = string.Format(
@@ -736,7 +736,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Show contents of a dictionary
         /// </summary>
-        /// <param name="settings"></param>
+        /// <param name="settings">Manager settings</param>
         public static void ShowDictionaryTrace(IReadOnlyDictionary<string, string> settings)
         {
             if (settings.Count == 0)
@@ -767,7 +767,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// If TraceMode is true, show a message at the console, preceded by a time stamp
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         protected void ShowTrace(string message)
         {
             if (!TraceMode)
@@ -793,7 +793,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Show a message at the console, preceded with a timestamp
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         protected static void ShowTraceMessage(string message)
         {
             BaseLogger.ShowTraceMessage(message, false);
@@ -846,7 +846,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Gets a manager parameter
         /// </summary>
-        /// <param name="itemKey"></param>
+        /// <param name="itemKey">Parameter name</param>
         /// <returns>Parameter value if found, otherwise an empty string</returns>
         public string GetParam(string itemKey)
         {
@@ -919,10 +919,10 @@ namespace PRISM.AppSettings
         }
 
         /// <summary>
-        /// Adds or updates a manager parameter
+        /// Add or update a manager parameter
         /// </summary>
-        /// <param name="itemKey"></param>
-        /// <param name="itemValue"></param>
+        /// <param name="itemKey">Parameter name</param>
+        /// <param name="itemValue">Value</param>
         // ReSharper disable once UnusedMember.Global
         public void SetParam(string itemKey, string itemValue)
         {
@@ -932,7 +932,7 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Report an important error
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         private void OnCriticalErrorEvent(string message)
         {
             if (CriticalErrorEvent == null && WriteToConsoleIfNoListener)
@@ -947,8 +947,8 @@ namespace PRISM.AppSettings
         /// Raises a CriticalErrorEvent if criticalError is true and ParamsLoadedFromDB is false
         /// Otherwise, raises a normal error event
         /// </summary>
-        /// <param name="errorMessage"></param>
-        /// <param name="criticalError"></param>
+        /// <param name="errorMessage">Error message</param>
+        /// <param name="criticalError">When true, invoke CriticalErrorEvent; otherwise, invoke ErrorEvent</param>
         protected void ReportError(string errorMessage, bool criticalError = true)
         {
             if (!ParamsLoadedFromDB && criticalError)
@@ -964,8 +964,8 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Raises an error event that includes an exception
         /// </summary>
-        /// <param name="errorMessage"></param>
-        /// <param name="ex"></param>
+        /// <param name="errorMessage">Error message</param>
+        /// <param name="ex">Exception</param>
         protected void ReportError(string errorMessage, Exception ex)
         {
             OnErrorEvent(errorMessage, ex);

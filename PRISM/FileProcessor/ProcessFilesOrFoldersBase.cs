@@ -16,7 +16,7 @@ namespace PRISM.FileProcessor
         /// Returns the full path to the folder into which this application should read/write settings file information
         /// </summary>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
-        /// <param name="appName"></param>
+        /// <param name="appName">Application name</param>
         [Obsolete("Use GetAppDataDirectoryPath in ProcessFilesOrDirectoriesBase")]
         public static string GetAppDataFolderPath(string appName)
         {

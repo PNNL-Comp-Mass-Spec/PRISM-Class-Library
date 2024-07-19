@@ -18,7 +18,7 @@ namespace PRISM.FileProcessor
     /// </summary>
     public abstract class ProcessFilesOrDirectoriesBase : EventNotifier
     {
-        // Ignore Spelling: username, yyyy-MM-dd, hh:mm:ss tt
+        // Ignore Spelling: app, holdoff, username, yyyy-MM-dd, hh:mm:ss tt
 
         private const string LOG_FILE_EXTENSION = ".txt";
 
@@ -370,8 +370,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Cleanup paths
         /// </summary>
-        /// <param name="inputFileOrDirectoryPath"></param>
-        /// <param name="outputDirectoryPath"></param>
+        /// <param name="inputFileOrDirectoryPath">Input file or directory path</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         protected abstract void CleanupPaths(ref string inputFileOrDirectoryPath, ref string outputDirectoryPath);
 
         /// <summary>
@@ -603,7 +603,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Perform garbage collection
         /// </summary>
-        /// <param name="maxWaitTimeMSec"></param>
+        /// <param name="maxWaitTimeMSec">Maximum wait time, in seconds</param>
         [Obsolete("Moved to static class PRISM.AppUtils")]
         public static void GarbageCollectNow(int maxWaitTimeMSec)
         {
@@ -614,7 +614,7 @@ namespace PRISM.FileProcessor
         /// Returns the full path to the directory into which this application should read/write settings file information
         /// </summary>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName</remarks>
-        /// <param name="appName"></param>
+        /// <param name="appName">Application name</param>
         [Obsolete("Moved to static class PRISM.AppUtils")]
         public static string GetAppDataDirectoryPath(string appName)
         {
@@ -643,7 +643,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Returns the .NET assembly version followed by the program date
         /// </summary>
-        /// <param name="programDate"></param>
+        /// <param name="programDate">Program date</param>
         [Obsolete("Moved to static class PRISM.AppUtils")]
         public static string GetAppVersion(string programDate)
         {
@@ -653,7 +653,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Append the timestamp for the given date to mLogFileBasePath
         /// </summary>
-        /// <param name="date"></param>
+        /// <param name="date">Timestamp</param>
         private string GetDateBasedLogFilePath(DateTime date)
         {
             if (string.IsNullOrWhiteSpace(mLogFileBasePath))
@@ -701,8 +701,8 @@ namespace PRISM.FileProcessor
         /// Returns the full path to this application's local settings file
         /// </summary>
         /// <remarks>For example, C:\Users\username\AppData\Roaming\AppName\SettingsFileName.xml</remarks>
-        /// <param name="applicationName"></param>
-        /// <param name="settingsFileName"></param>
+        /// <param name="applicationName">Application name</param>
+        /// <param name="settingsFileName">Settings file name</param>
         public static string GetSettingsFilePathLocal(string applicationName, string settingsFileName)
         {
             return Path.Combine(AppUtils.GetAppDataDirectoryPath(applicationName), settingsFileName);
@@ -892,7 +892,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Reset progress, updating the current processing step
         /// </summary>
-        /// <param name="progressStepDescription"></param>
+        /// <param name="progressStepDescription">Progress step description</param>
         protected void ResetProgress(string progressStepDescription)
         {
             UpdateProgress(progressStepDescription, 0);
@@ -903,7 +903,7 @@ namespace PRISM.FileProcessor
         /// Show a debug message, optionally logging the message to the log file
         /// </summary>
         /// <param name="message">Message to show</param>
-        /// <param name="allowLogToFile"></param>
+        /// <param name="allowLogToFile">When true, write to the log file</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the debug event has no listeners
@@ -918,7 +918,7 @@ namespace PRISM.FileProcessor
         /// Show an error message and write it to the log file
         /// </summary>
         /// <param name="message">Message to show</param>
-        /// <param name="duplicateHoldoffHours"></param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the error event has no listeners
@@ -933,7 +933,7 @@ namespace PRISM.FileProcessor
         /// Show an error message, optionally logging the message to the log file
         /// </summary>
         /// <param name="message">Message</param>
-        /// <param name="allowLogToFile">When true, allow the message to be logged</param>
+        /// <param name="allowLogToFile">When true, write to the log file</param>
         /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
@@ -960,7 +960,7 @@ namespace PRISM.FileProcessor
         /// Show a status message and write it to the log file
         /// </summary>
         /// <param name="message">Message to show</param>
-        /// <param name="duplicateHoldoffHours"></param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the message event has no listeners
@@ -976,8 +976,8 @@ namespace PRISM.FileProcessor
         /// </summary>
         /// <param name="message">Message to show</param>
         /// <param name="allowLogToFile">When true, write to the log file (if the message severity is >= LoggingLevel)</param>
-        /// <param name="duplicateHoldoffHours"></param>
-        /// <param name="messageType"></param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
+        /// <param name="messageType">Message type</param>
         /// <param name="emptyLinesBeforeMessage">Number of empty lines to display before showing the message</param>
         protected void ShowMessage(
             string message,
@@ -1001,7 +1001,7 @@ namespace PRISM.FileProcessor
         /// Show a warning
         /// </summary>
         /// <param name="message">Message to show</param>
-        /// <param name="duplicateHoldoffHours"></param>
+        /// <param name="duplicateHoldoffHours">Do not log the message if it was previously logged within this many hours</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the warning event has no listeners
@@ -1016,7 +1016,7 @@ namespace PRISM.FileProcessor
         /// Show a warning
         /// </summary>
         /// <param name="message">Message to show</param>
-        /// <param name="allowLogToFile"></param>
+        /// <param name="allowLogToFile">When true, write to the log file</param>
         /// <param name="emptyLinesBeforeMessage">
         /// Number of empty lines to write to the console before displaying a message
         /// This is only applicable if WriteToConsoleIfNoListener is true and the warning event has no listeners
@@ -1180,7 +1180,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update the current progress description
         /// </summary>
-        /// <param name="progressStepDescription"></param>
+        /// <param name="progressStepDescription">Progress step description</param>
         protected void UpdateProgress(string progressStepDescription)
         {
             UpdateProgress(progressStepDescription, mProgressPercentComplete);
@@ -1189,7 +1189,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update progress percent complete
         /// </summary>
-        /// <param name="percentComplete"></param>
+        /// <param name="percentComplete">Percent complete</param>
         protected void UpdateProgress(float percentComplete)
         {
             UpdateProgress(ProgressStepDescription, percentComplete);
@@ -1198,8 +1198,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update progress description and percent complete
         /// </summary>
-        /// <param name="progressStepDescription"></param>
-        /// <param name="percentComplete"></param>
+        /// <param name="progressStepDescription">Progress step description</param>
+        /// <param name="percentComplete">Percent complete</param>
         protected void UpdateProgress(string progressStepDescription, float percentComplete)
         {
             var descriptionChanged = !string.Equals(progressStepDescription, ProgressStepDescription);

@@ -76,7 +76,7 @@ namespace PRISM
         /// <summary>
         /// Validate the options
         /// </summary>
-        /// <param name="errorMessage"></param>
+        /// <param name="errorMessage">Error message</param>
         // ReSharper disable once UnusedMember.Global
         public bool ValidateArgs(out string errorMessage)
         {

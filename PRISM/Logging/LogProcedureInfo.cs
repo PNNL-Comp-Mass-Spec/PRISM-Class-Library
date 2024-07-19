@@ -51,13 +51,13 @@ public class LogProcedureInfo
     /// <summary>
     /// Update the logging procedure info
     /// </summary>
-    /// <param name="procedureName"></param>
-    /// <param name="logTypeParamName"></param>
-    /// <param name="messageParamName"></param>
-    /// <param name="postedByParamName"></param>
-    /// <param name="logTypeParamSize"></param>
-    /// <param name="messageParamSize"></param>
-    /// <param name="postedByParamSize"></param>
+    /// <param name="procedureName">Procedure name</param>
+    /// <param name="logTypeParamName">Log type parameter name</param>
+    /// <param name="messageParamName">Message parameter name</param>
+    /// <param name="postedByParamName">Posted by parameter name</param>
+    /// <param name="logTypeParamSize">Log type parameter size</param>
+    /// <param name="messageParamSize">Message parameter size</param>
+    /// <param name="postedByParamSize">Posted by parameter size</param>
     public void UpdateProcedureInfo(
         string procedureName = "",
         string logTypeParamName = "",

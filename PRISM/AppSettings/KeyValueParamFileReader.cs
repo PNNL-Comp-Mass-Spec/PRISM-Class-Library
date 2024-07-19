@@ -160,7 +160,7 @@ namespace PRISM.AppSettings
         /// If the line starts with # it is treated as a comment line and an empty key/value pair will be returned
         /// If the line contains a # sign in the middle, the comment text is stored in output argument comment
         /// </remarks>
-        /// <param name="settingText"></param>
+        /// <param name="settingText">Key/value setting to parse</param>
         /// <param name="removeComment">
         /// When true, if the value of the setting has a # delimited comment, remove it
         /// When false, the value of the setting will include the comment
@@ -239,9 +239,9 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Get the value associated with the given parameter
         /// </summary>
-        /// <param name="paramFileEntries"></param>
-        /// <param name="paramName"></param>
-        /// <param name="valueIfMissing"></param>
+        /// <param name="paramFileEntries">List of key/value parameters</param>
+        /// <param name="paramName">Parameter name</param>
+        /// <param name="valueIfMissing">Value to return if the parameter is missing</param>
         public static string GetParameterValue(List<KeyValuePair<string, string>> paramFileEntries, string paramName, string valueIfMissing = "")
         {
             foreach (var paramEntry in paramFileEntries.Where(paramEntry => paramEntry.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase)))
@@ -256,9 +256,9 @@ namespace PRISM.AppSettings
         /// Get the boolean value associated with the given parameter
         /// </summary>
         /// <remarks>Will return valueIfMissing if the parameter is missing or does not contain "true" or "false"</remarks>
-        /// <param name="paramFileEntries"></param>
-        /// <param name="paramName"></param>
-        /// <param name="valueIfMissing"></param>
+        /// <param name="paramFileEntries">List of key/value parameters</param>
+        /// <param name="paramName">Parameter name</param>
+        /// <param name="valueIfMissing">Value to return if the parameter is missing</param>
         public static bool GetParameterValue(List<KeyValuePair<string, string>> paramFileEntries, string paramName, bool valueIfMissing)
         {
             foreach (var paramEntry in paramFileEntries.Where(paramEntry => paramEntry.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase)))
@@ -277,9 +277,9 @@ namespace PRISM.AppSettings
         /// Get the integer value associated with the given parameter
         /// </summary>
         /// <remarks>Will return valueIfMissing if the parameter is missing or does not contain an integer</remarks>
-        /// <param name="paramFileEntries"></param>
-        /// <param name="paramName"></param>
-        /// <param name="valueIfMissing"></param>
+        /// <param name="paramFileEntries">List of key/value parameters</param>
+        /// <param name="paramName">Parameter name</param>
+        /// <param name="valueIfMissing">Value to return if the parameter is missing</param>
         public static int GetParameterValue(List<KeyValuePair<string, string>> paramFileEntries, string paramName, int valueIfMissing)
         {
             foreach (var paramEntry in paramFileEntries.Where(paramEntry => paramEntry.Key.Equals(paramName, StringComparison.OrdinalIgnoreCase)))
@@ -308,8 +308,8 @@ namespace PRISM.AppSettings
         /// <summary>
         /// Returns true if paramFileEntries contains parameter paramName and the parameter's value is True or a positive integer
         /// </summary>
-        /// <param name="paramFileEntries"></param>
-        /// <param name="paramName"></param>
+        /// <param name="paramFileEntries">List of key/value parameters</param>
+        /// <param name="paramName">Parameter name</param>
         /// <param name="caseSensitiveParamName">When true, require a case-sensitive match to the parameter names in paramFileEntries</param>
         public bool ParamIsEnabled(List<KeyValuePair<string, string>> paramFileEntries, string paramName, bool caseSensitiveParamName = false)
         {

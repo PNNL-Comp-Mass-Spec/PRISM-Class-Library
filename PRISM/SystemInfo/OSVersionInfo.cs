@@ -172,7 +172,7 @@ namespace PRISM
         /// <summary>
         /// Return the first line of an operating system version file
         /// </summary>
-        /// <param name="versionFilePath"></param>
+        /// <param name="versionFilePath">Version file path</param>
         /// <param name="osName">Operating system name (empty by default); if non-blank, the version returned is guaranteed to contain this text</param>
         public string GetFirstLineVersion(string versionFilePath, string osName = "")
         {
@@ -234,7 +234,7 @@ namespace PRISM
         /// <summary>
         /// Parse version information from an os-release file
         /// </summary>
-        /// <param name="osReleaseFilePath"></param>
+        /// <param name="osReleaseFilePath">File path</param>
         public string GetOSReleaseVersion(string osReleaseFilePath)
         {
             var versionFile = new FileInfo(osReleaseFilePath);
@@ -297,7 +297,7 @@ namespace PRISM
         /// <summary>
         /// Parse version information from an Ubuntu lsb-release file
         /// </summary>
-        /// <param name="lsbReleaseFilePath"></param>
+        /// <param name="lsbReleaseFilePath">File path</param>
         public string GetUbuntuVersion(string lsbReleaseFilePath)
         {
             var versionFile = new FileInfo(lsbReleaseFilePath);
@@ -359,7 +359,7 @@ namespace PRISM
         /// <summary>
         /// For old windows kernel
         /// </summary>
-        /// <param name="osInfo"></param>
+        /// <param name="osInfo">Operating system info</param>
         private static string GetWin32Version(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows 95,
@@ -380,7 +380,7 @@ namespace PRISM
         /// <summary>
         /// For NT kernel
         /// </summary>
-        /// <param name="osInfo"></param>
+        /// <param name="osInfo">Operating system info</param>
         private static string GetWinNTVersion(OperatingSystem osInfo)
         {
             // Code to determine specific version of Windows NT 3.51,
@@ -438,7 +438,7 @@ namespace PRISM
         /// Read a Linux os-release file or similar release file
         /// where the contents are expected to be in the form KEY=Value
         /// </summary>
-        /// <param name="reader"></param>
+        /// <param name="reader">Stream reader</param>
         private static Dictionary<string, string> ReadReleaseFile(StreamReader reader)
         {
             var contents = new List<string>();
@@ -478,7 +478,7 @@ namespace PRISM
         /// <summary>
         /// Remove leading and trailing double quotes
         /// </summary>
-        /// <param name="dataLine"></param>
+        /// <param name="dataLine">Data line</param>
         private static string StripQuotes(string dataLine)
         {
             if (string.IsNullOrWhiteSpace(dataLine))

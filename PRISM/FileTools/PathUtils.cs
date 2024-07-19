@@ -14,10 +14,12 @@ namespace PRISM
     /// </summary>
     public static class PathUtils
     {
+        // Ignore Spelling: sep
+
         /// <summary>
         /// Convert a path to be Linux-compatible (backslash to forward slash
         /// </summary>
-        /// <param name="pathSpec"></param>
+        /// <param name="pathSpec">File or directory path</param>
         public static string AssureLinuxPath(string pathSpec)
         {
             return pathSpec.Replace('\\', '/');
@@ -26,7 +28,7 @@ namespace PRISM
         /// <summary>
         /// Convert a path to be Windows-compatible (forward slash to backslash
         /// </summary>
-        /// <param name="pathSpec"></param>
+        /// <param name="pathSpec">File or directory path</param>
         public static string AssureWindowsPath(string pathSpec)
         {
             return pathSpec.Replace('/', '\\');
@@ -35,8 +37,8 @@ namespace PRISM
         /// <summary>
         /// Combine paths using the system default path separator character
         /// </summary>
-        /// <param name="path1"></param>
-        /// <param name="path2"></param>
+        /// <param name="path1">Path 1</param>
+        /// <param name="path2">Path 2</param>
         // ReSharper disable once UnusedMember.Global
         public static string CombinePathsLocalSepChar(string path1, string path2)
         {
@@ -46,8 +48,8 @@ namespace PRISM
         /// <summary>
         /// Combine paths using a forward slash as a path separator character
         /// </summary>
-        /// <param name="path1"></param>
-        /// <param name="path2"></param>
+        /// <param name="path1">Path 1</param>
+        /// <param name="path2">Path 2</param>
         public static string CombineLinuxPaths(string path1, string path2)
         {
             return CombinePaths(path1, path2, '/');
@@ -56,8 +58,8 @@ namespace PRISM
         /// <summary>
         /// Combine paths using a backslash as a path separator character
         /// </summary>
-        /// <param name="path1"></param>
-        /// <param name="path2"></param>
+        /// <param name="path1">Path 1</param>
+        /// <param name="path2">Path 2</param>
         public static string CombineWindowsPaths(string path1, string path2)
         {
             return CombinePaths(path1, path2, '\\');
@@ -66,9 +68,9 @@ namespace PRISM
         /// <summary>
         /// Combine paths using the specified path separator character
         /// </summary>
-        /// <param name="path1"></param>
-        /// <param name="path2"></param>
-        /// <param name="directorySepChar"></param>
+        /// <param name="path1">Path 1</param>
+        /// <param name="path2">Path 2</param>
+        /// <param name="directorySepChar">Path separator character</param>
         public static string CombinePaths(string path1, string path2, char directorySepChar)
         {
             if (path1 == null || path2 == null)
@@ -98,7 +100,7 @@ namespace PRISM
         /// C:\...\W..\Business\Finances.doc
         /// C:\My Doc..\Word\Business\Finances.doc
         /// </summary>
-        /// <param name="pathToCompact"></param>
+        /// <param name="pathToCompact">File or directory path to compact</param>
         /// <param name="maxLength">Maximum length of the shortened path</param>
         /// <returns>Shortened path</returns>
         // ReSharper disable once UnusedMember.Global
@@ -309,8 +311,8 @@ namespace PRISM
         /// Check a filename against a file mask (like * or *.txt or MSGF*)
         /// </summary>
         /// <remarks>From https://stackoverflow.com/a/725352/1179467/ how-to-determine-if-a-file-matches-a-file-mask</remarks>
-        /// <param name="fileName"></param>
-        /// <param name="fileMask"></param>
+        /// <param name="fileName">File name</param>
+        /// <param name="fileMask">File mask</param>
         /// <returns>True if a match, otherwise false</returns>
         public static bool FitsMask(string fileName, string fileMask)
         {
@@ -322,7 +324,7 @@ namespace PRISM
         /// <summary>
         /// Replace * and ? characters in fileOrDirectoryPath with underscores
         /// </summary>
-        /// <param name="fileOrDirectoryPath"></param>
+        /// <param name="fileOrDirectoryPath">File or directory path</param>
         public static string GetCleanPath(string fileOrDirectoryPath)
         {
             if (!fileOrDirectoryPath.StartsWith(NativeIOFileTools.WIN32_LONG_PATH_PREFIX))
@@ -422,7 +424,7 @@ namespace PRISM
         /// <summary>
         /// Examines filePath to look for spaces
         /// </summary>
-        /// <param name="filePath"></param>
+        /// <param name="filePath">File or directory path</param>
         /// <returns>filePath as-is if no spaces, otherwise filePath surrounded by double quotes </returns>
         public static string PossiblyQuotePath(string filePath)
         {
@@ -450,8 +452,8 @@ namespace PRISM
         /// <summary>
         /// Replace the filename in the path with a new filename
         /// </summary>
-        /// <param name="existingFilePath"></param>
-        /// <param name="newFileName"></param>
+        /// <param name="existingFilePath">File path</param>
+        /// <param name="newFileName">New file name</param>
         public static string ReplaceFilenameInPath(string existingFilePath, string newFileName)
         {
             if (string.IsNullOrWhiteSpace(existingFilePath))

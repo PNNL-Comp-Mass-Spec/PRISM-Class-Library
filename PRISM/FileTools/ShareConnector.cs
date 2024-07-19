@@ -323,7 +323,7 @@ namespace PRISM
         /// Updates class variable with the specified share path
         /// </summary>
         /// <remarks>If the path ends in a forward slash then the slash will be removed</remarks>
-        /// <param name="shareName"></param>
+        /// <param name="shareName">Share path</param>
         private void DefineShareName(string shareName)
         {
             if (shareName.EndsWith("\\"))

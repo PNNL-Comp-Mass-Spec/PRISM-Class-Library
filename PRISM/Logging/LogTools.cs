@@ -180,8 +180,8 @@ namespace PRISM.Logging
         /// Sets the databases logger
         /// </summary>
         /// <param name="dbLogger">Instance of DatabaseLogger</param>
-        /// <param name="logLevel"></param>
-        /// <param name="traceMode"></param>
+        /// <param name="logLevel">Log level</param>
+        /// <param name="traceMode">Trace mode</param>
         public static void SetDbLogger(
             DatabaseLogger dbLogger,
             BaseLogger.LogLevels logLevel = BaseLogger.LogLevels.INFO,
@@ -202,8 +202,8 @@ namespace PRISM.Logging
         /// <summary>
         /// Notify the user at console that an error occurred while writing to a log file or posting a log message to the database
         /// </summary>
-        /// <param name="logMessage"></param>
-        /// <param name="ex"></param>
+        /// <param name="logMessage">Message</param>
+        /// <param name="ex">Exception</param>
         public static void ErrorWritingToLog(string logMessage, Exception ex)
         {
             ConsoleMsgUtils.ShowError("Error logging errors; log message: " + logMessage, ex);

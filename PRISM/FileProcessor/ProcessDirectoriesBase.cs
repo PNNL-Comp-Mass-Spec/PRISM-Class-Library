@@ -121,8 +121,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Cleanup file/directory paths
         /// </summary>
-        /// <param name="inputFileOrDirectoryPath"></param>
-        /// <param name="outputDirectoryPath"></param>
+        /// <param name="inputFileOrDirectoryPath">Input file or directory path</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         protected override void CleanupPaths(ref string inputFileOrDirectoryPath, ref string outputDirectoryPath)
         {
             CleanupDirectoryPaths(ref inputFileOrDirectoryPath, ref outputDirectoryPath);
@@ -132,8 +132,8 @@ namespace PRISM.FileProcessor
         /// Make sure inputDirectoryPath points to a valid directory and validate the output directory (defining it if null or empty)
         /// </summary>
         /// <remarks>Create outputDirectoryPath if it does not exist</remarks>
-        /// <param name="inputDirectoryPath"></param>
-        /// <param name="outputDirectoryPath"></param>
+        /// <param name="inputDirectoryPath">Input directory path</param>
+        /// <param name="outputDirectoryPath">Output directory path</param>
         /// <returns>True if success, false if an error</returns>
         protected bool CleanupDirectoryPaths(ref string inputDirectoryPath, ref string outputDirectoryPath)
         {
@@ -377,8 +377,8 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Process directories and subdirectories
         /// </summary>
-        /// <param name="inputDirectoryPath"></param>
-        /// <param name="maxLevelsToRecurse"></param>
+        /// <param name="inputDirectoryPath">Input directory path</param>
+        /// <param name="maxLevelsToRecurse">Maximum levels to recurse</param>
         public bool ProcessAndRecurseDirectories(string inputDirectoryPath, int maxLevelsToRecurse)
         {
             return ProcessAndRecurseDirectories(inputDirectoryPath, string.Empty, string.Empty, maxLevelsToRecurse);
@@ -612,7 +612,7 @@ namespace PRISM.FileProcessor
         /// <summary>
         /// Update the base class error code
         /// </summary>
-        /// <param name="newErrorCode"></param>
+        /// <param name="newErrorCode">Error code</param>
         protected void SetBaseClassErrorCode(ProcessDirectoriesErrorCodes newErrorCode)
         {
             ErrorCode = newErrorCode;

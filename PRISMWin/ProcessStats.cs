@@ -26,8 +26,8 @@ namespace PRISMWin
         /// <summary>
         /// Error event
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="ex"></param>
+        /// <param name="message">Message</param>
+        /// <param name="ex">Exception</param>
         public delegate void ErrorEventEventHandler(string message, Exception ex);
 
         #endregion
@@ -472,7 +472,7 @@ namespace PRISMWin
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         private void OnErrorEvent(string message)
         {
             ErrorEvent?.Invoke(message, null);
@@ -481,7 +481,7 @@ namespace PRISMWin
         /// <summary>
         /// Report an error
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message">Message</param>
         /// <param name="ex">Exception (allowed to be null)</param>
         private void OnErrorEvent(string message, Exception ex)
         {

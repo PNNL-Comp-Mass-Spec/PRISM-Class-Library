@@ -40,7 +40,7 @@ namespace PRISM
         /// <summary>
         /// Get the format string for the given number of digits after the decimal
         /// </summary>
-        /// <param name="digitsAfterDecimal"></param>
+        /// <param name="digitsAfterDecimal">Number of digits to display after the decimal point</param>
         /// <returns>Strings like "0.0", "0.0#", "0.0##"</returns>
         private static string GetFormatString(int digitsAfterDecimal)
         {
@@ -74,7 +74,7 @@ namespace PRISM
         /// Get the format string for the given number of digits after the decimal
         /// </summary>
         /// <param name="value">Value being formatted</param>
-        /// <param name="digitsAfterDecimal"></param>
+        /// <param name="digitsAfterDecimal">Number of digits to display after the decimal point</param>
         /// <returns>Strings like "0.0E+00", "0.0#E+00", "0.0##E+00", "0.0#E+000", or "0.0##E+000"</returns>
         private static string GetFormatStringScientific(double value, int digitsAfterDecimal)
         {
