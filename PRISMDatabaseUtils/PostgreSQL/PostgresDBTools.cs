@@ -1820,9 +1820,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
             permissionDenied = false;
 
             return ex.Message.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("No such host is known", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("open data reader exists for this command", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("LDAP authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   ex.Message.IndexOf("LDAP authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0;
+                   ex.Message.IndexOf("password authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>

@@ -103,17 +103,29 @@ namespace PRISMDatabaseUtils.AppSettings
 
                 if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
                 {
-                    if (RecentErrorMessage.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (RecentErrorMessage.IndexOf("No such host is known", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: the host specified in the connection string is invalid; {0}", RecentErrorMessage);
+                    }
+                    else if (RecentErrorMessage.IndexOf("LDAP authentication failed", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: the user specified in the connection string is not defined in the pg_hba.conf file on the PostgreSQL server; {0}", RecentErrorMessage);
+                    }
+                    else if (RecentErrorMessage.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         var pgPassFile = GetPgPassFile();
 
                         ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: " +
-                                               "user specified in the connection string is not defined in the .pgpass file for the user running this manager; " +
-                                               "update file {0}; {1}", pgPassFile.FullName, RecentErrorMessage);
+                                               "the user specified in the connection string is not defined in the PgPass file; " +
+                                               "update {0}; {1}", pgPassFile.FullName, RecentErrorMessage);
                     }
-                    else if (RecentErrorMessage.IndexOf("LDAP authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0)
+                    else if (RecentErrorMessage.IndexOf("password authentication failed", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: user specified in the connection string is not defined in the pg_hba.conf file on the PostgreSQL server; {0}", RecentErrorMessage);
+                        var pgPassFile = GetPgPassFile();
+
+                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: " +
+                                               "the PgPass file has the wrong password for the user specified in the connection string; " +
+                                               "update {0}; {1}", pgPassFile.FullName, RecentErrorMessage);
                     }
                     else
                     {
