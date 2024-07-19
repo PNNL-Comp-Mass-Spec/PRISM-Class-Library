@@ -37,18 +37,18 @@ The latest versions of the DLLs are available for one month on the [AppVeyor CI 
 | Database Utilities                  | ExecuteDatabaseSP       | Obsolete SQL Server stored procedure methods; use PRISMDatabaseUtils.dll instead (see below)  |
 | File/Directory Processor Base Class | ProcessFilesBase        | Base class for classes that process a file or files, creating new output files in an output directory |
 | File/Directory Processor Base Class | ProcessDirectoriesBase  | Base class for classes that process a directory or directories |
-| File Utilities                      | FileTools               | Methods for copying, moving, and deleting files and directories; supports a queueing mechanism that uses lock files to avoid overloading a remote server with too many data transfer requests. Also includes methods for reading/writing Gzipped files that include filename and modification date metadata in the .gz file header. |
+| File Utilities                      | FileTools               | Methods for copying, moving, and deleting files and directories; supports a queuing mechanism that uses lock files to avoid overloading a remote server with too many data transfer requests. Also includes methods for reading/writing Gzipped files that include filename and modification date metadata in the .gz file header. |
 | File Utilities                      | PathUtils               | Cross-platform path utilities | 
 | File Utilities                      | ShareConnector          | Methods for connecting a machine to an SMB/CIFS share using a password and user name |
 | File Utilities                      | ZipTools                | Methods for programmatically creating and working with zip files using PKZip |
 | Logging                             | LogTools                | Class for handling logging via the FileLogger and DatabaseLogger |
 | Logging                             | FileLogger              | Logs messages to a file |
-| Logging                             | ODBCDatabaseLogger      | Logs messages to an database by calling a stored procedure using ODBC |
+| Logging                             | ODBCDatabaseLogger      | Logs messages to a database by calling a stored procedure using ODBC |
 | Logging                             | SQLServerDatabaseLogger | Logs messages to a SQL Server database by calling a stored procedure |
 | Logging                             | EventNotifier           | Abstract class that implements various status events, including status, debug, error, and warning events |
 | Output Utilities                    | ConsoleMsgUtils         | Methods for displaying messages at the console while monitoring a class that inherits EventNotifier; uses colors for different message types. Also includes WrapParagraph methods for wrapping a paragraph to a given number of characters. |
 | Output Utilities                    | StackTraceFormatter     | Methods for formatting stack traces from exceptions, either as a single line with methods separated by -:- or as multiple lines |
-| Output Utilities                    | StringUtilities         | Methods for converting doubles to strings, either specifying the number of digits to displate after the decimal, or specifying the total digits of precision to display (considering digits left and right of the decimal point) |
+| Output Utilities                    | StringUtilities         | Methods for converting doubles to strings, either specifying the number of digits to display after the decimal, or specifying the total digits of precision to display (considering digits left and right of the decimal point) |
 | Program Execution                   | ProgRunner              | Methods for running a single program as an external process, including monitoring it with an internal thread |
 | System Info                         | LinuxSystemInfo         | Methods to determine memory usage, CPU usage, and Linux system version |
 | System Info                         | OSVersionInfo           | Methods for determining the currently running operating system; supports both Windows and Linux |
