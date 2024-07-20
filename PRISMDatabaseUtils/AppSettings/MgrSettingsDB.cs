@@ -22,23 +22,35 @@ namespace PRISMDatabaseUtils.AppSettings
         private string RecentErrorMessage { get; set; } = string.Empty;
 
         /// <summary>
-        /// Determine the expected path to the pgpass.conf file (or the .pgpass file if on Linux)
+        /// Determine the expected path to the PgPass file (pgpass.conf on Windows or .pgpass on Linux)
         /// </summary>
+        /// <param name="createOrUpdateMessage">Message that starts with "create" or "update" and includes the file path</param>
         /// <returns>FileInfo instance</returns>
-        private static FileInfo GetPgPassFile()
+        private static FileInfo GetPgPassFile(out string createOrUpdateMessage)
         {
+            FileInfo pgPassFile;
+
             if (SystemInfo.IsLinux)
             {
                 // Standard location: ~/.pgpass
-                return new FileInfo(Path.Combine("~", ".pgpass"));
+                pgPassFile = new FileInfo(Path.Combine("~", ".pgpass"));
+            }
+            else
+            {
+                // ReSharper disable once CommentTypo
+                // Standard location: %APPDATA%\postgresql\pgpass.conf
+                var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+                pgPassFile = new FileInfo(Path.Combine(appDataDirectory, "postgresql", "pgpass.conf"));
             }
 
-            // ReSharper disable once CommentTypo
-            // Standard location: %APPDATA%\postgresql\pgpass.conf
-            var appDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            // Generate a message similar to either of these two messages:
+            // - create file C:\Users\svc-dms\AppData\Roaming\postgresql\pgpass.conf
+            // - update file C:\Users\svc-dms\AppData\Roaming\postgresql\pgpass.conf
 
-            return new FileInfo(Path.Combine(appDataDirectory, "postgresql", "pgpass.conf"));
-        }
+            createOrUpdateMessage = string.Format("{0} file {1}", pgPassFile.Exists ? "update" : "create", pgPassFile.FullName);
+
+            return pgPassFile; }
 
         /// <summary>
         /// Load manager settings from the database
@@ -99,33 +111,46 @@ namespace PRISMDatabaseUtils.AppSettings
                 // Log the message to the DB if the monthly Windows updates are not pending
                 var criticalError = !WindowsUpdateStatus.ServerUpdatesArePending();
 
-                var defaultErrorMessage = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: Excessive failures attempting to retrieve manager settings from database for manager {0}", managerName);
+                var defaultErrorMessage = string.Format(
+                    "LoadMgrSettingsFromDBWork: Excessive failures attempting to retrieve manager settings from the database for manager {0}",
+                    managerName);
 
                 if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
                 {
-                    if (RecentErrorMessage.IndexOf("No such host is known", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (RecentErrorMessage.IndexOf("database", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                        RecentErrorMessage.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: the host specified in the connection string is invalid; {0}", RecentErrorMessage);
+                        ErrMsg = string.Format(
+                            "LoadMgrSettingsFromDBWork: the database specified in the connection string is invalid; {0}", RecentErrorMessage);
+                    }
+                    else if (RecentErrorMessage.IndexOf("No such host is known", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        ErrMsg = string.Format(
+                            "LoadMgrSettingsFromDBWork: the host specified in the connection string is invalid; {0}", RecentErrorMessage);
                     }
                     else if (RecentErrorMessage.IndexOf("LDAP authentication failed", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: the user specified in the connection string is not defined in the pg_hba.conf file on the PostgreSQL server; {0}", RecentErrorMessage);
+                        ErrMsg = string.Format(
+                            "LoadMgrSettingsFromDBWork: the user specified in the connection string is not defined in the pg_hba.conf file " +
+                            "on the PostgreSQL server; {0}", RecentErrorMessage);
                     }
                     else if (RecentErrorMessage.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        var pgPassFile = GetPgPassFile();
+                        GetPgPassFile(out var createOrUpdateMessage);
 
-                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: " +
-                                               "the user specified in the connection string is not defined in the PgPass file; " +
-                                               "update {0}; {1}", pgPassFile.FullName, RecentErrorMessage);
+                        // ReSharper disable once UseStringInterpolation
+                        ErrMsg = string.Format(
+                            "LoadMgrSettingsFromDBWork: the user specified in the connection string is not defined in the PgPass file; " +
+                            "{0}; {1}", createOrUpdateMessage, RecentErrorMessage);
                     }
                     else if (RecentErrorMessage.IndexOf("password authentication failed", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        var pgPassFile = GetPgPassFile();
+                        GetPgPassFile(out var createOrUpdateMessage);
 
-                        ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork: " +
-                                               "the PgPass file has the wrong password for the user specified in the connection string; " +
-                                               "update {0}; {1}", pgPassFile.FullName, RecentErrorMessage);
+                        // ReSharper disable once UseStringInterpolation
+                        ErrMsg = string.Format(
+                            "LoadMgrSettingsFromDBWork: the PgPass file has the wrong password for the user specified in the connection string; " +
+                            "{0}; {1}", createOrUpdateMessage, RecentErrorMessage);
                     }
                     else
                     {
@@ -147,7 +172,7 @@ namespace PRISMDatabaseUtils.AppSettings
             if (queryResults.Count < 1 && returnErrorIfNoParameters)
             {
                 // Wrong number of rows returned
-                ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDBWork; Manager '{0}' is not defined in the manager control database; using {1}",
+                ErrMsg = string.Format("LoadMgrSettingsFromDBWork; Manager '{0}' is not defined in the manager control database; using {1}",
                                        managerName, connectionStringToUse);
                 ReportError(ErrMsg);
                 return false;
@@ -223,7 +248,7 @@ namespace PRISMDatabaseUtils.AppSettings
                     return;
                 }
 
-                var pgPassFile = GetPgPassFile();
+                var pgPassFile = GetPgPassFile(out var _);
 
                 if (pgPassFile.Exists)
                 {
