@@ -419,11 +419,17 @@ namespace PRISMDatabaseUtils
             // This is a special case that will be resolved by GetServerTypeFromConnectionString
             // DbServerType is a non-standard connection string keyword, which allows the user to explicitly specify the database server type
             mConnectionStringKeywordMap.Add(new KeyValuePair<Regex, DbServerTypes>(mDbServerTypeMatcher, DbServerTypes.Undefined));
+            // Microsoft.Data.SqlClient.SqlConnection connection string keywords
+            // Note that "Database=DbName" is also supported by SqlClient.SqlConnection, but we assume PostgreSQL
+            InitializeKeywordInfo(@"\bData Source\s*=", DbServerTypes.MSSQLServer);
+            InitializeKeywordInfo(@"\bInitial Catalog\s*=", DbServerTypes.MSSQLServer);
+            InitializeKeywordInfo(@"\bIntegrated Security\s*=", DbServerTypes.MSSQLServer);
 
-            InitializeKeywordInfo(@"Data Source\s*=", DbServerTypes.MSSQLServer);
-            InitializeKeywordInfo(@"Initial Catalog\s*=", DbServerTypes.MSSQLServer);
-            InitializeKeywordInfo(@"host\s*=", DbServerTypes.PostgreSQL);
-            InitializeKeywordInfo(@"db\s*=", DbServerTypes.PostgreSQL);
+            // Npgsql connection string keywords
+            InitializeKeywordInfo(@"\bHost\s*=", DbServerTypes.PostgreSQL);
+            InitializeKeywordInfo(@"\bPort\s*=", DbServerTypes.PostgreSQL);
+            InitializeKeywordInfo(@"\bDatabase\s*=", DbServerTypes.PostgreSQL);
+
 
             mConnectionStringKeywordMapInitialized = true;
         }
