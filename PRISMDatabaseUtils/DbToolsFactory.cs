@@ -42,16 +42,18 @@ namespace PRISMDatabaseUtils
         // Ignore Spelling: pgpass, Postgres, PostgreSQL, Sql, Username, Utils
 
         /// <summary>
-        /// Set to true once mConnectionStringKeywordMap has been initialized
+        /// RegEx for extracting the server type name from the connection string, e.g. DbServerType=Postgres
         /// </summary>
-        private static bool mConnectionStringKeywordMapInitialized;
+        /// <remarks>
+        /// Allowed server type names are SqlServer, MSSqlServer, Postgres, or PostgreSQL
+        /// </remarks>
+        private static readonly Regex mDbServerTypeMatcher = new (@"DbServerType\s*=\s*(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        private static readonly Regex mDbServerTypeMatcher = new (@"DbServerType\s*=(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Map between RegEx matchers and the server type for each RegEx
         /// </summary>
-        private static readonly List<KeyValuePair<Regex, DbServerTypes>> mConnectionStringKeywordMap = new();
+        private static readonly List<KeyValuePair<Regex, DbServerTypes>> mConnectionStringServerTypeMap = new();
 
         /// <summary>
         /// Add / update the application name in a connection string
@@ -339,12 +341,12 @@ namespace PRISMDatabaseUtils
             // "Host=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"
             // "DbServerType=Postgres;Server=MyServer;Username=MyUser;Password=pass;Database=MyDatabase;Application Name=Analysis Manager"
 
-            if (!mConnectionStringKeywordMapInitialized)
+            if (mConnectionStringServerTypeMap.Count == 0)
             {
-                InitializeConnectionStringKeywordMap();
+                InitializeConnectionStringServerTypeMap();
             }
 
-            foreach (var keywordInfo in mConnectionStringKeywordMap)
+            foreach (var keywordInfo in mConnectionStringServerTypeMap)
             {
                 var match = keywordInfo.Key.Match(connectionString);
 
@@ -412,13 +414,14 @@ namespace PRISMDatabaseUtils
             return DbServerTypes.MSSQLServer;
         }
 
-        private static void InitializeConnectionStringKeywordMap()
+        private static void InitializeConnectionStringServerTypeMap()
         {
-            mConnectionStringKeywordMap.Clear();
+            mConnectionStringServerTypeMap.Clear();
 
             // This is a special case that will be resolved by GetServerTypeFromConnectionString
             // DbServerType is a non-standard connection string keyword, which allows the user to explicitly specify the database server type
-            mConnectionStringKeywordMap.Add(new KeyValuePair<Regex, DbServerTypes>(mDbServerTypeMatcher, DbServerTypes.Undefined));
+            mConnectionStringServerTypeMap.Add(new KeyValuePair<Regex, DbServerTypes>(mDbServerTypeMatcher, DbServerTypes.Undefined));
+
             // Microsoft.Data.SqlClient.SqlConnection connection string keywords
             // Note that "Database=DbName" is also supported by SqlClient.SqlConnection, but we assume PostgreSQL
             InitializeKeywordInfo(@"\bData Source\s*=", DbServerTypes.MSSQLServer);
@@ -431,7 +434,6 @@ namespace PRISMDatabaseUtils
             InitializeKeywordInfo(@"\bDatabase\s*=", DbServerTypes.PostgreSQL);
 
 
-            mConnectionStringKeywordMapInitialized = true;
         }
 
         private static void InitializeKeywordInfo(string matchSpec, DbServerTypes serverType)
@@ -439,7 +441,7 @@ namespace PRISMDatabaseUtils
             var keywordMatcher = new Regex(matchSpec, RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
             var keywordInfo = new KeyValuePair<Regex, DbServerTypes>(keywordMatcher, serverType);
-            mConnectionStringKeywordMap.Add(keywordInfo);
+            mConnectionStringServerTypeMap.Add(keywordInfo);
         }
     }
 }
