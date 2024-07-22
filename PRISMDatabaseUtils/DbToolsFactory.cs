@@ -49,6 +49,10 @@ namespace PRISMDatabaseUtils
         /// </remarks>
         private static readonly Regex mDbServerTypeMatcher = new (@"DbServerType\s*=\s*(?<ServerType>[a-z]+)\s*;?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+        /// <summary>
+        /// List of RegEx instances for extracting host name from a connection string
+        /// </summary>
+        private static readonly List<Regex> mConnectionStringHostNameMap = new();
 
         /// <summary>
         /// Map between RegEx matchers and the server type for each RegEx
@@ -129,6 +133,12 @@ namespace PRISMDatabaseUtils
                 default:
                     throw new Exception("GetServerTypeFromConnectionString was unable to determine the server type for the connection string");
             }
+        }
+
+        private static void AddHostNameMatchRegEx(string keyword)
+        {
+            var expression = string.Format(@"\b{0}\s*=\s*(?<HostName>[^ ;]+)", keyword);
+            mConnectionStringHostNameMap.Add(new Regex(expression, RegexOptions.Compiled | RegexOptions.IgnoreCase));
         }
 
         /// <summary>
@@ -329,6 +339,39 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
+        /// Checks elements in the connection string to determine the host name (server name) of the database server
+        /// </summary>
+        /// <param name="connectionString">Database connection string</param>
+        public static string GetHostNameFromConnectionString(string connectionString)
+        {
+            // Example SQL Server connection string:
+            // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=SSPI;Application Name=Analysis Manager"
+
+            // Example PostgreSQL connection strings:
+            // "Host=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"
+            // "DbServerType=Postgres;Server=MyServer;Username=MyUser;Password=pass;Database=MyDatabase;Application Name=Analysis Manager"
+
+            if (mConnectionStringHostNameMap.Count == 0)
+            {
+                InitializeConnectionStringHostNameMap();
+            }
+
+            foreach (var matcher in mConnectionStringHostNameMap)
+            {
+                var match = matcher.Match(connectionString);
+
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                return match.Groups["HostName"].Value;
+            }
+
+            return string.Empty;
+        }
+
+        /// <summary>
         /// Checks elements in the connection string to determine which database engine it refers to
         /// </summary>
         /// <param name="connectionString">Database connection string</param>
@@ -432,8 +475,24 @@ namespace PRISMDatabaseUtils
             InitializeKeywordInfo(@"\bHost\s*=", DbServerTypes.PostgreSQL);
             InitializeKeywordInfo(@"\bPort\s*=", DbServerTypes.PostgreSQL);
             InitializeKeywordInfo(@"\bDatabase\s*=", DbServerTypes.PostgreSQL);
+        }
 
+        private static void InitializeConnectionStringHostNameMap()
+        {
+            mConnectionStringHostNameMap.Clear();
 
+            // Microsoft.Data.SqlClient.SqlConnection connection string keywords
+            AddHostNameMatchRegEx("Data Source");
+            AddHostNameMatchRegEx("Server");
+            AddHostNameMatchRegEx("Address");
+
+            // ReSharper disable once StringLiteralTypo
+            AddHostNameMatchRegEx("Addr");
+
+            AddHostNameMatchRegEx("Network Address");
+
+            // Npgsql connection string keywords
+            AddHostNameMatchRegEx("Host");
         }
 
         private static void InitializeKeywordInfo(string matchSpec, DbServerTypes serverType)
