@@ -175,17 +175,17 @@ namespace PRISMTest
             GetQueryResults(connectionString, sqlQuery, secondsToStayConnected);
         }
 
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "", "", "", null, "", "Data Source=gigasax;Integrated Security=True", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "bob", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=bob", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Application Name=PRISMTest", true)]
-        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "", "d3l243", "", null, "", "Host=prismdb2;Username=d3l243", true)]
-        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", null, "", "Host=prismdb2;Database=dms;Username=d3l243", true)]
-        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", true, "", "Host=prismdb2;Database=dms;Username=d3l243", true)]
-        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", null, "PRISMTest", "Host=prismdb2;Database=dms;Username=d3l243;Application Name=PRISMTest", true)]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "", "", "", null, "", "Data Source=gigasax;Integrated Security=True")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "bob", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=bob")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Application Name=PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "", "d3l243", "", null, "", "Host=prismdb2;Username=d3l243")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", null, "", "Host=prismdb2;Database=dms;Username=d3l243")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", true, "", "Host=prismdb2;Database=dms;Username=d3l243")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "", null, "PRISMTest", "Host=prismdb2;Database=dms;Username=d3l243;Application Name=PRISMTest")]
         [Category("PNL_Domain")]
         [Category("DatabaseIntegrated")]
         public void TestGetConnectionStringForUserGetData(
@@ -197,7 +197,7 @@ namespace PRISMTest
             bool? useIntegratedSecurity,
             string applicationName,
             string expectedResult,
-            bool testConnectionString = false,
+            bool testConnectionString = true,
             int secondsToStayConnected = 0,
             string sqlQuery = "Select Table_Catalog, Table_Schema, Table_Type, Table_Name From information_schema.tables")
         {
@@ -205,6 +205,34 @@ namespace PRISMTest
                 serverType, serverName, databaseName, userName, password,
                 useIntegratedSecurity, applicationName, expectedResult,
                 testConnectionString, secondsToStayConnected, sqlQuery);
+        }
+
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "", "", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "", "", false, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "", "", true, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "SecretKey", null, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "SecretKey", false, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "SecretKey", true, "PRISMTest")]
+        public void TestGetHostNameFromConnectionString(
+            DbServerTypes serverType,
+            string serverName,
+            string databaseName,
+            string userName,
+            string password,
+            bool? useIntegratedSecurity,
+            string applicationName)
+        {
+            var connectionString = DbToolsFactory.GetConnectionString(serverType, serverName, databaseName, userName, password, applicationName, useIntegratedSecurity);
+
+            var hostName = DbToolsFactory.GetHostNameFromConnectionString(connectionString);
+
+            Console.WriteLine("Host name '{0}' extracted from {1}", hostName, connectionString);
+
+            Assert.AreEqual(serverName, hostName);
         }
 
         private string GetPaddedList(List<string> items, string stringFormat)
