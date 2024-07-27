@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Ionic.Zip;
+using System.IO.Compression;
 using NUnit.Framework;
 using PRISM;
 using PRISM.Logging;
-using ZipFile = System.IO.Compression.ZipFile;
 
 namespace PRISMTest
 {
@@ -113,14 +112,10 @@ namespace PRISMTest
                     writer.WriteLine("Placeholder log file for {0}", startDate.Year);
                 }
 
-                // Ionic.Zip.ZipFile
-                using var zipper = new Ionic.Zip.ZipFile(oldLogDirZipFile.FullName)
+                using (var zipFile = ZipFile.Open(oldLogDirZipFile.FullName, ZipArchiveMode.Create))
                 {
-                    UseZip64WhenSaving = Zip64Option.AsNecessary
-                };
-
-                zipper.AddItem(infoFile.FullName, string.Empty);
-                zipper.Save();
+                    zipFile.CreateEntryFromFile(infoFile.FullName, infoFile.Name);
+                }
 
                 oldZippedLogFiles.Add(oldLogDirZipFile);
 
