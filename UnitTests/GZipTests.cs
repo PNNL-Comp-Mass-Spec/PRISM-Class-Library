@@ -232,13 +232,13 @@ namespace PRISMTest
 
             // Compare file modification times
             var timeDiffMsecWithMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileWithMeta.LastWriteTimeUtc).TotalSeconds);
-            Assert.AreEqual(timeDiffMsecWithMeta, 0, 5, "Round robin file size does not match the original file (.gz file with metadata)");
+            Assert.AreEqual(0, timeDiffMsecWithMeta, 5, "Round robin file size does not match the original file (.gz file with metadata)");
             Console.WriteLine("File to compress, modified {0}, matches round robin file with metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileWithMeta.LastWriteTime);
 
             if (!includedMetadata)
             {
                 var timeDiffMsecNoMeta = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(roundRobinFileNoMeta.LastWriteTimeUtc).TotalSeconds);
-                Assert.AreEqual(timeDiffMsecNoMeta, 0, 5, "Round robin file size does not match the original file (.gz file without metadata");
+                Assert.AreEqual(0, timeDiffMsecNoMeta, 5, "Round robin file size does not match the original file (.gz file without metadata");
                 Console.WriteLine("File to compress, modified {0}, matches round robin file without metadata, modified {1}", fileToCompress.LastWriteTime, roundRobinFileNoMeta.LastWriteTime);
             }
 
@@ -253,14 +253,14 @@ namespace PRISMTest
             {
                 // Assure that the .gz file's date matches the current time
                 var timeDiffMsecGz = Math.Abs(DateTime.UtcNow.Subtract(compressedFile.LastWriteTimeUtc).TotalSeconds);
-                Assert.AreEqual(timeDiffMsecGz, 0, 60, "Compressed .gz file time does not match the current time; they should be close");
+                Assert.AreEqual(0, timeDiffMsecGz, 60, "Compressed .gz file time does not match the current time; they should be close");
                 Console.WriteLine("The modification time of the .gz file matches the current date/time; this is expected when including metadata: {0}", compressedFile.LastWriteTime);
             }
             else
             {
                 // Assure that the .gz file's date matches the file to compress
                 var timeDiffMsecGz = Math.Abs(fileToCompress.LastWriteTimeUtc.Subtract(compressedFile.LastWriteTimeUtc).TotalSeconds);
-                Assert.AreEqual(timeDiffMsecGz, 0, 2.05, "Compressed .gz file time does not match the original file to compress; they should be close");
+                Assert.AreEqual(0, timeDiffMsecGz, 2.05, "Compressed .gz file time does not match the original file to compress; they should be close");
                 Console.WriteLine("The modification time of the .gz file matches the compressed file's date/time; this is expected when not including metadata: {0}", compressedFile.LastWriteTime);
             }
 
