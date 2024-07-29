@@ -22,7 +22,7 @@ namespace PRISMTest
             if (runningLinux)
             {
                 var linuxVersion = osVersionInfo.GetLinuxVersion();
-                Assert.AreEqual(version, linuxVersion);
+                Assert.That(linuxVersion, Is.EqualTo(version));
                 return;
             }
 
@@ -43,7 +43,7 @@ namespace PRISMTest
                     break;
                 case PlatformID.Unix:
                     var linuxVersion = osVersionInfo.GetLinuxVersion();
-                    Assert.AreEqual(version, linuxVersion);
+                    Assert.That(linuxVersion, Is.EqualTo(version));
                     break;
                 case PlatformID.Xbox:
                     Assert.True(version.StartsWith("Xbox", StringComparison.OrdinalIgnoreCase));

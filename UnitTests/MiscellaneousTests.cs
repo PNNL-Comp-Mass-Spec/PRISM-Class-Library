@@ -27,7 +27,7 @@ namespace PRISMTest
             if (pendingUpdates)
                 Console.WriteLine(pendingWindowsUpdateMessage);
 
-            Assert.AreEqual(expectedValue, pendingUpdates, $"Unexpected value for {dateToTest}: {pendingUpdates}");
+            Assert.That(pendingUpdates, Is.EqualTo(expectedValue), $"Unexpected value for {dateToTest}: {pendingUpdates}");
         }
 
         [TestCase("8/10/2017 2 am", false)]
@@ -51,7 +51,7 @@ namespace PRISMTest
             if (pendingUpdates)
                 Console.WriteLine(pendingWindowsUpdateMessage);
 
-            Assert.AreEqual(expectedValue, pendingUpdates, $"Unexpected value for {dateToTest}: {pendingUpdates}");
+            Assert.That(pendingUpdates, Is.EqualTo(expectedValue), $"Unexpected value for {dateToTest}: {pendingUpdates}");
         }
     }
 }

@@ -42,7 +42,7 @@ namespace PRISMTest
                 currentTaskProgressAtStart, currentTaskProgressAtEnd,
                 subTaskProgress, overallProgress);
 
-            Assert.AreEqual(expectedOverallProgress, overallProgress, 0.01);
+            Assert.That(overallProgress, Is.EqualTo(expectedOverallProgress).Within(0.01));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace PRISMTest
                 currentTaskProgressAtStart, currentTaskProgressAtEnd,
                 currentTaskItemsProcessed, currentTaskTotalItems, overallProgress);
 
-            Assert.AreEqual(expectedOverallProgress, overallProgress, 0.01);
+            Assert.That(overallProgress, Is.EqualTo(expectedOverallProgress).Within(0.01));
         }
 
         [TestCase(@"C:\Temp", "", @"C:\Temp\PRISM_log", 0)]
@@ -137,7 +137,7 @@ namespace PRISMTest
             Console.WriteLine();
             Console.WriteLine("Log file path: " + fileStatsLogger.LogFilePath);
 
-            Assert.AreEqual(logFilePath, fileStatsLogger.LogFilePath);
+            Assert.That(fileStatsLogger.LogFilePath, Is.EqualTo(logFilePath));
         }
 
         [TestCase(@"C:\Program Files", "msvcp*.dll", 5)]

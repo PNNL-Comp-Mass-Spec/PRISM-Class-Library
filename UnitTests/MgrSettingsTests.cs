@@ -70,7 +70,7 @@ namespace PRISMTest
 
             Console.WriteLine("Value for {0} is '{1}'", settingName, settingValue);
 
-            Assert.AreEqual(expectedValue, settingValue);
+            Assert.That(settingValue, Is.EqualTo(expectedValue));
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace PRISMTest
                 Assert.IsTrue(settings.ContainsKey(setting.Key));
 
                 Console.WriteLine("Value for {0,-30} {1}", setting.Key + ":", settings[setting.Key]);
-                Assert.AreEqual(setting.Value, settings[setting.Key]);
+                Assert.That(settings[setting.Key], Is.EqualTo(setting.Value));
             }
         }
 
@@ -213,7 +213,7 @@ namespace PRISMTest
                 if (mgrSettings.MgrParams.TryGetValue(expected.Key, out var actual))
                 {
                     Console.WriteLine("Value for {0,-30} {1}", expected.Key + ":", actual);
-                    Assert.AreEqual(expected.Value, actual, "Parameter value is different");
+                    Assert.That(actual, Is.EqualTo(expected.Value), "Parameter value is different");
                 }
                 else
                 {

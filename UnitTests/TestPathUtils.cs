@@ -20,7 +20,7 @@ namespace PRISMTest
         {
             var result = PathUtils.AssureLinuxPath(pathSpec);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase(@"C:\DMS_WorkDir/12343/stat", @"C:\DMS_WorkDir\12343\stat")]
@@ -33,7 +33,7 @@ namespace PRISMTest
         {
             var result = PathUtils.AssureWindowsPath(pathSpec);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase("/proc/12343", "stat", "/proc/12343/stat")]
@@ -48,7 +48,7 @@ namespace PRISMTest
         {
             var result = PathUtils.CombineLinuxPaths(path1, path2);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase(@"C:\DMS_WorkDir", "subdir", @"C:\DMS_WorkDir\subdir")]
@@ -59,7 +59,7 @@ namespace PRISMTest
         {
             var result = PathUtils.CombineWindowsPaths(path1, path2);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase(@"C:\DMS_WorkDir", "subdir", '\\', @"C:\DMS_WorkDir\subdir")]
@@ -76,7 +76,7 @@ namespace PRISMTest
         {
             var result = PathUtils.CombinePaths(path1, path2, directorySepChar);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
         }
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "File*", "FileCopyTest, FileCopyTestWithLocks", false, 2)]
@@ -118,7 +118,7 @@ namespace PRISMTest
             Console.WriteLine("Directories via pathSpec: {0}", directories1.Count);
             Console.WriteLine("Directories via directoryMask: {0}", directories2.Count);
 
-            Assert.AreEqual(directories1.Count, directories2.Count, $"Directory count mismatch; {directories1.Count} vs. {directories2.Count}");
+            Assert.That(directories2.Count, Is.EqualTo(directories1.Count), $"Directory count mismatch; {directories1.Count} vs. {directories2.Count}");
 
             if (string.IsNullOrWhiteSpace(expectedDirectoryNames))
                 return;
@@ -290,7 +290,7 @@ namespace PRISMTest
         {
             var result = PathUtils.FitsMask(fileName, fileMask);
 
-            Assert.AreEqual(expectedResult, result);
+            Assert.That(result, Is.EqualTo(expectedResult));
 
             if (result)
                 Console.WriteLine("{0} matches\n{1}", fileName, fileMask);
@@ -340,8 +340,8 @@ namespace PRISMTest
                 Console.WriteLine("{0} has parent {1} and name {2}", directoryPath, parentPath, directoryName);
             }
 
-            Assert.AreEqual(expectedParentPath, parentPath, "Parent path mismatch");
-            Assert.AreEqual(expectedDirectoryName, directoryName, "Directory name mismatch");
+            Assert.That(parentPath, Is.EqualTo(expectedParentPath), "Parent path mismatch");
+            Assert.That(directoryName, Is.EqualTo(expectedDirectoryName), "Directory name mismatch");
         }
 
         [TestCase(@"C:\DMS_WorkDir\SubDir", false)]
@@ -359,7 +359,7 @@ namespace PRISMTest
 
             var pathWasQuoted = !string.Equals(filePath, quotedPath);
 
-            Assert.AreEqual(expectedQuoteRequired, pathWasQuoted, "Mismatch for " + filePath);
+            Assert.That(pathWasQuoted, Is.EqualTo(expectedQuoteRequired), "Mismatch for " + filePath);
         }
 
         [TestCase(@"C:\DMS_WorkDir\filename.txt", "UpdatedFile.txt", @"C:\DMS_WorkDir\UpdatedFile.txt")]
@@ -367,7 +367,7 @@ namespace PRISMTest
         public void TestReplaceFilenameInPath(string existingFilePath, string newFileName, string expectedResult)
         {
             var newPath = PathUtils.ReplaceFilenameInPath(existingFilePath, newFileName);
-            Assert.AreEqual(expectedResult, newPath);
+            Assert.That(newPath, Is.EqualTo(expectedResult));
         }
     }
 }

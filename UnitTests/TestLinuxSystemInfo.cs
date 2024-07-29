@@ -89,11 +89,11 @@ namespace PRISMTest
 
             Console.WriteLine("Core count: {0}", coreCount);
 
-            Assert.AreEqual(expectedCoreCount, coreCount);
+            Assert.That(coreCount, Is.EqualTo(expectedCoreCount));
 
             Console.WriteLine("Processor Packages: {0}", linuxSystemInfo.GetProcessorPackageCount());
 
-            Assert.AreEqual(expectedProcessorPackages, linuxSystemInfo.GetProcessorPackageCount());
+            Assert.That(linuxSystemInfo.GetProcessorPackageCount(), Is.EqualTo(expectedProcessorPackages));
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 98079, "mono", "", 3.841)]
@@ -170,7 +170,7 @@ namespace PRISMTest
 
             Console.WriteLine("Core usage: {0:F2}", coreUsage);
 
-            Assert.AreEqual(expectedCoreUsageTotal, coreUsage, 0.1, "Core usage mismatch");
+            Assert.That(coreUsage, Is.EqualTo(expectedCoreUsageTotal).Within(0.1), "Core usage mismatch");
 
             switch (processIDs.Count)
             {
@@ -241,8 +241,8 @@ namespace PRISMTest
             Console.WriteLine("Core usage: {0:F2}", coreUsage);
             Console.WriteLine("Total CPU usage: {0:F1}%", cpuUsageTotal);
 
-            Assert.AreEqual(expectedCoreUsage, coreUsage, 0.01, "Core usage mismatch");
-            Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.1, "Total CPU usage mismatch");
+            Assert.That(coreUsage, Is.EqualTo(expectedCoreUsage).Within(0.01), "Core usage mismatch");
+            Assert.That(cpuUsageTotal, Is.EqualTo(expectedCpuUsageTotal).Within(0.1), "Total CPU usage mismatch");
         }
 
         private void CopyCPUInfoFile(FileSystemInfo procDirectory, string sourceProcDirectoryPath)
@@ -392,7 +392,7 @@ namespace PRISMTest
 
             Console.WriteLine("Overall CPU usage: {0:F1}%", cpuUsageTotal);
 
-            Assert.AreEqual(expectedCpuUsageTotal, cpuUsageTotal, 0.01, "CPU usage mismatch");
+            Assert.That(cpuUsageTotal, Is.EqualTo(expectedCpuUsageTotal).Within(0.01), "CPU usage mismatch");
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 42128)]
@@ -433,7 +433,7 @@ namespace PRISMTest
 
             Console.WriteLine("Free memory: {0:F0} MB", freeMemoryMB);
 
-            Assert.AreEqual(expectedFreeMemoryMB, freeMemoryMB, 1);
+            Assert.That(freeMemoryMB, Is.EqualTo(expectedFreeMemoryMB).Within(1));
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 64183)]
@@ -474,7 +474,7 @@ namespace PRISMTest
 
             Console.WriteLine("Total memory: {0:F0} MB", totalMemoryMB);
 
-            Assert.AreEqual(expectedTotalMemoryMB, totalMemoryMB, 1);
+            Assert.That(totalMemoryMB, Is.EqualTo(expectedTotalMemoryMB).Within(1));
         }
 
         private FileInfo VerifyTestFile(string filePath)

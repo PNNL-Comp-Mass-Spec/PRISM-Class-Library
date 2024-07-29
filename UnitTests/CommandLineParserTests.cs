@@ -474,37 +474,37 @@ namespace PRISMTest
                 Console.WriteLine("{0,-15} {1}", "IntArray[" + i + "]:", options.IntArray[i]);
             }
 
-            Assert.AreEqual(11, options.IntMinOnly, "Unexpected value for IntMinOnly");
-            Assert.AreEqual(5, options.IntMaxOnly, "Unexpected value for IntMaxOnly");
-            Assert.AreEqual(2, options.IntMinMax, "Unexpected value for IntMinMax");
-            Assert.AreEqual(15, options.DblMinOnly, "Unexpected value for DblMinOnly");
-            Assert.AreEqual(5.5, options.DblMaxOnly, "Unexpected value for DblMaxOnly");
-            Assert.AreEqual(2.4, options.DblMinMax, "Unexpected value for DblMinMax");
-            Assert.AreEqual(@"C:\Users\User", options.LowerChar, "Unexpected value for LowerChar");
-            Assert.AreEqual(@"C:\Users\User2\", options.UpperChar, "Unexpected value for UpperChar");
-            Assert.AreEqual("TestAb1", options.Ab1, "Unexpected value for Ab1");
-            Assert.AreEqual("TestAb2", options.Ab2, "Unexpected value for Ab2");
-            Assert.AreEqual("TestAb3", options.Ab3, "Unexpected value for Ab3");
-            Assert.AreEqual("TestAb4", options.Ab4, "Unexpected value for Ab4");
-            Assert.AreEqual(true, options.BoolCheck1, "Unexpected value for BoolCheck1");
-            Assert.AreEqual(false, options.BoolCheck2, "Unexpected value for BoolCheck2");
-            Assert.AreEqual(true, options.BoolCheck3, "Unexpected value for BoolCheck3");
-            Assert.AreEqual("MyInputFile.txt", options.InputFilePath, "Unexpected value for InputFilePath");
-            Assert.AreEqual("RandomlyPlacedOutputFile.txt", options.OutputFilePath, "Unexpected value for OutputFilePath");
-            Assert.AreEqual(true, options.NumericArg, "Unexpected value for NumericArg");
-            Assert.AreEqual("This string should be used", options.Overrides, "Unexpected value for Overrides");
-            Assert.AreEqual(3, options.StringArray.Length, "Unexpected value for StringArray.Length");
-            Assert.AreEqual("value1", options.StringArray[0], "Unexpected value for StringArray[0]");
-            Assert.AreEqual("value2", options.StringArray[1], "Unexpected value for StringArray[1]");
-            Assert.AreEqual("value3", options.StringArray[2], "Unexpected value for StringArray[2]");
-            Assert.AreEqual(5, options.IntArray.Length, "Unexpected value for IntArray.Length");
-            Assert.AreEqual(0, options.IntArray[0], "Unexpected value for IntArray[0]");
-            Assert.AreEqual(1, options.IntArray[1], "Unexpected value for IntArray[1]");
-            Assert.AreEqual(2, options.IntArray[2], "Unexpected value for IntArray[2]");
-            Assert.AreEqual(3, options.IntArray[3], "Unexpected value for IntArray[3]");
-            Assert.AreEqual(4, options.IntArray[4], "Unexpected value for IntArray[4]");
-            Assert.AreEqual(1, options.DblArray.Length, "Unexpected value for DblArray.Length");
-            Assert.AreEqual(1.0, options.DblArray[0], "Unexpected value for DblArray[0]");
+            Assert.That(options.IntMinOnly, Is.EqualTo(11), "Unexpected value for IntMinOnly");
+            Assert.That(options.IntMaxOnly, Is.EqualTo(5), "Unexpected value for IntMaxOnly");
+            Assert.That(options.IntMinMax, Is.EqualTo(2), "Unexpected value for IntMinMax");
+            Assert.That(options.DblMinOnly, Is.EqualTo(15), "Unexpected value for DblMinOnly");
+            Assert.That(options.DblMaxOnly, Is.EqualTo(5.5), "Unexpected value for DblMaxOnly");
+            Assert.That(options.DblMinMax, Is.EqualTo(2.4), "Unexpected value for DblMinMax");
+            Assert.That(options.LowerChar, Is.EqualTo(@"C:\Users\User"), "Unexpected value for LowerChar");
+            Assert.That(options.UpperChar, Is.EqualTo(@"C:\Users\User2\"), "Unexpected value for UpperChar");
+            Assert.That(options.Ab1, Is.EqualTo("TestAb1"), "Unexpected value for Ab1");
+            Assert.That(options.Ab2, Is.EqualTo("TestAb2"), "Unexpected value for Ab2");
+            Assert.That(options.Ab3, Is.EqualTo("TestAb3"), "Unexpected value for Ab3");
+            Assert.That(options.Ab4, Is.EqualTo("TestAb4"), "Unexpected value for Ab4");
+            Assert.That(options.BoolCheck1, Is.EqualTo(true), "Unexpected value for BoolCheck1");
+            Assert.That(options.BoolCheck2, Is.EqualTo(false), "Unexpected value for BoolCheck2");
+            Assert.That(options.BoolCheck3, Is.EqualTo(true), "Unexpected value for BoolCheck3");
+            Assert.That(options.InputFilePath, Is.EqualTo("MyInputFile.txt"), "Unexpected value for InputFilePath");
+            Assert.That(options.OutputFilePath, Is.EqualTo("RandomlyPlacedOutputFile.txt"), "Unexpected value for OutputFilePath");
+            Assert.That(options.NumericArg, Is.EqualTo(true), "Unexpected value for NumericArg");
+            Assert.That(options.Overrides, Is.EqualTo("This string should be used"), "Unexpected value for Overrides");
+            Assert.That(options.StringArray.Length, Is.EqualTo(3), "Unexpected value for StringArray.Length");
+            Assert.That(options.StringArray[0], Is.EqualTo("value1"), "Unexpected value for StringArray[0]");
+            Assert.That(options.StringArray[1], Is.EqualTo("value2"), "Unexpected value for StringArray[1]");
+            Assert.That(options.StringArray[2], Is.EqualTo("value3"), "Unexpected value for StringArray[2]");
+            Assert.That(options.IntArray.Length, Is.EqualTo(5), "Unexpected value for IntArray.Length");
+            Assert.That(options.IntArray[0], Is.EqualTo(0), "Unexpected value for IntArray[0]");
+            Assert.That(options.IntArray[1], Is.EqualTo(1), "Unexpected value for IntArray[1]");
+            Assert.That(options.IntArray[2], Is.EqualTo(2), "Unexpected value for IntArray[2]");
+            Assert.That(options.IntArray[3], Is.EqualTo(3), "Unexpected value for IntArray[3]");
+            Assert.That(options.IntArray[4], Is.EqualTo(4), "Unexpected value for IntArray[4]");
+            Assert.That(options.DblArray.Length, Is.EqualTo(1), "Unexpected value for DblArray.Length");
+            Assert.That(options.DblArray[0], Is.EqualTo(1.0), "Unexpected value for DblArray[0]");
         }
 
         [Test]
@@ -527,8 +527,8 @@ namespace PRISMTest
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
 
-            Assert.AreEqual("MyInputFile.txt", options.InputFilePath);
-            Assert.AreEqual("OutputFile.txt", options.OutputFilePath);
+            Assert.That(options.InputFilePath, Is.EqualTo("MyInputFile.txt"));
+            Assert.That(options.OutputFilePath, Is.EqualTo("OutputFile.txt"));
         }
 
         [Test]
@@ -554,8 +554,8 @@ namespace PRISMTest
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
 
-            Assert.AreEqual("/home/user/MyInputFile.txt", options.InputFilePath);
-            Assert.AreEqual("/home/user/OutputFile.txt", options.OutputFilePath);
+            Assert.That(options.InputFilePath, Is.EqualTo("/home/user/MyInputFile.txt"));
+            Assert.That(options.OutputFilePath, Is.EqualTo("/home/user/OutputFile.txt"));
         }
 
         [Test]
@@ -586,8 +586,8 @@ namespace PRISMTest
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
 
-            Assert.AreEqual("./pagefile.sys", options.InputFilePath);
-            Assert.AreEqual("./ProgramData", options.OutputFilePath);
+            Assert.That(options.InputFilePath, Is.EqualTo("./pagefile.sys"));
+            Assert.That(options.OutputFilePath, Is.EqualTo("./ProgramData"));
         }
 
         [Test]
@@ -635,8 +635,8 @@ namespace PRISMTest
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
 
-            Assert.AreEqual("/home/user/MyInputFile.txt", options.InputFilePath);
-            Assert.AreEqual("/home/user/OutputFile.txt", options.OutputFilePath);
+            Assert.That(options.InputFilePath, Is.EqualTo("/home/user/MyInputFile.txt"));
+            Assert.That(options.OutputFilePath, Is.EqualTo("/home/user/OutputFile.txt"));
         }
 
         [Test]
@@ -661,8 +661,8 @@ namespace PRISMTest
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
 
-            Assert.AreEqual("/pagefile.sys", options.InputFilePath);
-            Assert.AreEqual("/ProgramData", options.OutputFilePath);
+            Assert.That(options.InputFilePath, Is.EqualTo("/pagefile.sys"));
+            Assert.That(options.OutputFilePath, Is.EqualTo("/ProgramData"));
         }
 
         [Test]
@@ -1066,7 +1066,7 @@ namespace PRISMTest
             Console.WriteLine("{0,-25} {1}", "Matches per Spectrum:", result.ParsedResults.MatchesPerSpectrumToReport);
             Console.WriteLine("{0,-25} {1}", "Verbose Mode:", result.ParsedResults.VerboseMode);
 
-            Assert.AreEqual(expectedParseResult, result.ParsedResults.VerboseMode, $"{verboseFlagValue} did not get parsed as {expectedParseResult}");
+            Assert.That(result.ParsedResults.VerboseMode, Is.EqualTo(expectedParseResult), $"{verboseFlagValue} did not get parsed as {expectedParseResult}");
         }
 
         [Test]
@@ -1175,10 +1175,10 @@ namespace PRISMTest
             var options = result.ParsedResults;
             Assert.IsTrue(result.Success, "Parser failed to parse valid args");
             Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
-            Assert.AreEqual(TestEnum.DoublyTrue, options.BeUnknown);
-            Assert.AreEqual(TestEnum.Legend, options.TooBad);
-            Assert.AreEqual("Ugly, Apocalypse, EndOfUniverse", options.ResultEffect.ToString());
-            Assert.AreEqual(TestEnumFlags.Ugly | TestEnumFlags.Apocalypse | TestEnumFlags.EndOfUniverse, options.ResultEffect);
+            Assert.That(options.BeUnknown, Is.EqualTo(TestEnum.DoublyTrue));
+            Assert.That(options.TooBad, Is.EqualTo(TestEnum.Legend));
+            Assert.That(options.ResultEffect.ToString(), Is.EqualTo("Ugly, Apocalypse, EndOfUniverse"));
+            Assert.That(options.ResultEffect, Is.EqualTo(TestEnumFlags.Ugly | TestEnumFlags.Apocalypse | TestEnumFlags.EndOfUniverse));
         }
 
         [Test]
@@ -1341,25 +1341,25 @@ namespace PRISMTest
 
             var parser2 = new CommandLineParser<OkayKey2>();
             var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
-            Assert.AreEqual(results.Smooth, results2.Smooth);
-            Assert.AreEqual(results.Smooth2, results2.Smooth2);
-            Assert.AreEqual(results.OkayName, results2.OkayName);
-            Assert.AreEqual(results.Verbose, results2.Verbose);
-            Assert.AreEqual(results.CharValue, results2.CharValue);
-            Assert.AreEqual(results.EmptyString, results2.EmptyString);
-            Assert.AreEqual(results.EmptyCharValue, results2.EmptyCharValue);
-            Assert.AreEqual(results.QuotedWhitespace, results2.QuotedWhitespace);
+            Assert.That(results2.Smooth, Is.EqualTo(results.Smooth));
+            Assert.That(results2.Smooth2, Is.EqualTo(results.Smooth2));
+            Assert.That(results2.OkayName, Is.EqualTo(results.OkayName));
+            Assert.That(results2.Verbose, Is.EqualTo(results.Verbose));
+            Assert.That(results2.CharValue, Is.EqualTo(results.CharValue));
+            Assert.That(results2.EmptyString, Is.EqualTo(results.EmptyString));
+            Assert.That(results2.EmptyCharValue, Is.EqualTo(results.EmptyCharValue));
+            Assert.That(results2.QuotedWhitespace, Is.EqualTo(results.QuotedWhitespace));
 
             var parser3 = new CommandLineParser<OkayKey2>();
             var smooth2Override = 15;
             var okayNameOverride = "A Different Value?";
             var results3 = parser3.ParseArgs(
                 new[] { "-smooth2", smooth2Override.ToString(), "-okay-name", okayNameOverride, "-ESP", "-ParamFile", paramFileName }).ParsedResults;
-            Assert.AreEqual(results.Smooth, results3.Smooth);
-            Assert.AreEqual(smooth2Override, results3.Smooth2);
-            Assert.AreEqual(okayNameOverride, results3.OkayName);
-            Assert.AreEqual(results.Verbose, results3.Verbose);
-            Assert.AreEqual(true, results3.ExtraSpecialProcessingOption);
+            Assert.That(results3.Smooth, Is.EqualTo(results.Smooth));
+            Assert.That(results3.Smooth2, Is.EqualTo(smooth2Override));
+            Assert.That(results3.OkayName, Is.EqualTo(okayNameOverride));
+            Assert.That(results3.Verbose, Is.EqualTo(results.Verbose));
+            Assert.That(results3.ExtraSpecialProcessingOption, Is.EqualTo(true));
         }
 
         [Test]
@@ -1380,16 +1380,16 @@ namespace PRISMTest
 
             var parser2 = new CommandLineParser<OkayKey2>();
             var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
-            Assert.AreEqual(results.Smooth, results2.Smooth);
-            Assert.AreEqual(results.Smooth2, results2.Smooth2);
-            Assert.AreEqual(results.OkayName, results2.OkayName);
-            Assert.AreEqual(results.Verbose, results2.Verbose);
+            Assert.That(results2.Smooth, Is.EqualTo(results.Smooth));
+            Assert.That(results2.Smooth2, Is.EqualTo(results.Smooth2));
+            Assert.That(results2.OkayName, Is.EqualTo(results.OkayName));
+            Assert.That(results2.Verbose, Is.EqualTo(results.Verbose));
 
             // "Duplicate parameter" parsing error with duplicated, non-array parameter
             File.AppendAllText(paramFile.FullName, "\nOkay-Name=Duplicated\n");
             var parser3 = new CommandLineParser<OkayKey2>();
             var results3 = parser3.ParseArgs(new[] { "-ParamFile", paramFile.FullName });
-            Assert.AreEqual(false, results3.Success);
+            Assert.That(results3.Success, Is.EqualTo(false));
             Assert.LessOrEqual(1, results3.ParseErrors.Count);
 
             foreach (var error in results3.ParseErrors)
@@ -1397,7 +1397,7 @@ namespace PRISMTest
                 Console.WriteLine(error.Message);
             }
 
-            Assert.AreEqual(true, results3.ParseErrors.Any(x => x.Message.Contains("Duplicated parameter")));
+            Assert.That(results3.ParseErrors.Any(x => x.Message.Contains("Duplicated parameter")), Is.EqualTo(true));
         }
 
         [Test]
@@ -1427,21 +1427,21 @@ namespace PRISMTest
 
             var parser2 = new CommandLineParser<OkayKey2>();
             var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
-            Assert.AreEqual(results.Smooth, results2.Smooth);
-            Assert.AreEqual(results.Smooth2, results2.Smooth2);
-            Assert.AreEqual(results.OkayName, results2.OkayName);
-            Assert.AreEqual(results.Verbose, results2.Verbose);
+            Assert.That(results2.Smooth, Is.EqualTo(results.Smooth));
+            Assert.That(results2.Smooth2, Is.EqualTo(results.Smooth2));
+            Assert.That(results2.OkayName, Is.EqualTo(results.OkayName));
+            Assert.That(results2.Verbose, Is.EqualTo(results.Verbose));
 
             // Add a couple arguments that do not match any of the argument names. These must be ignored by the duplicate-check code
             File.AppendAllText(paramFile.FullName, "\nOkayName=Duplicated\n");
             File.AppendAllText(paramFile.FullName, "\nOkayName=Duplicated\n");
             var parser3 = new CommandLineParser<OkayKey2>();
             var results3 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
-            Assert.AreEqual(true, parser3.Results.Success);
-            Assert.AreEqual(results.Smooth, results3.Smooth);
-            Assert.AreEqual(results.Smooth2, results3.Smooth2);
-            Assert.AreEqual(results.OkayName, results3.OkayName);
-            Assert.AreEqual(results.Verbose, results3.Verbose);
+            Assert.That(parser3.Results.Success, Is.EqualTo(true));
+            Assert.That(results3.Smooth, Is.EqualTo(results.Smooth));
+            Assert.That(results3.Smooth2, Is.EqualTo(results.Smooth2));
+            Assert.That(results3.OkayName, Is.EqualTo(results.OkayName));
+            Assert.That(results3.Verbose, Is.EqualTo(results.Verbose));
         }
 
         [Test]
@@ -1473,10 +1473,10 @@ namespace PRISMTest
             // No "duplicate parameter" error when parsing a parameter file with array entries
             var parser2 = new CommandLineParser<ArgsArray>();
             var results2 = parser2.ParseArgs(new[] { "-ParamFile", paramFile.FullName }).ParsedResults;
-            Assert.AreEqual(results.IntMinOnly, results2.IntMinOnly);
-            Assert.AreEqual(results.DblMinOnly, results2.DblMinOnly);
-            Assert.AreEqual(results.LowerChar, results2.LowerChar);
-            Assert.AreEqual(results.BoolCheck, results2.BoolCheck);
+            Assert.That(results2.IntMinOnly, Is.EqualTo(results.IntMinOnly));
+            Assert.That(results2.DblMinOnly, Is.EqualTo(results.DblMinOnly));
+            Assert.That(results2.LowerChar, Is.EqualTo(results.LowerChar));
+            Assert.That(results2.BoolCheck, Is.EqualTo(results.BoolCheck));
             Assert.That(results.StringArray.SequenceEqual(results2.StringArray), "StringArray SequenceEqual");
             Assert.That(results.IntArray.SequenceEqual(results2.IntArray), "IntArray SequenceEqual");
         }
@@ -1523,10 +1523,10 @@ namespace PRISMTest
             Console.WriteLine("Class values before reading the parameter file");
             options.ShowProcessingOptions();
 
-            Assert.AreEqual("Yes", options.Verbose);
-            Assert.AreEqual(5, options.Smooth);
-            Assert.AreEqual(10, options.Smooth2);
-            Assert.AreEqual(false, options.ExtraSpecialProcessingOption);
+            Assert.That(options.Verbose, Is.EqualTo("Yes"));
+            Assert.That(options.Smooth, Is.EqualTo(5));
+            Assert.That(options.Smooth2, Is.EqualTo(10));
+            Assert.That(options.ExtraSpecialProcessingOption, Is.EqualTo(false));
 
             var args = new List<string>
             {
@@ -1542,14 +1542,14 @@ namespace PRISMTest
             Console.WriteLine("Class values after reading the parameter file");
             options.ShowProcessingOptions();
 
-            Assert.AreEqual("No", options.Verbose);
-            Assert.AreEqual(6, options.Smooth);
-            Assert.AreEqual(10, options.Smooth2);
-            Assert.AreEqual(true, options.ExtraSpecialProcessingOption);
+            Assert.That(options.Verbose, Is.EqualTo("No"));
+            Assert.That(options.Smooth, Is.EqualTo(6));
+            Assert.That(options.Smooth2, Is.EqualTo(10));
+            Assert.That(options.ExtraSpecialProcessingOption, Is.EqualTo(true));
 
             if (options.RecurseDirectories)
             {
-                Assert.AreEqual(LEVELS_TO_RECURSE, options.MaxLevelsToRecurse);
+                Assert.That(options.MaxLevelsToRecurse, Is.EqualTo(LEVELS_TO_RECURSE));
             }
 
             options.Smooth = 18;
@@ -1561,15 +1561,15 @@ namespace PRISMTest
             Console.WriteLine("Class values after manually changing Smooth, Smooth2, and RecurseDirectories");
             options.ShowProcessingOptions();
 
-            Assert.AreEqual("No", options.Verbose);
-            Assert.AreEqual(18, options.Smooth);
-            Assert.AreEqual(28, options.Smooth2);
-            Assert.AreEqual(false, options.ExtraSpecialProcessingOption);
-            Assert.AreEqual(false, options.RecurseDirectories);
+            Assert.That(options.Verbose, Is.EqualTo("No"));
+            Assert.That(options.Smooth, Is.EqualTo(18));
+            Assert.That(options.Smooth2, Is.EqualTo(28));
+            Assert.That(options.ExtraSpecialProcessingOption, Is.EqualTo(false));
+            Assert.That(options.RecurseDirectories, Is.EqualTo(false));
 
             if (options.RecurseDirectories)
             {
-                Assert.AreEqual(LEVELS_TO_RECURSE, options.MaxLevelsToRecurse);
+                Assert.That(options.MaxLevelsToRecurse, Is.EqualTo(LEVELS_TO_RECURSE));
             }
 
             var parser = new CommandLineParser<OkayKey2>(options, "PRISMTest");
@@ -1580,15 +1580,15 @@ namespace PRISMTest
             Console.WriteLine("Class values after re-reading the parameter file");
             parsedOptions.ShowProcessingOptions();
 
-            Assert.AreEqual("No", parsedOptions.Verbose);
-            Assert.AreEqual(6, parsedOptions.Smooth);
-            Assert.AreEqual(28, parsedOptions.Smooth2);
-            Assert.AreEqual(true, options.ExtraSpecialProcessingOption);
-            Assert.AreEqual(includeSecondaryArgs, options.RecurseDirectories);
+            Assert.That(parsedOptions.Verbose, Is.EqualTo("No"));
+            Assert.That(parsedOptions.Smooth, Is.EqualTo(6));
+            Assert.That(parsedOptions.Smooth2, Is.EqualTo(28));
+            Assert.That(options.ExtraSpecialProcessingOption, Is.EqualTo(true));
+            Assert.That(options.RecurseDirectories, Is.EqualTo(includeSecondaryArgs));
 
             if (options.RecurseDirectories)
             {
-                Assert.AreEqual(LEVELS_TO_RECURSE, options.MaxLevelsToRecurse);
+                Assert.That(options.MaxLevelsToRecurse, Is.EqualTo(LEVELS_TO_RECURSE));
             }
 
             Console.WriteLine();
@@ -1830,8 +1830,8 @@ namespace PRISMTest
             Console.WriteLine("{0,-15} {1}", "LogEnabled:", options.LogEnabled);
             Console.WriteLine("{0,-15} {1}", "LogFilePath:", options.LogFilePath);
 
-            Assert.AreEqual(true, options.LogEnabled, "LogEnabled should be true!!");
-            Assert.AreEqual(defaults.LogFilePath, options.LogFilePath, "LogFilePath should match the default value!!");
+            Assert.That(options.LogEnabled, Is.EqualTo(true), "LogEnabled should be true!!");
+            Assert.That(options.LogFilePath, Is.EqualTo(defaults.LogFilePath), "LogFilePath should match the default value!!");
         }
 
         [Test]
@@ -1847,8 +1847,8 @@ namespace PRISMTest
             Console.WriteLine("{0,-15} {1}", "LogEnabled:", options.LogEnabled);
             Console.WriteLine("{0,-15} {1}", "LogFilePath:", options.LogFilePath);
 
-            Assert.AreEqual(true, options.LogEnabled, "LogEnabled should be true!!");
-            Assert.AreEqual(logFileName, options.LogFilePath, "LogFilePath should match the provided value!!");
+            Assert.That(options.LogEnabled, Is.EqualTo(true), "LogEnabled should be true!!");
+            Assert.That(options.LogFilePath, Is.EqualTo(logFileName), "LogFilePath should match the provided value!!");
         }
 
         private class ArgExistsPropertyFail1
@@ -1964,15 +1964,15 @@ namespace PRISMTest
 
             if (expectedQuoteCount == 0 && commentHasMatchingQuotes)
             {
-                Assert.AreEqual(expectedQuoteCount, commentQuoteCount, "Matching leading/trailing quotes were not removed from the comment, but they should have been");
+                Assert.That(commentQuoteCount, Is.EqualTo(expectedQuoteCount), "Matching leading/trailing quotes were not removed from the comment, but they should have been");
             }
             else if (expectedQuoteCount == 0)
             {
-                Assert.AreEqual(expectedQuoteCount, commentQuoteCount, "The comment has quotes, but it shouldn't be quoted");
+                Assert.That(commentQuoteCount, Is.EqualTo(expectedQuoteCount), "The comment has quotes, but it shouldn't be quoted");
             }
             else
             {
-                Assert.AreEqual(expectedQuoteCount, commentQuoteCount, "The comment does not have the expected number of non-removed quotes");
+                Assert.That(commentQuoteCount, Is.EqualTo(expectedQuoteCount), "The comment does not have the expected number of non-removed quotes");
             }
         }
 
@@ -2015,8 +2015,8 @@ namespace PRISMTest
             Console.WriteLine("Parameter file path: " + paramFilePath);
             Console.WriteLine("Input file path: " + inputFilePath);
 
-            Assert.AreEqual(remoteParamFile.FullName, paramFilePath);
-            Assert.AreEqual(inputFilePathExpected, inputFilePath);
+            Assert.That(paramFilePath, Is.EqualTo(remoteParamFile.FullName));
+            Assert.That(inputFilePath, Is.EqualTo(inputFilePathExpected));
         }
 
         [Test]
@@ -2041,8 +2041,8 @@ namespace PRISMTest
             Console.WriteLine("Parameter file path: " + paramFilePath);
             Console.WriteLine("Input file path: " + inputFilePath);
 
-            Assert.AreEqual(remoteParamFile.FullName, paramFilePath);
-            Assert.AreEqual(inputFilePathExpected, inputFilePath);
+            Assert.That(paramFilePath, Is.EqualTo(remoteParamFile.FullName));
+            Assert.That(inputFilePath, Is.EqualTo(inputFilePathExpected));
         }
 
         [Test]
@@ -2177,10 +2177,10 @@ namespace PRISMTest
             Console.WriteLine("{0,-15} {1}", "double:", options.BaseClassDouble);
             Console.WriteLine("{0,-15} {1}", "string:", options.NotInheritedString);
 
-            Assert.AreEqual(17, options.InheritInt, "Should be '17'");
-            Assert.AreEqual(true, options.InheritBool, "Should be 'True'");
-            Assert.AreEqual(3.1415, options.BaseClassDouble, "Should be '3.1415'");
-            Assert.AreEqual("test string", options.NotInheritedString, "Should be 'test string'");
+            Assert.That(options.InheritInt, Is.EqualTo(17), "Should be '17'");
+            Assert.That(options.InheritBool, Is.EqualTo(true), "Should be 'True'");
+            Assert.That(options.BaseClassDouble, Is.EqualTo(3.1415), "Should be '3.1415'");
+            Assert.That(options.NotInheritedString, Is.EqualTo("test string"), "Should be 'test string'");
         }
 
         private class TestParamFileKeyPreference

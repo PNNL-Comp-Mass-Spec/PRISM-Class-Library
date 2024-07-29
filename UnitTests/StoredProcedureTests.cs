@@ -100,7 +100,7 @@ namespace PRISMTest
 
             var returnCodeValue = DBToolsBase.GetReturnCode(returnParam);
 
-            Assert.AreEqual(0, returnCodeValue, spCmd.CommandText + " Procedure did not return 0");
+            Assert.That(returnCodeValue, Is.EqualTo(0), spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
 
@@ -165,7 +165,7 @@ namespace PRISMTest
 
             var returnCode = dbTools.ExecuteSPData(spCmd, out var results);
 
-            Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
+            Assert.That(returnCode, Is.EqualTo(0), spCmd.CommandText + " Procedure did not return 0");
 
             var rowsDisplayed = 0;
 
@@ -308,7 +308,7 @@ namespace PRISMTest
 
             var returnCode = dbTools.ExecuteSPData(spCmd, out var results, 0);
 
-            Assert.AreEqual(0, returnCode, spCmd.CommandText + " Procedure did not return 0");
+            Assert.That(returnCode, Is.EqualTo(0), spCmd.CommandText + " Procedure did not return 0");
 
             ExamineManagerParams(results);
         }
@@ -343,11 +343,11 @@ namespace PRISMTest
 
                 if (managerName.Equals("Pub-12-1", StringComparison.OrdinalIgnoreCase))
                 {
-                    Assert.AreEqual(@"C:\DMS_WorkDir1", workDir);
+                    Assert.That(workDir, Is.EqualTo(@"C:\DMS_WorkDir1"));
                 }
                 else if (managerName.Equals("Pub-12-2", StringComparison.OrdinalIgnoreCase))
                 {
-                    Assert.AreEqual(@"C:\DMS_WorkDir2", workDir);
+                    Assert.That(workDir, Is.EqualTo(@"C:\DMS_WorkDir2"));
                 }
 
                 Console.WriteLine();
@@ -436,8 +436,8 @@ namespace PRISMTest
                 Console.WriteLine("Error:   " + errorMessage);
             }
 
-            Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
-            Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
+            Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
         [TestCase("ProteinSeqs", "Manager_Control")]
@@ -520,8 +520,8 @@ namespace PRISMTest
                 Console.WriteLine(string.Join(", ", row));
             }
 
-            Assert.AreEqual(0, returnCode, procedureNameWithSchema + " Procedure did not return 0");
-            Assert.AreEqual(0, returnParam.Value, procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
+            Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
         }
 
         [TestCase("Gigasax", "dms5", "find_log_entry", false, 0)]
@@ -615,7 +615,7 @@ namespace PRISMTest
             else
                 Console.WriteLine("_returnCode {0} evaluates to return value {1}", returnCodeOverride, returnCodeValue);
 
-            Assert.AreEqual(expectedReturnCode, returnCodeValue, "Return code mismatch");
+            Assert.That(returnCodeValue, Is.EqualTo(expectedReturnCode), "Return code mismatch");
         }
 
         [TestCase("Gigasax", "dms5", 0)]
@@ -758,7 +758,7 @@ namespace PRISMTest
                 Console.WriteLine("Storage Path:        " + storagePathParam.Value);
                 Console.WriteLine("Should Make New Lib: " + shouldMakeLibraryParam.Value);
 
-                Assert.AreEqual(expectedReturnCode, returnCode, "Return code mismatch");
+                Assert.That(returnCode, Is.EqualTo(expectedReturnCode), "Return code mismatch");
             }
             catch (Exception ex)
             {

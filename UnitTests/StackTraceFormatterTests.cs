@@ -143,7 +143,7 @@ namespace PRISMTest
 
         private void ShowStackTraceNow(IReadOnlyCollection<string> parents, int depth, bool multiLine)
         {
-            Assert.AreEqual(depth, parents.Count, "Parent list length invalid");
+            Assert.That(parents.Count, Is.EqualTo(depth), "Parent list length invalid");
 
             string stackTrace;
 
@@ -157,7 +157,7 @@ namespace PRISMTest
 
         private void ThrowExceptionNow(ExceptionTypes targetException, IReadOnlyCollection<string> parents, int depth)
         {
-            Assert.AreEqual(depth, parents.Count, "Parent list length invalid");
+            Assert.That(parents.Count, Is.EqualTo(depth), "Parent list length invalid");
 
             switch (targetException)
             {

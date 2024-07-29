@@ -177,7 +177,7 @@ namespace PRISMTest
                 Assert.Fail("Renamed file not found: " + newFile.FullName);
             }
 
-            Assert.AreEqual(fileToRename.FullName, newFile.FullName);
+            Assert.That(newFile.FullName, Is.EqualTo(fileToRename.FullName));
 
             Console.WriteLine("Successfully renamed the file to " + newFile.FullName);
         }

@@ -41,7 +41,7 @@ namespace PRISMTest
             var elapsedSeconds = DateTime.UtcNow.Subtract(startTime).TotalSeconds;
             Console.WriteLine("Done after {0:F3} seconds", elapsedSeconds);
 
-            Assert.AreEqual(0, Math.Abs(elapsedSeconds - waitTimeSeconds), 0.1, "Did not sleep as long as expected");
+            Assert.That(Math.Abs(elapsedSeconds - waitTimeSeconds), Is.EqualTo(0).Within(0.1), "Did not sleep as long as expected");
         }
 
         [TestCase(TEXT_TO_WRAP1, 40, 0, 14, 514)]
@@ -84,8 +84,8 @@ namespace PRISMTest
 
             if (expectedLineCount > 0)
             {
-                Assert.AreEqual(expectedLineCount, lineCount,
-                                $"Text wrapped to {lineCount} lines instead of {expectedLineCount} lines");
+                Assert.That(lineCount, Is.EqualTo(expectedLineCount),
+                            $"Text wrapped to {lineCount} lines instead of {expectedLineCount} lines");
             }
             else
             {
@@ -94,8 +94,8 @@ namespace PRISMTest
 
             if (expectedCharacterCount > 0)
             {
-                Assert.AreEqual(expectedCharacterCount, charCount,
-                                $"Wrapped text has {charCount} characters instead of {expectedCharacterCount} characters");
+                Assert.That(charCount, Is.EqualTo(expectedCharacterCount),
+                            $"Wrapped text has {charCount} characters instead of {expectedCharacterCount} characters");
             }
             else
             {
@@ -150,8 +150,8 @@ namespace PRISMTest
 
             if (expectedLineCount > 0)
             {
-                Assert.AreEqual(expectedLineCount, wrappedText.Count,
-                                $"Text wrapped to {wrappedText.Count} lines instead of {expectedLineCount} lines");
+                Assert.That(wrappedText.Count, Is.EqualTo(expectedLineCount),
+                            $"Text wrapped to {wrappedText.Count} lines instead of {expectedLineCount} lines");
             }
             else
             {
@@ -160,8 +160,8 @@ namespace PRISMTest
 
             if (expectedCharacterCount > 0)
             {
-                Assert.AreEqual(expectedCharacterCount, charCount,
-                                $"Wrapped text has {charCount} characters instead of {expectedCharacterCount} characters");
+                Assert.That(charCount, Is.EqualTo(expectedCharacterCount),
+                            $"Wrapped text has {charCount} characters instead of {expectedCharacterCount} characters");
             }
             else
             {

@@ -36,7 +36,7 @@ namespace PRISMTest
 
             Console.WriteLine(shortPath);
 
-            Assert.AreEqual(expectedResult, shortPath, $"Unexpected short path for {pathToCompact}: {shortPath}");
+            Assert.That(shortPath, Is.EqualTo(expectedResult), $"Unexpected short path for {pathToCompact}: {shortPath}");
         }
     }
 }

@@ -74,7 +74,7 @@ namespace PRISMTest
             var columnIdentifiers = columnIdentifierList.Split(',');
             var columnNames = string.IsNullOrEmpty(columnNameList) ? columnIdentifierList.Split(',') : columnNameList.Split(',');
 
-            Assert.AreEqual(columnIdentifiers.Length, columnNames.Length,
+            Assert.That(columnNames.Length, Is.EqualTo(columnIdentifiers.Length),
                 $"columnIdentifierList.Count does not match columnNameList.Count: {columnIdentifiers.Length} vs. {columnNames.Length}");
 
             var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
@@ -99,10 +99,10 @@ namespace PRISMTest
 
             Console.WriteLine("Validating {0} {1}, side count {2}, perimeter {3}", color, shape, sides, perimeter);
 
-            Assert.AreEqual("Square", shape, "Shape name mismatch");
-            Assert.AreEqual(4, sides, "Side count mismatch");
-            Assert.AreEqual("Yellow", color, "Color mismatch");
-            Assert.AreEqual(16, perimeter, "Perimeter mismatch");
+            Assert.That(shape, Is.EqualTo("Square"), "Shape name mismatch");
+            Assert.That(sides, Is.EqualTo(4), "Side count mismatch");
+            Assert.That(color, Is.EqualTo("Yellow"), "Color mismatch");
+            Assert.That(perimeter, Is.EqualTo(16), "Perimeter mismatch");
         }
 
         /// <summary>
@@ -133,10 +133,10 @@ namespace PRISMTest
 
             Console.WriteLine("Validating {0} {1}, side count {2}, perimeter {3}", color, shape, sides, perimeter);
 
-            Assert.AreEqual("Square", shape, "Shape name mismatch");
-            Assert.AreEqual(4, sides, "Side count mismatch");
-            Assert.AreEqual("Yellow", color, "Color mismatch");
-            Assert.AreEqual(16, perimeter, "Perimeter mismatch");
+            Assert.That(shape, Is.EqualTo("Square"), "Shape name mismatch");
+            Assert.That(sides, Is.EqualTo(4), "Side count mismatch");
+            Assert.That(color, Is.EqualTo("Yellow"), "Color mismatch");
+            Assert.That(perimeter, Is.EqualTo(16), "Perimeter mismatch");
         }
 
         [TestCase("Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
@@ -151,14 +151,14 @@ namespace PRISMTest
             if (dbTools.DbServerType == DbServerTypes.PostgreSQL)
             {
                 Console.WriteLine("Connection string was interpreted as PostgreSQL");
-                Assert.AreEqual(expectedServerType, DbServerTypes.PostgreSQL);
+                Assert.That(DbServerTypes.PostgreSQL, Is.EqualTo(expectedServerType));
                 return;
             }
 
             if (dbTools.DbServerType == DbServerTypes.MSSQLServer)
             {
                 Console.WriteLine("Connection string was interpreted as Microsoft SQL Server");
-                Assert.AreEqual(expectedServerType, DbServerTypes.MSSQLServer);
+                Assert.That(DbServerTypes.MSSQLServer, Is.EqualTo(expectedServerType));
                 return;
             }
 
@@ -699,7 +699,7 @@ namespace PRISMTest
                 Console.WriteLine(defaultHeaderNames);
                 Console.WriteLine();
 
-                Assert.AreEqual(expectedHeaderNames, defaultHeaderNames);
+                Assert.That(defaultHeaderNames, Is.EqualTo(expectedHeaderNames));
             }
 
             if (customHeaderOrder.Length == 0)
@@ -710,7 +710,7 @@ namespace PRISMTest
             var customHeaderNames = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, customHeaderOrder, "  ");
             Console.WriteLine(customHeaderNames);
 
-            Assert.AreEqual(expectedHeaderNames, customHeaderNames);
+            Assert.That(customHeaderNames, Is.EqualTo(expectedHeaderNames));
         }
 
         [Test]
@@ -793,7 +793,7 @@ namespace PRISMTest
                 var expectedName = expectedNames[i].Trim();
                 var actualName = columnNames[i];
 
-                Assert.AreEqual(expectedName, actualName,
+                Assert.That(actualName, Is.EqualTo(expectedName),
                     $"Actual column name does not match the expected column name: {actualName} vs. {expectedName}");
             }
 
@@ -1029,7 +1029,7 @@ namespace PRISMTest
 
             var expectedValues = expectedValueList.Split(',');
 
-            Assert.AreEqual(results.Count, expectedRowCount, "RowCount mismatch");
+            Assert.That(expectedRowCount, Is.EqualTo(results.Count), "RowCount mismatch");
 
             if (expectedRowCount < 1)
             {
@@ -1044,7 +1044,7 @@ namespace PRISMTest
                 if (colIndex >= expectedValues.Length)
                     break;
 
-                Assert.AreEqual(firstRow[colIndex], expectedValues[colIndex].Trim(),
+                Assert.That(expectedValues[colIndex].Trim(), Is.EqualTo(firstRow[colIndex]),
                     $"Data value mismatch, column {colIndex + 1}, expected {expectedValues[colIndex]} but actually {firstRow[colIndex]}");
             }
 
@@ -1106,7 +1106,7 @@ namespace PRISMTest
                 return;
             }
 
-            Assert.AreEqual(results.Count, expectedRowCount, "RowCount mismatch");
+            Assert.That(expectedRowCount, Is.EqualTo(results.Count), "RowCount mismatch");
 
             if (expectedRowCount < 1)
             {
@@ -1121,7 +1121,7 @@ namespace PRISMTest
                 if (colIndex >= expectedValues.Length)
                     break;
 
-                Assert.AreEqual(firstRow[colIndex], expectedValues[colIndex].Trim(),
+                Assert.That(expectedValues[colIndex].Trim(), Is.EqualTo(firstRow[colIndex]),
                     $"Data value mismatch, column {colIndex + 1}, expected {expectedValues[colIndex]} but actually {firstRow[colIndex]}");
             }
 

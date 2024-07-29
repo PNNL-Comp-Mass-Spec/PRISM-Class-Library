@@ -26,7 +26,7 @@ namespace PRISMTest
             Console.WriteLine("PInv Total memory: {0:F2} MB", pinvMem);
 
 #if !NETCOREAPP2_0
-            Assert.AreEqual(wmiMem, pinvMem, 0.001);
+            Assert.That(pinvMem, Is.EqualTo(wmiMem).Within(0.001));
 #endif
         }
 
@@ -45,7 +45,7 @@ namespace PRISMTest
             Console.WriteLine("PInv Free memory: {0:F2} MB", pinvMem);
 
 #if !NETCOREAPP2_0
-            Assert.AreEqual(wmiMem, pinvMem, 20);
+            Assert.That(pinvMem, Is.EqualTo(wmiMem).Within(20));
 #endif
         }
 
@@ -65,8 +65,8 @@ namespace PRISMTest
             Console.WriteLine("PInv: {0} processor(s) and {1} cores", pirvProcCount, pinvCore);
 
 #if !NETCOREAPP2_0
-            Assert.AreEqual(wmiPhysicalProcs, pirvProcCount);
-            Assert.AreEqual(wmiCore, pinvCore);
+            Assert.That(pirvProcCount, Is.EqualTo(wmiPhysicalProcs));
+            Assert.That(pinvCore, Is.EqualTo(wmiCore));
 #endif
         }
 

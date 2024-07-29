@@ -44,7 +44,7 @@ namespace PRISMTest
             Console.WriteLine("{0}: {1}", serverType, updatedConnectionString);
 
             if (!string.IsNullOrWhiteSpace(expectedResult))
-                Assert.AreEqual(expectedResult, updatedConnectionString);
+                Assert.That(updatedConnectionString, Is.EqualTo(expectedResult));
 
             if (!testConnectionString)
                 return;
@@ -136,7 +136,7 @@ namespace PRISMTest
             Console.WriteLine("{0}: {1}", serverType, connectionString);
 
             if (!string.IsNullOrWhiteSpace(expectedResult))
-                Assert.AreEqual(expectedResult, connectionString);
+                Assert.That(connectionString, Is.EqualTo(expectedResult));
         }
 
         [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Application Name=PRISMTest")]
@@ -167,7 +167,7 @@ namespace PRISMTest
             Console.WriteLine("{0}: {1}", serverType, connectionString);
 
             if (!string.IsNullOrWhiteSpace(expectedResult))
-                Assert.AreEqual(expectedResult, connectionString);
+                Assert.That(connectionString, Is.EqualTo(expectedResult));
 
             if (!testConnectionString)
                 return;
@@ -232,7 +232,7 @@ namespace PRISMTest
 
             Console.WriteLine("Host name '{0}' extracted from {1}", hostName, connectionString);
 
-            Assert.AreEqual(serverName, hostName);
+            Assert.That(hostName, Is.EqualTo(serverName));
         }
 
         private string GetPaddedList(List<string> items, string stringFormat)
