@@ -1390,7 +1390,7 @@ namespace PRISMTest
             var parser3 = new CommandLineParser<OkayKey2>();
             var results3 = parser3.ParseArgs(new[] { "-ParamFile", paramFile.FullName });
             Assert.That(results3.Success, Is.EqualTo(false));
-            Assert.LessOrEqual(1, results3.ParseErrors.Count);
+            Assert.That(results3.ParseErrors.Count, Is.LessThanOrEqualTo(1));
 
             foreach (var error in results3.ParseErrors)
             {

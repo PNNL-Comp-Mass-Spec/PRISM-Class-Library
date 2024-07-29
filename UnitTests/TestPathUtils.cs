@@ -153,7 +153,7 @@ namespace PRISMTest
             }
 
             if (expectedDirectoryCount > 0)
-                Assert.GreaterOrEqual(directories1.Count, expectedDirectoryCount, $"Found {directories1.Count} directories; expected to find {expectedDirectoryCount}");
+                Assert.That(directories1.Count, Is.GreaterThanOrEqualTo(expectedDirectoryCount), $"Found {directories1.Count} directories; expected to find {expectedDirectoryCount}");
         }
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
@@ -243,7 +243,7 @@ namespace PRISMTest
 
             var fileCountDifference = Math.Abs(files1.Count - files2.Count);
 
-            Assert.LessOrEqual(fileCountDifference, allowedVariance, $"File count mismatch; {allowedVariance} > {fileCountDifference}");
+            Assert.That(fileCountDifference, Is.LessThanOrEqualTo(allowedVariance), $"File count mismatch; {allowedVariance} > {fileCountDifference}");
 
             if (string.IsNullOrWhiteSpace(expectedFileNames))
                 return;
@@ -278,7 +278,7 @@ namespace PRISMTest
             }
 
             if (expectedFileCount > 0)
-                Assert.GreaterOrEqual(files1.Count, expectedFileCount, $"Found {files1.Count} files; expected to find {expectedFileCount}");
+                Assert.That(files1.Count, Is.GreaterThanOrEqualTo(expectedFileCount), $"Found {files1.Count} files; expected to find {expectedFileCount}");
         }
 
         [TestCase("Results.txt", "*.txt", true)]

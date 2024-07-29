@@ -231,7 +231,7 @@ namespace PRISMTest
             var coreCount = processStats.GetCoreCount();
             Console.WriteLine("Machine has {0} cores", coreCount);
 
-            Assert.GreaterOrEqual(coreCount, 2, "Core count less than 2");
+            Assert.That(coreCount, Is.GreaterThanOrEqualTo(2), "Core count less than 2");
 
             var progRunner = new ProgRunner
             {

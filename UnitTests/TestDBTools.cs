@@ -422,7 +422,7 @@ namespace PRISMTest
 
             Assert.IsTrue(success, "GetQueryResults returned false");
 
-            Assert.Greater(queryResults.Count, 0, $"Row count in {tableName} should be non-zero, but was not");
+            Assert.That(queryResults.Count, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
 
             var columnMapping = dbTools.GetColumnMapping(columnNames);
 
@@ -779,7 +779,7 @@ namespace PRISMTest
 
             Assert.IsTrue(success, "GetQueryResults returned false");
 
-            Assert.Greater(queryResults.Count, 0, "Row count should be non-zero, but was not");
+            Assert.That(queryResults.Count, Is.GreaterThan(0), "Row count should be non-zero, but was not");
 
             var expectedNames = expectedColumnNames.Split(',');
 
@@ -893,7 +893,7 @@ namespace PRISMTest
 
                 Assert.IsTrue(success, "GetQueryResults returned false");
 
-                Assert.Greater(queryResults.Count, 0, $"Row count in {tableName} should be non-zero, but was not");
+                Assert.That(queryResults.Count, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
 
                 Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
                 ShowRowsFromTLogEntries(queryResults, columnNames);
@@ -952,7 +952,7 @@ namespace PRISMTest
             var tableRowCount = queryResult.CastDBVal<int>();
             Console.WriteLine("RowCount in table {0} is {1:N0}", tableName, tableRowCount);
 
-            Assert.Greater(tableRowCount, 0, $"Row count in {tableName} should be non-zero, but was not");
+            Assert.That(tableRowCount, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
         }
 
         [TestCase("Gigasax", "DMS5",

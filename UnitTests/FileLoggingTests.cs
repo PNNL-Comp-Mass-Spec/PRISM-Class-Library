@@ -171,7 +171,7 @@ namespace PRISMTest
 
                 var fileCountInZip = archive.Entries.Count;
 
-                Assert.GreaterOrEqual(fileCountInZip, FILES_PER_YEAR, $"Zip file {zipFileToCheck.FullName} has fewer than {FILES_PER_YEAR} files");
+                Assert.That(fileCountInZip, Is.GreaterThanOrEqualTo(FILES_PER_YEAR), $"Zip file {zipFileToCheck.FullName} has fewer than {FILES_PER_YEAR} files");
 
                 Console.WriteLine("{0} has {1} entries", zipFileToCheck.FullName, fileCountInZip);
             }
@@ -633,7 +633,7 @@ namespace PRISMTest
 
             var timeDiffSeconds = expectedTimestamp.Subtract(messageTimestamp).TotalSeconds;
 
-            Assert.LessOrEqual(Math.Abs(timeDiffSeconds), 2,
+            Assert.That(Math.Abs(timeDiffSeconds), Is.LessThanOrEqualTo(2),
                                $"Message timestamp does not agree with system clock: {messageTimestampText} vs. {expectedTimestampText}");
         }
 
