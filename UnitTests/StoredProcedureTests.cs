@@ -852,9 +852,9 @@ namespace PRISMTest
         private void VerifyTestPostLogEntry(IDBTools dbTools, string user, bool expectedPostSuccess, bool actualPostSuccess)
         {
             if (expectedPostSuccess)
-                Assert.IsTrue(actualPostSuccess, "Call to post_log_entry failed for user {0}; it should have succeeded", user);
+                Assert.IsTrue(actualPostSuccess, $"Call to post_log_entry failed for user {user}; it should have succeeded");
             else
-                Assert.IsFalse(actualPostSuccess, "Call to post_log_entry succeeded for user {0}; it should have failed", user);
+                Assert.IsFalse(actualPostSuccess, $"Call to post_log_entry succeeded for user {user}; it should have failed");
 
             if (!actualPostSuccess)
                 return;

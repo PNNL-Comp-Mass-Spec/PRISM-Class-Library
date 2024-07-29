@@ -85,7 +85,7 @@ namespace PRISMTest
             if (expectedLineCount > 0)
             {
                 Assert.AreEqual(expectedLineCount, lineCount,
-                                "Text wrapped to {0} lines instead of {1} lines", lineCount, expectedLineCount);
+                                $"Text wrapped to {lineCount} lines instead of {expectedLineCount} lines");
             }
             else
             {
@@ -95,7 +95,7 @@ namespace PRISMTest
             if (expectedCharacterCount > 0)
             {
                 Assert.AreEqual(expectedCharacterCount, charCount,
-                                "Wrapped text has {0} characters instead of {1} characters", charCount, expectedCharacterCount);
+                                $"Wrapped text has {charCount} characters instead of {expectedCharacterCount} characters");
             }
             else
             {
@@ -151,7 +151,7 @@ namespace PRISMTest
             if (expectedLineCount > 0)
             {
                 Assert.AreEqual(expectedLineCount, wrappedText.Count,
-                                "Text wrapped to {0} lines instead of {1} lines", wrappedText.Count, expectedLineCount);
+                                $"Text wrapped to {wrappedText.Count} lines instead of {expectedLineCount} lines");
             }
             else
             {
@@ -161,7 +161,7 @@ namespace PRISMTest
             if (expectedCharacterCount > 0)
             {
                 Assert.AreEqual(expectedCharacterCount, charCount,
-                                "Wrapped text has {0} characters instead of {1} characters", charCount, expectedCharacterCount);
+                                $"Wrapped text has {charCount} characters instead of {expectedCharacterCount} characters");
             }
             else
             {

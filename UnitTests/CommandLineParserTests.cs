@@ -1066,7 +1066,7 @@ namespace PRISMTest
             Console.WriteLine("{0,-25} {1}", "Matches per Spectrum:", result.ParsedResults.MatchesPerSpectrumToReport);
             Console.WriteLine("{0,-25} {1}", "Verbose Mode:", result.ParsedResults.VerboseMode);
 
-            Assert.AreEqual(expectedParseResult, result.ParsedResults.VerboseMode, "{0} did not get parsed as {1}", verboseFlagValue, expectedParseResult);
+            Assert.AreEqual(expectedParseResult, result.ParsedResults.VerboseMode, $"{verboseFlagValue} did not get parsed as {expectedParseResult}");
         }
 
         [Test]

@@ -203,7 +203,7 @@ namespace PRISMTest
             var enabled = paramFileReader.ParamIsEnabled(paramFileEntries, parameterName);
 
             Console.WriteLine("{0}={1}", parameterName, enabled);
-            Assert.AreEqual(expectedIsEnabled, enabled, "Parameter {0} was {1}, but expected to be {2}", parameterName, enabled, expectedIsEnabled);
+            Assert.AreEqual(expectedIsEnabled, enabled, $"Parameter {parameterName} was {enabled}, but expected to be {expectedIsEnabled}");
         }
 
         [TestCase("InputFile,Recurse,Debug,Smooth", "VisibleColors.tsv", "true", "false", "7")]

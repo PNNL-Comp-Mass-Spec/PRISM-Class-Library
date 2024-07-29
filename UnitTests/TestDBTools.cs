@@ -75,7 +75,7 @@ namespace PRISMTest
             var columnNames = string.IsNullOrEmpty(columnNameList) ? columnIdentifierList.Split(',') : columnNameList.Split(',');
 
             Assert.AreEqual(columnIdentifiers.Length, columnNames.Length,
-                "columnIdentifierList.Count does not match columnNameList.Count: {0} vs. {1}", columnIdentifiers.Length, columnNames.Length);
+                $"columnIdentifierList.Count does not match columnNameList.Count: {columnIdentifiers.Length} vs. {columnNames.Length}");
 
             var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
             for (var i = 0; i < columnIdentifiers.Length; i++)
@@ -422,7 +422,7 @@ namespace PRISMTest
 
             Assert.IsTrue(success, "GetQueryResults returned false");
 
-            Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
+            Assert.Greater(queryResults.Count, 0, $"Row count in {tableName} should be non-zero, but was not");
 
             var columnMapping = dbTools.GetColumnMapping(columnNames);
 
@@ -785,7 +785,7 @@ namespace PRISMTest
 
             if (expectedNames.Length != columnNames.Count)
             {
-                Assert.Fail("Expected column name list has {0} columns, but the query results have {1} columns", expectedNames.Length, columnNames.Count);
+                Assert.Fail($"Expected column name list has {expectedNames.Length} columns, but the query results have {columnNames.Count} columns");
             }
 
             for (var i = 0; i < expectedNames.Length; i++)
@@ -794,7 +794,7 @@ namespace PRISMTest
                 var actualName = columnNames[i];
 
                 Assert.AreEqual(expectedName, actualName,
-                    "Actual column name does not match the expected column name: {0} vs. {1}", actualName, expectedName);
+                    $"Actual column name does not match the expected column name: {actualName} vs. {expectedName}");
             }
 
             Console.WriteLine("All {0} column names matched the expected capitalization: {1}", expectedNames.Length, expectedColumnNames);
@@ -893,7 +893,7 @@ namespace PRISMTest
 
                 Assert.IsTrue(success, "GetQueryResults returned false");
 
-                Assert.Greater(queryResults.Count, 0, "Row count in {0} should be non-zero, but was not", tableName);
+                Assert.Greater(queryResults.Count, 0, $"Row count in {tableName} should be non-zero, but was not");
 
                 Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
                 ShowRowsFromTLogEntries(queryResults, columnNames);
@@ -952,7 +952,7 @@ namespace PRISMTest
             var tableRowCount = queryResult.CastDBVal<int>();
             Console.WriteLine("RowCount in table {0} is {1:N0}", tableName, tableRowCount);
 
-            Assert.Greater(tableRowCount, 0, "Row count in {0} should be non-zero, but was not", tableName);
+            Assert.Greater(tableRowCount, 0, $"Row count in {tableName} should be non-zero, but was not");
         }
 
         [TestCase("Gigasax", "DMS5",
@@ -1045,8 +1045,7 @@ namespace PRISMTest
                     break;
 
                 Assert.AreEqual(firstRow[colIndex], expectedValues[colIndex].Trim(),
-                    "Data value mismatch, column {0}, expected {1} but actually {2}",
-                    colIndex + 1, expectedValues[colIndex], firstRow[colIndex]);
+                    $"Data value mismatch, column {colIndex + 1}, expected {expectedValues[colIndex]} but actually {firstRow[colIndex]}");
             }
 
             Console.WriteLine("Rows returned: " + results.Count);
@@ -1123,8 +1122,7 @@ namespace PRISMTest
                     break;
 
                 Assert.AreEqual(firstRow[colIndex], expectedValues[colIndex].Trim(),
-                    "Data value mismatch, column {0}, expected {1} but actually {2}",
-                    colIndex + 1, expectedValues[colIndex], firstRow[colIndex]);
+                    $"Data value mismatch, column {colIndex + 1}, expected {expectedValues[colIndex]} but actually {firstRow[colIndex]}");
             }
 
             Console.WriteLine("Rows returned: " + results.Count);

@@ -22,16 +22,16 @@ namespace PRISMTest
 
                 if (valueNotPresent)
                 {
-                    Assert.Fail("Setting not found, section {0}, setting {1}", sectionName, settingName);
+                    Assert.Fail($"Setting not found, section {sectionName}, setting {settingName}");
                 }
-                Assert.AreEqual(expectedBool, actualBool, "Unexpected boolean for section {0}, setting {1}: {2}", sectionName, settingName, actualBool);
+                Assert.AreEqual(expectedBool, actualBool, $"Unexpected boolean for section {sectionName}, setting {settingName}: {actualBool}");
 
                 Console.WriteLine("Value for section {0}, setting {1} is {2}", sectionName, settingName, actualBool);
                 return;
             }
 
             var actualValue = reader.GetParam(sectionName, settingName, "", out _);
-            Assert.AreEqual(expectedValue, actualValue, "Unexpected value for section {0}, setting {1}: {2}", sectionName, settingName, actualValue);
+            Assert.AreEqual(expectedValue, actualValue, $"Unexpected value for section {sectionName}, setting {settingName}: {actualValue}");
 
             Console.WriteLine("Value for section {0}, setting {1} is {2}", sectionName, settingName, actualValue);
         }

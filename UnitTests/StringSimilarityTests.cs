@@ -88,12 +88,10 @@ namespace PRISMTest
             }
 
             Assert.AreEqual(expectedSimilarityScore, similarityScore, 0.0001,
-                            "Actual score of {0} does not match the expected score, {1}",
-                            similarityScore, expectedSimilarityScore);
+                            $"Actual score of {similarityScore} does not match the expected score, {expectedSimilarityScore}");
 
             Assert.AreEqual(expectedSimilarityScoreNoSymbolsOrWhitespace, similarityScoreNoSymbolsOrWhitespace, 0.0001,
-                            "Actual score of {0} does not match the expected score, {1} (ignore whitespace)",
-                            similarityScoreNoSymbolsOrWhitespace, expectedSimilarityScoreNoSymbolsOrWhitespace);
+                            $"Actual score of {similarityScoreNoSymbolsOrWhitespace} does not match the expected score, {expectedSimilarityScoreNoSymbolsOrWhitespace} (ignore whitespace)");
         }
     }
 }

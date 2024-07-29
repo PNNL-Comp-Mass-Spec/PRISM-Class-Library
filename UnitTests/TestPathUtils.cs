@@ -118,7 +118,7 @@ namespace PRISMTest
             Console.WriteLine("Directories via pathSpec: {0}", directories1.Count);
             Console.WriteLine("Directories via directoryMask: {0}", directories2.Count);
 
-            Assert.AreEqual(directories1.Count, directories2.Count, "Directory count mismatch; {0} vs. {1}}", directories1.Count, directories2.Count);
+            Assert.AreEqual(directories1.Count, directories2.Count, $"Directory count mismatch; {directories1.Count} vs. {directories2.Count}");
 
             if (string.IsNullOrWhiteSpace(expectedDirectoryNames))
                 return;
@@ -149,11 +149,11 @@ namespace PRISMTest
             foreach (var expectedDirectory in expectedDirectoryList)
             {
                 if (!foundDirectoryNames.Contains(expectedDirectory.Trim()))
-                    Assert.Fail("Did not find an expected directory in {0}: {1}", directoryPath, expectedDirectory);
+                    Assert.Fail($"Did not find an expected directory in {directoryPath}: {expectedDirectory}");
             }
 
             if (expectedDirectoryCount > 0)
-                Assert.GreaterOrEqual(directories1.Count, expectedDirectoryCount, "Found {0} directories; expected to find {1}", directories1.Count, expectedDirectoryCount);
+                Assert.GreaterOrEqual(directories1.Count, expectedDirectoryCount, $"Found {directories1.Count} directories; expected to find {expectedDirectoryCount}");
         }
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
@@ -243,7 +243,7 @@ namespace PRISMTest
 
             var fileCountDifference = Math.Abs(files1.Count - files2.Count);
 
-            Assert.LessOrEqual(fileCountDifference, allowedVariance, "File count mismatch; {1} > {0}", fileCountDifference, allowedVariance);
+            Assert.LessOrEqual(fileCountDifference, allowedVariance, $"File count mismatch; {allowedVariance} > {fileCountDifference}");
 
             if (string.IsNullOrWhiteSpace(expectedFileNames))
                 return;
@@ -274,11 +274,11 @@ namespace PRISMTest
             foreach (var expectedFile in expectedFileList)
             {
                 if (!foundFileNames.Contains(expectedFile.Trim()))
-                    Assert.Fail("Did not find an expected file in {0}: {1}", directoryPath, expectedFile);
+                    Assert.Fail($"Did not find an expected file in {directoryPath}: {expectedFile}");
             }
 
             if (expectedFileCount > 0)
-                Assert.GreaterOrEqual(files1.Count, expectedFileCount, "Found {0} files; expected to find {1}", files1.Count, expectedFileCount);
+                Assert.GreaterOrEqual(files1.Count, expectedFileCount, $"Found {files1.Count} files; expected to find {expectedFileCount}");
         }
 
         [TestCase("Results.txt", "*.txt", true)]
