@@ -150,7 +150,7 @@ namespace PRISMTest
 
             if (expectedLineCount > 0)
             {
-                Assert.That(wrappedText.Count, Is.EqualTo(expectedLineCount),
+                Assert.That(wrappedText, Has.Count.EqualTo(expectedLineCount),
                             $"Text wrapped to {wrappedText.Count} lines instead of {expectedLineCount} lines");
             }
             else

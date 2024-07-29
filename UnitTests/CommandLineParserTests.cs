@@ -284,7 +284,7 @@ namespace PRISMTest
                 Console.WriteLine(message);
             }
 
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
         }
 
         [Test]
@@ -299,7 +299,7 @@ namespace PRISMTest
                 Console.WriteLine(message);
             }
 
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
         }
 
         [Test]
@@ -314,7 +314,7 @@ namespace PRISMTest
                 Console.WriteLine(message);
             }
 
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
         }
 
         [Test]
@@ -332,7 +332,7 @@ namespace PRISMTest
                 Console.WriteLine(message);
             }
 
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
         }
 
         private class OkayKey1
@@ -462,7 +462,7 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
 
             Console.WriteLine("{0,-15} {1}", "InputFilePath", options.InputFilePath);
             Console.WriteLine("{0,-15} {1}", "OutputFilePath", options.OutputFilePath);
@@ -493,17 +493,17 @@ namespace PRISMTest
             Assert.That(options.OutputFilePath, Is.EqualTo("RandomlyPlacedOutputFile.txt"), "Unexpected value for OutputFilePath");
             Assert.That(options.NumericArg, Is.EqualTo(true), "Unexpected value for NumericArg");
             Assert.That(options.Overrides, Is.EqualTo("This string should be used"), "Unexpected value for Overrides");
-            Assert.That(options.StringArray.Length, Is.EqualTo(3), "Unexpected value for StringArray.Length");
+            Assert.That(options.StringArray, Has.Length.EqualTo(3), "Unexpected value for StringArray.Length");
             Assert.That(options.StringArray[0], Is.EqualTo("value1"), "Unexpected value for StringArray[0]");
             Assert.That(options.StringArray[1], Is.EqualTo("value2"), "Unexpected value for StringArray[1]");
             Assert.That(options.StringArray[2], Is.EqualTo("value3"), "Unexpected value for StringArray[2]");
-            Assert.That(options.IntArray.Length, Is.EqualTo(5), "Unexpected value for IntArray.Length");
+            Assert.That(options.IntArray, Has.Length.EqualTo(5), "Unexpected value for IntArray.Length");
             Assert.That(options.IntArray[0], Is.EqualTo(0), "Unexpected value for IntArray[0]");
             Assert.That(options.IntArray[1], Is.EqualTo(1), "Unexpected value for IntArray[1]");
             Assert.That(options.IntArray[2], Is.EqualTo(2), "Unexpected value for IntArray[2]");
             Assert.That(options.IntArray[3], Is.EqualTo(3), "Unexpected value for IntArray[3]");
             Assert.That(options.IntArray[4], Is.EqualTo(4), "Unexpected value for IntArray[4]");
-            Assert.That(options.DblArray.Length, Is.EqualTo(1), "Unexpected value for DblArray.Length");
+            Assert.That(options.DblArray, Has.Length.EqualTo(1), "Unexpected value for DblArray.Length");
             Assert.That(options.DblArray[0], Is.EqualTo(1.0), "Unexpected value for DblArray[0]");
         }
 
@@ -522,7 +522,7 @@ namespace PRISMTest
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -549,7 +549,7 @@ namespace PRISMTest
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -581,7 +581,7 @@ namespace PRISMTest
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -630,7 +630,7 @@ namespace PRISMTest
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -656,7 +656,7 @@ namespace PRISMTest
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -1174,7 +1174,7 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
             Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
             Assert.That(options.BeUnknown, Is.EqualTo(TestEnum.DoublyTrue));
             Assert.That(options.TooBad, Is.EqualTo(TestEnum.Legend));
             Assert.That(options.ResultEffect.ToString(), Is.EqualTo("Ugly, Apocalypse, EndOfUniverse"));
@@ -1390,7 +1390,7 @@ namespace PRISMTest
             var parser3 = new CommandLineParser<OkayKey2>();
             var results3 = parser3.ParseArgs(new[] { "-ParamFile", paramFile.FullName });
             Assert.That(results3.Success, Is.EqualTo(false));
-            Assert.That(results3.ParseErrors.Count, Is.LessThanOrEqualTo(1));
+            Assert.That(results3.ParseErrors, Has.Count.LessThanOrEqualTo(1));
 
             foreach (var error in results3.ParseErrors)
             {
@@ -2147,17 +2147,17 @@ namespace PRISMTest
             var output = sw.ToString();
             Assert.That(result.Success, Is.False, "Parser did not \"fail\" when user requested the help screen");
             Console.WriteLine(output);
-            Assert.That(output.Contains("-int"), Is.True);
-            Assert.That(output.Contains("-bool"), Is.True);
-            Assert.That(output.Contains("-double"), Is.True);
-            Assert.That(output.Contains("-string"), Is.True);
+            Assert.That(output, Does.Contain("-int"));
+            Assert.That(output, Does.Contain("-bool"));
+            Assert.That(output, Does.Contain("-double"));
+            Assert.That(output, Does.Contain("-string"));
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
+            Assert.That(result.ParseErrors, Is.Empty, "Error list not empty");
         }
 
         [Test]

@@ -106,7 +106,7 @@ namespace PRISMTest
 
             foreach (var result in results)
             {
-                Assert.That(result.Count, Is.GreaterThanOrEqualTo(5), "Result row has fewer than 5 columns");
+                Assert.That(result, Has.Count.GreaterThanOrEqualTo(5), "Result row has fewer than 5 columns");
 
                 for (var colIndex = 0; colIndex < result.Count; colIndex++)
                 {
@@ -171,7 +171,7 @@ namespace PRISMTest
 
             foreach (var result in results)
             {
-                Assert.That(result.Count, Is.GreaterThanOrEqualTo(9), "Result row has fewer than 9 columns");
+                Assert.That(result, Has.Count.GreaterThanOrEqualTo(9), "Result row has fewer than 9 columns");
 
                 var dbName = result[0];
                 var showData = dbName.IndexOf("human", StringComparison.OrdinalIgnoreCase) >= 0;
@@ -319,7 +319,7 @@ namespace PRISMTest
 
             foreach (var result in results)
             {
-                Assert.That(result.Count, Is.GreaterThanOrEqualTo(12), "Result row has fewer than 12 columns");
+                Assert.That(result, Has.Count.GreaterThanOrEqualTo(12), "Result row has fewer than 12 columns");
 
                 var managerName = result[0];
                 var paramName = result[1];

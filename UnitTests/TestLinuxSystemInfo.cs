@@ -29,7 +29,7 @@ namespace PRISMTest
             var versionText = osVersionInfo.GetFirstLineVersion(versionInfoFile.FullName);
 
             Console.WriteLine(versionText);
-            Assert.That(versionText.StartsWith(expectedVersionTextStart), Is.True);
+            Assert.That(versionText, Does.StartWith(expectedVersionTextStart));
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\etc", "os-release", "Ubuntu 17.04 (Zesty Zapus)")]
@@ -42,7 +42,7 @@ namespace PRISMTest
             var versionText = osVersionInfo.GetOSReleaseVersion(versionInfoFile.FullName);
 
             Console.WriteLine(versionText);
-            Assert.That(versionText.StartsWith(expectedVersionTextStart), Is.True);
+            Assert.That(versionText, Does.StartWith(expectedVersionTextStart));
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Solaris\etc", "release", "Solaris 10 11/06 s10s_u3wos_10 SPARC")]
@@ -55,7 +55,7 @@ namespace PRISMTest
             var versionText = osVersionInfo.GetFirstLineVersion(versionInfoFile.FullName);
 
             Console.WriteLine(versionText);
-            Assert.That(versionText.StartsWith(expectedVersionTextStart), Is.True);
+            Assert.That(versionText, Does.StartWith(expectedVersionTextStart));
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Ubuntu\etc", "lsb-release", "Ubuntu 17.04")]
@@ -70,7 +70,7 @@ namespace PRISMTest
 
             Console.WriteLine(versionText);
 
-            Assert.That(versionText.StartsWith(expectedVersionTextStart), Is.True);
+            Assert.That(versionText, Does.StartWith(expectedVersionTextStart));
         }
 
         [TestCase(@"UnitTests\Data\LinuxTestFiles\Centos6\proc", 16, 2)]

@@ -74,7 +74,7 @@ namespace PRISMTest
             var columnIdentifiers = columnIdentifierList.Split(',');
             var columnNames = string.IsNullOrEmpty(columnNameList) ? columnIdentifierList.Split(',') : columnNameList.Split(',');
 
-            Assert.That(columnNames.Length, Is.EqualTo(columnIdentifiers.Length),
+            Assert.That(columnNames, Has.Length.EqualTo(columnIdentifiers.Length),
                 $"columnIdentifierList.Count does not match columnNameList.Count: {columnIdentifiers.Length} vs. {columnNames.Length}");
 
             var columnNamesByIdentifier = new Dictionary<string, SortedSet<string>>();
@@ -422,7 +422,7 @@ namespace PRISMTest
 
             Assert.That(success, Is.True, "GetQueryResults returned false");
 
-            Assert.That(queryResults.Count, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
+            Assert.That(queryResults, Is.Not.Empty, $"Row count in {tableName} should be non-zero, but was not");
 
             var columnMapping = dbTools.GetColumnMapping(columnNames);
 
@@ -779,7 +779,7 @@ namespace PRISMTest
 
             Assert.That(success, Is.True, "GetQueryResults returned false");
 
-            Assert.That(queryResults.Count, Is.GreaterThan(0), "Row count should be non-zero, but was not");
+            Assert.That(queryResults, Is.Not.Empty, "Row count should be non-zero, but was not");
 
             var expectedNames = expectedColumnNames.Split(',');
 
@@ -893,7 +893,7 @@ namespace PRISMTest
 
                 Assert.That(success, Is.True, "GetQueryResults returned false");
 
-                Assert.That(queryResults.Count, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
+                Assert.That(queryResults, Is.Not.Empty, $"Row count in {tableName} should be non-zero, but was not");
 
                 Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
                 ShowRowsFromTLogEntries(queryResults, columnNames);

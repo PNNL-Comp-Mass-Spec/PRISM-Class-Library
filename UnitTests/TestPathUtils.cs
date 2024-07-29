@@ -118,7 +118,7 @@ namespace PRISMTest
             Console.WriteLine("Directories via pathSpec: {0}", directories1.Count);
             Console.WriteLine("Directories via directoryMask: {0}", directories2.Count);
 
-            Assert.That(directories2.Count, Is.EqualTo(directories1.Count), $"Directory count mismatch; {directories1.Count} vs. {directories2.Count}");
+            Assert.That(directories2, Has.Count.EqualTo(directories1.Count), $"Directory count mismatch; {directories1.Count} vs. {directories2.Count}");
 
             if (string.IsNullOrWhiteSpace(expectedDirectoryNames))
                 return;
@@ -153,7 +153,7 @@ namespace PRISMTest
             }
 
             if (expectedDirectoryCount > 0)
-                Assert.That(directories1.Count, Is.GreaterThanOrEqualTo(expectedDirectoryCount), $"Found {directories1.Count} directories; expected to find {expectedDirectoryCount}");
+                Assert.That(directories1, Has.Count.GreaterThanOrEqualTo(expectedDirectoryCount), $"Found {directories1.Count} directories; expected to find {expectedDirectoryCount}");
         }
 
         [TestCase(@"\\proto-2\UnitTest_Files\PRISM", "*.fasta", "HumanContam.fasta, MP_06_01.fasta, Tryp_Pig_Bov.fasta", false)]
@@ -278,7 +278,7 @@ namespace PRISMTest
             }
 
             if (expectedFileCount > 0)
-                Assert.That(files1.Count, Is.GreaterThanOrEqualTo(expectedFileCount), $"Found {files1.Count} files; expected to find {expectedFileCount}");
+                Assert.That(files1, Has.Count.GreaterThanOrEqualTo(expectedFileCount), $"Found {files1.Count} files; expected to find {expectedFileCount}");
         }
 
         [TestCase("Results.txt", "*.txt", true)]
