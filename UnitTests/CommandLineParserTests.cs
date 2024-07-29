@@ -1999,7 +1999,7 @@ namespace PRISMTest
         public void TestFileInfoPropertyWithParameterFile()
         {
             var remoteParamFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\ParamFileTests\ExampleParamFile.conf");
-            Assert.IsNotNull(remoteParamFile.DirectoryName, "Could not determine the parent directory of the remote parameter file");
+            Assert.That(remoteParamFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the remote parameter file");
 
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { "-ParamFile:" + remoteParamFile.FullName }, showHelpOnError, outputErrors);
@@ -2008,7 +2008,7 @@ namespace PRISMTest
             var paramFilePath = parser.Results.ParamFilePath;
             var inputFilePath = parser.Results.ParsedResults.InputFile;
 
-            Assert.IsNotNull(inputFilePath, "InputFile parameter of the parsed results is null");
+            Assert.That(inputFilePath, Is.Not.Null, "InputFile parameter of the parsed results is null");
 
             var inputFilePathExpected = Path.Combine(remoteParamFile.DirectoryName, Path.GetFileName(inputFilePath));
 
@@ -2024,7 +2024,7 @@ namespace PRISMTest
         public void TestFileInfoPropertyWithParameterFileParseMethod()
         {
             var remoteParamFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\ParamFileTests\ExampleParamFile.conf");
-            Assert.IsNotNull(remoteParamFile.DirectoryName, "Could not determine the parent directory of the remote parameter file");
+            Assert.That(remoteParamFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the remote parameter file");
 
             var parameterClass = new FileInfoPropertyGood();
             var parser = new CommandLineParser<FileInfoPropertyGood>(parameterClass);
@@ -2034,7 +2034,7 @@ namespace PRISMTest
             var paramFilePath = parser.Results.ParamFilePath;
             var inputFilePath = parser.Results.ParsedResults.InputFile;
 
-            Assert.IsNotNull(inputFilePath, "InputFile parameter of the parsed results is null");
+            Assert.That(inputFilePath, Is.Not.Null, "InputFile parameter of the parsed results is null");
 
             var inputFilePathExpected = Path.Combine(remoteParamFile.DirectoryName, Path.GetFileName(inputFilePath));
 

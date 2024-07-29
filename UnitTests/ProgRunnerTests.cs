@@ -299,7 +299,7 @@ namespace PRISMTest
                 AppUtils.SleepMilliseconds(250);
 
                 var consoleOutputFilePath = progRunner.ConsoleOutputFilePath;
-                Assert.IsNotEmpty(consoleOutputFilePath, "Console output file path is empty");
+                Assert.That(consoleOutputFilePath, Is.Not.Empty, "Console output file path is empty");
 
                 var consoleOutputFile = new FileInfo(consoleOutputFilePath);
                 Assert.That(consoleOutputFile.Exists, Is.True, "File not found: " + consoleOutputFilePath);

@@ -722,8 +722,8 @@ namespace PRISMTest
 
             var emptyHeaderListB = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, new List<TestTableColumnNames>(), "  ");
 
-            Assert.IsEmpty(emptyHeaderListA);
-            Assert.IsEmpty(emptyHeaderListB);
+            Assert.That(emptyHeaderListA, Is.Empty);
+            Assert.That(emptyHeaderListB, Is.Empty);
 
             Console.WriteLine("Header lines were empty, as expected");
         }

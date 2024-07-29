@@ -57,7 +57,7 @@ namespace PRISMTest
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
 
             Assert.That(configFile.Exists, Is.True);
-            Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
+            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
 
             var configFilePaths = new List<string>
             {
@@ -79,7 +79,7 @@ namespace PRISMTest
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
             Assert.That(configFile.Exists, Is.True);
-            Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
+            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
 
             var mgrSettings = new MgrSettings();
 
@@ -95,7 +95,7 @@ namespace PRISMTest
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
             Assert.That(configFile.Exists, Is.True);
-            Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
+            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
 
             var mgrSettings = new MgrSettings();
 
@@ -111,7 +111,7 @@ namespace PRISMTest
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg2.exe.config");
             Assert.That(configFile.Exists, Is.True);
-            Assert.IsNotNull(configFile.DirectoryName, "Could not determine the parent directory of the config file");
+            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
 
             var mgrSettings = new MgrSettings();
 
