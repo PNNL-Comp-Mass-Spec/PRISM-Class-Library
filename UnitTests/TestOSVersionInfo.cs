@@ -33,23 +33,23 @@ namespace PRISMTest
             {
                 case PlatformID.Win32Windows:
                 case PlatformID.Win32NT:
-                    Assert.True(version.StartsWith("Windows", StringComparison.OrdinalIgnoreCase));
+                    Assert.That(version.StartsWith("Windows", StringComparison.OrdinalIgnoreCase), Is.True);
                     break;
                 case PlatformID.Win32S:
-                    Assert.True(version.StartsWith("Win32", StringComparison.OrdinalIgnoreCase));
+                    Assert.That(version.StartsWith("Win32", StringComparison.OrdinalIgnoreCase), Is.True);
                     break;
                 case PlatformID.WinCE:
-                    Assert.True(version.StartsWith("WinCE", StringComparison.OrdinalIgnoreCase));
+                    Assert.That(version.StartsWith("WinCE", StringComparison.OrdinalIgnoreCase), Is.True);
                     break;
                 case PlatformID.Unix:
                     var linuxVersion = osVersionInfo.GetLinuxVersion();
                     Assert.That(linuxVersion, Is.EqualTo(version));
                     break;
                 case PlatformID.Xbox:
-                    Assert.True(version.StartsWith("Xbox", StringComparison.OrdinalIgnoreCase));
+                    Assert.That(version.StartsWith("Xbox", StringComparison.OrdinalIgnoreCase), Is.True);
                     break;
                 case PlatformID.MacOSX:
-                    Assert.True(version.StartsWith("MacOS", StringComparison.OrdinalIgnoreCase));
+                    Assert.That(version.StartsWith("MacOS", StringComparison.OrdinalIgnoreCase), Is.True);
                     break;
                 default:
                     Assert.Ignore("Unknown OS Platform");

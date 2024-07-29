@@ -265,7 +265,7 @@ namespace PRISMTest
             }
 
             var errMsg = "Result " + result + " did not match expected result (" + resultExpected + ")";
-            Assert.IsTrue(expectedResultFound, errMsg);
+            Assert.That(expectedResultFound, Is.True, errMsg);
         }
     }
 }

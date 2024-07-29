@@ -30,15 +30,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey1>();
             var result = parser.ParseArgs(new[] { "-bad-name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with '-' at start of arg key");
+            Assert.That(result.Success, Is.False, "Parser did not fail with '-' at start of arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains("bad character") && x.Message.Contains("char '-'")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char '-'")), Is.True,
                 "Error message does not contain \"bad character\" and \"char '-'\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -49,15 +49,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey2>();
             var result = parser.ParseArgs(new[] { "/bad/name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with '/' at start of arg key");
+            Assert.That(result.Success, Is.False, "Parser did not fail with '/' at start of arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains("bad character") && x.Message.Contains("char '/'")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char '/'")), Is.True,
                 "Error message does not contain \"bad character\" and \"char '/'\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -68,15 +68,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey3>();
             var result = parser.ParseArgs(new[] { "-badname", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with duplicate arg keys");
+            Assert.That(result.Success, Is.False, "Parser did not fail with duplicate arg keys");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("badname")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("badname")), Is.True,
                 "Error message does not contain \"duplicate\" and \"badname\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -87,15 +87,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey4>();
             var result = parser.ParseArgs(new[] { "-NoGood", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with duplicate arg keys");
+            Assert.That(result.Success, Is.False, "Parser did not fail with duplicate arg keys");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("NoGood")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("duplicate", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("NoGood")), Is.True,
                 "Error message does not contain \"duplicate\" and \"NoGood\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -105,15 +105,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey5>();
             var result = parser.ParseArgs(new[] { "-bad name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with ' ' in arg key");
+            Assert.That(result.Success, Is.False, "Parser did not fail with ' ' in arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains("bad character") && x.Message.Contains("char ' '")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char ' '")), Is.True,
                 "Error message does not contain \"bad character\" and \"char ' '\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -124,15 +124,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey6>();
             var result = parser.ParseArgs(new[] { "/bad:name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with ':' in arg key");
+            Assert.That(result.Success, Is.False, "Parser did not fail with ':' in arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains("bad character") && x.Message.Contains("char ':'")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char ':'")), Is.True,
                 "Error message does not contain \"bad character\" and \"char ':'\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -143,15 +143,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey7>();
             var result = parser.ParseArgs(new[] { "-bad=name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with '=' in arg key");
+            Assert.That(result.Success, Is.False, "Parser did not fail with '=' in arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains("bad character") && x.Message.Contains("char '='")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains("bad character") && x.Message.Contains("char '='")), Is.True,
                 "Error message does not contain \"bad character\" and \"char '='\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -162,15 +162,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<BadKey8>();
             var result = parser.ParseArgs(new[] { "-bad/name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with '/' in arg key");
+            Assert.That(result.Success, Is.False, "Parser did not fail with '/' in arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                    x.Message.Contains("bad character") && x.Message.Contains("char '/'")),
+            Assert.That(result.ParseErrors.Any(x =>
+                    x.Message.Contains("bad character") && x.Message.Contains("char '/'")), Is.True,
                 "Error message does not contain \"bad character\" and \"char '='\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -277,14 +277,14 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<OkayKey1>();
             var result = parser.ParseArgs(new[] { "-okay-name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser failed with '-' not at start of arg key");
+            Assert.That(result.Success, Is.True, "Parser failed with '-' not at start of arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
         }
 
         [Test]
@@ -292,14 +292,14 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<OkayKey2>();
             var result = parser.ParseArgs(new[] { "/okay-name", "b" }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser failed with '/' not at start of arg key");
+            Assert.That(result.Success, Is.True, "Parser failed with '/' not at start of arg key");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
         }
 
         [Test]
@@ -307,14 +307,14 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<OkayKey2>();
             var result = parser.ParseArgs(new[] { "--help" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
+            Assert.That(result.Success, Is.False, "Parser did not \"fail\" when user requested the help screen");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
         }
 
         [Test]
@@ -325,14 +325,14 @@ namespace PRISMTest
                 ParamFlagCharacters = new[] { '/', '-' }
             };
             var result = parser.ParseArgs(new[] { "/?" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
+            Assert.That(result.Success, Is.False, "Parser did not \"fail\" when user requested the help screen");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
         }
 
         private class OkayKey1
@@ -461,8 +461,8 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
 
             Console.WriteLine("{0,-15} {1}", "InputFilePath", options.InputFilePath);
             Console.WriteLine("{0,-15} {1}", "OutputFilePath", options.OutputFilePath);
@@ -521,8 +521,8 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -548,8 +548,8 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -580,8 +580,8 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -604,14 +604,14 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
+            Assert.That(result.Success, Is.False, "Parser did not fail with unrecognized argument name error");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+            Assert.That(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")), Is.True);
 
             Console.WriteLine("\nThis error message was expected");
         }
@@ -629,8 +629,8 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -655,8 +655,8 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
 
             Console.WriteLine("Input file path: {0}", options.InputFilePath);
             Console.WriteLine("Output file path: {0}", options.OutputFilePath);
@@ -678,14 +678,14 @@ namespace PRISMTest
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
 
-            Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
+            Assert.That(result.Success, Is.False, "Parser did not fail with unrecognized argument name error");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+            Assert.That(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")), Is.True);
 
             Console.WriteLine("\nThis error message was expected");
         }
@@ -699,15 +699,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
+            Assert.That(result.Success, Is.False, "Parser did not fail on value less than min");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")), Is.True,
                 "Error message does not contain \"minInt\" and \"is less than minimum\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -722,15 +722,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
+            Assert.That(result.Success, Is.False, "Parser did not fail on value less than min");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("minmaxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("minmaxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")), Is.True,
                 "Error message does not contain \"minMaxInt\" and \"is less than minimum\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -745,15 +745,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on invalid min type");
+            Assert.That(result.Success, Is.False, "Parser did not fail on invalid min type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("minintbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("minintbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")), Is.True,
                 "Error message does not contain \"minIntBad\" and \"cannot cast min or max to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -768,15 +768,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.That(result.Success, Is.False, "Parser did not on invalid type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("minint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), Is.True,
                 "Error message does not contain \"minInt\", \"cannot cast\", and \"to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -791,15 +791,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on value greater than max");
+            Assert.That(result.Success, Is.False, "Parser did not fail on value greater than max");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")), Is.True,
                 "Error message does not contain \"maxInt\" and \"is greater than maximum\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -814,16 +814,16 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on invalid max type");
+            Assert.That(result.Success, Is.False, "Parser did not fail on invalid max type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
+            Assert.That(result.ParseErrors.Any(x =>
                 x.Message.IndexOf("maxintbad", StringComparison.OrdinalIgnoreCase) >= 0 &&
-                x.Message.Contains("cannot cast min or max to type")),
+                x.Message.Contains("cannot cast min or max to type")), Is.True,
                 "Error message does not contain \"maxIntBad\" and \"cannot cast min or max to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -838,15 +838,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.That(result.Success, Is.False, "Parser did not on invalid type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("maxint", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), Is.True,
                 "Error message does not contain \"maxInt\", \"cannot cast\", and \"to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -861,15 +861,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
+            Assert.That(result.Success, Is.False, "Parser did not fail on value less than min");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")), Is.True,
                 "Error message does not contain \"minDbl\" and \"is less than minimum\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -884,15 +884,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on value less than min");
+            Assert.That(result.Success, Is.False, "Parser did not fail on value less than min");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("minmaxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("minmaxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is less than minimum")), Is.True,
                 "Error message does not contain \"MinMaxDbl\" and \"is less than minimum\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -907,15 +907,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on invalid min type");
+            Assert.That(result.Success, Is.False, "Parser did not fail on invalid min type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("mindblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("mindblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")), Is.True,
                 "Error message does not contain \"minDblBad\" and \"cannot cast min or max to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -930,15 +930,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on invalid type");
+            Assert.That(result.Success, Is.False, "Parser did not fail on invalid type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("mindbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), Is.True,
                 "Error message does not contain \"minDbl\", \"cannot cast\", and \"to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -953,15 +953,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on value greater than max");
+            Assert.That(result.Success, Is.False, "Parser did not fail on value greater than max");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("is greater than maximum")), Is.True,
                 "Error message does not contain \"maxDbl\" and \"is greater than maximum\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -976,15 +976,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on invalid max type");
+            Assert.That(result.Success, Is.False, "Parser did not fail on invalid max type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("maxdblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("maxdblbad", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast min or max to type")), Is.True,
                 "Error message does not contain \"maxDblBad\" and \"cannot cast min or max to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -999,15 +999,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsVariety>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail on invalid type");
+            Assert.That(result.Success, Is.False, "Parser did not fail on invalid type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("maxdbl", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), Is.True,
                 "Error message does not contain \"maxDbl\", \"cannot cast\", and \"to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -1057,7 +1057,7 @@ namespace PRISMTest
                 result.OutputErrors();
 
                 if (!parseErrorExpected)
-                    Assert.True(result.Success, "result.Success is false");
+                    Assert.That(result.Success, Is.True, "result.Success is false");
             }
 
             Console.WriteLine("{0,-25} {1}", "Tda Flag:", result.ParsedResults.TdaInt);
@@ -1173,8 +1173,8 @@ namespace PRISMTest
             var parser = new CommandLineParser<ArgsEnum>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
             var options = result.ParsedResults;
-            Assert.IsTrue(result.Success, "Parser failed to parse valid args");
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.Success, Is.True, "Parser failed to parse valid args");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
             Assert.That(options.BeUnknown, Is.EqualTo(TestEnum.DoublyTrue));
             Assert.That(options.TooBad, Is.EqualTo(TestEnum.Legend));
             Assert.That(options.ResultEffect.ToString(), Is.EqualTo("Ugly, Apocalypse, EndOfUniverse"));
@@ -1192,15 +1192,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsEnum>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.That(result.Success, Is.False, "Parser did not on invalid type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), Is.True,
                 "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -1217,15 +1217,15 @@ namespace PRISMTest
             };
             var parser = new CommandLineParser<ArgsEnum>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not on invalid type");
+            Assert.That(result.Success, Is.False, "Parser did not on invalid type");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.IndexOf("2t", StringComparison.OrdinalIgnoreCase) >= 0 && x.Message.Contains("cannot cast") && x.Message.Contains("to type")), Is.True,
                 "Error message does not contain \"2t\", \"cannot cast\", and \"to type\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -1536,7 +1536,7 @@ namespace PRISMTest
 
             var success = CommandLineParser<OkayKey2>.ParseArgs(args.ToArray(), options);
 
-            Assert.IsTrue(success, "Call to static instance of ParseArgs failed");
+            Assert.That(success, Is.True, "Call to static instance of ParseArgs failed");
 
             Console.WriteLine();
             Console.WriteLine("Class values after reading the parameter file");
@@ -1765,15 +1765,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<ArgExistsPropertyFail1>();
             var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
+            Assert.That(result.Success, Is.False, "Parser did not fail with empty or whitespace ArgExistsProperty");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("null") && x.Message.Contains("boolean")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("null") && x.Message.Contains("boolean")), Is.True,
                 $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"null\", and \"boolean\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -1784,15 +1784,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<ArgExistsPropertyFail2>();
             var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with an ArgExistsProperty non-existent property");
+            Assert.That(result.Success, Is.False, "Parser did not fail with an ArgExistsProperty non-existent property");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")), Is.True,
                 $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -1803,15 +1803,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<ArgExistsPropertyFail3>();
             var result = parser.ParseArgs(new[] { "-L", "bad" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with an ArgExistsProperty non-boolean property");
+            Assert.That(result.Success, Is.False, "Parser did not fail with an ArgExistsProperty non-boolean property");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")),
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.ArgExistsProperty)) && x.Message.Contains("not exist") && x.Message.Contains("not a boolean")), Is.True,
                 $"Error message does not contain \"{nameof(OptionAttribute.ArgExistsProperty)}\", \"not exist\", and \"not a boolean\"");
 
             Console.WriteLine("\nThis error message was expected");
@@ -1822,7 +1822,7 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<ArgExistsPropertyGood>();
             var result = parser.ParseArgs(new[] { "-L" }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser failed to process with valid and specified ArgExistsProperty");
+            Assert.That(result.Success, Is.True, "Parser failed to process with valid and specified ArgExistsProperty");
             var defaults = new ArgExistsPropertyGood();
 
             var options = result.ParsedResults;
@@ -1840,7 +1840,7 @@ namespace PRISMTest
             var logFileName = "myLogFile.txt";
             var parser = new CommandLineParser<ArgExistsPropertyGood>();
             var result = parser.ParseArgs(new[] { "-L", logFileName }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser failed to process with valid and specified ArgExistsProperty");
+            Assert.That(result.Success, Is.True, "Parser failed to process with valid and specified ArgExistsProperty");
 
             var options = result.ParsedResults;
 
@@ -1912,7 +1912,7 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { @"-I:..\..\VisibleColors.tsv", "/S" }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser did not succeed");
+            Assert.That(result.Success, Is.True, "Parser did not succeed");
 
             var inputFilePath = parser.Results.ParsedResults.InputFile;
             Console.WriteLine("Input file: " + inputFilePath);
@@ -1926,13 +1926,13 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { "-I:" + inputFilePath, "/S" }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser did not succeed");
+            Assert.That(result.Success, Is.True, "Parser did not succeed");
 
             var parsedInputFilePath = parser.Results.ParsedResults.InputFile;
             Console.WriteLine("Parsed input file path:");
             Console.WriteLine(parsedInputFilePath);
 
-            Assert.IsTrue(parsedInputFilePath.IndexOfAny(new[] { '\'', '"' }) < 0, "Quotes in the path were not removed");
+            Assert.That(parsedInputFilePath.IndexOfAny(new[] { '\'', '"' }) < 0, Is.True, "Quotes in the path were not removed");
         }
 
         [Test]
@@ -1948,7 +1948,7 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { "-Comment", propertyValue, "/S" }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser did not succeed");
+            Assert.That(result.Success, Is.True, "Parser did not succeed");
 
             var parsedComment = parser.Results.ParsedResults.Comment;
             Console.WriteLine("Comment: " + parsedComment);
@@ -1981,15 +1981,15 @@ namespace PRISMTest
         {
             var parser = new CommandLineParser<FileInfoPropertyBad>();
             var result = parser.ParseArgs(new[] { "-I", @"..\..\VisibleColors.tsv" }, showHelpOnError, outputErrors);
-            Assert.IsFalse(result.Success, "Parser did not fail with empty or whitespace ArgExistsProperty");
+            Assert.That(result.Success, Is.False, "Parser did not fail with empty or whitespace ArgExistsProperty");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x =>
-                x.Message.Contains(nameof(OptionAttribute.IsInputFilePath)) && x.Message.Contains("must be of type")));
+            Assert.That(result.ParseErrors.Any(x =>
+                x.Message.Contains(nameof(OptionAttribute.IsInputFilePath)) && x.Message.Contains("must be of type")), Is.True);
 
             Console.WriteLine("\nThis error message was expected");
         }
@@ -2003,7 +2003,7 @@ namespace PRISMTest
 
             var parser = new CommandLineParser<FileInfoPropertyGood>();
             var result = parser.ParseArgs(new[] { "-ParamFile:" + remoteParamFile.FullName }, showHelpOnError, outputErrors);
-            Assert.IsTrue(result.Success, "Parser did not succeed");
+            Assert.That(result.Success, Is.True, "Parser did not succeed");
 
             var paramFilePath = parser.Results.ParamFilePath;
             var inputFilePath = parser.Results.ParsedResults.InputFile;
@@ -2029,7 +2029,7 @@ namespace PRISMTest
             var parameterClass = new FileInfoPropertyGood();
             var parser = new CommandLineParser<FileInfoPropertyGood>(parameterClass);
             var result = parser.ParseParamFile(remoteParamFile.FullName);
-            Assert.IsTrue(result.Success, "Parser did not succeed");
+            Assert.That(result.Success, Is.True, "Parser did not succeed");
 
             var paramFilePath = parser.Results.ParamFilePath;
             var inputFilePath = parser.Results.ParsedResults.InputFile;
@@ -2056,8 +2056,8 @@ namespace PRISMTest
                 Console.WriteLine(message);
             }
 
-            Assert.IsFalse(result.Success, "Parser did not fail with parameter file not found error");
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("parameter file was not found")));
+            Assert.That(result.Success, Is.False, "Parser did not fail with parameter file not found error");
+            Assert.That(result.ParseErrors.Any(x => x.Message.Contains("parameter file was not found")), Is.True);
 
             Console.WriteLine("\nThis error message was expected");
         }
@@ -2097,14 +2097,14 @@ namespace PRISMTest
                 new[] { "-verbose:\"Lots of text for this argument\"", "-smooth:25", "-smooth2:50", "-MaxValue=32" },
                 showHelpOnError, outputErrors);
 
-            Assert.IsFalse(result.Success, "Parser did not fail with unrecognized argument name error");
+            Assert.That(result.Success, Is.False, "Parser did not fail with unrecognized argument name error");
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")));
+            Assert.That(result.ParseErrors.Any(x => x.Message.Contains("Unrecognized argument name")), Is.True);
 
             Console.WriteLine("\nThis error message was expected");
         }
@@ -2145,19 +2145,19 @@ namespace PRISMTest
             Console.SetOut(cOut);
             //Console.SetError(cError);
             var output = sw.ToString();
-            Assert.IsFalse(result.Success, "Parser did not \"fail\" when user requested the help screen");
+            Assert.That(result.Success, Is.False, "Parser did not \"fail\" when user requested the help screen");
             Console.WriteLine(output);
-            Assert.IsTrue(output.Contains("-int"));
-            Assert.IsTrue(output.Contains("-bool"));
-            Assert.IsTrue(output.Contains("-double"));
-            Assert.IsTrue(output.Contains("-string"));
+            Assert.That(output.Contains("-int"), Is.True);
+            Assert.That(output.Contains("-bool"), Is.True);
+            Assert.That(output.Contains("-double"), Is.True);
+            Assert.That(output.Contains("-string"), Is.True);
 
             foreach (var message in result.ParseErrors)
             {
                 Console.WriteLine(message);
             }
 
-            Assert.IsTrue(result.ParseErrors.Count == 0, "Error list not empty");
+            Assert.That(result.ParseErrors.Count == 0, Is.True, "Error list not empty");
         }
 
         [Test]
@@ -2168,7 +2168,7 @@ namespace PRISMTest
                 new[] { "-string:\"test string\"", "-int:17", "-bool", "-double=3.1415" },
                 showHelpOnError, outputErrors);
 
-            Assert.IsTrue(result.Success, "Parser did not succeed");
+            Assert.That(result.Success, Is.True, "Parser did not succeed");
 
             var options = result.ParsedResults;
 

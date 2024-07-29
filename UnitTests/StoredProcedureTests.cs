@@ -116,7 +116,7 @@ namespace PRISMTest
                     {
                         var completeFound = result[colIndex].IndexOf("complete", StringComparison.OrdinalIgnoreCase) >= 0;
 
-                        Assert.True(completeFound, "Result row does not have complete in the Message column");
+                        Assert.That(completeFound, Is.True, "Result row does not have complete in the Message column");
                         break;
                     }
                 }
@@ -193,7 +193,7 @@ namespace PRISMTest
                 {
                     var humanFound = organism.IndexOf("homo_sapiens", StringComparison.OrdinalIgnoreCase) >= 0;
 
-                    Assert.True(humanFound, "Human PT database does not have organism Homo_Sapiens");
+                    Assert.That(humanFound, Is.True, "Human PT database does not have organism Homo_Sapiens");
                 }
 
                 if (showData)
@@ -231,7 +231,7 @@ namespace PRISMTest
 
             var success = dbTools.GetQueryResults(spCmd, out var results, 1);
 
-            Assert.IsTrue(success, "GetQueryResults return false");
+            Assert.That(success, Is.True, "GetQueryResults return false");
 
             ExamineManagerParams(results);
         }
@@ -262,7 +262,7 @@ namespace PRISMTest
 
             var success = dbTools.GetQueryResults(spCmd, out var results, 1);
 
-            Assert.IsTrue(success, "GetQueryResults return false");
+            Assert.That(success, Is.True, "GetQueryResults return false");
 
             ExamineManagerParams(results);
         }
@@ -796,7 +796,7 @@ namespace PRISMTest
 
             var success = dbTools.GetQueryResults(spSelectCmd, out var queryResults, out var columnNames, 1);
 
-            Assert.IsTrue(success, "GetQueryResults returned false while querying t_log_entries");
+            Assert.That(success, Is.True, "GetQueryResults returned false while querying t_log_entries");
 
             TestDBTools.ShowRowsFromTLogEntries(queryResults, columnNames);
         }
@@ -852,9 +852,9 @@ namespace PRISMTest
         private void VerifyTestPostLogEntry(IDBTools dbTools, string user, bool expectedPostSuccess, bool actualPostSuccess)
         {
             if (expectedPostSuccess)
-                Assert.IsTrue(actualPostSuccess, $"Call to post_log_entry failed for user {user}; it should have succeeded");
+                Assert.That(actualPostSuccess, Is.True, $"Call to post_log_entry failed for user {user}; it should have succeeded");
             else
-                Assert.IsFalse(actualPostSuccess, $"Call to post_log_entry succeeded for user {user}; it should have failed");
+                Assert.That(actualPostSuccess, Is.False, $"Call to post_log_entry succeeded for user {user}; it should have failed");
 
             if (!actualPostSuccess)
                 return;
@@ -867,7 +867,7 @@ namespace PRISMTest
 
             var querySuccess = dbTools.GetQueryResults(spSelectCmd, out var queryResults, out var columnNames, 1);
 
-            Assert.IsTrue(querySuccess, "GetQueryResults returned false while querying t_log_entries");
+            Assert.That(querySuccess, Is.True, "GetQueryResults returned false while querying t_log_entries");
 
             TestDBTools.ShowRowsFromTLogEntries(queryResults, columnNames);
         }

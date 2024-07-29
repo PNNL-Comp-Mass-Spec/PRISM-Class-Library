@@ -134,7 +134,7 @@ namespace PRISMTest
                 exceptionRaised = true;
             }
 
-            Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
+            Assert.That(exceptionRaised, Is.True, "File copy with overwrite = false did not raise an exception; it should have");
         }
 
         [TestCase(@"C:\Windows\win.ini", @"C:\temp\win.ini")]
@@ -172,12 +172,12 @@ namespace PRISMTest
             // This copy will not overwrite the file, though CopyFileUsingLocks returns True because the file exists
             var success1 = mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, false);
 
-            Assert.IsTrue(success1, "CopyFileUsingLocks did not return true (test 1)");
+            Assert.That(success1, Is.True, "CopyFileUsingLocks did not return true (test 1)");
 
             // This copy will not overwrite the file, though CopyFileUsingLocks returns True because the file exists
             var success2 = mFileTools.CopyFileUsingLocks(sourceFilePath, targetFilePath, "TestClass");
 
-            Assert.IsTrue(success2, "CopyFileUsingLocks did not return true (test 2)");
+            Assert.That(success2, Is.True, "CopyFileUsingLocks did not return true (test 2)");
 
             System.Threading.Thread.Sleep(150);
 
@@ -195,7 +195,7 @@ namespace PRISMTest
                 exceptionRaised = true;
             }
 
-            Assert.IsTrue(exceptionRaised, "File copy with overwrite = false did not raise an exception; it should have");
+            Assert.That(exceptionRaised, Is.True, "File copy with overwrite = false did not raise an exception; it should have");
         }
 
         private void CreateTargetDirectoryIfMissing(string targetFilePath)

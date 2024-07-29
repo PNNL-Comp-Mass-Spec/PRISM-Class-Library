@@ -420,7 +420,7 @@ namespace PRISMTest
 
             var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
 
-            Assert.IsTrue(success, "GetQueryResults returned false");
+            Assert.That(success, Is.True, "GetQueryResults returned false");
 
             Assert.That(queryResults.Count, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
 
@@ -554,20 +554,20 @@ namespace PRISMTest
                         Console.WriteLine("{0,-15} {1,-12} {2,-10} {3,-12} {4,-15}", shapeName, sideCount, colorName, perimeterText, perimeter);
 
                         if (colorName.Equals("No color"))
-                            Assert.False(colorDefined, "Color column found unexpectedly");
+                            Assert.That(colorDefined, Is.False, "Color column found unexpectedly");
                         else
-                            Assert.True(colorDefined, "Color column not found");
+                            Assert.That(colorDefined, Is.True, "Color column not found");
 
                         if (headerNames.Contains("Perimeter"))
                         {
                             if (perimeterText.Equals("Undefined"))
-                                Assert.False(perimeterDefined, "Perimeter column found unexpectedly");
+                                Assert.That(perimeterDefined, Is.False, "Perimeter column found unexpectedly");
                             else
-                                Assert.True(perimeterDefined, "Perimeter column not found");
+                                Assert.That(perimeterDefined, Is.True, "Perimeter column not found");
                         }
                         else
                         {
-                            Assert.False(perimeterDefined, "perimeterDefined should be false");
+                            Assert.That(perimeterDefined, Is.False, "perimeterDefined should be false");
                         }
                     }
                     catch (Exception ex)
@@ -777,7 +777,7 @@ namespace PRISMTest
 
             Console.WriteLine();
 
-            Assert.IsTrue(success, "GetQueryResults returned false");
+            Assert.That(success, Is.True, "GetQueryResults returned false");
 
             Assert.That(queryResults.Count, Is.GreaterThan(0), "Row count should be non-zero, but was not");
 
@@ -891,7 +891,7 @@ namespace PRISMTest
 
                 var success = dbTools.GetQueryResults(spCmd, out var queryResults, out var columnNames, 1);
 
-                Assert.IsTrue(success, "GetQueryResults returned false");
+                Assert.That(success, Is.True, "GetQueryResults returned false");
 
                 Assert.That(queryResults.Count, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
 
@@ -947,7 +947,7 @@ namespace PRISMTest
 
             var success = dbTools.GetQueryScalar(spCmd, out var queryResult, 1);
 
-            Assert.IsTrue(success, "GetQueryScalar returned false");
+            Assert.That(success, Is.True, "GetQueryScalar returned false");
 
             var tableRowCount = queryResult.CastDBVal<int>();
             Console.WriteLine("RowCount in table {0} is {1:N0}", tableName, tableRowCount);

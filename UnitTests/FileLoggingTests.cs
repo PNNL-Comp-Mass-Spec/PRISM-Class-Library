@@ -39,11 +39,11 @@ namespace PRISMTest
 
             // Create 10 dummy log files using the MM-dd-yyyy format, starting 52 days before today
             var logFilesCreated1 = CreateLogFiles(logDir, DateTime.Now.AddDays(-52), 10, true);
-            Assert.IsTrue(logFilesCreated1.Count > 0, "CreateLogFiles returned an empty list for logFilesCreated1");
+            Assert.That(logFilesCreated1.Count > 0, Is.True, "CreateLogFiles returned an empty list for logFilesCreated1");
 
             // Create 40 dummy log files using the yyyy-MM-dd format, starting 42 days before today
             var logFilesCreated2 = CreateLogFiles(logDir, DateTime.Now.AddDays(-42), 40, false);
-            Assert.IsTrue(logFilesCreated2.Count > 0, "CreateLogFiles returned an empty list for logFilesCreated2");
+            Assert.That(logFilesCreated2.Count > 0, Is.True, "CreateLogFiles returned an empty list for logFilesCreated2");
 
             // Delete old dummy log files from the previous year
             var previousYearDir = new DirectoryInfo(Path.Combine(logDir.FullName, (DateTime.Now.Year - 1).ToString()));

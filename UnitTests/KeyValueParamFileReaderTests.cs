@@ -23,7 +23,7 @@ namespace PRISMTest
 
             var paramFileReader = new KeyValueParamFileReader(TOOL_NAME, PARAMETER_FILE_PATH);
             var success = paramFileReader.ParseKeyValueParameterFile(out var paramFileEntries);
-            Assert.True(success, "Error reading the parameter file");
+            Assert.That(success, Is.True, "Error reading the parameter file");
 
             ValidateConvertParamsToArgs(expectedArgumentLine, paramFileReader, paramFileEntries, paramToArgMapping, paramNamesToSkip);
         }
@@ -52,7 +52,7 @@ namespace PRISMTest
 
             var paramFileReader = new KeyValueParamFileReader(string.Empty, string.Empty);
             var success = paramFileReader.ParseKeyValueParameterList(parameterList, out var paramFileEntries);
-            Assert.True(success, "Error parsing the list of parameters");
+            Assert.That(success, Is.True, "Error parsing the list of parameters");
 
             ValidateConvertParamsToArgs(expectedArgumentLine, paramFileReader, paramFileEntries, paramToArgMapping, paramNamesToSkip);
         }
@@ -198,7 +198,7 @@ namespace PRISMTest
         {
             var paramFileReader = new KeyValueParamFileReader(TOOL_NAME, PARAMETER_FILE_PATH);
             var success = paramFileReader.ParseKeyValueParameterFile(out var paramFileEntries);
-            Assert.True(success, "Error reading the parameter file");
+            Assert.That(success, Is.True, "Error reading the parameter file");
 
             var enabled = paramFileReader.ParamIsEnabled(paramFileEntries, parameterName);
 
@@ -213,7 +213,7 @@ namespace PRISMTest
             var paramNameList = paramNames.Split(',').ToList();
             var paramFileEntries = GetParamFileEntries(out var success);
 
-            Assert.True(success, "Error reading the parameter file");
+            Assert.That(success, Is.True, "Error reading the parameter file");
 
             for (var i = 0; i < paramNameList.Count; i++)
             {
@@ -230,7 +230,7 @@ namespace PRISMTest
             var paramNameList = paramNames.Split(',').ToList();
             var paramFileEntries = GetParamFileEntries(out var success);
 
-            Assert.True(success, "Error reading the parameter file");
+            Assert.That(success, Is.True, "Error reading the parameter file");
 
             for (var i = 0; i < paramNameList.Count; i++)
             {
@@ -247,7 +247,7 @@ namespace PRISMTest
             var paramNameList = paramNames.Split(',').ToList();
             var paramFileEntries = GetParamFileEntries(out var success);
 
-            Assert.True(success, "Error reading the parameter file");
+            Assert.That(success, Is.True, "Error reading the parameter file");
 
             for (var i = 0; i < paramNameList.Count; i++)
             {
@@ -271,8 +271,8 @@ namespace PRISMTest
             var paramFileReader = new KeyValueParamFileReader(TOOL_NAME, parameterFilePath);
             var success = paramFileReader.ParseKeyValueParameterFile(out _);
 
-            Assert.False(success, "ParseKeyValueParameterFile returned true unexpectedly");
-            Assert.True(paramFileReader.ParamFileNotFound, "Parameter file exists, but it was expected to be missing: " + parameterFilePath);
+            Assert.That(success, Is.False, "ParseKeyValueParameterFile returned true unexpectedly");
+            Assert.That(paramFileReader.ParamFileNotFound, Is.True, "Parameter file exists, but it was expected to be missing: " + parameterFilePath);
 
             Console.WriteLine("Validated behavior trying to load a non-existent parameter file");
         }
@@ -285,8 +285,8 @@ namespace PRISMTest
             var paramFileReader = new KeyValueParamFileReader(TOOL_NAME, workingDirectoryPath, parameterFileName);
             var success = paramFileReader.ParseKeyValueParameterFile(out _);
 
-            Assert.False(success, "ParseKeyValueParameterFile returned true unexpectedly");
-            Assert.True(paramFileReader.ParamFileNotFound, "Parameter file exists, but it was expected to be missing: " + paramFileReader.ParamFilePath);
+            Assert.That(success, Is.False, "ParseKeyValueParameterFile returned true unexpectedly");
+            Assert.That(paramFileReader.ParamFileNotFound, Is.True, "Parameter file exists, but it was expected to be missing: " + paramFileReader.ParamFilePath);
 
             Console.WriteLine("Validated behavior trying to load a non-existent parameter file");
         }

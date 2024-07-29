@@ -23,8 +23,8 @@ namespace PRISMTest
 
             var success2 = DeleteDirectories(directoriesCreatedOrFound);
 
-            Assert.IsTrue(success1, "Error creating directories");
-            Assert.IsTrue(success2, "Error deleting directories");
+            Assert.That(success1, Is.True, "Error creating directories");
+            Assert.That(success2, Is.True, "Error deleting directories");
         }
 
         [TestCase(3, 25, 10)]
@@ -140,11 +140,11 @@ namespace PRISMTest
 
             Console.WriteLine();
 
-            Assert.IsFalse(errorOccurred, "Error creating or deleting files");
+            Assert.That(errorOccurred, Is.False, "Error creating or deleting files");
 
-            Assert.IsFalse(fileSizeMismatch, "File size mismatch");
+            Assert.That(fileSizeMismatch, Is.False, "File size mismatch");
 
-            Assert.IsTrue(success1, "Error creating directories");
+            Assert.That(success1, Is.True, "Error creating directories");
 
             if (!success2)
             {

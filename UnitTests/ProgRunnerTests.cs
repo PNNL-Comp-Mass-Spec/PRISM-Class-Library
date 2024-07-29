@@ -302,7 +302,7 @@ namespace PRISMTest
                 Assert.IsNotEmpty(consoleOutputFilePath, "Console output file path is empty");
 
                 var consoleOutputFile = new FileInfo(consoleOutputFilePath);
-                Assert.True(consoleOutputFile.Exists, "File not found: " + consoleOutputFilePath);
+                Assert.That(consoleOutputFile.Exists, Is.True, "File not found: " + consoleOutputFilePath);
 
                 var secondsSinceMidnight = (int)(DateTime.Now.Subtract(DateTime.Today).TotalSeconds);
 
@@ -357,11 +357,11 @@ namespace PRISMTest
 
             if (programAbortExpected)
             {
-                Assert.True(abortProcess, "Process was expected to be aborted due to excessive runtime, but was not");
+                Assert.That(abortProcess, Is.True, "Process was expected to be aborted due to excessive runtime, but was not");
             }
             else
             {
-                Assert.False(abortProcess, "Process was aborted due to excessive runtime; this is unexpected");
+                Assert.That(abortProcess, Is.False, "Process was aborted due to excessive runtime; this is unexpected");
             }
         }
 #endif

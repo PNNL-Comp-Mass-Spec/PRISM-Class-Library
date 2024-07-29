@@ -112,7 +112,7 @@ namespace PRISMTest
 
             var success = mFileTools.RenameFileWithRetry(fileToRename, newFileInfo, out var errorMessage);
 
-            Assert.IsFalse(success, "RenameFileWithRetry returned true instead of false");
+            Assert.That(success, Is.False, "RenameFileWithRetry returned true instead of false");
 
             Console.WriteLine("As expected, the rename failed");
             Console.WriteLine(errorMessage);
