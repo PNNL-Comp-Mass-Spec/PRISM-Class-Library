@@ -340,8 +340,11 @@ namespace PRISMTest
                 Console.WriteLine("{0} has parent {1} and name {2}", directoryPath, parentPath, directoryName);
             }
 
-            Assert.That(parentPath, Is.EqualTo(expectedParentPath), "Parent path mismatch");
-            Assert.That(directoryName, Is.EqualTo(expectedDirectoryName), "Directory name mismatch");
+            Assert.Multiple(() =>
+            {
+                Assert.That(parentPath, Is.EqualTo(expectedParentPath), "Parent path mismatch");
+                Assert.That(directoryName, Is.EqualTo(expectedDirectoryName), "Directory name mismatch");
+            });
         }
 
         [TestCase(@"C:\DMS_WorkDir\SubDir", false)]

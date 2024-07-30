@@ -99,10 +99,13 @@ namespace PRISMTest
 
             Console.WriteLine("Validating {0} {1}, side count {2}, perimeter {3}", color, shape, sides, perimeter);
 
-            Assert.That(shape, Is.EqualTo("Square"), "Shape name mismatch");
-            Assert.That(sides, Is.EqualTo(4), "Side count mismatch");
-            Assert.That(color, Is.EqualTo("Yellow"), "Color mismatch");
-            Assert.That(perimeter, Is.EqualTo(16), "Perimeter mismatch");
+            Assert.Multiple(() =>
+            {
+                Assert.That(shape, Is.EqualTo("Square"), "Shape name mismatch");
+                Assert.That(sides, Is.EqualTo(4), "Side count mismatch");
+                Assert.That(color, Is.EqualTo("Yellow"), "Color mismatch");
+                Assert.That(perimeter, Is.EqualTo(16), "Perimeter mismatch");
+            });
         }
 
         /// <summary>
@@ -133,10 +136,13 @@ namespace PRISMTest
 
             Console.WriteLine("Validating {0} {1}, side count {2}, perimeter {3}", color, shape, sides, perimeter);
 
-            Assert.That(shape, Is.EqualTo("Square"), "Shape name mismatch");
-            Assert.That(sides, Is.EqualTo(4), "Side count mismatch");
-            Assert.That(color, Is.EqualTo("Yellow"), "Color mismatch");
-            Assert.That(perimeter, Is.EqualTo(16), "Perimeter mismatch");
+            Assert.Multiple(() =>
+            {
+                Assert.That(shape, Is.EqualTo("Square"), "Shape name mismatch");
+                Assert.That(sides, Is.EqualTo(4), "Side count mismatch");
+                Assert.That(color, Is.EqualTo("Yellow"), "Color mismatch");
+                Assert.That(perimeter, Is.EqualTo(16), "Perimeter mismatch");
+            });
         }
 
         [TestCase("Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
@@ -420,9 +426,12 @@ namespace PRISMTest
 
             var success = dbTools.GetQueryResults(spCmd, out var queryResults, 1);
 
-            Assert.That(success, Is.True, "GetQueryResults returned false");
+            Assert.Multiple(() =>
+            {
+                Assert.That(success, Is.True, "GetQueryResults returned false");
 
-            Assert.That(queryResults, Is.Not.Empty, $"Row count in {tableName} should be non-zero, but was not");
+                Assert.That(queryResults, Is.Not.Empty, $"Row count in {tableName} should be non-zero, but was not");
+            });
 
             var columnMapping = dbTools.GetColumnMapping(columnNames);
 
@@ -722,8 +731,11 @@ namespace PRISMTest
 
             var emptyHeaderListB = DataTableUtils.GetExpectedHeaderLine(columnNamesByIdentifier, new List<TestTableColumnNames>(), "  ");
 
-            Assert.That(emptyHeaderListA, Is.Empty);
-            Assert.That(emptyHeaderListB, Is.Empty);
+            Assert.Multiple(() =>
+            {
+                Assert.That(emptyHeaderListA, Is.Empty);
+                Assert.That(emptyHeaderListB, Is.Empty);
+            });
 
             Console.WriteLine("Header lines were empty, as expected");
         }
@@ -777,9 +789,12 @@ namespace PRISMTest
 
             Console.WriteLine();
 
-            Assert.That(success, Is.True, "GetQueryResults returned false");
+            Assert.Multiple(() =>
+            {
+                Assert.That(success, Is.True, "GetQueryResults returned false");
 
-            Assert.That(queryResults, Is.Not.Empty, "Row count should be non-zero, but was not");
+                Assert.That(queryResults, Is.Not.Empty, "Row count should be non-zero, but was not");
+            });
 
             var expectedNames = expectedColumnNames.Split(',');
 
@@ -891,9 +906,12 @@ namespace PRISMTest
 
                 var success = dbTools.GetQueryResults(spCmd, out var queryResults, out var columnNames, 1);
 
-                Assert.That(success, Is.True, "GetQueryResults returned false");
+                Assert.Multiple(() =>
+                {
+                    Assert.That(success, Is.True, "GetQueryResults returned false");
 
-                Assert.That(queryResults, Is.Not.Empty, $"Row count in {tableName} should be non-zero, but was not");
+                    Assert.That(queryResults, Is.Not.Empty, $"Row count in {tableName} should be non-zero, but was not");
+                });
 
                 Console.WriteLine("{0} most recent entries in table {1}:", queryResults.Count, tableName);
                 ShowRowsFromTLogEntries(queryResults, columnNames);

@@ -436,8 +436,11 @@ namespace PRISMTest
                 Console.WriteLine("Error:   " + errorMessage);
             }
 
-            Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
-            Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
+                Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            });
         }
 
         [TestCase("ProteinSeqs", "Manager_Control")]
@@ -520,8 +523,11 @@ namespace PRISMTest
                 Console.WriteLine(string.Join(", ", row));
             }
 
-            Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
-            Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
+                Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            });
         }
 
         [TestCase("Gigasax", "dms5", "find_log_entry", false, 0)]

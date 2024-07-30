@@ -121,21 +121,27 @@ namespace PRISMTest
 
             Console.WriteLine("ParamName=[{0}], Value=[{1}], Comment=[{2}]", paramFileLine1.ParamName, paramFileLine1.ParamValue, paramFileLine1.Comment);
 
-            Assert.That(paramFileLine2.ParamName, Is.EqualTo(paramFileLine1.ParamName), "Parameter names don't match from the two calls to KeyValueParamFileLine");
-            Assert.That(paramFileLine2.ParamValue, Is.EqualTo(paramFileLine1.ParamValue), "Values don't match from the two calls to KeyValueParamFileLine");
+            Assert.Multiple(() =>
+            {
+                Assert.That(paramFileLine2.ParamName, Is.EqualTo(paramFileLine1.ParamName), "Parameter names don't match from the two calls to KeyValueParamFileLine");
+                Assert.That(paramFileLine2.ParamValue, Is.EqualTo(paramFileLine1.ParamValue), "Values don't match from the two calls to KeyValueParamFileLine");
+            });
 
             if (string.IsNullOrWhiteSpace(expectedParamName) && string.IsNullOrWhiteSpace(expectedValue))
                 return;
 
-            Assert.That(paramFileLine1.LineNumber, Is.EqualTo(lineNumber), "Line number mismatch");
+            Assert.Multiple(() =>
+            {
+                Assert.That(paramFileLine1.LineNumber, Is.EqualTo(lineNumber), "Line number mismatch");
 
-            Assert.That(paramFileLine1.Text, Is.EqualTo(lineText), "Full line text mismatch");
+                Assert.That(paramFileLine1.Text, Is.EqualTo(lineText), "Full line text mismatch");
 
-            Assert.That(paramFileLine1.ParamName, Is.EqualTo(expectedParamName), "Actual key does not match the expected key");
-            Assert.That(paramFileLine1.ParamValue, Is.EqualTo(expectedValue), "Actual value does not match the expected value");
+                Assert.That(paramFileLine1.ParamName, Is.EqualTo(expectedParamName), "Actual key does not match the expected key");
+                Assert.That(paramFileLine1.ParamValue, Is.EqualTo(expectedValue), "Actual value does not match the expected value");
 
-            if (!expectedComment.Equals(string.Empty))
-                Assert.That(paramFileLine1.Comment, Is.EqualTo(expectedComment), "Actual comment does not match the expected comment");
+                if (!expectedComment.Equals(string.Empty))
+                    Assert.That(paramFileLine1.Comment, Is.EqualTo(expectedComment), "Actual comment does not match the expected comment");
+            });
         }
 
         [TestCase("Color=green", false, "Color", "green")]
@@ -178,14 +184,20 @@ namespace PRISMTest
 
             Console.WriteLine("Key=[{0}], Value=[{1}], Comment=[{2}]", kvSetting2.Key, kvSetting2.Value, comment);
 
-            Assert.That(kvSetting1.Key, Is.EqualTo(kvSetting2.Key), "Keys don't match from the two calls to GetKeyValueSetting");
-            Assert.That(kvSetting1.Value, Is.EqualTo(kvSetting2.Value), "Values don't match from the two calls to GetKeyValueSetting");
+            Assert.Multiple(() =>
+            {
+                Assert.That(kvSetting1.Key, Is.EqualTo(kvSetting2.Key), "Keys don't match from the two calls to GetKeyValueSetting");
+                Assert.That(kvSetting1.Value, Is.EqualTo(kvSetting2.Value), "Values don't match from the two calls to GetKeyValueSetting");
+            });
 
             if (string.IsNullOrWhiteSpace(expectedKey) && string.IsNullOrWhiteSpace(expectedValue))
                 return;
 
-            Assert.That(kvSetting2.Key, Is.EqualTo(expectedKey), "Actual key does not match the expected key");
-            Assert.That(kvSetting2.Value, Is.EqualTo(expectedValue), "Actual value does not match the expected value");
+            Assert.Multiple(() =>
+            {
+                Assert.That(kvSetting2.Key, Is.EqualTo(expectedKey), "Actual key does not match the expected key");
+                Assert.That(kvSetting2.Value, Is.EqualTo(expectedValue), "Actual value does not match the expected value");
+            });
 
             if (!expectedComment.Equals(string.Empty))
                 Assert.That(comment, Is.EqualTo(expectedComment), "Actual comment does not match the expected comment");
@@ -271,8 +283,11 @@ namespace PRISMTest
             var paramFileReader = new KeyValueParamFileReader(TOOL_NAME, parameterFilePath);
             var success = paramFileReader.ParseKeyValueParameterFile(out _);
 
-            Assert.That(success, Is.False, "ParseKeyValueParameterFile returned true unexpectedly");
-            Assert.That(paramFileReader.ParamFileNotFound, Is.True, "Parameter file exists, but it was expected to be missing: " + parameterFilePath);
+            Assert.Multiple(() =>
+            {
+                Assert.That(success, Is.False, "ParseKeyValueParameterFile returned true unexpectedly");
+                Assert.That(paramFileReader.ParamFileNotFound, Is.True, "Parameter file exists, but it was expected to be missing: " + parameterFilePath);
+            });
 
             Console.WriteLine("Validated behavior trying to load a non-existent parameter file");
         }
@@ -285,8 +300,11 @@ namespace PRISMTest
             var paramFileReader = new KeyValueParamFileReader(TOOL_NAME, workingDirectoryPath, parameterFileName);
             var success = paramFileReader.ParseKeyValueParameterFile(out _);
 
-            Assert.That(success, Is.False, "ParseKeyValueParameterFile returned true unexpectedly");
-            Assert.That(paramFileReader.ParamFileNotFound, Is.True, "Parameter file exists, but it was expected to be missing: " + paramFileReader.ParamFilePath);
+            Assert.Multiple(() =>
+            {
+                Assert.That(success, Is.False, "ParseKeyValueParameterFile returned true unexpectedly");
+                Assert.That(paramFileReader.ParamFileNotFound, Is.True, "Parameter file exists, but it was expected to be missing: " + paramFileReader.ParamFilePath);
+            });
 
             Console.WriteLine("Validated behavior trying to load a non-existent parameter file");
         }
@@ -329,18 +347,21 @@ namespace PRISMTest
             if (string.IsNullOrWhiteSpace(expectedParamName) && string.IsNullOrWhiteSpace(expectedValue))
                 return;
 
-            Assert.That(paramFileLine.LineNumber, Is.EqualTo(lineNumber), "Line number mismatch");
+            Assert.Multiple(() =>
+            {
+                Assert.That(paramFileLine.LineNumber, Is.EqualTo(lineNumber), "Line number mismatch");
 
-            if (updateTextProperty)
-                Assert.That(paramFileLine.Text, Is.Not.EqualTo(lineText), "Full line text matched, but should not have");
-            else
-                Assert.That(paramFileLine.Text, Is.EqualTo(lineText), "Full line text mismatch, but should have matched");
+                if (updateTextProperty)
+                    Assert.That(paramFileLine.Text, Is.Not.EqualTo(lineText), "Full line text matched, but should not have");
+                else
+                    Assert.That(paramFileLine.Text, Is.EqualTo(lineText), "Full line text mismatch, but should have matched");
 
-            Assert.That(paramFileLine.ParamName, Is.EqualTo(expectedParamName), "Actual key does not match the expected key");
-            Assert.That(paramFileLine.ParamValue, Is.EqualTo(expectedValue), "Actual value does not match the expected value");
+                Assert.That(paramFileLine.ParamName, Is.EqualTo(expectedParamName), "Actual key does not match the expected key");
+                Assert.That(paramFileLine.ParamValue, Is.EqualTo(expectedValue), "Actual value does not match the expected value");
 
-            if (!expectedComment.Equals(string.Empty))
-                Assert.That(paramFileLine.Comment, Is.EqualTo(expectedComment), "Actual comment does not match the expected comment");
+                if (!expectedComment.Equals(string.Empty))
+                    Assert.That(paramFileLine.Comment, Is.EqualTo(expectedComment), "Actual comment does not match the expected comment");
+            });
         }
     }
 }

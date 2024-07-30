@@ -241,8 +241,11 @@ namespace PRISMTest
             Console.WriteLine("Core usage: {0:F2}", coreUsage);
             Console.WriteLine("Total CPU usage: {0:F1}%", cpuUsageTotal);
 
-            Assert.That(coreUsage, Is.EqualTo(expectedCoreUsage).Within(0.01), "Core usage mismatch");
-            Assert.That(cpuUsageTotal, Is.EqualTo(expectedCpuUsageTotal).Within(0.1), "Total CPU usage mismatch");
+            Assert.Multiple(() =>
+            {
+                Assert.That(coreUsage, Is.EqualTo(expectedCoreUsage).Within(0.01), "Core usage mismatch");
+                Assert.That(cpuUsageTotal, Is.EqualTo(expectedCpuUsageTotal).Within(0.1), "Total CPU usage mismatch");
+            });
         }
 
         private void CopyCPUInfoFile(FileSystemInfo procDirectory, string sourceProcDirectoryPath)

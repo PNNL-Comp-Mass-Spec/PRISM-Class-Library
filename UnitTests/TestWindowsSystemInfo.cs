@@ -65,8 +65,11 @@ namespace PRISMTest
             Console.WriteLine("PInv: {0} processor(s) and {1} cores", pirvProcCount, pinvCore);
 
 #if !NETCOREAPP2_0
-            Assert.That(pirvProcCount, Is.EqualTo(wmiPhysicalProcs));
-            Assert.That(pinvCore, Is.EqualTo(wmiCore));
+            Assert.Multiple(() =>
+            {
+                Assert.That(pirvProcCount, Is.EqualTo(wmiPhysicalProcs));
+                Assert.That(pinvCore, Is.EqualTo(wmiCore));
+            });
 #endif
         }
 

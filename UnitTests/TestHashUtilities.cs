@@ -78,8 +78,11 @@ namespace PRISMTest
             Console.WriteLine("MD5 hash for '{0}' is {1}", text, md5);
             Console.WriteLine("MD5 hash is {0}", base64md5);
 
-            Assert.That(md5, Is.EqualTo(expectedHash));
-            Assert.That(base64md5, Is.EqualTo(expectedBase64Hash));
+            Assert.Multiple(() =>
+            {
+                Assert.That(md5, Is.EqualTo(expectedHash));
+                Assert.That(base64md5, Is.EqualTo(expectedBase64Hash));
+            });
         }
 
         [TestCase("2962ffd5238c526f570a813188ae2aaa")]
@@ -98,8 +101,11 @@ namespace PRISMTest
             Console.WriteLine("MD5 hash for {0} is {1}", Path.GetFileName(HashTestFilePath), md5);
             Console.WriteLine("Base64 MD5 hash is {0}", base64md5);
 
-            Assert.That(md5, Is.EqualTo(expectedHash));
-            Assert.That(base64md5, Is.EqualTo(expectedBase64Hash));
+            Assert.Multiple(() =>
+            {
+                Assert.That(md5, Is.EqualTo(expectedHash));
+                Assert.That(base64md5, Is.EqualTo(expectedBase64Hash));
+            });
         }
 
         [TestCase(HashUtilities.HashTypeConstants.CRC32, "6478B34B")]

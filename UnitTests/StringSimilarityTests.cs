@@ -87,11 +87,14 @@ namespace PRISMTest
                 return;
             }
 
-            Assert.That(similarityScore, Is.EqualTo(expectedSimilarityScore).Within(0.0001),
-                        $"Actual score of {similarityScore} does not match the expected score, {expectedSimilarityScore}");
+            Assert.Multiple(() =>
+            {
+                Assert.That(similarityScore, Is.EqualTo(expectedSimilarityScore).Within(0.0001),
+                            $"Actual score of {similarityScore} does not match the expected score, {expectedSimilarityScore}");
 
-            Assert.That(similarityScoreNoSymbolsOrWhitespace, Is.EqualTo(expectedSimilarityScoreNoSymbolsOrWhitespace).Within(0.0001),
-                        $"Actual score of {similarityScoreNoSymbolsOrWhitespace} does not match the expected score, {expectedSimilarityScoreNoSymbolsOrWhitespace} (ignore whitespace)");
+                Assert.That(similarityScoreNoSymbolsOrWhitespace, Is.EqualTo(expectedSimilarityScoreNoSymbolsOrWhitespace).Within(0.0001),
+                            $"Actual score of {similarityScoreNoSymbolsOrWhitespace} does not match the expected score, {expectedSimilarityScoreNoSymbolsOrWhitespace} (ignore whitespace)");
+            });
         }
     }
 }

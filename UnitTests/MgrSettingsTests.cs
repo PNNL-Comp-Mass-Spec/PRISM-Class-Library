@@ -56,8 +56,11 @@ namespace PRISMTest
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
 
-            Assert.That(configFile.Exists, Is.True);
-            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            Assert.Multiple(() =>
+            {
+                Assert.That(configFile.Exists, Is.True);
+                Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            });
 
             var configFilePaths = new List<string>
             {
@@ -78,8 +81,11 @@ namespace PRISMTest
         public void TestLoadSingleFileConfig()
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
-            Assert.That(configFile.Exists, Is.True);
-            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            Assert.Multiple(() =>
+            {
+                Assert.That(configFile.Exists, Is.True);
+                Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            });
 
             var mgrSettings = new MgrSettings();
 
@@ -94,8 +100,11 @@ namespace PRISMTest
         public void TestLoadMultiFileConfig()
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg.exe.config");
-            Assert.That(configFile.Exists, Is.True);
-            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            Assert.Multiple(() =>
+            {
+                Assert.That(configFile.Exists, Is.True);
+                Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            });
 
             var mgrSettings = new MgrSettings();
 
@@ -110,8 +119,11 @@ namespace PRISMTest
         public void TestLoadMultiFileConfig2()
         {
             var configFile = new FileInfo(@"\\proto-2\UnitTest_Files\PRISM\MgrSettingsTests\TestProg2.exe.config");
-            Assert.That(configFile.Exists, Is.True);
-            Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            Assert.Multiple(() =>
+            {
+                Assert.That(configFile.Exists, Is.True);
+                Assert.That(configFile.DirectoryName, Is.Not.Null, "Could not determine the parent directory of the config file");
+            });
 
             var mgrSettings = new MgrSettings();
 
