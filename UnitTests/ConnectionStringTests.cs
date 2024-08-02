@@ -146,6 +146,8 @@ namespace PRISMTest
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "", "", null, "", "Host=prismdb2;Database=dms")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "", "", false, "", "Host=prismdb2;Database=dms")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "", "", true, "", "Host=prismdb2;Database=dms")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "dmsreader", "", null, "", "Host=prismdb2;Database=dms;Username=dmsreader")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "dmsreader", "", false, "", "Host=prismdb2;Database=dms;Username=dmsreader")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "SecretKey", null, "PRISMTest", "Host=prismdb2;Database=dms;Username=d3l243;Password=SecretKey;Application Name=PRISMTest")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "SecretKey", false, "PRISMTest", "Host=prismdb2;Database=dms;Username=d3l243;Password=SecretKey;Application Name=PRISMTest")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2", "dms", "d3l243", "SecretKey", true, "PRISMTest", "Host=prismdb2;Database=dms;Username=d3l243;Password=SecretKey;Application Name=PRISMTest")]
