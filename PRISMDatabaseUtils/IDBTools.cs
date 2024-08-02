@@ -86,7 +86,7 @@ namespace PRISMDatabaseUtils
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -106,10 +106,10 @@ namespace PRISMDatabaseUtils
         /// Uses the connection string passed to the constructor of this class
         /// By default, retries the query up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         bool GetQueryScalar(
@@ -132,7 +132,7 @@ namespace PRISMDatabaseUtils
         /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -155,7 +155,7 @@ namespace PRISMDatabaseUtils
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -177,7 +177,7 @@ namespace PRISMDatabaseUtils
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -198,11 +198,11 @@ namespace PRISMDatabaseUtils
         /// Numbers are converted to their string equivalent
         /// By default, retries the query up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         bool GetQueryResults(
@@ -222,12 +222,12 @@ namespace PRISMDatabaseUtils
         /// Numbers are converted to their string equivalent
         /// By default, retries the query up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="columnNames">Column names (as returned by the database)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         bool GetQueryResults(
@@ -246,10 +246,10 @@ namespace PRISMDatabaseUtils
         /// Uses the connection string passed to the constructor of this class
         /// By default, retries the query up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="queryResults">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         bool GetQueryResultsDataTable(
@@ -266,10 +266,10 @@ namespace PRISMDatabaseUtils
         /// Uses the connection string passed to the constructor of this class
         /// By default, retries the query up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         bool GetQueryResultsDataSet(
@@ -290,7 +290,7 @@ namespace PRISMDatabaseUtils
         /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>Data; empty if no data or error</returns>
@@ -310,11 +310,11 @@ namespace PRISMDatabaseUtils
         /// Uses the connection string passed to the constructor of this class
         /// By default, retries the connection (but not the query) up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>Data; empty if no data or error</returns>
         IEnumerable<T> GetQueryResultsEnumerable<T>(

@@ -253,7 +253,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -281,10 +281,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>Uses the connection string passed to the constructor of this class</para>
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="queryResult">Result (single value) returned by the query</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         public bool GetQueryScalar(
@@ -404,7 +404,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -437,11 +437,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>Numbers are converted to their string equivalent</para>
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         public bool GetQueryResults(
@@ -472,12 +472,12 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// the names will be capitalized by this method (where possible)
         /// </para>
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="results">Results (list of, list of strings)</param>
         /// <param name="columnNames">Column names (as returned by the database)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         public bool GetQueryResults(
@@ -554,7 +554,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -582,10 +582,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>Uses the connection string passed to the constructor of this class</para>
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="queryResults">Results (as a DataTable)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         public bool GetQueryResultsDataTable(
@@ -620,7 +620,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="sqlQuery">Query to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
@@ -648,10 +648,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>Uses the connection string passed to the constructor of this class</para>
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="queryResults">Results (as a DataSet)</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         public bool GetQueryResultsDataSet(
@@ -686,10 +686,10 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <para>Uses the connection string passed to the constructor of this class</para>
         /// <para>By default, retries the query up to 3 times</para>
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="readMethod">Method to read and return data from the command; command will be ready to run, executing and processing of returned data is left to this Action</param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>True if success, false if an error</returns>
         private bool GetQueryResults(
@@ -803,7 +803,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query</param>
         /// <param name="timeoutSeconds">Number of seconds to set as the command timeout; if &lt;=0, <see cref="TimeoutSeconds"/> is used</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>Data; empty if no data or error</returns>
@@ -832,11 +832,11 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// Uses the connection string passed to the constructor of this class
         /// By default, retries the connection (but not the query) up to 3 times
         /// </remarks>
-        /// <param name="cmd">Query to run</param>
+        /// <param name="cmd">Query or procedure to run</param>
         /// <param name="rowObjectCreator">method to create an object from a row in a <see cref="DbDataReader"/></param>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
         /// <param name="maxRowsToReturn">Maximum rows to return; 0 to return all rows</param>
-        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the call to the procedure</param>
+        /// <param name="retryDelaySeconds">Number of seconds to wait between retrying the query or procedure</param>
         /// <param name="callingFunction">Name of the calling method (for logging purposes)</param>
         /// <returns>Data; empty if no data or error</returns>
         public IEnumerable<T> GetQueryResultsEnumerable<T>(
