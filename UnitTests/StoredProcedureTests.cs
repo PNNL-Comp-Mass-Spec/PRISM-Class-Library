@@ -57,7 +57,7 @@ namespace PRISMTest
         /// </remarks>
         /// <param name="server">Server</param>
         /// <param name="database">Database</param>
-        [TestCase("prismdb2", "dms")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms")]
         public void TestSearchLogsPostgres(string server, string database)
         {
             var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, DMS_WEB_USER);
@@ -212,7 +212,7 @@ namespace PRISMTest
         /// <summary>
         /// Retrieve values from PostgreSQL function mc.get_manager_parameters()
         /// </summary>
-        [TestCase("prismdb2", "dms")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestGetManagerParametersPostgresFunction(string server, string database)
         {
@@ -239,7 +239,7 @@ namespace PRISMTest
         /// <summary>
         /// Retrieve values from PostgreSQL function mc.get_manager_parameters()
         /// </summary>
-        [TestCase("prismdb2", "dms")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestGetManagerParametersPostgresFunctionWithParameters(string server, string database)
         {
@@ -368,7 +368,7 @@ namespace PRISMTest
             TestEnableDisableManagers(connectionString, "enable_disable_managers");
         }
 
-        [TestCase("prismdb2", "dms")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestEnableDisableManagersPostgres(string server, string database)
         {
@@ -451,7 +451,7 @@ namespace PRISMTest
             TestEnableDisableManagersData(connectionString, "enable_disable_managers");
         }
 
-        [TestCase("prismdb2", "dms")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms")]
         [Category("DatabaseNamedUser")]
         public void TestEnableDisableManagersDataPostgres(string server, string database)
         {
@@ -537,9 +537,9 @@ namespace PRISMTest
             TestGetReturnCode(connectionString, procedureName, skipProcedureCall, expectedReturnCode);
         }
 
-        [TestCase("prismdb2", "dms", "find_log_entry", true, 0, "")]
-        [TestCase("prismdb2", "dms", "find_log_entry", true, 2200, "2200L")]
-        [TestCase("prismdb2", "dms", "find_log_entry", true, 2, "2F005")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "find_log_entry", true, 0, "")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "find_log_entry", true, 2200, "2200L")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "find_log_entry", true, 2, "2F005")]
         public void TestGetReturnCodePostgres(
             string server,
             string database,
@@ -638,7 +638,7 @@ namespace PRISMTest
         // On Proto-2, the Jenkins service runs under the NETWORK SERVICE account
         // The required location for the PgPass file is: C:\Windows\ServiceProfiles\NetworkService\AppData\Roaming\postgresql\pgpass.conf
 
-        [TestCase("prismdb2", "dms", 0)]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", 0)]
         [Category("DatabaseNamedUser")]
         public void TestGetNamedReturnCodePostgres(string server, string database, int expectedReturnCode)
         {
