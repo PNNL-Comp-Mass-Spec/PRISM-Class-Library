@@ -1525,7 +1525,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                     return AddParameter(command, name, dbType, size, string.Empty, direction);
 
                 default:
-                    return AddParameter(command, name, dbType, size, null, direction);
+                    return AddParameter(command, name, dbType, size, DBNull.Value, direction);
             }
         }
 
