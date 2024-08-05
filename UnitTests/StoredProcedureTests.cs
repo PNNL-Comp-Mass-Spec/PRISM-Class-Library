@@ -460,7 +460,7 @@ namespace PRISMTest
         }
 
         /// <summary>
-        /// Invoke stored procedure EnableDisableManagers (or enable_disable_managers) and examine output parameter @message (or _message)
+        /// Invoke stored procedure enable_disable_managers and examine output parameter @message (or _message)
         /// </summary>
         /// <remarks>
         /// On PostgreSQL, procedure mc.enable_disable_managers returns query results using a reference cursor (_results refcursor)
@@ -853,6 +853,73 @@ namespace PRISMTest
             var postSuccess = dbTools.GetQueryScalar(spCmd, out _, 1);
 
             VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
+        }
+
+
+        [TestCase("Gigasax", "DMS_Capture")]
+        [Category("DatabaseIntegrated")]
+        public void TestRequestCaptureStepTaskSqlServer(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringSqlServer(server, database, "Integrated", string.Empty);
+            TestRequestCaptureStepTask(connectionString, "request_ctm_step_task");
+        }
+
+        [TestCase("prismdb2.emsl.pnl.gov", "dms")]
+        [Category("DatabaseNamedUser")]
+        public void TestRequestCaptureStepTaskPostgres(string server, string database)
+        {
+            var connectionString = TestDBTools.GetConnectionStringPostgres(server, database, "svc-dms");
+            TestRequestCaptureStepTask(connectionString, "cap.request_ctm_step_task");
+        }
+
+        /// <summary>
+        /// Invoke stored procedure request_ctm_step_task and examine the results
+        /// </summary>
+        /// <remarks>
+        /// On PostgreSQL, procedure mc.request_ctm_step_task returns query results using a reference cursor (_results refcursor)
+        /// ExecuteSPData looks for parameters of type refcursor and retrieves the results
+        /// If not tasks are available, the cursor will not be open
+        /// </remarks>
+        /// <param name="connectionString">Connection string</param>
+        /// <param name="procedureNameWithSchema">Procedure name</param>
+        private void TestRequestCaptureStepTask(string connectionString, string procedureNameWithSchema)
+        {
+            var dbTools = DbToolsFactory.GetDBTools(connectionString, debugMode: true);
+
+            var spCmd = dbTools.CreateCommand("request_ctm_step_task", CommandType.StoredProcedure);
+
+            dbTools.AddParameter(spCmd, "@processorName", SqlType.VarChar, 128, "Monroe_CTM");
+            var jobParam = dbTools.AddParameter(spCmd, "@job", SqlType.Int, ParameterDirection.InputOutput);
+            var messageParam = dbTools.AddParameter(spCmd, "@message", SqlType.VarChar, 512, ParameterDirection.InputOutput);
+            dbTools.AddTypedParameter(spCmd, "@infoLevel", SqlType.TinyInt, value: 1);
+            dbTools.AddParameter(spCmd, "@managerVersion", SqlType.VarChar, 128, "(unknown version)");
+            dbTools.AddTypedParameter(spCmd, "@jobCountToPreview", SqlType.Int, value: 10);
+
+            jobParam.Value = 0;
+
+            // Uncomment if required (this class never assigned a value to this parameter, though the procedure supports limiting assigned capture jobs if manager parameter "perspective" is "server")
+            // dbTools.AddTypedParameter(spCmd, "@serverPerspectiveEnabled", SqlType.TinyInt, value: serverPerspectiveEnabled);
+
+            var returnParam = dbTools.AddParameter(spCmd, "@returnCode", SqlType.VarChar, 64, ParameterDirection.InputOutput);
+
+            Console.WriteLine("Running stored procedure " + procedureNameWithSchema + " using dbTools of type " + dbTools.DbServerType);
+
+            var returnCode = dbTools.ExecuteSPData(spCmd, out var results, 1);
+
+            Console.WriteLine();
+            Console.WriteLine("Message: " + messageParam.Value);
+            Console.WriteLine("Return:  " + returnParam.Value);
+
+            foreach (var row in results)
+            {
+                Console.WriteLine(string.Join(", ", row));
+            }
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnCode, Is.EqualTo(0), procedureNameWithSchema + " Procedure did not return 0");
+                Assert.That(returnParam.Value, Is.EqualTo(0), procedureNameWithSchema + " @Return (or _returnCode) is not 0");
+            });
         }
 
         private void VerifyTestPostLogEntry(IDBTools dbTools, string user, bool expectedPostSuccess, bool actualPostSuccess)
