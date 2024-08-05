@@ -1091,7 +1091,23 @@ namespace PRISMDatabaseUtils.PostgreSQL
                                 // Cursor found; read it and populate the output object
                                 using var cmd = new NpgsqlCommand($"FETCH ALL FROM {cursorName}", dbConnection);
 
-                                readMethod(cmd);
+                                try
+                                {
+                                    readMethod(cmd);
+                                }
+                                catch (Exception ex)
+                                {
+                                    var cursorErrorMatcher = new Regex("cursor.+does not exist", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+                                    if (cursorErrorMatcher.IsMatch(ex.Message))
+                                    {
+                                        OnDebugEvent("Cursor {0} is does not exist, which means the procedure never opened the cursor");
+                                    }
+                                    else
+                                    {
+                                        throw;
+                                    }
+                                }
                             }
 
                             resultCode = GetReturnCode(sqlCmd.Parameters);
