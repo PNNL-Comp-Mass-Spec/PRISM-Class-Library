@@ -1835,12 +1835,16 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
             permissionDenied = false;
 
+            // Example context for the "DBNull.Value" text below:
+            // Parameter '_remoteProgress' cannot be null, DBNull.Value should be used instead
+
             return ex.Message.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("No such host is known", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("open data reader exists for this command", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("LDAP authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0 ||
                    ex.Message.IndexOf("No password has been provided but the backend requires one", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   ex.Message.IndexOf("password authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0;
+                   ex.Message.IndexOf("password authentication failed for user", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   ex.Message.IndexOf("cannot be null, DBNull.Value should be used instead", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>
