@@ -855,7 +855,6 @@ namespace PRISMTest
             VerifyTestPostLogEntry(dbTools, user, expectedPostSuccess, postSuccess);
         }
 
-
         [TestCase("Gigasax", "DMS_Capture")]
         [Category("DatabaseIntegrated")]
         public void TestRequestCaptureStepTaskSqlServer(string server, string database)
@@ -906,9 +905,16 @@ namespace PRISMTest
 
             var returnCode = dbTools.ExecuteSPData(spCmd, out var results, 1);
 
+
             Console.WriteLine();
             Console.WriteLine("Message: " + messageParam.Value);
             Console.WriteLine("Return:  " + returnParam.Value);
+
+            if (returnCode is 53000 or 5301)
+            {
+                Console.WriteLine("ReturnCode is {0}, No tasks are available", returnCode);
+                return;
+            }
 
             foreach (var row in results)
             {
