@@ -1101,7 +1101,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
                                     if (cursorErrorMatcher.IsMatch(ex.Message))
                                     {
-                                        OnDebugEvent("Cursor {0} is does not exist, which means the procedure never opened the cursor");
+                                        OnDebugEvent("Cursor {0} does not exist, which means the procedure never opened the cursor", cursorName);
                                     }
                                     else
                                     {
