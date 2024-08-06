@@ -20,6 +20,8 @@ namespace PRISMTest
         public const string DMS_READER = "dmsreader";
         public const string DMS_READER_PASSWORD = "dms4fun";
 
+        private const string PRISMDB_CONNECTION_STRING = "Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Database=dms";
+
         public enum TestTableColumnNames
         {
             ShapeName = 0,
@@ -250,6 +252,41 @@ namespace PRISMTest
             }
 
             DisplayParameters(addedParameters);
+        }
+
+        [Test]
+        public void TestAddTypedBooleanValueForSmallIntParameter()
+        {
+            var dbTools = DbToolsFactory.GetDBTools(DbServerTypes.PostgreSQL, PRISMDB_CONNECTION_STRING);
+
+            var cmd = dbTools.CreateCommand("store_job_psm_stats", CommandType.StoredProcedure);
+
+            // Define parameter for procedure's return value
+            // If querying a Postgres DB, dbTools will auto-change "@return" to "_returnCode"
+            dbTools.AddParameter(cmd, "@Return", SqlType.Int, ParameterDirection.ReturnValue);
+
+            // ReSharper disable ConvertToConstant.Local
+            var msgfThresholdIsEValue = true;
+            var dynamicReporterIon = true;
+
+            // ReSharper restore ConvertToConstant.Local
+
+            // Excerpt of parameters from Analysis_Manager\Plugins\AM_MSGF_PlugIn\MSGFResultsSummarizerDLL\ResultsSummarizer.cs
+            dbTools.AddTypedParameter(cmd, "@job", SqlType.Int, value: 0);
+
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
+
+            var msgfThresholdIsEValueParam = dbTools.AddTypedParameter(cmd, "@msgfThresholdIsEValue", SqlType.TinyInt, value: msgfThresholdIsEValue ? 1 : 0);
+            var dynamicReporterIonParam = dbTools.AddTypedParameter(cmd, "@dynamicReporterIon", SqlType.TinyInt, value: dynamicReporterIon);
+            dbTools.AddTypedParameter(cmd, "@dynamicReporterIon_SmallInt", SqlType.SmallInt, value: dynamicReporterIon);
+            dbTools.AddTypedParameter(cmd, "@dynamicReporterIon_Int", SqlType.Int, value: dynamicReporterIon);
+
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
+
+            dbTools.AddTypedParameter(cmd, "@infoOnly", SqlType.Boolean, value: false);
+
+            Console.WriteLine("MSGF ThresholdIsEValue value: {0}", msgfThresholdIsEValueParam.Value);
+            Console.WriteLine("Dynamic Reporter Ion value: {0}", dynamicReporterIonParam.Value);
         }
 
         private void DisplayParameters(IEnumerable<DbParameter> addedParameters)
