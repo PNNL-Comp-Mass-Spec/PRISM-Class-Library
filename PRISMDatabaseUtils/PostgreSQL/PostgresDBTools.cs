@@ -1608,6 +1608,30 @@ namespace PRISMDatabaseUtils.PostgreSQL
         // ReSharper disable once UnusedMember.Global
 
         /// <inheritdoc />
+        public DbParameter AddTypedParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size = 0,
+            bool value = default,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+            var valueToStore = value ? (short)1 : (short)0;
+
+            switch (dbType)
+            {
+                case SqlType.TinyInt:
+                    return AddTypedParameter(command, name, dbType, size, (byte)valueToStore, direction);
+                case SqlType.SmallInt:
+                    return AddTypedParameter(command, name, dbType, size, valueToStore, direction);
+                case SqlType.Int:
+                    return AddTypedParameter(command, name, dbType, size, (int)valueToStore, direction);
+                default:
+                    return AddTypedParameter<bool>(command, name, dbType, size, value, direction);
+            }
+        }
+
+        /// <inheritdoc />
         public DbParameter AddTypedParameter<T>(
             DbCommand command,
             string name,
@@ -1625,8 +1649,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
             {
                 NpgsqlDbType = ConvertSqlType(dbType),
                 Size = size,
-                Direction = direction,
-                Value = value,
+                Direction = direction
             };
 
             if (dbType == SqlType.Decimal)

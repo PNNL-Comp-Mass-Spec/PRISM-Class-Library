@@ -481,6 +481,27 @@ namespace PRISMDatabaseUtils
         /// <summary>
         /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives
         /// </summary>
+        /// <remarks>
+        /// Auto-convert boolean values to 0 or 1 when the data type of the argument is TinyInt, SmallInt, or Int
+        /// </remarks>
+        /// <param name="command">Database command</param>
+        /// <param name="name">Parameter name</param>
+        /// <param name="dbType">Database data type</param>
+        /// <param name="size">Size (typically for varchar, but sometimes for date and time)</param>
+        /// <param name="value">Parameter value</param>
+        /// <param name="direction">Parameter direction</param>
+        /// <returns>The newly added parameter</returns>
+        public DbParameter AddTypedParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size = 0,
+            bool value = default,
+            ParameterDirection direction = ParameterDirection.Input);
+
+        /// <summary>
+        /// Adds a parameter to the DbCommand, appropriate for the database type. If supported by the database, this version can avoid boxing of primitives
+        /// </summary>
         /// <param name="command">Database command</param>
         /// <param name="name">Parameter name</param>
         /// <param name="dbType">Database data type</param>

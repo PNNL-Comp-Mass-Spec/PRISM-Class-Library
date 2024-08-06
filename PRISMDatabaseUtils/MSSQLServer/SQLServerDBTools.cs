@@ -1528,6 +1528,20 @@ namespace PRISMDatabaseUtils.MSSQLServer
             return param;
         }
 
+        // ReSharper disable once UnusedMember.Global
+
+        /// <inheritdoc />
+        public DbParameter AddTypedParameter(
+            DbCommand command,
+            string name,
+            SqlType dbType,
+            int size = 0,
+            bool value = default,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+            return AddTypedParameter<bool>(command, name, dbType, size, value, direction);
+        }
+
         /// <inheritdoc />
         public DbParameter AddTypedParameter<T>(
             DbCommand command,
