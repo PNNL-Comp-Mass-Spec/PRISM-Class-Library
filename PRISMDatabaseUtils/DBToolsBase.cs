@@ -129,9 +129,9 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Get the .NET DbType for the given data type name
+        /// Get the .NET System.Data.DbType for the given data type name
         /// </summary>
-        /// <param name="dataTypeName">Data type name, supporting various synonyms for each data type</param>
+        /// <param name="dataTypeName">Data type name, supporting various synonyms of each data type</param>
         /// <param name="dataType">Output: SQL data type</param>
         /// <param name="supportsSize">Output: True if the data type supports a value for size</param>
         /// <returns>True if a recognized data type, otherwise false</returns>
@@ -162,6 +162,7 @@ namespace PRISMDatabaseUtils
                 case "int32":
                 case "integer":
                 case "int4":
+                case "oid":
                     dataType = DbType.Int32;
                     return true;
 
@@ -179,6 +180,7 @@ namespace PRISMDatabaseUtils
 
                 case "float":
                 case "double":
+                case "double precision":
                     dataType = DbType.Double;
                     return true;
 
@@ -189,6 +191,7 @@ namespace PRISMDatabaseUtils
                     return true;
 
                 case "char":
+                case "\"char\"":    // Information schema view information_schema.parameters includes double quotes for columns of type char: "char"
                 case "character":
                 case "nchar":
                     dataType = DbType.String;
@@ -197,12 +200,15 @@ namespace PRISMDatabaseUtils
 
                 // ReSharper disable StringLiteralTypo
                 case "varchar":
+                case "character varying":
                 case "nvarchar":
                 case "text":
                 case "citext":
                 case "ntext":
+                case "json":
                 case "name":
                 case "string":
+                case "regclass":
                     dataType = DbType.String;
                     return true;
 
@@ -212,6 +218,7 @@ namespace PRISMDatabaseUtils
                 case "time":
                 case "datetime":
                 case "timestamp":
+                case "timestamp without time zone":
                     dataType = DbType.DateTime;
                     supportsSize = true;
                     return true;
@@ -219,6 +226,7 @@ namespace PRISMDatabaseUtils
                 // ReSharper disable StringLiteralTypo
                 case "datetimeoffset":
                 case "timestamptz":
+                case "timestamp with time zone":
                     dataType = DbType.DateTimeOffset;
                     supportsSize = true;
                     return true;
@@ -227,7 +235,13 @@ namespace PRISMDatabaseUtils
 
                 case "blob":
                 case "binary":
+                case "bytea":
                     dataType = DbType.Binary;
+                    return true;
+
+                case "inet":
+                    // IP address
+                    dataType = DbType.String;
                     return true;
 
                 case "interval":
@@ -246,6 +260,7 @@ namespace PRISMDatabaseUtils
                     dataType = DbType.Xml;
                     return true;
 
+                case "refcursor":
                 case "sql_variant":
                     dataType = DbType.Object;
                     return true;
@@ -256,7 +271,7 @@ namespace PRISMDatabaseUtils
         }
 
         /// <summary>
-        /// Get the SqlType enum for the given data type name
+        /// Get the PRISMDatabaseUtils.SqlType enum for the given data type name
         /// </summary>
         /// <param name="dataTypeName">Data type name, supporting various synonyms for each data type</param>
         /// <param name="dataType">Output: SQL data type</param>
