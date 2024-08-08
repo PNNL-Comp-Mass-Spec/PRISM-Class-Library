@@ -236,11 +236,11 @@ namespace PRISMDatabaseUtils
                 // ReSharper disable once StringLiteralTypo
                 case "uuid":
                 case "uniqueidentifier":
-                    dataType = DbType.String;
+                    dataType = DbType.Guid;
                     return true;
 
                 case "xml":
-                    dataType = DbType.String;
+                    dataType = DbType.Xml;
                     return true;
 
                 case "sql_variant":
@@ -351,16 +351,9 @@ namespace PRISMDatabaseUtils
                             dataType = SqlType.Interval;
                             return true;
 
-                        case "uuid":
-                        case "uniqueidentifier":
-                            dataType = SqlType.UUID;
                             return true;
 
                         // ReSharper restore StringLiteralTypo
-
-                        case "xml":
-                            dataType = SqlType.XML;
-                            return true;
 
                         case "json":
                             dataType = SqlType.JSON;
@@ -397,7 +390,13 @@ namespace PRISMDatabaseUtils
                     supportsSize = true;
                     return true;
 
+                case DbType.Guid:
+                    dataType = SqlType.UUID;
+                    return true;
 
+                case DbType.Xml:
+                    dataType = SqlType.XML;
+                    return true;
 
                 default:
                     // Unsupported type
