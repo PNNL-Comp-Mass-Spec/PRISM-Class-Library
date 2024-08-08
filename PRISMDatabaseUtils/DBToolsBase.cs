@@ -227,6 +227,12 @@ namespace PRISMDatabaseUtils
                     dataType = DbType.Binary;
                     return true;
 
+                case "interval":
+                    // Period of time, e.g. '1 day, 1 hour'
+                    // Treat as a string, though method GetSqlTypeByDataTypeName() will set dataType to SqlType.Interval
+                    dataType = DbType.String;
+                    return true;
+
                 // ReSharper disable once StringLiteralTypo
                 case "uuid":
                 case "uniqueidentifier":
@@ -341,6 +347,8 @@ namespace PRISMDatabaseUtils
                         case "name":
                             dataType = SqlType.Name;
                             supportsSize = true;
+                        case "interval":
+                            dataType = SqlType.Interval;
                             return true;
 
                         case "uuid":
@@ -389,14 +397,9 @@ namespace PRISMDatabaseUtils
                     supportsSize = true;
                     return true;
 
+
+
                 default:
-
-                    if (dataTypeName.Equals("interval", StringComparison.OrdinalIgnoreCase))
-                    {
-                        dataType = SqlType.Interval;
-                        return true;
-                    }
-
                     // Unsupported type
                     // Includes DbType.Binary and DbType.Object
 
