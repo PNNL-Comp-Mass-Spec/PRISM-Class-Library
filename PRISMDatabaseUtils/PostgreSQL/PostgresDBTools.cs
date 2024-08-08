@@ -1618,6 +1618,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
         {
             var valueToStore = value ? (short)1 : (short)0;
 
+            // ReSharper disable once ConvertSwitchStatementToSwitchExpression
             switch (dbType)
             {
                 case SqlType.TinyInt:
