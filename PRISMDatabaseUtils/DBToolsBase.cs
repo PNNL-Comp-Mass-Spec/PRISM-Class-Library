@@ -192,6 +192,7 @@ namespace PRISMDatabaseUtils
                 case "character":
                 case "nchar":
                     dataType = DbType.String;
+                    supportsSize = true;
                     return true;
 
                 // ReSharper disable StringLiteralTypo
@@ -212,12 +213,14 @@ namespace PRISMDatabaseUtils
                 case "datetime":
                 case "timestamp":
                     dataType = DbType.DateTime;
+                    supportsSize = true;
                     return true;
 
                 // ReSharper disable StringLiteralTypo
                 case "datetimeoffset":
                 case "timestamptz":
                     dataType = DbType.DateTimeOffset;
+                    supportsSize = true;
                     return true;
 
                 // ReSharper restore StringLiteralTypo
@@ -344,13 +347,12 @@ namespace PRISMDatabaseUtils
                             dataType = SqlType.Citext;
                             return true;
 
-                        case "name":
-                            dataType = SqlType.Name;
-                            supportsSize = true;
                         case "interval":
                             dataType = SqlType.Interval;
                             return true;
 
+                        case "name":
+                            dataType = SqlType.Name;
                             return true;
 
                         // ReSharper restore StringLiteralTypo
