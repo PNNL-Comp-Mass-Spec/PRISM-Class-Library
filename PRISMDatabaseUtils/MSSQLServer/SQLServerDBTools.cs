@@ -1514,6 +1514,13 @@ namespace PRISMDatabaseUtils.MSSQLServer
                 throw new ArgumentException($"Method AddParameter requires a parameter of type {typeof(SqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
 
+            if (value?.GetType() == typeof(ParameterDirection))
+            {
+                throw new ArgumentException(
+                    string.Format("Argument {0} of method AddParameter should be a value matching the data type specified by argument {1}, not a ParameterDirection value (since that is the 6th argument)",
+                        nameof(value), nameof(dbType)), nameof(value));
+            }
+
             var param = new SqlParameter(name, ConvertSqlType(dbType), size)
             {
                 Direction = direction,
@@ -1551,6 +1558,13 @@ namespace PRISMDatabaseUtils.MSSQLServer
             T value = default,
             ParameterDirection direction = ParameterDirection.Input)
         {
+            if (typeof(T) == typeof(ParameterDirection))
+            {
+                throw new ArgumentException(
+                    string.Format("Argument {0} of method AddTypedParameter should be a value matching the data type specified by argument {1}, not a ParameterDirection value (since that is the 6th argument)",
+                        nameof(value), nameof(dbType)), nameof(value));
+            }
+
             return AddParameter(command, name, dbType, size, value, direction);
         }
 

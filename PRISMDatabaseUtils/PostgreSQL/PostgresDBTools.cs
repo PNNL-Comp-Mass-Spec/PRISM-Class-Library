@@ -1579,6 +1579,13 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 throw new ArgumentException($"Method AddParameter requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
             }
 
+            if (value?.GetType() == typeof(ParameterDirection))
+            {
+                throw new ArgumentException(
+                    string.Format("Argument {0} of method AddParameter should be a value matching the data type specified by argument {1}, not a ParameterDirection value (since that is the 6th argument)",
+                        nameof(value), nameof(dbType)), nameof(value));
+            }
+
             // Optional: force the parameter name to be lowercase
             // See https://stackoverflow.com/a/45080006/1179467
 
@@ -1644,6 +1651,13 @@ namespace PRISMDatabaseUtils.PostgreSQL
             if (command is not NpgsqlCommand npgCmd)
             {
                 throw new ArgumentException($"Method AddTypedParameter requires a parameter of type {typeof(NpgsqlCommand).FullName}, but got an argument of type {command.GetType().FullName}.", nameof(command));
+            }
+
+            if (typeof(T) == typeof(ParameterDirection))
+            {
+                throw new ArgumentException(
+                    string.Format("Argument {0} of method AddTypedParameter should be a value matching the data type specified by argument {1}, not a ParameterDirection value (since that is the 6th argument)",
+                    nameof(value), nameof(dbType)), nameof(value));
             }
 
             var param = new NpgsqlParameter<T>(name, value)
