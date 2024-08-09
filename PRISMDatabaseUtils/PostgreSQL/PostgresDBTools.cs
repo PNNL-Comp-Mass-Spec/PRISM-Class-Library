@@ -40,6 +40,9 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// </remarks>
         public bool CapitalizeColumnNamesInResults { get; set; } = true;
 
+        /// <inheritdoc />
+        public bool ShowFullSqlStackTraceInEvents { get; set; }
+
         /// <summary>
         /// Database connection string
         /// </summary>
@@ -145,7 +148,6 @@ namespace PRISMDatabaseUtils.PostgreSQL
         /// <param name="args">Arguments</param>
         private void OnNotice(object sender, NpgsqlNoticeEventArgs args)
         {
-            var msg = new StringBuilder();
             var notice = args.Notice;
 
             if (notice.Routine != null &&
@@ -157,33 +159,105 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 return;
             }
 
-            msg.Append("Message: " + notice.MessageText);
-            msg.Append(", Source: " + notice.Where);
-            msg.Append(", Class: " + notice.Severity);
-            msg.Append(", State: " + notice.SqlState);
-            msg.Append(", LineNumber: " + notice.Line);
-            msg.Append(", Procedure:" + notice.Routine);
-            msg.Append(", Server: " + notice.File);
+            var msg = FormatNoticeMessage(notice, ShowFullSqlStackTraceInEvents);
 
             if (notice.InvariantSeverity.Equals("NOTICE"))
             {
-                OnDebugEvent(msg.ToString());
+                OnDebugEvent(msg);
                 return;
             }
 
             if (notice.InvariantSeverity.Equals("INFO"))
             {
-                OnStatusEvent(msg.ToString());
+                OnStatusEvent(msg);
                 return;
             }
 
             if (notice.InvariantSeverity.Equals("WARNING"))
             {
-                OnWarningEvent(msg.ToString());
+                OnWarningEvent(msg);
                 return;
             }
 
-            OnErrorEvent(msg.ToString());
+            OnErrorEvent(msg);
+        }
+
+        /// <summary>
+        /// Format a <see cref="PostgresNotice"/> for event logging
+        /// </summary>
+        /// <param name="notice">PostgresNotice data</param>
+        /// <param name="showFullStackTrace">If true, display the full stack trace instead of a summarized stack trace</param>
+        /// <returns>Notice, formatted as a string</returns>
+        /// <remarks>Internal static for unit testing access</remarks>
+        internal static string FormatNoticeMessage(PostgresNotice notice, bool showFullStackTrace)
+        {
+            var msg = new StringBuilder();
+
+            msg.Append("PostgreSQL Message: " + notice.MessageText);
+
+            // Do not show the source/stack trace, or other data for 'INFO' or 'NOTICE' messages
+            if (!notice.Severity.Equals("INFO") && !notice.Severity.Equals("NOTICE"))
+            {
+                if (showFullStackTrace)
+                {
+                    msg.Append(", Source: " + notice.Where);
+                }
+                else
+                {
+                    msg.Append(", Source: " + CleanUpPostgresStacktrace(notice.Where));
+                }
+
+                msg.Append(", Class: " + notice.Severity);
+                msg.Append(", State: " + notice.SqlState);
+                msg.Append(", LineNumber: " + notice.Line);
+                msg.Append(", Procedure:" + notice.Routine);
+                msg.Append(", Server: " + notice.File);
+            }
+
+            return msg.ToString();
+        }
+
+        /// <summary>
+        /// Cleans up a Postgres stack trace by removing parameter listings and SQL statement excerpts
+        /// </summary>
+        /// <param name="stackTrace"></param>
+        /// <returns>Clean Postgres stack trace</returns>
+        /// <remarks>Internal static for unit testing access</remarks>
+        internal static string CleanUpPostgresStacktrace(string stackTrace)
+        {
+            if (string.IsNullOrWhiteSpace(stackTrace))
+            {
+                return string.Empty;
+            }
+
+            if (!stackTrace.StartsWith("PL/pgSQL", StringComparison.OrdinalIgnoreCase))
+            {
+                return stackTrace;
+            }
+
+            var cleanLines = new List<string>(10);
+
+            foreach (var line in stackTrace.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (!line.Trim().StartsWith("PL/pgSQL", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var index = 0;
+                var openIndex = line.IndexOf('(');
+                var closeIndex = line.IndexOf(')');
+                if (openIndex >= 0 && closeIndex != openIndex + 1)
+                {
+                    cleanLines.Add($"{line.Substring(index, openIndex + 1)}...{line.Substring(closeIndex)}");
+                }
+                else
+                {
+                    cleanLines.Add(line);
+                }
+            }
+
+            return string.Join(Environment.NewLine, cleanLines);
         }
 
         /// <summary>

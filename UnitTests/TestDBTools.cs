@@ -1222,5 +1222,151 @@ namespace PRISMTest
 
             return string.Format("Data Source={0};Initial Catalog={1};User={2};Password={3};", server, database, user, password);
         }
+
+        [Test]
+        public void TestPostgresNotice1()
+        {
+            var trace = @"PL/pgSQL function add_update_dataset(text,text,text,text,text,text,text,text,text,text,text,text,text,text,text,text,integer,text,text,text,boolean,text,text,boolean,text,text) line 878 at RAISE
+SQL statement ""CALL public.add_update_dataset (
+            _datasetName           => _datasetName,
+            _experimentName        => _experimentName,
+            _operatorUsername      => _operatorUsername,
+            _instrumentName        => _instrumentName,
+            _msType                => _datasetType,
+            _lcColumnName          => _lcColumnName,
+            _wellplateName         => _wellplateName,
+            _wellNumber            => _wellNumber,
+            _secSep                => _separationType,
+            _internalStandards     => _internalStandards,
+            _comment               => _comment,
+            _rating                => _interestRating,
+            _lcCartName            => _lcCartName,
+            _eusProposalID         => _emslProposalID,
+            _eusUsageType          => _emslUsageType,
+            _eusUsersList          => _emslUsersList,
+            _requestID             => _requestID,
+            _workPackage           => _workPackage,
+            _mode                  => _mode,
+            _callingUser           => SESSION_USER,
+            _aggregationJobDataset => false,
+            _captureSubfolder      => _captureSubdirectory,
+            _lcCartConfig          => _lcCartConfig,
+            _logDebugMessages      => _logDebugMessages,
+            _message               => _message,      -- Output
+            _returnCode            => _returnCode    -- Output
+           )""
+PL/pgSQL function add_new_dataset(text,text,text,text,boolean) line 418 at CALL";
+
+            Console.WriteLine("Stack trace only:");
+            Console.WriteLine(PRISMDatabaseUtils.PostgreSQL.PostgresDBTools.CleanUpPostgresStacktrace(trace));
+            Console.WriteLine();
+
+            var notice = new PostgresNotice("Setting the dataset comment to an empty string since it matches the requested run comment", "INFO", "info", "00000", where: trace, line: "3909", routine: "exec_stmt_raise", file: "pl_exec.c");
+            var notice2 = new PostgresNotice("Setting the dataset comment to an empty string since it matches the requested run comment", "TEST", "test", "00000", where: trace, line: "3909", routine: "exec_stmt_raise", file: "pl_exec.c");
+            var notice3 = new PostgresNotice("Setting the dataset comment to an empty string since it matches the requested run comment", "NOTICE", "notice", "00000", where: trace, line: "3909", routine: "exec_stmt_raise", file: "pl_exec.c");
+
+            var formatted = PRISMDatabaseUtils.PostgreSQL.PostgresDBTools.FormatNoticeMessage(notice, false);
+            Console.WriteLine("Formatted normal:");
+            Console.WriteLine(formatted);
+            Console.WriteLine();
+
+            var formatted2 = PRISMDatabaseUtils.PostgreSQL.PostgresDBTools.FormatNoticeMessage(notice2, false);
+            Console.WriteLine("Formatted non-INFO:");
+            Console.WriteLine(formatted2);
+            Console.WriteLine();
+
+            var formatted3 = PRISMDatabaseUtils.PostgreSQL.PostgresDBTools.FormatNoticeMessage(notice3, false);
+            Console.WriteLine("Formatted NOTICE:");
+            Console.WriteLine(formatted3);
+        }
+
+        [Test]
+        public void TestPostgresNotice2()
+        {
+            var trace = @"PL/pgSQL function lookup_instrument_run_info_from_experiment_sample_prep(text,text,text,text,text,text,text) line 58 at RAISE
+SQL statement ""CALL public.lookup_instrument_run_info_from_experiment_sample_prep (
+                            _experimentName,
+                            _instrumentGroup    => _instrumentGroup,    -- Output
+                            _datasetType        => _msType,             -- Output
+                            _instrumentSettings => _instrumentSettings, -- Output
+                            _separationGroup    => _separationGroup,    -- Output
+                            _message            => _msg,                -- Output
+                            _returnCode         => _returnCode)""
+PL/pgSQL function add_update_requested_run(text,text,text,text,text,text,text,text,text,text,text,integer,integer,integer,text,text,text,text,text,text,text,boolean,boolean,text,text,text,text,integer,boolean,integer,text,text,text) line 534 at CALL
+SQL statement ""CALL public.add_update_requested_run (
+                                            _requestName => _requestName,
+                                            _experimentName => _experimentName,
+                                            _requesterUsername => _operatorUsername,
+                                            _instrumentGroup => _instrumentGroup,
+                                            _workPackage => _workPackage,
+                                            _msType => _msType,
+                                            _instrumentSettings => 'na',
+                                            _wellplateName => NULL,
+                                            _wellNumber => NULL,
+                                            _internalStandard => 'na',
+                                            _comment => 'Automatically created by Dataset entry',
+                                            _batch => 0,
+                                            _block => 0,
+                                            _runOrder => 0,
+                                            _eusProposalID => _eusProposalID,
+                                            _eusUsageType => _eusUsageType,
+                                            _eusUsersList => _eusUsersList,
+                                            _mode => 'add-auto',
+                                            _secSep => _secSep,
+                                            _mrmAttachment => '',
+                                            _status => 'Completed',
+                                            _skipTransactionRollback => true,
+                                            _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
+                                            _callingUser => _callingUser,
+                                            _vialingConc => null,
+                                            _vialingVol => null,
+                                            _stagingLocation => null,
+                                            _requestIDForUpdate => null,
+                                            _logDebugMessages => _logDebugMessages,
+                                            _request => _requestID,                                 -- Output
+                                            _resolvedInstrumentInfo => _resolvedInstrumentInfo,     -- Output
+                                            _message => _message,                                   -- Output
+                                            _returnCode => _returnCode)""
+PL/pgSQL function add_update_dataset(text,text,text,text,text,text,text,text,text,text,text,text,text,text,text,text,integer,text,text,text,boolean,text,text,boolean,text,text) line 1198 at CALL
+SQL statement ""CALL public.add_update_dataset (
+            _datasetName           => _datasetName,
+            _experimentName        => _experimentName,
+            _operatorUsername      => _operatorUsername,
+            _instrumentName        => _instrumentName,
+            _msType                => _datasetType,
+            _lcColumnName          => _lcColumnName,
+            _wellplateName         => _wellplateName,
+            _wellNumber            => _wellNumber,
+            _secSep                => _separationType,
+            _internalStandards     => _internalStandards,
+            _comment               => _comment,
+            _rating                => _interestRating,
+            _lcCartName            => _lcCartName,
+            _eusProposalID         => _emslProposalID,
+            _eusUsageType          => _emslUsageType,
+            _eusUsersList          => _emslUsersList,
+            _requestID             => _requestID,
+            _workPackage           => _workPackage,
+            _mode                  => _mode,
+            _callingUser           => SESSION_USER,
+            _aggregationJobDataset => false,
+            _captureSubfolder      => _captureSubdirectory,
+            _lcCartConfig          => _lcCartConfig,
+            _logDebugMessages      => _logDebugMessages,
+            _message               => _message,      -- Output
+            _returnCode            => _returnCode    -- Output
+           )""
+PL/pgSQL function add_new_dataset(text,text,text,text,boolean) line 418 at CALL";
+
+            Console.WriteLine("Stack trace only:");
+            Console.WriteLine(PRISMDatabaseUtils.PostgreSQL.PostgresDBTools.CleanUpPostgresStacktrace(trace));
+            Console.WriteLine();
+
+            var notice = new PostgresNotice("Experiment does not exist: Blank", "WARNING", "warning", "01000", where: trace, line: "3909", routine: "exec_stmt_raise", file: "pl_exec.c");
+
+            var formatted = PRISMDatabaseUtils.PostgreSQL.PostgresDBTools.FormatNoticeMessage(notice, false);
+            Console.WriteLine("Formatted normal:");
+            Console.WriteLine(formatted);
+        }
     }
 }

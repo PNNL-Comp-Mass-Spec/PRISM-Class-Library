@@ -60,6 +60,15 @@ namespace PRISMDatabaseUtils
         public bool CapitalizeColumnNamesInResults { get; set; }
 
         /// <summary>
+        /// Controls whether minimal or full SQL stack traces are reported in <see cref="IEventNotifier"/> events
+        /// </summary>
+        /// <remarks>
+        /// <para>Defaults to false</para>
+        /// <para>When true, the full stack trace reported by the database engine is reported in <see cref="IEventNotifier"/> events</para>
+        /// </remarks>
+        public bool ShowFullSqlStackTraceInEvents { get; set; }
+
+        /// <summary>
         /// Test connecting to the database
         /// </summary>
         /// <param name="retryCount">Number of times to retry (in case of a problem)</param>

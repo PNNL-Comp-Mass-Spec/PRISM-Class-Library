@@ -33,6 +33,9 @@ namespace PRISMDatabaseUtils.MSSQLServer
         /// </remarks>
         public bool CapitalizeColumnNamesInResults { get; set; } = true;
 
+        /// <inheritdoc />
+        public bool ShowFullSqlStackTraceInEvents { get; set; }
+
         /// <summary>
         /// Database connection string
         /// </summary>
