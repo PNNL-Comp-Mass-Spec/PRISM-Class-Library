@@ -352,6 +352,7 @@ namespace PRISMTest
         [TestCase("Gigasax", "dms5", "dmsreader", "dms4fun", "T_Event_Log", 15)]
         [TestCase("Gigasax", "dms5", "dmsreader", "dms4fun", "T_Event_Target", 15)]
         [Category("DatabaseIntegrated")]
+        [Ignore("The dmsreader user was disabled on Gigasax in August 2024")]
         public void TestGetColumnValueSqlServerUsePassword(string server, string database, string username, string password, string tableName, int rowCountToRetrieve)
         {
             var connectionString = GetConnectionStringSqlServer(server, database, username, password);
@@ -1021,9 +1022,9 @@ namespace PRISMTest
             TestQueryTable(server, database, "Integrated", "", query, expectedRowCount, expectedValueList);
         }
 
-        [TestCase("Gigasax", "DMS5",
+        [TestCase("prismdb2.emsl.pnl.gov", "dms",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
-        [TestCase("Gigasax", "DMS5",
+        [TestCase("prismdb2.emsl.pnl.gov", "dms",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
         [Category("PNL_Domain")]
@@ -1036,10 +1037,13 @@ namespace PRISMTest
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
+        /*
+         * The dmsreader user was disabled on Gigasax in August 2024
         [TestCase(
-            "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
-            "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol",
-            2, "6, 12, 2, 1, 0")]
+               "Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun",
+               "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol",
+               2, "6, 12, 2, 1, 0")]
+         */
         [TestCase(
             "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
@@ -1122,18 +1126,18 @@ namespace PRISMTest
             TestQueryFailures(server, database, "Integrated", "", query, expectedRowCount, expectedValueList);
         }
 
-        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "dmsreader", "dms4fun",
             "SELECT U_PRN, U_Name, U_HID FROM T_FakeTable WHERE U_Name = 'AutoUser'", 0, "")]
-        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "dmsreader", "dms4fun",
             "SELECT FakeColumn FROM T_Log_Entries WHERE ID = 5", 0, "")]
-        [TestCase("Gigasax", "DMS5", "dmsreader", "dms4fun",
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "dmsreader", "dms4fun",
             "SELECT * FROM T_LogEntries WHERE ID = 5", 0, "")]
-        [TestCase("Gigasax", "NonExistentDatabase", "dmsreader", "dms4fun",
+        [TestCase("prismdb2.emsl.pnl.gov", "NonExistentDatabase", "dmsreader", "dms4fun",
             "SELECT * FROM T_FakeTable", 0, "")]
-        [TestCase("Gigasax", "DMS5", "dmsreader", "WrongPassword",
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "dmsreader", "WrongPassword",
             "SELECT * FROM T_Log_Entries WHERE ID = 5", 0, "")]
-        [TestCase("Gigasax", "Ontology_Lookup", "dmsreader", "dms4fun",
-            "SELECT * FROM T_Permissions_Test_Table", 0, "")]
+        [TestCase("prismdb2.emsl.pnl.gov", "dms", "dmsreader", "dms4fun",
+            "SELECT * FROM ont.T_Permissions_Test_Table", 0, "")]
         [Category("PNL_Domain")]
         public void TestQueryFailuresNamedUser(
             string server, string database, string user, string password,
