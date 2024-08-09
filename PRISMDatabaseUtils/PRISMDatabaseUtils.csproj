@@ -108,4 +108,8 @@
     <ProjectReference Include="..\PRISM\PRISM.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="PRISMTest" />
+  </ItemGroup>
+
 </Project>
