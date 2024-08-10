@@ -1012,26 +1012,26 @@ namespace PRISMTest
             Assert.That(tableRowCount, Is.GreaterThan(0), $"Row count in {tableName} should be non-zero, but was not");
         }
 
-        [TestCase("Gigasax", "DMS5",
+        [TestCase("Gigasax", false, "DMS5",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
-        [TestCase("Gigasax", "DMS5",
+        [TestCase("Gigasax", false, "DMS5",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
         [Category("DatabaseIntegrated")]
-        public void TestQueryTableIntegrated(string server, string database, string query, int expectedRowCount, string expectedValueList)
+        public void TestQueryTableIntegrated(string server, bool isPostgres, string database, string query, int expectedRowCount, string expectedValueList)
         {
-            TestQueryTable(server, database, "Integrated", "", query, expectedRowCount, expectedValueList);
+            TestQueryTable(server, isPostgres, database, "Integrated", "", query, expectedRowCount, expectedValueList);
         }
 
-        [TestCase("prismdb2.emsl.pnl.gov", "dms",
+        [TestCase("prismdb2.emsl.pnl.gov", true, "dms",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'", 1, "H09090911,AutoUser,H09090911")]
-        [TestCase("prismdb2.emsl.pnl.gov", "dms",
+        [TestCase("prismdb2.emsl.pnl.gov", true, "dms",
             "SELECT Num_C, Num_H, Num_N, Num_O, Num_S FROM V_Residue_List_Report WHERE (Symbol IN ('K', 'R')) ORDER BY Symbol", 2,
             "6, 12, 2, 1, 0")]
         [Category("PNL_Domain")]
-        public void TestQueryTableNamedUser(string server, string database, string query, int expectedRowCount, string expectedValueList)
+        public void TestQueryTableNamedUser(string server, bool isPostgres, string database, string query, int expectedRowCount, string expectedValueList)
         {
-            TestQueryTable(server, database, DMS_READER, DMS_READER_PASSWORD, query, expectedRowCount, expectedValueList);
+            TestQueryTable(server, isPostgres, database, DMS_READER, DMS_READER_PASSWORD, query, expectedRowCount, expectedValueList);
         }
 
         [TestCase(
@@ -1071,9 +1071,12 @@ namespace PRISMTest
             TestQueryTableWork(connectionString, database, user, query, expectedRowCount, expectedValueList);
         }
 
-        private void TestQueryTable(string server, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
+        private void TestQueryTable(string server, bool isPostgres, string database, string user, string password, string query, int expectedRowCount, string expectedValueList)
         {
-            var connectionString = GetConnectionStringSqlServer(server, database, user, password);
+            var connectionString = isPostgres
+                ? GetConnectionStringPostgres(server, database, user, password)
+                : GetConnectionStringSqlServer(server, database, user, password);
+
             TestQueryTableWork(connectionString, database, user, query, expectedRowCount, expectedValueList);
         }
 
@@ -1089,7 +1092,7 @@ namespace PRISMTest
 
             var expectedValues = expectedValueList.Split(',');
 
-            Assert.That(expectedRowCount, Is.EqualTo(results.Count), "RowCount mismatch");
+            Assert.That(results.Count, Is.EqualTo(expectedRowCount), "RowCount mismatch");
 
             if (expectedRowCount < 1)
             {
@@ -1104,7 +1107,7 @@ namespace PRISMTest
                 if (colIndex >= expectedValues.Length)
                     break;
 
-                Assert.That(expectedValues[colIndex].Trim(), Is.EqualTo(firstRow[colIndex]),
+                Assert.That(firstRow[colIndex], Is.EqualTo(expectedValues[colIndex].Trim()),
                     $"Data value mismatch, column {colIndex + 1}, expected {expectedValues[colIndex]} but actually {firstRow[colIndex]}");
             }
 
@@ -1166,7 +1169,7 @@ namespace PRISMTest
                 return;
             }
 
-            Assert.That(expectedRowCount, Is.EqualTo(results.Count), "RowCount mismatch");
+            Assert.That(results.Count, Is.EqualTo(expectedRowCount), "RowCount mismatch");
 
             if (expectedRowCount < 1)
             {
@@ -1181,7 +1184,7 @@ namespace PRISMTest
                 if (colIndex >= expectedValues.Length)
                     break;
 
-                Assert.That(expectedValues[colIndex].Trim(), Is.EqualTo(firstRow[colIndex]),
+                Assert.That(firstRow[colIndex], Is.EqualTo(expectedValues[colIndex].Trim()),
                     $"Data value mismatch, column {colIndex + 1}, expected {expectedValues[colIndex]} but actually {firstRow[colIndex]}");
             }
 
