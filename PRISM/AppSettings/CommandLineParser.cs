@@ -294,6 +294,11 @@ namespace PRISM
         /// </remarks>
         public string ParameterFilePath { get; private set; }
 
+        /// <summary>
+        /// If true, disables the support for the parameter file creation/parsing
+        /// </summary>
+        public bool DisableParameterFileSupport { get; set; }
+
         // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
@@ -374,6 +379,7 @@ namespace PRISM
         {
             EntryAssemblyName = entryAsmName ?? string.Empty;
             ExeVersionInfo = versionInfo ?? string.Empty;
+            DisableParameterFileSupport = false;
             ParameterFilePath = string.Empty;
 
             Results = new ParserResults(options);
@@ -388,6 +394,16 @@ namespace PRISM
             ContactInfo = string.Empty;
             UsageExamples = new List<string>();
         }
+
+        /// <summary>
+        /// Internal wrapper - returns an empty list if param file support is disabled
+        /// </summary>
+        private IReadOnlyList<string> AllowedParamFileArgs => DisableParameterFileSupport ? [] : paramFileArgs;
+
+        /// <summary>
+        /// Internal wrapper - returns an empty list if param file support is disabled
+        /// </summary>
+        private IReadOnlyList<string> AllowedCreateParamFileArgs => DisableParameterFileSupport ? [] : mDefaultCreateExampleParamFileArgs;
 
         /// <summary>
         /// Add additional param keys that can be used to specify a parameter file argument, for example "Conf"
@@ -572,7 +588,7 @@ namespace PRISM
 
                 // Check for a parameter file, and load any arguments from it
                 // Do not automatically merge with the command-line arguments
-                foreach (var paramFileArg in paramFileArgs)
+                foreach (var paramFileArg in AllowedParamFileArgs)
                 {
                     // Make sure the param file arg is not defined in the template class
                     if (!preprocessed.ContainsKey(paramFileArg) ||
@@ -673,7 +689,7 @@ namespace PRISM
                 }
 
                 // Determine if we need to write an example parameter file
-                foreach (var createExampleParamFileArg in mDefaultCreateExampleParamFileArgs)
+                foreach (var createExampleParamFileArg in AllowedCreateParamFileArgs)
                 {
                     // Make sure the help arg is not defined in the template class
                     if (preprocessed.ContainsKey(createExampleParamFileArg) && validArgs.ContainsKey(createExampleParamFileArg.ToLower()) && validArgs[createExampleParamFileArg.ToLower()].IsBuiltInArg)
@@ -1947,7 +1963,7 @@ namespace PRISM
             var paramFileArgString = string.Empty;
 
             // Add the default param file string
-            foreach (var paramFileArg in paramFileArgs)
+            foreach (var paramFileArg in AllowedParamFileArgs)
             {
                 if (!validArgs.ContainsKey(paramFileArg.ToLower()) || !validArgs[paramFileArg.ToLower()].IsBuiltInArg)
                 {
@@ -1973,7 +1989,7 @@ namespace PRISM
             var createParamFileArgString = string.Empty;
 
             // Add the default param file string
-            foreach (var createParamFileArg in mDefaultCreateExampleParamFileArgs)
+            foreach (var createParamFileArg in AllowedCreateParamFileArgs)
             {
                 if (!validArgs.ContainsKey(createParamFileArg.ToLower()) || !validArgs[createParamFileArg.ToLower()].IsBuiltInArg)
                 {
@@ -2216,7 +2232,7 @@ namespace PRISM
                 validArgs.Add(helpArg, info);
             }
 
-            foreach (var paramFileArg in paramFileArgs)
+            foreach (var paramFileArg in AllowedParamFileArgs)
             {
                 if (validArgs.ContainsKey(paramFileArg.ToLower()))
                 {
@@ -2235,7 +2251,7 @@ namespace PRISM
                 validArgs.Add(paramFileArg.ToLower(), info);
             }
 
-            foreach (var createParamArg in mDefaultCreateExampleParamFileArgs)
+            foreach (var createParamArg in AllowedCreateParamFileArgs)
             {
                 if (validArgs.ContainsKey(createParamArg.ToLower()))
                 {

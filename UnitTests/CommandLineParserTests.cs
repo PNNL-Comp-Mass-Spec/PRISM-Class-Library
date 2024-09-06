@@ -1330,6 +1330,54 @@ namespace PRISMTest
         }
 
         [Test]
+        [TestCase(0, 0, false)]
+        [TestCase(20, 0, false)]
+        [TestCase(30, 40, false)]
+        [TestCase(0, 0, true)]
+        [TestCase(30, 0, true)]
+        [TestCase(30, 40, true)]
+        public void TestPrintHelpNoParamFile(int paramKeysWidth, int helpDescriptionWidth, bool hideLongKeyNames)
+        {
+            var exeName = "Test.exe";
+
+            var parser = new CommandLineParser<OkayKey2>()
+            {
+                ProgramInfo = "This program sed tempor urna. Proin porta scelerisque nisi, " +
+                              "non vestibulum elit varius vel. Sed sed tristique orci, sit amet " +
+                              "feugiat risus. \n\n" +
+                              "Vivamus ac fermentum eros. Aliquam accumsan est vitae quam rhoncus, " +
+                              "et consectetur ante egestas. Donec in enim id arcu mollis sagittis. " +
+                              "Nulla venenatis tellus at urna feugiat, et placerat tortor dapibus. " +
+                              "Proin in bibendum dui. Phasellus bibendum purus non mi semper, vel rhoncus " +
+                              "massa viverra. Aenean quis neque sit amet nisi posuere congue. \n\n" +
+                              "Options for EnumTypeMode are:\n" +
+                              "  0 for feugiat risu\n" +
+                              "  1 for porttitor libero\n" +
+                              "  2 for sapien maximus varius\n" +
+                              "  3 for lorem luctus\n" +
+                              "  4 for pulvinar quam at libero dapibus\n" +
+                              "  5 for tortor loborti\n" +
+                              "  6 for ante nec nisi consequat\n" +
+                              "  7 for facilisis vestibulum risus",
+
+                ContactInfo = "Program written by Maecenas cursus for fermentum ullamcorper velit in 2017" +
+                              Environment.NewLine +
+                              "E-mail: person@place.org or alternate@place.org" + Environment.NewLine +
+                              "Website: https://github.com/PNNL-Comp-Mass-Spec/ or https://www.pnnl.gov/integrative-omics",
+
+                UsageExamples = {
+                    exeName + " InputFile.txt",
+                    exeName + " InputFile.txt /Start:2",
+                    exeName + " InputFile.txt /Start:2 /EnumTypeMode:2 /Smooth:7"
+                },
+                HideLongParamKeyNamesAtConsole = hideLongKeyNames,
+                DisableParameterFileSupport = true
+            };
+
+            parser.PrintHelp(paramKeysWidth, helpDescriptionWidth);
+        }
+
+        [Test]
         [TestCase("")]
         [TestCase("ParamFileExample.conf")]
         public void TestParamFileOutputConsole(string parameterFileName)
