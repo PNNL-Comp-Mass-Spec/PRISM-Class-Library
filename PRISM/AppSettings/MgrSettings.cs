@@ -579,7 +579,7 @@ namespace PRISM.AppSettings
 
             var settings = LoadMgrSettingsFromFile(configFilePath, new Dictionary<string, string>());
 
-            if (!configFilePath.EndsWith(".exe.config", StringComparison.OrdinalIgnoreCase))
+            if (!configFilePath.EndsWith(".exe.config", StringComparison.OrdinalIgnoreCase) && !configFilePath.EndsWith(".dll.config", StringComparison.OrdinalIgnoreCase))
                 return settings;
 
             // Look for other .config files and read them alphabetically (ignoring case)
