@@ -237,6 +237,35 @@ namespace PRISMTest
             Assert.That(hostName, Is.EqualTo(serverName));
         }
 
+        [TestCase("Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI", DbServerTypes.MSSQLServer)]
+        [TestCase("Data Source=gigasax;Initial Catalog=DMS5;Integrated Security=SSPI;Application Name=Capture Task Manager", DbServerTypes.MSSQLServer)]
+        [TestCase("Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun", DbServerTypes.MSSQLServer)]
+        [TestCase("Host=prismdb2.emsl.pnl.gov;Database=dms;Username=dmsreader", DbServerTypes.PostgreSQL)]
+        [TestCase("Host=prismdb2.emsl.pnl.gov;Port=5432;Database=dms;Username=svc-dms", DbServerTypes.PostgreSQL)]
+        [TestCase("Host=prismdb2.emsl.pnl.gov;Port=5432;Database=dms;Username=svc-dms;Application Name=Analysis Manager", DbServerTypes.PostgreSQL)]
+        [TestCase("Host=prismdb2.emsl.pnl.gov;Port=5432;Database=dms;Username=svc-dms;Application Name=net48", DbServerTypes.PostgreSQL)]
+        public void TestGetServerTypeFromConnectionString(string connectionString, DbServerTypes expectedServerType)
+        {
+            var dbServerType = DbToolsFactory.GetServerTypeFromConnectionString(connectionString);
+
+            switch (dbServerType)
+            {
+                case DbServerTypes.MSSQLServer:
+                    Console.WriteLine("Connection string was interpreted as Microsoft SQL Server");
+                    break;
+
+                case DbServerTypes.PostgreSQL:
+                    Console.WriteLine("Connection string was interpreted as PostgreSQL");
+                    break;
+
+                default:
+                    Console.WriteLine("Connection string as not recognized as SQL Server or PostgreSQL");
+                    break;
+            }
+
+            Assert.That(dbServerType, Is.EqualTo(expectedServerType));
+        }
+
         private string GetPaddedList(List<string> items, string stringFormat)
         {
             var result = new StringBuilder();

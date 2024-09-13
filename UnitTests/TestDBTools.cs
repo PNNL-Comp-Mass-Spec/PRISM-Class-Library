@@ -152,6 +152,7 @@ namespace PRISMTest
         [TestCase("DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
         [TestCase("Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
         [TestCase("Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Password=dms4fun;Database=dms", DbServerTypes.PostgreSQL)]
+        [TestCase("Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Password=dms4fun;Database=dms;Application Name=Analysis Manager", DbServerTypes.PostgreSQL)]
         [TestCase("DbServerType=Postgres;Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
         public void TestDbToolsInitialization(string connectionString, DbServerTypes expectedServerType)
         {
