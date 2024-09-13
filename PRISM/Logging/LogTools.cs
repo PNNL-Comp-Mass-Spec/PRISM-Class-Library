@@ -147,6 +147,7 @@ namespace PRISM.Logging
         /// <param name="connectionString">System.Data.SqlClient style connection string</param>
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
+        [Obsolete("Use CreateDbLogger in class DbConfig to create the database logger, since this method is SQL Server specific")]
         public static void CreateDbLogger(string connectionString, string moduleName, bool traceMode)
         {
             CreateDbLogger(connectionString, moduleName, BaseLogger.LogLevels.INFO, traceMode);
@@ -160,6 +161,7 @@ namespace PRISM.Logging
         /// <param name="moduleName">Module name used by logger</param>
         /// <param name="logLevel">Log threshold level</param>
         /// <param name="traceMode">When true, show additional debug messages at the console</param>
+        [Obsolete("Use CreateDbLogger in class DbConfig to create the database logger, since this method is SQL Server specific")]
         public static void CreateDbLogger(
             string connectionString,
             string moduleName,
