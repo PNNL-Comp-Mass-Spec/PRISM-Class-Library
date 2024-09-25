@@ -14,7 +14,7 @@ namespace PRISMDatabaseUtils
     /// </summary>
     public interface IDBTools : IEventNotifier
     {
-        // Ignore Spelling: Postgres, Utils, varchar
+        // Ignore Spelling: Postgres, SQL, Utils, varchar
 
         /// <summary>
         /// Database connection string

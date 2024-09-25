@@ -12,6 +12,8 @@ namespace PRISMDatabaseUtils.Logging;
 /// </summary>
 public sealed class PostgresDatabaseLogger : DatabaseLogger
 {
+    // Ignore Spelling: Npgsql, Postgres
+
     private const string DEFAULT_PROCEDURE_NAME = "post_log_entry";
 
     private const string DEFAULT_PG_PARAM_NAME_LOG_TYPE = "_type";
@@ -19,8 +21,6 @@ public sealed class PostgresDatabaseLogger : DatabaseLogger
     private const string DEFAULT_PG_PARAM_NAME_MESSAGE = "_message";
 
     private const string DEFAULT_PG_PARAM_NAME_POSTED_BY = "_postedBy";
-
-    // Ignore Spelling: Npgsql
 
     private static readonly ConcurrentQueue<LogMessage> mMessageQueue = new();
 

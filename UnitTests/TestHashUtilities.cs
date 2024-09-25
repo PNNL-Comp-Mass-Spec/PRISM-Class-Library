@@ -7,6 +7,8 @@ namespace PRISMTest
 {
     internal class TestHashUtilities
     {
+        // Ignore Spelling: CRC, SHA
+
         private const string HASH_TEST_TEMP_DIR_PATH = @"C:\Temp\HashTest";
 
         private const string HASH_TEST_FILE_NAME = "HashTestFile.txt";
