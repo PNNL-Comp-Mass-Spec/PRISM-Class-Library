@@ -72,9 +72,9 @@ namespace PRISMTest
         [TestCase("/proc/12343/", "/stat/", '/', "/stat/")]
         [TestCase("/share/item", "dataset/results", '/', "/share/item/dataset/results")]
         [TestCase("/share/item/", "dataset/results", '/', "/share/item/dataset/results")]
-        public void TestCombinePaths(string path1, string path2, char directorySepChar, string expectedResult)
+        public void TestCombinePaths(string path1, string path2, char directorySeparator, string expectedResult)
         {
-            var result = PathUtils.CombinePaths(path1, path2, directorySepChar);
+            var result = PathUtils.CombinePaths(path1, path2, directorySeparator);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }

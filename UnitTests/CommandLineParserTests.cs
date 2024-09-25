@@ -2011,6 +2011,36 @@ namespace PRISMTest
             [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
             public string LogFilePath { get; set; } = "log.txt";
         }
+
+        [Test]
+        [TestCase(@"/I:C:\CTM_Workdir\DatasetName.D /O:C:\CTM_Workdir\QC /MinInt:11 /MaxInt:4")]
+        [TestCase(@"/I:C:\CTM_Workdir\DatasetName.D /O:C:\CTM_Workdir\QC /MinInt:12 /MaxInt:5 /MinMaxInt:-2")]
+        [TestCase("/MaxInt:7 /MinMaxInt:-3\n")]
+        [TestCase("/I:C:\\CTM_Workdir\\DatasetName.D /O:C:\\CTM_Workdir\\QC /MinInt:13 /MaxInt:7 /MinMaxInt:-3\n")]
+        [TestCase("/I:C:\\CTM_Workdir\\DatasetName.D /O:C:\\CTM_Workdir\\QC /MinInt:14 /MaxInt:8 /MinMaxInt:-4\r\n")]
+        public void TestArgumentListWithLineFeed(string argumentList)
+        {
+            var args = argumentList.Split(' ');
+            var parser = new CommandLineParser<ArgsVariety>();
+            var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+
+            if (result.ParseErrors.Count == 0)
+            {
+                Console.WriteLine("Arguments successfully parsed");
+                Console.WriteLine("Input path:  {0}", result.ParsedResults.InputFilePath);
+                Console.WriteLine("Output path: {0}", result.ParsedResults.OutputFilePath);
+                Console.WriteLine("IntMinOnly:  {0}", result.ParsedResults.IntMinOnly);
+                Console.WriteLine("IntMaxOnly:  {0}", result.ParsedResults.IntMaxOnly);
+                Console.WriteLine("IntMinMax:   {0}", result.ParsedResults.IntMinMax);
+                return;
+            }
+
+            foreach (var message in result.ParseErrors)
+            {
+                Console.WriteLine(message);
+            }
+
+            Assert.Fail("One or more errors were found");
         }
 
         [Test]
