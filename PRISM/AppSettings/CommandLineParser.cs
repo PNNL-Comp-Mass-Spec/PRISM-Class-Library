@@ -954,7 +954,7 @@ namespace PRISM
         /// <returns>Parser results</returns>
         public ParserResults ParseParamFile(string paramFilePath)
         {
-            var args = new string[] { "-ParamFile", paramFilePath };
+            var args = new[] { "-ParamFile", paramFilePath };
             return ParseArgs(args, false, false);
         }
 
@@ -1411,22 +1411,27 @@ namespace PRISM
             var processed = new Dictionary<string, List<string>>();
             var positionArgumentNumber = 0;
 
+            var whitespaceCharsToTrim = new[] { '\t', '\r', '\n'};
+
             for (var i = 0; i < args.Count; i++)
             {
-                if (string.IsNullOrWhiteSpace(args[i]))
+                // Assure that the argument does not end with a tab, carriage return, or newline
+                // This can happen while debugging with Visual Studio if the user pastes a list of arguments
+                // into the Command Line Arguments text box, and the pasted text contains a carriage return
+                var trimmedArg = args[i].TrimEnd(whitespaceCharsToTrim);
+
+                if (string.IsNullOrWhiteSpace(trimmedArg))
                 {
-                    // The argument is likely "\r\n"
-                    // This can happen while debugging with Visual Studio if the user pastes a list of arguments
-                    // into the Command Line Arguments text box, and the pasted text contains a carriage return
+                    // The argument was likely "\r\n" and thus trimmedArg is an empty string
                     continue;
                 }
 
-                var argIsLinuxRootedPath = paramChars.Contains('/') && args[i].StartsWith("/") &&
-                                           (args[i].TrimStart('/').Count(x => x == '/') >= 1 ||
-                                            ((File.Exists(args[i]) || Directory.Exists(args[i])) &&
-                                             !validArgs.ContainsKey(args[i].TrimStart('/'))));
+                var argIsLinuxRootedPath = paramChars.Contains('/') && trimmedArg.StartsWith("/") &&
+                                           (trimmedArg.TrimStart('/').Count(x => x == '/') >= 1 ||
+                                            ((File.Exists(trimmedArg) || Directory.Exists(trimmedArg)) &&
+                                             !validArgs.ContainsKey(trimmedArg.TrimStart('/'))));
 
-                if (!parsingParamFileArgs && (argIsLinuxRootedPath || !paramChars.Contains(args[i][0])))
+                if (!parsingParamFileArgs && (argIsLinuxRootedPath || !paramChars.Contains(trimmedArg[0])))
                 {
                     // Positional argument
                     positionArgumentNumber++;
@@ -1440,11 +1445,11 @@ namespace PRISM
                         processed.Add(argName, new List<string>());
                     }
 
-                    AppendArgumentValue(processed[argName], args[i]);
+                    AppendArgumentValue(processed[argName], trimmedArg);
                     continue;
                 }
 
-                var key = args[i].TrimStart(paramChars);
+                var key = trimmedArg.TrimStart(paramChars);
                 var value = string.Empty;
 
                 var containedSeparator = false;
