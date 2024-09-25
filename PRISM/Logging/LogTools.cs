@@ -257,6 +257,8 @@ namespace PRISM.Logging
             LogDebug(string.Format(format, args));
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Log an error message and exception
         /// </summary>
@@ -291,6 +293,8 @@ namespace PRISM.Logging
             LogError(string.Format(format, args));
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Log an error message and exception
         /// </summary>
@@ -303,6 +307,8 @@ namespace PRISM.Logging
         {
             LogError(string.Format(format, args), ex);
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Log a fatal error message and exception
@@ -337,6 +343,8 @@ namespace PRISM.Logging
         {
             LogFatalError(string.Format(format, args));
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Log a fatal error message and exception
@@ -460,7 +468,7 @@ namespace PRISM.Logging
         }
 
         /// <summary>
-        /// Sets the file logging log threshold via an enum
+        /// Sets the log threshold for file logging using an enum
         /// </summary>
         /// <param name="logLevel">LogLevels value defining log threshold level (Debug is most verbose)</param>
         public static void SetFileLogLevel(BaseLogger.LogLevels logLevel)
@@ -494,7 +502,7 @@ namespace PRISM.Logging
         /// <summary>
         /// Write a message and possibly an exception to the logging system
         /// </summary>
-        /// <remarks>Log message will not be written if logLevel is LogLevel or higher)</remarks>
+        /// <remarks>Log message will not be written if logLevel is LogLevel or higher</remarks>
         /// <param name="loggerType">Type of logger to use</param>
         /// <param name="logLevel">Level of log reporting</param>
         /// <param name="message">Message to be logged</param>

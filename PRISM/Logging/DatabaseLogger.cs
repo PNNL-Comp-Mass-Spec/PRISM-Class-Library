@@ -63,6 +63,8 @@ namespace PRISM.Logging
         /// </summary>
         public bool IsInfoEnabled { get; private set; }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// True if info level logging is enabled (LogLevel is LogLevels.WARN or higher)
         /// </summary>
@@ -93,7 +95,7 @@ namespace PRISM.Logging
         public static string MachineName => System.Net.Dns.GetHostName();
 
         /// <summary>
-        /// The user name running this program
+        /// The username running this program
         /// </summary>
         public static string UserName
         {
@@ -213,6 +215,8 @@ namespace PRISM.Logging
             WriteLog(LogLevels.DEBUG, message, ex);
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Log an error message
         /// (provided the log threshold is LogLevels.ERROR or higher; see this.LogLevel)
@@ -226,6 +230,8 @@ namespace PRISM.Logging
 
             WriteLog(LogLevels.ERROR, message, ex);
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Log a fatal error message
@@ -254,6 +260,8 @@ namespace PRISM.Logging
 
             WriteLog(LogLevels.INFO, message, ex);
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Log a warning message

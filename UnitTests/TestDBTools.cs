@@ -1039,6 +1039,8 @@ namespace PRISMTest
             "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
+        // ReSharper disable once GrammarMistakeInComment
+
         /*
          * The dmsreader user was disabled on Gigasax in August 2024
         [TestCase(
@@ -1292,6 +1294,8 @@ PL/pgSQL function add_new_dataset(text,text,text,text,boolean) line 418 at CALL"
         [Test]
         public void TestPostgresNotice2()
         {
+            // ReSharper disable once StringLiteralTypo
+
             var trace = @"PL/pgSQL function lookup_instrument_run_info_from_experiment_sample_prep(text,text,text,text,text,text,text) line 58 at RAISE
 SQL statement ""CALL public.lookup_instrument_run_info_from_experiment_sample_prep (
                             _experimentName,

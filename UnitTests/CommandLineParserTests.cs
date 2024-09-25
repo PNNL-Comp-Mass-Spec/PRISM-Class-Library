@@ -626,6 +626,8 @@ namespace PRISMTest
 
             var parser = new CommandLineParser<ArgsPositionalOnly>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+
+            // ReSharper disable once UnusedVariable
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.False, "Parser did not fail with unrecognized argument name error");
@@ -712,6 +714,8 @@ namespace PRISMTest
 
             var parser = new CommandLineParser<ArgsPositionalOnly>();
             var result = parser.ParseArgs(args, showHelpOnError, outputErrors);
+
+            // ReSharper disable once UnusedVariable
             var options = result.ParsedResults;
 
             Assert.That(result.Success, Is.False, "Parser did not fail with unrecognized argument name error");
@@ -1152,6 +1156,7 @@ namespace PRISMTest
             [Option("result", HelpText = "How bad will it be?")]
             public TestEnumFlags ResultEffect { get; set; }
 
+            // ReSharper disable once ConvertConstructorToMemberInitializers
             public ArgsEnum()
             {
                 BeUnknown = TestEnum.Unknown;
@@ -2353,6 +2358,8 @@ namespace PRISMTest
         public void TestParamFileOutputKeyPreferenceHelp()
         {
             var parser = new CommandLineParser<TestParamFileKeyPreference>();
+
+            // ReSharper disable once CollectionNeverUpdated.Local
             var args = new List<string>();
 
             var result = parser.ParseArgs(args.ToArray());

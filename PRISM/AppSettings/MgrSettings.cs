@@ -787,6 +787,7 @@ namespace PRISM.AppSettings
             if (!TraceMode)
                 return;
 
+            // ReSharper disable once CoVariantArrayConversion
             ShowTraceMessage(string.Format(format, args));
         }
 

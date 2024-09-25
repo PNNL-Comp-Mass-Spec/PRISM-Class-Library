@@ -46,6 +46,7 @@ namespace PRISM
     ///         ConsoleMsgUtils.ShowWarning(errorMessage);
     ///         return -1;
     ///     }
+    ///   }
     /// </para>
     /// <para>
     /// Or instantiate this class, which allows for suppressing the auto-display of the syntax if an argument error is encountered
@@ -65,6 +66,7 @@ namespace PRISM
     ///     };
     ///     var parseResults = parser.ParseArgs(args);
     ///     var options = parseResults.ParsedResults;
+    ///   }
     /// </para>
     /// <para>
     ///     if (!parseResults.Success)
@@ -2047,6 +2049,8 @@ namespace PRISM
             }
         }
 
+        // ReSharper disable once GrammarMistakeInComment
+
         /// <summary>
         /// Wraps the words in textToWrap to the set width (where possible)
         /// </summary>
@@ -2058,6 +2062,8 @@ namespace PRISM
         {
             return ConsoleMsgUtils.WrapParagraph(textToWrap, wrapWidth);
         }
+
+        // ReSharper disable once GrammarMistakeInComment
 
         /// <summary>
         /// Wraps the words in textToWrap to the set width (where possible)

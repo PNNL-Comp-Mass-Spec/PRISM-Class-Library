@@ -154,7 +154,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
                 notice.InvariantSeverity.Equals("NOTICE") &&
                 notice.Routine.Equals("DropErrorMsgNonExistent", StringComparison.OrdinalIgnoreCase))
             {
-                // Example message: "table \"tmp_mgr_params\" does not exist, skipping"
+                // Example message: 'table \"tmp_mgr_params\" does not exist, skipping'
                 // This is an informational message that can be ignored
                 return;
             }
@@ -1037,7 +1037,7 @@ namespace PRISMDatabaseUtils.PostgreSQL
 
         /// <summary>
         /// Convert a "stored procedure" command to work properly with Npgsql
-        /// Npgsql 6.0 and earlier treated <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()")
+        /// Npgsql 6.0 and earlier treated <see cref="CommandType.StoredProcedure"/> as a function, calling it with "SELECT * FROM CommandText()"
         /// We instead want to handle "stored procedure" command as CALL procedure_name()
         /// </summary>
         /// <remarks>

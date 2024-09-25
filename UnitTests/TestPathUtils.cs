@@ -130,6 +130,7 @@ namespace PRISMTest
 
             foreach (var foundDirectory in directories1)
             {
+                // ReSharper disable once CanSimplifySetAddingWithSingleCall
                 if (foundDirectoryNames.Contains(foundDirectory.Name))
                     continue;
 
@@ -255,6 +256,7 @@ namespace PRISMTest
 
             foreach (var foundFile in files1)
             {
+                // ReSharper disable once CanSimplifySetAddingWithSingleCall
                 if (foundFileNames.Contains(foundFile.Name))
                     continue;
 
