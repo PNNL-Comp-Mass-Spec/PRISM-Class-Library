@@ -1984,58 +1984,33 @@ namespace PRISMTest
 
         private class ArgExistsPropertyFail1
         {
-            public ArgExistsPropertyFail1()
-            {
-                LogEnabled = false;
-                LogFilePath = "log.txt";
-            }
-
             public bool LogEnabled { get; set; }
 
             [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = " ")]
-            public string LogFilePath { get; set; }
+            public string LogFilePath { get; set; } = "log.txt";
         }
 
         private class ArgExistsPropertyFail2
         {
-            public ArgExistsPropertyFail2()
-            {
-                LogEnabled = false;
-                LogFilePath = "log.txt";
-            }
-
             public bool LogEnabled { get; set; }
 
             [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = "LogEnabled1")]
-            public string LogFilePath { get; set; }
+            public string LogFilePath { get; set; } = "log.txt";
         }
 
         private class ArgExistsPropertyFail3
         {
-            public ArgExistsPropertyFail3()
-            {
-                LogEnabled = 0;
-                LogFilePath = "log.txt";
-            }
-
-            public int LogEnabled { get; set; }
-
             [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = "LogEnabled1")]
-            public string LogFilePath { get; set; }
+            public string LogFilePath { get; set; } = "log.txt";
         }
 
         private class ArgExistsPropertyGood
         {
-            public ArgExistsPropertyGood()
-            {
-                LogEnabled = false;
-                LogFilePath = "log.txt";
-            }
-
             public bool LogEnabled { get; set; }
 
             [Option("log", "L", HelpText = "If specified, write to a log file. Can optionally provide a log file path", ArgExistsProperty = nameof(LogEnabled))]
-            public string LogFilePath { get; set; }
+            public string LogFilePath { get; set; } = "log.txt";
+        }
         }
 
         [Test]
