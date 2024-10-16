@@ -431,6 +431,7 @@ namespace PRISM
         /// <summary>
         /// Assure that the console output file data has been written to disk
         /// </summary>
+        /// <param name="closeFile">If true, close the console output file</param>
         public void FlushConsoleOutputFile(bool closeFile = false)
         {
             if (mConsoleOutputStreamWriter == null)
