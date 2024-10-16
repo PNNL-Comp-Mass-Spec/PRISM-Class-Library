@@ -195,7 +195,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// When true then will cache the text the external program writes to the console
+        /// When true, cache the text the external program writes to the console
         /// Can retrieve using the CachedConsoleOutput ReadOnly property
         /// Will also fire event ConsoleOutputEvent as new text is written to the console
         /// </summary>
@@ -318,7 +318,7 @@ namespace PRISM
         public string WorkDir { get; set; }
 
         /// <summary>
-        /// When true then will write the standard output to a file in real-time
+        /// When true, write the standard output to a file in real-time
         /// Will also fire event ConsoleOutputEvent as new text is written to the console
         /// Define the path to the file using property ConsoleOutputFilePath; if not defined, the file will be created in the WorkDir
         /// </summary>
@@ -425,6 +425,24 @@ namespace PRISM
                     // Another thread is likely trying to write to a closed file
                     // Ignore errors here
                 }
+            }
+        }
+
+        /// <summary>
+        /// Assure that the console output file data has been written to disk
+        /// </summary>
+        public void FlushConsoleOutputFile(bool closeFile = false)
+        {
+            if (mConsoleOutputStreamWriter == null)
+                return;
+
+            // Give the other threads time to write any additional info to mConsoleOutputStreamWriter
+            AppUtils.GarbageCollectNow();
+            mConsoleOutputStreamWriter.Flush();
+
+            if (closeFile)
+            {
+                mConsoleOutputStreamWriter.Close();
             }
         }
 
@@ -763,6 +781,7 @@ namespace PRISM
                     // Give the other threads time to write any additional info to mConsoleOutputStreamWriter
                     AppUtils.GarbageCollectNow();
                     mConsoleOutputStreamWriter.Flush();
+                    mConsoleOutputStreamWriter.Close();
                     mConsoleOutputStreamWriter.Dispose();
                 }
 
