@@ -209,6 +209,53 @@ namespace PRISMTest
                 testConnectionString, secondsToStayConnected, sqlQuery);
         }
 
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "", "", "", null, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", null, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", true, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "bob", "", null, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", true, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "", "", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "", "d3l243", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "", "", false, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "", "", true, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "dmsreader", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "dmsreader", "", false, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "SecretKey", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "SecretKey", false, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "SecretKey", true, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "SecretKey", null, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "SecretKey", false, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "SecretKey", true, "PRISMTest")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "", null, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "", true, "")]
+        [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "", null, "PRISMTest")]
+        public void TestGetMaskedConnectionString(
+            DbServerTypes serverType,
+            string serverName,
+            string databaseName,
+            string userName,
+            string password,
+            bool? useIntegratedSecurity,
+            string applicationName)
+
+        {
+            var connectionString = DbToolsFactory.GetConnectionString(serverType, serverName, databaseName, userName, password, applicationName, useIntegratedSecurity);
+            var maskedString = DBToolsBase.MaskConnectionStringPassword(connectionString);
+
+            Console.WriteLine(maskedString);
+        }
+
         [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "PRISMTest")]
         [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "PRISMTest")]
         [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "PRISMTest")]

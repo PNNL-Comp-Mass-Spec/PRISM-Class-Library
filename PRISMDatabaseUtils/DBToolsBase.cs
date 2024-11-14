@@ -486,7 +486,7 @@ namespace PRISMDatabaseUtils
         /// </summary>
         /// <param name="connectionString">Connection string</param>
         /// <returns>Updated connection string</returns>
-        protected static string MaskConnectionStringPassword(string connectionString)
+        public static string MaskConnectionStringPassword(string connectionString)
         {
             const string MASKED_PASSWORD = "Password=******";
 
