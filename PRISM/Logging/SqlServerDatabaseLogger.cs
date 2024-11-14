@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Data;
-using System.Data.SqlClient;
 using System.Threading;
+using Microsoft.Data.SqlClient;
 
 namespace PRISM.Logging
 {
     /// <summary>
     /// Logs messages to a SQL Server database by calling a stored procedure
-    /// Connect using System.Data.SqlClient
+    /// Connect using Microsoft.Data.SqlClient
     /// </summary>
     /// <remarks>Can only log to a single database at a time</remarks>
     public sealed class SQLServerDatabaseLogger : DatabaseLogger

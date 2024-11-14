@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using Microsoft.Data.SqlClient;
 using Npgsql;
 using NUnit.Framework;
 using PRISMDatabaseUtils;

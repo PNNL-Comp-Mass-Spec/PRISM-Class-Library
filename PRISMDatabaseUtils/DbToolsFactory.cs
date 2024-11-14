@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
 using Npgsql;
 using PRISMDatabaseUtils.MSSQLServer;
 using PRISMDatabaseUtils.PostgreSQL;
