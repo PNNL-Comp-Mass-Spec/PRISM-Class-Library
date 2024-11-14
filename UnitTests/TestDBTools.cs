@@ -149,6 +149,7 @@ namespace PRISMTest
 
         [TestCase("Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
         [TestCase("Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun", DbServerTypes.MSSQLServer)]
+        [TestCase("Data Source=gigasax;Initial Catalog=dms5;User=dmsreader;Password=dms4fun;Encrypt=optional", DbServerTypes.MSSQLServer)]
         [TestCase("DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI", DbServerTypes.MSSQLServer)]
         [TestCase("Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Database=dms", DbServerTypes.PostgreSQL)]
         [TestCase("Host=prismdb2.emsl.pnl.gov;Username=dmsreader;Password=dms4fun;Database=dms", DbServerTypes.PostgreSQL)]
@@ -1231,7 +1232,7 @@ namespace PRISMTest
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))
                 return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);
 
-            return string.Format("Data Source={0};Initial Catalog={1};User={2};Password={3};", server, database, user, password);
+            return string.Format("Data Source={0};Initial Catalog={1};User={2};Password={3};Encrypt=optional", server, database, user, password);
         }
 
         [Test]
