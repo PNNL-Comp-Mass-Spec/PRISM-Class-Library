@@ -164,6 +164,9 @@ namespace PRISMDatabaseUtils
         /// <para>If null, auto-determine based on whether userName is defined</para>
         /// <para>If password is not an empty string, useIntegratedSecurity will be set to false by this method</para>
         /// </param>
+        /// <param name="optionalEncryption">For SQL Server, set this to true to include "Encrypt=False" in the connection string</param>
+        /// <param name="mandatoryEncryption">For SQL Server, set this to true to include "Encrypt=True" in the connection string; ignored if optionalEncryption is true</param>
+        /// <param name="strictEncryption">For SQL Server, set this to true to include "Encrypt=Strict" in the connection string; ignored if optionalEncryption or mandatoryEncryption are true</param>
         /// <returns>Connection string</returns>
         public static string GetConnectionString(
             DbServerTypes serverType,
@@ -172,11 +175,16 @@ namespace PRISMDatabaseUtils
             string userName,
             string password,
             string applicationName = "",
-            bool? useIntegratedSecurity = null)
+            bool? useIntegratedSecurity = null,
+            bool? optionalEncryption = null,
+            bool? mandatoryEncryption = null,
+            bool? strictEncryption = null)
         {
             // Example SQL Server connection string:
             // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=SSPI;Application Name=Analysis Manager"
+            // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=SSPI;Encrypt=False;Application Name=Analysis Manager"
             // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=False;User ID=MyUser;Password=pass;Application Name=Analysis Manager"
+            // "Data Source=MyServer;Initial Catalog=MyDatabase;Integrated Security=False;User ID=MyUser;Password=pass;Encrypt=optional;Application Name=Analysis Manager"
 
             // Example PostgreSQL connection strings:
             // "Host=MyServer;Username=MyUser;Password=pass;Database=MyDatabase"
@@ -218,6 +226,17 @@ namespace PRISMDatabaseUtils
                                 builder.IntegratedSecurity = false;
                                 builder.Password = password;
                             }
+                        }
+
+                        if (optionalEncryption == true)
+                        {
+                            builder.Encrypt = false;
+                        } else if (mandatoryEncryption == true)
+                        {
+                            builder.Encrypt = true;
+                        } else if (strictEncryption == true)
+                        {
+                            builder.Encrypt = SqlConnectionEncryptOption.Strict;
                         }
 
                         if (!string.IsNullOrWhiteSpace(applicationName))
