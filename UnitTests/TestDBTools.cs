@@ -1037,7 +1037,7 @@ namespace PRISMTest
         }
 
         [TestCase(
-            "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
+            "Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI;Encrypt=False",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         // ReSharper disable once GrammarMistakeInComment
@@ -1050,7 +1050,7 @@ namespace PRISMTest
                2, "6, 12, 2, 1, 0")]
          */
         [TestCase(
-            "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI",
+            "DbServerType=SqlServer;Data Source=gigasax;Initial Catalog=DMS5;integrated security=SSPI;Encrypt=False",
             "SELECT username, name, hanford_id FROM v_users_export WHERE name = 'AutoUser'",
             1, "H09090911,AutoUser,H09090911")]
         [TestCase(
@@ -1230,9 +1230,9 @@ namespace PRISMTest
         public static string GetConnectionStringSqlServer(string server, string database, string user = "Integrated", string password = "")
         {
             if (string.Equals(user, "Integrated", StringComparison.OrdinalIgnoreCase))
-                return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;", server, database);
+                return string.Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI;Encrypt=False;", server, database);
 
-            return string.Format("Data Source={0};Initial Catalog={1};User={2};Password={3};Encrypt=optional", server, database, user, password);
+            return string.Format("Data Source={0};Initial Catalog={1};User={2};Password={3};Encrypt=False", server, database, user, password);
         }
 
         [Test]

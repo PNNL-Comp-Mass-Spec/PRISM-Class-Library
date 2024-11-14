@@ -52,10 +52,10 @@ namespace PRISMTest
             GetQueryResults(updatedConnectionString, sqlQuery, secondsToStayConnected);
         }
 
-        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI", "", "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI", true)]
-        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI", "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;Application Name=PRISMTest", true, 2)]
-        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI;", "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;Application Name=PRISMTest", true, 2)]
-        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;integrated security=SSPI;", "PRISMTest", "Data Source=gigasax;Integrated Security=True;Application Name=PRISMTest", true, 2)]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI;Encrypt=False", "", "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI;Encrypt=False", true)]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI;Encrypt=False", "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;Encrypt=False;Application Name=PRISMTest", true, 2)]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;Initial Catalog=dms5;integrated security=SSPI;Encrypt=False;", "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;Encrypt=False;Application Name=PRISMTest", true, 2)]
+        [TestCase(DbServerTypes.MSSQLServer, "Data Source=gigasax;integrated security=SSPI;Encrypt=False;", "PRISMTest", "Data Source=gigasax;Integrated Security=True;Encrypt=False;Application Name=PRISMTest", true, 2)]
         [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb2.emsl.pnl.gov;Username=d3l243", "", "Host=prismdb2.emsl.pnl.gov;Username=d3l243", true)]
         [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb2.emsl.pnl.gov;UserId=d3l243",   "", "Host=prismdb2.emsl.pnl.gov;UserId=d3l243", true)]
         [TestCase(DbServerTypes.PostgreSQL, "Host=prismdb2.emsl.pnl.gov;Username=d3l243", "PRISMTest", "Host=prismdb2.emsl.pnl.gov;Username=d3l243;Application Name=PRISMTest", true, 2)]
@@ -139,9 +139,9 @@ namespace PRISMTest
                 Assert.That(connectionString, Is.EqualTo(expectedResult));
         }
 
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Application Name=PRISMTest")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Application Name=PRISMTest")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Application Name=PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Encrypt=False;Application Name=PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", false, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Encrypt=False;Application Name=PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "SecretKey", true, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=False;User ID=d3l243;Password=SecretKey;Encrypt=False;Application Name=PRISMTest")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "", "", "", null, "", "Host=prismdb2.emsl.pnl.gov")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "", "", null, "", "Host=prismdb2.emsl.pnl.gov;Database=dms")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "", "", false, "", "Host=prismdb2.emsl.pnl.gov;Database=dms")]
@@ -162,9 +162,10 @@ namespace PRISMTest
             string expectedResult,
             bool testConnectionString = false,
             int secondsToStayConnected = 0,
-            string sqlQuery = "")
+            string sqlQuery = "",
+            bool? optionalEncryption = true)
         {
-            var connectionString = DbToolsFactory.GetConnectionString(serverType, serverName, databaseName, userName, password, applicationName, useIntegratedSecurity);
+            var connectionString = DbToolsFactory.GetConnectionString(serverType, serverName, databaseName, userName, password, applicationName, useIntegratedSecurity, optionalEncryption);
 
             Console.WriteLine("{0}: {1}", serverType, connectionString);
 
@@ -177,13 +178,13 @@ namespace PRISMTest
             GetQueryResults(connectionString, sqlQuery, secondsToStayConnected);
         }
 
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "", "", "", null, "", "Data Source=gigasax;Integrated Security=True")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "bob", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=bob")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243")]
-        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Application Name=PRISMTest")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "", "", "", null, "", "Data Source=gigasax;Integrated Security=True;Encrypt=False")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;Encrypt=False")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;Encrypt=False")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "bob", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=bob;Encrypt=False")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Encrypt=False")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", true, "", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Encrypt=False")]
+        [TestCase(DbServerTypes.MSSQLServer, "gigasax", "dms5", "d3l243", "", null, "PRISMTest", "Data Source=gigasax;Initial Catalog=dms5;Integrated Security=True;User ID=d3l243;Encrypt=False;Application Name=PRISMTest")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "", "d3l243", "", null, "", "Host=prismdb2.emsl.pnl.gov;Username=d3l243")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "", null, "", "Host=prismdb2.emsl.pnl.gov;Database=dms;Username=d3l243")]
         [TestCase(DbServerTypes.PostgreSQL, "prismdb2.emsl.pnl.gov", "dms", "d3l243", "", true, "", "Host=prismdb2.emsl.pnl.gov;Database=dms;Username=d3l243")]
