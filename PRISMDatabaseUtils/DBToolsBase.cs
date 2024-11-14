@@ -488,14 +488,16 @@ namespace PRISMDatabaseUtils
         /// <returns>Updated connection string</returns>
         protected static string MaskConnectionStringPassword(string connectionString)
         {
+            const string MASKED_PASSWORD = "Password=******";
+
             var match = mPasswordMatcher.Match(connectionString);
 
-            if (match.Success)
-            {
-                return mPasswordMatcher.Replace(connectionString, "Password=******");
-            }
+            if (!match.Success)
+                return connectionString;
 
-            return connectionString;
+            var replacement = string.Format("{0}{1}", MASKED_PASSWORD, connectionString.EndsWith(match.Value) ? string.Empty : ";");
+
+            return mPasswordMatcher.Replace(connectionString, replacement);
         }
 
         /// <summary>
