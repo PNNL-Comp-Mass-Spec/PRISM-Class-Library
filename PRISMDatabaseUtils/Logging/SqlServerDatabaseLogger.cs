@@ -3,15 +3,16 @@ using System.Collections.Concurrent;
 using System.Data;
 using System.Threading;
 using Microsoft.Data.SqlClient;
+using PRISM;
+using PRISM.Logging;
 
-namespace PRISM.Logging
+namespace PRISMDatabaseUtils.Logging
 {
     /// <summary>
     /// Logs messages to a SQL Server database by calling a stored procedure
     /// Connect using Microsoft.Data.SqlClient
     /// </summary>
     /// <remarks>Can only log to a single database at a time</remarks>
-    [Obsolete("Use PRISMDatabaseUtils.Logging.SQLServerDatabaseLogger instead (drop-in replacement)")]
     public sealed class SQLServerDatabaseLogger : DatabaseLogger
     {
         private const string DEFAULT_STORED_PROCEDURE_NAME = "post_log_entry";
