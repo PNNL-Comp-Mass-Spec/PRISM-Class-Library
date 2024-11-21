@@ -68,22 +68,6 @@ namespace PRISM
         /// </summary>
         private BaseLogger mLogger;
 
-#pragma warning disable CS0618
-
-        /// <summary>
-        /// Interface used for logging exceptions
-        /// </summary>
-        [Obsolete("Use mLogger (typically a FileLogger)")]
-        private ILogger mExceptionLogger;
-
-        /// <summary>
-        /// Interface used for logging errors and health related messages
-        /// </summary>
-        [Obsolete("Use mLogger (typically a FileLogger)")]
-        private ILogger mEventLogger;
-
-#pragma warning restore CS0618
-
         /// <summary>
         /// Used to start and monitor the external program
         /// </summary>
@@ -509,33 +493,11 @@ namespace PRISM
             mLogger = logger;
         }
 
-        /// <summary>
-        /// Associate an event logger with this class
-        /// </summary>
-        [Obsolete("Use RegisterEventLogger that takes a BaseLogger (typically a FileLogger)")]
-        public void RegisterEventLogger(ILogger logger)
-        {
-            mEventLogger = logger;
-        }
-
-        /// <summary>
-        /// Sets the name of the exception logger
-        /// </summary>
-        [Obsolete("Use RegisterEventLogger that takes a BaseLogger (typically a FileLogger)")]
-        public void RegisterExceptionLogger(ILogger logger)
-        {
-            mExceptionLogger = logger;
-        }
-
         private void RaiseConditionalProgChangedEvent(ProgRunner obj)
         {
             if (NotifyOnEvent)
             {
                 var msg = "Raising ProgChanged event for " + obj.Name;
-
-#pragma warning disable CS0618
-                mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
-#pragma warning restore CS0618
 
                 mLogger?.Debug(msg);
 
@@ -760,19 +722,11 @@ namespace PRISM
 
                 var msg = "Process " + Name + " terminated with exit code " + mExitCode;
 
-#pragma warning disable CS0618
-                mEventLogger?.PostEntry(msg, logMsgType.logHealth, true);
-#pragma warning restore CS0618
-
                 mLogger?.Debug(msg);
 
                 if (mCachedConsoleError?.Length > 0)
                 {
                     var errorMsg = "Cached error text for process " + Name + ": " + mCachedConsoleError;
-
-#pragma warning disable CS0618
-                    mEventLogger?.PostEntry(errorMsg, logMsgType.logError, true);
-#pragma warning restore CS0618
 
                     mLogger?.Error(errorMsg);
                 }
@@ -900,18 +854,12 @@ namespace PRISM
 
         private void ThrowConditionalException(Exception ex, string loggerMessage)
         {
-#pragma warning disable CS0618
-            mExceptionLogger?.PostError(loggerMessage, ex, true);
-#pragma warning restore CS0618
-
             mLogger?.Error(loggerMessage, ex);
 
             if (!NotifyOnException)
                 return;
 
-#pragma warning disable CS0618
-            var ignoreException = (mExceptionLogger == null && mLogger == null);
-#pragma warning restore CS0618
+            var ignoreException = mLogger == null;
 
             if (ignoreException)
             {
