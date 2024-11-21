@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using PRISM.Logging;
+using SQLServerDatabaseLogger = PRISMDatabaseUtils.Logging.SQLServerDatabaseLogger;
 
 namespace PRISMTest
 {
