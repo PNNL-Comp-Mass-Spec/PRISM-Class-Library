@@ -216,10 +216,12 @@ namespace PRISMDatabaseUtils
                             if (string.IsNullOrWhiteSpace(password))
                             {
                                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+#pragma warning disable RCS1173
                                 if (useIntegratedSecurity.HasValue)
                                     builder.IntegratedSecurity = useIntegratedSecurity.Value;
                                 else
                                     builder.IntegratedSecurity = true;
+#pragma warning restore RCS1173
                             }
                             else
                             {
