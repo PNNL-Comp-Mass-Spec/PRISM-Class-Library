@@ -53,6 +53,7 @@
     <Compile Include="IDBTools.cs" />
     <Compile Include="Logging\DbConfig.cs" />
     <Compile Include="Logging\PostgresDatabaseLogger.cs" />
+    <Compile Include="Logging\SqlServerDatabaseLogger.cs" />
     <Compile Include="MSSQLServer\SQLServerDBTools.cs" />
     <Compile Include="PostgreSQL\PostgresDBTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -65,6 +66,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient">
+      <Version>5.2.2</Version>
+    </PackageReference>
     <PackageReference Include="Npgsql">
       <Version>8.0.3</Version>
     </PackageReference>
