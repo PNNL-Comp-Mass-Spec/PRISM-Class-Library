@@ -241,10 +241,10 @@ namespace PRISM
         /// </summary>
         /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>
         /// <param name="userName">Username</param>
-        /// <param name="userPwd">Password</param>
-        public ShareConnector(string userName, string userPwd)
+        /// <param name="userPassword">Password</param>
+        public ShareConnector(string userName, string userPassword)
         {
-            RealNew(userName, userPwd);
+            RealNew(userName, userPassword);
         }
 
         /// <summary>
@@ -253,22 +253,22 @@ namespace PRISM
         /// <remarks>For local user accounts, it is safest to use HostName\username</remarks>  ///
         /// <param name="shareName">The name of the file share to which you will connect</param>
         /// <param name="userName">Username</param>
-        /// <param name="userPwd">Password</param>
-        public ShareConnector(string shareName, string userName, string userPwd)
+        /// <param name="userPassword">Password</param>
+        public ShareConnector(string shareName, string userName, string userPassword)
         {
             DefineShareName(shareName);
-            RealNew(userName, userPwd);
+            RealNew(userName, userPassword);
         }
 
         /// <summary>
         /// This routine is called by each of the constructors to make the actual assignments in a consistent fashion
         /// </summary>
         /// <param name="userName">Username</param>
-        /// <param name="userPwd">Password</param>
-        private void RealNew(string userName, string userPwd)
+        /// <param name="userPassword">Password</param>
+        private void RealNew(string userName, string userPassword)
         {
             mUsername = userName;
-            mPassword = userPwd;
+            mPassword = userPassword;
             mNetResource.lpRemoteName = mShareName;
             mNetResource.dwType = ResourceType.Disk;
             mNetResource.dwScope = ResourceScope.GlobalNetwork;

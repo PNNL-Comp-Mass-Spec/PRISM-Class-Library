@@ -22,25 +22,25 @@ namespace PRISM
         /// <remarks>This event is most useful for implementing a progress indicator</remarks>
         /// <param name="fileName">The found file's full path</param>
         public delegate void FoundFileEventHandler(string fileName);
-        private readonly List<string> mSearchDirs;
+        private readonly List<string> mSearchDirectories;
 
         private readonly List<string> mFileList;
 
         /// <summary>
         /// Constructor: Initializes a new instance of the DirectoryScanner class
         /// </summary>
-        /// <param name="dirs">An array of directory paths to scan</param>
-        public DirectoryScanner(IEnumerable<string> dirs) : this(dirs.ToList())
+        /// <param name="directoryPaths">An array of directory paths to scan</param>
+        public DirectoryScanner(IEnumerable<string> directoryPaths) : this(directoryPaths.ToList())
         {
         }
 
         /// <summary>
         /// Constructor: Initializes a new instance of the DirectoryScanner class
         /// </summary>
-        /// <param name="dirs">A list of directory paths to scan</param>
-        public DirectoryScanner(List<string> dirs)
+        /// <param name="directoryPaths">A list of directory paths to scan</param>
+        public DirectoryScanner(List<string> directoryPaths)
         {
-            mSearchDirs = dirs;
+            mSearchDirectories = directoryPaths;
             mFileList = new List<string>();
         }
 
@@ -54,7 +54,7 @@ namespace PRISM
         {
             mFileList.Clear();
 
-            foreach (var dir in mSearchDirs)
+            foreach (var dir in mSearchDirectories)
             {
                 foreach (var pattern in searchPatterns)
                 {
