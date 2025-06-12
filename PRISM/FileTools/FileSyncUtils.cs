@@ -281,7 +281,7 @@ namespace PRISM
         /// <param name="expectedHashType">Hash type (CRC32, MD5, or SHA1)</param>
         /// <returns>True if the file is valid, otherwise false</returns>
         // ReSharper disable once UnusedMember.Global
-        public bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, string expectedHash, HashUtilities.HashTypeConstants expectedHashType)
+        public static bool ValidateFileVsHashcheck(string localFilePath, out string errorMessage, string expectedHash, HashUtilities.HashTypeConstants expectedHashType)
         {
             var expectedHashInfo = new HashUtilities.HashInfoType
             {

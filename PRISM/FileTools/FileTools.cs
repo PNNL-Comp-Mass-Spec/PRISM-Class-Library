@@ -1904,7 +1904,7 @@ namespace PRISM
         /// </summary>
         /// <remarks>Also creates parent directories if missing (shows a warning if an error, but continues)</remarks>
         /// <param name="directoryPath">Directory path</param>
-        public void CreateDirectoryIfNotExists(string directoryPath)
+        public static void CreateDirectoryIfNotExists(string directoryPath)
         {
             if (string.IsNullOrWhiteSpace(directoryPath))
             {
@@ -2194,7 +2194,7 @@ namespace PRISM
         /// <param name="fileToDelete">File to delete</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
         /// <returns>True if successful, false if an error</returns>
-        public bool DeleteFileWithRetry(FileInfo fileToDelete, out string errorMessage)
+        public static bool DeleteFileWithRetry(FileInfo fileToDelete, out string errorMessage)
         {
             return DeleteFileWithRetry(fileToDelete, 3, out errorMessage);
         }
@@ -2206,7 +2206,7 @@ namespace PRISM
         /// <param name="retryCount">Maximum number of times to retry the deletion, waiting 500 msec, then 750 msec between deletion attempts</param>
         /// <param name="errorMessage">Output message: error message if unable to delete the file</param>
         /// <returns>True if successful, false if an error</returns>
-        public bool DeleteFileWithRetry(FileInfo fileToDelete, int retryCount, out string errorMessage)
+        public static bool DeleteFileWithRetry(FileInfo fileToDelete, int retryCount, out string errorMessage)
         {
             var sleepTimeMsec = 500;
 
@@ -2357,7 +2357,7 @@ namespace PRISM
         /// </summary>
         /// <param name="directoryPath">The path to the directory</param>
         /// <returns>The directory size</returns>
-        public long GetDirectorySize(string directoryPath)
+        public static long GetDirectorySize(string directoryPath)
         {
             return GetDirectorySize(directoryPath, out _, out _);
         }
@@ -2369,7 +2369,7 @@ namespace PRISM
         /// <param name="fileCount">The number of files in the entire directory tree</param>
         /// <param name="subDirectoryCount">The number of directories in the entire directory tree</param>
         /// <returns>The directory size</returns>
-        public long GetDirectorySize(string directoryPath, out long fileCount, out long subDirectoryCount)
+        public static long GetDirectorySize(string directoryPath, out long fileCount, out long subDirectoryCount)
         {
             long runningFileCount = 0;
             long runningSubDirCount = 0;
@@ -2387,7 +2387,7 @@ namespace PRISM
         /// <param name="fileCount">The number of files in the entire directory tree</param>
         /// <param name="subDirectoryCount">The number of directories in the entire directory tree</param>
         /// <returns>The directory size</returns>
-        private long GetDirectorySizeEx(string directoryPath, ref long fileCount, ref long subDirectoryCount)
+        private static long GetDirectorySizeEx(string directoryPath, ref long fileCount, ref long subDirectoryCount)
         {
             long directorySize = 0;
             var directory = new DirectoryInfo(directoryPath);
@@ -2428,7 +2428,7 @@ namespace PRISM
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
         /// <param name="dataFile">File instance</param>
         /// <returns>Lock directory path if it exists</returns>
-        public string GetLockDirectory(FileInfo dataFile)
+        public static string GetLockDirectory(FileInfo dataFile)
         {
             var lockDirectoryPath = GetLockDirectoryPath(dataFile);
 
@@ -2446,7 +2446,7 @@ namespace PRISM
         /// <remarks>Lock directories are only returned for remote shares (shares that start with \\)</remarks>
         /// <param name="dataFile">File instance</param>
         /// <returns>Lock directory path</returns>
-        private string GetLockDirectoryPath(FileInfo dataFile)
+        private static string GetLockDirectoryPath(FileInfo dataFile)
         {
             if (Path.IsPathRooted(dataFile.FullName))
             {
@@ -2464,7 +2464,7 @@ namespace PRISM
         /// <summary>
         /// Get the time stamp to be used when naming a lock file
         /// </summary>
-        public long GetLockFileTimeStamp()
+        public static long GetLockFileTimeStamp()
         {
             return (long)Math.Round(DateTime.UtcNow.Subtract(new DateTime(2010, 1, 1)).TotalMilliseconds, 0);
         }
@@ -2474,7 +2474,7 @@ namespace PRISM
         /// </summary>
         /// <remarks>Treats \\picfs as a special share since DMS-related files are at \\picfs\projects\DMS</remarks>
         /// <param name="serverSharePath">Server share path</param>
-        public string GetServerShareBase(string serverSharePath)
+        public static string GetServerShareBase(string serverSharePath)
         {
             if (!serverSharePath.StartsWith(@"\\"))
                 return string.Empty;
@@ -2795,7 +2795,7 @@ namespace PRISM
         /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
         /// <param name="retryCount">Maximum number of times to retry the rename, waiting 3 sec, then 6 sec between rename attempts</param>
         /// <returns>True if successful, false if an error</returns>
-        public bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, out string errorMessage, int retryCount = 3)
+        public static bool RenameFileWithRetry(FileInfo fileToRename, string newFileName, out string errorMessage, int retryCount = 3)
         {
             var newPath = fileToRename.Directory == null
                 ? newFileName
@@ -2813,7 +2813,7 @@ namespace PRISM
         /// <param name="errorMessage">Output message: error message if unable to rename the file</param>
         /// <param name="retryCount">Maximum number of times to retry the rename, waiting 3 sec, then 6 sec between rename attempts</param>
         /// <returns>True if successful, false if an error</returns>
-        public bool RenameFileWithRetry(FileInfo fileToRename, FileInfo newFileInfo, out string errorMessage, int retryCount = 3)
+        public static bool RenameFileWithRetry(FileInfo fileToRename, FileInfo newFileInfo, out string errorMessage, int retryCount = 3)
         {
             if (fileToRename == null)
             {
