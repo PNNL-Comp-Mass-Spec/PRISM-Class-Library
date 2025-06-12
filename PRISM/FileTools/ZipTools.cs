@@ -15,6 +15,7 @@ namespace PRISM
     /// There are routines to create an archive, extract files from an existing archive, and verify an existing archive
     /// </remarks>
     // ReSharper disable once UnusedMember.Global
+    [Obsolete("It is preferable to use the zipping methods in class ZipFileTools since it uses System.IO.Compression.ZipFile")]
     public class ZipTools
     {
         // ReSharper disable once CommentTypo
