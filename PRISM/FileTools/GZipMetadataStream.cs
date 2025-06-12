@@ -11,7 +11,7 @@ namespace PRISM
     /// </summary>
     internal class GZipMetadataStream : Stream
     {
-        // Ignore Spelling: gzip
+        // Ignore Spelling: CRC, gzip
 
         [Flags]
         private enum GzipFlags : byte

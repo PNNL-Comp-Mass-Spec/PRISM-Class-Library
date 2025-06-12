@@ -14,7 +14,7 @@ namespace PRISM
     /// </summary>
     public static class PathUtils
     {
-        // Ignore Spelling: sep
+        // Ignore Spelling: sep, utils
 
         /// <summary>
         /// Convert a path to be Linux-compatible (backslash to forward slash

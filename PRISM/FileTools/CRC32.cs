@@ -12,7 +12,7 @@ namespace PRISM
     [CLSCompliant(false)]
     public static class Crc32
     {
-        // Ignore Spelling: crc, pre, uint
+        // Ignore Spelling: buf, crc, pre, uint
 
         /// <summary>
         /// Table of CRCs of all 8-bit messages

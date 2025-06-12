@@ -9,7 +9,7 @@ using Microsoft.Extensions.FileSystemGlobbing;
 namespace PRISM
 {
     /// <summary>
-    /// System.IO.Compression.ZipFile Tools
+    /// Compress files and directories using System.IO.Compression.ZipFile
     /// </summary>
     // ReSharper disable once UnusedMember.Global
     public class ZipFileTools : EventNotifier
@@ -120,7 +120,8 @@ namespace PRISM
             return bytes / 1024.0 / 1024.0;
         }
 
-        private void DeleteFile(FileSystemInfo targetFile)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        private void DeleteFile(FileInfo targetFile)
         {
             try
             {
@@ -149,7 +150,7 @@ namespace PRISM
         /// <param name="item1">First string</param>
         /// <param name="item2">Second string</param>
         /// <returns>Common characters</returns>
-        private string GetCommonStartString(string item1, string item2)
+        private static string GetCommonStartString(string item1, string item2)
         {
             var commonCharCount = 0;
 
@@ -164,14 +165,10 @@ namespace PRISM
             return item1.Substring(0, commonCharCount);
         }
 
-        private string GetRelativeFilePath(FileInfo file, FileSystemInfo parentDirectory)
+        // ReSharper disable once SuggestBaseTypeForParameter
+        private static string GetRelativeFilePath(FileInfo file, DirectoryInfo parentDirectory)
         {
-            if (parentDirectory == null || file.DirectoryName == null || file.DirectoryName.Length == 0)
-            {
-                return file.Name;
-            }
-
-            if (parentDirectory.FullName.Equals(file.DirectoryName))
+            if (parentDirectory == null || file.DirectoryName == null || file.DirectoryName.Length == 0 || parentDirectory.FullName.Equals(file.DirectoryName))
             {
                 return file.Name;
             }

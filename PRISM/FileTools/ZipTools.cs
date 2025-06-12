@@ -9,11 +9,10 @@ using PRISM.Logging;
 namespace PRISM
 {
     /// <summary>
-    /// Routines for calling an external zipping program like 7-zip.exe
+    /// Routines for calling an external zipping program, like 7-zip.exe
     /// </summary>
     /// <remarks>
-    /// There are routines to create an archive, extract files from an existing archive,
-    /// and verify an existing archive
+    /// There are routines to create an archive, extract files from an existing archive, and verify an existing archive
     /// </remarks>
     // ReSharper disable once UnusedMember.Global
     public class ZipTools
@@ -49,7 +48,7 @@ namespace PRISM
                 return false;
             }
 
-            // Setup the zip program
+            // Set up the zip program
             var zipper = new ProgRunner
             {
                 Arguments = "-Add " + cmdOptions + " \"" + outputFile + "\" \"" + inputSpec + "\"",
@@ -109,7 +108,7 @@ namespace PRISM
                 return false;
             }
 
-            // Setup the unzip program
+            // Set up the unzip program
             var zipper = new ProgRunner
             {
                 Arguments = "-Extract " + cmdOptions + " \"" + zipFilePath + "\" \"" + outputDirectoryPath + "\"",
@@ -195,7 +194,7 @@ namespace PRISM
                 return false;
             }
 
-            // Setup the zip program
+            // Set up the zip program
             var zipper = new ProgRunner
             {
                 // ReSharper disable once StringLiteralTypo

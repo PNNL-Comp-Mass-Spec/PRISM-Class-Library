@@ -10,7 +10,7 @@ namespace PRISM
     // ReSharper disable once UnusedMember.Global
     public class FileSyncUtils : EventNotifier
     {
-        // Ignore Spelling: hashcheck, hashtype, utc, utils
+        // Ignore Spelling: hashcheck, hashtype, LastUsed, utc, utils
 
         /// <summary>
         /// Extension for .LastUsed files that track when a data file was last used
