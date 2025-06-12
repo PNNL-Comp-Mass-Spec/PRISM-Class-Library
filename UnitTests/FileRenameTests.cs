@@ -19,7 +19,7 @@ namespace PRISMTest
         {
             var changingDirectory = !string.Equals(fileToRename.DirectoryName, newFile.DirectoryName);
 
-            mFileTools.CreateDirectoryIfNotExists(fileToRename.DirectoryName);
+            FileTools.CreateDirectoryIfNotExists(fileToRename.DirectoryName);
 
             using var writer = new StreamWriter(new FileStream(fileToRename.FullName, FileMode.Create, FileAccess.Write, FileShare.Read));
 
@@ -110,7 +110,7 @@ namespace PRISMTest
                 writer.WriteLine("Test conflicting name file to prevent rename of " + newFileInfo.Name);
             }
 
-            var success = mFileTools.RenameFileWithRetry(fileToRename, newFileInfo, out var errorMessage);
+            var success = FileTools.RenameFileWithRetry(fileToRename, newFileInfo, out var errorMessage);
 
             Assert.That(success, Is.False, "RenameFileWithRetry returned true instead of false");
 
@@ -147,7 +147,7 @@ namespace PRISMTest
                 ConsoleMsgUtils.SleepSeconds(1.5);
             }
 
-            var success = mFileTools.RenameFileWithRetry(fileToRename, newFile, out var errorMessage, retryCount);
+            var success = FileTools.RenameFileWithRetry(fileToRename, newFile, out var errorMessage, retryCount);
 
             Console.WriteLine();
 

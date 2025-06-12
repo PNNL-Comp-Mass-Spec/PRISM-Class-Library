@@ -64,7 +64,7 @@ namespace PRISMTest
 
             try
             {
-                mFileTools.CreateDirectoryIfNotExists(directoryPath);
+                FileTools.CreateDirectoryIfNotExists(directoryPath);
 
                 var targetDirectory = new DirectoryInfo(directoryPath);
 

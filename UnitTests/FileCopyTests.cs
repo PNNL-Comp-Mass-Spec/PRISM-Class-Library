@@ -30,7 +30,7 @@ namespace PRISMTest
                 try
                 {
                     // Create the missing source directory
-                    mFileTools.CreateDirectoryIfNotExists(sourceDirectoryPath);
+                    FileTools.CreateDirectoryIfNotExists(sourceDirectoryPath);
 
                     var rand = new Random();
 
@@ -204,7 +204,7 @@ namespace PRISMTest
 
             // ReSharper disable once MergeIntoPattern
             if (targetFile.Directory != null && !targetFile.Directory.Exists)
-                mFileTools.CreateDirectoryIfNotExists(targetFile.Directory.FullName);
+                FileTools.CreateDirectoryIfNotExists(targetFile.Directory.FullName);
         }
 
 #if !NETCOREAPP2_0
@@ -212,7 +212,7 @@ namespace PRISMTest
         [TestCase(@"C:\Temp\")]
         public void GetDriveFreeSpaceForDirectoryLocal(string directoryPath)
         {
-            mFileTools.CreateDirectoryIfNotExists(directoryPath);
+            FileTools.CreateDirectoryIfNotExists(directoryPath);
             GetDriveFreeSpaceForDirectory(directoryPath);
         }
 
@@ -229,7 +229,7 @@ namespace PRISMTest
         [Category("PNL_Protoapps")]
         public void GetDriveFreeSpaceForDirectoryRemote2(string directoryPath)
         {
-            mFileTools.CreateDirectoryIfNotExists(directoryPath);
+            FileTools.CreateDirectoryIfNotExists(directoryPath);
             GetDriveFreeSpaceForDirectory(directoryPath);
         }
 
