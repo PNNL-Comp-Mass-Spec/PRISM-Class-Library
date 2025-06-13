@@ -30,22 +30,6 @@ namespace PRISM
         public const string WIN32_LONG_PATH_PREFIX = @"\\?\";
 
         /// <summary>
-        /// Check whether the file exists
-        /// </summary>
-        /// <param name="path">File path</param>
-        /// <returns>True if the file exists, otherwise false</returns>
-        public static bool Exists(string path)
-        {
-            if (path.Length < FILE_PATH_LENGTH_THRESHOLD)
-            {
-                return File.Exists(path);
-            }
-
-            var result = NativeIOMethods.GetFileAttributesW(GetWin32LongPath(path));
-            return result > 0;
-        }
-
-        /// <summary>
         /// Copy the file
         /// </summary>
         /// <param name="sourcePath">Source file path</param>
@@ -87,6 +71,22 @@ namespace PRISM
                     ThrowWin32Exception();
                 }
             }
+        }
+
+        /// <summary>
+        /// Check whether the file exists
+        /// </summary>
+        /// <param name="filePath">File path</param>
+        /// <returns>True if the file exists, otherwise false</returns>
+        public static bool Exists(string filePath)
+        {
+            if (filePath.Length < FILE_PATH_LENGTH_THRESHOLD)
+            {
+                return File.Exists(filePath);
+            }
+
+            var result = NativeIOMethods.GetFileAttributesW(GetWin32LongPath(filePath));
+            return result > 0;
         }
 
         /// <summary>
