@@ -952,8 +952,8 @@ namespace PRISM
                 else
                 {
                     // If overWrite = false, copy the file only if it does not exist
-                    // this is done to avoid an IOException if a file already exists
-                    // this way the other files can be copied anyway...
+                    // This is done to avoid an IOException if a file already exists
+                    // This way the other files can be copied anyway...
                     if (!File.Exists(targetFilePath))
                     {
                         UpdateCurrentStatus(CopyStatus.NormalCopy, childFile.FullName);
@@ -1202,7 +1202,7 @@ namespace PRISM
                         // Does file already exist?
                         var existingFile = new FileInfo(Path.Combine(targetDirectory.FullName, sourceFile.Name));
 
-                        if (existingFile.Exists)
+                        if (existingFile.Exists || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(existingFile.FullName)))
                         {
                             switch (fileOverwriteMode)
                             {
@@ -1510,7 +1510,7 @@ namespace PRISM
         {
             var useLockFile = false;
 
-            if (!overWrite && File.Exists(targetFilePath))
+            if (!overWrite && (File.Exists(targetFilePath) || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(targetFilePath))))
             {
                 return true;
             }
@@ -1583,7 +1583,7 @@ namespace PRISM
             string lockDirectoryPathSource, string lockDirectoryPathTarget,
             FileInfo sourceFile, string targetFilePath, string managerName, bool overWrite)
         {
-            if (!overWrite && File.Exists(targetFilePath))
+            if (!overWrite && (File.Exists(targetFilePath) || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(targetFilePath))))
             {
                 if (DebugLevel >= 2)
                 {
@@ -1732,7 +1732,7 @@ namespace PRISM
                 // Delete the target file if it already exists
                 var targetFile = new FileInfo(targetFilePath);
 
-                if (targetFile.Exists)
+                if (targetFile.Exists || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(targetFilePath)))
                 {
                     DeleteFileNative(targetFile);
                     AppUtils.SleepMilliseconds(25);
@@ -1746,12 +1746,12 @@ namespace PRISM
                 var sourceFileLastWriteTimeUTC = sourceFile.LastWriteTimeUtc;
                 var sourceFileLastWriteTime = sourceFileLastWriteTimeUTC.ToString("yyyy-MM-dd hh:mm:ss.fff tt");
 
-                if (filePart.Exists)
+                if (filePart.Exists || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(filePart.FullName)))
                 {
                     // Possibly resume copying
                     // First inspect the FilePartInfo file
 
-                    if (filePartInfo.Exists)
+                    if (filePartInfo.Exists || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(filePartInfo.FullName)))
                     {
                         // Open the file and read the file length and file modification time
                         // If they match sourceFile then set resumeCopy to true and update fileOffsetStart
@@ -1805,6 +1805,11 @@ namespace PRISM
                     if (filePart.Exists)
                     {
                         filePart.Delete();
+                        AppUtils.SleepMilliseconds(25);
+                    }
+                    else if (!SystemInfo.IsLinux && NativeIOFileTools.Exists(filePart.FullName))
+                    {
+                        NativeIOFileTools.Delete(filePart.FullName);
                         AppUtils.SleepMilliseconds(25);
                     }
 
@@ -2845,7 +2850,7 @@ namespace PRISM
 
             fileToRename.Refresh();
 
-            if (!fileToRename.Exists)
+            if (!fileToRename.Exists || (!SystemInfo.IsLinux && !NativeIOFileTools.Exists(fileToRename.FullName)))
             {
                 throw new FileNotFoundException("File not found: " + fileToRename.FullName);
             }
@@ -2858,7 +2863,7 @@ namespace PRISM
 
             newFileInfo.Refresh();
 
-            if (newFileInfo.Exists)
+            if (newFileInfo.Exists || (!SystemInfo.IsLinux && NativeIOFileTools.Exists(newFileInfo.FullName)))
             {
                 if (string.Equals(fileToRename.FullName, newFileInfo.FullName, StringComparison.OrdinalIgnoreCase))
                 {
