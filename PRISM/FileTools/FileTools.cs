@@ -2167,9 +2167,7 @@ namespace PRISM
         }
 
         /// <summary>
-        /// Try to delete a file using File.Delete
-        /// If the delete fails due to the path length being 260 characters or longer,
-        /// and if we're running Windows, use DeleteFileW in kernel32.dll instead
+        /// Try to delete a file using File.Delete or NativeIOFileTools.Delete (if on Windows)
         /// </summary>
         /// <param name="targetFile">File path</param>
         // ReSharper disable once SuggestBaseTypeForParameter

@@ -126,7 +126,7 @@ namespace PRISM
         /// <summary>
         /// Remove Win32 long path characters
         /// </summary>
-        /// <param name="path">File or directory pat</param>
+        /// <param name="path">File or directory path</param>
         public static string GetCleanPath(string path)
         {
             if (path.StartsWith(@"\\?\UNC\"))
