@@ -2177,7 +2177,16 @@ namespace PRISM
         {
             try
             {
-                if (targetFile.Exists)
+                // Note that targetFile.Exists will be false if the path length is 260 characters or longer
+
+                if (!SystemInfo.IsLinux && targetFile.FullName.Length >= NativeIOFileTools.FILE_PATH_LENGTH_THRESHOLD)
+                {
+                    if (NativeIOFileTools.Exists(targetFile.FullName))
+                    {
+                        NativeIOFileTools.Delete(targetFile.FullName);
+                    }
+                }
+                else if (targetFile.Exists)
                 {
                     targetFile.Delete();
                 }
