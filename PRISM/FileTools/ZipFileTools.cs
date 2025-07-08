@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Microsoft.Extensions.FileSystemGlobbing;
 
 // ReSharper disable once CheckNamespace
 namespace PRISM
@@ -587,7 +586,7 @@ namespace PRISM
         /// </summary>
         /// <param name="zipFilePath">File to unzip</param>
         /// <param name="targetDirectory">Directory to place the unzipped files</param>
-        /// <param name="fileFilter">Filter to apply when unzipping</param>
+        /// <param name="fileFilter">Filter to apply when unzipping. This is used as 'name contains [fileFilter]', case-insensitive; '*' is removed as it is not valid in a Windows filename</param>
         /// <returns>True if success, false if an error</returns>
         // ReSharper disable once UnusedMember.Global
         public bool UnzipFile(string zipFilePath, string targetDirectory, string fileFilter)
@@ -600,10 +599,32 @@ namespace PRISM
         /// </summary>
         /// <param name="zipFilePath">File to unzip</param>
         /// <param name="targetDirectory">Directory to place the unzipped files</param>
-        /// <param name="fileFilter">Filter to apply when unzipping</param>
+        /// <param name="fileFilter">Filter to apply when unzipping. This is used as 'name contains [fileFilter]', case-insensitive; '*' is removed as it is not valid in a Windows filename</param>
         /// <param name="overwriteBehavior">Defines what to do when existing files could be overwritten</param>
         /// <returns>True if success, false if an error</returns>
         public bool UnzipFile(string zipFilePath, string targetDirectory, string fileFilter, ExtractExistingFileBehavior overwriteBehavior)
+        {
+            Func<string, bool> doExtractFile = null;
+            // Leave as null when filter value is: null, whitespace, empty, or any combination of just '*' and '.', like "*" and "*.*"
+            if (!string.IsNullOrWhiteSpace(fileFilter) &&
+                string.IsNullOrWhiteSpace(fileFilter.Replace("*", "").Replace(".", "")))
+            {
+                var cleanedFilter = fileFilter.Replace("*", "");
+                doExtractFile = name => name != null && name.IndexOf(cleanedFilter, StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+
+            return UnzipFile(zipFilePath, targetDirectory, doExtractFile, overwriteBehavior);
+        }
+
+        /// <summary>
+        /// Unzip zipFilePath into the specified target directory, applying the specified file filter
+        /// </summary>
+        /// <param name="zipFilePath">File to unzip</param>
+        /// <param name="targetDirectory">Directory to place the unzipped files</param>
+        /// <param name="fileMatchesFilter">Function to use to determine if a file should be extracted. To extract all files, 'null' should be provided for this parameter.</param>
+        /// <param name="overwriteBehavior">Defines what to do when existing files could be overwritten</param>
+        /// <returns>True if success, false if an error</returns>
+        public bool UnzipFile(string zipFilePath, string targetDirectory, Func<string, bool> fileMatchesFilter, ExtractExistingFileBehavior overwriteBehavior)
         {
             Message = string.Empty;
             MostRecentZipFilePath = zipFilePath;
@@ -635,7 +656,7 @@ namespace PRISM
                         targetDirectoryInstance.Create();
                     }
 
-                    if (string.IsNullOrWhiteSpace(fileFilter))
+                    if (fileMatchesFilter == null)
                     {
                         // When the overwrite behavior is "Throw", use method ExtractToDirectory() since it raises an exception if an existing file is found
 
@@ -653,12 +674,12 @@ namespace PRISM
                         }
                         else
                         {
-                            UnzipFiles(archive, targetDirectory, "*", overwriteBehavior);
+                            UnzipFiles(archive, targetDirectory, _ => true, overwriteBehavior);
                         }
                     }
                     else
                     {
-                        UnzipFiles(archive, targetDirectory, fileFilter, overwriteBehavior);
+                        UnzipFiles(archive, targetDirectory, fileMatchesFilter, overwriteBehavior);
                     }
                 }
 
@@ -678,13 +699,9 @@ namespace PRISM
             }
         }
 
-        private void UnzipFiles(ZipArchive archive, string targetDirectory, string fileFilter, ExtractExistingFileBehavior overwriteBehavior)
+        private void UnzipFiles(ZipArchive archive, string targetDirectory, Func<string, bool> fileMatchesFilter, ExtractExistingFileBehavior overwriteBehavior)
         {
             var overwrite = (overwriteBehavior == ExtractExistingFileBehavior.OverwriteSilently);
-
-            // Microsoft.Extensions.FileSystemGlobbing.Matcher
-            Matcher matcher = new();
-            matcher.AddInclude(fileFilter);
 
             foreach (var item in archive.Entries)
             {
@@ -706,9 +723,8 @@ namespace PRISM
                     continue;
                 }
 
-                var result = matcher.Match(item.Name);
-
-                if (!result.HasMatches)
+                // Check the item name against the file matching function
+                if (!fileMatchesFilter(item.Name))
                     continue;
 
                 var targetFile = new FileInfo(Path.Combine(targetDirectory, item.FullName));
