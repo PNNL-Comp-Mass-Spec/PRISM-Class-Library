@@ -624,7 +624,7 @@ namespace PRISM
         /// <param name="fileMatchesFilter">Function to use to determine if a file should be extracted. To extract all files, 'null' should be provided for this parameter.</param>
         /// <param name="overwriteBehavior">Defines what to do when existing files could be overwritten</param>
         /// <returns>True if success, false if an error</returns>
-        public bool UnzipFile(string zipFilePath, string targetDirectory, Func<string, bool> fileMatchesFilter, ExtractExistingFileBehavior overwriteBehavior)
+        public bool UnzipFile(string zipFilePath, string targetDirectory, Func<string, bool> fileMatchesFilter, ExtractExistingFileBehavior overwriteBehavior = ExtractExistingFileBehavior.OverwriteSilently)
         {
             Message = string.Empty;
             MostRecentZipFilePath = zipFilePath;
