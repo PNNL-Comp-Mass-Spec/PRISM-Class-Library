@@ -18,49 +18,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net462|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net462|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net48|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0|AnyCPU'">
-    <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
+  <PropertyGroup>
     <NoWarn>IDE0028;IDE0057;IDE0290;IDE0300;IDE0305;SYSLIB1045;1701;1702</NoWarn>
   </PropertyGroup>
   <ItemGroup>
