@@ -258,8 +258,9 @@ namespace PRISM
         /// <returns>MD5 hash, as a string</returns>
         private static string ComputeMD5Hash(Stream data, out string base64MD5)
         {
+            // Use the MD5 hash algorithm to compute a hash of the data stream
             var md5Hasher = MD5.Create();
-            var byteArray = ComputeHashGetByteArray(md5Hasher, data);
+            var byteArray = md5Hasher.ComputeHash(data);
 
             base64MD5 = Convert.ToBase64String(byteArray);
 
@@ -274,36 +275,10 @@ namespace PRISM
         /// <returns>SHA-1 hash, as a string</returns>
         private static string ComputeSha1Hash(Stream data)
         {
+            // Use the SHA1 hash algorithm to compute a hash of the data stream
             var sha1Hasher = SHA1.Create();
-            return ComputeHash(sha1Hasher, data);
-        }
-
-        /// <summary>
-        /// Use the given hash algorithm to compute a hash of the data stream
-        /// </summary>
-        /// <param name="hasher">Hash algorithm</param>
-        /// <param name="data">Stream to hash</param>
-        /// <returns>Hash string</returns>
-        private static string ComputeHash(HashAlgorithm hasher, Stream data)
-        {
-            // hash contents of this stream
-            var arrHash = hasher.ComputeHash(data);
-
-            // Return the hash, formatted as a string
-            return ByteArrayToString(arrHash);
-        }
-
-        /// <summary>
-        /// Use the given hash algorithm to compute a hash of the data stream
-        /// </summary>
-        /// <param name="hasher">Hash algorithm</param>
-        /// <param name="data">Stream to hash</param>
-        /// <returns>Hash string</returns>
-        private static byte[] ComputeHashGetByteArray(HashAlgorithm hasher, Stream data)
-        {
-            // hash contents of this stream
-            var byteArray = hasher.ComputeHash(data);
-            return byteArray;
+            var byteArray = sha1Hasher.ComputeHash(data);
+            return ByteArrayToString(byteArray);
         }
 
         /// <summary>
