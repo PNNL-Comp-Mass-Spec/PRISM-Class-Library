@@ -216,11 +216,13 @@ namespace PRISM
         /// Computes the SHA-1 hash for a file
         /// </summary>
         /// <param name="filePath">File path</param>
+        /// <param name="noSharedWrite">If true, file will be opened with FileShare.Read instead of FileShare.ReadWrite</param>
         /// <returns>SHA-1 hash, as a hex string</returns>
-        public static string ComputeFileHashSha1(string filePath)
+        public static string ComputeFileHashSha1(string filePath, bool noSharedWrite = false)
         {
+            var fileShare = noSharedWrite ? FileShare.Read : FileShare.ReadWrite;
             // Open file (as read-only)
-            using Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using Stream reader = new FileStream(filePath, FileMode.Open, FileAccess.Read, fileShare);
 
             // Hash contents of this stream
             return ComputeSha1Hash(reader);
@@ -234,9 +236,7 @@ namespace PRISM
         // ReSharper disable once UnusedMember.Global
         public static string ComputeStringHashSha1(string text)
         {
-            var hashValue = ComputeSha1Hash(new MemoryStream(Encoding.UTF8.GetBytes(text)));
-
-            return hashValue;
+            return ComputeSha1Hash(new MemoryStream(Encoding.UTF8.GetBytes(text)));
         }
 
         /// <summary>
