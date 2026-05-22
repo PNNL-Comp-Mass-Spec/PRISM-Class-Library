@@ -106,16 +106,13 @@ namespace PRISM
         /// <summary>
         /// Converts a byte array into a hex string
         /// </summary>
-        private static string ByteArrayToString(IReadOnlyCollection<byte> byteArray)
+        private static string ByteArrayToString(byte[] byteArray)
         {
-            var output = new StringBuilder(byteArray.Count);
-
-            foreach (var oneByte in byteArray)
-            {
-                output.Append(oneByte.ToString("X2"));
-            }
-
-            return output.ToString().ToLower();
+#if NET5_0_OR_GREATER
+            return Convert.ToHexString(byteArray).ToLower();
+#else
+            return BitConverter.ToString(byteArray).Replace("-", string.Empty).ToLower();
+#endif
         }
 
         /// <summary>
@@ -259,8 +256,12 @@ namespace PRISM
         private static string ComputeMD5Hash(Stream data, out string base64MD5)
         {
             // Use the MD5 hash algorithm to compute a hash of the data stream
+#if NET5_0_OR_GREATER
+            var byteArray = MD5.HashData(data);
+#else
             var md5Hasher = MD5.Create();
             var byteArray = md5Hasher.ComputeHash(data);
+#endif
 
             base64MD5 = Convert.ToBase64String(byteArray);
 
@@ -276,8 +277,12 @@ namespace PRISM
         private static string ComputeSha1Hash(Stream data)
         {
             // Use the SHA1 hash algorithm to compute a hash of the data stream
+#if NET5_0_OR_GREATER
+            var byteArray = SHA1.HashData(data);
+#else
             var sha1Hasher = SHA1.Create();
             var byteArray = sha1Hasher.ComputeHash(data);
+#endif
             return ByteArrayToString(byteArray);
         }
 
