@@ -554,6 +554,7 @@ namespace PRISM
                 mProcess.StartInfo.UseShellExecute = false;
                 mProcess.StartInfo.RedirectStandardOutput = true;
                 mProcess.StartInfo.RedirectStandardError = true;
+                mProcess.StartInfo.RedirectStandardInput = true;
                 standardOutputRedirected = true;
             }
             else
@@ -657,6 +658,9 @@ namespace PRISM
 
                         mProcess.BeginOutputReadLine();
                         mProcess.BeginErrorReadLine();
+
+                        // Provide a newline write on the input, in case there is an expected input
+                        mProcess.StandardInput.WriteLine();
                     }
                     catch (Exception)
                     {
